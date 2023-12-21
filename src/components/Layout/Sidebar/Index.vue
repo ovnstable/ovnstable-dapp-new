@@ -1,29 +1,76 @@
 <template>
   <div class="sidebar">
     <ul class="sidebar__top">
-      <p class="sidebar__text-top">Homepage</p>
-      <p class="sidebar__text-top">All pools</p>
-      <hr class="sidebar__divider-top" />
-      <p class="sidebar__text-top">Money market</p>
-      <hr class="sidebar__divider-top" />
-      <p class="sidebar__text-top ovn">OVN</p>
-      <p class="sidebar__text-top">Insurance</p>
-      <p class="sidebar__text-top ovn-lp">OVN LP</p>
-      <hr class="sidebar__divider-top" />
-      <p class="sidebar__text-top">Calculator</p>
+
+      <router-link
+        to="/homepage"
+        class="sidebar__text-top"
+      >Homepage</router-link>
+
+      <router-link
+        to="/pools"
+        class="sidebar__text-top"
+      >All pools</router-link>
+
+      <div class="sidebar__divider-top" />
+
+      <router-link
+        to="/money-market"
+        class="sidebar__text-top"
+      >Money market</router-link>
+
+      <div class="sidebar__divider-top" />
+
+      <router-link
+        to="/insurance"
+        class="sidebar__text-top"
+      >Insurance</router-link>
+
+      <router-link
+        to="/ovn-lp"
+        class="sidebar__text-top ovn-lp"
+      >OVN LP</router-link>
+
+      <div class="sidebar__divider-top" />
+
+      <router-link
+        to="/calculator"
+        class="sidebar__text-top"
+      >Calculator</router-link>
     </ul>
+
     <ul class="sidebar__bottom">
-      <p class="sidebar__text-bottom">Help Center</p>
-      <p class="sidebar__text-bottom">Terms of service</p>
-      <p class="sidebar__text-bottom">Privacy Policy</p>
-      <p class="sidebar__text-bottom">Audits</p>
-      <p class="sidebar__text-bottom">ABOUT ETS</p>
-      <hr class="sidebar__divider-bottom" />
+      <router-link
+        to="/help-center"
+        class="sidebar__text-bottom"
+      >Help Center</router-link>
+
+      <router-link
+        to="/docs"
+        class="sidebar__text-bottom"
+      >Terms of service</router-link>
+
+      <router-link
+        to="/docs"
+        class="sidebar__text-bottom"
+      >Privacy Policy</router-link>
+
+      <router-link
+        to="/docs"
+        class="sidebar__text-bottom"
+      >Audits</router-link>
+
+      <router-link
+        to="/docs"
+        class="sidebar__text-bottom"
+      >ABOUT ETS</router-link>
+
+      <div class="sidebar__divider-bottom" />
       <div class="sidebar__icons-bottom">
         <IconTwitter class="sidebar__icon-social" />
         <IconDiscord class="sidebar__icon-social" />
       </div>
-      <hr class="sidebar__divider-bottom" />
+      <div class="sidebar__divider-bottom" />
       <div class="sidebar__icons-bottom">
         <IconSwitchTheme class="sidebar__button-switch-theme" />
         <button
@@ -51,7 +98,9 @@ export default {
 </script>
 
 <style scoped>
-.sidebar {
+.sidebar,
+.sidebar__top,
+.sidebar__bottom {
   display: flex;
   flex-direction: column;
   max-width: 140px;
@@ -64,16 +113,10 @@ export default {
   margin-top:20px;
 }
 
-.sidebar__text-top:not(.ovn):hover {
+.sidebar__text-top:hover {
   cursor: pointer;
   color: #7f8695;
   transition: color .15s ease
-}
-
-.ovn {
-  color: var(--2, #687386);
-  font-size: 15px;
-  font-weight: 700;
 }
 
 .ovn-lp {
