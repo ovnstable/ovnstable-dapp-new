@@ -64,18 +64,16 @@ export default {
   margin-top:20px;
 }
 
-.sidebar__text-top:hover {
+.sidebar__text-top:not(.ovn):hover {
   cursor: pointer;
+  color: #7f8695;
+  transition: color .15s ease
 }
 
 .ovn {
   color: var(--2, #687386);
   font-size: 15px;
   font-weight: 700;
-}
-
-.ovn:hover {
-  cursor: default;
 }
 
 .ovn-lp {
@@ -102,11 +100,19 @@ export default {
 }
 
 .sidebar__text-bottom:hover {
+  color: #050a17;
   cursor: pointer;
+  transition: color .15s ease;
+
 }
 
 .sidebar__text-bottom:first-child {
   margin-top: 0;
+}
+.sidebar__icon-social:hover {
+  cursor: pointer;
+  transform: scale(1.2);
+  transition: transform .15s ease
 }
 
 .sidebar__divider-bottom {
@@ -119,10 +125,6 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-}
-
-.sidebar__icon-social:hover {
-  cursor: pointer;
 }
 
 .sidebar__button-switch-theme:hover,
