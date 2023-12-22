@@ -21,7 +21,8 @@ import Sidebar from '@/components/Layout/Sidebar/Index.vue';
 }
 .container {
   width: 100%;
-  max-width: 1320px;
+  max-width: 1360px;
+  padding: 0 20px;
   margin: 0 auto;
   display: flex;
   justify-content: space-between;
