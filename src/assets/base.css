@@ -1,11 +1,11 @@
 /* color palette from <https://github.com/vuejs/theme> */
 :root {
-  --text-color: ##0F172A;
+  --text-color: ##0f172a;
 }
 
 /* semantic color variables for this project */
 :root {
-  --color-text: var( --text-color);
+  --color-text: var(--text-color);
 
   --section-gap: 160px;
 }
@@ -30,18 +30,18 @@
 *::after {
   box-sizing: border-box;
   margin: 0;
+  padding: 0;
   font-weight: normal;
+  text-decoration: none;
 }
 
 body {
   min-height: 100vh;
   color: var(--color-text);
-  background-color: #E3F2FD;
-  transition:
-    color 0.5s,
-    background-color 0.5s;
+  background-color: #e3f2fd;
+  transition: color 0.5s, background-color 0.5s;
   line-height: 1.6;
-  font-family: 'Red Hat Display', sans-serif;
+  font-family: "Red Hat Display", sans-serif;
   font-size: 15px;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
