@@ -24,7 +24,7 @@
 
 <script lang="ts">
 import WalletComponent from '@/components/Layout/Header/WalletComponent.vue';
-import Logo from '@/assets/icons/header/Logo.vue';
+import Logo from '@/assets/icons/header/IconLogo.vue';
 
 export default {
   name: 'HeaderBar',
