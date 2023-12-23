@@ -16,6 +16,7 @@ module.exports = {
       'error',
       2,
     ],
+    'no-plusplus': 0,
     'padded-blocks': ['error', 'never'],
     'vue/html-closing-bracket-newline': ['error', {
       singleline: 'never',

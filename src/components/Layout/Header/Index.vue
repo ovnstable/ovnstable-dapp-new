@@ -8,12 +8,16 @@
             OVERNIGHT
           </h1>
         </div>
-        <button
-          type="button"
-          class="app-header__connect"
-        >
-          CONNECT
-        </button>
+        <ButtonComponent
+          v-if="walletConnected"
+          text="DISCONNECT"
+          @click="disconnectWallet"
+        />
+        <ButtonComponent
+          v-else
+          text="CONNECT"
+          @click="connectWallet"
+        />
       </div>
       <WalletComponent
         v-if="false"
@@ -23,14 +27,30 @@
 </template>
 
 <script lang="ts">
+import { mapGetters } from 'vuex';
 import WalletComponent from '@/components/Layout/Header/WalletComponent.vue';
+import ButtonComponent from '@/components/Button/Index.vue';
 import Logo from '@/assets/icons/header/IconLogo.vue';
 
 export default {
   name: 'HeaderBar',
   components: {
     WalletComponent,
+    ButtonComponent,
     Logo,
+  },
+  computed: {
+    ...mapGetters('walletAction', ['walletConnected']),
+  },
+  methods: {
+    disconnectWallet() {
+      console.log('disconnectWallet');
+      this.$store.dispatch('walletAction/disconnectWallet');
+    },
+    connectWallet() {
+      console.log('connectWallet');
+      this.$store.dispatch('walletAction/connectWallet');
+    },
   },
 };
 </script>

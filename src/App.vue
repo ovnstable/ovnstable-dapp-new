@@ -1,6 +1,6 @@
 <template>
   <div class="app-wrapper">
-    <Header />
+    <HeaderBar />
 
     <div class="container">
       <Sidebar />
@@ -9,10 +9,23 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts">
 import { RouterView } from 'vue-router';
-import Header from '@/components/Layout/Header/Index.vue';
+import HeaderBar from '@/components/Layout/Header/Index.vue';
 import Sidebar from '@/components/Layout/Sidebar/Index.vue';
+
+export default {
+  name: 'AppView',
+  components: {
+    RouterView,
+    HeaderBar,
+    Sidebar,
+  },
+  async mounted() {
+    await this.$store.dispatch('web3/initWeb3');
+    await this.$store.dispatch('walletAction/dappInitWalletConnect');
+  },
+};
 </script>
 
 <style scoped>
