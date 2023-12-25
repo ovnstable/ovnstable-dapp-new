@@ -57,7 +57,7 @@ export default {
     IconArrowLeft,
     IconArrowRight,
   },
-  name: 'SliDer',
+  name: 'MainSlider',
 };
 </script>
 
@@ -71,8 +71,6 @@ export default {
 
 .slider {
     margin-right: 53px;
-    margin-top: 74px;
-    background: white;
     display: flex;
     flex-direction: row;
     align-items: center;
