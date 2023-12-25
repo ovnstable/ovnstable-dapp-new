@@ -3,28 +3,28 @@
     <IconArrowLeft class="slider__arrow-icon arrow-left" />
     <div class="slider__info">
       <div class="slider__usd-plus-overview">
-        <IconUsdPlus />
+        <IconUsdPlus class="slider__icon-plus" />
         <p class="slider__usd-plus-title">USD+</p>
         <p class="slider__overview-title">OVERVIEW</p>
       </div>
       <div class="slider__divider" />
       <div class="slider__data">
         <div class="slider__apy-info">
-          <p>Average APY:</p>
+          <p class="slider__apy-title">Average APY:</p>
           <div class="slider__apy-numbers">
             <p class="slider__data-total-number">10.4<span class="slider__data-apy-percent">%</span></p>
             <p class="slider__data-growth-number">+5%</p>
           </div>
         </div>
         <div class="slider__tvl-info">
-          <p>TVL:</p>
+          <p class="slider__tvl-title">TVL:</p>
           <div class="slider__tvl-numbers">
-            <p class="slider__data-total-number">5.3 <span>m</span></p>
+            <p class="slider__data-total-number">5.3 <span class="slider__data-tvl-millions">m</span></p>
             <p class="slider__data-growth-number">+1%</p>
           </div>
         </div>
         <div class="slider__payout-info">
-          <p>Last payout:</p>
+          <p class="slider__payout-title">Last payout:</p>
           <div class="slider__payout-numbers">
             <p class="slider__data-total-number">05:02</p>
             <p class="slider__data-growth-number">hours ago</p>
@@ -34,7 +34,7 @@
       <div class="slider__divider" />
       <div class="slider__wusd-plus-overview">
         <div class="slider__wusd-plus-title">
-          <IconWusdPlus />
+          <IconWusdPlus class="slider__icon-plus" />
           <p class="slider__wusd-plus-title-text">WUSD+</p>
         </div>
         <p class="slider__wusd-plus-description">An index-adjusted wrapper for USD+. Your wUSD+ balance won't increase over time. When wUSD+ will unwrap you receive USD+ based on the latest index.</p>
@@ -96,7 +96,6 @@ export default {
 .slider__usd-plus-title,
 .slider__wusd-plus-title-text {
     margin-left: 10px;
-    margin-right: 95px;
     font-size: 20px;
 }
 
@@ -107,6 +106,7 @@ export default {
 }
 
 .slider__overview-title {
+     margin-left: auto;
     font-size: 16px;
 }
 
@@ -180,6 +180,117 @@ export default {
 
 .arrow-right:hover {
   transform: translateX(5px);
+}
+
+@media (max-width: 1024px) {
+    .slider__info {
+       max-width:200px;
+       margin-right: 20px;
+       margin-left: 20px;
+    }
+    .slider__icon-plus,
+    .slider__arrow-icon {
+        transform: scale(0.8);
+    }
+
+    .slider__usd-plus-title,
+    .slider__wusd-plus-title-text{
+        margin-left: 5px;
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    .slider__info {
+       max-width:150px;
+       margin-right: 15px;
+       margin-left: 15px;
+    }
+    .slider__icon-plus,
+    .slider__arrow-icon {
+        transform: scale(0.6);
+    }
+
+    .slider__usd-plus-title,
+    .slider__wusd-plus-title-text{
+        margin-left: 0px;
+        font-size: 13px;
+    }
+
+    .slider__overview-title,
+    .slider__wusd-plus-description {
+         font-size: 12px;
+    }
+
+    .slider__divider {
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+    .slider__apy-title,
+    .slider__tvl-title,
+    .slider__payout-title,
+    .slider__data-growth-number {
+        font-size: 11px;
+    }
+
+    .slider__data-total-number {
+        font-size: 14px;
+    }
+
+    .slider__data-apy-percent {
+         font-size: 10px;
+    }
+
+    .slider__data-tvl-millions {
+         font-size: 12px;
+    }
+}
+
+@media (max-width: 576px) {
+    .slider__info {
+       max-width:100px;
+       margin-right: 10px;
+       margin-left: 10px;
+    }
+    .slider__icon-plus,
+    .slider__arrow-icon {
+        transform: scale(0.5);
+    }
+    .slider__usd-plus-title,
+    .slider__wusd-plus-title-text{
+        margin-left: 0px;
+        font-size: 10px;
+    }
+
+    .slider__overview-title,
+    .slider__wusd-plus-description {
+         font-size: 10px;
+    }
+
+    .slider__divider {
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+    .slider__apy-title,
+    .slider__tvl-title,
+    .slider__payout-title,
+    .slider__data-growth-number {
+        font-size: 8px;
+    }
+
+    .slider__data-total-number {
+        font-size: 12px;
+    }
+
+    .slider__data-apy-percent {
+         font-size: 8px;
+    }
+
+       .slider__data-tvl-millions {
+         font-size: 10px;
+    }
 }
 
 </style>
