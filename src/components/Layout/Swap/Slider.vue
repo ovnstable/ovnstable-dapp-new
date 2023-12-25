@@ -1,6 +1,6 @@
 <template>
   <div class="slider">
-    <IconArrowLeft />
+    <IconArrowLeft class="slider__arrow-icon arrow-left" />
     <div class="slider__info">
       <div class="slider__usd-plus-overview">
         <IconUsdPlus />
@@ -40,7 +40,7 @@
         <p class="slider__wusd-plus-description">An index-adjusted wrapper for USD+. Your wUSD+ balance won't increase over time. When wUSD+ will unwrap you receive USD+ based on the latest index.</p>
       </div>
     </div>
-    <IconArrowRight />
+    <IconArrowRight class="slider__arrow-icon arrow-right" />
   </div>
 </template>
 <script lang="ts">
@@ -168,4 +168,18 @@ export default {
     font-weight: 400;
     line-height: 18px;
 }
+
+.slider__arrow-icon {
+  transition: transform 0.15s ease;
+  cursor: pointer;
+}
+
+.arrow-left:hover {
+  transform: translateX(-5px);
+}
+
+.arrow-right:hover {
+  transform: translateX(5px);
+}
+
 </style>
