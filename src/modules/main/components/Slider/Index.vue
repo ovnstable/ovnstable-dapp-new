@@ -3,7 +3,10 @@
     <IconArrowLeft class="slider__arrow-icon arrow-left" />
     <div class="slider__info">
       <div class="slider__usd-plus-overview">
-        <IconUsdPlus class="slider__icon-plus" />
+        <BaseIcon
+          name="usdPlus"
+          path="assets/icons/currencies/UsdPlus.vue"
+        />
         <p class="slider__usd-plus-title">USD+</p>
         <p class="slider__overview-title">OVERVIEW</p>
       </div>
@@ -34,7 +37,10 @@
       <div class="slider__divider" />
       <div class="slider__wusd-plus-overview">
         <div class="slider__wusd-plus-title">
-          <IconWusdPlus class="slider__icon-plus" />
+          <BaseIcon
+            name="WusdPlus"
+            path="assets/icons/currencies/WusdPlus.vue"
+          />
           <p class="slider__wusd-plus-title-text">WUSD+</p>
         </div>
         <p class="slider__wusd-plus-description">An index-adjusted wrapper for USD+. Your wUSD+ balance won't increase over time. When wUSD+ will unwrap you receive USD+ based on the latest index.</p>
@@ -45,15 +51,13 @@
 </template>
 <script lang="ts">
 
-import IconUsdPlus from '@/assets/icons/plusTokens/IconUsdPlus.vue';
-import IconWusdPlus from '@/assets/icons/plusTokens/IconWusdPlus.vue';
 import IconArrowLeft from '@/assets/icons/arrows/IconArrowLeft.vue';
 import IconArrowRight from '@/assets/icons/arrows/IconArrowRight.vue';
+import BaseIcon from '@/components/Icon/BaseIcon.vue';
 
 export default {
   components: {
-    IconUsdPlus,
-    IconWusdPlus,
+    BaseIcon,
     IconArrowLeft,
     IconArrowRight,
   },
