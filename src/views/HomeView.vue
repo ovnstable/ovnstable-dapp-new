@@ -1,8 +1,10 @@
-<script setup lang="ts">
-</script>
-
 <template>
   <main>
-    WELCOME
+    <SliDer />
   </main>
 </template>
+
+<script setup lang="ts">
+import SliDer from '@/components/Layout/Swap/Slider.vue';
+
+</script>
