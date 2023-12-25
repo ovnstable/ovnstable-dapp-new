@@ -106,7 +106,7 @@ export default {
 }
 
 .slider__overview-title {
-     margin-left: auto;
+    margin-left: auto;
     font-size: 16px;
 }
 
@@ -147,7 +147,6 @@ export default {
 
 .slider__data-growth-number {
     margin-left: auto;
-
 }
 
 .slider__wusd-plus-overview {
@@ -248,7 +247,6 @@ export default {
 }
 
 @media (max-width: 576px) {
-
     .slider__info {
        max-width:100px;
        margin-right: 10px;
