@@ -1,6 +1,8 @@
 <template>
   <div class="slider">
-    <IconArrowLeft class="slider__arrow-icon arrow-left" />
+    <div class="slider__arrow-wrapper">
+      <IconArrowLeft class="slider__arrow-icon" />
+    </div>
     <div class="slider__info">
       <div class="slider__usd-plus-overview">
         <BaseIcon
@@ -46,7 +48,9 @@
         <p class="slider__wusd-plus-description">An index-adjusted wrapper for USD+. Your wUSD+ balance won't increase over time. When wUSD+ will unwrap you receive USD+ based on the latest index.</p>
       </div>
     </div>
-    <IconArrowRight class="slider__arrow-icon arrow-right" />
+    <div class="slider__arrow-wrapper">
+      <IconArrowRight class="slider__arrow-icon" />
+    </div>
   </div>
 </template>
 <script lang="ts">
@@ -170,18 +174,21 @@ export default {
     line-height: 18px;
 }
 
-.slider__arrow-icon {
-  transition: transform 0.15s ease;
+
+.slider__arrow-wrapper {
+  width: 32px; 
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
 }
 
-.arrow-left:hover {
-  transform: translateX(-5px);
+.slider__arrow-wrapper:hover {
+  background-color: #b2b8c6;
 }
 
-.arrow-right:hover {
-  transform: translateX(5px);
-}
 
 @media (max-width: 1024px) {
     .slider__info {
@@ -198,6 +205,11 @@ export default {
     .slider__wusd-plus-title-text{
         margin-left: 5px;
         font-size: 16px;
+    }
+
+    .slider__arrow-wrapper {
+      width: 26px; 
+      height: 26px;
     }
 }
 
@@ -246,6 +258,10 @@ export default {
     .slider__data-tvl-millions {
          font-size: 12px;
     }
+    .slider__arrow-wrapper {
+      width: 20px; 
+      height: 20px;
+    }
 }
 
 @media (max-width: 576px) {
@@ -293,9 +309,15 @@ export default {
          font-size: 8px;
     }
 
-       .slider__data-tvl-millions {
+    .slider__data-tvl-millions {
          font-size: 10px;
     }
+
+    .slider__arrow-wrapper {
+      width: 14px; 
+      height: 14px;
+    }
 }
+
 
 </style>
