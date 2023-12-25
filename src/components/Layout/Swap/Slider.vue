@@ -2,7 +2,6 @@
   <div class="slider">
     <IconArrowLeft />
     <div class="slider__info">
-
       <div class="slider__usd-plus-overview">
         <IconUsdPlus />
         <p class="slider__usd-plus-title">USD+</p>
@@ -11,21 +10,21 @@
       <div class="slider__divider" />
       <div class="slider__data">
         <div class="slider__apy-info">
-          <p class="slider__data-title-text">Average APY:</p>
+          <p>Average APY:</p>
           <div class="slider__apy-numbers">
             <p class="slider__data-total-number">10.4<span class="slider__data-apy-percent">%</span></p>
             <p class="slider__data-growth-number">+5%</p>
           </div>
         </div>
         <div class="slider__tvl-info">
-          <p class="slider__data-title-text">TVL:</p>
+          <p>TVL:</p>
           <div class="slider__tvl-numbers">
-            <p class="slider__data-total-number">5.3 <span class="slider__data-tvl-millions">m</span></p>
+            <p class="slider__data-total-number">5.3 <span>m</span></p>
             <p class="slider__data-growth-number">+1%</p>
           </div>
         </div>
         <div class="slider__payout-info">
-          <p class="slider__data-title-text">Last payout:</p>
+          <p>Last payout:</p>
           <div class="slider__payout-numbers">
             <p class="slider__data-total-number">05:02</p>
             <p class="slider__data-growth-number">hours ago</p>
@@ -63,6 +62,12 @@ export default {
 </script>
 
 <style scoped>
+
+* {
+    color: var(--2, #687386);
+    font-weight: 500;
+    font-size: 14px
+}
 
 .slider {
     margin-right: 53px;
@@ -131,36 +136,18 @@ export default {
     flex-direction: column;
 }
 
-.slider__data-title-text {
-    color: var(--2, #687386);
-    font-size: 14px;
-    font-weight: 500;
-}
-
 .slider__data-total-number {
-    color: var(--2, #687386);
     font-size: 20px;
-    font-weight: 500;
     text-align: right;
 }
 
 .slider__data-apy-percent {
-    color: var(--2, #687386);
-    font-size: 14px;
     font-weight: 700;
 }
 
 .slider__data-growth-number {
     margin-left: auto;
-    color: var(--2, #687386);
-    font-size: 14px;
-    font-weight: 500;
-}
 
-.slider__data-tvl-millions {
-    color: var(--2, #687386);
-    font-size: 14px;
-    font-weight: 500;
 }
 
 .slider__wusd-plus-overview {
@@ -177,9 +164,7 @@ export default {
 
 .slider__wusd-plus-description {
     margin-top: 10px;
-    color: var(--2, #687386);
     text-align: justify;
-    font-size: 14px;
     font-weight: 400;
     line-height: 18px;
 }
