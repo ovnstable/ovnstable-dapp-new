@@ -1,7 +1,10 @@
 <template>
   <div class="slider">
     <div class="slider__arrow-wrapper">
-      <IconArrowLeft class="slider__arrow-icon" />
+      <BaseIcon
+        name="arrowLeft"
+        path="assets/icons/arrows/IconArrowLeft.vue"
+        class="slider__arrow-icon"/>
     </div>
     <div class="slider__info">
       <div class="slider__usd-plus-overview">
@@ -49,21 +52,20 @@
       </div>
     </div>
     <div class="slider__arrow-wrapper">
-      <IconArrowRight class="slider__arrow-icon" />
+        <BaseIcon
+          name="arrowRight"
+          path="assets/icons/arrows/IconArrowRight.vue"
+          class="slider__arrow-icon"/>
     </div>
   </div>
 </template>
 <script lang="ts">
 
-import IconArrowLeft from '@/assets/icons/arrows/IconArrowLeft.vue';
-import IconArrowRight from '@/assets/icons/arrows/IconArrowRight.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 
 export default {
   components: {
     BaseIcon,
-    IconArrowLeft,
-    IconArrowRight,
   },
   name: 'MainSlider',
 };
