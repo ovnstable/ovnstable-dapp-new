@@ -248,10 +248,14 @@ export default {
 }
 
 @media (max-width: 576px) {
+
     .slider__info {
        max-width:100px;
        margin-right: 10px;
        margin-left: 10px;
+    }
+    .slider__usd-plus-title{
+        margin-right: 1px;
     }
     .slider__icon-plus,
     .slider__arrow-icon {
@@ -263,11 +267,12 @@ export default {
         font-size: 10px;
     }
 
-    .slider__overview-title,
     .slider__wusd-plus-description {
          font-size: 10px;
     }
-
+    .slider__overview-title {
+        font-size: 6px;
+    }
     .slider__divider {
         margin-top: 5px;
         margin-bottom: 5px;
