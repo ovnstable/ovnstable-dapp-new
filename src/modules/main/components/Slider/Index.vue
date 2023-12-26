@@ -1,10 +1,11 @@
-<!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
 <template>
   <div class="slider">
     <div
       v-if="currentIndex > 0"
       class="slider__arrow-wrapper"
       @click="prevSlide"
+      @keydown.enter="prevSlide"
+      tabindex="0"
     >
       <BaseIcon
         name="arrowLeft"
@@ -71,6 +72,8 @@
       v-if="currentIndex < slides.length - 1"
       class="slider__arrow-wrapper"
       @click="nextSlide"
+      @keydown.enter="nextSlide"
+      tabindex="0"
     >
       <BaseIcon
         name="arrowRight"
