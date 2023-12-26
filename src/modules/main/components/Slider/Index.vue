@@ -52,10 +52,10 @@
       </div>
     </div>
     <div class="slider__arrow-wrapper">
-        <BaseIcon
-          name="arrowRight"
-          path="assets/icons/arrows/IconArrowRight.vue"
-          class="slider__arrow-icon"/>
+      <BaseIcon
+        name="arrowRight"
+        path="assets/icons/arrows/IconArrowRight.vue"
+        class="slider__arrow-icon"/>
     </div>
   </div>
 </template>
@@ -74,7 +74,7 @@ export default {
 <style scoped>
 
 * {
-    color: var(--2, #687386);
+    color: var(--color-dark-grey);
     font-weight: 500;
     font-size: 14px
 }
@@ -109,7 +109,7 @@ export default {
 
 .slider__usd-plus-title,
 .slider__overview-title {
-    color: var(--1, #0F172A);
+    color: var(--color-black);
     font-weight: 600;
 }
 
@@ -121,7 +121,7 @@ export default {
 .slider__divider {
   margin-top: 16px;
   margin-bottom: 16px;
-  border: 1px solid #687386;
+  border: 1px solid var(--color-dark-grey);
 }
 
 .slider__apy-info,
@@ -164,7 +164,7 @@ export default {
 
 .slider__wusd-plus-title-text {
     margin-left:10px;
-    color: var(--1, #0F172A);
+    color: var(--color-black);
     font-size: 20px;
     font-weight: 600;
 }
@@ -176,9 +176,8 @@ export default {
     line-height: 18px;
 }
 
-
 .slider__arrow-wrapper {
-  width: 32px; 
+  width: 32px;
   height: 32px;
   border-radius: 50%;
   display: flex;
@@ -190,7 +189,6 @@ export default {
 .slider__arrow-wrapper:hover {
   background-color: #b2b8c6;
 }
-
 
 @media (max-width: 1024px) {
     .slider__info {
@@ -210,7 +208,7 @@ export default {
     }
 
     .slider__arrow-wrapper {
-      width: 26px; 
+      width: 26px;
       height: 26px;
     }
 }
@@ -261,7 +259,7 @@ export default {
          font-size: 12px;
     }
     .slider__arrow-wrapper {
-      width: 20px; 
+      width: 20px;
       height: 20px;
     }
 }
@@ -316,10 +314,9 @@ export default {
     }
 
     .slider__arrow-wrapper {
-      width: 14px; 
+      width: 14px;
       height: 14px;
     }
 }
-
 
 </style>
