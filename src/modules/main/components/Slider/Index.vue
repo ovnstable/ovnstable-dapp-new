@@ -85,7 +85,6 @@
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import 'swiper/swiper.min.css';
-import { ref } from 'vue';
 
 export default {
   components: {
@@ -93,74 +92,69 @@ export default {
     Swiper,
     SwiperSlide,
   },
-  setup() {
-    const currentIndex = ref(0);
-    const slides = [
-      {
-        iconFirstToken: 'usdPlus',
-        iconPathFirstToken: 'assets/icons/currencies/UsdPlus.vue',
-        titleFirstToken: 'USD+',
-        apyPercent: '10.4',
-        apyGrowth: '5',
-        tvlM: '5.3',
-        tvlGrowth: '1',
-        lastPayoutTime: '05:02',
-        lastPayoutText: 'hours ago',
-        iconSecondToken: 'WusdPlus',
-        iconPathSecondToken: 'assets/icons/currencies/WusdPlus.vue',
-        titleSecond: 'WUSD+',
-        descriptionSecondToken: 'An index-adjusted wrapper for USD+. Your wUSD+ balance won\'t increase over time. When wUSD+ will unwrap, you receive USD+ based on the latest index.',
-      },
-      {
-        iconFirstToken: 'usdPlus',
-        iconPathFirstToken: 'assets/icons/currencies/UsdPlus.vue',
-        titleFirstToken: 'USD+_2',
-        apyPercent: '30',
-        apyGrowth: '57',
-        tvlM: '5.73',
-        tvlGrowth: '71',
-        lastPayoutTime: '057:02',
-        lastPayoutText: '3 hours ago',
-        iconSecondToken: 'WusdPlus',
-        iconPathSecondToken: 'assets/icons/currencies/WusdPlus.vue',
-        titleSecond: 'WUSD+_2',
-        descriptionSecondToken: 'Just text _ 2',
-      },
-      {
-        iconFirstToken: 'usdPlus',
-        iconPathFirstToken: 'assets/icons/currencies/UsdPlus.vue',
-        titleFirstToken: 'USD+_3',
-        apyPercent: '10',
-        apyGrowth: '517',
-        tvlM: '15.73',
-        tvlGrowth: '1',
-        lastPayoutTime: '0:02',
-        lastPayoutText: '0 hours ago',
-        iconSecondToken: 'WusdPlus',
-        iconPathSecondToken: 'assets/icons/currencies/WusdPlus.vue',
-        titleSecond: 'WUSD+_3',
-        descriptionSecondToken: 'Just another text _ 3',
-      },
-    ];
-
-    const nextSlide = () => {
-      if (currentIndex.value < slides.length - 1) {
-        currentIndex.value += 1;
-      }
-    };
-
-    const prevSlide = () => {
-      if (currentIndex.value > 0) {
-        currentIndex.value -= 1;
-      }
-    };
-
+  data() {
     return {
-      currentIndex,
-      slides,
-      nextSlide,
-      prevSlide,
+      currentIndex: 0,
+      slides: [
+        {
+          iconFirstToken: 'usdPlus',
+          iconPathFirstToken: 'assets/icons/currencies/UsdPlus.vue',
+          titleFirstToken: 'USD+',
+          apyPercent: '10.4',
+          apyGrowth: '5',
+          tvlM: '5.3',
+          tvlGrowth: '1',
+          lastPayoutTime: '05:02',
+          lastPayoutText: 'hours ago',
+          iconSecondToken: 'WusdPlus',
+          iconPathSecondToken: 'assets/icons/currencies/WusdPlus.vue',
+          titleSecond: 'WUSD+',
+          descriptionSecondToken: 'An index-adjusted wrapper for USD+. Your wUSD+ balance won\'t increase over time. When wUSD+ will unwrap, you receive USD+ based on the latest index.',
+        },
+        {
+          iconFirstToken: 'usdPlus',
+          iconPathFirstToken: 'assets/icons/currencies/UsdPlus.vue',
+          titleFirstToken: 'USD+_2',
+          apyPercent: '30',
+          apyGrowth: '57',
+          tvlM: '5.73',
+          tvlGrowth: '71',
+          lastPayoutTime: '057:02',
+          lastPayoutText: '3 hours ago',
+          iconSecondToken: 'WusdPlus',
+          iconPathSecondToken: 'assets/icons/currencies/WusdPlus.vue',
+          titleSecond: 'WUSD+_2',
+          descriptionSecondToken: 'Just text _ 2',
+        },
+        {
+          iconFirstToken: 'usdPlus',
+          iconPathFirstToken: 'assets/icons/currencies/UsdPlus.vue',
+          titleFirstToken: 'USD+_3',
+          apyPercent: '10',
+          apyGrowth: '517',
+          tvlM: '15.73',
+          tvlGrowth: '1',
+          lastPayoutTime: '0:02',
+          lastPayoutText: '0 hours ago',
+          iconSecondToken: 'WusdPlus',
+          iconPathSecondToken: 'assets/icons/currencies/WusdPlus.vue',
+          titleSecond: 'WUSD+_3',
+          descriptionSecondToken: 'Just another text _ 3',
+        },
+      ],
     };
+  },
+  methods: {
+    nextSlide() {
+      if (this.currentIndex < this.slides.length - 1) {
+        this.currentIndex += 1;
+      }
+    },
+    prevSlide() {
+      if (this.currentIndex > 0) {
+        this.currentIndex -= 1;
+      }
+    },
   },
 
   name: 'MainSlider',
