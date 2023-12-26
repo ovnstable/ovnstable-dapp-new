@@ -1,72 +1,168 @@
+<!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
 <template>
   <div class="slider">
-    <div class="slider__arrow-wrapper">
+    <div
+      v-if="currentIndex > 0"
+      class="slider__arrow-wrapper"
+      @click="prevSlide"
+    >
       <BaseIcon
         name="arrowLeft"
         path="assets/icons/arrows/IconArrowLeft.vue"
-        class="slider__arrow-icon"/>
+        class="slider__arrow-icon"
+      />
     </div>
-    <div class="slider__info">
-      <div class="slider__usd-plus-overview">
-        <BaseIcon
-          name="usdPlus"
-          path="assets/icons/currencies/UsdPlus.vue"
-        />
-        <p class="slider__usd-plus-title">USD+</p>
-        <p class="slider__overview-title">OVERVIEW</p>
-      </div>
-      <div class="slider__divider" />
-      <div class="slider__data">
-        <div class="slider__apy-info">
-          <p class="slider__apy-title">Average APY:</p>
-          <div class="slider__apy-numbers">
-            <p class="slider__data-total-number">10.4<span class="slider__data-apy-percent">%</span></p>
-            <p class="slider__data-growth-number">+5%</p>
+    <swiper
+      :slides-per-view="1"
+      :space-between="0"
+    >
+      <swiper-slide
+        v-for="(slide, index) in [slides[currentIndex]]"
+        :key="index"
+      >
+        <div class="slider__info">
+          <div class="slider__token-plus-overview">
+            <BaseIcon
+              name={{slide.iconFirstToken}}
+              :path="slide.iconPathFirstToken"
+            />
+            <p class="slider__token-plus-title">{{ slide.titleFirstToken }}</p>
+            <p class="slider__overview-title">OVERVIEW</p>
+          </div>
+          <div class="slider__divider" />
+          <div class="slider__data">
+            <div class="slider__apy-info">
+              <p class="slider__apy-title">Average APY:</p>
+              <div class="slider__apy-numbers">
+                <p class="slider__data-total-number">{{slide.apyPercent }}<span class="slider__data-apy-percent">%</span></p>
+                <p class="slider__data-growth-number">+{{slide.apyGrowth }}%</p>
+              </div>
+            </div>
+            <div class="slider__tvl-info">
+              <p class="slider__tvl-title">TVL:</p>
+              <div class="slider__tvl-numbers">
+                <p class="slider__data-total-number">{{slide.tvlM }} <span class="slider__data-tvl-millions">m</span></p>
+                <p class="slider__data-growth-number">+{{slide.tvlGrowth }}%</p>
+              </div>
+            </div>
+            <div class="slider__payout-info">
+              <p class="slider__payout-title">Last payout:</p>
+              <div class="slider__payout-numbers">
+                <p class="slider__data-total-number">{{slide.lastPayoutTime }}</p>
+                <p class="slider__data-growth-number">{{slide.lastPayoutText }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="slider__divider" />
+          <div class="slider__wusd-plus-overview">
+            <div class="slider__wusd-plus-title">
+              <BaseIcon
+                name={{slide.iconSecondToken}}
+                :path="slide.iconPathSecondToken"
+              />
+              <p class="slider__wusd-plus-title-text">{{slide.titleSecond }}</p>
+            </div>
+            <p class="slider__wusd-plus-description">{{ slide.descriptionSecondToken }}</p>
           </div>
         </div>
-        <div class="slider__tvl-info">
-          <p class="slider__tvl-title">TVL:</p>
-          <div class="slider__tvl-numbers">
-            <p class="slider__data-total-number">5.3 <span class="slider__data-tvl-millions">m</span></p>
-            <p class="slider__data-growth-number">+1%</p>
-          </div>
-        </div>
-        <div class="slider__payout-info">
-          <p class="slider__payout-title">Last payout:</p>
-          <div class="slider__payout-numbers">
-            <p class="slider__data-total-number">05:02</p>
-            <p class="slider__data-growth-number">hours ago</p>
-          </div>
-        </div>
-      </div>
-      <div class="slider__divider" />
-      <div class="slider__wusd-plus-overview">
-        <div class="slider__wusd-plus-title">
-          <BaseIcon
-            name="WusdPlus"
-            path="assets/icons/currencies/WusdPlus.vue"
-          />
-          <p class="slider__wusd-plus-title-text">WUSD+</p>
-        </div>
-        <p class="slider__wusd-plus-description">An index-adjusted wrapper for USD+. Your wUSD+ balance won't increase over time. When wUSD+ will unwrap you receive USD+ based on the latest index.</p>
-      </div>
-    </div>
-    <div class="slider__arrow-wrapper">
+      </swiper-slide>
+    </swiper>
+    <div
+      v-if="currentIndex < slides.length - 1"
+      class="slider__arrow-wrapper"
+      @click="nextSlide"
+    >
       <BaseIcon
         name="arrowRight"
         path="assets/icons/arrows/IconArrowRight.vue"
-        class="slider__arrow-icon"/>
+        class="slider__arrow-icon"
+      />
     </div>
   </div>
 </template>
 <script lang="ts">
 
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import { Swiper, SwiperSlide } from 'swiper/vue';
+import 'swiper/swiper.min.css';
+import { ref } from 'vue';
 
 export default {
   components: {
     BaseIcon,
+    Swiper,
+    SwiperSlide,
   },
+  setup() {
+    const currentIndex = ref(0);
+    const slides = [
+      {
+        iconFirstToken: 'usdPlus',
+        iconPathFirstToken: 'assets/icons/currencies/UsdPlus.vue',
+        titleFirstToken: 'USD+',
+        apyPercent: '10.4',
+        apyGrowth: '5',
+        tvlM: '5.3',
+        tvlGrowth: '1',
+        lastPayoutTime: '05:02',
+        lastPayoutText: 'hours ago',
+        iconSecondToken: 'WusdPlus',
+        iconPathSecondToken: 'assets/icons/currencies/WusdPlus.vue',
+        titleSecond: 'WUSD+',
+        descriptionSecondToken: 'An index-adjusted wrapper for USD+. Your wUSD+ balance won\'t increase over time. When wUSD+ will unwrap, you receive USD+ based on the latest index.',
+      },
+      {
+        iconFirstToken: 'usdPlus',
+        iconPathFirstToken: 'assets/icons/currencies/UsdPlus.vue',
+        titleFirstToken: 'USD+_2',
+        apyPercent: '30',
+        apyGrowth: '57',
+        tvlM: '5.73',
+        tvlGrowth: '71',
+        lastPayoutTime: '057:02',
+        lastPayoutText: '3 hours ago',
+        iconSecondToken: 'WusdPlus',
+        iconPathSecondToken: 'assets/icons/currencies/WusdPlus.vue',
+        titleSecond: 'WUSD+_2',
+        descriptionSecondToken: 'Just text _ 2',
+      },
+      {
+        iconFirstToken: 'usdPlus',
+        iconPathFirstToken: 'assets/icons/currencies/UsdPlus.vue',
+        titleFirstToken: 'USD+_3',
+        apyPercent: '10',
+        apyGrowth: '517',
+        tvlM: '15.73',
+        tvlGrowth: '1',
+        lastPayoutTime: '0:02',
+        lastPayoutText: '0 hours ago',
+        iconSecondToken: 'WusdPlus',
+        iconPathSecondToken: 'assets/icons/currencies/WusdPlus.vue',
+        titleSecond: 'WUSD+_3',
+        descriptionSecondToken: 'Just another text _ 3',
+      },
+    ];
+
+    const nextSlide = () => {
+      if (currentIndex.value < slides.length - 1) {
+        currentIndex.value += 1;
+      }
+    };
+
+    const prevSlide = () => {
+      if (currentIndex.value > 0) {
+        currentIndex.value -= 1;
+      }
+    };
+
+    return {
+      currentIndex,
+      slides,
+      nextSlide,
+      prevSlide,
+    };
+  },
+
   name: 'MainSlider',
 };
 </script>
@@ -94,20 +190,20 @@ export default {
     flex-direction: column;
 }
 
-.slider__usd-plus-overview,
+.slider__token-plus-overview,
 .slider__wusd-plus-title {
     display: flex;
     flex-direction: row;
     align-items: center;
 }
 
-.slider__usd-plus-title,
+.slider__token-plus-title,
 .slider__wusd-plus-title-text {
     margin-left: 10px;
     font-size: 20px;
 }
 
-.slider__usd-plus-title,
+.slider__token-plus-title,
 .slider__overview-title {
     color: var(--color-black);
     font-weight: 600;
@@ -201,7 +297,7 @@ export default {
         transform: scale(0.8);
     }
 
-    .slider__usd-plus-title,
+    .slider__token-plus-title,
     .slider__wusd-plus-title-text{
         margin-left: 5px;
         font-size: 16px;
@@ -224,7 +320,7 @@ export default {
         transform: scale(0.6);
     }
 
-    .slider__usd-plus-title,
+    .slider__token-plus-title,
     .slider__wusd-plus-title-text{
         margin-left: 0px;
         font-size: 13px;
@@ -270,14 +366,14 @@ export default {
        margin-right: 10px;
        margin-left: 10px;
     }
-    .slider__usd-plus-title{
+    .slider__token-plus-title{
         margin-right: 1px;
     }
     .slider__icon-plus,
     .slider__arrow-icon {
         transform: scale(0.5);
     }
-    .slider__usd-plus-title,
+    .slider__token-plus-title,
     .slider__wusd-plus-title-text{
         margin-left: 0px;
         font-size: 10px;
