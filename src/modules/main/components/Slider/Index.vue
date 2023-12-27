@@ -1,14 +1,10 @@
 <template>
   <div class="slider">
     <div
-      v-if="currentIndex === 0"
-      class="slider__arrow-placeholder"
-    />
-    <div
-      v-if="currentIndex > 0"
       class="slider__arrow-wrapper"
-      @click="prevSlide"
-      @keydown.enter="prevSlide"
+      :class="{ 'slider__arrow-disabled': currentIndex === 0 }"
+      @click="currentIndex > 0 && prevSlide()"
+      @keydown.enter="currentIndex > 0 && prevSlide()"
       tabindex="0"
     >
       <BaseIcon
@@ -17,6 +13,7 @@
         class="slider__arrow-icon"
       />
     </div>
+
     <div class="swiper-container">
       <swiper
         :slides-per-view="1"
@@ -79,10 +76,10 @@
     </div>
 
     <div
-      v-if="currentIndex < slides.length - 1"
       class="slider__arrow-wrapper"
-      @click="nextSlide"
-      @keydown.enter="nextSlide"
+      :class="{ 'slider__arrow-disabled': currentIndex === slides.length - 1 }"
+      @click="currentIndex < slides.length - 1 && nextSlide()"
+      @keydown.enter="currentIndex < slides.length - 1 && nextSlide()"
       tabindex="0"
     >
       <BaseIcon
@@ -91,10 +88,6 @@
         class="slider__arrow-icon"
       />
     </div>
-    <div
-      v-if="currentIndex === slides.length - 1"
-      class="slider__arrow-placeholder"
-    />
   </div>
 </template>
 <script lang="ts">
@@ -314,12 +307,12 @@ export default {
 .slider__arrow-wrapper:hover {
   background-color: #b2b8c6;
 }
-.slider__arrow-placeholder {
-  width: 32px;
-  height: 32px;
-  pointer-events: none;
+.slider__arrow-disabled {
   opacity: 0;
+  pointer-events: none;
+  cursor: default;
 }
+
 @media (max-width: 1024px) {
     .slider__info {
        max-width:200px;
@@ -340,8 +333,7 @@ export default {
         font-size: 16px;
     }
 
-    .slider__arrow-wrapper,
-    .slider__arrow-placeholder {
+    .slider__arrow-wrapper {
       width: 26px;
       height: 26px;
     }
@@ -395,12 +387,10 @@ export default {
     .slider__data-tvl-millions {
          font-size: 12px;
     }
-    .slider__arrow-wrapper,
-    .slider__arrow-placeholder {
+    .slider__arrow-wrapper {
       width: 26px;
       height: 26px;
     }
-
 }
 
 @media (max-width: 576px) {
@@ -455,8 +445,7 @@ export default {
          font-size: 10px;
     }
 
-    .slider__arrow-wrapper,
-    .slider__arrow-placeholder {
+    .slider__arrow-wrapper {
       width: 14px;
       height: 14px;
     }
