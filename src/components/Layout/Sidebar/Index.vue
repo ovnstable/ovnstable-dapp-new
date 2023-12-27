@@ -40,35 +40,59 @@
     </ul>
 
     <ul class="sidebar__bottom">
-      <router-link
-        to="/help-center"
+      <a
+        href="https://discord.com/channels/933003627444969552/967813123149033542/967813482684760135/"
         class="sidebar__text-bottom"
-      >Help Center</router-link>
+        target="_blank"
+        rel="noopener noreferrer"
+      >Help Center</a>
 
-      <router-link
-        to="/docs"
+      <a
+        href="https://docs.overnight.fi/other/terms-of-service"
         class="sidebar__text-bottom"
-      >Terms of service</router-link>
+        target="_blank"
+        rel="noopener noreferrer"
+      >Terms of service</a>
 
-      <router-link
-        to="/docs"
+      <a
+        href="https://docs.overnight.fi/other/privacy-policy"
         class="sidebar__text-bottom"
-      >Privacy Policy</router-link>
+        target="_blank"
+        rel="noopener noreferrer"
+      >Privacy Policy</a>
 
-      <router-link
-        to="/docs"
+      <a
+        href="https://docs.overnight.fi/other/audits"
         class="sidebar__text-bottom"
-      >Audits</router-link>
+        target="_blank"
+        rel="noopener noreferrer"
+      >Audits</a>
 
-      <router-link
-        to="/docs"
+      <a
+        href="https://docs.overnight.fi/advanced/strategies/ets"
         class="sidebar__text-bottom"
-      >ABOUT ETS</router-link>
+        target="_blank"
+        rel="noopener noreferrer"
+      >ABOUT ETS</a>
 
       <div class="sidebar__divider-bottom" />
       <div class="sidebar__icons-bottom">
-        <IconTwitter class="sidebar__icon-social" />
-        <IconDiscord class="sidebar__icon-social" />
+        <a
+          href="https://twitter.com/overnight_fi"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Twitter"
+        >
+          <IconTwitter class="sidebar__icon-social" />
+        </a>
+        <a
+          href="https://discord.gg/overnight-fi"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Discord"
+        >
+          <IconDiscord class="sidebar__icon-social" />
+        </a>
       </div>
       <div class="sidebar__divider-bottom" />
       <div class="sidebar__icons-bottom">
