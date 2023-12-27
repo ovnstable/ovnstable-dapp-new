@@ -83,7 +83,11 @@
           rel="noopener noreferrer"
           aria-label="Twitter"
         >
-          <IconTwitter class="sidebar__icon-social" />
+          <BaseIcon
+            name="twitter"
+            path="assets/icons/social/IconTwitter.vue"
+            class="sidebar__icon-social"
+          />
         </a>
         <a
           href="https://discord.gg/overnight-fi"
@@ -91,12 +95,20 @@
           rel="noopener noreferrer"
           aria-label="Discord"
         >
-          <IconDiscord class="sidebar__icon-social" />
+          <BaseIcon
+            name="discord"
+            path="assets/icons/social/IconDiscord.vue"
+            class="sidebar__icon-social"
+          />
         </a>
       </div>
       <div class="sidebar__divider-bottom" />
       <div class="sidebar__icons-bottom">
-        <IconSwitchTheme class="sidebar__button-switch-theme" />
+        <BaseIcon
+          name="switchTheme"
+          path="assets/icons/theme/IconSwitchTheme.vue"
+          class="sidebar__button-switch-theme"
+        />
         <button
           type="button"
           class="sidebar__button-switch-language"
@@ -107,15 +119,11 @@
 </template>
 <script lang="ts">
 
-import IconDiscord from '@/assets/icons/social/IconDiscord.vue';
-import IconTwitter from '@/assets/icons/social/IconTwitter.vue';
-import IconSwitchTheme from '@/assets/icons/theme/IconSwitchTheme.vue';
+import BaseIcon from '@/components/Icon/BaseIcon.vue';
 
 export default {
   components: {
-    IconDiscord,
-    IconTwitter,
-    IconSwitchTheme,
+    BaseIcon,
   },
   name: 'SideBar',
 };
