@@ -30,12 +30,12 @@
           :key="index"
         >
           <div class="slider__info">
-            <div class="slider__token-plus-overview">
+            <div class="slider__token-overview">
               <BaseIcon
                 name={{slide.iconFirstToken}}
                 :path="slide.iconPathFirstToken"
               />
-              <p class="slider__token-plus-title">{{ slide.titleFirstToken }}</p>
+              <p class="slider__token-title">{{ slide.titleFirstToken }}</p>
               <p class="slider__overview-title">OVERVIEW</p>
             </div>
             <div class="slider__divider" />
@@ -63,15 +63,15 @@
               </div>
             </div>
             <div class="slider__divider" />
-            <div class="slider__wusd-plus-overview">
-              <div class="slider__wusd-plus-title">
+            <div class="slider__second-token-overview">
+              <div class="slider__second-token-title">
                 <BaseIcon
                   name={{slide.iconSecondToken}}
                   :path="slide.iconPathSecondToken"
                 />
-                <p class="slider__wusd-plus-title-text">{{ slide.titleSecond }}</p>
+                <p class="slider__second-token-title-text">{{ slide.titleSecond }}</p>
               </div>
-              <p class="slider__wusd-plus-description">{{ slide.descriptionSecondToken }}</p>
+              <p class="slider__second-token-description">{{ slide.descriptionSecondToken }}</p>
             </div>
           </div>
         </swiper-slide>
@@ -219,20 +219,20 @@ export default {
   max-width: 283px;
 }
 
-.slider__token-plus-overview,
-.slider__wusd-plus-title {
+.slider__token-overview,
+.slider__second-token-title {
     display: flex;
     flex-direction: row;
     align-items: center;
 }
 
-.slider__token-plus-title,
-.slider__wusd-plus-title-text {
+.slider__token-title,
+.slider__second-token-title-text {
     margin-left: 10px;
     font-size: 20px;
 }
 
-.slider__token-plus-title,
+.slider__token-title,
 .slider__overview-title {
     color: var(--color-black);
     font-weight: 600;
@@ -282,19 +282,19 @@ export default {
     margin-left: auto;
 }
 
-.slider__wusd-plus-overview {
+.slider__second-token-overview {
     display: flex;
     flex-direction: column;
 }
 
-.slider__wusd-plus-title-text {
+.slider__second-token-title-text {
     margin-left:10px;
     color: var(--color-black);
     font-size: 20px;
     font-weight: 600;
 }
 
-.slider__wusd-plus-description {
+.slider__second-token-description {
     margin-top: 10px;
     text-align: justify;
     font-weight: 400;
@@ -334,8 +334,8 @@ export default {
         transform: scale(0.8);
     }
 
-    .slider__token-plus-title,
-    .slider__wusd-plus-title-text{
+    .slider__token-title,
+    .slider__second-token-title-text {
         margin-left: 5px;
         font-size: 16px;
     }
@@ -361,8 +361,8 @@ export default {
         transform: scale(0.6);
     }
 
-    .slider__token-plus-title,
-    .slider__wusd-plus-title-text{
+    .slider__token-title,
+    .slider__second-token-title-text {
         margin-left: 0px;
         font-size: 13px;
     }
@@ -412,15 +412,15 @@ export default {
     .swiper-container {
       max-width: 100px;
     }
-    .slider__token-plus-title{
+    .slider__token-title{
         margin-right: 1px;
     }
     .slider__icon-plus,
     .slider__arrow-icon {
         transform: scale(0.5);
     }
-    .slider__token-plus-title,
-    .slider__wusd-plus-title-text{
+    .slider__token-title,
+    .slider__second-token-title-text {
         margin-left: 0px;
         font-size: 10px;
     }
