@@ -21,9 +21,12 @@
       <swiper
         :slides-per-view="1"
         :space-between="0"
+        @swiper="onSwiper"
+        @transitionEnd="handleSlideChange"
+        ref="mySwiper"
       >
         <swiper-slide
-          v-for="(slide, index) in [slides[currentIndex]]"
+          v-for="(slide, index) in slides"
           :key="index"
         >
           <div class="slider__info">
@@ -98,6 +101,7 @@
 
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { Swiper, SwiperSlide } from 'swiper/vue';
+import { Swiper as SwiperClass } from 'swiper/core';
 import 'swiper/swiper.min.css';
 
 export default {
@@ -156,19 +160,32 @@ export default {
           descriptionSecondToken: 'An index-adjusted wrapper for USD+. Your wUSD+ balance won\'t increase over time. When wUSD+ will unwrap, you receive USD+ based on the latest index.',
         },
       ],
+      swiperInstance: null as SwiperClass | null,
     };
   },
   methods: {
+    onSwiper(swiper: SwiperClass) {
+      this.swiperInstance = swiper;
+    },
     nextSlide() {
-      if (this.currentIndex < this.slides.length - 1) {
+      if (this.currentIndex < this.slides.length - 1 && this.swiperInstance) {
         this.currentIndex += 1;
+        this.swiperInstance.slideTo(this.currentIndex);
       }
     },
     prevSlide() {
-      if (this.currentIndex > 0) {
+      if (this.currentIndex > 0 && this.swiperInstance) {
         this.currentIndex -= 1;
+        this.swiperInstance.slideTo(this.currentIndex);
       }
     },
+
+    handleSlideChange() {
+      if (this.swiperInstance) {
+        this.currentIndex = this.swiperInstance.realIndex;
+      }
+    },
+
   },
 
   name: 'MainSlider',
