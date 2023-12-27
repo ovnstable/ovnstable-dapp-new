@@ -105,9 +105,12 @@
       <div class="sidebar__divider-bottom" />
       <div class="sidebar__icons-bottom">
         <BaseIcon
-          name="switchTheme"
-          path="assets/icons/theme/IconSwitchTheme.vue"
+          v-once
+          :key="isDarkTheme ? 'dark' : 'light'"
+          :name="isDarkTheme ? 'switchThemeDark' : 'switchThemeLight'"
+          :path="isDarkTheme ? 'assets/icons/theme/DarkThemeSwitch.vue' : 'assets/icons/theme/LightThemeSwitch.vue'"
           class="sidebar__button-switch-theme"
+          @click="toggleTheme"
         />
         <button
           type="button"
@@ -126,6 +129,16 @@ export default {
     BaseIcon,
   },
   name: 'SideBar',
+  data() {
+    return {
+      isDarkTheme: false,
+    };
+  },
+  methods: {
+    toggleTheme() {
+      this.isDarkTheme = !this.isDarkTheme;
+    },
+  },
 };
 </script>
 

@@ -1,0 +1,33 @@
+<template>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="50"
+    height="26"
+    viewBox="0 0 50 26"
+    fill="none"
+  >
+    <rect
+      x="0.5"
+      y="0.5"
+      width="49"
+      height="25"
+      rx="11.5"
+      fill="white"
+    />
+    <rect
+      x="0.5"
+      y="0.5"
+      width="49"
+      height="25"
+      rx="11.5"
+      stroke="#687386"
+    />
+    <circle
+      cx="37.5"
+      cy="13.5"
+      r="8"
+      fill="#E3F2FD"
+      stroke="#687386"
+    />
+  </svg>
+</template>
