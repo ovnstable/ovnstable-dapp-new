@@ -308,7 +308,7 @@ export default {
   background-color: #b2b8c6;
 }
 .slider__arrow-disabled {
-  opacity: 0;
+  opacity: 0.4;
   pointer-events: none;
   cursor: default;
 }
