@@ -13,7 +13,7 @@
     >
       <BaseIcon
         name="arrowLeft"
-        path="assets/icons/arrows/IconArrowLeft.vue"
+        path="assets/icons/common/ArrowLeft.vue"
         class="slider__arrow-icon"
       />
     </div>
@@ -87,7 +87,7 @@
     >
       <BaseIcon
         name="arrowRight"
-        path="assets/icons/arrows/IconArrowRight.vue"
+        path="assets/icons/common/ArrowRight.vue"
         class="slider__arrow-icon"
       />
     </div>
