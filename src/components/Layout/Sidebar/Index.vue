@@ -157,7 +157,7 @@ export default {
 }
 
 .sidebar__text-top {
-  color: var(--1, #0F172A);
+  color: var(--color-black);
   font-size: 17px;
   font-weight: 600;
   margin-top:20px;
@@ -166,7 +166,7 @@ export default {
 .sidebar__text-top:hover {
   cursor: pointer;
   color: #7f8695;
-  transition: color .15s ease
+  transition: color 0.15s ease
 }
 
 .ovn-lp {
@@ -178,7 +178,7 @@ export default {
 
 .sidebar__divider-top {
   margin-top: 20px;
-  border: 1px solid #0F172A;;
+  border: 1px solid var(--color-black);
 }
 
 .sidebar__bottom {
@@ -187,7 +187,7 @@ export default {
 
 .sidebar__text-bottom {
   margin-top: 10px;
-  color: var(--2, #687386);
+  color: var(--color-dark-grey);
   font-size: 15px;
   font-weight: 600;
 }
@@ -205,13 +205,13 @@ export default {
 .sidebar__icon-social:hover {
   cursor: pointer;
   transform: scale(1.2);
-  transition: transform .15s ease
+  transition: transform 0.15s ease
 }
 
 .sidebar__divider-bottom {
   margin-top: 20px;
   margin-bottom: 20px;
-  border: 1px solid #687386;
+  border: 1px solid var(--color-dark-grey);
 }
 
 .sidebar__icons-bottom {
@@ -228,9 +228,9 @@ export default {
   margin-left: 40px;
   padding: 0px 14px 0px 6px;
   border-radius: 12px;
-  border: 1px solid var(--2, #687386);
+  border: 1px solid var( --color-dark-grey);
   background: var(--4, #FFF);
-  color: var(--2, #687386);
+  color: var( --color-dark-grey);
   text-align: center;
   font-size: 14px;
 }
@@ -243,28 +243,26 @@ export default {
 
 .theme-switch-label {
   cursor: pointer;
-  width: 50px;
-  height: 26px;
-  background: #FFFFFF;
+  background: var(--color-white);
   display: flex;
   align-items: center;
   justify-content: space-between;
   border-radius: 15px;
   position: relative;
-  border: 1px solid var(--2, #687386);
-  padding: 0 5px;
+  border: 1px solid var( --color-dark-grey);
+  padding: 5px 28px 4px 5px;
 }
 
 .theme-switch-button {
   width: 17px;
   height: 17px;
-  border: 1px solid var(--2, #687386);
-  background: var(--5, #E3F2FD);
+  border: 1px solid var( --color-dark-grey);
+  background: var(--background-color);
   border-radius: 50%;
-  transition: transform 0.3s;
+  transition: transform 0.15s;
 }
 
 .theme-switch-checkbox:checked + .theme-switch-label .theme-switch-button {
-  transform: translateX(20px);
+  transform: translateX(23px);
 }
 </style>
