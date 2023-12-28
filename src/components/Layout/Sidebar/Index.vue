@@ -104,13 +104,18 @@
       </div>
       <div class="sidebar__divider-bottom" />
       <div class="sidebar__icons-bottom">
-        <BaseIcon
-          :key="isDarkTheme ? 'dark' : 'light'"
-          :name="iconName"
-          :path="iconPath"
-          class="sidebar__button-switch-theme"
-          @click="toggleTheme"
+        <input
+          type="checkbox"
+          id="theme-switch"
+          v-model="isDarkTheme"
+          class="theme-switch-checkbox"
         />
+        <label
+          for="theme-switch"
+          class="theme-switch-label"
+        >
+          <span class="theme-switch-button" />
+        </label>
         <button
           type="button"
           class="sidebar__button-switch-language"
@@ -132,16 +137,7 @@ export default {
   data() {
     return {
       isDarkTheme: false,
-      isTogglingTheme: false,
     };
-  },
-  computed: {
-    iconName() {
-      return this.isDarkTheme ? 'switchThemeDark' : 'switchThemeLight';
-    },
-    iconPath() {
-      return this.isDarkTheme ? 'assets/icons/theme/DarkThemeSwitch.vue' : 'assets/icons/theme/LightThemeSwitch.vue';
-    },
   },
   methods: {
     toggleTheme() {
@@ -224,8 +220,7 @@ export default {
   justify-content: space-between;
 }
 
-.sidebar__button-switch-theme:hover,
-.sidebar__button-switch-language{
+.sidebar__button-switch-language:hover {
   cursor: pointer;
 }
 
@@ -240,4 +235,36 @@ export default {
   font-size: 14px;
 }
 
+.theme-switch-checkbox {
+  height: 0;
+  width: 0;
+  visibility: hidden;
+}
+
+.theme-switch-label {
+  cursor: pointer;
+  width: 50px;
+  height: 26px;
+  background: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 15px;
+  position: relative;
+  border: 1px solid var(--2, #687386);
+  padding: 0 5px;
+}
+
+.theme-switch-button {
+  width: 17px;
+  height: 17px;
+  border: 1px solid var(--2, #687386);
+  background: var(--5, #E3F2FD);
+  border-radius: 50%;
+  transition: transform 0.3s;
+}
+
+.theme-switch-checkbox:checked + .theme-switch-label .theme-switch-button {
+  transform: translateX(20px);
+}
 </style>
