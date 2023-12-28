@@ -104,18 +104,7 @@
       </div>
       <div class="sidebar__divider-bottom" />
       <div class="sidebar__icons-bottom">
-        <input
-          type="checkbox"
-          id="theme-switch"
-          v-model="isDarkTheme"
-          class="theme-switch-checkbox"
-        />
-        <label
-          for="theme-switch"
-          class="theme-switch-label"
-        >
-          <span class="theme-switch-button" />
-        </label>
+        <SwitchBox />
         <button
           type="button"
           class="sidebar__button-switch-language"
@@ -128,22 +117,14 @@
 <script lang="ts">
 
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import SwitchBox from '@/modules/main/components/SwitchBox.vue';
 
 export default {
   components: {
     BaseIcon,
+    SwitchBox,
   },
   name: 'SideBar',
-  data() {
-    return {
-      isDarkTheme: false,
-    };
-  },
-  methods: {
-    toggleTheme() {
-      this.isDarkTheme = !this.isDarkTheme;
-    },
-  },
 };
 </script>
 
@@ -233,36 +214,5 @@ export default {
   color: var( --color-dark-grey);
   text-align: center;
   font-size: 14px;
-}
-
-.theme-switch-checkbox {
-  height: 0;
-  width: 0;
-  visibility: hidden;
-}
-
-.theme-switch-label {
-  cursor: pointer;
-  background: var(--color-white);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-radius: 15px;
-  position: relative;
-  border: 1px solid var( --color-dark-grey);
-  padding: 5px 28px 4px 5px;
-}
-
-.theme-switch-button {
-  width: 17px;
-  height: 17px;
-  border: 1px solid var( --color-dark-grey);
-  background: var(--background-color);
-  border-radius: 50%;
-  transition: transform 0.15s;
-}
-
-.theme-switch-checkbox:checked + .theme-switch-label .theme-switch-button {
-  transform: translateX(23px);
 }
 </style>
