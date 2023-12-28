@@ -2,7 +2,7 @@
   <input
     type="checkbox"
     id="theme-switch"
-    v-model="isDarkTheme"
+    :checked="isChecked"
     class="theme-switch-checkbox"
   />
   <label
@@ -14,18 +14,10 @@
 </template>
 
 <script lang="ts">
-
 export default {
   name: 'SwitchBox',
-  data() {
-    return {
-      isDarkTheme: false,
-    };
-  },
-  methods: {
-    toggleTheme() {
-      this.isDarkTheme = !this.isDarkTheme;
-    },
+  props: {
+    isChecked: Boolean,
   },
 };
 </script>

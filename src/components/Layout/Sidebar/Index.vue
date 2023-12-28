@@ -104,7 +104,10 @@
       </div>
       <div class="sidebar__divider-bottom" />
       <div class="sidebar__icons-bottom">
-        <SwitchBox />
+        <SwitchBox
+          :isChecked="isDarkTheme"
+          @change="toggleTheme"
+        />
         <button
           type="button"
           class="sidebar__button-switch-language"
@@ -125,6 +128,16 @@ export default {
     SwitchBox,
   },
   name: 'SideBar',
+  data() {
+    return {
+      isDarkTheme: false,
+    };
+  },
+  methods: {
+    toggleTheme() {
+      this.isDarkTheme = !this.isDarkTheme;
+    },
+  },
 };
 </script>
 
