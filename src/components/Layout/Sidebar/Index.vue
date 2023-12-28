@@ -40,39 +40,74 @@
     </ul>
 
     <ul class="sidebar__bottom">
-      <router-link
-        to="/help-center"
+      <a
+        href="https://discord.com/channels/933003627444969552/967813123149033542/967813482684760135/"
         class="sidebar__text-bottom"
-      >Help Center</router-link>
+        target="_blank"
+        rel="noopener noreferrer"
+      >Help Center</a>
 
-      <router-link
-        to="/docs"
+      <a
+        href="https://docs.overnight.fi/other/terms-of-service"
         class="sidebar__text-bottom"
-      >Terms of service</router-link>
+        target="_blank"
+        rel="noopener noreferrer"
+      >Terms of service</a>
 
-      <router-link
-        to="/docs"
+      <a
+        href="https://docs.overnight.fi/other/privacy-policy"
         class="sidebar__text-bottom"
-      >Privacy Policy</router-link>
+        target="_blank"
+        rel="noopener noreferrer"
+      >Privacy Policy</a>
 
-      <router-link
-        to="/docs"
+      <a
+        href="https://docs.overnight.fi/other/audits"
         class="sidebar__text-bottom"
-      >Audits</router-link>
+        target="_blank"
+        rel="noopener noreferrer"
+      >Audits</a>
 
-      <router-link
-        to="/docs"
+      <a
+        href="https://docs.overnight.fi/advanced/strategies/ets"
         class="sidebar__text-bottom"
-      >ABOUT ETS</router-link>
+        target="_blank"
+        rel="noopener noreferrer"
+      >ABOUT ETS</a>
 
       <div class="sidebar__divider-bottom" />
       <div class="sidebar__icons-bottom">
-        <IconTwitter class="sidebar__icon-social" />
-        <IconDiscord class="sidebar__icon-social" />
+        <a
+          href="https://twitter.com/overnight_fi"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Twitter"
+        >
+          <BaseIcon
+            name="twitter"
+            path="assets/icons/social/IconTwitter.vue"
+            class="sidebar__icon-social"
+          />
+        </a>
+        <a
+          href="https://discord.gg/overnight-fi"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Discord"
+        >
+          <BaseIcon
+            name="discord"
+            path="assets/icons/social/IconDiscord.vue"
+            class="sidebar__icon-social"
+          />
+        </a>
       </div>
       <div class="sidebar__divider-bottom" />
       <div class="sidebar__icons-bottom">
-        <IconSwitchTheme class="sidebar__button-switch-theme" />
+        <SwitchBox
+          :isChecked="isDarkTheme"
+          @change="toggleTheme"
+        />
         <button
           type="button"
           class="sidebar__button-switch-language"
@@ -80,20 +115,29 @@
       </div>
     </ul>
   </div>
+
 </template>
 <script lang="ts">
 
-import IconDiscord from '@/assets/icons/social/IconDiscord.vue';
-import IconTwitter from '@/assets/icons/social/IconTwitter.vue';
-import IconSwitchTheme from '@/assets/icons/theme/IconSwitchTheme.vue';
+import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import SwitchBox from '@/modules/main/components/SwitchBox.vue';
 
 export default {
   components: {
-    IconDiscord,
-    IconTwitter,
-    IconSwitchTheme,
+    BaseIcon,
+    SwitchBox,
   },
   name: 'SideBar',
+  data() {
+    return {
+      isDarkTheme: false,
+    };
+  },
+  methods: {
+    toggleTheme() {
+      this.isDarkTheme = !this.isDarkTheme;
+    },
+  },
 };
 </script>
 
@@ -107,7 +151,7 @@ export default {
 }
 
 .sidebar__text-top {
-  color: var(--1, #0F172A);
+  color: var(--color-black);
   font-size: 17px;
   font-weight: 600;
   margin-top:20px;
@@ -116,7 +160,7 @@ export default {
 .sidebar__text-top:hover {
   cursor: pointer;
   color: #7f8695;
-  transition: color .15s ease
+  transition: color 0.15s ease
 }
 
 .ovn-lp {
@@ -128,7 +172,7 @@ export default {
 
 .sidebar__divider-top {
   margin-top: 20px;
-  border: 1px solid #0F172A;;
+  border: 1px solid var(--color-black);
 }
 
 .sidebar__bottom {
@@ -137,7 +181,7 @@ export default {
 
 .sidebar__text-bottom {
   margin-top: 10px;
-  color: var(--2, #687386);
+  color: var(--color-dark-grey);
   font-size: 15px;
   font-weight: 600;
 }
@@ -155,13 +199,13 @@ export default {
 .sidebar__icon-social:hover {
   cursor: pointer;
   transform: scale(1.2);
-  transition: transform .15s ease
+  transition: transform 0.15s ease
 }
 
 .sidebar__divider-bottom {
   margin-top: 20px;
   margin-bottom: 20px;
-  border: 1px solid #687386;
+  border: 1px solid var(--color-dark-grey);
 }
 
 .sidebar__icons-bottom {
@@ -170,8 +214,7 @@ export default {
   justify-content: space-between;
 }
 
-.sidebar__button-switch-theme:hover,
-.sidebar__button-switch-language{
+.sidebar__button-switch-language:hover {
   cursor: pointer;
 }
 
@@ -179,11 +222,10 @@ export default {
   margin-left: 40px;
   padding: 0px 14px 0px 6px;
   border-radius: 12px;
-  border: 1px solid var(--2, #687386);
+  border: 1px solid var( --color-dark-grey);
   background: var(--4, #FFF);
-  color: var(--2, #687386);
+  color: var( --color-dark-grey);
   text-align: center;
   font-size: 14px;
 }
-
 </style>
