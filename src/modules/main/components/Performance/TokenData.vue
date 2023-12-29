@@ -67,7 +67,7 @@ export default {
     background: var(--color-white);
     box-shadow: 0px 1px 0px 0px var(--color-black);
     padding: 20px 25px;
-    max-width: 100%;
+    max-width: calc(100% - 40px);
   }
 
   .performance__icon-token {
@@ -161,7 +161,6 @@ export default {
     .performance__divider {
       margin-left: 30px;
       margin-right: 30px;
-      border: 1px solid var(--color-black);
     }
   }
 
@@ -172,7 +171,6 @@ export default {
     .performance__divider {
       margin-left: 20px;
       margin-right: 20px;
-      border: 1px solid var(--color-black);
     }
     .performance__token-data__collateral-token {
       margin: 0;
@@ -194,6 +192,10 @@ export default {
     }
     .performance__icon-chain {
       margin-top: 60px;
+    }
+    .performance__divider {
+      margin-left: 5px;
+      margin-right: 5px;
     }
   }
 </style>

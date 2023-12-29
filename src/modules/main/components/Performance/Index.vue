@@ -19,6 +19,8 @@ export default {
 .performance {
     display: flex;
     width: 100%;
+    justify-content: center; /* Center the child horizontally */
+    align-items: center; /* Center the child vertically */
 }
 .performance__token-data {
     width: 100%;
