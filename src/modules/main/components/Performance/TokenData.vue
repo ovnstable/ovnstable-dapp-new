@@ -19,7 +19,7 @@
     <div class="performance__divider" />
     <div class="performance__payout-data">
       <p class="performance__token-data__title">Last payout</p>
-      <p class="performance__token-data__number">05:02</p>
+      <p class="performance__token-data__number payout-ago">05:02</p>
       <p class="performance__token-data__hours">hours ago</p>
     </div>
     <div class="performance__divider" />
@@ -37,8 +37,8 @@
     <div class="performance__divider" />
     <div class="performance__tvl-data">
       <p class="performance__token-data__title">ETH+ TVL</p>
-      <p class="performance__token-data__number">123.631341 WETH</p>
-      <p performance__token-data__hours>past 2 hours</p>
+      <p class="performance__token-data__number">123.631341 <span class="performance__token-data__collateral-token">WETH</span></p>
+      <p class="performance__token-data__hours">past 2 hours</p>
     </div>
   </div>
 </template>
@@ -60,14 +60,13 @@ export default {
     justify-content: flex-start;
     display:flex;
     flex-direction: row;
-    align-items: stretch;
     align-self: flex-start;
     justify-content: center;
     border-radius: 20px;
     border: 1px solid var(--color-black);
     background: var(--color-white);
     box-shadow: 0px 1px 0px 0px var(--color-black);
-    padding: 20px;
+    padding: 20px 25px;
     max-width: 100%;
   }
 
@@ -133,5 +132,68 @@ export default {
   }
   .performance__icon-chain {
     margin-left: 10px;
+  }
+
+  .performance__token-data__hours {
+    color: var(--color-black);
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  @media (max-width: 1024px) {
+    .performance__token-data__description {
+      margin-left: 20px;
+      max-width: 150px;
+    }
+
+    .performance__token-data__title {
+        font-size: 16px;
+    }
+    .performance__token-data__number {
+      font-size: 14px;
+    }
+    .performance__token-data__hours {
+      font-size: 12px;
+    }
+    .performance__token-data__collateral-token {
+      margin-left: 20px;
+    }
+    .performance__divider {
+      margin-left: 30px;
+      margin-right: 30px;
+      border: 1px solid var(--color-black);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .performance__icon-token {
+      display: none;
+    }
+    .performance__divider {
+      margin-left: 20px;
+      margin-right: 20px;
+      border: 1px solid var(--color-black);
+    }
+    .performance__token-data__collateral-token {
+      margin: 0;
+    }
+    .performance__token-data__link-address {
+      margin-top: 40px;
+    }
+    .payout-ago {
+      margin-right: 15px;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .performance__token-data__number {
+      margin-top: 60px;
+    }
+    .performance__apy-data__chain {
+      margin: 0;
+    }
+    .performance__icon-chain {
+      margin-top: 60px;
+    }
   }
 </style>
