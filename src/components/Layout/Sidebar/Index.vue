@@ -15,7 +15,7 @@
       <div class="sidebar__divider-top" />
 
       <router-link
-        to="/money-market"
+        to="/performance"
         class="sidebar__text-top"
       >Money market</router-link>
 
