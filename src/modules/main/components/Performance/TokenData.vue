@@ -1,0 +1,137 @@
+<template>
+  <div class="performance__token-data">
+    <BaseIcon
+      name="token"
+      path="assets/icons/currencies/UsdPlus.vue"
+      class="performance__icon-token"
+    />
+    <div class="performance__token-data__link-title">
+      <p class="performance__token-data__title">ETH+</p>
+      <a
+        href="https://arbiscan.io/address/0xD4939D69B31fbE981ed6904A3aF43Ee1dc777Aab"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="token-address"
+        class="performance__token-data__link-address"
+      >token address</a>
+    </div>
+    <p class="performance__token-data__description">ETH+ is the equivalent of USD+, pegged to WETH 1:1, instantly mintable and redeemable in WETH. 100% collateralized with delta-neutral and other strategies based on the best protocols</p>
+    <div class="performance__divider" />
+    <div class="performance__payout-data">
+      <p class="performance__token-data__title">Last payout</p>
+      <p class="performance__token-data__number">05:02</p>
+      <p class="performance__token-data__hours">hours ago</p>
+    </div>
+    <div class="performance__divider" />
+    <div class="performance__apy-data">
+      <p class="performance__token-data__title">Daily APY</p>
+      <div class="performance__apy-data__chain">
+        <p class="performance__token-data__number apy-number">11.9%</p>
+        <BaseIcon
+          name="chain"
+          path="assets/icons/chains/IconArbitrum.vue"
+          class="performance__icon-chain"
+        />
+      </div>
+    </div>
+    <div class="performance__divider" />
+    <div class="performance__tvl-data">
+      <p class="performance__token-data__title">ETH+ TVL</p>
+      <p class="performance__token-data__number">123.631341 WETH</p>
+      <p performance__token-data__hours>past 2 hours</p>
+    </div>
+  </div>
+</template>
+<script lang="ts">
+
+import BaseIcon from '@/components/Icon/BaseIcon.vue';
+
+export default {
+  components: {
+    BaseIcon,
+  },
+
+  name: 'TokenDataPerformance',
+};
+</script>
+
+<style scoped>
+  .performance__token-data {
+    justify-content: flex-start;
+    display:flex;
+    flex-direction: row;
+    align-items: stretch;
+    align-self: flex-start;
+    justify-content: center;
+    border-radius: 20px;
+    border: 1px solid var(--color-black);
+    background: var(--color-white);
+    box-shadow: 0px 1px 0px 0px var(--color-black);
+    padding: 20px;
+    max-width: 100%;
+  }
+
+  .performance__icon-token {
+    width: 90px;
+    height: 90px;
+  }
+
+  .performance__token-data__link-title {
+    display:flex;
+    flex-direction: column;
+    margin-left: 20px;
+  }
+  .performance__token-data__title {
+    color: var(--color-black);
+    font-size: 22px;
+    font-weight: 600;
+  }
+  .performance__token-data__link-address {
+    margin-top: 10px;
+    max-width: 44px;
+    color: var(--color-dark-grey);
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration-line: underline;
+  }
+  .performance__token-data__description {
+    margin-left: 30px;
+    color: var(--color-dark-grey);
+    text-align: justify;
+    font-size: 12px;
+    font-weight: 400;
+    max-width: 186px;
+  }
+
+  .performance__divider {
+    margin-left: 40px;
+    margin-right: 40px;
+    border: 1px solid var(--color-black);
+  }
+
+  .performance__payout-data,
+  .performance__apy-data,
+  .performance__tvl-data {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .performance__token-data__number {
+    margin-top: 20px;
+    color: var(--color-black);
+    font-size: 20px;
+    font-weight: 500;
+  }
+  .apy-number {
+     margin-top: 0px;
+  }
+  .performance__apy-data__chain {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+  .performance__icon-chain {
+    margin-left: 10px;
+  }
+</style>

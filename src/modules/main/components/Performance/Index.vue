@@ -1,21 +1,27 @@
 <template>
-  <div>
-    <p>fdf</p>
+  <div class="performance">
+    <TokenDataPerformance class="performance__token-data" />
   </div>
 </template>
-<script lang="ts">
 
-// import BaseIcon from '@/components/Icon/BaseIcon.vue';
+<script lang="ts">
+import TokenDataPerformance from '@/modules/main/components/Performance/TokenData.vue';
 
 export default {
-  components: {
-    // BaseIcon,
-  },
-
   name: 'PerformancePage',
+  components: {
+    TokenDataPerformance,
+  },
 };
 </script>
 
-<style scoped>
+<style>
+.performance {
+    display: flex;
+    width: 100%;
+}
+.performance__token-data {
+    width: 100%;
+}
 
 </style>
