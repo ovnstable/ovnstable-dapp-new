@@ -1,33 +1,15 @@
 <template>
-  <div class="performance__graphics-buttons-interval">
-    <button
-      type="button"
-      class="performance__graphics-button-interval"
-    >1D</button>
-    <button
-      type="button"
-      class="performance__graphics-button-interval"
-    >1W</button>
-    <button
-      type="button"
-      class="performance__graphics-button-interval"
-    >1M</button>
-    <button
-      type="button"
-      class="performance__graphics-button-interval"
-    >3M</button>
-    <button
-      type="button"
-      class="performance__graphics-button-interval"
-    >6M</button>
-    <button
-      type="button"
-      class="performance__graphics-button-interval"
-    >1Y</button>
-    <button
-      type="button"
-      class="performance__graphics-button-interval"
-    >ALL</button>
+  <div>
+    <div
+      v-for="interval in intervals"
+      :key="interval"
+      :class="{ 'interval-selected': interval === selectedInterval }"
+      class="interval-option"
+      @click="selectInterval(interval)"
+      @keydown.enter="selectInterval(interval)"
+    >
+      {{ interval }}
+    </div>
   </div>
   <div class="performance__graphic">
     <div class="performance__graphic-data">
@@ -53,6 +35,17 @@ export default {
     graphicData: {
       type: Object,
       required: true,
+    },
+  },
+  data() {
+    return {
+      selectedInterval: '1D',
+      intervals: ['1D', '1W', '1M', '3M', '6M', '1Y', 'ALL'],
+    };
+  },
+  methods: {
+    selectInterval(interval:string) {
+      this.selectedInterval = interval;
     },
   },
 };
@@ -82,23 +75,20 @@ export default {
     flex-direction: column;
     align-items: flex-end;
 }
-.performance__graphics-buttons-interval > * {
-    color: var(--color-black);
+.interval-option {
+    display: inline-block;
+    padding: 5px 10px;
+    margin: 0 2px;
+    border-radius: 5px;
     font-size: 12px;
     font-weight: 600;
-    border: none;
-    background-color: transparent;
-    transition: color 0.3s ease;
-}
-
-.performance__graphics-buttons-interval > *:hover {
     cursor: pointer;
-    color: var(--color-dark-grey);
+    transition: background-color 0.3s ease;
 }
 
-.performance__graphics-buttons-interval > *:not(:last-child) {
-    /* TODO fix this according to future figma file */
-    margin-right: 5px;
+.interval-selected {
+    background-color: var(--color-light-blue);
+    color: var(--color-black);
 }
 
 .performance__graphic-title {
