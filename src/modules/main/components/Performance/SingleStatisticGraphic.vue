@@ -31,10 +31,12 @@
   </div>
   <div class="performance__graphic">
     <div class="performance__graphic-data">
-      <p class="performance__graphic-title">Average ETH+ APY</p>
+      <p class="performance__graphic-title">
+        {{ graphicData.type === 'APY' ? `Average ${graphicData.token} APY` : `${graphicData.token} TVL` }}
+      </p>
       <div class="performance__graphic-data-text">
-        <p class="performance__graphic-value">13.5%</p>
-        <p class="performance__graphic-date">from ХХ ХХ. ‘23</p>
+        <p class="performance__graphic-value">{{ graphicData.value }}</p>
+        <p class="performance__graphic-date">{{ graphicData.value }}</p>
       </div>
     </div>
     <div class="performance__graphic-display">
@@ -47,6 +49,12 @@
 
 export default {
   name: 'GraphicComponent',
+  props: {
+    graphicData: {
+      type: Object,
+      required: true,
+    },
+  },
 };
 </script>
 

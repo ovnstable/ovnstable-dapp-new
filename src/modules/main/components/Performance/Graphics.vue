@@ -1,21 +1,37 @@
 <template>
   <div class="performance__graphics">
     <div class="performance__graphics-APY-graphic">
-      <GraphicComponent />
+      <GraphicComponent :graphic-data=apyData />
     </div>
     <div class="performance__graphics-TVL-graphic">
-      <GraphicComponent />
+      <GraphicComponent :graphic-data=tvlData />
     </div>
   </div>
 </template>
 <script lang="ts">
 
-import GraphicComponent from '@/modules/main/components/Performance/Graphic.vue';
+import GraphicComponent from '@/modules/main/components/Performance/SingleStatisticGraphic.vue';
 
 export default {
   name: 'GraphicsPerformance',
   components: {
     GraphicComponent,
+  },
+  data() {
+    return {
+      apyData: {
+        type: 'APY',
+        token: 'ETH+',
+        value: '13.5%',
+        date: 'from XX XX. ‘23',
+      },
+      tvlData: {
+        type: 'TVL',
+        token: 'ETH+',
+        value: '123.631341 WETH',
+        date: 'past 2 hours',
+      },
+    };
   },
 };
 </script>
