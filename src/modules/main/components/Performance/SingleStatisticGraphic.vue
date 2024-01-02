@@ -1,16 +1,9 @@
 <template>
-  <div>
-    <div
-      v-for="interval in intervals"
-      :key="interval"
-      :class="{ 'interval-selected': interval === selectedInterval }"
-      class="interval-option"
-      @click="selectInterval(interval)"
-      @keydown.enter="selectInterval(interval)"
-    >
-      {{ interval }}
-    </div>
-  </div>
+  <GraphicInterval
+    :selectedInterval="currentInterval"
+    :intervals="['1D', '1W', '1M', '3M', '6M', '1Y', 'ALL']"
+    @update:interval="updateInterval"
+  />
   <div class="performance__graphic">
     <div class="performance__graphic-data">
       <p class="performance__graphic-title">
@@ -22,15 +15,20 @@
       </div>
     </div>
     <div class="performance__graphic-display">
-      <p>Graphic</p>
+      <p>Graphic {{ currentInterval }}</p>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 
+import GraphicInterval from '@/modules/main/components/GraphicInterval.vue';
+
 export default {
   name: 'GraphicComponent',
+  components: {
+    GraphicInterval,
+  },
   props: {
     graphicData: {
       type: Object,
@@ -39,13 +37,12 @@ export default {
   },
   data() {
     return {
-      selectedInterval: '1D',
-      intervals: ['1D', '1W', '1M', '3M', '6M', '1Y', 'ALL'],
+      currentInterval: '1D',
     };
   },
   methods: {
-    selectInterval(interval:string) {
-      this.selectedInterval = interval;
+    updateInterval(newInterval: string) {
+      this.currentInterval = newInterval;
     },
   },
 };
@@ -76,21 +73,6 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-}
-.interval-option {
-    display: inline-block;
-    padding: 2px 5px;
-    margin: 0 2px;
-    border-radius: 5px;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.interval-selected {
-    background-color: var(--color-light-blue);
-    color: var(--color-black);
 }
 
 .performance__graphic-title {
