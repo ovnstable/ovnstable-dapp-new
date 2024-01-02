@@ -31,7 +31,29 @@ export default {
   background: var(--color-white);
   box-shadow: 0px 1px 0px 0px var(--color-black);
   padding: 14px 20px;
-  width: calc(100% - 40px);;
+  width: calc(100% - 40px);
+}
+
+@media (max-width: 1024px) {
+  .performance__graphics {
+    flex-direction: column;
+  }
+  .performance__graphics-TVL-graphic {
+    margin-top: 50px;
+    width: 100%;
+  }
+  .performance__graphics-APY-graphic {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .performance__graphics {
+    flex-direction: column;
+  }
+  .performance__graphics-TVL-graphic {
+    margin-top: 50px;
+  }
 }
 
 </style>

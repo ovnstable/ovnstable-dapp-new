@@ -110,4 +110,39 @@ export default {
     font-size: 12px;
     font-weight: 500;
 }
+
+@media (max-width: 768px) {
+    .performance__graphic-value {
+        font-size: 16px;
+    }
+    .performance__graphic-title {
+        font-size: 12px;
+    }
+    .performance__graphics-buttons-interval > * {
+        font-size: 10px;
+    }
+    .performance__graphic-date {
+         font-size: 10px;
+    }
+    .performance__graphic{
+        padding: 15px 30px;
+    }
+}
+@media (max-width: 576px) {
+    .performance__graphic-value {
+        font-size: 14px;
+    }
+    .performance__graphic-title {
+        font-size: 10px;
+    }
+    .performance__graphics-buttons-interval > * {
+        font-size: 8px;
+    }
+    .performance__graphic-date {
+         font-size: 8px;
+    }
+    .performance__graphic{
+        padding: 10px 20px;
+    }
+}
 </style>
