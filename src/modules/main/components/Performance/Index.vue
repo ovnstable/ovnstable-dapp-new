@@ -7,7 +7,7 @@
 
 <script lang="ts">
 import TokenDataPerformance from '@/modules/main/components/Performance/TokenData.vue';
-import GraphicsPerformance from '@/modules/main/components/Performance/Graphics.vue'
+import GraphicsPerformance from '@/modules/main/components/Performance/Graphics.vue';
 
 export default {
   name: 'PerformancePage',
