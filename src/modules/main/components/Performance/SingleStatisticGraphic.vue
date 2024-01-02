@@ -68,6 +68,8 @@ export default {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    width: 100%;
+    flex-grow: 1;
 }
 .performance__graphic-data-text {
     margin-left: 167px;
@@ -77,7 +79,7 @@ export default {
 }
 .interval-option {
     display: inline-block;
-    padding: 5px 10px;
+    padding: 2px 5px;
     margin: 0 2px;
     border-radius: 5px;
     font-size: 12px;
@@ -107,6 +109,12 @@ export default {
     color: var(--color-black);
     font-size: 12px;
     font-weight: 500;
+}
+
+@media (max-width: 1250px) {
+  .performance__graphic-data-text {
+    margin-left: 50px;
+  }
 }
 
 @media (max-width: 768px) {
