@@ -37,7 +37,11 @@ export default {
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.15s ease;
+}
+
+.interval-option:hover {
+    background-color: #d8eefd;
 }
 
 .interval-selected {
