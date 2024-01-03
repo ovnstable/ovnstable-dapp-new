@@ -70,8 +70,8 @@ export default {
     border-radius: 20px 20px 0 0;
     padding-top: 14px;
     padding-bottom: 17px;
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
 }
-
 .performance__portfolio-tab:not(:last-child) {
     margin-right: -1px;
 }
@@ -87,8 +87,10 @@ export default {
 .performance__portfolio-tab:not(.performance__portfolio-tab--active) {
     border-bottom: 1px solid var(--color-black);
 }
-
-
+.performance__portfolio-tab:not(.performance__portfolio-tab--active):hover {
+    color: var(--color-blue);
+    transition: color 0.15s;
+}
 .performance__portfolio-tab-content {
     border: 1px solid var(--color-black);
     border-top: none;
@@ -96,5 +98,21 @@ export default {
     border-radius: 0 0 20px 20px;
     background: var(--color-white);
     box-shadow: 0 1px 0 0 var(--color-black);
+     transition: opacity 0.3s ease-in-out;
 }
+
+@media (max-width: 1024px) {
+  .performance__portfolio-tab {
+    padding-top: 10px;
+    padding-bottom: 14px;
+  }
+}
+
+@media (max-width: 768px) {
+  .performance__portfolio-tab {
+    padding-top: 5px;
+    padding-bottom: 7px;
+  }
+}
+
 </style>
