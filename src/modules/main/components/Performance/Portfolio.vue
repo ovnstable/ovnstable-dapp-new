@@ -47,42 +47,54 @@ export default {
     border: 1px solid var(--color-black);
     background: var(--color-white);
     box-shadow: 0 1px 0 0 var(--color-black);
-    padding: 14px 20px;
+    padding: 0;
     width: calc(100% - 40px);
 }
 
 .performance__portfolio-tabs-row {
     display: flex;
-    flex-direction: row;
     justify-content: space-between;
 }
 
 .performance__portfolio-tab {
-    flex-grow: 1;
+    flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    border-radius: 5px 5px 0 0;
     border: 1px solid var(--color-black);
     background: var(--6, #A8D8FA);
     color: var(--color-black);
     font-size: 15px;
     font-weight: 400;
+    border-radius: 20px 20px 0 0;
+    padding-top: 14px;
+    padding-bottom: 17px;
+}
+
+.performance__portfolio-tab:not(:last-child) {
+    margin-right: -1px;
 }
 
 .performance__portfolio-tab--active {
     background-color: #ffffff;
     color: var(--color-black);
-    font-size: 15px;
     font-weight: 600;
+    position: relative;
+    z-index: 1;
+    border-bottom: none;
+}
+.performance__portfolio-tab:not(.performance__portfolio-tab--active) {
+    border-bottom: 1px solid var(--color-black);
 }
 
-.tab-content {
+
+.performance__portfolio-tab-content {
     border: 1px solid var(--color-black);
     border-top: none;
     padding: 20px;
     border-radius: 0 0 20px 20px;
-    margin-top: -1px;
+    background: var(--color-white);
+    box-shadow: 0 1px 0 0 var(--color-black);
 }
 </style>
