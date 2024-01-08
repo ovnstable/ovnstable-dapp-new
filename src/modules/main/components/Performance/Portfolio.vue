@@ -13,19 +13,43 @@
       </div>
     </div>
     <div class="performance__portfolio-tab-content">
-      <p>{{ currentTabData }}</p>
+      <PortfolioStrategies
+        v-if="currentTab === 'portfolio'"
+        :tokenName="portfolioData.tokenName"
+        :assets="portfolioData.assets"
+      />
+      <p v-else>{{ currentTabData }}</p>
     </div>
   </div>
 </template>
 
 <script lang="ts">
+import PortfolioStrategies from '@/modules/main/components/Performance/PortfolioStrategies.vue';
+
 export default {
   name: 'PortfolioPerformance',
+  components: {
+    PortfolioStrategies,
+  },
   data() {
     return {
       currentTab: 'portfolio',
       tabs: [
-        { name: 'portfolio', title: 'PORTFOLIO', data: 'Portfolio Data Here' },
+        {
+          name: 'portfolio',
+          title: 'PORTFOLIO',
+          data: {
+            tokenName: 'USD+',
+            assets: [
+              {
+                tokenNameAsset: 'USDC', tokenImagePath: 'assets/icons/currencies/UsdPlus.vue', safetyScore: 'VERY HIGH', NAV: '$1 685 335.39', percentPortfolioPath: 'assets/icons/common/PercentPortfolio.vue', percentPortfolio: ' 81.5%',
+              },
+              {
+                tokenNameAsset: 'DAI', tokenImagePath: 'assets/icons/currencies/WusdPlus.vue', safetyScore: 'VERY HIGH', NAV: '$192 378.56', percentPortfolioPath: 'assets/icons/common/PercentPortfolio.vue', percentPortfolio: '9.3%',
+              },
+            ],
+          },
+        },
         { name: 'aboutStrategies', title: 'ABOUT STRATEGIES', data: 'Strategies Data Here' },
       ],
     };
@@ -34,6 +58,13 @@ export default {
     currentTabData() {
       const tab = this.tabs.find((tabItem) => tabItem.name === this.currentTab);
       return tab ? tab.data : '';
+    },
+    portfolioData() {
+      const portfolioTab = this.tabs.find((tabItem) => tabItem.name === 'portfolio');
+      if (portfolioTab && typeof portfolioTab.data === 'object') {
+        return portfolioTab.data;
+      }
+      return { tokenName: 'ETH+', assets: [] };
     },
   },
 };
