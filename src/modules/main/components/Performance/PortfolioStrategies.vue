@@ -32,6 +32,7 @@
               <BaseIcon
                 name="tokenLink"
                 path="assets/icons/common/LinkToken.vue"
+                class="performance__portfolio-strategy-token-link-img"
               />
             </a>
 
@@ -181,6 +182,105 @@ export default {
 }
 .nav {
     margin-right: 15px;
+}
+
+@media (max-width: 1024px) {
+  .performance__portfolio-strategies-token-title {
+    font-size: 20px;
+  }
+  .performance__portfolio-strategy-token-img,
+  .performance__portfolio-strategy-token-link-img,
+  .performance__portfolio-strategy-token-portfolio {
+    transform: scale(0.85);
+  }
+
+  .performance__portfolio-strategy-token-name,
+  .performance__portfolio-strategy-token-score,
+  .performance__portfolio-strategy-token-NAV,
+  .performance__portfolio-strategy-token-portfolio-number {
+    font-size: 14px;
+  }
+  .score {
+    margin-left: 20px;
+  }
+  .nav {
+    margin-right: 30px;
+  }
+  .performance__portfolio-strategies-piechart {
+    margin-left: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .performance__portfolio-strategies-token-title {
+    font-size: 14px;
+  }
+  .performance__portfolio-strategy-token-img,
+  .performance__portfolio-strategy-token-link-img,
+  .performance__portfolio-strategy-token-portfolio {
+    transform: scale(0.6);
+  }
+
+  .performance__portfolio-strategy-token-name,
+  .performance__portfolio-strategy-token-score,
+  .performance__portfolio-strategy-token-NAV,
+  .performance__portfolio-strategy-token-portfolio-number {
+    font-size: 12px;
+  }
+  .score {
+    margin-left: 5px;
+  }
+  .nav {
+    margin-right: 10px;
+  }
+  .performance__portfolio-strategies-piechart {
+    margin-left: 20px;
+  }
+  .performance__portfolio-strategy-portfolio-percent {
+    display: none;
+  }
+  .performance__portfolio-strategies-specification {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 576px) {
+    .performance__portfolio-strategy-token-name {
+        margin-left: 0;
+    }
+    .performance__portfolio-strategy {
+        padding: 10px 10px;
+    }
+    .performance__portfolio-strategies-stablecoins-specifications {
+        padding: 0 5px;
+    }
+    .performance__portfolio-strategies-token-title {
+        font-size: 12px;
+    }
+    .performance__portfolio-strategy-token-img,
+    .performance__portfolio-strategy-token-link-img,
+    .performance__portfolio-strategy-token-portfolio {
+        transform: scale(0.5);
+    }
+
+    .performance__portfolio-strategy-token-name,
+    .performance__portfolio-strategy-token-score,
+    .performance__portfolio-strategy-token-NAV,
+    .performance__portfolio-strategy-token-portfolio-number {
+        font-size: 10px;
+    }
+    .score {
+        margin-left: 5px;
+    }
+    .nav {
+        margin-right: 10px;
+    }
+    .performance__portfolio-strategies-piechart {
+        margin-left: 20px;
+    }
+    .performance__portfolio-strategies-specification {
+        font-size: 8px;
+    }
 }
 
 </style>
