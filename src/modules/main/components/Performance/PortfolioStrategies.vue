@@ -250,10 +250,7 @@ export default {
 .performance__portfolio-total {
   display: flex;
   justify-content: space-between;
-}
-
-.performance__portfolio-total-label {
-  font-weight: bold;
+  max-width: calc(100% - 270px);
 }
 
 .performance__portfolio-total-nav-value,
@@ -267,17 +264,13 @@ export default {
   margin-left: 80px;
 }
 
-.performance__portfolio-total-liquidation-value {
-  margin-right: 270px;
-}
-
 .performance__portfolio-total-circulation {
   display: flex;
   flex-direction: row;
 }
 
 .performance__portfolio-total-circulation-number {
-  margin-left: 65px;
+  margin-left: 75px;
 }
 
 .performance__portfolio-total-nav-value,
@@ -312,6 +305,33 @@ export default {
   .performance__portfolio-strategies-piechart {
     margin-left: 20px;
   }
+
+  .performance__portfolio-total {
+    max-width: calc(100% - 160px);
+  }
+
+  .performance__portfolio-total-info {
+    padding-left: 40px;
+  }
+
+  .performance__portfolio-total-liquidation-value {
+    margin-right: 40px;
+  }
+
+  .performance__portfolio-total-nav-value {
+    margin-left: 120px;
+  }
+  .performance__portfolio-total-circulation-number {
+    margin-left: 12px;
+  }
+  .performance__portfolio-total-nav-value,
+  .performance__portfolio-total-liquidation-value,
+  .performance__portfolio-total-circulation-number {
+    font-size: 14px;
+  }
+  .performance__portfolio-total-label{
+    font-size: 14px;
+  }
 }
 
 @media (max-width: 768px) {
@@ -344,6 +364,18 @@ export default {
   }
   .performance__portfolio-strategies-specification {
     font-size: 10px;
+  }
+
+  .performance__portfolio-total {
+    max-width: 100%
+  }
+  .performance__portfolio-total-nav-value,
+  .performance__portfolio-total-liquidation-value,
+  .performance__portfolio-total-circulation-number {
+    font-size: 12px;
+  }
+  .performance__portfolio-total-label{
+    font-size: 12px;
   }
 }
 
@@ -383,6 +415,20 @@ export default {
     }
     .performance__portfolio-strategies-specification {
         font-size: 8px;
+    }
+    .performance__portfolio-total-nav-value,
+    .performance__portfolio-total-liquidation-value,
+    .performance__portfolio-total-circulation-number {
+      font-size: 10px;
+    }
+    .performance__portfolio-total-label{
+     font-size: 10px;
+    }
+    .performance__portfolio-total-nav-value {
+      margin-left: 90px;
+    }
+    .performance__portfolio-total-info {
+      padding-left: 10px;
     }
 }
 
