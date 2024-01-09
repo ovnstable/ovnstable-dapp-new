@@ -1,11 +1,19 @@
 <template>
-  <p class="performance__portfolio-strategies-token-title">{{ tokenName }} portfolio</p>
+  <p class="performance__portfolio-strategies-token-title">
+    {{ type === 'strategies' ? tokenName + ' portfolio' : tokenName + ' collateral assets' }}
+  </p>
   <div class="performance__portfolio-strategies">
     <div class="performance__portfolio-strategies-stablecoins">
       <div class="performance__portfolio-strategies-stablecoins-specifications">
-        <p class="performance__portfolio-strategies-specification">Stablecoin</p>
-        <p class="performance__portfolio-strategies-specification score">Safety score</p>
-        <p class="performance__portfolio-strategies-specification nav">Net Asset Value</p>
+        <p class="performance__portfolio-strategies-specification">
+          {{ type === 'portfolio' ? 'Stablecoin' : 'Strategy' }}
+        </p>
+        <p class="performance__portfolio-strategies-specification score">
+          {{ type === 'portfolio' ? 'Safety score' : 'Net Asset Value USDC' }}
+        </p>
+        <p class="performance__portfolio-strategies-specification nav">
+          {{ type === 'portfolio' ? 'Net Asset Value' : 'Liquidation value USDC' }}
+        </p>
         <p class="performance__portfolio-strategies-specification percent">Percent in portfolio</p>
       </div>
       <div class="performance__portfolio-strategies-divider" />
@@ -18,10 +26,12 @@
           <div class="performance__portfolio-strategy-token-data">
             <BaseIcon
               name="tokenImage"
-              :path=asset.tokenImagePath
+              :path="type === 'portfolio' ? asset.tokenImagePath : asset.strategyImagePath"
               class="performance__portfolio-strategy-token-img"
             />
-            <p class="performance__portfolio-strategy-token-name">{{ asset.tokenNameAsset }}</p>
+            <p class="performance__portfolio-strategy-token-name">
+              {{ type === 'portfolio' ? asset.tokenNameAsset : asset.strategyNameAsset }}
+            </p>
             <a
               :href=asset.tokenLink
               class="performance__portfolio-strategy-token-link"
@@ -37,8 +47,12 @@
             </a>
 
           </div>
-          <p class="performance__portfolio-strategy-token-score">{{asset.safetyScore }}</p>
-          <p class="performance__portfolio-strategy-token-NAV">{{ asset.NAV }}</p>
+          <p :class="['performance__portfolio-strategy-token-score', type !== 'portfolio' ? 'nav-usdc' : '']">
+            {{ type === 'portfolio' ? asset.safetyScore : formatCurrency(asset.netAssetValue) }}
+          </p>
+          <p class="performance__portfolio-strategy-token-NAV">
+            {{ type === 'portfolio' ? formatCurrency(asset.NAV) : formatCurrency(asset.liquidationValue) }}
+          </p>
           <div class="performance__portfolio-strategy-portfolio-percent">
             <BaseIcon
               name="percentPortfolio"
@@ -49,6 +63,26 @@
           </div>
         </div>
         <div class="performance__portfolio-strategies-divider" />
+      </div>
+      <div
+        v-if="type === 'strategies'"
+        class="performance__portfolio-total-info"
+      >
+        <div class="performance__portfolio-total">
+          <p class="performance__portfolio-total-label">Total</p>
+          <p class="performance__portfolio-total-nav-value">
+            {{ formatCurrency(241242) }}
+          </p>
+          <p class="performance__portfolio-total-liquidation-value">
+            {{ formatCurrency(24122242) }}
+          </p>
+        </div>
+        <div class="performance__portfolio-total-circulation">
+          <p class="performance__portfolio-total-label">Total {{ tokenName }} in circulation</p>
+          <p class="performance__portfolio-total-circulation-number">
+            {{ formatCurrency(tokenAmountInCirculation) }}
+          </p>
+        </div>
       </div>
     </div>
     <div class="performance__portfolio-strategies-piechart">
@@ -74,7 +108,25 @@ export default {
       type: Array,
       required: true,
     },
+    type: {
+      type: String,
+      default: 'portfolio',
+    },
+    tokenAmountInCirculation: {
+      type: Number,
+      default: 0,
+    },
   },
+  methods: {
+    formatCurrency(value: number) {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        maximumFractionDigits: 2,
+      }).format(value).replace(/,/g, ' ');
+    },
+  },
+
 };
 </script>
 
@@ -182,6 +234,57 @@ export default {
 }
 .nav {
     margin-right: 15px;
+}
+.nav-usdc {
+  color: var(--color-black);
+}
+
+.performance__portfolio-total-info {
+  display: flex;
+  flex-direction: column;
+  padding-top: 20px;
+  padding-bottom: 12px;
+  padding-left: 68px;
+}
+
+.performance__portfolio-total {
+  display: flex;
+  justify-content: space-between;
+}
+
+.performance__portfolio-total-label {
+  font-weight: bold;
+}
+
+.performance__portfolio-total-nav-value,
+.performance__portfolio-total-liquidation-value,
+.performance__portfolio-total-circulation-number {
+  font-weight: 400;
+  text-align: right;
+}
+
+.performance__portfolio-total-nav-value {
+  margin-left: 80px;
+}
+
+.performance__portfolio-total-liquidation-value {
+  margin-right: 270px;
+}
+
+.performance__portfolio-total-circulation {
+  display: flex;
+  flex-direction: row;
+}
+
+.performance__portfolio-total-circulation-number {
+  margin-left: 65px;
+}
+
+.performance__portfolio-total-nav-value,
+.performance__portfolio-total-liquidation-value,
+.performance__portfolio-total-circulation-number {
+  font-size: 16px;
+  font-weight: 800;
 }
 
 @media (max-width: 1024px) {

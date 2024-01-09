@@ -15,8 +15,16 @@
     <div class="performance__portfolio-tab-content">
       <PortfolioStrategies
         v-if="currentTab === 'portfolio'"
+        :tokenName="strategiesData.tokenName"
+        :assets="strategiesData.assets"
+        :type="strategiesData.type"
+        :tokenAmountInCirculation="strategiesData.tokenAmountInCirculation"
+      />
+      <PortfolioStrategies
+        v-if="currentTab === 'portfolio'"
         :tokenName="portfolioData.tokenName"
         :assets="portfolioData.assets"
+        :type="portfolioData.type"
       />
       <p v-else>{{ currentTabData }}</p>
     </div>
@@ -38,16 +46,54 @@ export default {
         {
           name: 'portfolio',
           title: 'PORTFOLIO',
-          data: {
+          dataPortfolio: {
             tokenName: 'USD+',
+            type: 'portfolio',
             assets: [
               {
-                tokenNameAsset: 'USDC', tokenImagePath: 'assets/icons/currencies/UsdPlus.vue', safetyScore: 'VERY HIGH', NAV: '$1 685 335.39', percentPortfolioPath: 'assets/icons/common/PercentPortfolio.vue', tokenLink: 'https://arbiscan.io/token/0xaf88d065e77c8cC2239327C5EDb3A432268e5831', percentPortfolio: ' 81.5%',
+                tokenNameAsset: 'USDC',
+                tokenImagePath: 'assets/icons/currencies/UsdPlus.vue',
+                safetyScore: 'VERY HIGH',
+                NAV: 1685335.39,
+                percentPortfolioPath: 'assets/icons/common/PercentPortfolio.vue',
+                tokenLink: 'https://arbiscan.io/token/0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
+                percentPortfolio: ' 81.5%',
               },
               {
-                tokenNameAsset: 'DAI', tokenImagePath: 'assets/icons/currencies/WusdPlus.vue', safetyScore: 'VERY HIGH', NAV: '$192 378.56', percentPortfolioPath: 'assets/icons/common/PercentPortfolio.vue', tokenLink: 'https://arbiscan.io/token/0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1', percentPortfolio: '9.3%',
+                tokenNameAsset: 'DAI',
+                tokenImagePath: 'assets/icons/currencies/WusdPlus.vue',
+                safetyScore: 'VERY HIGH',
+                NAV: 192378.56,
+                percentPortfolioPath: 'assets/icons/common/PercentPortfolio.vue',
+                tokenLink: 'https://arbiscan.io/token/0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
+                percentPortfolio: '9.3%',
               },
             ],
+          },
+          dataStrategies: {
+            tokenName: 'USD+',
+            type: 'strategies',
+            assets: [
+              {
+                strategyNameAsset: 'Synapse USDC',
+                strategyImagePath: 'assets/icons/strategies/SynapseStrategy.vue',
+                netAssetValue: 826931.41,
+                liquidationValue: 826665.69,
+                percentPortfolioPath: 'assets/icons/common/PercentPortfolio.vue',
+                tokenLink: 'https://arbiscan.io/token/0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
+                percentPortfolio: '40%',
+              },
+              {
+                strategyNameAsset: 'Dodo USDC v2',
+                strategyImagePath: 'assets/icons/strategies/SynapseStrategy.vue',
+                netAssetValue: 413481.02,
+                liquidationValue: 413232.93,
+                percentPortfolioPath: 'assets/icons/common/PercentPortfolio.vue',
+                tokenLink: 'https://arbiscan.io/token/0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
+                percentPortfolio: '20%',
+              },
+            ],
+            tokenAmountInCirculation: 65000,
           },
         },
         { name: 'aboutStrategies', title: 'ABOUT STRATEGIES', data: 'Strategies Data Here' },
@@ -61,10 +107,22 @@ export default {
     },
     portfolioData() {
       const portfolioTab = this.tabs.find((tabItem) => tabItem.name === 'portfolio');
-      if (portfolioTab && typeof portfolioTab.data === 'object') {
-        return portfolioTab.data;
+      if (portfolioTab && typeof portfolioTab.dataPortfolio === 'object') {
+        return portfolioTab.dataPortfolio;
       }
-      return { tokenName: 'ETH+', assets: [] };
+      return { tokenName: 'ETH+', assets: [], type: 'portfolio' };
+    },
+    strategiesData() {
+      const portfolioTab = this.tabs.find((tabItem) => tabItem.name === 'portfolio');
+      if (portfolioTab && typeof portfolioTab.dataStrategies === 'object') {
+        return portfolioTab.dataStrategies;
+      }
+      return {
+        tokenName: 'ETH+',
+        assets: [],
+        type: 'strategies',
+        tokenAmountInCirculation: 50000,
+      };
     },
   },
 };
