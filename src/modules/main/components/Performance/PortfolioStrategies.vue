@@ -71,10 +71,10 @@
         <div class="performance__portfolio-total">
           <p class="performance__portfolio-total-label">Total</p>
           <p class="performance__portfolio-total-nav-value">
-            {{ formatCurrency(241242) }}
+            {{ formatCurrency(totalNAV(assets)) }}
           </p>
           <p class="performance__portfolio-total-liquidation-value">
-            {{ formatCurrency(24122242) }}
+            {{ formatCurrency(totalLiquidationValue(assets)) }}
           </p>
         </div>
         <div class="performance__portfolio-total-circulation">
@@ -125,6 +125,13 @@ export default {
         maximumFractionDigits: 2,
       }).format(value).replace(/,/g, ' ');
     },
+    totalNAV(assets: any[]) {
+      return assets.reduce((total: number, asset: any) => total + asset.netAssetValue, 0);
+    },
+    totalLiquidationValue(assets: any[]) {
+      return assets.reduce((total: number, asset: any) => total + asset.liquidationValue, 0);
+    },
+
   },
 
 };
