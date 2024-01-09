@@ -22,11 +22,19 @@
               class="performance__portfolio-strategy-token-img"
             />
             <p class="performance__portfolio-strategy-token-name">{{ asset.tokenNameAsset }}</p>
-            <BaseIcon
-              name="tokenLink"
-              path="assets/icons/common/LinkToken.vue"
+            <a
+              :href=asset.tokenLink
               class="performance__portfolio-strategy-token-link"
-            />
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Link for token"
+            >
+              <BaseIcon
+                name="tokenLink"
+                path="assets/icons/common/LinkToken.vue"
+              />
+            </a>
+
           </div>
           <p class="performance__portfolio-strategy-token-score">{{asset.safetyScore }}</p>
           <p class="performance__portfolio-strategy-token-NAV">{{ asset.NAV }}</p>
@@ -76,61 +84,103 @@ export default {
     font-size: 24px;
     font-weight: 400;
 }
+
 .performance__portfolio-strategies {
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
 }
+
 .performance__portfolio-strategies-stablecoins {
     display: flex;
     flex-direction: column;
+    width: 100%;
 }
+
 .performance__portfolio-strategies-stablecoins-specifications {
     display: flex;
-    flex-direction: row;
     justify-content: space-between;
     color: var(--color-light-grey);
     font-size: 14px;
     font-weight: 400;
     padding: 0 20px;
 }
+
 .performance__portfolio-strategy {
     display: flex;
-    flex-direction: row;
     justify-content: space-between;
-    width: 100%;
-    padding: 20px 20px 20px 20px;
+    align-items: center;
+    padding: 20px;
 }
 
 .performance__portfolio-strategy-token-data {
     display: flex;
     align-items: center;
-    min-width: 172px;
+    flex: 1;
 }
+
 .performance__portfolio-strategy-token-name {
     margin-left: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 16px;
+    font-weight: 400;
 }
+
 .performance__portfolio-strategy-token-link {
     margin-left: auto;
 }
-.score {
-    margin-left: 200px;
+
+.performance__portfolio-strategy-token-score {
+    flex: 1;
+    text-align: center;
+    color: var(--color-green);
+    font-size: 16px;
+    font-weight: 400;
 }
-.nav {
-    margin-left: 130px;
-    margin-right: 226px;
+
+.performance__portfolio-strategy-token-NAV {
+    flex: 1;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 400;
 }
+
 .performance__portfolio-strategy-portfolio-percent {
     display: flex;
-    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    flex: 1;
 }
+
 .performance__portfolio-strategy-token-portfolio {
-    margin-top: 5px;
     margin-right: 12px;
+}
+
+.performance__portfolio-strategy-token-portfolio-number {
+    white-space: nowrap;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.performance__portfolio-strategies-piechart {
+    margin-left: 60px;
+}
+
+.performance__portfolio-strategy-token-img,
+.performance__portfolio-strategy-token-link,
+.performance__portfolio-strategy-token-portfolio {
+    flex-shrink: 0;
 }
 .performance__portfolio-strategies-divider {
    border: 1px solid var(--color-light-grey);
 }
-.performance__portfolio-strategies-piechart {
-    margin-left: 60px;
+.score {
+    margin-left: 80px;
 }
+.nav {
+    margin-right: 15px;
+}
+
 </style>

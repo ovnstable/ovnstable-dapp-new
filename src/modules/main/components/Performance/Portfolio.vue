@@ -42,10 +42,10 @@ export default {
             tokenName: 'USD+',
             assets: [
               {
-                tokenNameAsset: 'USDC', tokenImagePath: 'assets/icons/currencies/UsdPlus.vue', safetyScore: 'VERY HIGH', NAV: '$1 685 335.39', percentPortfolioPath: 'assets/icons/common/PercentPortfolio.vue', percentPortfolio: ' 81.5%',
+                tokenNameAsset: 'USDC', tokenImagePath: 'assets/icons/currencies/UsdPlus.vue', safetyScore: 'VERY HIGH', NAV: '$1 685 335.39', percentPortfolioPath: 'assets/icons/common/PercentPortfolio.vue', tokenLink: 'https://arbiscan.io/token/0xaf88d065e77c8cC2239327C5EDb3A432268e5831', percentPortfolio: ' 81.5%',
               },
               {
-                tokenNameAsset: 'DAI', tokenImagePath: 'assets/icons/currencies/WusdPlus.vue', safetyScore: 'VERY HIGH', NAV: '$192 378.56', percentPortfolioPath: 'assets/icons/common/PercentPortfolio.vue', percentPortfolio: '9.3%',
+                tokenNameAsset: 'DAI', tokenImagePath: 'assets/icons/currencies/WusdPlus.vue', safetyScore: 'VERY HIGH', NAV: '$192 378.56', percentPortfolioPath: 'assets/icons/common/PercentPortfolio.vue', tokenLink: 'https://arbiscan.io/token/0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1', percentPortfolio: '9.3%',
               },
             ],
           },
