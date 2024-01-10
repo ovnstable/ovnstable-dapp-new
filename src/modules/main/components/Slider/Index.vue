@@ -1,8 +1,13 @@
 <template>
-  <div class="slider">
+  <div :class="['slider', { 'dark-theme-slider': isDarkTheme }]">
     <div
-      class="slider__arrow-wrapper"
-      :class="{ 'slider__arrow-disabled': currentIndex === 0 }"
+      :class="[
+        'slider__arrow-wrapper',
+        {
+          'dark-theme-arrow-wrapper': isDarkTheme,
+          'slider__arrow-disabled': currentIndex === 0,
+        },
+      ]"
       @click="currentIndex > 0 && prevSlide()"
       @keydown.enter="currentIndex > 0 && prevSlide()"
       tabindex="0"
@@ -11,6 +16,7 @@
         name="arrowLeft"
         path="assets/icons/common/ArrowLeft.vue"
         class="slider__arrow-icon"
+        :fillColor="fillColorArrow"
       />
     </div>
 
@@ -32,30 +38,42 @@
                 name={{slide.iconFirstToken}}
                 :path="slide.iconPathFirstToken"
               />
-              <p class="slider__token-title">{{ slide.titleFirstToken }}</p>
-              <p class="slider__overview-title">OVERVIEW</p>
+              <p :class="['slider__token-title', { 'dark-theme-token-title': isDarkTheme }]">
+                {{ slide.titleFirstToken }}
+              </p>
+              <p :class="['slider__overview-title', { 'dark-theme-overview-title': isDarkTheme }]">
+                OVERVIEW
+              </p>
             </div>
             <div class="slider__divider" />
             <div class="slider__data">
               <div class="slider__apy-info">
-                <p class="slider__apy-title">Average APY:</p>
+                <p :class="['slider__apy-title', { 'dark-theme-apy-title': isDarkTheme }]">
+                  Average APY:
+                </p>
                 <div class="slider__apy-numbers">
-                  <p class="slider__data-total-number">{{ slide.apyPercent }}<span class="slider__data-apy-percent">%</span></p>
-                  <p class="slider__data-growth-number">+{{ slide.apyGrowth }}%</p>
+                  <p :class="['slider__data-total-number', { 'dark-theme-data-total-number': isDarkTheme }]">
+                    {{ slide.apyPercent }}
+                    <span :class="['slider__data-apy-percent', { 'dark-theme-data-apy-percent': isDarkTheme }]">%</span>
+                  </p>
+                  <p :class="['slider__data-growth-number', { 'dark-theme-data-growth-number': isDarkTheme }]">+{{ slide.apyGrowth }}%</p>
                 </div>
               </div>
               <div class="slider__tvl-info">
-                <p class="slider__tvl-title">TVL:</p>
+                <p :class="['slider__tvl-title', { 'dark-theme-tvl-title': isDarkTheme }]">TVL:</p>
                 <div class="slider__tvl-numbers">
-                  <p class="slider__data-total-number">{{ slide.tvlM }} <span class="slider__data-tvl-millions">m</span></p>
-                  <p class="slider__data-growth-number">+{{ slide.tvlGrowth }}%</p>
+                  <p :class="['slider__data-total-number', { 'dark-theme-data-total-number': isDarkTheme }]">
+                    {{ slide.tvlM }}
+                    <span :class="['slider__data-tvl-millions', { 'dark-theme-data-tvl-millions': isDarkTheme }]">m</span>
+                  </p>
+                  <p :class="['slider__data-growth-number', { 'dark-theme-data-growth-number': isDarkTheme }]">+{{ slide.tvlGrowth }}%</p>
                 </div>
               </div>
               <div class="slider__payout-info">
-                <p class="slider__payout-title">Last payout:</p>
+                <p :class="['slider__payout-title', { 'dark-theme-payout-title': isDarkTheme }]">Last payout:</p>
                 <div class="slider__payout-numbers">
-                  <p class="slider__data-total-number">{{ slide.lastPayoutTime }}</p>
-                  <p class="slider__data-growth-number">{{ slide.lastPayoutText }}</p>
+                  <p :class="['slider__data-total-number', { 'dark-theme-data-total-number': isDarkTheme }]">{{ slide.lastPayoutTime }}</p>
+                  <p :class="['slider__data-growth-number', { 'dark-theme-data-growth-number': isDarkTheme }]">{{ slide.lastPayoutText }}</p>
                 </div>
               </div>
             </div>
@@ -66,9 +84,13 @@
                   name={{slide.iconSecondToken}}
                   :path="slide.iconPathSecondToken"
                 />
-                <p class="slider__second-token-title-text">{{ slide.titleSecond }}</p>
+                <p
+                  :class="['slider__second-token-title-text', { 'dark-theme-second-token-title-text': isDarkTheme }]"
+                >
+                  {{ slide.titleSecond }}
+                </p>
               </div>
-              <p class="slider__second-token-description">{{ slide.descriptionSecondToken }}</p>
+              <p :class="['slider__second-token-description', { 'dark-theme-second-token-description': isDarkTheme }]">{{ slide.descriptionSecondToken }}</p>
             </div>
           </div>
         </swiper-slide>
@@ -76,8 +98,13 @@
     </div>
 
     <div
-      class="slider__arrow-wrapper"
-      :class="{ 'slider__arrow-disabled': currentIndex === slides.length - 1 }"
+      :class="[
+        'slider__arrow-wrapper',
+        {
+          'dark-theme-arrow-wrapper': isDarkTheme,
+          'slider__arrow-disabled': currentIndex === slides.length - 1,
+        },
+      ]"
       @click="currentIndex < slides.length - 1 && nextSlide()"
       @keydown.enter="currentIndex < slides.length - 1 && nextSlide()"
       tabindex="0"
@@ -86,6 +113,7 @@
         name="arrowRight"
         path="assets/icons/common/ArrowRight.vue"
         class="slider__arrow-icon"
+        :fillColor="fillColorArrow"
       />
     </div>
   </div>
@@ -95,6 +123,7 @@
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import { Swiper as SwiperClass } from 'swiper/core';
+import { mapState } from 'vuex';
 import 'swiper/swiper.min.css';
 
 export default {
@@ -102,6 +131,26 @@ export default {
     BaseIcon,
     Swiper,
     SwiperSlide,
+  },
+  computed: {
+    ...mapState({
+      isDarkTheme: (state: any) => state.accountUI.isDarkTheme,
+    }),
+    themeClass() {
+      return {
+        'dark-theme': this.isDarkTheme,
+        'light-theme': !this.isDarkTheme,
+      };
+    },
+    arrowLightThemeColor() {
+      return getComputedStyle(document.documentElement).getPropertyValue('--color-dark-grey').trim();
+    },
+    arrowDarkThemeColor() {
+      return getComputedStyle(document.documentElement).getPropertyValue('--color-dark-theme-grey').trim();
+    },
+    fillColorArrow(): string {
+      return this.isDarkTheme ? this.arrowDarkThemeColor : this.arrowLightThemeColor;
+    },
   },
   data() {
     return {
@@ -305,14 +354,45 @@ export default {
 }
 
 .slider__arrow-wrapper:hover {
+  transition: background-color 0.15s ease;
   background-color: #b2b8c6;
+}
+.arrow-wrapper {
+  transition: background-color 0.15s ease;
 }
 .slider__arrow-disabled {
   opacity: 0.4;
   pointer-events: none;
   cursor: default;
 }
+.dark-theme-slider {
+   background-color: var(--color-dark-theme-dark-blue-2);
+}
+.dark-theme-token-title,
+.dark-theme-overview-title,
+.dark-theme-second-token-title-text {
+  color: var(--color-white)
+}
 
+.dark-theme-apy-title,
+.dark-theme-data-apy-percent,
+.dark-theme-data-total-number,
+.dark-theme-data-growth-number,
+.dark-theme-tvl-title,
+.dark-theme-data-tvl-millions,
+.data-growth-number,
+.dark-theme-payout-title,
+.dark-theme-second-token-description {
+   color: var(--color-dark-theme-grey)
+}
+
+.dark-theme-arrow-wrapper:hover {
+  background-color: var(--color-dark-theme-dark-blue);
+  transition: background-color 0.15s ease;
+}
+.dark-theme-arrow-wrapper {
+  transition: background-color 0.15s ease;;
+}
 @media (max-width: 1024px) {
     .slider__info {
        max-width:200px;

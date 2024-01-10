@@ -26,4 +26,8 @@ export default {
 .swap-module__form {
   width: 60%;
 }
+.dark-theme {
+  background-color: var(--color-dark-theme-dark-blue-2);
+  /* opacity: 50%; */
+}
 </style>

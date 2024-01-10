@@ -53,7 +53,6 @@ export default {
 
 .theme-switch-checkbox:checked + .theme-switch-label .theme-switch-button {
     transform: translateX(23px);
-    background: var(--color-blue)
 }
 .dark-theme .theme-switch-checkbox:checked + .theme-switch-label .theme-switch-button {
     background: var(--color-black);
