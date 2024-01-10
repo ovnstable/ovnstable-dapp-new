@@ -8,6 +8,8 @@ const state = {
   badge: false,
 
   tab: 2,
+
+  isDarkTheme: false,
 };
 
 const getters = {
@@ -79,6 +81,10 @@ const mutations = {
 
   setTab(state: any, value: any) {
     state.tab = value;
+  },
+
+  setIsDarkTheme(state: any, value: any) {
+    state.isDarkTheme = value;
   },
 };
 

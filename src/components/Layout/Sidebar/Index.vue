@@ -4,78 +4,78 @@
 
       <router-link
         to="/homepage"
-        class="sidebar__text-top"
+        :class="['sidebar__text-top', { 'dark-theme-text-top': isDarkTheme }]"
       >Homepage</router-link>
 
       <router-link
         to="/pools"
-        class="sidebar__text-top"
+        :class="['sidebar__text-top', { 'dark-theme-text-top': isDarkTheme }]"
       >All pools</router-link>
 
-      <div class="sidebar__divider-top" />
+      <div :class="['sidebar__divider-top', { 'dark-theme-divider-top': isDarkTheme }]" />
 
       <router-link
         to="/money-market"
-        class="sidebar__text-top"
+        :class="['sidebar__text-top', { 'dark-theme-text-top': isDarkTheme }]"
       >Money market</router-link>
 
-      <div class="sidebar__divider-top" />
+      <div :class="['sidebar__divider-top', { 'dark-theme-divider-top': isDarkTheme }]" />
 
       <router-link
         to="/insurance"
-        class="sidebar__text-top"
+        :class="['sidebar__text-top', { 'dark-theme-text-top': isDarkTheme }]"
       >Insurance</router-link>
 
       <router-link
         to="/ovn-lp"
-        class="sidebar__text-top ovn-lp"
+        :class="['sidebar__text-top ovn-lp', { 'dark-theme-text-top': isDarkTheme }]"
       >OVN LP</router-link>
 
-      <div class="sidebar__divider-top" />
+      <div :class="['sidebar__divider-top', { 'dark-theme-divider-top': isDarkTheme }]" />
 
       <router-link
         to="/calculator"
-        class="sidebar__text-top"
+        :class="['sidebar__text-top', { 'dark-theme-text-top': isDarkTheme }]"
       >Calculator</router-link>
     </ul>
 
     <ul class="sidebar__bottom">
       <a
         href="https://discord.com/channels/933003627444969552/967813123149033542/967813482684760135/"
-        class="sidebar__text-bottom"
+        :class="['sidebar__text-bottom', { 'dark-theme-text-bottom': isDarkTheme }]"
         target="_blank"
         rel="noopener noreferrer"
       >Help Center</a>
 
       <a
         href="https://docs.overnight.fi/other/terms-of-service"
-        class="sidebar__text-bottom"
+        :class="['sidebar__text-bottom', { 'dark-theme-text-bottom': isDarkTheme }]"
         target="_blank"
         rel="noopener noreferrer"
       >Terms of service</a>
 
       <a
         href="https://docs.overnight.fi/other/privacy-policy"
-        class="sidebar__text-bottom"
+        :class="['sidebar__text-bottom', { 'dark-theme-text-bottom': isDarkTheme }]"
         target="_blank"
         rel="noopener noreferrer"
       >Privacy Policy</a>
 
       <a
         href="https://docs.overnight.fi/other/audits"
-        class="sidebar__text-bottom"
+        :class="['sidebar__text-bottom', { 'dark-theme-text-bottom': isDarkTheme }]"
         target="_blank"
         rel="noopener noreferrer"
       >Audits</a>
 
       <a
         href="https://docs.overnight.fi/advanced/strategies/ets"
-        class="sidebar__text-bottom"
+        :class="['sidebar__text-bottom', { 'dark-theme-text-bottom': isDarkTheme }]"
         target="_blank"
         rel="noopener noreferrer"
       >ABOUT ETS</a>
 
-      <div class="sidebar__divider-bottom" />
+      <div :class="['sidebar__divider-bottom', { 'dark-theme-divider-bottom': isDarkTheme }]" />
       <div class="sidebar__icons-bottom">
         <a
           href="https://twitter.com/overnight_fi"
@@ -102,7 +102,7 @@
           />
         </a>
       </div>
-      <div class="sidebar__divider-bottom" />
+      <div :class="['sidebar__divider-bottom', { 'dark-theme-divider-bottom': isDarkTheme }]" />
       <div class="sidebar__icons-bottom">
         <SwitchBox
           :isChecked="isDarkTheme"
@@ -110,7 +110,7 @@
         />
         <button
           type="button"
-          class="sidebar__button-switch-language"
+          :class="['sidebar__button-switch-language', { 'dark-theme-switch-language': isDarkTheme }]"
         >ENG</button>
       </div>
     </ul>
@@ -121,6 +121,7 @@
 
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import SwitchBox from '@/modules/main/components/SwitchBox.vue';
+import { mapState } from 'vuex';
 
 export default {
   components: {
@@ -128,20 +129,28 @@ export default {
     SwitchBox,
   },
   name: 'SideBar',
-  data() {
-    return {
-      isDarkTheme: false,
-    };
+  computed: {
+    ...mapState({
+      isDarkTheme: (state: any) => state.accountUI.isDarkTheme,
+    }),
+    themeClass() {
+      return {
+        'dark-theme': this.isDarkTheme,
+        'light-theme': !this.isDarkTheme,
+      };
+    },
   },
   methods: {
-    toggleTheme() {
-      this.isDarkTheme = !this.isDarkTheme;
+    toggleTheme(isChecked:any) {
+      console.log(isChecked);
+      this.$store.commit('accountUI/setIsDarkTheme', isChecked);
     },
   },
 };
 </script>
 
 <style scoped>
+
 .sidebar,
 .sidebar__top,
 .sidebar__bottom {
@@ -155,6 +164,7 @@ export default {
   font-size: 17px;
   font-weight: 600;
   margin-top:20px;
+  transition: color 0.15s ease;
 }
 
 .sidebar__text-top:hover {
@@ -173,6 +183,7 @@ export default {
 .sidebar__divider-top {
   margin-top: 20px;
   border: 1px solid var(--color-black);
+  transition: border 0.15s ease;
 }
 
 .sidebar__bottom {
@@ -227,5 +238,31 @@ export default {
   color: var( --color-dark-grey);
   text-align: center;
   font-size: 14px;
+}
+
+.dark-theme-text-top {
+  color: var(--color-white);
+  transition: color 0.15s ease;
+}
+.dark-theme-divider-top {
+  border: 1px solid var(--color-white);
+  transition: border 0.15s ease;
+}
+.dark-theme-text-bottom {
+  color: var(--color-dark-theme-grey);
+  transition: color 0.15s ease;
+}
+.dark-theme-text-bottom:hover {
+  color: #7f8695;
+  transition: color 0.15s ease;
+}
+.dark-theme-divider-bottom {
+  color: var(--color-dark-theme-grey);
+  transition: color 0.15s ease;
+}
+.dark-theme-switch-language {
+  border: 1px solid var(--color-dark-theme-grey);
+  background: var(--color-black);
+  color: var(--color-dark-theme-grey);
 }
 </style>

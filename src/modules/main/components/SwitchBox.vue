@@ -4,12 +4,13 @@
     id="theme-switch"
     :checked="isChecked"
     class="theme-switch-checkbox"
+    @change="$emit('change', ($event.target as HTMLInputElement).checked)"
   />
   <label
     for="theme-switch"
-    class="theme-switch-label"
+    :class="['theme-switch-label', { 'dark-theme-label': isChecked }]"
   >
-    <span class="theme-switch-button" />
+    <span :class="['theme-switch-button', { 'dark-theme-button': isChecked }]" />
   </label>
 </template>
 
@@ -53,5 +54,14 @@ export default {
 .theme-switch-checkbox:checked + .theme-switch-label .theme-switch-button {
     transform: translateX(23px);
     background: var(--color-blue)
+}
+.dark-theme .theme-switch-checkbox:checked + .theme-switch-label .theme-switch-button {
+    background: var(--color-black);
+}
+
+.dark-theme-label,
+.dark-theme-button {
+  background: var(--color-black);
+  border: 1px solid var(--color-white);
 }
 </style>

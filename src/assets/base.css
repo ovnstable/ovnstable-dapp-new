@@ -22,6 +22,14 @@
   --color-yellow: #ffba00;
   --color-light-yellow: #ffde76;
   --background-color: #e3f2fd;
+  --color-dark-theme-light-grey: #eeeff2;
+  --color-dark-theme-light-grey-1: #bac0cb;
+  --color-dark-theme-grey: #d1d6de;
+  --color-dark-theme-background: #0f172a;
+  --color-dark-theme-dark-blue-1: #333c3f;
+  --color-dark-theme-dark-blue-2: #2a3245;
+  --color-dark-theme-dark-blue: #192235;
+  --color-dark-theme-blue: #0497ec;
   --section-gap: 160px;
 }
 
