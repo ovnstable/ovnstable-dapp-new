@@ -1,5 +1,8 @@
 <template>
-  <component :is="dynamicComponent" />
+  <component
+    :is="dynamicComponent"
+    :fill-color="fillColor"
+  />
 </template>
 
 <script lang="ts">
@@ -14,6 +17,11 @@ export default {
     path: {
       type: String,
       required: true,
+    },
+    fillColor: {
+      type: String,
+      default: '#687386',
+      required: false,
     },
   },
 

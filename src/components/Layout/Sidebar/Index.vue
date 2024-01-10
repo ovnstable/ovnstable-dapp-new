@@ -87,6 +87,7 @@
             name="twitter"
             path="assets/icons/social/IconTwitter.vue"
             class="sidebar__icon-social"
+            :fillColor="fillColorIcon"
           />
         </a>
         <a
@@ -99,6 +100,7 @@
             name="discord"
             path="assets/icons/social/IconDiscord.vue"
             class="sidebar__icon-social"
+            :fillColor="fillColorIcon"
           />
         </a>
       </div>
@@ -138,6 +140,15 @@ export default {
         'dark-theme': this.isDarkTheme,
         'light-theme': !this.isDarkTheme,
       };
+    },
+    iconLightThemeColor() {
+      return getComputedStyle(document.documentElement).getPropertyValue('--color-dark-grey').trim();
+    },
+    iconDarkThemeColor() {
+      return getComputedStyle(document.documentElement).getPropertyValue('--color-dark-theme-grey').trim();
+    },
+    fillColorIcon():string {
+      return this.isDarkTheme ? this.iconDarkThemeColor : this.iconLightThemeColor;
     },
   },
   methods: {
