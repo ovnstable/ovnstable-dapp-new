@@ -1,0 +1,64 @@
+/* color palette from <https://github.com/vuejs/theme> */
+:root {
+  --text-color: ##0f172a;
+}
+
+/* semantic color variables for this project */
+:root {
+  --color-text: var(--text-color);
+  --color-black: #0f172a;
+  --color-dark-grey: #687386;
+  --color-light-grey: #bac0cb;
+  --color-light-grey-1: #eeeff2;
+  --color-white: #ffffff;
+  --color-dark-white: #f4fafe;
+  --color-light-blue: #a8d8fa;
+  --color-blue: #0497ec;
+  --color-red: #ff1100;
+  --color-pink: #ff6b6c;
+  --color-green: #619300;
+  --color-light-green: #91b845;
+  --color-very-light-green: #bee179;
+  --color-yellow: #ffba00;
+  --color-light-yellow: #ffde76;
+  --bg-color: #e3f2fd;
+  --section-gap: 160px;
+}
+
+/* 
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background: var(--vt-c-black);
+    --color-background-soft: var(--vt-c-black-soft);
+    --color-background-mute: var(--vt-c-black-mute);
+
+    --color-border: var(--vt-c-divider-dark-2);
+    --color-border-hover: var(--vt-c-divider-dark-1);
+
+    --color-heading: var(--vt-c-text-dark-1);
+    --color-text: var(--vt-c-text-dark-2);
+  }
+} */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-weight: normal;
+  text-decoration: none;
+}
+
+body {
+  min-height: 100vh;
+  background-color: #e3f2fd;
+  color: var(--color-text);
+  transition: color 0.5s, background-color 0.5s;
+  line-height: 1.6;
+  font-family: "Red Hat Display", sans-serif;
+  font-size: 15px;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

@@ -24,6 +24,7 @@
       >
         <swiper-slide
           v-for="(slide, index) in slides"
+          :swiper-ref="swiperInstance"
           :key="index"
         >
           <div class="slider__info">
@@ -153,7 +154,7 @@ export default {
           descriptionSecondToken: 'An index-adjusted wrapper for USD+. Your wUSD+ balance won\'t increase over time. When wUSD+ will unwrap, you receive USD+ based on the latest index.',
         },
       ],
-      swiperInstance: null as SwiperClass | null,
+      swiperInstance: null as any,
     };
   },
   methods: {

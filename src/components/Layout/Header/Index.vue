@@ -10,14 +10,13 @@
         </div>
         <ButtonComponent
           v-if="walletConnected"
-          text="DISCONNECT"
           @click="disconnectWallet"
-        />
+        >DISCONNECT</ButtonComponent>
         <ButtonComponent
           v-else
           text="CONNECT"
           @click="connectWallet"
-        />
+        >CONNECT</ButtonComponent>
       </div>
       <WalletComponent
         v-if="false"

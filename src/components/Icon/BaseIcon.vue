@@ -4,16 +4,18 @@
 
 <script lang="ts">
 import { defineAsyncComponent } from 'vue';
+import { uniqueId } from 'lodash';
 
 export default {
   props: {
-    name: {
-      type: String,
-      required: true,
-    },
     path: {
       type: String,
       required: true,
+    },
+    name: {
+      type: String,
+      required: false,
+      default: () => uniqueId('icon'),
     },
   },
 

@@ -4,7 +4,10 @@
     class="button"
     @click="$emit('click', $event)"
   >
-    {{ text }}
+    <div v-if="isLoading">
+      ...Loading
+    </div>
+    <slot v-else />
   </button>
 </template>
 
@@ -16,6 +19,10 @@ type btnTypes = 'button' | 'submit';
 export default {
   name: 'ButtonComponent',
   props: {
+    isLoading: {
+      type: Boolean,
+      default: false,
+    },
     btnType: {
       type: String as PropType<btnTypes>,
       default: 'button',
@@ -23,10 +30,6 @@ export default {
     buttonHover: {
       type: String,
       default: 'blue',
-    },
-    text: {
-      type: String,
-      default: '',
     },
   },
 };
