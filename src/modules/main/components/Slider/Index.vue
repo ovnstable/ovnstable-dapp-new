@@ -1,5 +1,5 @@
 <template>
-  <div :class="['slider', { 'dark-theme-slider': isDarkTheme }]">
+  <div class='slider'>
     <div
       :class="[
         'slider__arrow-wrapper',
@@ -247,7 +247,6 @@ export default {
     display: flex;
     flex-direction: row;
     align-items: center;
-    transition: background-color 0.15s ease;
 }
 
 .slider__info {
@@ -365,10 +364,6 @@ export default {
   opacity: 0.4;
   pointer-events: none;
   cursor: default;
-}
-.dark-theme-slider {
-   background-color: var(--color-dark-theme-dark-blue-2);
-   transition: background-color 0.15s ease;
 }
 .dark-theme-token-title,
 .dark-theme-overview-title,
