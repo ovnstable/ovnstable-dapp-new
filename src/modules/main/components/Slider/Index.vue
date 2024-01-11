@@ -247,6 +247,7 @@ export default {
     display: flex;
     flex-direction: row;
     align-items: center;
+    transition: background-color 0.15s ease;
 }
 
 .slider__info {
@@ -367,6 +368,7 @@ export default {
 }
 .dark-theme-slider {
    background-color: var(--color-dark-theme-dark-blue-2);
+   transition: background-color 0.15s ease;
 }
 .dark-theme-token-title,
 .dark-theme-overview-title,

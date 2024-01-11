@@ -1,5 +1,5 @@
 <template>
-  <div :class="['sidebar', { 'dark-theme-sidebar': isDarkTheme }]">
+  <div class='sidebar'>
     <ul class="sidebar__top">
 
       <router-link
@@ -275,9 +275,5 @@ export default {
   border: 1px solid var(--color-dark-theme-grey);
   background: var(--color-black);
   color: var(--color-dark-theme-grey);
-}
-.dark-theme-sidebar {
-  background-color: var(--color-dark-theme-background);
-  transition: background-color 0.15s ease;
 }
 </style>
