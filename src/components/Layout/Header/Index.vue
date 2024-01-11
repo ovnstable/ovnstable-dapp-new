@@ -23,17 +23,27 @@
         >Open Modal</ButtonComponent>
         <ModalComponent v-model="showModal">
           <template #header>
-            <h2 style="padding: 10px 0 0;">Привет</h2>
+            <div class="app-header__modal-spinner" />
           </template>
 
-          <p>Я - модальное окно. Закрой меня скорее.</p>
+          <p class="app-header__modal-title1">Waiting for confirmation</p>
+          <p class="app-header__modal-confirmation-text">Confirm transaction in your wallet</p>
+          <div class="app-header__modal-divider" />
 
           <template #footer>
-            <ButtonComponent
-              label="Закрыть"
-              style="margin: 0 auto;"
-              @click="showModal = false"
-            />
+            <p class="app-header__modal-title2">Tips of Dapp</p>
+            <p class="app-header__modal-tip-text">
+              Join our pools with one click with
+              <a
+                href="https://example.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="app-header__modal-zap-in-text"
+              >
+                "Zap in"
+              </a>
+              button
+            </p>
           </template>
         </ModalComponent>
       </div>
@@ -121,5 +131,65 @@ export default {
 .app-header__connect {
   display: block;
   margin-left: auto;
+}
+
+.app-header__modal-spinner {
+  align-self: center;
+}
+
+.app-header__modal-title1 {
+  margin-top: 40px;
+  color: var(--color-black);
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.app-header__modal-confirmation-text {
+  margin-top: 20px;
+  color: var( --color-dark-grey);
+  font-size: 20px;
+  font-weight: 600;
+}
+.app-header__modal-divider {
+  border-top: 1px solid var(--color-light-grey);
+  margin-top: 40px;
+  margin-bottom: 40px;
+  width: 100%;
+}
+
+.app-header__modal-title2 {
+  color: #29323E;
+  font-size: 20px;
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+
+.app-header__modal-tip-text {
+  color: var(--color-dark-grey);
+  font-size: 20px;
+  font-weight: 400;
+}
+
+.app-header__modal-zap-in-text {
+  color: var(--color-blue);
+  cursor: pointer;
+}
+.app-header__modal-zap-in-text:hover {
+  text-decoration: underline;
+}
+
+.app-header__modal-spinner {
+  position: relative;
+  width: 1em;
+  height: 1em;
+  border: 3px solid rgba(0, 0, 0, 0.3);
+  border-top: 3px solid var(--color-primary); /* Set the spinner color */
+  border-radius: 50%;
+  animation: spin 1s linear infinite; /* Add the spin animation */
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 </style>

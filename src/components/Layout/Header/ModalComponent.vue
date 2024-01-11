@@ -134,7 +134,7 @@ export default {
     z-index: 200;
     display: flex;
     justify-content: center;
-    align-items: center;
+align-items: center;
     width: 100vw;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.1);
@@ -147,6 +147,7 @@ export default {
         box-shadow: 0 0 70px rgba(0, 0, 0, 0.1);
         border-radius: 10px;
         pointer-events: auto;
+        padding: 30px 40px;
     }
 
     .modal__close {
@@ -165,21 +166,19 @@ export default {
     .modal__header,
     .modal__body,
     .modal__footer {
-        padding: 10px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     .modal__header {
         border-bottom: 1px;
-    }
-
-    .modal__body {
-        max-height: 82vh;
-        max-width: 90vw;
-        overflow: auto;
+        align-items: center;
     }
 
     .modal__footer {
         border-top: 1px;
+        align-items: center;
     }
 }
 </style>
