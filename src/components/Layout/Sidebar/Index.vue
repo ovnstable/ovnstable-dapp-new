@@ -211,8 +211,7 @@ export default {
 .sidebar__text-bottom:hover {
   color: #050a17;
   cursor: pointer;
-  transition: color .15s ease;
-
+  transition: color 0.15s ease;
 }
 
 .sidebar__text-bottom:first-child {
@@ -251,6 +250,11 @@ export default {
   font-size: 14px;
 }
 
+.sidebar__text-top,
+.sidebar__text-bottom {
+  transition: color 0.15s ease;
+}
+
 .dark-theme-text-top {
   color: var(--color-white);
   transition: color 0.15s ease;
@@ -276,4 +280,6 @@ export default {
   background: var(--color-black);
   color: var(--color-dark-theme-grey);
 }
+
+
 </style>

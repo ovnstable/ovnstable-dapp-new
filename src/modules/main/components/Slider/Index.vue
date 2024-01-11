@@ -239,7 +239,8 @@ export default {
 * {
     color: var(--color-dark-grey);
     font-weight: 500;
-    font-size: 14px
+    font-size: 14px;
+    transition: color 0.15s ease;
 }
 
 .slider {
@@ -368,7 +369,8 @@ export default {
 .dark-theme-token-title,
 .dark-theme-overview-title,
 .dark-theme-second-token-title-text {
-  color: var(--color-white)
+  color: var(--color-white);
+  transition: color 0.15s ease;
 }
 
 .dark-theme-apy-title,
@@ -380,7 +382,8 @@ export default {
 .data-growth-number,
 .dark-theme-payout-title,
 .dark-theme-second-token-description {
-   color: var(--color-dark-theme-grey)
+   color: var(--color-dark-theme-grey);
+  transition: color 0.15s ease;
 }
 
 .dark-theme-arrow-wrapper:hover {
