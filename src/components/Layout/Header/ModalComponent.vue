@@ -134,7 +134,7 @@ export default {
     z-index: 200;
     display: flex;
     justify-content: center;
-align-items: center;
+    align-items: center;
     width: 100vw;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.1);
@@ -143,11 +143,12 @@ align-items: center;
     .modal__wrap-stop {
         position: relative;
         z-index: 250;
-        background-color: #fff;
-        box-shadow: 0 0 70px rgba(0, 0, 0, 0.1);
-        border-radius: 10px;
+        background-color: var(--color-white);
+        box-shadow: 0px 1px 0px 0px #0F172A;
+        border-radius: 5px;
         pointer-events: auto;
         padding: 30px 40px;
+        border: 2px solid var(--color-black);
     }
 
     .modal__close {
@@ -170,15 +171,18 @@ align-items: center;
       flex-direction: column;
       align-items: center;
     }
-
-    .modal__header {
-        border-bottom: 1px;
-        align-items: center;
-    }
-
-    .modal__footer {
-        border-top: 1px;
-        align-items: center;
-    }
 }
+
+@media (max-width: 768px) {
+  .modal__wrap {
+    width: 110vw;
+  }
+}
+
+@media (max-width: 576px) {
+.modal__wrap {
+    width: 115vw;
+  }
+}
+
 </style>

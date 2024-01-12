@@ -23,7 +23,11 @@
         >Open Modal</ButtonComponent>
         <ModalComponent v-model="showModal">
           <template #header>
-            <div class="app-header__modal-spinner" />
+            <BaseIcon
+              name="modal-example"
+              path="assets/icons/modal/ConfirmationModal.vue"
+              class="app-header__modal-spinner"
+            />
           </template>
 
           <p class="app-header__modal-title1">Waiting for confirmation</p>
@@ -59,6 +63,7 @@ import { mapGetters } from 'vuex';
 import WalletComponent from '@/components/Layout/Header/WalletComponent.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import ModalComponent from '@/components/Layout/Header/ModalComponent.vue';
+import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import Logo from '@/assets/icons/header/IconLogo.vue';
 
 export default {
@@ -68,6 +73,7 @@ export default {
     ButtonComponent,
     ModalComponent,
     Logo,
+    BaseIcon,
   },
   data() {
     return {
@@ -168,6 +174,9 @@ export default {
   color: var(--color-dark-grey);
   font-size: 20px;
   font-weight: 400;
+  margin-left: 118px;
+  margin-right: 118px;
+  margin-bottom: 56px;
 }
 
 .app-header__modal-zap-in-text {
@@ -179,17 +188,45 @@ export default {
 }
 
 .app-header__modal-spinner {
-  position: relative;
-  width: 1em;
-  height: 1em;
-  border: 3px solid rgba(0, 0, 0, 0.3);
-  border-top: 3px solid var(--color-primary); /* Set the spinner color */
-  border-radius: 50%;
-  animation: spin 1s linear infinite; /* Add the spin animation */
+  animation: spin 2s linear infinite;
+  margin-top: 56px;
 }
 
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+@media (max-width: 1024px) {
+  .app-header__modal-tip-text {
+    margin-left: 80px;
+    margin-right: 80px;
+    margin-bottom: 40px;
+  }
+  .app-header__modal-spinner {
+    margin-top: 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-header__modal-tip-text {
+    margin-left: 60px;
+    margin-right: 60px;
+    margin-bottom: 30px;
+  }
+  .app-header__modal-spinner {
+    margin-top: 30px;
+  }
+}
+@media (max-width: 576px) {
+.app-header__modal-tip-text {
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-bottom: 10px;
+  }
+  .app-header__modal-spinner {
+    margin-top: 10px;
+  }
+}
+
 </style>
