@@ -173,15 +173,22 @@ export default {
     }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .modal__wrap {
     width: 110vw;
   }
 }
 
+@media (max-width: 768px) {
+  .modal__wrap {
+    width: 140vw;
+  }
+}
+
 @media (max-width: 576px) {
 .modal__wrap {
-    width: 115vw;
+    width: 155vw;
+    left: -40px;
   }
 }
 
