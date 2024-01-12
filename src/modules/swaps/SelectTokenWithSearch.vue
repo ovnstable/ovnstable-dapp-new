@@ -43,11 +43,11 @@
             @keydown="clearSearchQuery()"
             class="search-input-close-container"
           >
-            <img
-              :src="light ? require('@/assets/icon/swap/search-close.svg') : require('@/assets/icon/light-close.svg')"
-              alt="close icon"
+            <BaseIcon
+              path="assets/icons/common/SearchClose.vue"
               class="search-image-close-image"
-            >
+              :class="light ? 'sidebar__icon-social--light' : ''"
+            />
           </div>
         </div>
         <div class="search-items-container">
@@ -115,9 +115,13 @@
 import { defineComponent } from 'vue';
 import { mapGetters } from 'vuex';
 import { formatMoney, fixedByPrice } from '@/utils/numbers.ts';
+import BaseIcon from '@/components/Icon/BaseIcon.vue';
 
 export default defineComponent({
   name: 'SelectTokenWithSearch',
+  components: {
+    BaseIcon,
+  },
 
   props: {
     tokens: {

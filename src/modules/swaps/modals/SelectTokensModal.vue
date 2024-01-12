@@ -38,16 +38,15 @@
             </label>
           </div>
 
-          <v-spacer />
           <button
             icon
             type="button"
             @click="setShowFunc(false)"
           >
-            <img
-              :src="light ? require('@/assets/icon/swap/search-close.svg') : require('@/assets/icon/light-close.svg')"
-              alt="close icon"
-            >
+            <BaseIcon
+              path="assets/icons/common/SearchClose.vue"
+              :class="light ? 'sidebar__icon-social--light' : ''"
+            />
           </button>
         </div>
 
@@ -99,12 +98,14 @@ import { defineComponent } from 'vue';
 import { mapGetters } from 'vuex';
 import SelectTokenShort from '@/modules/swaps/SelectTokenShort.vue';
 import SelectTokenWithSearch from '@/modules/swaps/SelectTokenWithSearch.vue';
+import BaseIcon from '@/components/Icon/BaseIcon.vue';
 
 export default defineComponent({
   name: 'SelectTokensModal',
   components: {
     SelectTokenWithSearch,
     SelectTokenShort,
+    BaseIcon,
   },
   props: {
     isShow: {

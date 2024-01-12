@@ -11,7 +11,7 @@
                   <div style="position:relative;">
                     Slippage Tolerance
                     <div class="sub-title-icon">
-                      <v-tooltip
+                      <!-- <div
                         color="var(--tooltip-bg)"
                         min-width="50px"
                         min-height="50px"
@@ -49,7 +49,7 @@
                             </div>
                           </div>
                         </div>
-                      </v-tooltip>
+                      </div> -->
                     </div>
                   </div>
                 </div>
