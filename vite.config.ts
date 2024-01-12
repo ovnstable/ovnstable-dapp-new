@@ -57,8 +57,7 @@ export default defineConfig(({ mode }) => {
       },
     },
     define: {
-      __APP_ENV__: JSON.stringify(env.APP_ENV),
-      'process.env': process.env,
+      'process.env': env,
     },
     build: {
       rollupOptions: {
