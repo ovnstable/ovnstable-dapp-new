@@ -22,7 +22,7 @@ export default {
     },
     intervals: {
       type: Array as () => string[],
-      default: () => ['1D', '1W', '1M', '3M', '6M', '1Y', 'ALL'],
+      default: () => ['1D', '1W', '1M', '3M', '6M', '1Y', 'ALL TIME'],
     },
   },
 };
@@ -37,15 +37,15 @@ export default {
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.15s ease;
+    color: var(--color-dark-grey);
 }
 
 .interval-option:hover {
-    background-color: #d8eefd;
+    color: var(--color-black);
 }
 
 .interval-selected {
-    background-color: var(--color-light-blue);
     color: var(--color-black);
+    font-weight: 800;
 }
 </style>

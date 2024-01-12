@@ -41,6 +41,14 @@
       <p class="performance__token-data__hours">past 2 hours</p>
     </div>
   </div>
+  <div class="performance__chain-data">
+    <BaseIcon
+      name="chain"
+      :path=chainIcon
+      class="performance__icon-chain-bottom"
+    />
+    <p class="performance__chain-data-name">{{ chainName }}</p>
+  </div>
 </template>
 <script lang="ts">
 
@@ -90,6 +98,10 @@ export default {
     collateralToken: {
       type: String,
       default: 'WETH',
+    },
+    chainName: {
+      type: String,
+      default: 'Arbitrum',
     },
   },
 
@@ -146,7 +158,7 @@ export default {
   .performance__divider {
     margin-left: 40px;
     margin-right: 40px;
-    border: 1px solid var(--color-black);
+    border: 1px solid var(--color-light-grey);
   }
 
   .performance__payout-data,
@@ -185,6 +197,23 @@ export default {
     font-weight: 500;
   }
 
+  .performance__chain-data {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border-radius: 30px;
+    border: 1px solid var(--color-light-blue);
+    background: var(--color-white);
+    padding: 5px 10px;
+    margin-top: 24px;
+    width: fit-content;
+  }
+
+  .performance__chain-data-name {
+    margin-left: 7px;
+    font-weight: 500;
+    font-size: 13px;
+  }
   @media (max-width: 1024px) {
     .performance__token-data__description {
       margin-left: 20px;
@@ -225,6 +254,14 @@ export default {
     }
     .payout-ago {
       margin-right: 15px;
+    }
+    .performance__chain-data {
+      padding: 2px 5px;
+      margin-top: 20px;
+    }
+
+    .performance__chain-data-name {
+      font-size: 12px;
     }
   }
 

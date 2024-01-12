@@ -1,7 +1,7 @@
 <template>
   <GraphicInterval
     :selectedInterval="currentInterval"
-    :intervals="['1D', '1W', '1M', '3M', '6M', '1Y', 'ALL']"
+    :intervals="['1D', '1W', '1M', '3M', '6M', '1Y', 'ALL TIME']"
     @update:interval="updateInterval"
   />
   <div class="performance__graphic">
