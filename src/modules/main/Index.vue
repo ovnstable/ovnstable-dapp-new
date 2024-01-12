@@ -40,7 +40,7 @@ export default {
   width: 60%;
 }
 .dark-theme-swap-module {
-  background-color: var(--color-dark-theme-dark-blue-2);
+  background-color: var(--color-22);
   transition: background-color 0.15s ease;
 }
 </style>

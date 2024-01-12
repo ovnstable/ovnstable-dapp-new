@@ -1,5 +1,5 @@
 <template>
-  <div :class="['app-wrapper', { 'dark-theme-app-wrapper': isDarkTheme }]">
+  <div :class="['app-wrapper', themeClass]">
     <HeaderBar />
 
     <div :class="['container', { 'dark-theme-container': isDarkTheme }]">
@@ -37,6 +37,15 @@ export default {
       };
     },
   },
+  watch: {
+    isDarkTheme(newValue) {
+      if (newValue) {
+        document.body.classList.add('dark-theme');
+      } else {
+        document.body.classList.remove('dark-theme');
+      }
+    },
+  },
 };
 </script>
 
@@ -53,9 +62,5 @@ export default {
   margin: 0 auto;
   display: flex;
   justify-content: space-between;
-}
-.dark-theme-app-wrapper {
-  background-color: var(--color-dark-theme-background);
-  transition: background-color 0.15s ease;
 }
 </style>

@@ -143,10 +143,10 @@ export default {
       };
     },
     arrowLightThemeColor() {
-      return getComputedStyle(document.documentElement).getPropertyValue('--color-dark-grey').trim();
+      return getComputedStyle(document.documentElement).getPropertyValue('--color-2').trim();
     },
     arrowDarkThemeColor() {
-      return getComputedStyle(document.documentElement).getPropertyValue('--color-dark-theme-grey').trim();
+      return getComputedStyle(document.body).getPropertyValue('--color-19').trim();
     },
     fillColorArrow(): string {
       return this.isDarkTheme ? this.arrowDarkThemeColor : this.arrowLightThemeColor;
@@ -237,7 +237,7 @@ export default {
 <style scoped>
 
 * {
-    color: var(--color-dark-grey);
+    color: var(--color-2);
     font-weight: 500;
     font-size: 14px;
     transition: color 0.15s ease;
@@ -277,7 +277,7 @@ export default {
 
 .slider__token-title,
 .slider__overview-title {
-    color: var(--color-black);
+    color: var(--color-1);
     font-weight: 600;
 }
 
@@ -289,7 +289,7 @@ export default {
 .slider__divider {
   margin-top: 16px;
   margin-bottom: 16px;
-  border: 1px solid var(--color-dark-grey);
+  border: 1px solid var(--color-2);
 }
 
 .slider__apy-info,
@@ -332,7 +332,7 @@ export default {
 
 .slider__second-token-title-text {
     margin-left:10px;
-    color: var(--color-black);
+    color: var(--color-1);
     font-size: 20px;
     font-weight: 600;
 }
@@ -369,7 +369,7 @@ export default {
 .dark-theme-token-title,
 .dark-theme-overview-title,
 .dark-theme-second-token-title-text {
-  color: var(--color-white);
+  color: var(--color-5);
   transition: color 0.15s ease;
 }
 
@@ -382,12 +382,12 @@ export default {
 .data-growth-number,
 .dark-theme-payout-title,
 .dark-theme-second-token-description {
-   color: var(--color-dark-theme-grey);
+  color: var(--color-19);
   transition: color 0.15s ease;
 }
 
 .dark-theme-arrow-wrapper:hover {
-  background-color: var(--color-dark-theme-dark-blue);
+  background-color: var(--color-21);
   transition: background-color 0.15s ease;
 }
 .dark-theme-arrow-wrapper {

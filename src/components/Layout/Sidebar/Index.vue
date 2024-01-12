@@ -142,10 +142,10 @@ export default {
       };
     },
     iconLightThemeColor() {
-      return getComputedStyle(document.documentElement).getPropertyValue('--color-dark-grey').trim();
+      return getComputedStyle(document.documentElement).getPropertyValue('--color-2').trim();
     },
     iconDarkThemeColor() {
-      return getComputedStyle(document.documentElement).getPropertyValue('--color-dark-theme-grey').trim();
+      return getComputedStyle(document.body).getPropertyValue('--color-19').trim();
     },
     fillColorIcon():string {
       return this.isDarkTheme ? this.iconDarkThemeColor : this.iconLightThemeColor;
@@ -171,7 +171,7 @@ export default {
 }
 
 .sidebar__text-top {
-  color: var(--color-black);
+  color: var(--color-1);
   font-size: 17px;
   font-weight: 600;
   margin-top:20px;
@@ -193,7 +193,7 @@ export default {
 
 .sidebar__divider-top {
   margin-top: 20px;
-  border: 1px solid var(--color-black);
+  border: 1px solid var(--color-1);
   transition: border 0.15s ease;
 }
 
@@ -203,7 +203,7 @@ export default {
 
 .sidebar__text-bottom {
   margin-top: 10px;
-  color: var(--color-dark-grey);
+  color: var(--color-2);
   font-size: 15px;
   font-weight: 600;
 }
@@ -226,7 +226,7 @@ export default {
 .sidebar__divider-bottom {
   margin-top: 20px;
   margin-bottom: 20px;
-  border: 1px solid var(--color-dark-grey);
+  border: 1px solid var(--color-2);
 }
 
 .sidebar__icons-bottom {
@@ -243,9 +243,9 @@ export default {
   margin-left: 40px;
   padding: 0px 14px 0px 6px;
   border-radius: 12px;
-  border: 1px solid var( --color-dark-grey);
+  border: 1px solid var( --color-2);
   background: var(--4, #FFF);
-  color: var( --color-dark-grey);
+  color: var( --color-2);
   text-align: center;
   font-size: 14px;
 }
@@ -256,15 +256,15 @@ export default {
 }
 
 .dark-theme-text-top {
-  color: var(--color-white);
+  color: var(--color-5);
   transition: color 0.15s ease;
 }
 .dark-theme-divider-top {
-  border: 1px solid var(--color-white);
+  border: 1px solid var(--color-5);
   transition: border 0.15s ease;
 }
 .dark-theme-text-bottom {
-  color: var(--color-dark-theme-grey);
+  color: var(--color-19);
   transition: color 0.15s ease;
 }
 .dark-theme-text-bottom:hover {
@@ -272,13 +272,13 @@ export default {
   transition: color 0.15s ease;
 }
 .dark-theme-divider-bottom {
-  color: var(--color-dark-theme-grey);
+  color: var(--color-19);
   transition: color 0.15s ease;
 }
 .dark-theme-switch-language {
-  border: 1px solid var(--color-dark-theme-grey);
-  background: var(--color-black);
-  color: var(--color-dark-theme-grey);
+  border: 1px solid var(--color-19);
+  background: var(--color-1);
+  color: var(--color-19);
 }
 
 
