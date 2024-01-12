@@ -11,9 +11,11 @@ const development = MODE === 'development';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  console.log(process, 'PROCESS');
   const env = loadEnv(mode, process.cwd(), '');
 
+  console.log(mode, 'mode');
+  console.log(process.cwd(), 'process.cwd()');
+  console.log(env, 'env');
   return {
 
     plugins: [
