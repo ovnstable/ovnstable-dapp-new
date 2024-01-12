@@ -24,6 +24,7 @@
       >
         <swiper-slide
           v-for="(slide, index) in slides"
+          :ref="slideRef"
           :swiper-ref="swiperInstance"
           :key="index"
         >
@@ -92,6 +93,7 @@
   </div>
 </template>
 <script lang="ts">
+import { ref } from 'vue';
 
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { Swiper, SwiperSlide } from 'swiper/vue';
@@ -107,6 +109,7 @@ export default {
   data() {
     return {
       currentIndex: 0,
+      slideRef: ref(null) as any,
       slides: [
         {
           iconFirstToken: 'usdPlus',
