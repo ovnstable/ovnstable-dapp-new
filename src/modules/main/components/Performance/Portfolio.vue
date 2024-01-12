@@ -6,6 +6,7 @@
         :assets="dataStrategies.assets"
         :type="dataStrategies.type"
         :tokenAmountInCirculation="dataStrategies.tokenAmountInCirculation"
+        :collateralToken="dataStrategies.collateralToken"
       />
       <PortfolioStrategies
         :tokenName="dataPortfolio.tokenName"
@@ -28,11 +29,11 @@ export default {
   data() {
     return {
       dataPortfolio: {
-        tokenName: 'USD+',
+        tokenName: 'ETH+',
         type: 'portfolio',
         assets: [
           {
-            tokenNameAsset: 'USDC',
+            tokenNameAsset: 'WETH (delta-neutral)',
             tokenImagePath: 'assets/icons/currencies/UsdPlus.vue',
             safetyScore: 'VERY HIGH',
             NAV: 1685335.39,
@@ -41,7 +42,7 @@ export default {
             percentPortfolio: ' 81.5%',
           },
           {
-            tokenNameAsset: 'DAI',
+            tokenNameAsset: 'WETH',
             tokenImagePath: 'assets/icons/currencies/WusdPlus.vue',
             safetyScore: 'VERY HIGH',
             NAV: 192378.56,
@@ -52,29 +53,30 @@ export default {
         ],
       },
       dataStrategies: {
-        tokenName: 'USD+',
+        tokenName: 'ETH+',
         type: 'strategies',
         assets: [
           {
-            strategyNameAsset: 'Synapse USDC',
+            strategyNameAsset: 'AAVE',
             strategyImagePath: 'assets/icons/strategies/SynapseStrategy.vue',
-            netAssetValue: 826931.41,
-            liquidationValue: 826665.69,
+            netAssetValue: 179.9790,
+            liquidationValue: 179.9790,
             percentPortfolioPath: 'assets/icons/common/PercentPortfolio.vue',
             tokenLink: 'https://arbiscan.io/token/0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
-            percentPortfolio: '40%',
+            percentPortfolio: '95.9%',
           },
           {
-            strategyNameAsset: 'Dodo USDC v2',
+            strategyNameAsset: 'ETS',
             strategyImagePath: 'assets/icons/strategies/SynapseStrategy.vue',
-            netAssetValue: 413481.02,
-            liquidationValue: 413232.93,
+            netAssetValue: 0.0360,
+            liquidationValue: 0.0360,
             percentPortfolioPath: 'assets/icons/common/PercentPortfolio.vue',
             tokenLink: 'https://arbiscan.io/token/0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
-            percentPortfolio: '20%',
+            percentPortfolio: '5.3%',
           },
         ],
-        tokenAmountInCirculation: 65000,
+        tokenAmountInCirculation: 180.0429,
+        collateralToken: 'WETH',
       },
     };
   },
