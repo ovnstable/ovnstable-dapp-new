@@ -5,6 +5,8 @@ import router from '@/router/index.ts';
 import store from '@/store/index.ts';
 import App from '@/App.vue';
 
+console.log(process, 'PROCESS');
+
 const app = createApp(App);
 app.config.globalProperties.$store = store;
 
