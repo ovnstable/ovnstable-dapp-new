@@ -104,11 +104,7 @@ export default {
     flex-direction: row;
     align-self: flex-start;
     justify-content: center;
-    border-radius: 20px;
-    border: 1px solid var(--color-black);
     background: var(--color-white);
-    box-shadow: 0px 1px 0px 0px var(--color-black);
-    padding: 20px 25px;
     max-width: calc(100% - 40px);
   }
 

@@ -26,9 +26,18 @@ export default {
 
 <style>
 .performance {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border-radius: 20px;
+  border: 1px solid var(--color-black);
+  background: var(--color-white);
+  box-shadow: 0px 1px 0px 0px var(--color-black);
+  padding-top: 40px;
+  padding-left: 25px;
+  padding-right: 25px;
+  padding-bottom: 20px;
+  width: calc(100% - 40px);
 }
 .performance__token-data,
 .performance__graphics,

@@ -85,9 +85,6 @@
         </div>
       </div>
     </div>
-    <div class="performance__portfolio-strategies-piechart">
-      <p>Piechart</p>
-    </div>
   </div>
 </template>
 
@@ -224,9 +221,6 @@ export default {
     font-weight: 400;
 }
 
-.performance__portfolio-strategies-piechart {
-    margin-left: 60px;
-}
 
 .performance__portfolio-strategy-token-img,
 .performance__portfolio-strategy-token-link,
@@ -309,9 +303,6 @@ export default {
   .nav {
     margin-right: 30px;
   }
-  .performance__portfolio-strategies-piechart {
-    margin-left: 20px;
-  }
 
   .performance__portfolio-total {
     max-width: calc(100% - 160px);
@@ -363,9 +354,7 @@ export default {
   .nav {
     margin-right: 10px;
   }
-  .performance__portfolio-strategies-piechart {
-    margin-left: 20px;
-  }
+
   .performance__portfolio-strategy-portfolio-percent {
     display: none;
   }
@@ -417,9 +406,7 @@ export default {
     .nav {
         margin-right: 10px;
     }
-    .performance__portfolio-strategies-piechart {
-        margin-left: 20px;
-    }
+
     .performance__portfolio-strategies-specification {
         font-size: 8px;
     }

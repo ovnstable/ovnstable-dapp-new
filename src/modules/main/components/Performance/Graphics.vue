@@ -37,16 +37,12 @@ export default {
 </script>
 
 <style scoped>
-  .performance__graphics {
+.performance__graphics {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  border-radius: 20px;
-  border: 1px solid var(--color-black);
   background: var(--color-white);
-  box-shadow: 0px 1px 0px 0px var(--color-black);
-  padding: 14px 20px;
   width: calc(100% - 40px);
 }
 
