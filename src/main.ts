@@ -1,11 +1,12 @@
+/* eslint-disable import/first */
 import '@/styles/main.css';
 
 import { createApp } from 'vue';
+
+console.log(process, 'PROCESS');
 import router from '@/router/index.ts';
 import store from '@/store/index.ts';
 import App from '@/App.vue';
-
-console.log(process, 'PROCESS');
 
 const app = createApp(App);
 app.config.globalProperties.$store = store;
