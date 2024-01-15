@@ -46,7 +46,6 @@ export default {
     width: 100%;
 }
 .performance__graphics,
-.performance__portfolio,
 .performance__payouts {
     margin-top: 20px;
 }

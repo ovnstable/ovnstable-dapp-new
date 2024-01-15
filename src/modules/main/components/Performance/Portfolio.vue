@@ -12,6 +12,7 @@
         :tokenName="dataPortfolio.tokenName"
         :assets="dataPortfolio.assets"
         :type="dataPortfolio.type"
+        :collateralToken="dataPortfolio.collateralToken"
       />
 
     </div>
@@ -34,23 +35,33 @@ export default {
         assets: [
           {
             tokenNameAsset: 'WETH (delta-neutral)',
-            tokenImagePath: 'assets/icons/currencies/UsdPlus.vue',
+            tokenImagePath: 'assets/icons/currencies/WSTEth.vue',
             safetyScore: 'VERY HIGH',
-            NAV: 1685335.39,
+            NAV: 179.979,
             percentPortfolioPath: 'assets/icons/common/PercentPortfolio.vue',
             tokenLink: 'https://arbiscan.io/token/0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
             percentPortfolio: ' 81.5%',
           },
           {
             tokenNameAsset: 'WETH',
-            tokenImagePath: 'assets/icons/currencies/WusdPlus.vue',
+            tokenImagePath: 'assets/icons/currencies/WSTEth.vue',
             safetyScore: 'VERY HIGH',
-            NAV: 192378.56,
+            NAV: 0.0360,
+            percentPortfolioPath: 'assets/icons/common/PercentPortfolio.vue',
+            tokenLink: 'https://arbiscan.io/token/0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
+            percentPortfolio: '9.3%',
+          },
+          {
+            tokenNameAsset: 'wstETH',
+            tokenImagePath: 'assets/icons/currencies/WSTEth.vue',
+            safetyScore: 'VERY HIGH',
+            NAV: 0.0279,
             percentPortfolioPath: 'assets/icons/common/PercentPortfolio.vue',
             tokenLink: 'https://arbiscan.io/token/0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
             percentPortfolio: '9.3%',
           },
         ],
+        collateralToken: 'WETH',
       },
       dataStrategies: {
         tokenName: 'ETH+',
@@ -58,7 +69,6 @@ export default {
         assets: [
           {
             strategyNameAsset: 'AAVE',
-            strategyImagePath: 'assets/icons/strategies/SynapseStrategy.vue',
             netAssetValue: 179.9790,
             liquidationValue: 179.9790,
             percentPortfolioPath: 'assets/icons/common/PercentPortfolio.vue',
@@ -67,12 +77,19 @@ export default {
           },
           {
             strategyNameAsset: 'ETS',
-            strategyImagePath: 'assets/icons/strategies/SynapseStrategy.vue',
             netAssetValue: 0.0360,
             liquidationValue: 0.0360,
             percentPortfolioPath: 'assets/icons/common/PercentPortfolio.vue',
             tokenLink: 'https://arbiscan.io/token/0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
             percentPortfolio: '5.3%',
+          },
+          {
+            strategyNameAsset: 'Pendle wstETH',
+            netAssetValue: 0.0279,
+            liquidationValue: 0.0279,
+            percentPortfolioPath: 'assets/icons/common/PercentPortfolio.vue',
+            tokenLink: 'https://arbiscan.io/token/0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
+            percentPortfolio: '2.6%',
           },
         ],
         tokenAmountInCirculation: 180.0429,
