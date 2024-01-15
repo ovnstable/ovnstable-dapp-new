@@ -5,6 +5,7 @@ import { defineConfig, loadEnv } from 'vite';
 import compression from 'vite-plugin-compression';
 import vue from '@vitejs/plugin-vue';
 import nodePolyfills from 'rollup-plugin-polyfill-node';
+import svgLoader from 'vite-svg-loader';
 
 const MODE = process.env.NODE_ENV;
 const development = MODE === 'development';
@@ -13,13 +14,11 @@ const development = MODE === 'development';
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
 
-  console.log(mode, 'mode');
-  console.log(process.cwd(), 'process.cwd()');
-  console.log(env, 'env');
   return {
 
     plugins: [
       vue(),
+      svgLoader(),
       (compression as any)({
         ext: '.br',
         algorithm: 'brotliCompress',

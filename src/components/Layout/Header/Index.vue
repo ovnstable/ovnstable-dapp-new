@@ -3,7 +3,7 @@
     <div class="app-header__container">
       <div class="app-header__content">
         <div class="app-header__content__logo">
-          <Logo />
+          <BaseIcon name="IconLogo" />
           <h1>
             OVERNIGHT
           </h1>
@@ -29,14 +29,14 @@
 import { mapGetters } from 'vuex';
 import WalletComponent from '@/components/Layout/Header/WalletComponent.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
-import Logo from '@/assets/icons/header/IconLogo.vue';
+import BaseIcon from '@/components/Icon/BaseIcon.vue';
 
 export default {
   name: 'HeaderBar',
   components: {
     WalletComponent,
     ButtonComponent,
-    Logo,
+    BaseIcon,
   },
   computed: {
     ...mapGetters('walletAction', ['walletConnected']),

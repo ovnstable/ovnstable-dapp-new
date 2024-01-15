@@ -87,8 +87,7 @@
               >
                 <div class="change-swap-image rotate">
                   <BaseIcon
-                    name="swap"
-                    path="assets/icons/swap/ChangeSwapVector.vue"
+                    name="ChangeSwapVector"
                   />
                 </div>
               </div>
@@ -165,8 +164,7 @@
         >
           <div class="slippage-info-title">
             <BaseIcon
-              name="warn"
-              path="assets/icons/swap/WarnInfoIcon.vue"
+              name="WarnInfoIcon"
               style="margin-right: 2px"
             />
             20-80% of the displayed gas fee on zkSync will be refunded
@@ -180,8 +178,7 @@
           <div>
             <BaseIcon
               class="alert-icon mr-2"
-              name="alert"
-              path="assets/icons/swap/AlertCircleOutline.vue"
+              name="AlertCircleOutline"
             />
           </div>
           <div>

@@ -44,7 +44,7 @@
             class="search-input-close-container"
           >
             <BaseIcon
-              path="assets/icons/common/SearchClose.vue"
+              name="SearchClose"
               class="search-image-close-image"
               :class="light ? 'sidebar__icon-social--light' : ''"
             />

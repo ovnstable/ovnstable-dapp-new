@@ -8,9 +8,8 @@
       tabindex="0"
     >
       <BaseIcon
-        name="arrowLeft"
-        path="assets/icons/common/ArrowLeft.vue"
         class="slider__arrow-icon"
+        name="ArrowLeft"
       />
     </div>
 
@@ -31,8 +30,7 @@
           <div class="slider__info">
             <div class="slider__token-overview">
               <BaseIcon
-                name={{slide.iconFirstToken}}
-                :path="slide.iconPathFirstToken"
+                :name="slide.iconPathFirstToken"
               />
               <p class="slider__token-title">{{ slide.titleFirstToken }}</p>
               <p class="slider__overview-title">OVERVIEW</p>
@@ -65,8 +63,7 @@
             <div class="slider__second-token-overview">
               <div class="slider__second-token-title">
                 <BaseIcon
-                  name={{slide.iconSecondToken}}
-                  :path="slide.iconPathSecondToken"
+                  :name="slide.iconPathSecondToken"
                 />
                 <p class="slider__second-token-title-text">{{ slide.titleSecond }}</p>
               </div>
@@ -85,8 +82,7 @@
       tabindex="0"
     >
       <BaseIcon
-        name="arrowRight"
-        path="assets/icons/common/ArrowRight.vue"
+        name="ArrowRight"
         class="slider__arrow-icon"
       />
     </div>
@@ -113,7 +109,7 @@ export default {
       slides: [
         {
           iconFirstToken: 'usdPlus',
-          iconPathFirstToken: 'assets/icons/currencies/UsdPlus.vue',
+          iconPathFirstToken: 'UsdPlus',
           titleFirstToken: 'USD+',
           apyPercent: '10.4',
           apyGrowth: '5',
@@ -122,13 +118,13 @@ export default {
           lastPayoutTime: '05:02',
           lastPayoutText: 'hours ago',
           iconSecondToken: 'WusdPlus',
-          iconPathSecondToken: 'assets/icons/currencies/WusdPlus.vue',
+          iconPathSecondToken: 'WusdPlus',
           titleSecond: 'WUSD+',
           descriptionSecondToken: 'An index-adjusted wrapper for USD+. Your wUSD+ balance won\'t increase over time. When wUSD+ will unwrap, you receive USD+ based on the latest index.',
         },
         {
           iconFirstToken: 'usdPlus',
-          iconPathFirstToken: 'assets/icons/currencies/UsdPlus.vue',
+          iconPathFirstToken: 'UsdPlus',
           titleFirstToken: 'USD+_2',
           apyPercent: '30',
           apyGrowth: '57',
@@ -137,13 +133,13 @@ export default {
           lastPayoutTime: '057:02',
           lastPayoutText: 'hours ago',
           iconSecondToken: 'WusdPlus',
-          iconPathSecondToken: 'assets/icons/currencies/WusdPlus.vue',
+          iconPathSecondToken: 'WusdPlus',
           titleSecond: 'WUSD+_2',
           descriptionSecondToken: 'An index-adjusted wrapper for USD+. Your wUSD+ balance won\'t increase over time. When wUSD+ will unwrap, you receive USD+ based on the latest index.',
         },
         {
           iconFirstToken: 'usdPlus',
-          iconPathFirstToken: 'assets/icons/currencies/UsdPlus.vue',
+          iconPathFirstToken: 'UsdPlus',
           titleFirstToken: 'USD+_3',
           apyPercent: '10',
           apyGrowth: '517',
@@ -152,7 +148,7 @@ export default {
           lastPayoutTime: '0:02',
           lastPayoutText: 'hours ago',
           iconSecondToken: 'WusdPlus',
-          iconPathSecondToken: 'assets/icons/currencies/WusdPlus.vue',
+          iconPathSecondToken: 'WusdPlus',
           titleSecond: 'WUSD+_3',
           descriptionSecondToken: 'An index-adjusted wrapper for USD+. Your wUSD+ balance won\'t increase over time. When wUSD+ will unwrap, you receive USD+ based on the latest index.',
         },

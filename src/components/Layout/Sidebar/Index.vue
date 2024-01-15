@@ -84,8 +84,7 @@
           aria-label="Twitter"
         >
           <BaseIcon
-            name="twitter"
-            path="assets/icons/social/IconTwitter.vue"
+            name="IconTwitter"
             class="sidebar__icon-social"
           />
         </a>
@@ -96,8 +95,7 @@
           aria-label="Discord"
         >
           <BaseIcon
-            name="discord"
-            path="assets/icons/social/IconDiscord.vue"
+            name="IconDiscord"
             class="sidebar__icon-social"
           />
         </a>

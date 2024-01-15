@@ -44,7 +44,7 @@
             @click="setShowFunc(false)"
           >
             <BaseIcon
-              path="assets/icons/common/SearchClose.vue"
+              name="SearchClose"
               :class="light ? 'sidebar__icon-social--light' : ''"
             />
           </button>

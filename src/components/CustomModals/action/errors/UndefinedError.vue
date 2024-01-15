@@ -4,8 +4,7 @@
   >
     <div class="loading-img">
       <BaseIcon
-        name="circle"
-        path="assets/icons/common/ErrorCircle.vue"
+        name="ErrorCircle"
       />
     </div>
 

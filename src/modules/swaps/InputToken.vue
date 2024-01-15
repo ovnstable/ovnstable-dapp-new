@@ -34,8 +34,7 @@
                 </div>
                 <div class="select-token-with-token-item-img">
                   <BaseIcon
-                    name="select-token"
-                    path="assets/icons/swap/TokenSelectClosed.vue"
+                    name="TokenSelectClosed"
                   />
                 </div>
               </div>
@@ -51,8 +50,7 @@
               </div>
               <div class="select-token-item-img">
                 <BaseIcon
-                  name="select-token"
-                  path="assets/icons/swap/TokenSelectClosed.vue"
+                  name="TokenSelectClosed"
                 />
               </div>
             </div>
@@ -69,8 +67,7 @@
             class="remove-button"
           >
             <BaseIcon
-              name="remove-token"
-              path="assets/icons/swap/RemoveToken.vue"
+              name="RemoveToken"
             />
           </div>
         </div>
@@ -105,8 +102,7 @@
                 class="select-token-balance-img"
               >
                 <BaseIcon
-                  name="wallet-active"
-                  path="assets/icons/swap/WalletActive.vue"
+                  name="WalletActive"
                 />
               </div>
               <div
@@ -114,8 +110,7 @@
                 class="select-token-balance-img"
               >
                 <BaseIcon
-                  name="wallet-icon"
-                  path="assets/icons/swap/WalletIcon.vue"
+                  name="WalletIcon"
                 />
               </div>
               <div class="select-token-balance-text">

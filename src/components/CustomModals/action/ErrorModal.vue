@@ -12,8 +12,7 @@
           class="ml-auto"
         >
           <BaseIcon
-            name="discord"
-            path="assets/icons/common/SearchClose.vue"
+            name="SearchClose"
             class="sidebar__icon-social"
             :class="light ? 'sidebar__icon-social--light' : ''"
           />

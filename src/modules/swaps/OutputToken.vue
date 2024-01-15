@@ -43,7 +43,7 @@
                   class="select-token-with-token-item-img"
                 >
                   <BaseIcon
-                    path="assets/icons/swap/TokenSelectClosed.vue"
+                    name="TokenSelectClosed"
                   />
                 </div>
               </div>
@@ -59,7 +59,7 @@
               </div>
               <div class="select-token-item-img">
                 <BaseIcon
-                  path="assets/icons/swap/TokenSelectClosed.vue"
+                  name="TokenSelectClosed"
                 />
               </div>
             </div>
@@ -76,7 +76,7 @@
             class="remove-button"
           >
             <BaseIcon
-              path="assets/icons/swap/RemoveToken.vue"
+              name="RemoveToken"
             />
           </div>
         </div>
@@ -102,7 +102,7 @@
             <div class="select-token-balance-container">
               <div class="select-token-balance-img">
                 <BaseIcon
-                  path="assets/icons/swap/WalletIcon.vue"
+                  name="WalletIcon"
                 />
               </div>
               <div class="select-token-balance-text">
@@ -139,7 +139,7 @@
               @keypress="lockProportionFunc(false, tokenInfo)"
             >
               <BaseIcon
-                path="assets/icons/swap/ProportLockClose.vue"
+                name="ProportLockClose"
               />
             </div>
             <div
@@ -148,7 +148,7 @@
               @keypress="lockProportionFunc(false, tokenInfo)"
             >
               <BaseIcon
-                path="assets/icons/swap/ProportLockOpen.vue"
+                name="ProportLockOpen"
               />
             </div>
           </div>
