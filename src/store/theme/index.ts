@@ -14,36 +14,37 @@ const getters = {
 const actions = {
 
   async switchTheme({ commit, dispatch, getters }: any) {
-    let isLight = false;
+    const themeType = document.documentElement.getAttribute('data-theme');
 
-    if (getters.light === null || getters.light === undefined) {
-      isLight = true;
+    console.log(themeType, '---switchTheme');
+    if (themeType === 'light') {
+      document.documentElement.setAttribute('data-theme', 'dark');
     } else {
-      isLight = !getters.light;
+      document.documentElement.setAttribute('data-theme', 'light');
     }
+    await commit('setLight', themeType === 'light');
 
-    localStorage.setItem('light_theme_on', JSON.stringify(isLight));
-
-    await commit('setLight', isLight);
-    await dispatch('applyColorVariables');
+    // await dispatch('applyColorVariables');
     if (getters.onboard) {
-      getters.onboard.state.actions.updateTheme(isLight ? 'light' : 'dark');
+      getters.onboard.state.actions.updateTheme(themeType ? 'light' : 'dark');
     }
   },
 
   async initTheme({ commit, getters }: any) {
-    let isLight = localStorage.getItem('light_theme_on');
+    console.log('---initTheme');
+    const themeType = document.documentElement.getAttribute('data-theme');
 
-    if (isLight === null || isLight === undefined) {
-      isLight = 'true';
+    console.log(themeType, '---isLight');
+    if (themeType === 'light') {
+      document.documentElement.setAttribute('data-theme', 'dark');
     } else {
-      isLight = isLight ? 'true' : '';
+      document.documentElement.setAttribute('data-theme', 'light');
     }
 
-    await commit('setLight', isLight);
+    await commit('setLight', themeType === 'light');
 
     if (getters.onboard) {
-      getters.onboard.state.actions.updateTheme(isLight ? 'light' : 'dark');
+      getters.onboard.state.actions.updateTheme(themeType === 'light' ? 'light' : 'dark');
     }
   },
 };

@@ -1,44 +1,43 @@
-/* color palette from <https://github.com/vuejs/theme> */
-:root {
-  --text-color: ##0f172a;
-}
-
 /* semantic color variables for this project */
-:root {
-  --color-text: var(--text-color);
-  --color-black: #0f172a;
-  --color-dark-grey: #687386;
-  --color-light-grey: #bac0cb;
-  --color-light-grey-1: #eeeff2;
-  --color-white: #ffffff;
-  --color-dark-white: #f4fafe;
-  --color-light-blue: #a8d8fa;
-  --color-blue: #0497ec;
-  --color-red: #ff1100;
-  --color-pink: #ff6b6c;
-  --color-green: #619300;
-  --color-light-green: #91b845;
-  --color-very-light-green: #bee179;
-  --color-yellow: #ffba00;
-  --color-light-yellow: #ffde76;
-  --bg-color: #e3f2fd;
+
+:root, [data-theme="light"] {
+  --color-1: #0f172a;
+  --color-2: #687386;
+  --color-3: #bac0cb;
+  --color-4: #eeeff2;
+  --color-5: #ffffff;
+  --color-6: #f4fafe;
+  --color-7: #a8d8fa;
+  --color-8: #0497ec;
+  --color-9: #ff1100;
+  --color-10: #ff6b6c;
+  --color-11: #619300;
+  --color-12: #91b845;
+  --color-13: #bee179;
+  --color-14: #ffba00;
+  --color-15: #ffde76;
+  --color-16: #e3f2fd;
   --section-gap: 160px;
 }
 
-/* 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-background: var(--vt-c-black);
-    --color-background-soft: var(--vt-c-black-soft);
-    --color-background-mute: var(--vt-c-black-mute);
-
-    --color-border: var(--vt-c-divider-dark-2);
-    --color-border-hover: var(--vt-c-divider-dark-1);
-
-    --color-heading: var(--vt-c-text-dark-1);
-    --color-text: var(--vt-c-text-dark-2);
-  }
-} */
+[data-theme="dark"] {
+  --color-1: #eeeff2;
+  --color-2: #bac0cb;
+  --color-3: #d1d6de;
+  --color-4: #0f172a;
+  --color-5: #333c3f;
+  --color-6: #2a3245;
+  --color-7: #192235;
+  --color-8: #0497ec;
+  --color-9: #ff1100;
+  --color-10: #ff6b6c;
+  --color-11: #619300;
+  --color-12: #91b845;
+  --color-13: #bee179;
+  --color-14: #ffba00;
+  --color-15: #ffde76;
+  --color-16: #e3f2fd;
+}
 
 *,
 *::before,

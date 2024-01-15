@@ -24,6 +24,7 @@ export default {
   async mounted() {
     await this.$store.dispatch('web3/initWeb3');
     await this.$store.dispatch('walletAction/dappInitWalletConnect');
+    await this.$store.dispatch('theme/initTheme');
   },
 };
 </script>

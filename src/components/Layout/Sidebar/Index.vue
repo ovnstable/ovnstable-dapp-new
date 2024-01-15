@@ -133,7 +133,8 @@ export default {
   },
   methods: {
     toggleTheme() {
-      this.isDarkTheme = !this.isDarkTheme;
+      console.log('-toggleTheme');
+      this.$store.dispatch('theme/switchTheme');
     },
   },
 };
