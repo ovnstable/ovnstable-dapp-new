@@ -4,13 +4,13 @@ export default {
   loadTokenImage(item: any) {
     try {
       if (item.symbol.includes(' (OLD)')) {
-        return new URL(`../assets/currencies/select/${
+        return new URL(`../assets/icons/currencies/select/${
           item.symbol.replace(' (OLD)', '')
         }.webp`, import.meta.url);
       }
-      return new URL(`../assets/currencies/select/${item.symbol}.webp`, import.meta.url);
+      return new URL(`../assets/icons/currencies/select/${item.symbol}.webp`, import.meta.url);
     } catch (error) {
-      return new URL('../assets/currencies/undefined.svg', import.meta.url);
+      return new URL('../assets/icons/currencies/undefined.svg', import.meta.url);
     }
   },
 
@@ -29,15 +29,15 @@ export default {
   getOvnCoinBaseImagePath(token: any) {
     try {
       if (token.symbol === 'ETH+') {
-        return new URL(`../assets/currencies/stablecoins/${
+        return new URL(`../assets/icons/currencies/stablecoins/${
           token.symbol
         }.svg`, import.meta.url);
       }
-      return new URL(`../assets/currencies/stablecoins/${
+      return new URL(`../assets/icons/currencies/stablecoins/${
         token.symbol
       }.png`, import.meta.url);
     } catch (error) {
-      return new URL('../assets/currencies/undefined.svg', import.meta.url);
+      return new URL('../assets/icons/currencies/undefined.svg', import.meta.url);
     }
   },
   async loadCoingeckoOvernightTokenImage(symbol: any) {
