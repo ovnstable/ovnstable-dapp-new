@@ -2,12 +2,15 @@
   <div class="app-header">
     <div class="app-header__container">
       <div class="app-header__content">
-        <div class="app-header__content__logo">
+        <router-link
+          to="/"
+          class="app-header__content__logo"
+        >
           <BaseIcon name="IconLogo" />
           <h1>
             OVERNIGHT
           </h1>
-        </div>
+        </router-link>
         <ButtonComponent
           v-if="walletConnected"
           @click="disconnectWallet"
