@@ -9,6 +9,11 @@ const router = createRouter({
       name: 'main',
       component: import('@/views/Main/Index.vue'),
     },
+    {
+      path: '/performance',
+      name: 'performance',
+      component: import('@/views/Performance/Index.vue'),
+    },
   ],
 });
 

@@ -15,7 +15,7 @@
       <div class="sidebar__divider-top" />
 
       <router-link
-        to="/money-market"
+        to="/performance"
         class="sidebar__text-top"
       >Money market</router-link>
 
@@ -155,7 +155,8 @@ export default {
   margin-top:20px;
 }
 
-.sidebar__text-top:hover {
+.sidebar__text-top:hover,
+.sidebar__text-bottom:hover {
   cursor: pointer;
   color: #7f8695;
   transition: color 0.15s ease
@@ -182,13 +183,6 @@ export default {
   color: var(--color-dark-grey);
   font-size: 15px;
   font-weight: 600;
-}
-
-.sidebar__text-bottom:hover {
-  color: #050a17;
-  cursor: pointer;
-  transition: color .15s ease;
-
 }
 
 .sidebar__text-bottom:first-child {
