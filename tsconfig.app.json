@@ -5,6 +5,7 @@
   "compilerOptions": {
     "composite": true,
     "noEmit": true,
+    "allowJs": true,
     "allowImportingTsExtensions": true,
     "baseUrl": ".",
     "types": ["node"],

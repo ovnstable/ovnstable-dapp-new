@@ -1,6 +1,7 @@
-import './assets/main.css';
+import '@/styles/main.css';
 
 import { createApp } from 'vue';
+
 import router from '@/router/index.ts';
 import store from '@/store/index.ts';
 import App from '@/App.vue';
