@@ -150,13 +150,13 @@ export default {
 }
 
 .sidebar__text-top {
-  color: var(--color-4);
+  color: var(--color-2);
   font-size: 17px;
   font-weight: 600;
   margin-top:20px;
 
   [data-theme="dark"] & {
-      color: var(--color-2);
+      color: var(--color-4);
   }
 }
 

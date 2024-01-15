@@ -14,37 +14,43 @@ const getters = {
 const actions = {
 
   async switchTheme({ commit, dispatch, getters }: any) {
-    const themeType = document.documentElement.getAttribute('data-theme');
+    const storageType = localStorage.getItem('theme-type');
+    const isLightTheme = !storageType || storageType === 'light';
 
-    console.log(themeType, '---switchTheme');
-    if (themeType === 'light') {
+    console.log(storageType, isLightTheme, '---switchTheme');
+    if (isLightTheme) {
       document.documentElement.setAttribute('data-theme', 'dark');
+      localStorage.setItem('theme-type', 'dark');
     } else {
       document.documentElement.setAttribute('data-theme', 'light');
+      localStorage.setItem('theme-type', 'light');
     }
-    await commit('setLight', themeType === 'light');
+
+    await commit('setLight', isLightTheme);
 
     // await dispatch('applyColorVariables');
     if (getters.onboard) {
-      getters.onboard.state.actions.updateTheme(themeType ? 'light' : 'dark');
+      getters.onboard.state.actions.updateTheme(isLightTheme ? 'light' : 'dark');
     }
   },
 
   async initTheme({ commit, getters }: any) {
     console.log('---initTheme');
-    const themeType = document.documentElement.getAttribute('data-theme');
+    const storageType = localStorage.getItem('theme-type');
+    const isLightTheme = !storageType || storageType === 'light';
 
-    console.log(themeType, '---isLight');
-    if (themeType === 'light') {
-      document.documentElement.setAttribute('data-theme', 'dark');
-    } else {
+    console.log(storageType, '---storageType');
+    if (isLightTheme) {
       document.documentElement.setAttribute('data-theme', 'light');
+      localStorage.setItem('theme-type', 'light');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'dark');
     }
 
-    await commit('setLight', themeType === 'light');
+    await commit('setLight', isLightTheme);
 
     if (getters.onboard) {
-      getters.onboard.state.actions.updateTheme(themeType === 'light' ? 'light' : 'dark');
+      getters.onboard.state.actions.updateTheme(isLightTheme ? 'light' : 'dark');
     }
   },
 };

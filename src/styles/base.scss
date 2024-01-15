@@ -52,7 +52,7 @@
 
 body {
   min-height: 100vh;
-  background-color: var(--color-1);
+  background-color: var(--color-5);
   color: var(--color-2);
   transition: color 0.5s, background-color 0.5s;
   line-height: 1.6;
@@ -62,7 +62,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  // [data-theme="dark"] & {
-  //     background-color: var(--color-4);
-  // }
+  [data-theme="dark"] & {
+      background-color: var(--color-6);
+  }
 }
