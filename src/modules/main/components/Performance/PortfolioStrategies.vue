@@ -145,31 +145,30 @@ export default {
   border-radius: 10px;
 }
 .performance__portfolio-strategies-token-title {
-    margin-bottom: 24px;
-    color: var(--color-black);
-    font-size: 24px;
-    font-weight: 400;
+  margin-bottom: 24px;
+  color: var(--color-black);
+  font-size: 24px;
+  font-weight: 400;
 }
 
 .performance__portfolio-strategies {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .performance__portfolio-strategies-stablecoins {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
 .performance__portfolio-strategies-stablecoins-specifications {
-    display: flex;
-    padding: 0 20px;
-    color: var(--color-dark-grey);
-    font-size: 15px;
-    font-weight: 400;
+  display: flex;
+  padding: 0 20px;
+  color: var(--color-dark-grey);
+  font-size: 15px;
+  font-weight: 400;
 }
 
 .performance__portfolio-strategies-specification {
@@ -198,8 +197,8 @@ export default {
 }
 
 .performance__portfolio-strategy {
-    display: flex;
-    padding: 10px 20px;
+  display: flex;
+  padding: 10px 20px;
 }
 
 .performance__portfolio-strategy > * {
@@ -211,26 +210,26 @@ export default {
 }
 
 .performance__portfolio-strategy-token-data {
-    display: flex;
-    align-items: center;
-    flex: 2;
+  display: flex;
+  align-items: center;
+  flex: 2;
 }
 
 .performance__portfolio-strategy-token-score {
-    flex: 3;
+  flex: 3;
 }
 
 .performance__portfolio-strategy-token-NAV {
-    flex: 3;
+  flex: 3;
 }
 
 .performance__portfolio-strategy-portfolio-percent {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-end;
-    justify-content: space-between;
-    flex: 2;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  justify-content: space-between;
+  flex: 2;
 }
 .performance__portfolio-strategy-icon {
   width: 14px;
@@ -255,16 +254,56 @@ export default {
   display: flex;
   flex-direction: column;
 }
-.performance__portfolio-total,
-.performance__portfolio-total-circulation {
-  display: flex;
-  flex-direction: row;
-}
-
 .performance__portfolio-strategy-token-portfolio-number {
   flex: none;
   width: 60px;
   text-align: right;
 }
 
+.performance__portfolio-total,
+.performance__portfolio-total-circulation {
+  display: flex;
+  justify-content: space-between;
+}
+
+.performance__portfolio-total-nav-value,
+.performance__portfolio-total-liquidation-value,
+.performance__portfolio-total-circulation-number {
+  text-align: right;
+  flex: none;
+}
+
+.performance__portfolio-total > *,
+.performance__portfolio-total-circulation > * {
+  text-align: center;
+}
+
+.performance__portfolio-total{
+  width: 70%;
+}
+
+.performance__portfolio-total-circulation  {
+   width: 39%;
+}
+.performance__portfolio-total-label,
+.performance__portfolio-total-circulation .performance__portfolio-total-label {
+  text-align: left;
+}
+
+.performance__portfolio-total-label,
+.performance__portfolio-total-circulation .performance__portfolio-total-label {
+  text-align: left;
+}
+.performance__portfolio-total-label,
+.performance__portfolio-total-nav-value,
+.performance__portfolio-total-liquidation-value {
+  flex: 1;
+}
+.performance__portfolio-total-nav-value {
+  margin-right: 12px;
+}
+.performance__portfolio-total-liquidation-value {
+  text-align: right;
+  padding-right: 15px;
+}
 </style>

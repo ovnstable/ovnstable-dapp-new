@@ -140,4 +140,7 @@ export default {
   max-width: fit-content;
   margin-right: 10px;
 }
+
+
+
 </style>
