@@ -7,12 +7,12 @@ const router = createRouter({
     {
       path: '/',
       name: 'main',
-      component: import('@/views/Main/Index.vue'),
+      component: () => import('@/views/Main/Index.vue'),
     },
     {
       path: '/performance',
       name: 'performance',
-      component: import('@/views/Performance/Index.vue'),
+      component: () => import('@/views/Performance/Index.vue'),
     },
   ],
 });
