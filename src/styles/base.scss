@@ -22,9 +22,9 @@
 
 [data-theme="dark"] {
   --color-1: #eeeff2;
-  --color-2: #bac0cb;
+  --color-2: #687386;
   --color-3: #d1d6de;
-  --color-4: #0f172a;
+  --color-4: #ffffff;
   --color-5: #333c3f;
   --color-6: #2a3245;
   --color-7: #192235;
@@ -37,6 +37,7 @@
   --color-14: #ffba00;
   --color-15: #ffde76;
   --color-16: #e3f2fd;
+  --section-gap: 160px;
 }
 
 *,
@@ -51,8 +52,8 @@
 
 body {
   min-height: 100vh;
-  background-color: #e3f2fd;
-  color: var(--color-text);
+  background-color: var(--color-1);
+  color: var(--color-2);
   transition: color 0.5s, background-color 0.5s;
   line-height: 1.6;
   font-family: "Red Hat Display", sans-serif;
@@ -60,4 +61,8 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  // [data-theme="dark"] & {
+  //     background-color: var(--color-4);
+  // }
 }
