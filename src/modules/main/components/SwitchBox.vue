@@ -4,6 +4,7 @@
     id="theme-switch"
     :checked="isChecked"
     class="theme-switch-checkbox"
+    @change="$emit('change', $event)"
   />
   <label
     for="theme-switch"
@@ -31,20 +32,20 @@ export default {
 
 .theme-switch-label {
     cursor: pointer;
-    background: var(--color-white);
+    background: var(--color-1);
     display: flex;
     align-items: center;
     justify-content: space-between;
     border-radius: 15px;
     position: relative;
-    border: 1px solid var( --color-dark-grey);
+    border: 1px solid var( --color-2);
     padding: 5px 28px 4px 5px;
 }
 
 .theme-switch-button {
     width: 17px;
     height: 17px;
-    border: 1px solid var( --color-dark-grey);
+    border: 1px solid var( --color-2);
     background: var(--background-color);
     border-radius: 50%;
     transition: transform 0.15s;
@@ -52,6 +53,6 @@ export default {
 
 .theme-switch-checkbox:checked + .theme-switch-label .theme-switch-button {
     transform: translateX(23px);
-    background: var(--color-blue)
+    background: var(--color-3)
 }
 </style>

@@ -133,13 +133,14 @@ export default {
   },
   methods: {
     toggleTheme() {
-      this.isDarkTheme = !this.isDarkTheme;
+      console.log('-toggleTheme');
+      this.$store.dispatch('theme/switchTheme');
     },
   },
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .sidebar,
 .sidebar__top,
 .sidebar__bottom {
@@ -149,10 +150,14 @@ export default {
 }
 
 .sidebar__text-top {
-  color: var(--color-black);
+  color: var(--color-4);
   font-size: 17px;
   font-weight: 600;
   margin-top:20px;
+
+  [data-theme="dark"] & {
+      color: var(--color-2);
+  }
 }
 
 .sidebar__text-top:hover,
