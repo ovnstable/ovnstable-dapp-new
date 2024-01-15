@@ -175,6 +175,7 @@ export default {
 .performance__portfolio-strategies-specification {
   text-align: center;
   flex: 1;
+
 }
 
 .performance__portfolio-strategies-specification:first-child {
@@ -193,6 +194,7 @@ export default {
 .performance__portfolio-strategies-specification.percent {
   flex: 2;
   text-align: left;
+  margin-right: 30px;
 }
 
 .performance__portfolio-strategy {
@@ -247,4 +249,22 @@ export default {
 .performance__portfolio-strategy-token-name {
   margin-left: 6px;
 }
+
+.performance__portfolio-total-info {
+  padding: 0px 20px;
+  display: flex;
+  flex-direction: column;
+}
+.performance__portfolio-total,
+.performance__portfolio-total-circulation {
+  display: flex;
+  flex-direction: row;
+}
+
+.performance__portfolio-strategy-token-portfolio-number {
+  flex: none;
+  width: 60px;
+  text-align: right;
+}
+
 </style>
