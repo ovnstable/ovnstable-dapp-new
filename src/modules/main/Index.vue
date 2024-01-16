@@ -106,8 +106,11 @@ export default {
   display: flex;
   width: 100%;
   height: fit-content;
-  background-color: #F4FAFE;
+  background-color: var(--color-6);
   border-radius: 30px;
+  [data-theme="dark"] & {
+      color: var(--color-2);
+  }
 }
 .swap-module__form {
   display: flex;
@@ -120,7 +123,7 @@ export default {
   align-items: center;
   justify-content: center;
   width: calc(100% + 3px);
-  border: 2px solid black;
+  border: 2px solid var(--color-1);
   border-top: 0;
   padding: 100px 50px;
   border-radius: 0 0 30px 30px;

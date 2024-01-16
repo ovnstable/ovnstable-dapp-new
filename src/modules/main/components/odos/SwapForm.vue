@@ -1774,10 +1774,15 @@ export default defineComponent({
   justify-content: center;
 }
 .swap-container {
-  background: var(--ov-bg);
+  background: var(--color-5);
   border-radius: 0 0 30px 30px;
-  border: 2px solid black;
+  border: 2px solid var(--color-1);
   border-top: 0;
+  [data-theme="dark"] & {
+      background: var(--color-17);
+      border: 2px solid var(--color-16);
+      border-top: 0;
+  }
 }
 
 @media only screen and (max-width: 960px) {
