@@ -85,7 +85,7 @@
         <div class="row">
           <div class="col-6">
             <div class="usd-equal-text">
-              <div v-if="token.selectedToken && token.selectedToken.balanceData.balance">
+              <div v-if="token.selectedToken && token.selectedToken.balanceData?.balance">
                 ~
                 ${{ formatMoney((tokenInfo.sum ? tokenInfo.sum.replaceAll(' ', '') : 0) * 1 * token.selectedToken.price, 2) }}
               </div>
@@ -106,8 +106,8 @@
                 />
               </div>
               <div class="select-token-balance-text">
-                <div v-if="token.selectedToken && token.selectedToken.balanceData.balance">
-                  {{formatMoney(token.selectedToken.balanceData.balance,
+                <div v-if="token.selectedToken && token.selectedToken.balanceData?.balance">
+                  {{formatMoney(token.selectedToken.balanceData?.balance,
                                 fixedByPrice(token.selectedToken.price))}}
                 </div>
                 <div v-else>

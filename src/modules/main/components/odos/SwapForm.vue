@@ -372,7 +372,7 @@
       :add-selected-token-to-list-func="addSelectedTokenToList"
       :remove-selected-token-from-list-func="removeSelectedTokenFromList"
       :second-tokens="secondTokens"
-      :tokens="tokens"
+      :tokens="allTokensList"
       :is-all-data-loaded="isAllDataLoaded"
       :is-ovn-swap="true"
       :selected-token-count="
@@ -405,7 +405,6 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 import { useEventBus } from '@vueuse/core';
 import InputToken from '@/modules/swaps/InputToken.vue';
 import OutputToken from '@/modules/swaps/OutputToken.vue';
-import SelectTokensModal from '@/modules/swaps/modals/SelectTokensModal.vue';
 import SwapSlippageSettings from '@/modules/swaps/SwapSlippageSettings.vue';
 import NetworkNotAvailable from '@/modules/swaps/network-not-available.vue';
 import WaitingModal from '@/components/CustomModals/action/WaitingModal.vue';
@@ -421,6 +420,7 @@ import {
 import { clearApproveToken, getAllowanceValue, approveToken } from '@/helpers/contract-approve.ts';
 import odosApiService from '@/services/odos-api-service.ts';
 import { getImageUrl } from '@/utils/const.ts';
+import SelectTokensModal from '@/modules/swaps/TokensModal/Index.vue';
 
 export default defineComponent({
   name: 'SwapForm',
@@ -487,6 +487,90 @@ export default defineComponent({
       ifMoreThanOneTokensAdded: false,
     };
   },
+  watch: {
+    async isAllDataLoaded(newVal) {
+      if (newVal && !this.dataBeInited) {
+        await this.initData({
+          tokenSeparationScheme: this.tokenSeparationScheme,
+          listOfBuyTokensAddresses: this.listOfBuyTokensAddresses,
+        });
+        this.$store.commit('odosData/changeState', {
+          field: 'dataBeInited',
+          val: true,
+        });
+      }
+    },
+
+    account(newVal) {
+      if (newVal) {
+        this.initAccountData();
+      }
+    },
+    async networkId(newVal) {
+      if (newVal) {
+        this.isFirstBalanceLoaded = false;
+        this.isBalancesLoading = false;
+        this.quotaResponseInfo = null;
+        await this.initContractData();
+        await this.initData({
+          tokenSeparationScheme: this.tokenSeparationScheme,
+          listOfBuyTokensAddresses: this.listOfBuyTokensAddresses,
+        });
+        this.loadPricesInfo(newVal);
+      }
+    },
+    outputTokensWithSelectedTokensCount(val, oldVal) {
+      // lock first
+      if (val === 1) {
+        const token: any = this.selectedOutputTokens[0];
+        if (!token.locked) {
+          this.lockProportion(true, token);
+        }
+        this.recalculateOutputTokensSum();
+        return;
+      }
+
+      if (val === 2 && oldVal === 1) {
+        const token: any = this.selectedOutputTokens[0];
+        if (token.locked) {
+          this.lockProportion(false, token);
+        }
+        this.recalculateOutputTokensSum();
+      }
+    },
+    sumOfAllSelectedTokensInUsd() {
+      this.recalculateOutputTokensSum();
+    },
+
+    isTokensLoadedAndFiltered(val) {
+      if (val) {
+        this.clearForm();
+      }
+    },
+    // networkId(newVal) {
+    //   if (newVal) {
+    //     // hide swap form and clear all(watch function) data,
+    //     // after new token loaded collection
+    //     this.isTokensLoadedAndFiltered = false;
+
+    //     if (!this.isAvailableOnNetwork) {
+    //       this.mintAction();
+    //     }
+    //   }
+    // },
+    hideSwapButton(val) {
+      if (val) {
+        this.clearQuotaInfo();
+      }
+      this.updateButtonDisabledFunc(val);
+    },
+
+    isFirstBalanceLoaded(val) {
+      if (val) {
+        this.initTopInputTokensByBalance(this.stablecoinWithoutSecondTokens);
+      }
+    },
+  },
   mounted() {
     this.$store.commit('odosData/changeState', {
       field: 'baseViewType',
@@ -515,7 +599,6 @@ export default defineComponent({
       'swapSessionId',
       'odosReferalCode',
       'secondTokens',
-      'tokens',
       'quotaResponseInfo',
       'isShowDecreaseAllowance',
       'tokenSeparationScheme',
@@ -525,6 +608,7 @@ export default defineComponent({
       'isBalancesLoading',
     ]),
     ...mapGetters('odosData', [
+      'allTokensList',
       'isAvailableOnNetwork',
       'swapResponseConfirmGetter',
       'isAllLoaded',
@@ -738,90 +822,6 @@ export default defineComponent({
       }
 
       return true;
-    },
-  },
-  watch: {
-    async isAllDataLoaded(newVal) {
-      if (newVal && !this.dataBeInited) {
-        await this.initData(
-          this.tokenSeparationScheme,
-          this.listOfBuyTokensAddresses,
-        );
-        this.$store.commit('odosData/changeState', {
-          field: 'dataBeInited',
-          val: true,
-        });
-      }
-    },
-
-    account(newVal) {
-      if (newVal) {
-        this.initAccountData();
-      }
-    },
-    async networkId(newVal) {
-      if (newVal) {
-        this.isFirstBalanceLoaded = false;
-        this.isBalancesLoading = false;
-        this.quotaResponseInfo = null;
-        await this.initContractData();
-        await this.initData(
-          this.tokenSeparationScheme,
-          this.listOfBuyTokensAddresses,
-        );
-        this.loadPricesInfo(newVal);
-      }
-    },
-    outputTokensWithSelectedTokensCount(val, oldVal) {
-      // lock first
-      if (val === 1) {
-        const token: any = this.selectedOutputTokens[0];
-        if (!token.locked) {
-          this.lockProportion(true, token);
-        }
-        this.recalculateOutputTokensSum();
-        return;
-      }
-
-      if (val === 2 && oldVal === 1) {
-        const token: any = this.selectedOutputTokens[0];
-        if (token.locked) {
-          this.lockProportion(false, token);
-        }
-        this.recalculateOutputTokensSum();
-      }
-    },
-    sumOfAllSelectedTokensInUsd() {
-      this.recalculateOutputTokensSum();
-    },
-
-    isTokensLoadedAndFiltered(val) {
-      if (val) {
-        this.clearForm();
-      }
-    },
-    // networkId(newVal) {
-    //   if (newVal) {
-    //     // hide swap form and clear all(watch function) data,
-    //     // after new token loaded collection
-    //     this.isTokensLoadedAndFiltered = false;
-
-    //     if (!this.isAvailableOnNetwork) {
-    //       this.mintAction();
-    //     }
-    //   }
-    // },
-    hideSwapButton(val) {
-      if (val) {
-        this.clearQuotaInfo();
-      }
-      this.updateButtonDisabledFunc(val);
-    },
-
-    isFirstBalanceLoaded(val) {
-      if (val) {
-        this.initTopInputTokensByBalance(this.stablecoinWithoutSecondTokens);
-      }
     },
   },
 

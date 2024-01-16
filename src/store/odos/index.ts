@@ -100,6 +100,9 @@ export const stateData = {
 };
 
 const getters = {
+  allTokensList(state: typeof stateData) {
+    return state.tokens;
+  },
   swapResponseConfirmGetter(state: typeof stateData) {
     return state.swapResponseConfirmInfo;
   },
@@ -233,6 +236,7 @@ const actions = {
     }
 
     if (data.tokenSeparationScheme === 'OVERNIGHT_SWAP') {
+      console.log('initOvernightSwap');
       dispatch('initOvernightSwap');
       return;
     }
@@ -286,6 +290,7 @@ const actions = {
     commit, state, dispatch, rootState,
   }: any) {
     const { networkId } = getNetworkParams(rootState.network.networkName);
+    console.log(await getFilteredOvernightTokens(state, networkId, false), '-test');
     await commit('changeState', { field: 'tokens', val: await getFilteredOvernightTokens(state, networkId, false) });
     await commit('changeState', { field: 'secondTokens', val: await getFilteredOvernightTokens(state, networkId, true) });
     state.isTokensLoadedAndFiltered = true;
@@ -483,13 +488,14 @@ const actions = {
     return odosApiService
       .loadContractData(chainId)
       .then((data: any) => {
+        console.log(data, '--data');
         commit('changeState', { field: 'contractData', val: data });
         commit('changeState', {
           field: 'routerContract',
           val: loadContractInstance(
-            data.contractData.routerAbi,
+            data.routerAbi,
             rootState.web3.web3,
-            data.contractData.routerAddress,
+            data.routerAddress,
           )
         });
         commit('changeState', {

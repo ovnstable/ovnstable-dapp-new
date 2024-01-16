@@ -7,7 +7,7 @@
       <p>Annualized yield, % per year</p>
       <p>Explorer</p>
     </div>
-    <div class="performance__payouts-divider"/>
+    <div class="performance__payouts-divider" />
     <div
       v-for="trx in transactionsData"
       :key="trx.id"
@@ -140,7 +140,5 @@ export default {
   max-width: fit-content;
   margin-right: 10px;
 }
-
-
 
 </style>
