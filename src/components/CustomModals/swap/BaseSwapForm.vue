@@ -381,7 +381,7 @@ import zksyncIcon from '@/assets/network/zk.svg';
 import bscIcon from '@/assets/network/bsc.svg';
 import Tooltip from '@/components/common/element/Tooltip';
 import GasSettingsMenu from '@/components/common/modal/gas/components/GasSettingsMenu';
-import loadJSON from '@/utils/http-utils';
+import { loadJSON } from '@/utils/http-utils';
 import { swap } from '@/components/mixins/swap';
 
 export default {

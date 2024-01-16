@@ -86,15 +86,11 @@ export default {
   },
 
   mounted() {
-    if (typeof window !== 'undefined') {
-      window.addEventListener('keyup', this.onKeyUp);
-    }
+    window.addEventListener('keyup', this.onKeyUp);
   },
 
   beforeUnmount() {
-    if (typeof window !== 'undefined') {
-      window.removeEventListener('keyup', this.onKeyUp);
-    }
+    window.removeEventListener('keyup', this.onKeyUp);
   },
 
   methods: {

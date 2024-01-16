@@ -70,7 +70,6 @@
 
 <script>
 import {mapActions, mapGetters} from "vuex";
-import RefundInfo from "@/components/common/modal/RefundInfo.vue";
 import BestAprPromotion from "@/components/common/modal/action/component/BestAprPromotion";
 import { pool } from "@/components/mixins/pool";
 

@@ -62,7 +62,7 @@
 import { mapGetters } from 'vuex';
 import WalletComponent from '@/components/Layout/Header/WalletComponent.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
-import ModalComponent from '@/components/Layout/Header/ModalComponent.vue';
+import ModalComponent from '@/components/common/ModalComponent.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import Logo from '@/assets/icons/header/IconLogo.vue';
 
