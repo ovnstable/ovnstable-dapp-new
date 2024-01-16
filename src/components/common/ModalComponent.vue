@@ -15,14 +15,6 @@
         class="modal__wrap-stop"
         @click.stop
       >
-        <div class="modal__close">
-          <au-icon
-            icon="mdi-close"
-            :size="24"
-            color="#bbb"
-            @click.native="opened = false"
-          />
-        </div>
 
         <div
           v-show="$slots.header"
