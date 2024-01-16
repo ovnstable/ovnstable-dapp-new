@@ -37,6 +37,7 @@
   --color-14: #ffba00;
   --color-15: #ffde76;
   --color-16: #e3f2fd;
+  --color-17: #0f172a;
   --section-gap: 160px;
 }
 
@@ -52,7 +53,7 @@
 
 body {
   min-height: 100vh;
-  background-color: var(--color-5);
+  background-color: var(--color-16);
   color: var(--color-2);
   transition: color 0.5s, background-color 0.5s;
   line-height: 1.6;

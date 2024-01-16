@@ -150,7 +150,7 @@ export default {
 }
 
 .sidebar__text-top {
-  color: var(--color-2);
+  color: var(--color-1);
   font-size: 17px;
   font-weight: 600;
   margin-top:20px;
@@ -188,6 +188,10 @@ export default {
   color: var(--color-2);
   font-size: 15px;
   font-weight: 600;
+
+  [data-theme="dark"] & {
+      color: var(--color-3);
+  }
 }
 
 .sidebar__text-bottom:first-child {
@@ -203,6 +207,10 @@ export default {
   margin-top: 20px;
   margin-bottom: 20px;
   border: 1px solid var(--color-2);
+
+  [data-theme="dark"] & {
+      color: var(--color-3);
+  }
 }
 
 .sidebar__icons-bottom {
@@ -220,9 +228,15 @@ export default {
   padding: 0px 14px 0px 6px;
   border-radius: 12px;
   border: 1px solid var( --color-2);
-  background: var(--4, #FFF);
+  background: var(--color-5);
   color: var( --color-2);
   text-align: center;
   font-size: 14px;
+
+  [data-theme="dark"] & {
+    border: 1px solid var(--color-3);
+    background: var(--color-17);
+    color: var( --color-4);
+  }
 }
 </style>
