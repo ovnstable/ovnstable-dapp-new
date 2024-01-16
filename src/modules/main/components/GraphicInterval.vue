@@ -37,15 +37,15 @@ export default {
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
-    color: var(--color-dark-grey);
+    color: var(--color-2);
 }
 
 .interval-option:hover {
-    color: var(--color-black);
+    color: var(--color-1);
 }
 
 .interval-selected {
-    color: var(--color-black);
+    color: var(--color-1);
     font-weight: 800;
 }
 </style>

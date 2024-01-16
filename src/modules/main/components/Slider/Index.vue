@@ -188,7 +188,7 @@ export default {
 <style scoped>
 
 * {
-    color: var(--color-dark-grey);
+    color: var(--color-2);
     font-weight: 500;
     font-size: 14px
 }
@@ -227,7 +227,7 @@ export default {
 
 .slider__token-title,
 .slider__overview-title {
-    color: var(--color-black);
+    color: var(--color-1);
     font-weight: 600;
 }
 
@@ -239,7 +239,7 @@ export default {
 .slider__divider {
   margin-top: 16px;
   margin-bottom: 16px;
-  border: 1px solid var(--color-dark-grey);
+  border: 1px solid var(--color-2);
 }
 
 .slider__apy-info,
@@ -282,7 +282,7 @@ export default {
 
 .slider__second-token-title-text {
     margin-left:10px;
-    color: var(--color-black);
+    color: var(--color-1);
     font-size: 20px;
     font-weight: 600;
 }
