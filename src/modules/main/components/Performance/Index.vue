@@ -30,9 +30,9 @@ export default {
   flex-direction: column;
   width: 100%;
   border-radius: 20px;
-  border: 1px solid var(--color-black);
-  background: var(--color-white);
-  box-shadow: 0px 1px 0px 0px var(--color-black);
+  border: 1px solid var(--color-1);
+  background: var(--color-5);
+  box-shadow: 0px 1px 0px 0px var(--color-1);
   padding-top: 40px;
   padding-left: 25px;
   padding-right: 25px;

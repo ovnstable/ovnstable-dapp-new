@@ -42,7 +42,7 @@ export default {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  background: var(--color-white);
+  background: var(--color-5);
   width: calc(100% - 40px);
 }
 

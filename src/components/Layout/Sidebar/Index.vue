@@ -118,7 +118,7 @@
 <script lang="ts">
 
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
-import SwitchBox from '@/modules/main/components/SwitchBox.vue';
+import SwitchBox from '@/components/SwitchBox.vue';
 
 export default {
   components: {
@@ -176,7 +176,7 @@ export default {
 
 .sidebar__divider-top {
   margin-top: 20px;
-  border: 1px solid var(--color-black);
+  border: 1px solid var(--color-1);
 }
 
 .sidebar__bottom {
@@ -185,7 +185,7 @@ export default {
 
 .sidebar__text-bottom {
   margin-top: 10px;
-  color: var(--color-dark-grey);
+  color: var(--color-2);
   font-size: 15px;
   font-weight: 600;
 }
@@ -202,7 +202,7 @@ export default {
 .sidebar__divider-bottom {
   margin-top: 20px;
   margin-bottom: 20px;
-  border: 1px solid var(--color-dark-grey);
+  border: 1px solid var(--color-2);
 }
 
 .sidebar__icons-bottom {
@@ -219,9 +219,9 @@ export default {
   margin-left: 40px;
   padding: 0px 14px 0px 6px;
   border-radius: 12px;
-  border: 1px solid var( --color-dark-grey);
+  border: 1px solid var( --color-2);
   background: var(--4, #FFF);
-  color: var( --color-dark-grey);
+  color: var( --color-2);
   text-align: center;
   font-size: 14px;
 }
