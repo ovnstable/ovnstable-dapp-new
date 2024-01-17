@@ -1,13 +1,12 @@
 <template>
   <div class="performance__payouts">
-    <p class="performance__payouts-text">USD+ Payouts</p>
     <div class="performance__payouts-titles">
       <p>Payable date, UTC</p>
-      <p>Daily profit, USDC per  USD+</p>
+      <p>Daily profit, {{ collateralToken }} per {{ tokenName }}</p>
       <p>Annualized yield, % per year</p>
       <p>Explorer</p>
     </div>
-    <div class="performance__payouts-divider"/>
+    <!-- <div class="performance__payouts-divider" /> -->
     <div
       v-for="trx in transactionsData"
       :key="trx.id"
@@ -47,6 +46,8 @@ export default {
   },
   data() {
     return {
+      tokenName: 'ETH+',
+      collateralToken: 'WETH',
       transactionsData: [
         {
           id: '0xd0209d91c53f4c5e574948a07ef3659d8bf2ab5df5983d9f4bec39c1d883c44f',
@@ -82,24 +83,29 @@ export default {
 }
 
 .performance__payouts {
-    display: flex;
-    flex-direction: column;
-    background: var(--color-5);
-    width: calc(100% - 40px);
+  display: flex;
+  flex-direction: column;
+  background: var(--color-6);
+  width: calc(100% - 40px);
+  padding: 20px;
 }
 .performance__payouts-text {
-    text-align: left;
-    margin-bottom: 20px;
+  text-align: left;
+  margin-bottom: 20px;
+  color: var(--color-1);
+  font-size: 17px;
+  font-weight: 600;
 }
 .performance__payouts-titles {
   display: flex;
   justify-content: space-between;
-  color: var( --color-3);
-  font-size: 14px;
+  color: var(--color-2);
+  font-size: 15px;
   font-weight: 400;
+  margin-bottom: 22px;
 }
 .performance__payouts-divider {
-  border: 1px solid var(--color-3);
+  border: 1px solid var(--color-17);
 }
 
 .performance__payouts-titles,
@@ -112,6 +118,12 @@ export default {
 .performance__payouts-transactions p {
   text-align: center;
   flex: 1;
+}
+
+.performance__payouts-transactions p {
+  color: var(--color-1);
+  font-size: 15px;
+  font-weight: 400;
 }
 .performance__payouts-titles p:first-child,
 .performance__payouts-transactions p:first-child {
@@ -134,10 +146,11 @@ export default {
   flex: 2;
   display: flex;
   justify-content: flex-end;
+  align-items: right;
+  text-align: right;
 }
 
 .performance__payouts-id-link p {
   max-width: fit-content;
-  margin-right: 10px;
 }
 </style>

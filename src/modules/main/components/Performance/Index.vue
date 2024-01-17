@@ -1,10 +1,15 @@
 <template>
-  <div class="performance">
-    <TokenDataPerformance class="performance__token-data" />
-    <GraphicsPerformance class="performance__graphics" />
-    <PortfolioPerformance class="performance__portfolio" />
-    <PortfolioPayouts class="performance__payouts" />
+  <div class="performance-wrapper">
+    <div class="performance">
+      <TokenDataPerformance class="performance__token-data" />
+      <GraphicsPerformance class="performance__graphics" />
+      <PortfolioPerformance class="performance__portfolio" />
+    </div>
+    <div class="performance__payouts-wrapper">
+      <PortfolioPayouts class="performance__payouts" />
+    </div>
   </div>
+
 </template>
 
 <script lang="ts">
@@ -45,8 +50,21 @@ export default {
 .performance__payouts {
     width: 100%;
 }
-.performance__graphics,
-.performance__payouts {
+.performance__graphics{
     margin-top: 20px;
+}
+
+.performance-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: calc(100% - 40px);
+}
+
+.performance__payouts-wrapper {
+  width: calc(100% - 40px);
+  border-radius: 0px 0px 30px 30px;
+  background: var(--color-6);
+  z-index: -1;
+  margin-top: -10px;
 }
 </style>

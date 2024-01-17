@@ -14,7 +14,7 @@
         :type="dataPortfolio.type"
         :collateralToken="dataPortfolio.collateralToken"
       />
-
+      <p class="performance__portfolio-token-payout">{{ dataPortfolio.tokenName }} Payouts</p>
     </div>
   </div>
 </template>
@@ -111,6 +111,13 @@ export default {
 .performance__portfolio-tab-content {
     background: var(--color-5);
     transition: opacity 0.3s ease-in-out;
+}
+
+.performance__portfolio-token-payout {
+  color: var(--color-1);
+  font-size: 17px;
+  font-weight: 600;
+  margin-top: 24px;
 }
 
 @media (max-width: 1024px) {

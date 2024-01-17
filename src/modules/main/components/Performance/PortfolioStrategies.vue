@@ -389,5 +389,4 @@ export default {
 .performance__portfolio-strategy-token-img {
   margin-right: 17px;
 }
-
 </style>

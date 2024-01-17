@@ -213,6 +213,7 @@ export default {
     margin-left: 7px;
     font-weight: 500;
     font-size: 13px;
+    color: var(--color-1)
   }
   @media (max-width: 1024px) {
     .performance__token-data__description {
