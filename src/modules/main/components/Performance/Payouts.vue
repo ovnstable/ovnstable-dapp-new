@@ -6,35 +6,38 @@
       <p>Annualized yield, % per year</p>
       <p>Explorer</p>
     </div>
-    <div
-      v-for="(trx, index) in visibleTransactions"
-      :key="trx.id"
-      class="performance__payouts-transactions"
-    >
-      <div class="performance__payouts-transaction">
-        <div class="performance__payouts-date-transaction">
-          <p class="performance__payouts-datetime">{{ formatDate(trx.date) }} <span class="date">{{ formatTime(trx.date)
-          }} </span></p>
+    <TransitionGroup name="list" tag="ul">
+   <div
+        v-for="(trx, index) in visibleTransactions"
+        :key="trx.id"
+        class="performance__payouts-transactions"
+      >
+        <div class="performance__payouts-transaction">
+          <div class="performance__payouts-date-transaction">
+            <p class="performance__payouts-datetime">{{ formatDate(trx.date) }} <span class="date">{{ formatTime(trx.date)
+            }} </span></p>
+          </div>
+          <p>{{ trx.sum }} {{ collateralToken }}</p>
+          <p>{{ trx.apy }}%</p>
+          <div class="performance__payouts-id-link">
+            <a
+              :href="trx.tokenLink"
+              class="performance__payouts-link"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Link for token"
+            >
+              <p>{{ formatTransactionID(trx.id) }}</p>
+            </a>
+          </div>
         </div>
-        <p>{{ trx.sum }} {{ collateralToken }}</p>
-        <p>{{ trx.apy }}%</p>
-        <div class="performance__payouts-id-link">
-          <a
-            :href="trx.tokenLink"
-            class="performance__payouts-link"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Link for token"
-          >
-            <p>{{ formatTransactionID(trx.id) }}</p>
-          </a>
-        </div>
+        <div
+          class="performance__payouts-divider"
+          v-if="index !== visibleTransactions.length - 1"
+        />
       </div>
-      <div
-        class="performance__payouts-divider"
-        v-if="index !== visibleTransactions.length - 1"
-      />
-    </div>
+    </TransitionGroup>
+   
     <button
       class="performance__payouts-button-show"
       @click="showMoreTransactions"
@@ -218,11 +221,26 @@ export default {
   margin-top: 9px;
 }
 
+.performance__payouts-button-show:hover {
+  cursor: pointer;
+  border: 2px solid var(--color-1);
+}
+
 .performance__payouts-button-show-text {
   margin-left: 12px;
   margin-right: 12px;
   color: var(--color-3);
   font-size: 15px;
   font-weight: 600;
+}
+
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.7s ease;
+}
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateZ(-30px);
 }
 </style>
