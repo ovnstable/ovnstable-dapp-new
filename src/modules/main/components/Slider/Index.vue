@@ -194,7 +194,8 @@ export default {
 }
 
 .slider {
-    margin-right: 53px;
+    margin-left: auto;
+    margin-right: 40px;
     display: flex;
     flex-direction: row;
     align-items: center;

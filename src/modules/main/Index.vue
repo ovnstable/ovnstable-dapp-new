@@ -5,16 +5,15 @@
         :tabs="tabsData"
         @tab-change="changeTab"
       >
-        <div v-if="activeTab === 0">
-          <SwapForm
-            view-type="SWAP"
-            :update-path-view-func="updatePathView"
-            :update-button-disabled-func="updateButtonDisabled"
-            :update-is-loading-data-func="updateIsLoadingData"
-            :handle-form-reset-func="handleFormReset"
-            :update-stablecoins-list-func="updateStablecoinsList"
-          />
-        </div>
+        <SwapForm
+          v-if="activeTab === 0"
+          view-type="SWAP"
+          :update-path-view-func="updatePathView"
+          :update-button-disabled-func="updateButtonDisabled"
+          :update-is-loading-data-func="updateIsLoadingData"
+          :handle-form-reset-func="handleFormReset"
+          :update-stablecoins-list-func="updateStablecoinsList"
+        />
         <div
           v-if="activeTab === 1"
           class="bridge-wrap"
@@ -34,7 +33,7 @@
 import { mapActions } from 'vuex';
 import SliderComponent from '@/modules/main/components/Slider/Index.vue';
 import TabsComponent from '@/components/Tabs/Index.vue';
-import SwapForm from '@/modules/main/components/odos/SwapForm.vue';
+import SwapForm from '@/modules/main/components/odos/Index.vue';
 
 export default {
   name: 'MainModule',
@@ -114,6 +113,7 @@ export default {
   flex-direction: column;
   align-items: center;
   width: 60%;
+  min-height: 690px;
 }
 .bridge-wrap {
   display: flex;

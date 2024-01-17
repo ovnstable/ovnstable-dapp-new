@@ -73,8 +73,8 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import SelectTokenShort from '@/modules/swaps/TokensModal/SelectTokenShort.vue';
-import SelectTokenWithSearch from '@/modules/swaps/TokensModal/SelectTokenWithSearch.vue';
+import SelectTokenShort from '@/modules/main/components/odos/TokensModal/SelectTokenShort.vue';
+import SelectTokenWithSearch from '@/modules/main/components/odos/TokensModal/SelectTokenWithSearch.vue';
 import ModalComponent from '@/components/Modal/Index.vue';
 
 export default defineComponent({

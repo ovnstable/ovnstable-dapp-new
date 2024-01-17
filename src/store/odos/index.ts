@@ -148,7 +148,7 @@ const getters = {
   },
   stablecoinWithoutSecondTokens(state: typeof stateData, getters: any) {
     return getters.stablecoinTokens.filter(
-      (item: any) => !this.stablecoinSecondTokens(state)
+      (item: any) => !getters.stablecoinSecondTokens
         .map((itemInn: any) => itemInn.address)
         .includes(item.address),
     );
@@ -284,7 +284,7 @@ const actions = {
     state.isTokensLoadedAndFiltered = true;
 
     dispatch('loadPricesInfo', networkId);
-    await this.initAccountData(networkId);
+    dispatch('initAccountData');
   },
   async initOvernightSwap({
     commit, state, dispatch, rootState,
@@ -296,8 +296,7 @@ const actions = {
     state.isTokensLoadedAndFiltered = true;
 
     dispatch('loadPricesInfo', networkId);
-
-    await this.initAccountData(networkId);
+    dispatch('initAccountData');
   },
   async initAccountData({
     commit, state, dispatch, rootState,
@@ -530,7 +529,7 @@ const actions = {
           token.price = tokenPricesMap[token.address];
           try {
             token.estimatePerOne = rootState.web3.web3.utils.fromWei(
-              1,
+              '1',
               getWeiMarker(token.decimals),
             );
           } catch (e) {

@@ -14,7 +14,7 @@
         v-if="!isAllLoaded"
         class="loader-container"
       >
-        Loading...
+        <Spinner />
       </div>
 
       <div v-else>
@@ -403,12 +403,10 @@
 import { defineComponent } from 'vue';
 import { mapActions, mapGetters, mapState } from 'vuex';
 import { useEventBus } from '@vueuse/core';
-import InputToken from '@/modules/swaps/InputToken.vue';
-import OutputToken from '@/modules/swaps/OutputToken.vue';
-import SwapSlippageSettings from '@/modules/swaps/SwapSlippageSettings.vue';
-import NetworkNotAvailable from '@/modules/swaps/network-not-available.vue';
+import InputToken from '@/modules/main/components/odos/InputToken.vue';
 import WaitingModal from '@/components/CustomModals/action/WaitingModal.vue';
 import ErrorModal from '@/components/CustomModals/action/ErrorModal.vue';
+import Spinner from '@/components/Spinner/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { getWeiMarker } from '@/utils/web3.ts';
@@ -420,12 +418,16 @@ import {
 import { clearApproveToken, getAllowanceValue, approveToken } from '@/helpers/contract-approve.ts';
 import odosApiService from '@/services/odos-api-service.ts';
 import { getImageUrl } from '@/utils/const.ts';
-import SelectTokensModal from '@/modules/swaps/TokensModal/Index.vue';
+import NetworkNotAvailable from '@/modules/main/components/odos/network-not-available.vue';
+import SwapSlippageSettings from '@/modules/main/components/odos/SwapSlippageSettings.vue';
+import OutputToken from '@/modules/main/components/odos/OutputToken.vue';
+import SelectTokensModal from '@/modules/main/components/odos/TokensModal/Index.vue';
 
 export default defineComponent({
   name: 'SwapForm',
   components: {
     ButtonComponent,
+    Spinner,
     NetworkNotAvailable,
     ErrorModal,
     WaitingModal,
@@ -1774,6 +1776,7 @@ export default defineComponent({
   justify-content: center;
 }
 .swap-container {
+  height: 100%;
   background: var(--ov-bg);
   border-radius: 0 0 30px 30px;
   border: 2px solid black;
