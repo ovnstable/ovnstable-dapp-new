@@ -43,7 +43,6 @@ export default {
   justify-content: space-between;
   align-items: center;
   background: var(--color-5);
-  width: calc(100% - 40px);
 }
 
 @media (max-width: 1024px) {

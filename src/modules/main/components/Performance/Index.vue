@@ -62,9 +62,13 @@ export default {
 
 .performance__payouts-wrapper {
   width: calc(100% - 40px);
-  border-radius: 0px 0px 30px 30px;
   background: var(--color-6);
   z-index: -1;
   margin-top: -10px;
+  border-radius: 0px 0px 30px 30px;
+}
+
+.performance__payouts {
+ border-radius: 0px 0px 30px 30px;
 }
 </style>

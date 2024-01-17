@@ -105,7 +105,6 @@ export default {
     display: flex;
     flex-direction: column;
     background: var(--color-5);
-    width: calc(100% - 40px);
 }
 
 .performance__portfolio-tab-content {
