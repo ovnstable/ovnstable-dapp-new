@@ -118,7 +118,7 @@
 <script lang="ts">
 
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
-import SwitchBox from '@/components/SwitchBox.vue';
+import SwitchBox from '@/components/Switch/Index.vue';
 
 export default {
   components: {

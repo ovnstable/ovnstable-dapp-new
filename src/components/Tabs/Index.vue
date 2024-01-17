@@ -147,6 +147,11 @@ export default {
 <style lang="scss" scoped>
 .tabs-wrap {
   width: 100%;
+  height: 100%;
+}
+
+.tabs-item {
+  height: calc(100% - 42px);
 }
 .tabs-header__ul {
   width: 100%;

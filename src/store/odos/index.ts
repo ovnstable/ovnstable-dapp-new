@@ -100,6 +100,9 @@ export const stateData = {
 };
 
 const getters = {
+  allTokensList(state: typeof stateData) {
+    return state.tokens;
+  },
   swapResponseConfirmGetter(state: typeof stateData) {
     return state.swapResponseConfirmInfo;
   },
@@ -145,7 +148,7 @@ const getters = {
   },
   stablecoinWithoutSecondTokens(state: typeof stateData, getters: any) {
     return getters.stablecoinTokens.filter(
-      (item: any) => !this.stablecoinSecondTokens(state)
+      (item: any) => !getters.stablecoinSecondTokens
         .map((itemInn: any) => itemInn.address)
         .includes(item.address),
     );
@@ -233,6 +236,7 @@ const actions = {
     }
 
     if (data.tokenSeparationScheme === 'OVERNIGHT_SWAP') {
+      console.log('initOvernightSwap');
       dispatch('initOvernightSwap');
       return;
     }
@@ -280,19 +284,19 @@ const actions = {
     state.isTokensLoadedAndFiltered = true;
 
     dispatch('loadPricesInfo', networkId);
-    await this.initAccountData(networkId);
+    dispatch('initAccountData');
   },
   async initOvernightSwap({
     commit, state, dispatch, rootState,
   }: any) {
     const { networkId } = getNetworkParams(rootState.network.networkName);
+    console.log(await getFilteredOvernightTokens(state, networkId, false), '-test');
     await commit('changeState', { field: 'tokens', val: await getFilteredOvernightTokens(state, networkId, false) });
     await commit('changeState', { field: 'secondTokens', val: await getFilteredOvernightTokens(state, networkId, true) });
     state.isTokensLoadedAndFiltered = true;
 
     dispatch('loadPricesInfo', networkId);
-
-    await this.initAccountData(networkId);
+    dispatch('initAccountData');
   },
   async initAccountData({
     commit, state, dispatch, rootState,
@@ -483,13 +487,14 @@ const actions = {
     return odosApiService
       .loadContractData(chainId)
       .then((data: any) => {
+        console.log(data, '--data');
         commit('changeState', { field: 'contractData', val: data });
         commit('changeState', {
           field: 'routerContract',
           val: loadContractInstance(
-            data.contractData.routerAbi,
+            data.routerAbi,
             rootState.web3.web3,
-            data.contractData.routerAddress,
+            data.routerAddress,
           )
         });
         commit('changeState', {
@@ -524,7 +529,7 @@ const actions = {
           token.price = tokenPricesMap[token.address];
           try {
             token.estimatePerOne = rootState.web3.web3.utils.fromWei(
-              1,
+              '1',
               getWeiMarker(token.decimals),
             );
           } catch (e) {
