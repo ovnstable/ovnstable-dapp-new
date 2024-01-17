@@ -11,7 +11,7 @@
       "
     >
       <div
-        v-if="true"
+        v-if="!isAllLoaded"
         class="loader-container"
       >
         <Spinner />
