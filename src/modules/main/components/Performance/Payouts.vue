@@ -6,15 +6,15 @@
       <p>Annualized yield, % per year</p>
       <p>Explorer</p>
     </div>
-
     <div
-      v-for="trx in transactionsData"
+      v-for="(trx, index) in visibleTransactions"
       :key="trx.id"
       class="performance__payouts-transactions"
     >
       <div class="performance__payouts-transaction">
         <div class="performance__payouts-date-transaction">
-          <p class="performance__payouts-datetime">{{ formatDate(trx.date) }} <span class="date">{{ formatTime(trx.date) }} </span></p>
+          <p class="performance__payouts-datetime">{{ formatDate(trx.date) }} <span class="date">{{ formatTime(trx.date)
+          }} </span></p>
         </div>
         <p>{{ trx.sum }} {{ collateralToken }}</p>
         <p>{{ trx.apy }}%</p>
@@ -30,9 +30,22 @@
           </a>
         </div>
       </div>
-
-      <div class="performance__payouts-divider" />
+      <div
+        class="performance__payouts-divider"
+        v-if="index !== visibleTransactions.length - 1"
+      />
     </div>
+    <button
+      class="performance__payouts-button-show"
+      @click="showMoreTransactions"
+      v-if="hasMoreTransactions"
+      type="button"
+    >  <!-- TODO Update to image  -->
+      <p>Arrow down</p>
+      <p class="performance__payouts-button-show-text">Show more</p>
+      <p>Arrow  down</p>
+    </button>
+
   </div>
 </template>
 
@@ -50,14 +63,24 @@ export default {
     };
     const transactionsData = [];
 
-    for (let i = 0; i < 20; i++) {
-      transactionsData.push({ ...originalTransaction }); // Push a copy of the original transaction
+    for (let i = 0; i < 21; i++) {
+      transactionsData.push({ ...originalTransaction });
     }
     return {
       tokenName: 'ETH+',
       collateralToken: 'WETH',
       transactionsData,
+      showMore: false,
+      visibleTransactionCount: 6,
     };
+  },
+  computed: {
+    visibleTransactions() {
+      return this.transactionsData.slice(0, this.visibleTransactionCount);
+    },
+    hasMoreTransactions() {
+      return this.transactionsData.length > this.visibleTransactionCount;
+    },
   },
   methods: {
     formatTransactionID(id: string): string {
@@ -66,7 +89,7 @@ export default {
     formatDate(dateStr: string): string {
       const date = new Date(Number(dateStr));
       const day = date.getUTCDate().toString().padStart(2, '0');
-      const month = (date.getUTCMonth() + 1).toString().padStart(2, '0'); 
+      const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
       const year = date.getUTCFullYear();
       return `${day}.${month}.${year}`;
     },
@@ -75,6 +98,11 @@ export default {
       const hours = date.getUTCHours().toString().padStart(2, '0');
       const minutes = date.getUTCMinutes().toString().padStart(2, '0');
       return `${hours}:${minutes}`;
+    },
+    showMoreTransactions() {
+      // Increase the number of visible transactions
+      this.visibleTransactionCount += 14;
+      // Do not set showMore to true here, as it is not needed for the logic
     },
   },
 
@@ -178,6 +206,23 @@ export default {
   text-decoration: underline;
 }
 
+.performance__payouts-button-show {
+  display: flex;
+  flex-direction: row;
+  border-radius: 30px;
+  border: 1px solid var(--color-3);
+  padding: 10px 225px;
+  justify-content: center;
+  align-items: center;
+  background: none;
+  margin-top: 9px;
+}
 
-
+.performance__payouts-button-show-text {
+  margin-left: 12px;
+  margin-right: 12px;
+  color: var(--color-3);
+  font-size: 15px;
+  font-weight: 600;
+}
 </style>
