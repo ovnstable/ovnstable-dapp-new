@@ -145,13 +145,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.tabs-header {
+  min-height: 50px;
+}
+
 .tabs-wrap {
   width: 100%;
   height: 100%;
 }
 
 .tabs-item {
-  height: calc(100% - 42px);
+  height: calc(100% - 50px);
 }
 .tabs-header__ul {
   width: 100%;
@@ -171,7 +175,7 @@ export default {
   color: var(--color-1);
   position: relative;
   z-index: 10;
-  padding: 6px 0;
+  padding: 10px 0;
 }
 
 .tab-content.active {
@@ -197,7 +201,7 @@ export default {
   width: 100%;
   text-decoration: none;
   border: 2px solid var(--color-1);
-  transition: padding .25s ease .1s,
+  transition: padding .15s ease .1s,
     border-radius .2s ease, color .2s ease;
 
   font-size: 14px;
