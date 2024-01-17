@@ -2,22 +2,24 @@
   <div class="app-header">
     <div class="app-header__container">
       <div class="app-header__content">
-        <div class="app-header__content__logo">
-          <Logo />
+        <router-link
+          to="/"
+          class="app-header__content__logo"
+        >
+          <BaseIcon name="IconLogo" />
           <h1>
             OVERNIGHT
           </h1>
-        </div>
+        </router-link>
         <ButtonComponent
           v-if="walletConnected"
-          text="DISCONNECT"
           @click="disconnectWallet"
-        />
+        >DISCONNECT</ButtonComponent>
         <ButtonComponent
           v-else
           text="CONNECT"
           @click="connectWallet"
-        />
+        >CONNECT</ButtonComponent>
       </div>
       <WalletComponent
         v-if="false"
@@ -30,14 +32,14 @@
 import { mapGetters } from 'vuex';
 import WalletComponent from '@/components/Layout/Header/WalletComponent.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
-import Logo from '@/assets/icons/header/IconLogo.vue';
+import BaseIcon from '@/components/Icon/BaseIcon.vue';
 
 export default {
   name: 'HeaderBar',
   components: {
     WalletComponent,
     ButtonComponent,
-    Logo,
+    BaseIcon,
   },
   computed: {
     ...mapGetters('walletAction', ['walletConnected']),

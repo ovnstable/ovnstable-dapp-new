@@ -8,9 +8,8 @@
       tabindex="0"
     >
       <BaseIcon
-        name="arrowLeft"
-        path="assets/icons/common/ArrowLeft.vue"
         class="slider__arrow-icon"
+        name="ArrowLeft"
       />
     </div>
 
@@ -24,13 +23,14 @@
       >
         <swiper-slide
           v-for="(slide, index) in slides"
+          :ref="slideRef"
+          :swiper-ref="swiperInstance"
           :key="index"
         >
           <div class="slider__info">
             <div class="slider__token-overview">
               <BaseIcon
-                name={{slide.iconFirstToken}}
-                :path="slide.iconPathFirstToken"
+                :name="slide.iconPathFirstToken"
               />
               <p class="slider__token-title">{{ slide.titleFirstToken }}</p>
               <p class="slider__overview-title">OVERVIEW</p>
@@ -63,8 +63,7 @@
             <div class="slider__second-token-overview">
               <div class="slider__second-token-title">
                 <BaseIcon
-                  name={{slide.iconSecondToken}}
-                  :path="slide.iconPathSecondToken"
+                  :name="slide.iconPathSecondToken"
                 />
                 <p class="slider__second-token-title-text">{{ slide.titleSecond }}</p>
               </div>
@@ -83,14 +82,14 @@
       tabindex="0"
     >
       <BaseIcon
-        name="arrowRight"
-        path="assets/icons/common/ArrowRight.vue"
+        name="ArrowRight"
         class="slider__arrow-icon"
       />
     </div>
   </div>
 </template>
 <script lang="ts">
+import { ref } from 'vue';
 
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { Swiper, SwiperSlide } from 'swiper/vue';
@@ -106,10 +105,11 @@ export default {
   data() {
     return {
       currentIndex: 0,
+      slideRef: ref(null) as any,
       slides: [
         {
           iconFirstToken: 'usdPlus',
-          iconPathFirstToken: 'assets/icons/currencies/UsdPlus.vue',
+          iconPathFirstToken: 'usdPlus',
           titleFirstToken: 'USD+',
           apyPercent: '10.4',
           apyGrowth: '5',
@@ -117,14 +117,14 @@ export default {
           tvlGrowth: '1',
           lastPayoutTime: '05:02',
           lastPayoutText: 'hours ago',
-          iconSecondToken: 'WusdPlus',
-          iconPathSecondToken: 'assets/icons/currencies/WusdPlus.vue',
+          iconSecondToken: 'wUsdPlus',
+          iconPathSecondToken: 'wUsdPlus',
           titleSecond: 'WUSD+',
           descriptionSecondToken: 'An index-adjusted wrapper for USD+. Your wUSD+ balance won\'t increase over time. When wUSD+ will unwrap, you receive USD+ based on the latest index.',
         },
         {
           iconFirstToken: 'usdPlus',
-          iconPathFirstToken: 'assets/icons/currencies/UsdPlus.vue',
+          iconPathFirstToken: 'usdPlus',
           titleFirstToken: 'USD+_2',
           apyPercent: '30',
           apyGrowth: '57',
@@ -132,14 +132,14 @@ export default {
           tvlGrowth: '71',
           lastPayoutTime: '057:02',
           lastPayoutText: 'hours ago',
-          iconSecondToken: 'WusdPlus',
-          iconPathSecondToken: 'assets/icons/currencies/WusdPlus.vue',
+          iconSecondToken: 'wUsdPlus',
+          iconPathSecondToken: 'wUsdPlus',
           titleSecond: 'WUSD+_2',
           descriptionSecondToken: 'An index-adjusted wrapper for USD+. Your wUSD+ balance won\'t increase over time. When wUSD+ will unwrap, you receive USD+ based on the latest index.',
         },
         {
           iconFirstToken: 'usdPlus',
-          iconPathFirstToken: 'assets/icons/currencies/UsdPlus.vue',
+          iconPathFirstToken: 'usdPlus',
           titleFirstToken: 'USD+_3',
           apyPercent: '10',
           apyGrowth: '517',
@@ -147,13 +147,13 @@ export default {
           tvlGrowth: '1',
           lastPayoutTime: '0:02',
           lastPayoutText: 'hours ago',
-          iconSecondToken: 'WusdPlus',
-          iconPathSecondToken: 'assets/icons/currencies/WusdPlus.vue',
+          iconSecondToken: 'wUsdPlus',
+          iconPathSecondToken: 'wUsdPlus',
           titleSecond: 'WUSD+_3',
           descriptionSecondToken: 'An index-adjusted wrapper for USD+. Your wUSD+ balance won\'t increase over time. When wUSD+ will unwrap, you receive USD+ based on the latest index.',
         },
       ],
-      swiperInstance: null as SwiperClass | null,
+      swiperInstance: null as any,
     };
   },
   methods: {
@@ -188,9 +188,12 @@ export default {
 <style scoped>
 
 * {
-    color: var(--color-dark-grey);
+    color: var(--color-2);
     font-weight: 500;
-    font-size: 14px
+    font-size: 14px;
+    [data-theme="dark"] & {
+      color: var(--color-4)
+    }
 }
 
 .slider {
@@ -227,7 +230,7 @@ export default {
 
 .slider__token-title,
 .slider__overview-title {
-    color: var(--color-black);
+    color: var(--color-1);
     font-weight: 600;
 }
 
@@ -239,7 +242,18 @@ export default {
 .slider__divider {
   margin-top: 16px;
   margin-bottom: 16px;
-  border: 1px solid var(--color-dark-grey);
+  border: 1px solid var(--color-2);
+  [data-theme="dark"] & {
+      border-color: var(--color-3)
+  }
+}
+
+.slider__data p,
+.slider__data-apy-percent,
+.slider__data-tvl-millions {
+  [data-theme="dark"] & {
+      color: var(--color-3)
+  }
 }
 
 .slider__apy-info,
@@ -282,7 +296,7 @@ export default {
 
 .slider__second-token-title-text {
     margin-left:10px;
-    color: var(--color-black);
+    color: var(--color-1);
     font-size: 20px;
     font-weight: 600;
 }
@@ -292,6 +306,9 @@ export default {
     text-align: justify;
     font-weight: 400;
     line-height: 18px;
+    [data-theme="dark"] & {
+      color: var(--color-3)
+    }
 }
 
 .slider__arrow-wrapper {

@@ -203,9 +203,9 @@ export default {
   margin-top: 8px;
 }
 
-.wallet-bar-container:hover > .wallet-col >  {
+/* .wallet-bar-container:hover > .wallet-col > {
   color: var(--hover);
-}
+} */
 
 .account-display-container {
   background: var(--card-coin-background);

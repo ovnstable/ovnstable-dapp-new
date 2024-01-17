@@ -1,0 +1,69 @@
+/* semantic color variables for this project */
+
+:root, [data-theme="light"] {
+  --color-1: #0f172a;
+  --color-2: #687386;
+  --color-3: #bac0cb;
+  --color-4: #eeeff2;
+  --color-5: #ffffff;
+  --color-6: #f4fafe;
+  --color-7: #a8d8fa;
+  --color-8: #0497ec;
+  --color-9: #ff1100;
+  --color-10: #ff6b6c;
+  --color-11: #619300;
+  --color-12: #91b845;
+  --color-13: #bee179;
+  --color-14: #ffba00;
+  --color-15: #ffde76;
+  --color-16: #e3f2fd;
+  --section-gap: 160px;
+}
+
+[data-theme="dark"] {
+  --color-1: #eeeff2;
+  --color-2: #687386;
+  --color-3: #d1d6de;
+  --color-4: #ffffff;
+  --color-5: #333c3f;
+  --color-6: #2a3245;
+  --color-7: #192235;
+  --color-8: #0497ec;
+  --color-9: #ff1100;
+  --color-10: #ff6b6c;
+  --color-11: #619300;
+  --color-12: #91b845;
+  --color-13: #bee179;
+  --color-14: #ffba00;
+  --color-15: #ffde76;
+  --color-16: #e3f2fd;
+  --color-17: #0f172a;
+  --section-gap: 160px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-weight: normal;
+  text-decoration: none;
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--color-16);
+  color: var(--color-2);
+  transition: color 0.5s, background-color 0.5s;
+  line-height: 1.6;
+  font-family: "Red Hat Display", sans-serif;
+  font-size: 15px;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  [data-theme="dark"] & {
+      background-color: var(--color-7);
+  }
+}

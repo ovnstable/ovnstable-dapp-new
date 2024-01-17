@@ -57,7 +57,7 @@ export default {
     align-items: flex-start;
     flex-shrink: 0;
     border-radius: 5px;
-    border: 1px solid var(--color-black);
+    border: 1px solid var(--color-1);
     margin-top: 5px;
 }
 
@@ -76,19 +76,19 @@ export default {
 }
 
 .performance__graphic-title {
-    color: var(--color-black);
+    color: var(--color-1);
     font-size: 15px;
     font-weight: 600;
 }
 
 .performance__graphic-value {
-    color: var(--color-black);
+    color: var(--color-1);
     font-size: 20px;
     font-weight: 600;
 }
 
 .performance__graphic-date {
-    color: var(--color-black);
+    color: var(--color-1);
     font-size: 12px;
     font-weight: 500;
 }

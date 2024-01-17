@@ -185,7 +185,7 @@ export default {
 
 <style>
 .performance__portfolio-assets {
-  background: var(--color-dark-white);
+  background: var(--color-6);
   border-radius: 10px;
 }
 .performance__portfolio-strategies-token-title {
@@ -214,7 +214,7 @@ export default {
 .performance__portfolio-strategies-stablecoins-specifications {
   display: flex;
   padding: 0 20px;
-  color: var(--color-dark-grey);
+  color: var(--color-2);
   font-size: 15px;
   font-weight: 400;
 }
@@ -253,7 +253,7 @@ export default {
 .performance__portfolio-strategy > * {
   flex: 1;
   text-align: center;
-  color: var(--color-black);
+  color: var(--color-1);
   font-size: 15px;
   font-weight: 500;
 }
@@ -280,6 +280,7 @@ export default {
   justify-content: space-between;
   flex: 2;
 }
+
 .performance__portfolio-strategy-icon {
   width: 14px;
   height: 14px;
@@ -289,7 +290,7 @@ export default {
 
 .performance__portfolio-strategy-token-portfolio-number,
 .performance__portfolio-strategy-token-name {
-  color: var(--color-black);
+  color: var(--color-1);
   font-size: 15px;
   font-weight: 500;
 }

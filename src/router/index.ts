@@ -1,17 +1,18 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  scrollBehavior: () => ({ left: 0, top: 0 }),
+  history: createWebHistory(),
   routes: [
     {
       path: '/',
       name: 'main',
-      component: import('@/views/Main/Index.vue'),
+      component: () => import('@/views/Main/Index.vue'),
     },
     {
       path: '/performance',
       name: 'performance',
-      component: import('@/views/Performance/Index.vue'),
+      component: () => import('@/views/Performance/Index.vue'),
     },
   ],
 });

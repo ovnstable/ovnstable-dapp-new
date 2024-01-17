@@ -104,12 +104,12 @@ export default {
 .performance__portfolio {
     display: flex;
     flex-direction: column;
-    background: var(--color-white);
+    background: var(--color-5);
     width: calc(100% - 40px);
 }
 
 .performance__portfolio-tab-content {
-    background: var(--color-white);
+    background: var(--color-5);
     transition: opacity 0.3s ease-in-out;
 }
 

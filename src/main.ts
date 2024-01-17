@@ -1,6 +1,7 @@
-import './assets/main.css';
+import '@/styles/main.scss';
 
 import { createApp } from 'vue';
+
 import router from '@/router/index.ts';
 import store from '@/store/index.ts';
 import App from '@/App.vue';
@@ -15,6 +16,7 @@ async function initNetwork() {
   try {
     if (!window?.ethereum.chainId) return;
     const chainId = Number(window.ethereum.chainId)?.toString();
+    store.dispatch('theme/initTheme');
     store.dispatch('network/saveNetworkToLocalStore', chainId, { root: true });
     console.log('main created networkId: ', chainId);
   } catch (e) {
