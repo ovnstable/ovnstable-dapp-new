@@ -173,9 +173,9 @@ export default {
     },
     getIconColor(index:number) {
       const colors = [
-        getComputedStyle(document.documentElement).getPropertyValue('--color-blue').trim(),
-        getComputedStyle(document.documentElement).getPropertyValue('--color-red').trim(),
-        getComputedStyle(document.documentElement).getPropertyValue('--color-pink').trim()];
+        getComputedStyle(document.documentElement).getPropertyValue('--color-8').trim(),
+        getComputedStyle(document.documentElement).getPropertyValue('--color-9').trim(),
+        getComputedStyle(document.documentElement).getPropertyValue('--color-10').trim()];
       return colors[index % colors.length];
     },
   },
@@ -191,7 +191,7 @@ export default {
 .performance__portfolio-strategies-token-title {
   margin-bottom: 20px;
   margin-top: 24px;
-  color: var(--color-black);
+  color: var(--color-1);
   font-size: 17px;
   font-weight: 600;
   display: flex;
@@ -355,17 +355,17 @@ export default {
 
 .performance__portfolio-divider {
   margin-bottom: 10px;
-  border: 1px solid var(--background-color);
+  border: 1px solid var(--color-16);
   width: 96%;
 }
 
 .performance__portfolio-description {
-  color: var( --color-dark-grey);
+  color: var(--color-2);
   font-size: 15px;
   font-weight: 500;
 }
 .strategies {
-  color: var(--color-blue);
+  color: var(--color-8);
 }
 .strategies:hover {
   cursor: pointer;
@@ -377,7 +377,7 @@ export default {
 }
 
 .performance__portfolio-total-info {
-  color: var(--color-dark-grey);
+  color: var(--color-2);
   font-size: 15px;
   font-weight: 500;
 }
