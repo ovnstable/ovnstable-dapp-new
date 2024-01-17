@@ -58,6 +58,7 @@ export default {
   display: flex;
   flex-direction: column;
   width: calc(100% - 40px);
+  z-index: 1;
 }
 
 .performance__payouts-wrapper {
