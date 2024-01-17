@@ -31,6 +31,7 @@ export default {
 <style scoped>
 .app-wrapper {
   width: 100vw;
+  height: calc(100vh - 100px);
 }
 .container {
   width: 100%;

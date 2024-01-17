@@ -23,3 +23,27 @@ export const OVN_CONTRACT_ADDRESS_BASE = '0xA3d1a8DEB97B111454B294E2324EfAD13a9d
 export const OVN_CONTRACT_ADDRESS_OPTIMISM = '0x3b08fcd15280e7B5A6e404c4abb87F7C774D1B2e';
 
 export const getImageUrl = (path: string) => new URL(`../${path}`, import.meta.url).href;
+
+export const svgIconsMap = (() => {
+  function getSvgNameFromPath(path: string) {
+    const pathSplit = path.split('/');
+    const fileName = pathSplit[pathSplit.length - 1] || '';
+    const svgName = fileName.replace('.svg', '');
+
+    return svgName;
+  }
+
+  const modules = import.meta.glob('@/assets/icons/**/*.svg', {
+    import: 'default',
+    eager: true,
+  });
+
+  const svgMap = new Map();
+
+  Object.keys(modules).forEach((path) => {
+    const svgName = getSvgNameFromPath(path);
+    svgMap.set(svgName, modules[path]);
+  });
+
+  return svgMap;
+})();

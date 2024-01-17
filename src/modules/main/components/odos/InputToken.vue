@@ -1,130 +1,81 @@
 <!-- eslint-disable vuejs-accessibility/form-control-has-label -->
 <template>
-  <div>
-    <div class="input-container">
-      <div class="input-data-container">
-        <div class="row">
-          <div class="col-7">
-            <input
-              v-model="token.value"
-              type="text"
-              placeholder="0"
-              @keypress="isNumber($event)"
-              @input="inputUpdate(token.value)"
-              class="input-style"
-            />
-          </div>
-          <div class="col-5 selected-image-right">
-            <div
-              v-if="token.selectedToken"
-              @click="selectTokenFunc(token)"
-              @keypress="selectTokenFunc(token)"
-              class="selected-token-container"
-            >
-              <div class="selected-token-container__content">
-                <div class="selected-token-item-img">
-                  <img
-                    :src="token.selectedToken.logoUrl"
-                    class="selected-token"
-                    alt="select-token"
-                  >
-                </div>
-                <div class="selected-token-item-text">
-                  {{token.selectedToken.symbol}}
-                </div>
-                <div class="select-token-with-token-item-img">
-                  <BaseIcon
-                    name="TokenSelectClosed"
-                  />
-                </div>
-              </div>
-            </div>
-            <div
-              v-else
-              @click="selectTokenFunc(token)"
-              @keypress="selectTokenFunc(token)"
-              class="select-token-container"
-            >
-              <div class="select-token-item-text">
-                Select token
-              </div>
-              <div class="select-token-item-img">
-                <BaseIcon
-                  name="TokenSelectClosed"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
+  <div class="input-tokens">
+    <div class="input-tokens__row">
+      <InputComponent
+        customClass="input-tokens__field"
+        :value="token.value"
+        is-custom
+        placeholder="0"
+        full-width
+        :disabled="disabled"
+        @input="inputUpdate"
+      />
 
-        <div
-          v-if="isTokenRemovable"
-          class="remove-container"
+      <div
+        v-if="token.selectedToken"
+        @click="selectTokenFunc(token)"
+        @keypress="selectTokenFunc(token)"
+        class="input-tokens__selected"
+      >
+        <img
+          :src="token.selectedToken.logoUrl"
+          alt="select-token"
         >
-          <div
-            @click="removeItemFunc(tokenInfo.id)"
-            @keypress="removeItemFunc(tokenInfo.id)"
-            class="remove-button"
-          >
-            <BaseIcon
-              name="RemoveToken"
-            />
-          </div>
+        <span>
+          {{token.selectedToken.symbol}}
+        </span>
+      </div>
+      <div
+        v-else
+        @click="selectTokenFunc(token)"
+        @keypress="selectTokenFunc(token)"
+        class="input-tokens__select"
+      >
+        Select token
+      </div>
+
+      <div
+        v-if="isTokenRemovable"
+        class="input-tokens_rmv-btn"
+        @click="removeItemFunc(tokenInfo.id)"
+        @keypress="removeItemFunc(tokenInfo.id)"
+      >
+        <BaseIcon
+          name="RemoveToken"
+        />
+      </div>
+    </div>
+    <div class="input-tokens__row">
+      <div class="input-tokens__balance">
+        <div
+          v-if="token.value
+            && token.selectedToken
+            && token.selectedToken.balanceData.balance"
+        >
+          ~ ${{formatMoney(token.usdValue, 2)}}
+        </div>
+        <div v-else-if="token.value && token.selectedToken">
+          ~ ${{formatMoney(token.usdValue, 2)}}
+        </div>
+        <div v-else>
+          $0
         </div>
       </div>
-      <div class="founds-container">
-        <div class="row">
-          <div class="col-6">
-            <div class="usd-equal-text">
-              <div
-                v-if="token.value
-                  && token.selectedToken
-                  && token.selectedToken.balanceData.balance"
-              >
-                ~ ${{formatMoney(token.usdValue, 2)}}
-              </div>
-              <div v-else-if="token.value && token.selectedToken">
-                ~ ${{formatMoney(token.usdValue, 2)}}
-              </div>
-              <div v-else>
-                $0
-              </div>
-            </div>
+      <div
+        @click="clickOnBalance()"
+        @keypress="clickOnBalance()"
+        class="input-tokens__balance"
+      >
+        <div class="select-token-balance-text">
+          <div v-if="token.selectedToken && token.selectedToken.balanceData.balance">
+            <span class="select-token-balance-text-enabled">
+              {{formatMoney(token.selectedToken.balanceData.balance,
+                            fixedByPrice(token.selectedToken.price))}}
+            </span>
           </div>
-          <div class="col-6 text-right">
-            <div
-              @click="clickOnBalance()"
-              @keypress="clickOnBalance()"
-              class="select-token-balance-container"
-            >
-              <div
-                v-if="token.selectedToken && token.selectedToken.balanceData.balance"
-                class="select-token-balance-img"
-              >
-                <BaseIcon
-                  name="WalletActive"
-                />
-              </div>
-              <div
-                v-else
-                class="select-token-balance-img"
-              >
-                <BaseIcon
-                  name="WalletIcon"
-                />
-              </div>
-              <div class="select-token-balance-text">
-                <div v-if="token.selectedToken && token.selectedToken.balanceData.balance">
-                  <span class="select-token-balance-text-enabled">
-                    {{formatMoney(token.selectedToken.balanceData.balance,
-                                  fixedByPrice(token.selectedToken.price))}}
-                  </span>
-                </div>
-                <div v-else>
-                  0.<span class="numeric-change numeric-blue">00</span>
-                </div>
-              </div>
-            </div>
+          <div v-else>
+            Balance: 0
           </div>
         </div>
       </div>
@@ -135,6 +86,7 @@
 <!-- eslint-disable no-param-reassign -->
 <script lang="ts">
 import { defineComponent } from 'vue';
+import InputComponent from '@/components/Input/Index.vue';
 import { formatMoney, fixedByPrice } from '@/utils/numbers.ts';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 
@@ -142,6 +94,7 @@ export default defineComponent({
   name: 'InputToken',
   components: {
     BaseIcon,
+    InputComponent,
   },
   props: [
     'tokenInfo',
@@ -149,6 +102,7 @@ export default defineComponent({
     'isTokenRemovable',
     'selectTokenFunc',
     'updateTokenValueFunc',
+    'disabled',
   ],
   mounted() {
     this.token.selectedToken = this.tokenInfo.selectedToken;
@@ -210,237 +164,97 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
-.selected-token-container__content {
-    display: flex;
-    align-items: center;
+<style>
+.input-tokens__row .input-tokens__field input {
+    padding-left: 0;
+}
+</style>
+
+<style lang="scss" scoped>
+.input-tokens {
+  position: relative;
+  background-color: var(--color-5);
+  border-radius: 10px;
+  padding: 20px 15px 15px 15px;
 }
 
-@media only screen and (max-width: 960px) {
-    .select-token-item-text {
-        font-size: 16px;
-        line-height: 24px;
-    }
+.input-tokens__field {
+  font-size: 20px;
+  color: var(--color-1);
+  font-weight: 600;
+  margin-right: 30px;
+  transition: box-shadow .2s ease;
 
-    .selected-token-item-text {
-        font-size: 16px;
-        line-height: 24px;
-    }
-
-    .select-token-balance-text {
-        font-size: 16px;
-        line-height: 24px;
-    }
-
-    .usd-equal-text {
-        font-size: 16px;
-        line-height: 28px;
-    }
+  &:hover, &:focus-within {
+    box-shadow: inset 0px -2px 0px 0px var(--color-6);
+  }
 }
 
-/* tablet */
-@media only screen and (min-width: 960px) and (max-width: 1400px) {
-    .select-token-item-text {
-        font-size: 18px;
-        line-height: 24px;
-    }
+.input-tokens__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 
-    .selected-token-item-text {
-        font-size: 18px;
-        line-height: 24px;
-    }
-
-    .select-token-balance-text {
-        font-size: 18px;
-        line-height: 28px;
-    }
-
-    .usd-equal-text {
-        font-size: 18px;
-        line-height: 28px;
-    }
+  &:first-child {
+    margin-bottom: 15px;
+  }
 }
 
-/* full */
-@media only screen and (min-width: 1400px) {
-    .select-token-item-text {
-        font-size: 18px;
-        line-height: 24px;
-    }
+.input-tokens__select {
+  background-color: var(--color-4);
+  color: var(--color-2);
+  font-weight: 500;
+  font-size: 15px;
+  border-radius: 30px;
+  padding: 10px 8px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color .2s ease, color .2s ease;
 
-    .selected-token-item-text {
-        font-size: 18px;
-        line-height: 24px;
-    }
-
-    .select-token-balance-text {
-        font-size: 18px;
-        line-height: 28px;
-    }
-
-    .usd-equal-text {
-        font-size: 18px;
-        line-height: 28px;
-    }
+  &:hover {
+    background-color: var(--color-6);
+    color: var(--color-1);
+  }
 }
 
-@media only screen and (min-width: 1300px) {
-    .select-token-item-text {
-        font-size: 18px;
-        line-height: 24px;
-    }
+.input-tokens__selected {
+  display: flex;
+  align-items: center;
+  background-color: var(--color-4);
+  color: var(--color-2);
+  font-size: 15px;
+  border-radius: 30px;
+  padding: 5px 4px;
+  transition: background-color .2s ease, color .2s ease;
+  cursor: pointer;
 
-    .selected-token-item-text {
-        font-size: 18px;
-        line-height: 24px;
-    }
+  img {
+    width: 22px;
+    height: 22px;
+    margin-right: 4px;
+  }
 
-    .select-token-balance-text {
-        font-size: 18px;
-        line-height: 28px;
-    }
-
-    .usd-equal-text {
-        font-size: 18px;
-        line-height: 28px;
-    }
-}
-
-.input-container {
-
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 20px;
-
-    background: var(--swap-input-placeholder);
-    border-radius: 20px;
-}
-
-.input-data-container {
-    position: relative;
-}
-
-.founds-container {
-}
-
-.select-token-container {
-    position: absolute;
-    padding: 12px;
-    background: var(--swap-select-token);
-    border-radius: 40px;
-    cursor: pointer;
-}
-
-.selected-token-container {
-    position: absolute;
-    padding: 12px;
-    background: var(--swap-select-token);
-    border-radius: 40px;
-    cursor: pointer;
-}
-
-.select-token-item-text {
-    display: inline-block;
-    font-style: normal;
-    font-weight: 600;
-    color: var(--main-gray-text);
-    margin-right: 15px;
-}
-
-.selected-token-item-text {
-    display: inline-block;
-    font-style: normal;
-    font-weight: 600;
-    color: var(--main-gray-text);
-    margin-right: 15px;
-    padding-left: 6px;
-}
-
-.select-token-item-img {
-    position: absolute;
-    right: 0;
-    top: 12px;
-}
-
-.select-token-with-token-item-img {
-    position: absolute;
-    right: 0;
-    top: 12px;
-}
-.selected-token-item-img {
-    display: flex;
-}
-
-.select-token-balance-container {
-    text-align: end;
-    position: relative;
-    cursor: pointer;
-    display: inline-flex
-}
-
-.select-token-balance-text {
-    font-style: normal;
+  span {
+    font-size: 14px;
     font-weight: 500;
-    color: #1C95E7;
-    padding-left: 2px;
+  }
+
+  &:hover {
+    background-color: var(--color-6);
+    color: var(--color-1);
+  }
 }
 
-.select-token-balance-text-enabled {
-    color: #1C95E7;
-}
+.input-tokens_rmv-btn {
+  position: absolute;
+  right: 15px;
+  top: -1px;
+  padding: 3px 4px;
+  cursor: pointer;
+  transition: transform .2s ease;
 
-.select-token-balance-img {
-}
-
-.input-style {
-    border:none;
-    background: transparent;
-    outline: 0;
-
-    max-width: 100%;
-
-    color: var(--main-gray-text);
-
-    font-style: normal;
-    font-weight: 400;
-    font-size: 40px;
-    line-height: 48px;
-
-}
-
-.input-style::placeholder {
-    color: #C5C9D1;
-}
-
-.usd-equal-text {
-    font-style: normal;
-    font-weight: 500;
-    color: #707A8B;
-}
-
-.numeric-change {
-    font-size: 18px;
-}
-
-.numeric-blue {
-    color: var(--links-blue);
-}
-
-.remove-container {
-    position: absolute;
-    top: 10px;
-    right: -10px;
-    cursor: pointer;
-}
-
-.selected-token {
-    height: 32px;
-    width: 32px;
-}
-
-.selected-image-right {
-    display: flex;
-    justify-content: flex-end;
-    padding-right: 25px;
+  &:hover {
+    transform: rotate(-90deg);
+  }
 }
 </style>

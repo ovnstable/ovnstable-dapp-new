@@ -1,5 +1,5 @@
 <template>
-  <div class="slider">
+  <div class="swap-slider">
     <div
       class="slider__arrow-wrapper"
       :class="{ 'slider__arrow-disabled': currentIndex === 0 }"
@@ -196,12 +196,11 @@ export default {
     }
 }
 
-.slider {
-    margin-left: auto;
-    margin-right: 40px;
+.swap-slider {
     display: flex;
     flex-direction: row;
     align-items: center;
+    margin: 50px 40px 50px auto;
 }
 
 .slider__info {

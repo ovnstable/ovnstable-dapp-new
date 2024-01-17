@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="componentClasses"
+    :class="[componentClasses, customClass, { 'input--custom': isCustom }]"
     @click="$emit('click', $event)"
     @mouseover="$emit('mouseover', $event)"
     @mouseenter="$emit('mouseenter', $event)"
@@ -11,8 +11,6 @@
     @keypress="$emit('mousemove', $event)"
   >
     <slot name="prefix" />
-    <label for="input" />
-
     <input
       ref="input"
       type="text"
@@ -54,6 +52,14 @@ export default {
         Array,
       ],
       default: null,
+    },
+    customClass: {
+      type: String,
+      default: '',
+    },
+    isCustom: {
+      type: Boolean,
+      default: false,
     },
     label: {
       type: String,
@@ -193,6 +199,19 @@ export default {
 
   &.is-full-width {
     width: 100%;
+  }
+}
+
+.input--custom {
+  input {
+    &:hover {
+      box-shadow: unset;
+    }
+  }
+  &.is-focused {
+    input {
+      box-shadow: unset;
+    }
   }
 }
 </style>

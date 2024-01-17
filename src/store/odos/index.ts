@@ -500,9 +500,9 @@ const actions = {
         commit('changeState', {
           field: 'executorContract',
           val: loadContractInstance(
-            data.contractData.erc20Abi,
+            data.erc20Abi,
             rootState.web3.web3,
-            data.contractData.executorAddress,
+            data.executorAddress,
           )
         });
         commit('changeState', { field: 'isContractLoading', val: false });

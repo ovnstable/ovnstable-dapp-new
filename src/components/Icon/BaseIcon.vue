@@ -4,30 +4,7 @@
 
 <script lang="ts">
 import { defineComponent, h } from 'vue';
-
-export function createSvgMap() {
-  function getSvgNameFromPath(path: string) {
-    const pathSplit = path.split('/');
-    const fileName = pathSplit[pathSplit.length - 1] || '';
-    const svgName = fileName.replace('.svg', '');
-
-    return svgName;
-  }
-
-  const modules = import.meta.glob('@/assets/icons/**/*.svg', {
-    import: 'default',
-    eager: true,
-  });
-
-  const svgMap = new Map();
-
-  Object.keys(modules).forEach((path) => {
-    const svgName = getSvgNameFromPath(path);
-    svgMap.set(svgName, modules[path]);
-  });
-
-  return svgMap;
-}
+import { svgIconsMap } from '@/utils/const.ts';
 
 export default defineComponent({
   props: {
@@ -39,7 +16,7 @@ export default defineComponent({
 
   computed: {
     dynamicComponent() {
-      const svg = createSvgMap().get(this.name);
+      const svg = svgIconsMap.get(this.name);
       return svg && h(svg);
     },
   },

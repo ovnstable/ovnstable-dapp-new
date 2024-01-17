@@ -171,7 +171,6 @@ export default defineComponent({
   components: { Slider, BaseIcon },
   props: [
     'tokenInfo',
-    'swapMethod',
     'removeItemFunc',
     'isTokenRemovable',
     'isTokenWithoutSlider',

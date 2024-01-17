@@ -207,7 +207,7 @@ export default {
   font-size: 14px;
   /* Default colors */
   color: #848D9C;
-  background: var(--color-5);
+  background: var(--color-6);
   font-weight: 400;
   text-transform: uppercase;
   cursor: pointer;
@@ -218,10 +218,6 @@ export default {
   -moz-border-radius-topright: 15px;
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
-
-  &:hover {
-    color: var(--ov-bg-secondary)
-  }
 
   [data-theme="dark"] & {
       border: 2px solid var(--color-16);
@@ -239,12 +235,12 @@ export default {
 }
 .tabs-header__ul .active span {
   /* Colors when tab is active */
-  background: var(--color-5);
+  background: var(--color-4);
   font-weight: 700;
-  border: 2px solid --color-1;
-  color: --color-1;
+  border: 2px solid var(--color-1);
+  color: var(--color-1);
   border-bottom: 0;
-  color: --color-1;
+  color: var(--color-1);
   -webkit-border-top-right-radius: 30px;
   -moz-border-radius-topleft: 30px;
   -moz-border-radius-topright: 30px;
@@ -284,10 +280,11 @@ export default {
 
 /* Squares */
 .tabs-header__ul li:before, .tabs-header__ul li:after {
-  background: var(--color-5);
+  background: var(--color-6);
   width: 15px;
   height: 15px;
-   [data-theme="dark"] & {
+
+  [data-theme="dark"] & {
       background: var(--color-17);
   }
 }
@@ -305,13 +302,17 @@ export default {
   -webkit-border-radius: 10px;
   -moz-border-radius:    10px;
   border-radius:         20px;
-  background: var(--ov-bg);
+  background: var(--color-16);
 
   /* Circles over squares */
   z-index: 2;
 }
+
+.tabs-header__ul__li:last-child span:after {
+  display: none;
+}
 .tabs-header__ul .active span:after, .tabs-header__ul .active span:before {
-  background: var(--color-5);
+  background: var(--color-6);
    [data-theme="dark"] & {
       background: var(--color-17);
   }

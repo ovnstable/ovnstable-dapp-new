@@ -105,7 +105,8 @@ export default {
   display: flex;
   width: 100%;
   height: fit-content;
-  background-color: var(--color-6);
+  overflow: hidden;
+  background-color: var(--color-8);
   border-radius: 30px;
   [data-theme="dark"] & {
       color: var(--color-2);
@@ -116,7 +117,6 @@ export default {
   flex-direction: column;
   align-items: center;
   width: 60%;
-  min-height: 690px;
 }
 .bridge-wrap {
   height: 100%;

@@ -1,5 +1,5 @@
 <template>
-  <div class="swap-form-wrap">
+  <div class="swap-form">
     <div v-if="!isAvailableOnNetwork">
       <NetworkNotAvailable :network-name="networkName" />
     </div>
@@ -12,29 +12,34 @@
     >
       <div
         v-if="!isAllLoaded"
-        class="loader-container"
+        class="swap-form__loader"
       >
         <Spinner />
       </div>
 
-      <div v-else>
-        <div class="swap-body">
-          <div>
-            <div class="input-swap-container">
-              <div class="swap-title pb-lg-2 mt-2">
-                <div>
-                  <span v-if="swapMethod === 'SELL'">
-                    <span v-if="viewType === 'SWIPE'">Swipe</span><span v-else>Swap</span> from Overnight
-                  </span>
-                  <span v-else>
-                    <span v-if="viewType === 'SWIPE'">Swipe</span><span v-else>Swap</span> from
-                  </span>
-                </div>
+      <template v-else>
+        <div class="swap-form__body">
+          <div class="swap-form__body-block">
+            <div class="swap-form__body-block__title">
+              <h3>
+                You send
+              </h3>
+              <div
+                v-if="inputTokensWithSelectedTokensCount"
+                class="swap-form__body-block__inputs-max"
+                @click="maxAllMethod"
+                @keypress="maxAllMethod"
+              >
+                Max all
               </div>
+            </div>
+            <div
+              :class="{ 'swap-form__body-block__inputs': true, 'block-inputs--scroll': inputTokens?.length > 3 }"
+            >
               <div
                 v-for="token in inputTokens"
                 :key="token.id"
-                class="input-component-container"
+                class="swap-form__body-block__inputs-item"
               >
                 <div
                   v-if="isShowDecreaseAllowance && token.selectedToken"
@@ -53,110 +58,64 @@
                   :update-token-value-func="updateTokenValueMethod"
                 />
               </div>
-              <div class="row">
-                <div class="col-6">
-                  <div
-                    v-if="isInputTokensAddAvailable"
-                    @click="addNewInputToken"
-                    @keypress="addNewInputToken"
-                    class="add-token-text"
-                  >
-                    + Select token
-                  </div>
-                </div>
-                <div
-                  v-if="inputTokensWithSelectedTokensCount"
-                  class="col-6"
-                >
-                  <div
-                    @click="maxAllMethod"
-                    @keypress="maxAllMethod"
-                    class="add-token-text max-all"
-                  >
-                    Max all
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="pt-5">
               <div
-                @click="changeSwap()"
-                @keypress="changeSwap"
-                class="change-swap-container"
+                v-if="isInputTokensAddAvailable"
+                class="swap-form__body-block__inputs-add"
+                @click="addNewInputToken"
+                @keypress="addNewInputToken"
               >
-                <div class="change-swap-image rotate">
-                  <BaseIcon
-                    name="ChangeSwapVector"
-                  />
-                </div>
+                +
               </div>
             </div>
+          </div>
 
-            <div class="out-swap-container">
-              <div class="swap-title pb-2">
-                <span v-if="swapMethod === 'BUY'">
-                  <span v-if="viewType === 'SWIPE'">Swipe</span><span v-else>Swap</span> to Overnight
-                </span>
-                <span v-else>
-                  <span v-if="viewType === 'SWIPE'">Swipe</span><span v-else>Swap</span> to
-                </span>
-              </div>
+          <div
+            @click="changeSwap()"
+            @keypress="changeSwap"
+            class="swap-form__body-arrow"
+          >
+            <BaseIcon
+              name="ChangeSwapVector"
+            />
+          </div>
+
+          <div class="swap-form__body-block">
+            <h3>
+              You receive
+            </h3>
+            <div
+              :class="{ 'swap-form__body-block__inputs': true, 'block-inputs--scroll': outputTokens?.length > 3 }"
+            >
               <div
                 v-for="token in outputTokens"
                 :key="token.id"
-                class="input-component-container"
+                class="swap-form__body-block__inputs-item"
               >
-                <OutputToken
+                <InputToken
                   :token-info="token"
-                  :swap-method="swapMethod"
                   :remove-item-func="removeOutputToken"
                   :is-token-removable="isOutputTokensRemovable"
-                  :is-token-without-slider="isTokenWithoutSlider"
-                  :is-token-without-line-slider="
-                    getLastUnlockedToken && getLastUnlockedToken.id === token.id
-                  "
-                  :lock-proportion-func="lockProportion"
-                  :update-slider-value-func="updateSliderValue"
                   :select-token-func="selectOutputToken"
-                  :is-tokens-prices-loading="isSumulateSwapLoading"
-                  :free-output-tokens-percentage="freeOutputTokensPercentage"
                 />
               </div>
 
-              <div class="row">
-                <div class="col-6">
-                  <div
-                    v-if="isOutputTokensAddAvailable"
-                    @click="addNewOutputToken"
-                    @keypress="addNewOutputToken"
-                    class="add-token-text"
-                  >
-                    + Select token
-                  </div>
-                </div>
-                <div
-                  v-if="outputTokensWithSelectedTokensCount >= 2"
-                  class="col-6"
-                >
-                  <div
-                    @click="resetOutputs"
-                    @keypress="resetOutputs"
-                    class="add-token-text max-all"
-                  >
-                    Reset output %
-                  </div>
-                </div>
+              <div
+                v-if="isOutputTokensAddAvailable"
+                class="swap-form__body-block__inputs-add"
+                @click="addNewOutputToken"
+                @keypress="addNewOutputToken"
+              >
+                +
               </div>
             </div>
           </div>
         </div>
 
-        <SwapSlippageSettings
+        <!-- <SwapSlippageSettings
           :currentSlippageChanged="handleCurrentSlippageChanged"
           :selected-input-tokens="selectedInputTokens"
           :selected-output-tokens="selectedOutputTokens"
-        />
+        /> -->
 
         <div
           v-if="networkName === 'zksync'"
@@ -189,85 +148,62 @@
           </div>
         </div>
 
-        <div class="swap-footer pt-5">
-          <div
+        <div class="swap-form__btns">
+          <ButtonComponent
             v-if="!account"
-            class="swap-button-container"
+            @click="connectWallet"
+            btn-size="large"
+            full
           >
+            CONNECT WALLET
+          </ButtonComponent>
+          <template v-else>
             <ButtonComponent
-              @click="connectWallet"
-              class="swap-button"
-            >
-              <div class="swap-button-title">
-                <div>CONNECT WALLET</div>
-              </div>
-            </ButtonComponent>
-          </div>
-          <div
-            v-else
-            class="swap-button-container"
-          >
-            <div
-              elevated
-              large
               v-if="hideSwapButton"
-              class="disable-button"
+              btn-size="large"
+              disabled
+              full
             >
-              <div class="disable-button-title">
-                <div>
-                  {{ disableButtonMessage }}
-                </div>
-              </div>
-            </div>
+              {{ disableButtonMessage }}
+            </ButtonComponent>
             <ButtonComponent
               v-else-if="isAnyInputsNeedApprove"
               @click="approve(firstInputInQueueForToApprove)"
-              class="swap-button"
+              btn-size="large"
+              disabled
+              full
             >
-              <div class="swap-button-title">
-                <div>
-                  <span
-                    v-if="viewType === 'SWIPE' && !firstSwipeClickOnApprove"
-                  >
-                    SWIPE
-                  </span>
-                  <span v-else>
-                    APPROVE
-                    {{ firstInputInQueueForToApprove.selectedToken.symbol }}
-                  </span>
-                </div>
-              </div>
+              <span
+                v-if="viewType === 'SWIPE' && !firstSwipeClickOnApprove"
+              >
+                SWIPE
+              </span>
+              <span v-else>
+                APPROVE
+                {{ firstInputInQueueForToApprove.selectedToken.symbol }}
+              </span>
             </ButtonComponent>
             <ButtonComponent
               v-else
               @click="swap()"
-              class="swap-button"
+              btn-size="large"
+              disabled
+              full
               :loading="isLoadingSwap"
             >
               <span v-if="viewType === 'SWIPE'">SWIPE LIQUIDITY</span><span v-else>SWAP</span>
             </ButtonComponent>
-          </div>
+          </template>
 
-          <div class="label-container pt-3">
-            <div class="row">
-              <div
-                class="col-6 pr-1"
-                style="padding-top: 15px"
-              >
-                <div class="powered-text">Powered by</div>
-              </div>
-              <div class="col-6 pl-0">
-                <div class="powered-image">
-                  <img
-                    alt="odos"
-                    :src="getImageUrl('assets/images/common/odosLogo.png')"
-                  />
-                </div>
-              </div>
-            </div>
+          <div class="swap-form__powered">
+            <h4>POWERED BY</h4>
+            <BaseIcon
+              class="swap-form__powered__icon"
+              name="PoweredByOdos"
+            />
           </div>
         </div>
-      </div>
+      </template>
     </div>
 
     <div v-if="quotaResponseInfo">
@@ -419,8 +355,6 @@ import { clearApproveToken, getAllowanceValue, approveToken } from '@/helpers/co
 import odosApiService from '@/services/odos-api-service.ts';
 import { getImageUrl } from '@/utils/const.ts';
 import NetworkNotAvailable from '@/modules/main/components/odos/network-not-available.vue';
-import SwapSlippageSettings from '@/modules/main/components/odos/SwapSlippageSettings.vue';
-import OutputToken from '@/modules/main/components/odos/OutputToken.vue';
 import SelectTokensModal from '@/modules/main/components/odos/TokensModal/Index.vue';
 
 export default defineComponent({
@@ -431,10 +365,8 @@ export default defineComponent({
     NetworkNotAvailable,
     ErrorModal,
     WaitingModal,
-    SwapSlippageSettings,
     SelectTokensModal,
     InputToken,
-    OutputToken,
     BaseIcon,
   },
   props: {
@@ -1657,7 +1589,7 @@ export default defineComponent({
     },
     selectOutputToken() {
       if (this.swapMethod === 'BUY') {
-        this.openModalWithSelectTokenAndBySwapMethod('OVERNIGHT');
+        this.openModalWithSelectTokenAndBySwapMethod('ALL');
         return;
       }
 
@@ -1754,412 +1686,124 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
-.powered-image img {
-  height: 36px;
-  background-color: #000;
-  border-radius: 8px;
-}
-.swap-form-wrap,
-.loader-container {
-  height: 100%;
-  width: calc(100% + 3px);
+<style lang="scss" scoped>
+.swap-form__body-block {
+  overflow-x: scroll;
+  overflow-y: hidden;
 }
 
-.swap-container-full {
-  height: 100%;
-}
-
-.loader-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.swap-container {
-  background: var(--color-5);
-  height: 100%;
-  border-radius: 0 0 30px 30px;
-  border: 2px solid var(--color-1);
-  border-top: 0;
-  [data-theme="dark"] & {
-      background: var(--color-17);
-      border: 2px solid var(--color-16);
-      border-top: 0;
-  }
-}
-
-@media only screen and (max-width: 960px) {
-  .swap-container {
-    padding: 10px 20px;
-    gap: 8px;
-    background: var(--swap-main-banner-background);
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.2);
-    border-radius: 28px;
-  }
-
-  .add-token-text {
-    font-size: 14px;
-    line-height: 24px;
-  }
-
-  .swap-title {
-    font-size: 18px;
-    line-height: 28px;
-  }
-
-  .swap-button-title {
-    font-size: 16px;
-    line-height: 22px;
-  }
-
-  .disable-button-title {
-    font-size: 16px;
-    line-height: 22px;
-  }
-}
-
-/* tablet */
-@media only screen and (min-width: 960px) and (max-width: 1400px) {
-  .swap-container {
-    padding: 40px 30px;
-    gap: 8px;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.2);
-  }
-  .add-token-text {
-    font-size: 16px;
-    line-height: 24px;
-  }
-
-  .swap-title {
-    font-size: 18px;
-    line-height: 28px;
-  }
-
-  .swap-button-title {
-    font-size: 18px;
-    line-height: 22px;
-  }
-
-  .disable-button-title {
-    font-size: 18px;
-    line-height: 22px;
-  }
-}
-
-/* full */
-@media only screen and (min-width: 1400px) {
-  .swap-container {
-    padding: 40px 30px;
-    gap: 8px;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.2);
-  }
-
-  .add-token-text {
-    font-size: 16px;
-    line-height: 24px;
-  }
-
-  .swap-title {
-    font-size: 18px;
-    line-height: 28px;
-  }
-
-  .swap-button-title {
-    font-size: 18px;
-    line-height: 22px;
-  }
-
-  .disable-button-title {
-    font-size: 18px;
-    line-height: 22px;
-  }
-}
-
-@media only screen and (min-width: 1300px) {
-  .swap-container {
-    padding: 30px 20px;
-    gap: 8px;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.2);
-  }
-
-  .add-token-text {
-    font-size: 16px;
-    line-height: 24px;
-  }
-
-  .swap-title {
-    font-size: 18px;
-    line-height: 28px;
-  }
-
-  .swap-button-title {
-    font-size: 18px;
-    line-height: 22px;
-  }
-
-  .disable-button-title {
-    font-size: 18px;
-    line-height: 22px;
-  }
-}
-
-div {
-}
-
-.swap-header {
-}
-
-.swap-settings {
-  text-align: end;
-  cursor: pointer;
-}
-
-.swap-body {
-}
-
-.swap-footer {
-}
-
-.add-token-text {
-  font-style: normal;
-  font-weight: 400;
-
-  color: #1c95e7;
-  cursor: pointer;
-}
-
-.add-token-text-disabled {
-  cursor: default !important;
-  color: #707a8b;
-}
-
-.swap-title {
+.swap-form__body-block__title {
   display: flex;
   justify-content: space-between;
-  font-style: normal;
-  font-weight: 400;
-
-  color: var(--main-gray-text);
-}
-
-.input-component-container {
-  margin-bottom: 4px;
-}
-
-.max-all {
-  text-align: end;
-}
-.change-swap-container {
-  width: 44px;
-  height: 44px;
-
-  background: var(--swap-arrow-bg);
-  box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.2);
-  border-radius: 12px;
-  cursor: pointer;
-
-  display: flex;
-  justify-content: center;
   align-items: center;
-
-  display: table;
-  margin: 0 auto;
-  margin-bottom: 10px;
+  position: sticky;
+  left: 0;
+  top: 0;
+}
+.swap-form__body-block__inputs {
+  position: relative;
+  display: flex;
+  gap: 5px;
 }
 
-.change-swap-image {
-  text-align: center; /* center the child element's content horizontally */
-  padding-top: 8px;
+.block-inputs--scroll {
+  width: calc(100% + 600px);
+  overflow-x: scroll;
+  overflow-y: hidden;
 }
 
-.powered-text {
-  font-style: normal;
-  font-weight: 400;
+.swap-form__body-block__inputs-item {
+  width: 100%;
+}
+
+.swap-form__body-block__inputs-max {
+  position: sticky;
+  margin-right: 12px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color .1s ease;
+
+  &:hover {
+    color: var(--color-3);
+  }
+}
+
+.swap-form__body-block__inputs-add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-5);
+  color: var(--color-1);
+  font-size: 40px;
+  padding: 15px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color .2s ease;
+
+  &:hover {
+    background-color: var(--color-6);
+  }
+}
+.swap-form, .swap-container {
+  height: 100%;
+  width: calc(100% + 3px);
+  border-radius: 0 0 30px 30px;
+}
+
+.swap-form__loader {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.swap-form {
+  padding: 24px 20px;
+  background-color: var(--color-4);
+  border: 2px solid var(--color-1);
+  border-top: 0;
+}
+.swap-form__body-block {
+  h3 {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--color-2);
+    margin-bottom: 5px;
+  }
+}
+.swap-form__powered {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 12px;
-  line-height: 16px;
-
-  color: #adb3bd;
-
-  text-align: end;
-}
-
-.swap-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  align-items: center;
-  gap: 8px;
-  color: #fff;
-
-  width: 100%;
-  height: 48px;
-
-  padding: 15px 0;
-
-  /* Blue gradient */
-
-  background: linear-gradient(
-    91.26deg,
-    #28a0f0 0%,
-    rgba(6, 120, 196, 0.9917) 100%
-  );
-  border-radius: 2px;
-
-  cursor: pointer;
-}
-
-.swap-button-title {
-  font-style: normal;
-  font-weight: 400;
-
-  color: #ffffff;
-}
-
-.disable-button {
-  justify-content: center;
-  align-items: center;
-  padding: 8px 12px;
-
-  height: 48px;
-
-  background: var(--action-btn-bg);
-  border-radius: 2px;
-}
-
-.disable-button-title {
-  text-align: center;
-  align-items: center;
-  gap: 8px;
-
-  width: 100%;
-
-  padding-top: 7px;
-
-  font-style: normal;
-  font-weight: 400;
-
-  color: var(--progress-text);
-}
-
-.decrease-allowance {
-  font-size: 14px;
-  font-weight: 400;
-  height: auto;
-  color: var(--main-gray-text);
-  letter-spacing: 0.1px;
-  line-height: 22px;
-  cursor: pointer;
-}
-
-.transaction-info-container {
-  padding: 20px;
-  max-width: 600px;
-}
-
-.transaction-info-title {
-  font-style: normal;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 24px;
-
-  color: #707a8b;
-}
-
-.transaction-info {
-  font-style: normal;
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 24px;
-  text-align: end;
-
-  color: var(--main-gray-text);
-}
-
-.transaction-info-additional {
-  font-style: normal;
-  font-weight: 200;
-  font-size: 16px;
-  line-height: 24px;
-
-  color: var(--main-gray-text);
-}
-
-.transaction-info-address {
-  text-decoration: underline;
-  font-weight: bold;
-  text-align: end;
-  color: var(--main-gray-text);
-}
-
-.transaction-info-footer {
-  border-top: 1px solid var(--dividers);
-  padding-top: 22px;
-}
-
-.transaction-info-body {
-  padding-bottom: 20px;
-}
-
-.loader-container {
-  min-height: 80px;
-}
-
-.rotate {
-  transform-origin: center;
-  transition: transform 0.7s ease;
-}
-
-.rotate:hover {
-  transform: rotate(180deg);
-}
-
-.dont-work-on-network {
-  font-style: normal;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 24px;
-
-  color: #cf3f92;
-}
-
-.dont-work-on-network-container {
-  text-align: center;
-}
-
-.slippage-info-container {
-  background: rgba(254, 127, 45, 0.1);
-  padding: 8px;
-  width: 100%;
   margin-top: 10px;
-  text-align: center;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-7);
 }
 
-.slippage-info-title {
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0em;
-  text-align: left;
-  color: rgba(254, 127, 45, 1);
+.swap-form__powered__icon {
+  margin-left: 8px;
 }
 
-.odos-fees-container {
+.swap-form__body-arrow {
   display: flex;
-  flex-direction: row;
-}
-
-.odos-fees-title {
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 24px;
-  text-align: end;
-
-  color: var(--secondary-gray-text);
-}
-
-.with-tooltip {
-  display: flex;
-  flex-direction: row;
   align-items: center;
+  justify-content: center;
+  margin: 20px auto;
+  background-color: var(--color-5);
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  cursor: pointer;
+  transition: background-color .2s ease;
+
+  &:hover {
+    background-color: var(--color-6);
+  }
+}
+
+.swap-form__btns {
+  margin-top: 20px;
 }
 </style>

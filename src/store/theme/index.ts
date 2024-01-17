@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 const state = {
   light: true,
 };
@@ -13,11 +12,10 @@ const getters = {
 
 const actions = {
 
-  async switchTheme({ commit, dispatch, getters }: any) {
+  async switchTheme({ commit, getters }: any) {
     const storageType = localStorage.getItem('theme-type');
     const isLightTheme = !storageType || storageType === 'light';
 
-    console.log(storageType, isLightTheme, '---switchTheme');
     if (isLightTheme) {
       document.documentElement.setAttribute('data-theme', 'dark');
       localStorage.setItem('theme-type', 'dark');
@@ -35,11 +33,9 @@ const actions = {
   },
 
   async initTheme({ commit, getters }: any) {
-    console.log('---initTheme');
     const storageType = localStorage.getItem('theme-type');
     const isLightTheme = !storageType || storageType === 'light';
 
-    console.log(storageType, '---storageType');
     if (isLightTheme) {
       document.documentElement.setAttribute('data-theme', 'light');
       localStorage.setItem('theme-type', 'light');

@@ -1,5 +1,5 @@
 <template>
-  <div class="sidebar">
+  <div class="app-sidebar">
     <ul class="sidebar__top">
 
       <router-link
@@ -141,7 +141,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.sidebar,
+.app-sidebar {
+  height: calc(100vh - 100px);
+}
+.app-sidebar,
 .sidebar__top,
 .sidebar__bottom {
   display: flex;
@@ -180,7 +183,8 @@ export default {
 }
 
 .sidebar__bottom {
-  margin-top: 252px;
+  margin-top: auto;
+  margin-bottom: 50px;
 }
 
 .sidebar__text-bottom {
