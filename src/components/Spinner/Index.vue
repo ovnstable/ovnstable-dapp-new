@@ -1,101 +1,93 @@
 <template>
   <div
-    :class="$options.name"
-    :style="style"
-    class="sk-fading-circle"
+    class="v-spinner"
+    v-show="true"
   >
     <div
-      v-for="i in 8"
-      :key="i"
-      :class="'sk-circle sk-circle' + i"
-    />
+      class="v-moon v-moon1"
+      :style="spinnerStyle"
+    >
+      <div
+        class="v-moon v-moon2"
+        :style="[spinnerMoonStyle, animationStyle2]"
+      />
+    </div>
   </div>
 </template>
-
 <script lang="ts">
 export default {
-  name: 'spinner-fading-circle',
-  inheritAttrs: false,
-
+  name: 'SpinnerComponent',
   props: {
+    loading: {
+      type: Boolean,
+      default: true,
+    },
+    color: {
+      type: String,
+      default: '#E3F2FD',
+    },
     size: {
-      type: Number,
-      default: 48,
+      type: String,
+      default: '60px',
+    },
+    margin: {
+      type: String,
+      default: '2px',
+    },
+    radius: {
+      type: String,
+      default: '100%',
     },
   },
-
   computed: {
-    style() {
-      const size = this.size && `${this.size}px`;
+    spinnerStyle() {
       return {
-        width: size,
-        height: size,
+        height: this.size,
+        width: this.size,
+        borderRadius: this.radius,
+      };
+    },
+    moonSize() {
+      return parseFloat(this.size) / 10;
+    },
+    spinnerMoonStyle() {
+      return {
+        height: this.size,
+        width: this.size,
+        borderRadius: this.radius,
+      };
+    },
+    animationStyle2() {
+      return {
+        top: `${parseFloat(this.size) / 2 - this.moonSize / 2}px`,
+        border: `#0497EC solid ${this.moonSize}px`,
+        borderBottom: `${this.moonSize}px solid ${this.color}`,
       };
     },
   },
 };
 </script>
 
-<style lang="scss" scoped>
-@use "sass:math";
-
-$circle-count: 8;
-$animation-duration: 0.1s * $circle-count;
-$spinkit-size: 36px;
-
-.sk-fading-circle {
+<style>
+.v-spinner .v-moon1 {
+  -webkit-animation: v-moonStretchDelay 1s 0s infinite linear;
+  animation: v-moonStretchDelay 1s 0s infinite linear;
+  -webkit-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
   position: relative;
+}
 
-  width: $spinkit-size;
-  height: $spinkit-size;
-  color: var(--color-1);
-
-  &.white {
-    color: #fff;
-  }
-
-  .sk-circle {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-  }
-
-  .sk-circle::before {
-    $width: round(0.2 * $spinkit-size);
-    display: block;
-    width: $width;
-    height: $width;
-    margin: 0 auto;
-    background-color: currentColor;
-    animation: sk-circleFadeDelay $animation-duration infinite ease-in-out both;
-    content: "";
-    overflow: hidden;
-    border-radius: math.div($width, 2);
-  }
-
-  @for $i from 1 through $circle-count {
-    .sk-circle#{$i} {
-      transform: rotate(math.div(360deg, $circle-count) * ($i - 1));
-
-      &::before {
-        $a: -$animation-duration + ($i - 1) * math.div($animation-duration, $circle-count);
-        animation-delay: $a;
-      }
-    }
+@-webkit-keyframes v-moonStretchDelay {
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
   }
 }
 
-@keyframes sk-circleFadeDelay {
-  0%,
-  39%,
+@keyframes v-moonStretchDelay {
   100% {
-    opacity: 0;
-  }
-
-  40% {
-    opacity: 1;
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
   }
 }
 </style>
