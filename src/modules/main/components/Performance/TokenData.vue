@@ -116,7 +116,7 @@ export default {
     flex-direction: row;
     align-self: flex-start;
     justify-content: center;
-    background: var(--color-white);
+    background: var(--color-5);
     max-width: calc(100% - 40px);
   }
 
@@ -131,24 +131,24 @@ export default {
     margin-left: 20px;
   }
   .performance__token-data__title {
-    color: var(--color-black);
+    color: var(--color-1);
     font-size: 22px;
     font-weight: 600;
   }
   .performance__token-data__link-address {
     margin-top: 10px;
     max-width: 44px;
-    color: var(--color-dark-grey);
+    color: var(--color-2);
     font-size: 12px;
     font-weight: 600;
     text-decoration-line: underline;
   }
   .performance__token-data__link-address:hover {
-    color: var(--color-blue);
+    color: var(--color-8);
   }
   .performance__token-data__description {
     margin-left: 30px;
-    color: var(--color-dark-grey);
+    color: var(--color-2);
     text-align: justify;
     font-size: 12px;
     font-weight: 400;
@@ -158,7 +158,7 @@ export default {
   .performance__divider {
     margin-left: 40px;
     margin-right: 40px;
-    border: 1px solid var(--color-light-grey);
+    border: 1px solid var(--color-3);
   }
 
   .performance__payout-data,
@@ -170,7 +170,7 @@ export default {
   }
   .performance__token-data__number,
   .performance__token-data__collateral-token {
-    color: var(--color-black);
+    color: var(--color-1);
     font-size: 20px;
     font-weight: 500;
   }
@@ -192,7 +192,7 @@ export default {
   }
 
   .performance__token-data__hours {
-    color: var(--color-black);
+    color: var(--color-1);
     font-size: 15px;
     font-weight: 500;
   }
@@ -202,8 +202,8 @@ export default {
     flex-direction: row;
     align-items: center;
     border-radius: 30px;
-    border: 1px solid var(--color-light-blue);
-    background: var(--color-white);
+    border: 1px solid var(--color-7);
+    background: var(--color-5);
     padding: 5px 10px;
     margin-top: 24px;
     width: fit-content;

@@ -32,7 +32,7 @@ export default {
 
 .theme-switch-label {
     cursor: pointer;
-    background: var(--color-1);
+    background: var(--color-5);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -40,6 +40,10 @@ export default {
     position: relative;
     border: 1px solid var( --color-2);
     padding: 5px 28px 4px 5px;
+    [data-theme="dark"] & {
+      background: var(--1, #0F172A);
+      border: 1px solid var( --color-4);
+    }
 }
 
 .theme-switch-button {
@@ -49,10 +53,13 @@ export default {
     background: var(--background-color);
     border-radius: 50%;
     transition: transform 0.15s;
+    [data-theme="dark"] & {
+      border: 1px solid var( --color-4);
+      background:  var(--color-17);
+    }
 }
 
 .theme-switch-checkbox:checked + .theme-switch-label .theme-switch-button {
     transform: translateX(23px);
-    background: var(--color-3)
 }
 </style>

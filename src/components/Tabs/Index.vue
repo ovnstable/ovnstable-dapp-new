@@ -168,6 +168,7 @@ export default {
 }
 
 .tabs-header__ul__li-trigger {
+  color: var(--color-1);
   position: relative;
   z-index: 10;
   padding: 6px 0;
@@ -195,14 +196,14 @@ export default {
   text-align: center;
   width: 100%;
   text-decoration: none;
-  border: 2px solid black;
+  border: 2px solid var(--color-1);
   transition: padding .25s ease .1s,
     border-radius .2s ease, color .2s ease;
 
   font-size: 14px;
   /* Default colors */
   color: #848D9C;
-  background: #fff;
+  background: var(--color-5);
   font-weight: 400;
   text-transform: uppercase;
   cursor: pointer;
@@ -217,6 +218,12 @@ export default {
   &:hover {
     color: var(--ov-bg-secondary)
   }
+
+  [data-theme="dark"] & {
+      border: 2px solid var(--color-16);
+      color: #848D9C;
+      background: var(--color-17);
+  }
 }
 .tabs-header__ul .active {
   /* Highest, active tab is on top */
@@ -228,17 +235,23 @@ export default {
 }
 .tabs-header__ul .active span {
   /* Colors when tab is active */
-  background: white;
+  background: var(--color-5);
   font-weight: 700;
-  border: 2px solid black;
-  color: #0F172A;
+  border: 2px solid --color-1;
+  color: --color-1;
   border-bottom: 0;
-  color: black;
+  color: --color-1;
   -webkit-border-top-right-radius: 30px;
   -moz-border-radius-topleft: 30px;
   -moz-border-radius-topright: 30px;
   border-top-left-radius: 30px;
   border-top-right-radius: 30px;
+  [data-theme="dark"] & {
+      background: var(--color-17);
+      color: var(--color-4);
+      border: 2px solid var(--color-1);
+      border-bottom: 0;
+  }
 }
 .tabs-header__ul li:before, .tabs-header__ul li:after,
 .tabs-header__ul li span:before, .tabs-header__ul li span:after {
@@ -256,17 +269,23 @@ export default {
   content: "";
 }
 .tabs-header__ul .active:before, .tabs-header__ul .active:after {
-  background: white;
+  background: var(--color-5);
 
   /* Squares below circles */
   z-index: 1;
+  [data-theme="dark"] & {
+      background: var(--color-17);
+  }
 }
 
 /* Squares */
 .tabs-header__ul li:before, .tabs-header__ul li:after {
-  background: #fff;
+  background: var(--color-5);
   width: 15px;
   height: 15px;
+   [data-theme="dark"] & {
+      background: var(--color-17);
+  }
 }
 .tabs-header__ul li:before {
   left: -10px;
@@ -288,20 +307,29 @@ export default {
   z-index: 2;
 }
 .tabs-header__ul .active span:after, .tabs-header__ul .active span:before {
-  background: #fff;
+  background: var(--color-5);
+   [data-theme="dark"] & {
+      background: var(--color-17);
+  }
 }
 
 .tabs-header__ul .active span:after {
-  border: 1px solid black;
+  border: 1px solid var(--color-1);
   border-width: 0 0 2px 2px;
   border-radius: 0 50% 0 50%;
+  [data-theme="dark"] & {
+       border-color: var(--color-1);
+  }
 }
 
 .tabs-header__ul .active span:before {
-  border: 1px solid black;
+  border: 2px solid var(--color-1);
   border-width: 2px 2px 0 0;
   border-radius: 0 50% 0 50%;
   transform: rotate(90deg);
+  [data-theme="dark"] & {
+       border-color: var(--color-1);
+  }
 }
 .tabs-header__ul li:first-child span:before,
 .tabs-header__ul li:last-child span:after {
@@ -329,7 +357,7 @@ export default {
    outside color needs */
 .tabs-header__ul li:first-child.active span:before,
 .tabs-header__ul li:last-child.active span:after {
-  background: var(--ov-bg);
+  background: none;
 }
 .tabs-header__ul li span:before {
   left: -27px;

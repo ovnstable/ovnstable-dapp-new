@@ -1,7 +1,26 @@
 <template>
-  <p class="performance__portfolio-strategies-token-title">
+  <div class="performance__portfolio-strategies-token-title">
     {{ type === 'strategies' ? tokenName + ' portfolio' : tokenName + ' collateral assets' }}
-  </p>
+    <a
+      v-if="type === 'strategies'"
+      href="https://docs.overnight.fi/advanced/strategies"
+      target="_blank"
+      rel="noopener noreferrer"
+      :class="{
+        'performance__portfolio-description': true,
+        strategies: true,
+      }"
+    >
+      Learn about our strategies
+    </a>
+    <p
+      v-else
+      :class="'performance__portfolio-description'"
+    >
+      Using our products you assume the risk of the protocols integrated into our collateral
+    </p>
+
+  </div>
   <div class="performance__portfolio-strategies">
     <div class="performance__portfolio-strategies-stablecoins">
       <div class="performance__portfolio-strategies-stablecoins-specifications">
@@ -22,15 +41,25 @@
           :key="asset.tokenName"
           class="performance__portfolio-strategies-stablecoins"
         >
-          <div class="performance__portfolio-strategy">
+          <div
+            :class="[
+              'performance__portfolio-strategy',
+              { assets: type === 'portfolio' && assets.indexOf(asset) === assets.length - 1 },
+            ]"
+          >
             <div class="performance__portfolio-strategy-token-data">
+              <div
+                v-if="type === 'strategies'"
+                name="strategyImage"
+                class="performance__portfolio-strategy-icon"
+                :style="{ 'background-color': getIconColor(assets.indexOf(asset)) }"
+              />
               <BaseIcon
                 v-if="type === 'portfolio'"
                 name="tokenImage"
-                :path="asset.strategyImagePath"
+                :path="asset.tokenImagePath"
                 class="performance__portfolio-strategy-token-img"
               />
-              <div class="performance__portfolio-strategy-icon" />
               <p class="performance__portfolio-strategy-token-name">
                 {{ type === 'portfolio' ? asset.tokenNameAsset : asset.strategyNameAsset }}
               </p>
@@ -54,6 +83,10 @@
         </div>
         <div
           v-if="type === 'strategies'"
+          class="performance__portfolio-divider"
+        />
+        <div
+          v-if="type === 'strategies'"
           class="performance__portfolio-total-info"
         >
           <div class="performance__portfolio-total">
@@ -75,6 +108,7 @@
       </div>
     </div>
   </div>
+
 </template>
 
 <script lang="ts">
@@ -134,6 +168,16 @@ export default {
       }
       return value.toFixed(4);
     },
+    isLastAsset(asset:any) {
+      return this.assets.indexOf(asset) === this.assets.length - 1;
+    },
+    getIconColor(index:number) {
+      const colors = [
+        getComputedStyle(document.documentElement).getPropertyValue('--color-blue').trim(),
+        getComputedStyle(document.documentElement).getPropertyValue('--color-red').trim(),
+        getComputedStyle(document.documentElement).getPropertyValue('--color-pink').trim()];
+      return colors[index % colors.length];
+    },
   },
 
 };
@@ -141,14 +185,18 @@ export default {
 
 <style>
 .performance__portfolio-assets {
-  background: var(--color-dark-white);
+  background: var(--color-6);
   border-radius: 10px;
 }
 .performance__portfolio-strategies-token-title {
-  margin-bottom: 24px;
+  margin-bottom: 20px;
+  margin-top: 24px;
   color: var(--color-black);
-  font-size: 24px;
-  font-weight: 400;
+  font-size: 17px;
+  font-weight: 600;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .performance__portfolio-strategies {
@@ -166,7 +214,7 @@ export default {
 .performance__portfolio-strategies-stablecoins-specifications {
   display: flex;
   padding: 0 20px;
-  color: var(--color-dark-grey);
+  color: var(--color-2);
   font-size: 15px;
   font-weight: 400;
 }
@@ -198,13 +246,14 @@ export default {
 
 .performance__portfolio-strategy {
   display: flex;
-  padding: 10px 20px;
+  padding: 0px 20px;
+  padding-bottom: 10px;
 }
 
 .performance__portfolio-strategy > * {
   flex: 1;
   text-align: center;
-  color: var(--color-black);
+  color: var(--color-1);
   font-size: 15px;
   font-weight: 500;
 }
@@ -231,22 +280,19 @@ export default {
   justify-content: space-between;
   flex: 2;
 }
+
 .performance__portfolio-strategy-icon {
   width: 14px;
   height: 14px;
   border-radius: 5px;
-  background: var(--color-blue);
+  margin-right: 3px;
 }
 
 .performance__portfolio-strategy-token-portfolio-number,
 .performance__portfolio-strategy-token-name {
-  color: var(--color-black);
+  color: var(--color-1);
   font-size: 15px;
   font-weight: 500;
-}
-
-.performance__portfolio-strategy-token-name {
-  margin-left: 6px;
 }
 
 .performance__portfolio-total-info {
@@ -306,4 +352,42 @@ export default {
   text-align: right;
   padding-right: 15px;
 }
+
+.performance__portfolio-divider {
+  margin-bottom: 10px;
+  border: 1px solid var(--background-color);
+  width: 96%;
+}
+
+.performance__portfolio-description {
+  color: var( --color-dark-grey);
+  font-size: 15px;
+  font-weight: 500;
+}
+.strategies {
+  color: var(--color-blue);
+}
+.strategies:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+.performance__portfolio-assets {
+  padding-bottom: 20px;
+  padding-top: 20px;
+}
+
+.performance__portfolio-total-info {
+  color: var(--color-dark-grey);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.assets {
+  padding-bottom: 0px;
+}
+
+.performance__portfolio-strategy-token-img {
+  margin-right: 17px;
+}
+
 </style>
