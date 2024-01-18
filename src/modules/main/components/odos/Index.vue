@@ -182,8 +182,8 @@
               v-else-if="isAnyInputsNeedApprove"
               @click="approve(firstInputInQueueForToApprove)"
               btn-size="large"
-              disabled
               full
+              :is-loading="firstSwipeClickOnApprove"
             >
               <span
                 v-if="viewType === 'SWIPE' && !firstSwipeClickOnApprove"
@@ -340,8 +340,8 @@
       :view-type="viewType"
     /> -->
 
-    <WaitingModal v-if="showWaitModal" />
-    <ErrorModal v-if="showErrorModalGet" />
+    <WaitingModal :show-modal="showWaitModal" />
+    <ErrorModal :show-modal="showErrorModalGet" />
   </div>
 </template>
 <!-- eslint-disable no-restricted-syntax -->
@@ -1270,6 +1270,7 @@ export default defineComponent({
     },
     async checkApproveForToken(token: any, checkedAllowanceValue?: any) {
       // checkedAllowanceValue in wei
+      console.log('--checkApproveForToken');
       const { selectedToken } = token;
       if (
         selectedToken.address === '0x0000000000000000000000000000000000000000'
@@ -1279,12 +1280,16 @@ export default defineComponent({
       }
 
       const tokenContract = this.tokensContractMap[selectedToken.address];
+      console.log(tokenContract, '--tokenContract');
+      console.log(this.routerContract, '--this.routerContract');
+      console.log(this.account, '--this.account');
       const allowanceValue = await getAllowanceValue(
         tokenContract,
         this.account,
         this.routerContract.options.address,
       );
 
+      console.log(allowanceValue, '--checkApproveForToken2');
       selectedToken.approveData.allowanceValue = allowanceValue * 1;
       if (!selectedToken.approveData.allowanceValue) {
         selectedToken.approveData.approved = false;
@@ -1440,7 +1445,9 @@ export default defineComponent({
       return tokensPercentage;
     },
 
-    addSelectedTokenToList(selectedToken: any, swapMethod: any, selectTokenType: any) {
+    addSelectedTokenToList(selectedToken: any, swapMethod: string, selectTokenType: any) {
+      console.log(swapMethod, '-swapMethod');
+      console.log(selectTokenType, '-selectTokenType');
       if (this.isInputToken(swapMethod, selectTokenType)) {
         this.addSelectedTokenToInputList(selectedToken);
         this.removeOutputToken(selectedToken.id);
@@ -1763,6 +1770,7 @@ export default defineComponent({
 
 .swap-form__loader {
   height: 100%;
+  min-height: 474px;
   display: flex;
   align-items: center;
   justify-content: center;

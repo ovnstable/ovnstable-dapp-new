@@ -34,14 +34,18 @@
             CONNECT
           </ButtonComponent>
 
-          <PopperComponent placement="bottom-end">
+          <PopperComponent
+            v-if="walletConnected && account"
+            interactive
+            placement="bottom-end"
+          >
             <ButtonComponent btn-styles="secondary">
               <BaseIcon
                 class="networks-active"
                 :name="activeNetworkData.name.toLowerCase()"
               />
             </ButtonComponent>
-            <template #content>
+            <template #content="{ close }">
               <div
                 class="networks-list"
               >
@@ -49,8 +53,8 @@
                   class="networks-list__item"
                   v-for="item in networksData"
                   :key="item.name"
-                  @click="setWalletNetwork(item.chain)"
-                  @keypress="setWalletNetwork(item.chain)"
+                  @click="chooseNetwork(item.chain, close)"
+                  @keypress="chooseNetwork(item.chain, close)"
                 >
                   <BaseIcon :name="item.name.toLowerCase()" />
                   {{ item.name }}
@@ -101,6 +105,10 @@ export default {
     connectWallet() {
       console.log('connectWallet');
       this.$store.dispatch('walletAction/connectWallet');
+    },
+    chooseNetwork(network: number, close: () => null) {
+      this.setWalletNetwork(network);
+      close();
     },
     cutString,
   },

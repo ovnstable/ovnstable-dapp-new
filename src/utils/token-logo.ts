@@ -28,7 +28,8 @@ export default {
   },
   getOvnCoinBaseImagePath(token: any) {
     try {
-      if (token.symbol === 'ETH+') {
+      const svgIcons = ['ETH+', 'USDC+'];
+      if (svgIcons.includes(token.symbol)) {
         return new URL(`../assets/icons/currencies/stablecoins/${
           token.symbol
         }.svg`, import.meta.url);

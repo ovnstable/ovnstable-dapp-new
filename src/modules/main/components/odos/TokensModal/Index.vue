@@ -152,7 +152,6 @@ export default defineComponent({
   },
   watch: {
     isShow(currVal: boolean) {
-      console.log(currVal, '-currVal');
       this.showModal = currVal;
     },
   },

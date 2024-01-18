@@ -19,6 +19,7 @@
           @click.stop
         >
           <div
+            v-if="showClose"
             class="modal__close"
             @click.native="closeModal"
             @keypress="closeModal"
@@ -65,6 +66,10 @@ export default {
     modelValue: {
       type: Boolean,
       default: false,
+    },
+    showClose: {
+      type: Boolean,
+      default: true,
     },
     pauseListeners: {
       type: Boolean,

@@ -11,9 +11,6 @@
         class="slider__arrow-icon"
         name="ArrowLeft"
       />
-      <BaseIcon
-        name="wUsdPlus"
-      />
     </div>
 
     <div class="swiper-container">

@@ -1,5 +1,9 @@
 <template>
-  <div>
+  <ModalComponent
+    :modelValue="showModal"
+    :show-close="false"
+    type-modal="custom"
+  >
     <div class="container_body py-10 px-10">
       <div
         class="container_header"
@@ -83,11 +87,12 @@
       </div>
 
     </div>
-  </div>
+  </ModalComponent>
 </template>
 
 <script lang="ts">
 import { mapActions, mapGetters } from 'vuex';
+import ModalComponent from '@/components/Modal/Index.vue';
 import UndefinedError from '@/components/CustomModals/action/errors/UndefinedError.vue';
 import RpcError from '@/components/CustomModals/action/errors/RpcError.vue';
 import GasError from '@/components/CustomModals/action/errors/GasError.vue';
@@ -112,8 +117,15 @@ export default {
     RpcError,
     UndefinedError,
     BaseIcon,
+    ModalComponent,
   },
 
+  props: {
+    showModal: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data: () => ({
     showCopyTooltip: false,
     showCopyTooltipContainer: false,

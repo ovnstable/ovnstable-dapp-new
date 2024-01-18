@@ -94,6 +94,7 @@ export default {
 .swap-module {
   display: flex;
   width: 100%;
+  gap: 20px;
   height: fit-content;
   overflow: hidden;
   background-color: var(--color-8);

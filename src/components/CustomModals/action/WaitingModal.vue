@@ -1,8 +1,9 @@
 <!-- eslint-disable vuejs-accessibility/label-has-for -->
 <template>
-  <div
-    width="500"
-    persistent
+  <ModalComponent
+    :modelValue="showModal"
+    :show-close="false"
+    type-modal="custom"
   >
     <div class="container_body">
       <div class="px-5 pt-5">
@@ -10,7 +11,7 @@
           justify="center"
           class="mt-10 mb-10"
         >
-          ...loading
+          <Spinner size="24px" />
         </div>
         <div justify="center">
           <label class="loading-label">Waiting for confirmation</label>
@@ -36,17 +37,24 @@
       </div>
 
     </div>
-
-  </div>
+  </ModalComponent>
 </template>
 
 <script lang="ts">
 import { mapActions, mapGetters } from 'vuex';
+import ModalComponent from '@/components/Modal/Index.vue';
 import Carousel from '@/components/CustomModals/action/component/Carousel.vue';
+import Spinner from '@/components/Spinner/Index.vue';
 
 export default {
   name: 'WaitingModal',
-  components: { Carousel },
+  components: { Carousel, Spinner, ModalComponent },
+  props: {
+    showModal: {
+      type: Boolean,
+      default: false,
+    },
+  },
   computed: {
     ...mapGetters('waitingModal', ['show', 'modalText']),
   },
