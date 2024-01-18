@@ -197,9 +197,8 @@
             </ButtonComponent>
             <ButtonComponent
               v-else
-              @click="swap()"
+              @click="swap"
               btn-size="large"
-              disabled
               full
               :loading="isLoadingSwap"
             >
