@@ -103,9 +103,7 @@ export default {
       return `${hours}:${minutes}`;
     },
     showMoreTransactions() {
-      // Increase the number of visible transactions
       this.visibleTransactionCount += 14;
-      // Do not set showMore to true here, as it is not needed for the logic
     },
   },
 

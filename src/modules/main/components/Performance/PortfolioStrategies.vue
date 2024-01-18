@@ -39,47 +39,86 @@
         <div
           v-for="asset in assets as any[]"
           :key="asset.tokenName"
-          class="performance__portfolio-strategies-stablecoins"
+          class="performance__portfolio-strategy-container"
         >
           <div
-            :class="[
-              'performance__portfolio-strategy',
-              { assets: type === 'portfolio' && assets.indexOf(asset) === assets.length - 1 },
-            ]"
+            class="performance__portfolio-strategies-stablecoins"
+            @click="type === 'strategies' && toggleDropdown(asset.strategyNameAsset)"
+            @keydown.enter="type === 'strategies' && toggleDropdown(asset.strategyNameAsset)"
+            tabindex="0"
           >
-            <div class="performance__portfolio-strategy-token-data">
-              <div
-                v-if="type === 'strategies'"
-                name="strategyImage"
-                class="performance__portfolio-strategy-icon"
-                :style="{ 'background-color': getIconColor(assets.indexOf(asset)) }"
-              />
-              <BaseIcon
-                v-if="type === 'portfolio'"
-                name="tokenImage"
-                :path="asset.tokenImagePath"
-                class="performance__portfolio-strategy-token-img"
-              />
-              <p class="performance__portfolio-strategy-token-name">
-                {{ type === 'portfolio' ? asset.tokenNameAsset : asset.strategyNameAsset }}
-              </p>
-            </div>
-            <p :class="['performance__portfolio-strategy-token-score', type !== 'portfolio' ? 'nav-usdc' : '']">
-              {{ type === 'portfolio' ? asset.safetyScore : formatCurrency(asset.netAssetValue, collateralToken) }}
-            </p>
-            <p class="performance__portfolio-strategy-token-NAV">
-              {{ type === 'portfolio' ? formatCurrency(asset.netAssetValue, collateralToken) : formatCurrency(asset.liquidationValue, collateralToken) }}
-            </p>
-            <div class="performance__portfolio-strategy-portfolio-percent">
-              <div class="performance__portfolio-strategy-progress-bar">
+            <div
+              :class="[
+                'performance__portfolio-strategy',
+                { assets: type === 'portfolio' && assets.indexOf(asset) === assets.length - 1 },
+              ]"
+            >
+              <div class="performance__portfolio-strategy-token-data">
                 <div
-                  class="performance__portfolio-strategy-progress"
-                  :style="{ width: calculatePercentPortfolio(asset.netAssetValue, totalPortfolioValue(assets)) + '%', 'background-color': getIconColor(assets.indexOf(asset)) }"
+                  v-if="type === 'strategies'"
+                  name="strategyImage"
+                  class="performance__portfolio-strategy-icon"
+                  :style="{ 'background-color': getIconColor(assets.indexOf(asset)) }"
                 />
+                <p
+                  class="performance__portfolio-strategy-token-name"
+                >
+                  {{ type === 'portfolio' ? asset.tokenNameAsset : asset.strategyNameAsset }}
+                </p>
               </div>
-              <p class="performance__portfolio-strategy-token-portfolio-number">{{ calculatePercentPortfolio(asset.netAssetValue, totalPortfolioValue(assets)) }}%</p>
+              <p :class="['performance__portfolio-strategy-token-score', type !== 'portfolio' ? 'nav-usdc' : '']">
+                {{ type === 'portfolio' ? asset.safetyScore : formatCurrency(asset.netAssetValue, collateralToken) }}
+              </p>
+              <p class="performance__portfolio-strategy-token-NAV">
+                {{ type === 'portfolio' ? formatCurrency(asset.netAssetValue, collateralToken) : formatCurrency(asset.liquidationValue, collateralToken) }}
+              </p>
+              <div class="performance__portfolio-strategy-portfolio-percent">
+                <div class="performance__portfolio-strategy-progress-bar">
+                  <div
+                    class="performance__portfolio-strategy-progress"
+                    :style="{ width: calculatePercentPortfolio(asset.netAssetValue, totalPortfolioValue(assets)) + '%', 'background-color': getIconColor(assets.indexOf(asset)) }"
+                  />
+                </div>
+                <p class="performance__portfolio-strategy-token-portfolio-number">{{ calculatePercentPortfolio(asset.netAssetValue, totalPortfolioValue(assets)) }}%</p>
+              </div>
+
+            </div>
+            <div
+              v-show="dropdownVisible === asset.strategyNameAsset"
+              class="performance__portfolio-strategy-dropdown-content"
+            >
+              <div class="performance__portfolio-strategy-dropdown-data deposited-to">
+                <p>Lending Protocol Deposited To:</p>
+                <p>{{ asset.lendingProtocolDepositedTo }}</p>
+                <p>See on Debank:</p>
+                <a
+                  :href="'https://debank.com/profile/' + asset.linkDepositedProtocol"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="performance__portfolio-strategy-dropdown-link-deposited-protocol"
+                >
+                  <p>{{ formatTransactionID(asset.linkDepositedProtocol) }}</p>
+                </a>
+              </div>
+              <div class="performance__portfolio-strategy-dropdown-data deposited-asset">
+                <p>Deposited asset:</p>
+                <p>{{ asset.depositedAsset }}</p>
+              </div>
+              <div class="performance__portfolio-strategy-dropdown-data borrowed-asset">
+                <p>Borrowed asset:</p>
+                <p>{{ asset.borrowedAsset }}</p>
+              </div>
+              <div class="performance__portfolio-strategy-dropdown-data lp-farming">
+                <p>LP Farming</p>
+                <p>{{ asset.lpFarmingPlatform }}</p>
+              </div>
+              <div class="performance__portfolio-strategy-dropdown-data lp-pair">
+                <p>LP Pair</p>
+                <p>{{ asset.lpPair }}</p>
+              </div>
             </div>
           </div>
+
           <div class="performance__portfolio-strategies-divider" />
         </div>
         <div
@@ -113,13 +152,9 @@
 </template>
 
 <script lang="ts">
-import BaseIcon from '@/components/Icon/BaseIcon.vue';
 
 export default {
   name: 'PortfolioStrategies',
-  components: {
-    BaseIcon,
-  },
   props: {
     tokenName: {
       type: String,
@@ -142,7 +177,17 @@ export default {
       default: '$',
     },
   },
+  data() {
+    return {
+      dropdownVisible: null as string | null,
+    };
+  },
   methods: {
+    toggleDropdown(tokenName: string | null) {
+      if (this.type === 'strategies') {
+        this.dropdownVisible = this.dropdownVisible === tokenName ? null : tokenName;
+      }
+    },
     formatCurrency(value:any, collateralToken:string) {
       if (collateralToken === '$') {
         return new Intl.NumberFormat('en-US', {
@@ -185,6 +230,13 @@ export default {
 
     calculatePercentPortfolio(assetValue: number, totalPortfolioValue: number) {
       return ((assetValue / totalPortfolioValue) * 100).toFixed(2);
+    },
+
+    formatTransactionID(id: string): string {
+      if (id === undefined) {
+        return '';
+      }
+      return `${id.substring(0, 5)}...${id.substring(id.length - 4)}`;
     },
   },
 };
@@ -229,7 +281,6 @@ export default {
 .performance__portfolio-strategies-specification {
   text-align: center;
   flex: 1;
-
 }
 
 .performance__portfolio-strategies-specification:first-child {
@@ -403,7 +454,7 @@ export default {
 
 .performance__portfolio-strategy-progress-bar {
   border-radius: 3px;
-background: linear-gradient(0deg, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.20) 100%), var(--6, #A8D8FA);
+  background: var(--color-6);
   width: 181px;
   height: 12px;
 }
@@ -413,4 +464,69 @@ background: linear-gradient(0deg, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 2
   border-radius: 4px;
   transition: width 0.5s ease-in-out;
 }
+
+.performance__portfolio-strategy-dropdown-content {
+  display: flex;
+  flex-direction: column;
+  margin-left: 20px;
+  margin-top: 4px;
+  margin-bottom: 7px;
+}
+.performance__portfolio-strategy-dropdown-data {
+  display: flex;
+  flex-direction: row;
+}
+
+.performance__portfolio-strategy-dropdown-data p {
+  color: var(--color-2);
+  font-size: 15px;
+  font-weight: 400;
+}
+
+.performance__portfolio-strategy-dropdown-link-deposited-protocol:hover {
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: var(--color-2);
+}
+
+.lp-pair p:nth-child(1),
+.lp-farming p:nth-child(1),
+.borrowed-asset p:nth-child(1),
+.deposited-asset p:nth-child(1) {
+  flex:1.9;
+}
+.lp-pair p:nth-child(2),
+.lp-farming p:nth-child(2),
+.borrowed-asset p:nth-child(2),
+.deposited-asset p:nth-child(2) {
+  flex:5;
+}
+
+.deposited-to {
+  text-align: center;
+  flex: 1;
+}
+
+.deposited-to:first-child {
+  text-align: left;
+  flex: 2;
+}
+
+.deposited-to p:nth-child(2)  {
+  flex: 3;
+     margin-left: 62px;
+
+}
+
+.deposited-to p:nth-child(3)  {
+  flex: 2;
+  margin-right: 17px;
+}
+
+.deposited-to a:nth-child(4){
+  flex: 3;
+  text-align: left;
+
+}
+
 </style>
