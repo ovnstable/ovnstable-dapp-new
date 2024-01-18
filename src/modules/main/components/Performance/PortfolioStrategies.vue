@@ -514,8 +514,7 @@ export default {
 
 .deposited-to p:nth-child(2)  {
   flex: 3;
-     margin-left: 62px;
-
+  margin-left: 62px;
 }
 
 .deposited-to p:nth-child(3)  {
@@ -526,7 +525,34 @@ export default {
 .deposited-to a:nth-child(4){
   flex: 3;
   text-align: left;
+}
 
+@media (max-width: 1024px) {
+  .deposited-to:first-child {
+    width: 120px;
+  }
+  .performance__portfolio-strategy-progress-bar {
+    width: 100px;
+  }
+  .performance__portfolio-total-liquidation-value {
+    padding-right: 0px;
+  }
+  .performance__portfolio-total-nav-value {
+    margin-right: 65px;
+  }
+
+ .performance__portfolio-strategy-dropdown-data.deposited-to {
+  width: 100%;
+  flex-grow: 1;
+  }
+  .deposited-to p:nth-child(2)  {
+    flex: 3;
+    margin-left: 12px;
+  }
+
+ .performance__portfolio-strategy-token-name {
+  text-align: left;
+ }
 }
 
 </style>
