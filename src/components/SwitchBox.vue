@@ -41,8 +41,8 @@ export default {
     border: 1px solid var( --color-2);
     padding: 5px 28px 4px 5px;
     [data-theme="dark"] & {
-      background: var(--1, #0F172A);
-      border: 1px solid var( --color-9);
+      background: var(--color-4);
+      border: 1px solid var( --color-1);
     }
 }
 
@@ -54,8 +54,8 @@ export default {
     border-radius: 50%;
     transition: transform 0.15s;
     [data-theme="dark"] & {
-      border: 1px solid var( --color-9);
-      background:  var(--color-17);
+      border: 1px solid var( --color-1);
+      background:  var(--color-4);
     }
 }
 

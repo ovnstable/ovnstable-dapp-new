@@ -156,7 +156,7 @@ export default {
   margin-top:20px;
 
   [data-theme="dark"] & {
-      color: var(--color-9);
+      color: var(--color-1);
   }
 }
 
@@ -190,7 +190,7 @@ export default {
   font-weight: 600;
 
   [data-theme="dark"] & {
-      color: var(--color-6);
+      color: var(--color-10);
   }
 }
 
@@ -209,7 +209,7 @@ export default {
   border: 1px solid var(--color-2);
 
   [data-theme="dark"] & {
-      color: var(--color-6);
+      color: var(--color-10);
   }
 }
 
@@ -234,9 +234,9 @@ export default {
   font-size: 14px;
 
   [data-theme="dark"] & {
-    border: 1px solid var(--color-6);
-    background: var(--color-17);
-    color: var( --color-9);
+    border: 1px solid var(--color-10);
+    background: var(--color-4);
+    color: var( --color-1);
   }
 }
 </style>
