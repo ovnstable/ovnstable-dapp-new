@@ -49,8 +49,8 @@ export default {
   transition: transform .15s ease, background-color .2s ease, color .2s ease;
 
   &:hover {
-    color: #fff;
-    background-color: #0497EC;
+    color: var(--color-4);
+    background-color: var(--color-6);
   }
 
   &:active {

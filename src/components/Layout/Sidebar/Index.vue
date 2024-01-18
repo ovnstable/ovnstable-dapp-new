@@ -156,7 +156,7 @@ export default {
   margin-top:20px;
 
   [data-theme="dark"] & {
-      color: var(--color-4);
+      color: var(--color-9);
   }
 }
 
@@ -190,7 +190,7 @@ export default {
   font-weight: 600;
 
   [data-theme="dark"] & {
-      color: var(--color-3);
+      color: var(--color-6);
   }
 }
 
@@ -209,7 +209,7 @@ export default {
   border: 1px solid var(--color-2);
 
   [data-theme="dark"] & {
-      color: var(--color-3);
+      color: var(--color-6);
   }
 }
 
@@ -228,15 +228,15 @@ export default {
   padding: 0px 14px 0px 6px;
   border-radius: 12px;
   border: 1px solid var( --color-2);
-  background: var(--color-5);
+  background: var(--color-4);
   color: var( --color-2);
   text-align: center;
   font-size: 14px;
 
   [data-theme="dark"] & {
-    border: 1px solid var(--color-3);
+    border: 1px solid var(--color-6);
     background: var(--color-17);
-    color: var( --color-4);
+    color: var( --color-9);
   }
 }
 </style>

@@ -116,13 +116,13 @@ export default {
 .performance__payouts-horizontal-divider {
   height: 1px;
   width: 100%;
-  background-color: var(--color-3);
+  background-color: var(--color-6);
 }
 
 .performance__payouts {
   display: flex;
   flex-direction: column;
-  background: var(--color-6);
+  background: var(--color-8);
   padding: 20px;
 }
 .performance__payouts-text {
@@ -213,7 +213,7 @@ export default {
   display: flex;
   flex-direction: row;
   border-radius: 30px;
-  border: 1px solid var(--color-3);
+  border: 1px solid var(--color-6);
   padding: 10px 225px;
   justify-content: center;
   align-items: center;
@@ -229,7 +229,7 @@ export default {
 .performance__payouts-button-show-text {
   margin-left: 12px;
   margin-right: 12px;
-  color: var(--color-3);
+  color: var(--color-7);
   font-size: 15px;
   font-weight: 600;
 }

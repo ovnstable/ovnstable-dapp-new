@@ -173,9 +173,9 @@ export default {
     },
     getIconColor(index:number) {
       const colors = [
-        getComputedStyle(document.documentElement).getPropertyValue('--color-8').trim(),
-        getComputedStyle(document.documentElement).getPropertyValue('--color-9').trim(),
-        getComputedStyle(document.documentElement).getPropertyValue('--color-10').trim()];
+        getComputedStyle(document.documentElement).getPropertyValue('--color-3').trim(),
+        getComputedStyle(document.documentElement).getPropertyValue('--color-11').trim(),
+        getComputedStyle(document.documentElement).getPropertyValue('--color-9').trim()];
       return colors[index % colors.length];
     },
   },
@@ -185,7 +185,7 @@ export default {
 
 <style>
 .performance__portfolio-assets {
-  background: var(--color-6);
+  background: var(--color-8);
   border-radius: 10px;
 }
 .performance__portfolio-strategies-token-title {
@@ -355,7 +355,7 @@ export default {
 
 .performance__portfolio-divider {
   margin-bottom: 10px;
-  border: 1px solid var(--color-16);
+  border: 1px solid var(--color-5);
   width: 96%;
 }
 
@@ -365,7 +365,7 @@ export default {
   font-weight: 500;
 }
 .strategies {
-  color: var(--color-8);
+  color: var(--color-3);
 }
 .strategies:hover {
   cursor: pointer;

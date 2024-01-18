@@ -198,7 +198,7 @@ export default {
   font-size: 14px;
   /* Default colors */
   color: #848D9C;
-  background: var(--color-5);
+  background: var(--color-4);
   font-weight: 400;
   text-transform: uppercase;
   cursor: pointer;
@@ -215,7 +215,7 @@ export default {
   }
 
   [data-theme="dark"] & {
-      border: 2px solid var(--color-16);
+      border: 2px solid var(--color-5);
       color: #848D9C;
       background: var(--color-17);
   }
@@ -230,7 +230,7 @@ export default {
 }
 .tabs-header__ul .active span {
   /* Colors when tab is active */
-  background: var(--color-5);
+  background: var(--color-4);
   font-weight: 700;
   border: 2px solid --color-1;
   color: --color-1;
@@ -243,7 +243,7 @@ export default {
   border-top-right-radius: 30px;
   [data-theme="dark"] & {
       background: var(--color-17);
-      color: var(--color-4);
+      color: var(--color-9);
       border: 2px solid var(--color-1);
       border-bottom: 0;
   }
@@ -264,7 +264,7 @@ export default {
   content: "";
 }
 .tabs-header__ul .active:before, .tabs-header__ul .active:after {
-  background: var(--color-5);
+  background: var(--color-4);
 
   /* Squares below circles */
   z-index: 1;
@@ -275,7 +275,7 @@ export default {
 
 /* Squares */
 .tabs-header__ul li:before, .tabs-header__ul li:after {
-  background: var(--color-5);
+  background: var(--color-4);
   width: 15px;
   height: 15px;
    [data-theme="dark"] & {
@@ -302,7 +302,7 @@ export default {
   z-index: 2;
 }
 .tabs-header__ul .active span:after, .tabs-header__ul .active span:before {
-  background: var(--color-5);
+  background: var(--color-4);
    [data-theme="dark"] & {
       background: var(--color-17);
   }

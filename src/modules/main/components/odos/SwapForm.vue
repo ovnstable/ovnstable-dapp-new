@@ -1774,13 +1774,13 @@ export default defineComponent({
   justify-content: center;
 }
 .swap-container {
-  background: var(--color-5);
+  background: var(--color-4);
   border-radius: 0 0 30px 30px;
   border: 2px solid var(--color-1);
   border-top: 0;
   [data-theme="dark"] & {
       background: var(--color-17);
-      border: 2px solid var(--color-16);
+      border: 2px solid var(--color-5);
       border-top: 0;
   }
 }

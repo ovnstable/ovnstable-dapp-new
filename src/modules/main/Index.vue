@@ -106,7 +106,7 @@ export default {
   display: flex;
   width: 100%;
   height: fit-content;
-  background-color: var(--color-6);
+  background-color: var(--color-8);
   border-radius: 30px;
   [data-theme="dark"] & {
       color: var(--color-2);

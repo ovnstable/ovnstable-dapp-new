@@ -36,7 +36,7 @@ export default {
   width: 100%;
   border-radius: 20px;
   border: 1px solid var(--color-1);
-  background: var(--color-5);
+  background: var(--color-4);
   box-shadow: 0px 1px 0px 0px var(--color-1);
   padding-top: 40px;
   padding-left: 25px;
@@ -63,7 +63,7 @@ export default {
 
 .performance__payouts-wrapper {
   width: calc(100% - 40px);
-  background: var(--color-6);
+  background: var(--color-8);
   z-index: -1;
   margin-top: -10px;
   border-radius: 0px 0px 30px 30px;

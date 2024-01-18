@@ -192,7 +192,7 @@ export default {
     font-weight: 500;
     font-size: 14px;
     [data-theme="dark"] & {
-      color: var(--color-4)
+      color: var(--color-9)
     }
 }
 
@@ -244,7 +244,7 @@ export default {
   margin-bottom: 16px;
   border: 1px solid var(--color-2);
   [data-theme="dark"] & {
-      border-color: var(--color-3)
+      border-color: var(--color-6)
   }
 }
 
@@ -252,7 +252,7 @@ export default {
 .slider__data-apy-percent,
 .slider__data-tvl-millions {
   [data-theme="dark"] & {
-      color: var(--color-3)
+      color: var(--color-6)
   }
 }
 
@@ -307,7 +307,7 @@ export default {
     font-weight: 400;
     line-height: 18px;
     [data-theme="dark"] & {
-      color: var(--color-3)
+      color: var(--color-6)
     }
 }
 

@@ -3,20 +3,20 @@
 :root, [data-theme="light"] {
   --color-1: #0f172a;
   --color-2: #687386;
-  --color-3: #bac0cb;
-  --color-4: #eeeff2;
-  --color-5: #ffffff;
-  --color-6: #f4fafe;
-  --color-7: #a8d8fa;
-  --color-8: #0497ec;
-  --color-9: #ff1100;
-  --color-10: #ff6b6c;
-  --color-11: #619300;
-  --color-12: #91b845;
-  --color-13: #bee179;
+  --color-3: #0497ec;
+  --color-4: #ffffff;
+  --color-5: #e3f2fd;
+  --color-6: #a8d8fa;
+  --color-7: #bac0cb;
+  --color-8: #f4fafe;
+  --color-9: #ff6b6c;
+  --color-10: #eeeff2;
+  --color-11: #ff1100;
+  --color-12: #619300;
+  --color-13: #91b845;
   --color-14: #ffba00;
   --color-15: #ffde76;
-  --color-16: #e3f2fd;
+  --color-16: #bee179;
   --color-17: #d2d7e0;
   --section-gap: 160px;
 }
@@ -54,7 +54,7 @@
 
 body {
   min-height: 100vh;
-  background-color: var(--color-16);
+  background-color: var(--color-5);
   color: var(--color-2);
   transition: color 0.5s, background-color 0.5s;
   line-height: 1.6;
