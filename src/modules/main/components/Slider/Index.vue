@@ -14,6 +14,9 @@
     </div>
 
     <div class="swiper-container">
+      <BaseIcon
+        name="wUsdPlus"
+      />
       <swiper
         :slides-per-view="1"
         :space-between="0"
