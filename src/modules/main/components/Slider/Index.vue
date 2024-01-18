@@ -11,12 +11,12 @@
         class="slider__arrow-icon"
         name="ArrowLeft"
       />
-    </div>
-
-    <div class="swiper-container">
       <BaseIcon
         name="wUsdPlus"
       />
+    </div>
+
+    <div class="swiper-container">
       <swiper
         :slides-per-view="1"
         :space-between="0"
@@ -100,6 +100,7 @@ import { Swiper as SwiperClass } from 'swiper/core';
 import 'swiper/swiper.min.css';
 
 export default {
+  name: 'MainSlider',
   components: {
     BaseIcon,
     Swiper,
@@ -183,8 +184,6 @@ export default {
     },
 
   },
-
-  name: 'MainSlider',
 };
 </script>
 

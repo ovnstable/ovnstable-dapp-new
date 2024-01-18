@@ -22,8 +22,8 @@
           class="bridge-wrap"
         >Bridge</div>
       </TabsComponent>
-
     </div>
+
     <SliderComponent />
   </div>
 </template>
