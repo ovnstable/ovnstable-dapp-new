@@ -6,7 +6,7 @@ export const beforeEnterList = (el: any) => {
 };
 
 export const onEnterList = (el: any, done: any) => {
-  const delay = el.dataset.index * 100;
+  const delay = el.dataset.index * 50;
   setTimeout(() => {
     el.style.opacity = 1;
     el.style.transform = 'translateX(0)';

@@ -144,7 +144,7 @@
 <!-- eslint-disable no-await-in-loop -->
 <script lang="ts">
 import { defineComponent } from 'vue';
-import tokenLogo from '@/helpers/token-logo.ts';
+import tokenLogo from '@/utils/token-logo.ts';
 
 export default defineComponent({
   name: 'PathView',
