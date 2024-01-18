@@ -194,9 +194,11 @@ export default defineComponent({
     },
     selectToken(token: any) {
       // eslint-disable-next-line no-param-reassign
-      token.selected = true;
       console.log('Token select: ', token, this.swapMethod, this.selectTokenType);
-      this.addSelectedTokenToListFunc(token, this.swapMethod, this.selectTokenType);
+      this.addSelectedTokenToListFunc({
+        ...token,
+        selected: true,
+      }, this.swapMethod, this.selectTokenType);
     },
     removeToken(token: any) {
       // eslint-disable-next-line no-param-reassign

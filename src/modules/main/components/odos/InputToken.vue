@@ -51,7 +51,7 @@
         <div
           v-if="token.value
             && token.selectedToken
-            && token.selectedToken.balanceData.balance"
+            && token.selectedToken?.balanceData?.balance"
         >
           ~ ${{formatMoney(token.usdValue, 2)}}
         </div>
@@ -68,7 +68,7 @@
         class="input-tokens__balance"
       >
         <div class="select-token-balance-text">
-          <div v-if="token.selectedToken && token.selectedToken.balanceData.balance">
+          <div v-if="token.selectedToken && token.selectedToken?.balanceData?.balance">
             <span class="select-token-balance-text-enabled">
               {{formatMoney(token.selectedToken.balanceData.balance,
                             fixedByPrice(token.selectedToken.price))}}
@@ -145,13 +145,6 @@ export default defineComponent({
       return true;
     },
     inputUpdate(value: any) {
-      /* if (this.token.selectedToken) {
-                if (value*1 > this.token.selectedToken.balanceData.balance*1) {
-                    value = this.formatMoney(this.token.selectedToken.balanceData.balance*1, 6);
-                    this.token.value = value;
-                }
-            } */
-
       this.updateTokenValueFunc(this.tokenInfo, value);
     },
     clickOnBalance() {

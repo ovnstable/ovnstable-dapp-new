@@ -45,7 +45,7 @@ export default {
     },
     btnStyles: {
       type: String as PropType<btnStyles>,
-      default: 'default',
+      default: 'standard',
     },
     btnType: {
       type: String as PropType<btnTypes>,
@@ -86,12 +86,6 @@ export default {
     width: 100%;
   }
 
-  &.disabled {
-    color: var(--color-2);
-    background-color: var(--color-5);
-    pointer-events: none;
-  }
-
   &.primary {
     color: #fff;
     background-color: #0497EC;
@@ -119,5 +113,14 @@ export default {
       background-color: #0497EC;
     }
   }
+
+  &.disabled {
+    color: var(--color-2);
+    background-color: var(--color-5);
+    border: unset;
+    box-shadow: unset;
+    pointer-events: none;
+  }
+
 }
 </style>

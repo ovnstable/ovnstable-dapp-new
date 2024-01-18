@@ -11,8 +11,7 @@ import { useEventBus } from '@vueuse/core';
 import {
   getFilteredOvernightTokens,
   getFilteredPoolTokens,
-  innerGetDefaultSecondtokenByIndex,
-  innerGetDefaultSecondtokenBySymobl,
+  loadBalance,
   loadContractInstance
 } from './helpers.ts';
 import { getNetworkParams } from '../common/web3/network.ts';
@@ -20,7 +19,6 @@ import { getNetworkParams } from '../common/web3/network.ts';
 const KEY = 'REFERRAL_CODE';
 
 const ODOS_DURATION_CONFIRM_REQUEST = 60;
-const SECONDTOKEN_DEFAULT_SYMBOL = 'USD+';
 
 const loadPrices = async (chainId: number | string) => odosApiService
   .loadPrices(chainId)
@@ -107,7 +105,6 @@ const getters = {
     return state.swapResponseConfirmInfo;
   },
   isAllLoaded(state: typeof stateData, getters: any, rootState: any) {
-    console.log(state, '----isAllLoaded');
     // form swap window show
     if (state.baseViewType === 'SWIPE') {
       return rootState?.account
@@ -352,13 +349,13 @@ const actions = {
       for (let i = 0; i < tokens.length; i++) {
         const token: any = tokens[i];
         if (addresses.includes(token.address)) {
-          // eslint-disable-next-line no-await-in-loop, no-promise-executor-return
-          await new Promise((resolve) => setTimeout(resolve, 500));
           // eslint-disable-next-line no-await-in-loop
-          dispatch(
-            'loadBalance',
-            state.tokensContractMap[token.address],
-            token,
+          token.balanceData = await loadBalance(
+            rootState,
+            {
+              contract: state.tokensContractMap[token.address],
+              token
+            }
           );
         }
       }
@@ -386,10 +383,13 @@ const actions = {
       const tokens = getters.tokensToBalanceUpdate;
       for (let i = 0; i < tokens.length; i++) {
         const token = tokens[i];
-        dispatch(
-          'loadBalance',
-          state.tokensContractMap[token.address],
-          token,
+        // eslint-disable-next-line no-await-in-loop
+        token.balanceData = await loadBalance(
+          rootState,
+          {
+            contract: state.tokensContractMap[token.address],
+            token
+          }
         );
       }
     } catch (e) {
@@ -399,62 +399,6 @@ const actions = {
       if (!state.isFirstBalanceLoaded) {
         state.isFirstBalanceLoaded = true;
       }
-    }
-  },
-  async loadBalance(
-    {
-      commit, state, getters, rootState,
-    }: any,
-    data: {
-      contract: any,
-      token: any
-    }
-  ) {
-    // console.log("Load balance from contract: ", token)
-    try {
-      // balance for network currency
-      if (data.token.address === '0x0000000000000000000000000000000000000000') {
-        const ethBalance = await rootState.web3.eth.getBalance(rootState.accountData.account);
-        const balance = rootState.web3.utils.fromWei(
-          ethBalance,
-          getWeiMarker(data.token.decimals),
-        );
-        data.token.balanceData = {
-          name: data.token.symbol,
-          balance,
-          balanceInUsd: balance * data.token.price,
-          originalBalance: ethBalance,
-          decimal: data.token.decimals,
-        };
-
-        return;
-      }
-
-      // balance for ERC20
-      await data.contract.methods
-        .balanceOf(rootState.accountData.account)
-        .call()
-        .then((erc20Balance: any) => {
-          // console.log('Balance for: ', token, erc20Balance, state.getWeiMarker(token.decimals));
-          const balance = rootState.web3.utils.fromWei(
-            erc20Balance,
-            getWeiMarker(data.token.decimals),
-          );
-          data.token.balanceData = {
-            name: data.token.symbol,
-            balance,
-            balanceInUsd: balance * data.token.price,
-            originalBalance: erc20Balance,
-            decimal: data.token.decimals,
-          };
-        })
-        .catch(() => {
-          // todo 5 return after load balance optimization
-          // tmp ignore
-          // console.info('Error balance for: ', token, e);
-        });
-    } catch (e) {
-      console.log('Error when load balance at token: ', data.token.address, e);
     }
   },
 
@@ -848,26 +792,6 @@ const actions = {
         dispatch('stopSwapConfirmTimer');
       });
   },
-
-  getDefaultSecondtoken({
-    commit, state, dispatch, rootState,
-  }: any, symbol: string) {
-    if (state.tokenSeparationScheme === 'OVERNIGHT_SWAP') {
-      return innerGetDefaultSecondtokenBySymobl(
-        state,
-        symbol || SECONDTOKEN_DEFAULT_SYMBOL,
-      );
-    }
-
-    if (state.tokenSeparationScheme === 'POOL_SWAP') {
-      return innerGetDefaultSecondtokenByIndex(state, 0);
-    }
-
-    console.error(
-      'TOKEN SEPARATION SCHEME NOT FOUND FOR GET DEFAULT',
-      state.tokenSeparationScheme,
-    );
-  },
   async getActualGasPrice({
     commit, state, dispatch, rootState,
   }: any, networkId: number | string) {
@@ -971,7 +895,6 @@ const mutations = {
     field: keyof typeof stateData,
     val: any
   }) {
-    console.log(data, 'CHANGE STATE');
     state[data.field] = data.val;
   },
 };

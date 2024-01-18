@@ -6,6 +6,7 @@ import { getWeiMarker } from '@/utils/web3.ts';
 import type { stateData } from './index';
 
 const SECONDTOKEN_SECOND_DEFAULT_SYMBOL = 'DAI+';
+const SECONDTOKEN_DEFAULT_SYMBOL = 'USD+';
 
 export const addItemToFilteredTokens = async (
   tokens: any,
@@ -16,6 +17,7 @@ export const addItemToFilteredTokens = async (
   if (
     item.protocolId === 'overnight'
       || item.symbol === 'USD+'
+      || item.symbol === 'USDC+'
       || item.symbol === 'DAI+'
       || item.symbol === 'USDT+'
       || item.symbol === 'OVN'
@@ -97,9 +99,6 @@ export const getFilteredPoolTokens = async (
       await addItemToFilteredTokens(tokens, key, item);
     }
   }
-
-  console.log(listTokensAddresses, 'listTokensAddresses--');
-  console.log(tokens, 'tokens--');
 
   // order tokens like as list addresses.
   if (isIncludeInListAddresses) {
@@ -207,7 +206,26 @@ export const getSecondDefaultSecondtoken = (state: typeof stateData): any => {
     state.tokenSeparationScheme,
   );
 
-  return {};
+  return null;
+};
+
+export const getDefaultSecondtoken = (state: typeof stateData, symbol: string | null) => {
+  if (state.tokenSeparationScheme === 'OVERNIGHT_SWAP') {
+    return innerGetDefaultSecondtokenBySymobl(
+      state,
+      symbol || SECONDTOKEN_DEFAULT_SYMBOL,
+    );
+  }
+
+  if (state.tokenSeparationScheme === 'POOL_SWAP') {
+    return innerGetDefaultSecondtokenByIndex(state, 0);
+  }
+
+  console.error(
+    'TOKEN SEPARATION SCHEME NOT FOUND FOR GET DEFAULT',
+    state.tokenSeparationScheme,
+  );
+  return null;
 };
 
 export const loadContractInstance = (file: any, web3: any, address: any) => {
@@ -279,5 +297,67 @@ export const maxAll = (selectedInputTokens: any[], toWeiFunc: any) => {
       'token.selectedToken.balanceData.balance',
     );
     updateTokenValue(token, token.selectedToken.balanceData.balance, toWeiFunc);
+  }
+};
+
+export const loadBalance = async (
+  rootState: any,
+  data: {
+    contract: any,
+    token: any
+  },
+) => {
+  // console.log("Load balance from contract: ", token)
+  try {
+    // balance for network currency
+    if (data.token.address === '0x0000000000000000000000000000000000000000') {
+      const ethBalance = await rootState.web3.web3.eth.getBalance(rootState.accountData.account);
+      const balance = rootState.web3.web3.utils.fromWei(
+        ethBalance,
+        getWeiMarker(data.token.decimals),
+      );
+      data.token.balanceData = {
+        name: data.token.symbol,
+        balance,
+        balanceInUsd: balance * data.token.price,
+        originalBalance: ethBalance,
+        decimal: data.token.decimals,
+      };
+
+      return {
+        name: data.token.symbol,
+        balance,
+        balanceInUsd: balance * data.token.price,
+        originalBalance: ethBalance,
+        decimal: data.token.decimals,
+      };
+    }
+
+    // balance for ERC20
+    const erc20Balance = await data.contract.methods
+      .balanceOf(rootState.accountData.account)
+      .call();
+
+    const balance = rootState.web3.web3.utils.fromWei(
+      erc20Balance,
+      getWeiMarker(data.token.decimals),
+    );
+
+    return {
+      name: data.token.symbol,
+      balance,
+      balanceInUsd: balance * data.token.price,
+      originalBalance: erc20Balance,
+      decimal: data.token.decimals,
+    };
+  } catch (e) {
+    console.log('Error when load balance at token: ', data.token.address, e);
+    return {
+      name: data.token.symbol,
+      balance: '0',
+      balanceInUsd: '0',
+      originalBalance: '0',
+      decimal: data.token.decimals,
+    };
   }
 };

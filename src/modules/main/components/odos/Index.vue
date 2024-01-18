@@ -349,7 +349,7 @@ import { getWeiMarker } from '@/utils/web3.ts';
 import { formatMoney } from '@/utils/numbers.ts';
 import { getRandomString } from '@/utils/strings.ts';
 import {
-  getNewInputToken, getNewOutputToken, maxAll, updateTokenValue,
+  getNewInputToken, getNewOutputToken, maxAll, updateTokenValue, getDefaultSecondtoken,
 } from '@/store/odos/helpers.ts';
 import { clearApproveToken, getAllowanceValue, approveToken } from '@/helpers/contract-approve.ts';
 import odosApiService from '@/services/odos-api-service.ts';
@@ -766,7 +766,6 @@ export default defineComponent({
         'loadChains',
         'loadTokens',
         'initContractData',
-        'getDefaultSecondtoken',
         'getActualGasPrice',
         'initWalletTransaction',
         'initData',
@@ -804,7 +803,10 @@ export default defineComponent({
     },
     addDefaultOvnToken() {
       const symbol = this.$route.query.symbol ? this.$route.query.symbol : null;
-      const ovnSelectedToken: any = this.getDefaultSecondtoken(symbol);
+      const ovnSelectedToken: any = getDefaultSecondtoken(
+        this.$store.state.odosData as any,
+        symbol as string | null,
+      );
       if (!ovnSelectedToken) {
         this.addNewInputToken();
         this.addNewOutputToken();
@@ -814,6 +816,7 @@ export default defineComponent({
       ovnSelectedToken.selected = true;
 
       if (this.swapMethod === 'BUY') {
+        console.log(ovnSelectedToken, '---ovnSelectedToken');
         this.addSelectedTokenToOutputList(ovnSelectedToken);
         this.addNewInputToken();
         return;
@@ -831,7 +834,8 @@ export default defineComponent({
       );
     },
     addNewOutputToken() {
-      const newToken: any = getNewOutputToken();
+      const newToken = getNewOutputToken();
+      console.log(newToken, '----newToken');
       this.outputTokens.push(newToken);
     },
     removeOutputToken(id: any) {
@@ -886,11 +890,13 @@ export default defineComponent({
 
         const transformOutputToInputToken = getNewInputToken();
         transformOutputToInputToken.id = tokenOut.id;
+        console.log(tokenOut, '---tokenOut');
         transformOutputToInputToken.selectedToken = tokenOut.selectedToken;
         tempInputArray.push(transformOutputToInputToken);
       }
 
       this.inputTokens = tempInputArray;
+      console.log(tempOutputArray, '---tempOutputArray');
       this.outputTokens = tempOutputArray;
 
       const symbol = this.$route.query.symbol ? this.$route.query.symbol : null;
@@ -1467,6 +1473,7 @@ export default defineComponent({
     },
     addSelectedTokenToOutputList(selectedToken: any) {
       const newOutputToken = getNewOutputToken();
+      console.log(newOutputToken, selectedToken, 'addSelectedTokenToOutputList');
       newOutputToken.selectedToken = selectedToken;
       this.outputTokens.push(newOutputToken);
       this.removeAllWithoutSelectedTokens(this.outputTokens);
