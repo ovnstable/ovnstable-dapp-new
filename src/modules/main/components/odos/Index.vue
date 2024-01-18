@@ -386,10 +386,6 @@ export default defineComponent({
       type: Function,
       required: true,
     },
-    handleFormResetFunc: {
-      type: Function,
-      required: true,
-    },
     updateStablecoinsListFunc: {
       type: Function,
       required: true,
@@ -434,11 +430,8 @@ export default defineComponent({
         });
       }
     },
-
     account(newVal) {
-      if (newVal) {
-        this.initAccountData();
-      }
+      if (newVal) this.initAccountData();
     },
     async networkId(newVal) {
       if (newVal) {
@@ -477,21 +470,8 @@ export default defineComponent({
     },
 
     isTokensLoadedAndFiltered(val) {
-      if (val) {
-        this.clearForm();
-      }
+      if (val) this.clearForm();
     },
-    // networkId(newVal) {
-    //   if (newVal) {
-    //     // hide swap form and clear all(watch function) data,
-    //     // after new token loaded collection
-    //     this.isTokensLoadedAndFiltered = false;
-
-    //     if (!this.isAvailableOnNetwork) {
-    //       this.mintAction();
-    //     }
-    //   }
-    // },
     hideSwapButton(val) {
       if (val) {
         this.clearQuotaInfo();
@@ -506,6 +486,7 @@ export default defineComponent({
     },
   },
   mounted() {
+    console.log('---mounted');
     this.$store.commit('odosData/changeState', {
       field: 'baseViewType',
       val: this.viewType,
@@ -514,7 +495,10 @@ export default defineComponent({
       field: 'tokenSeparationScheme',
       val: 'OVERNIGHT_SWAP',
     });
+
     this.init();
+    // its init input/output default tokens
+    this.clearForm();
 
     if (!this.isAvailableOnNetwork) {
       this.mintAction();
@@ -866,6 +850,7 @@ export default defineComponent({
     },
 
     changeSwap() {
+      console.log('---changeSwap');
       // Transform Input Tokens into Output format by adding temporary variable "tempOutputArray"
       const tempOutputArray = [];
       for (let i = 0; i < this.inputTokens.length; i++) {
@@ -913,7 +898,7 @@ export default defineComponent({
           params = { action: 'swap-out' };
         }
 
-        this.initTabName('/swap', params);
+        this.initTabName('/', params);
         return;
       }
 
@@ -929,7 +914,7 @@ export default defineComponent({
           params = { action: 'swap-in' };
         }
 
-        this.initTabName('/swap', params);
+        this.initTabName('/', params);
         return;
       }
 
@@ -942,10 +927,10 @@ export default defineComponent({
 
     finishTransaction() {
       this.clearForm();
-      this.handleFormResetFunc(true);
     },
 
     clearForm() {
+      console.log('clearFormclearForm');
       this.clearAllSelectedTokens();
 
       if (this.swapMethod === 'BUY') {

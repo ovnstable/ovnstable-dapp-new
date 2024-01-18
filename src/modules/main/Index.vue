@@ -11,7 +11,6 @@
           :update-path-view-func="updatePathView"
           :update-button-disabled-func="updateButtonDisabled"
           :update-is-loading-data-func="updateIsLoadingData"
-          :handle-form-reset-func="handleFormReset"
           :update-stablecoins-list-func="updateStablecoinsList"
         />
         <div
@@ -60,11 +59,8 @@ export default {
       ],
       activeTab: 0,
       pathViz: null,
-      inputTokens: [],
-      outputTokens: [],
       buttonDisabled: true,
       isLoadingData: true,
-      isFirstInitializationForPath: true,
       stablecoinTokens: [],
     };
   },
@@ -78,14 +74,8 @@ export default {
       this.showMintView();
       this.showSwapModal();
     },
-    updatePathView(path: any, inputTokens: any, outputTokens: any) {
+    updatePathView(path: any) {
       this.pathViz = path;
-      this.inputTokens = inputTokens;
-      this.outputTokens = outputTokens;
-      this.isFirstInitializationForPath = false;
-    },
-    handleFormReset() {
-      this.isFirstInitializationForPath = true; // Set to true when SwapForm is reset
     },
     updateButtonDisabled(value: any) {
       this.buttonDisabled = value;
