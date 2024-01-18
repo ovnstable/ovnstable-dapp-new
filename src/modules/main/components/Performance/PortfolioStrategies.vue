@@ -68,15 +68,16 @@
               {{ type === 'portfolio' ? asset.safetyScore : formatCurrency(asset.netAssetValue, collateralToken) }}
             </p>
             <p class="performance__portfolio-strategy-token-NAV">
-              {{ type === 'portfolio' ? formatCurrency(asset.NAV, collateralToken) : formatCurrency(asset.liquidationValue, collateralToken) }}
+              {{ type === 'portfolio' ? formatCurrency(asset.netAssetValue, collateralToken) : formatCurrency(asset.liquidationValue, collateralToken) }}
             </p>
             <div class="performance__portfolio-strategy-portfolio-percent">
-              <BaseIcon
-                name="percentPortfolio"
-                :path=asset.percentPortfolioPath
-                class="performance__portfolio-strategy-token-portfolio"
-              />
-              <p class="performance__portfolio-strategy-token-portfolio-number">{{ asset.percentPortfolio }}</p>
+              <div class="performance__portfolio-strategy-progress-bar">
+                <div
+                  class="performance__portfolio-strategy-progress"
+                  :style="{ width: calculatePercentPortfolio(asset.netAssetValue, totalPortfolioValue(assets)) + '%', 'background-color': getIconColor(assets.indexOf(asset)) }"
+                />
+              </div>
+              <p class="performance__portfolio-strategy-token-portfolio-number">{{ calculatePercentPortfolio(asset.netAssetValue, totalPortfolioValue(assets)) }}%</p>
             </div>
           </div>
           <div class="performance__portfolio-strategies-divider" />
@@ -178,8 +179,14 @@ export default {
         getComputedStyle(document.documentElement).getPropertyValue('--color-9').trim()];
       return colors[index % colors.length];
     },
-  },
+    totalPortfolioValue(assets: any[]) {
+      return assets.reduce((total: any, asset: { netAssetValue: any; }) => total + asset.netAssetValue, 0);
+    },
 
+    calculatePercentPortfolio(assetValue: number, totalPortfolioValue: number) {
+      return ((assetValue / totalPortfolioValue) * 100).toFixed(2);
+    },
+  },
 };
 </script>
 
@@ -241,7 +248,7 @@ export default {
 .performance__portfolio-strategies-specification.percent {
   flex: 2;
   text-align: left;
-  margin-right: 30px;
+  margin-right: 60px;
 }
 
 .performance__portfolio-strategy {
@@ -319,6 +326,10 @@ export default {
   flex: none;
 }
 
+.performance__portfolio-total-circulation-number {
+  margin-right: 6px;
+}
+
 .performance__portfolio-total > *,
 .performance__portfolio-total-circulation > * {
   text-align: center;
@@ -350,7 +361,7 @@ export default {
 }
 .performance__portfolio-total-liquidation-value {
   text-align: right;
-  padding-right: 15px;
+  padding-right: 35px;
 }
 
 .performance__portfolio-divider {
@@ -388,5 +399,18 @@ export default {
 
 .performance__portfolio-strategy-token-img {
   margin-right: 17px;
+}
+
+.performance__portfolio-strategy-progress-bar {
+  border-radius: 3px;
+background: linear-gradient(0deg, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.20) 100%), var(--6, #A8D8FA);
+  width: 181px;
+  height: 12px;
+}
+
+.performance__portfolio-strategy-progress {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.5s ease-in-out;
 }
 </style>
