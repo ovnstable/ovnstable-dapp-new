@@ -33,12 +33,19 @@
                 Max all
               </div>
             </div>
-            <div
+            <TransitionGroup
+              name="staggered-fade"
+              tag="div"
               :class="{ 'swap-form__body-block__inputs': true, 'block-inputs--scroll': inputTokens?.length > 3 }"
+              :css="false"
+              @before-enter="beforeEnterList"
+              @enter="onEnterList"
+              @onLeave="onLeaveList"
             >
               <div
                 v-for="token in inputTokens"
                 :key="token.id"
+                :data-index="token.id"
                 class="swap-form__body-block__inputs-item"
               >
                 <div
@@ -66,7 +73,7 @@
               >
                 +
               </div>
-            </div>
+            </TransitionGroup>
           </div>
 
           <div
@@ -83,12 +90,19 @@
             <h3>
               You receive
             </h3>
-            <div
+            <TransitionGroup
+              name="staggered-fade"
+              tag="div"
               :class="{ 'swap-form__body-block__inputs': true, 'block-inputs--scroll': outputTokens?.length > 3 }"
+              :css="false"
+              @before-enter="beforeEnterList"
+              @enter="onEnterList"
+              @onLeave="onLeaveList"
             >
               <div
                 v-for="token in outputTokens"
                 :key="token.id"
+                :data-index="token.id"
                 class="swap-form__body-block__inputs-item"
               >
                 <InputToken
@@ -107,15 +121,15 @@
               >
                 +
               </div>
-            </div>
+            </TransitionGroup>
           </div>
         </div>
 
-        <!-- <SwapSlippageSettings
+        <SwapSlippageSettings
           :currentSlippageChanged="handleCurrentSlippageChanged"
           :selected-input-tokens="selectedInputTokens"
           :selected-output-tokens="selectedOutputTokens"
-        /> -->
+        />
 
         <div
           v-if="networkName === 'zksync'"
@@ -351,11 +365,13 @@ import { getRandomString } from '@/utils/strings.ts';
 import {
   getNewInputToken, getNewOutputToken, maxAll, updateTokenValue, getDefaultSecondtoken,
 } from '@/store/odos/helpers.ts';
-import { clearApproveToken, getAllowanceValue, approveToken } from '@/helpers/contract-approve.ts';
+import { clearApproveToken, getAllowanceValue, approveToken } from '@/utils/contract-approve.ts';
 import odosApiService from '@/services/odos-api-service.ts';
 import { getImageUrl } from '@/utils/const.ts';
 import NetworkNotAvailable from '@/modules/main/components/odos/network-not-available.vue';
 import SelectTokensModal from '@/modules/main/components/odos/TokensModal/Index.vue';
+import SwapSlippageSettings from '@/modules/main/components/odos/SwapSlippageSettings.vue';
+import { onLeaveList, onEnterList, beforeEnterList } from '@/utils/animations.ts';
 
 export default defineComponent({
   name: 'SwapForm',
@@ -366,6 +382,7 @@ export default defineComponent({
     ErrorModal,
     WaitingModal,
     SelectTokensModal,
+    SwapSlippageSettings,
     InputToken,
     BaseIcon,
   },
@@ -764,6 +781,9 @@ export default defineComponent({
 
     formatMoney,
     getImageUrl,
+    onLeaveList,
+    beforeEnterList,
+    onEnterList,
     maxAllMethod() {
       maxAll(this.selectedInputTokens, this.web3.utils.toWei);
     },
@@ -1706,6 +1726,7 @@ export default defineComponent({
 
 .swap-form__body-block__inputs-item {
   width: 100%;
+  transition: opacity .2s ease, transform .3s ease;
 }
 
 .swap-form__body-block__inputs-max {
@@ -1738,7 +1759,7 @@ export default defineComponent({
 }
 .swap-form, .swap-container {
   height: 100%;
-  width: calc(100% + 3px);
+  width: calc(100% + 4px);
   border-radius: 0 0 30px 30px;
 }
 

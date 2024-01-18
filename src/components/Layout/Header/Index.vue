@@ -11,40 +11,89 @@
             OVERNIGHT
           </h1>
         </router-link>
-        <ButtonComponent
-          v-if="walletConnected"
-          @click="disconnectWallet"
-        >DISCONNECT</ButtonComponent>
-        <ButtonComponent
-          v-else
-          text="CONNECT"
-          @click="connectWallet"
-        >CONNECT</ButtonComponent>
+
+        <div class="app-header__content-data">
+          <ButtonComponent
+            v-if="walletConnected && account"
+            class="app-header__content-account"
+            btn-styles="secondary"
+            @click="disconnectWallet"
+          >
+            <span>
+              {{ cutString(account, 4, 4)?.toUpperCase() }}
+            </span>
+            <div
+              class="app-header__chain"
+              :style="{ backgroundColor: activeNetworkData.color }"
+            />
+          </ButtonComponent>
+          <ButtonComponent
+            v-else
+            @click="connectWallet"
+          >
+            CONNECT
+          </ButtonComponent>
+
+          <PopperComponent placement="bottom-end">
+            <ButtonComponent btn-styles="secondary">
+              <BaseIcon
+                class="networks-active"
+                :name="activeNetworkData.name.toLowerCase()"
+              />
+            </ButtonComponent>
+            <template #content>
+              <div
+                class="networks-list"
+              >
+                <div
+                  class="networks-list__item"
+                  v-for="item in networksData"
+                  :key="item.name"
+                  @click="setWalletNetwork(item.chain)"
+                  @keypress="setWalletNetwork(item.chain)"
+                >
+                  <BaseIcon :name="item.name.toLowerCase()" />
+                  {{ item.name }}
+                </div>
+              </div>
+            </template>
+          </PopperComponent>
+        </div>
       </div>
-      <WalletComponent
-        v-if="false"
-      />
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { mapGetters } from 'vuex';
-import WalletComponent from '@/components/Layout/Header/WalletComponent.vue';
+import { mapGetters, mapActions } from 'vuex';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import { cutString } from '@/utils/strings.ts';
+import { appNetworksData } from '@/utils/const.ts';
 
 export default {
   name: 'HeaderBar',
   components: {
-    WalletComponent,
     ButtonComponent,
     BaseIcon,
   },
+  data() {
+    return {
+      networksData: appNetworksData,
+    };
+  },
   computed: {
     ...mapGetters('walletAction', ['walletConnected']),
+    ...mapGetters('accountData', ['balance', 'account']),
+    ...mapGetters('network', ['networkId']),
+
+    activeNetworkData() {
+      const data = appNetworksData.find((_) => _.chain === this.networkId);
+      return data || appNetworksData[0];
+    },
   },
   methods: {
+    ...mapActions('network', ['setWalletNetwork']),
     disconnectWallet() {
       console.log('disconnectWallet');
       this.$store.dispatch('walletAction/disconnectWallet');
@@ -53,6 +102,7 @@ export default {
       console.log('connectWallet');
       this.$store.dispatch('walletAction/connectWallet');
     },
+    cutString,
   },
 };
 </script>
@@ -83,15 +133,75 @@ export default {
 .app-header__content__logo {
   display: flex;
   align-items: center;
+
   h1 {
+    color: var(--color-1);
     font-size: 15px;
     font-weight: 700;
     margin-left: 8px;
   }
 }
 
-.app-header__connect {
-  display: block;
-  margin-left: auto;
+.app-header__content-account {
+  display: flex;
+  align-items: center;
+  padding: 5px 8px 5px 20px;
+
+  span {
+    position: relative;
+    top: 1px;
+  }
+}
+
+.app-header__chain {
+  position: relative;
+  margin-left: 20px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: var(--color-3);
+}
+
+.app-header__content-data {
+  display: flex;
+  gap: 16px;
+}
+
+.networks-list {
+  border-radius: 0px 0px 5px 5px;
+  border: 1px solid var(--color-1);
+  background: var(--color-4);
+  box-shadow: 0px 1px 0px 0px var(--color-1);
+}
+
+.networks-list__item {
+  display: flex;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: background-color .2s ease, color .2s ease;
+
+  svg {
+    width: 18px;
+    height: 18px;
+    margin-right: 10px;
+  }
+
+  &:first-child {
+    padding-top: 12px;
+  }
+
+  &:last-child {
+    padding-bottom: 12px;
+  }
+
+  &:hover {
+    background-color: var(--color-3);
+    color: var(--color-4)
+  }
+}
+
+.networks-active {
+  width: 20px;
+  height: 20px;
 }
 </style>

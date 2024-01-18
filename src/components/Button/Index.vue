@@ -61,12 +61,13 @@ export default {
 
 <style lang="scss">
 .button {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 5px 12px;
+  padding: 5px 20px;
   border-radius: 10px;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 500;
   border: unset;
   background-color: transparent;
@@ -96,21 +97,26 @@ export default {
   }
 
   &.secondary {
-    color: #fff;
-    background-color: #0497EC;
+    color: var(--color-1);
+    background-color: var(--color-5);
+    border: 1px solid var(--color-1);
+    box-shadow: 0px 1px 0px 0px var(--color-1);
 
     &:hover {
-      opacity: .9;
+      color: var(--color-3);
+      background-color: var(--color-4);
     }
   }
 
   &.standard {
-    border: 1px solid #0F172A;
-    box-shadow: 0px 1px 0px 0px #0F172A;
+    background-color: var(--color-3);
+    border: 1px solid var(--color-1);
+    color: var(--color-4);
+    box-shadow: 0px 1px 0px 0px var(--color-1);
 
     &:hover {
-      color: #fff;
-      background-color: #0497EC;
+      color: var(--color-3);
+      background-color: var(--color-4);
     }
   }
 

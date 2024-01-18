@@ -73,7 +73,7 @@
             <div class="performance__portfolio-strategy-portfolio-percent">
               <BaseIcon
                 name="percentPortfolio"
-                :path=asset.percentPortfolioPath
+                :path="asset.percentPortfolioPath"
                 class="performance__portfolio-strategy-token-portfolio"
               />
               <p class="performance__portfolio-strategy-token-portfolio-number">{{ asset.percentPortfolio }}</p>

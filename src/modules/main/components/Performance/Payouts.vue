@@ -27,7 +27,7 @@
         >
           <BaseIcon
             name="tokenLink"
-            path="assets/icons/common/LinkToken.vue"
+            path="LinkToken"
             class=""
           />
         </a>

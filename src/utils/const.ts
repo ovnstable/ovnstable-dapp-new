@@ -47,3 +47,41 @@ export const svgIconsMap = (() => {
 
   return svgMap;
 })();
+
+export const appNetworksData = [
+  {
+    chain: 10,
+    name: 'Optimism',
+    color: 'red',
+  },
+  {
+    chain: 42161,
+    name: 'Arbitrum',
+    color: 'blue',
+  },
+  {
+    chain: 8453,
+    name: 'Base',
+    color: 'blue',
+  },
+  {
+    chain: 59144,
+    name: 'Linea',
+    color: 'black',
+  },
+  {
+    chain: 56,
+    name: 'BSC',
+    color: 'yellow',
+  },
+  {
+    chain: 324,
+    name: 'ZkSync',
+    color: 'red',
+  },
+  {
+    chain: 137,
+    name: 'Polygon',
+    color: 'red',
+  },
+];

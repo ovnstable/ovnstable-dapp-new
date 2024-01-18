@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-continue */
 /* eslint-disable no-await-in-loop */
-import tokenLogo from '@/helpers/token-logo.ts';
+import tokenLogo from '@/utils/token-logo.ts';
 import { getWeiMarker } from '@/utils/web3.ts';
 import type { stateData } from './index';
 

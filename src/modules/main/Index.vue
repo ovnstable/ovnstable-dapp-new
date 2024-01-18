@@ -113,7 +113,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: calc(100% + 3px);
+  width: calc(100% + 4px);
   border: 2px solid var(--color-1);
   border-top: 0;
   padding: 100px 50px;
