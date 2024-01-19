@@ -1,9 +1,7 @@
 <template>
   <div class="performance__token-data">
     <BaseIcon
-      name="token"
-      :path=tokenImagePath
-      class="performance__icon-token"
+      name="ARB"
     />
     <div class="performance__token-data__link-title">
       <p class="performance__token-data__title">{{tokenName}}</p>
@@ -28,8 +26,7 @@
       <div class="performance__apy-data__chain">
         <p class="performance__token-data__number apy-number">{{ dailyAPY }}%</p>
         <BaseIcon
-          name="chain"
-          :path=chainIcon
+          :name=chainIcon
           class="performance__icon-chain"
         />
       </div>
@@ -43,8 +40,7 @@
   </div>
   <div class="performance__chain-data">
     <BaseIcon
-      name="chain"
-      :path=chainIcon
+      :name=chainIcon
       class="performance__icon-chain-bottom"
     />
     <p class="performance__chain-data-name">{{ chainName }}</p>
@@ -89,7 +85,7 @@ export default {
     },
     chainIcon: {
       type: String,
-      default: 'assets/icons/chains/IconArbitrum.vue',
+      default: 'IconArbitrum',
     },
     totalTVL: {
       type: Number,
@@ -137,7 +133,7 @@ export default {
   }
   .performance__token-data__link-address {
     margin-top: 10px;
-    max-width: 44px;
+    min-width: 79px;
     color: var(--color-2);
     font-size: 12px;
     font-weight: 600;
@@ -153,6 +149,7 @@ export default {
     font-size: 12px;
     font-weight: 400;
     max-width: 186px;
+    line-height: normal;
   }
 
   .performance__divider {

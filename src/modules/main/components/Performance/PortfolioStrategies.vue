@@ -60,8 +60,13 @@
                   class="performance__portfolio-strategy-icon"
                   :style="{ 'background-color': getIconColor(assets.indexOf(asset)) }"
                 />
+                <BaseIcon
+                  v-if="type === 'portfolio'"
+                  name="ARB"
+                  class="performance__portfolio-asset-icon"
+                />
                 <p
-                  class="performance__portfolio-strategy-token-name"
+                  :class="['performance__portfolio-strategy-token-name', { asset: type === 'strategies' }]"
                 >
                   {{ type === 'portfolio' ? asset.tokenNameAsset : asset.strategyNameAsset }}
                 </p>
@@ -156,8 +161,13 @@
 
 <script lang="ts">
 
+import BaseIcon from '@/components/Icon/BaseIcon.vue';
+
 export default {
   name: 'PortfolioStrategies',
+  components: {
+    BaseIcon,
+  },
   props: {
     tokenName: {
       type: String,
@@ -299,7 +309,7 @@ export default {
 
 .performance__portfolio-strategy-token-data {
   display: flex;
-  align-items: start;
+  align-items: center;
   justify-content: flex-start;
   flex: 2;
 }
@@ -325,6 +335,14 @@ export default {
   color: var(--color-1);
   font-size: 15px;
   font-weight: 500;
+}
+.performance__portfolio-strategy-token-name {
+  margin-left: 17px;
+  display: flex;
+  min-width: 153px;
+}
+.asset {
+    margin-left: 6px;
 }
 .performance__portfolio-total-info {
   padding: 0px 20px;
@@ -397,10 +415,10 @@ export default {
 }
 .strategies {
   color: var(--color-3);
+  text-decoration: underline;
 }
 .strategies:hover {
   cursor: pointer;
-  text-decoration: underline;
 }
 .performance__portfolio-assets {
   padding-bottom: 20px;
@@ -483,21 +501,17 @@ export default {
 }
 .deposited-to p:nth-child(2)  {
   flex: 3;
-  margin-left: 30px;
-  margin-right: 70px;
+  margin-right: 90px;
 }
 
 .deposited-to p:nth-child(3)  {
   flex: 2;
-  margin-left: 40px;
-  margin-right: 30px;
-   text-align: center;
+  text-align: left;
 }
 
 .deposited-to a:nth-child(4){
   flex: 3;
   text-align: left;
-   padding-left: 40px;
 }
 
 .performance__portfolio-strategies-stablecoins-specifications p,
@@ -509,19 +523,19 @@ export default {
 .performance__portfolio-strategies-stablecoins-specifications p:first-child,
 .performance__portfolio-strategy p:first-child {
   text-align: left;
-  flex: 2;
+  flex: 3.2;
 }
 
 .performance__portfolio-strategies-stablecoins-specifications p:nth-child(2),
 .performance__portfolio-strategies-stablecoins-specifications p:nth-child(3),
 .performance__portfolio-strategy p:nth-child(2),
 .performance__portfolio-strategy p:nth-child(3) {
-  flex: 3;
+  flex: 4;
 }
 
 .performance__portfolio-strategies-stablecoins-specifications p:nth-child(4),
 .performance__portfolio-strategy p:nth-child(4) {
-  flex: 2;
+  flex: 3.2;
   display: flex;
   justify-content: flex-end;
   text-align: right;
@@ -533,7 +547,7 @@ export default {
 
 .performance__portfolio-total-circulation-number {
   text-align: right;
-  margin-right: -15px;
+  margin-right: -19px;
 }
 
 .performance__portfolio-total-circulation {
@@ -547,7 +561,10 @@ export default {
   flex-grow: 1;
   text-align: left;
 }
-
+.performance__portfolio-asset-icon {
+  width: 22px;
+  height: 22px;
+}
 @media (max-width: 1024px) {
   .performance__portfolio-strategy-progress-bar {
     width: 50px;

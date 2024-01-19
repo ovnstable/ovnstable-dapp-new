@@ -6,8 +6,11 @@
       <p>Annualized yield, % per year</p>
       <p>Explorer</p>
     </div>
-    <TransitionGroup name="list" tag="ul">
-   <div
+    <TransitionGroup
+      name="list"
+      tag="ul"
+    >
+      <div
         v-for="(trx, index) in visibleTransactions"
         :key="trx.id"
         class="performance__payouts-transactions"
@@ -37,16 +40,20 @@
         />
       </div>
     </TransitionGroup>
-   
+
     <button
       class="performance__payouts-button-show"
       @click="showMoreTransactions"
       v-if="hasMoreTransactions"
       type="button"
-    >  <!-- TODO Update to image  -->
-      <p>Arrow down</p>
+    >
+      <BaseIcon
+        name="ArrowDown"
+      />
       <p class="performance__payouts-button-show-text">Show more</p>
-      <p>Arrow  down</p>
+      <BaseIcon
+        name="ArrowDown"
+      />
     </button>
 
   </div>
@@ -54,8 +61,13 @@
 
 <script lang="ts">
 
+import BaseIcon from '@/components/Icon/BaseIcon.vue';
+
 export default {
   name: 'PortfolioPayouts',
+  components: {
+    BaseIcon,
+  },
   data() {
     const originalTransaction = {
       id: '0xd0209d91c53f4c5e574948a07ef3659d8bf2ab5df5983d9f4bec39c1d883c44f',
@@ -141,8 +153,8 @@ export default {
 }
 .performance__payouts-divider {
   border: 1px solid var(--color-17);
-  margin-top: 13px;
-  margin-bottom: 9px;
+  margin-top: 17px;
+  margin-bottom: 13px;
 }
 
 .performance__payouts-transaction {
@@ -190,6 +202,7 @@ export default {
 
 .performance__payouts-id-link p {
   max-width: fit-content;
+  text-decoration: underline;
 }
 
 .performance__payouts-date-transaction {
@@ -204,7 +217,6 @@ export default {
 
 .performance__payouts-id-link:hover {
   cursor: pointer;
-  text-decoration: underline;
 }
 
 .performance__payouts-button-show {
