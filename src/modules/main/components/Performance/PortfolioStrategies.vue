@@ -139,7 +139,7 @@
             </p>
           </div>
           <div class="performance__portfolio-total-circulation">
-            <p class="performance__portfolio-total-label">Total {{ tokenName }} in circulation</p>
+            <p class="performance__portfolio-total-label circulation">Total {{ tokenName }} in circulation</p>
             <p class="performance__portfolio-total-circulation-number">
               {{ formatCurrency(tokenAmountInCirculation, collateralToken) }}
             </p>
@@ -278,30 +278,6 @@ export default {
   font-weight: 400;
 }
 
-.performance__portfolio-strategies-specification {
-  text-align: center;
-  flex: 1;
-}
-
-.performance__portfolio-strategies-specification:first-child {
-  text-align: left;
-  flex: 2;
-}
-
-.performance__portfolio-strategies-specification.score {
-  flex: 3;
-}
-
-.performance__portfolio-strategies-specification.nav {
-  flex: 3;
-}
-
-.performance__portfolio-strategies-specification.percent {
-  flex: 2;
-  text-align: left;
-  margin-right: 60px;
-}
-
 .performance__portfolio-strategy {
   display: flex;
   padding: 0px 20px;
@@ -319,15 +295,8 @@ export default {
 .performance__portfolio-strategy-token-data {
   display: flex;
   align-items: center;
+  justify-content: flex-start;
   flex: 2;
-}
-
-.performance__portfolio-strategy-token-score {
-  flex: 3;
-}
-
-.performance__portfolio-strategy-token-NAV {
-  flex: 3;
 }
 
 .performance__portfolio-strategy-portfolio-percent {
@@ -351,6 +320,10 @@ export default {
   color: var(--color-1);
   font-size: 15px;
   font-weight: 500;
+}
+.performance__portfolio-strategy-token-name {
+    justify-content: flex-start;
+  text-align: left;
 }
 
 .performance__portfolio-total-info {
@@ -376,11 +349,6 @@ export default {
   text-align: right;
   flex: none;
 }
-
-.performance__portfolio-total-circulation-number {
-  margin-right: 6px;
-}
-
 .performance__portfolio-total > *,
 .performance__portfolio-total-circulation > * {
   text-align: center;
@@ -407,12 +375,8 @@ export default {
 .performance__portfolio-total-liquidation-value {
   flex: 1;
 }
-.performance__portfolio-total-nav-value {
-  margin-right: 12px;
-}
 .performance__portfolio-total-liquidation-value {
   text-align: right;
-  padding-right: 35px;
 }
 
 .performance__portfolio-divider {
@@ -455,7 +419,7 @@ export default {
 .performance__portfolio-strategy-progress-bar {
   border-radius: 3px;
   background: var(--color-6);
-  width: 181px;
+  width: 131px;
   height: 12px;
 }
 
@@ -493,13 +457,13 @@ export default {
 .lp-farming p:nth-child(1),
 .borrowed-asset p:nth-child(1),
 .deposited-asset p:nth-child(1) {
-  flex:1.9;
+  flex:3;
 }
 .lp-pair p:nth-child(2),
 .lp-farming p:nth-child(2),
 .borrowed-asset p:nth-child(2),
 .deposited-asset p:nth-child(2) {
-  flex:5;
+  flex:7;
 }
 
 .deposited-to {
@@ -511,19 +475,65 @@ export default {
   text-align: left;
   flex: 2;
 }
-
 .deposited-to p:nth-child(2)  {
   flex: 3;
-  margin-left: 62px;
+  margin-left: 87px;
+  margin-right: 70px;
 }
 
 .deposited-to p:nth-child(3)  {
   flex: 2;
-  margin-right: 17px;
+  margin-right: 50px;
 }
 
 .deposited-to a:nth-child(4){
   flex: 3;
+  text-align: left;
+}
+.performance__portfolio-strategies-stablecoins-specifications p,
+.performance__portfolio-strategy p {
+  text-align: center;
+  flex: 1;
+}
+
+.performance__portfolio-strategies-stablecoins-specifications p:first-child,
+.performance__portfolio-strategy p:first-child {
+  text-align: left;
+  flex: 2;
+}
+
+.performance__portfolio-strategies-stablecoins-specifications p:nth-child(2),
+.performance__portfolio-strategies-stablecoins-specifications p:nth-child(3),
+.performance__portfolio-strategy p:nth-child(2),
+.performance__portfolio-strategy p:nth-child(3) {
+  flex: 3;
+}
+
+.performance__portfolio-strategies-stablecoins-specifications p:nth-child(4),
+.performance__portfolio-strategy p:nth-child(4) {
+  flex: 2;
+  display: flex;
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.performance__portfolio-strategies-stablecoins-specifications p:nth-child(4) {
+  justify-content: flex-start;
+}
+
+.performance__portfolio-total-circulation-number {
+  text-align: right;
+  margin-right: -13px;
+}
+
+.performance__portfolio-total-circulation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.performance__portfolio-total-circulation .performance__portfolio-total-label {
+  flex-grow: 1;
   text-align: left;
 }
 

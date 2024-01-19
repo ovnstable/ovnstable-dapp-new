@@ -158,7 +158,7 @@ export default {
   .performance__divider {
     margin-left: 40px;
     margin-right: 40px;
-    border: 1px solid var(--color-6);
+    border: 1px solid var(--color-7);
   }
 
   .performance__payout-data,
