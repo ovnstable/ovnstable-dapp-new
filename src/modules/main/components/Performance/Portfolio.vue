@@ -14,7 +14,7 @@
         :type="dataPortfolio.type"
         :collateralToken="dataPortfolio.collateralToken"
       />
-
+      <p class="performance__portfolio-token-payout">{{ dataPortfolio.tokenName }} Payouts</p>
     </div>
   </div>
 </template>
@@ -37,28 +37,25 @@ export default {
             tokenNameAsset: 'WETH (delta-neutral)',
             tokenImagePath: 'assets/icons/currencies/WSTEth.vue',
             safetyScore: 'VERY HIGH',
-            NAV: 179.979,
-            percentPortfolioPath: 'PercentPortfolio',
+            netAssetValue: 80,
+            percentPortfolioPath: 'assets/icons/common/PercentPortfolio.vue',
             tokenLink: 'https://arbiscan.io/token/0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
-            percentPortfolio: ' 81.5%',
           },
           {
             tokenNameAsset: 'WETH',
             tokenImagePath: 'assets/icons/currencies/WSTEth.vue',
             safetyScore: 'VERY HIGH',
-            NAV: 0.0360,
-            percentPortfolioPath: 'PercentPortfolio',
+            netAssetValue: 50,
+            percentPortfolioPath: 'assets/icons/common/PercentPortfolio.vue',
             tokenLink: 'https://arbiscan.io/token/0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
-            percentPortfolio: '9.3%',
           },
           {
             tokenNameAsset: 'wstETH',
             tokenImagePath: 'assets/icons/currencies/WSTEth.vue',
             safetyScore: 'VERY HIGH',
-            NAV: 0.0279,
-            percentPortfolioPath: 'PercentPortfolio',
+            netAssetValue: 30,
+            percentPortfolioPath: 'assets/icons/common/PercentPortfolio.vue',
             tokenLink: 'https://arbiscan.io/token/0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
-            percentPortfolio: '9.3%',
           },
         ],
         collateralToken: 'WETH',
@@ -69,27 +66,42 @@ export default {
         assets: [
           {
             strategyNameAsset: 'AAVE',
-            netAssetValue: 179.9790,
+            netAssetValue: 80,
             liquidationValue: 179.9790,
-            percentPortfolioPath: 'PercentPortfolio',
+            percentPortfolioPath: 'assets/icons/common/PercentPortfolio.vue',
             tokenLink: 'https://arbiscan.io/token/0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
-            percentPortfolio: '95.9%',
+            lendingProtocolDepositedTo: 'Sonne Finance',
+            linkDepositedProtocol: '0x454e6869a34dac7ef3f8ec6c1383fea795fdb713',
+            depositedAsset: 'USDBC',
+            borrowedAsset: 'WETH',
+            lpFarmingPlatform: 'Aerodrome',
+            lpPair: 'WETH/USDBC',
           },
           {
             strategyNameAsset: 'ETS',
-            netAssetValue: 0.0360,
+            netAssetValue: 50,
             liquidationValue: 0.0360,
-            percentPortfolioPath: 'PercentPortfolio',
+            percentPortfolioPath: 'assets/icons/common/PercentPortfolio.vue',
             tokenLink: 'https://arbiscan.io/token/0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
-            percentPortfolio: '5.3%',
+            lendingProtocolDepositedTo: 'Sonne Finance',
+            linkDepositedProtocol: '0x454e6869a34dac7ef3f8ec6c1383fea795fdb713',
+            depositedAsset: 'USDBC',
+            borrowedAsset: 'WETH',
+            lpFarmingPlatform: 'Aerodrome',
+            lpPair: 'WETH/USDBC',
           },
           {
             strategyNameAsset: 'Pendle wstETH',
-            netAssetValue: 0.0279,
+            netAssetValue: 30,
             liquidationValue: 0.0279,
-            percentPortfolioPath: 'PercentPortfolio',
+            percentPortfolioPath: 'assets/icons/common/PercentPortfolio.vue',
             tokenLink: 'https://arbiscan.io/token/0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
-            percentPortfolio: '2.6%',
+            lendingProtocolDepositedTo: 'Sonne Finance',
+            linkDepositedProtocol: '0x454e6869a34dac7ef3f8ec6c1383fea795fdb713',
+            depositedAsset: 'USDBC',
+            borrowedAsset: 'WETH',
+            lpFarmingPlatform: 'Aerodrome',
+            lpPair: 'WETH/USDBC',
           },
         ],
         tokenAmountInCirculation: 180.0429,
@@ -104,13 +116,19 @@ export default {
 .performance__portfolio {
     display: flex;
     flex-direction: column;
-    background: var(--color-5);
-    width: calc(100% - 40px);
+    background: var(--color-4);
 }
 
 .performance__portfolio-tab-content {
-    background: var(--color-5);
+    background: var(--color-4);
     transition: opacity 0.3s ease-in-out;
+}
+
+.performance__portfolio-token-payout {
+  color: var(--color-1);
+  font-size: 17px;
+  font-weight: 600;
+  margin-top: 24px;
 }
 
 @media (max-width: 1024px) {
