@@ -477,19 +477,24 @@ export default {
 }
 .deposited-to p:nth-child(2)  {
   flex: 3;
-  margin-left: 87px;
+  margin-left: 30px;
   margin-right: 70px;
 }
 
 .deposited-to p:nth-child(3)  {
   flex: 2;
-  margin-right: 50px;
+  margin-left: 40px;
+  margin-right: 30px;
+   text-align: center;
 }
 
 .deposited-to a:nth-child(4){
   flex: 3;
   text-align: left;
+   padding-left: 40px;
 }
+
+
 .performance__portfolio-strategies-stablecoins-specifications p,
 .performance__portfolio-strategy p {
   text-align: center;
