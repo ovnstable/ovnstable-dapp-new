@@ -494,7 +494,6 @@ export default {
    padding-left: 40px;
 }
 
-
 .performance__portfolio-strategies-stablecoins-specifications p,
 .performance__portfolio-strategy p {
   text-align: center;
@@ -543,31 +542,23 @@ export default {
 }
 
 @media (max-width: 1024px) {
-  .deposited-to:first-child {
-    width: 120px;
-  }
   .performance__portfolio-strategy-progress-bar {
-    width: 100px;
-  }
-  .performance__portfolio-total-liquidation-value {
-    padding-right: 0px;
-  }
-  .performance__portfolio-total-nav-value {
-    margin-right: 65px;
-  }
-
- .performance__portfolio-strategy-dropdown-data.deposited-to {
-  width: 100%;
-  flex-grow: 1;
+    width: 50px;
   }
   .deposited-to p:nth-child(2)  {
-    flex: 3;
-    margin-left: 12px;
+    margin-left: 30px;
+    margin-right: 20px;
   }
 
- .performance__portfolio-strategy-token-name {
-  text-align: left;
- }
+  .deposited-to p:nth-child(3)  {
+    margin-left: 10px;
+    margin-right: 20px;
+  }
+
+  .performance__portfolio-total-label.circulation {
+    margin-right: 90px;
+  }
+
 }
 
 </style>
