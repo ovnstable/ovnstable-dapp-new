@@ -116,7 +116,7 @@ export default {
     flex-direction: row;
     align-self: flex-start;
     justify-content: center;
-    background: var(--color-5);
+    background: var(--color-4);
     max-width: calc(100% - 40px);
   }
 
@@ -144,7 +144,7 @@ export default {
     text-decoration-line: underline;
   }
   .performance__token-data__link-address:hover {
-    color: var(--color-8);
+    color: var(--color-3);
   }
   .performance__token-data__description {
     margin-left: 30px;
@@ -158,7 +158,7 @@ export default {
   .performance__divider {
     margin-left: 40px;
     margin-right: 40px;
-    border: 1px solid var(--color-3);
+    border: 1px solid var(--color-7);
   }
 
   .performance__payout-data,
@@ -202,8 +202,8 @@ export default {
     flex-direction: row;
     align-items: center;
     border-radius: 30px;
-    border: 1px solid var(--color-7);
-    background: var(--color-5);
+    border: 1px solid var(--color-6);
+    background: var(--color-4);
     padding: 5px 10px;
     margin-top: 24px;
     width: fit-content;
@@ -213,6 +213,7 @@ export default {
     margin-left: 7px;
     font-weight: 500;
     font-size: 13px;
+    color: var(--color-1)
   }
   @media (max-width: 1024px) {
     .performance__token-data__description {

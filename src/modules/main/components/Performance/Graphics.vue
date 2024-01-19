@@ -42,8 +42,7 @@ export default {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  background: var(--color-5);
-  width: calc(100% - 40px);
+  background: var(--color-4);
 }
 
 @media (max-width: 1024px) {
