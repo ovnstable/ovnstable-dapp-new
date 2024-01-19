@@ -66,10 +66,10 @@
                   {{ type === 'portfolio' ? asset.tokenNameAsset : asset.strategyNameAsset }}
                 </p>
               </div>
-              <p :class="['performance__portfolio-strategy-token-score', type !== 'portfolio' ? 'nav-usdc' : '']">
+              <p>
                 {{ type === 'portfolio' ? asset.safetyScore : formatCurrency(asset.netAssetValue, collateralToken) }}
               </p>
-              <p class="performance__portfolio-strategy-token-NAV">
+              <p>
                 {{ type === 'portfolio' ? formatCurrency(asset.netAssetValue, collateralToken) : formatCurrency(asset.liquidationValue, collateralToken) }}
               </p>
               <div class="performance__portfolio-strategy-portfolio-percent">
@@ -87,6 +87,7 @@
               v-show="dropdownVisible === asset.strategyNameAsset"
               class="performance__portfolio-strategy-dropdown-content"
             >
+              <div class="performance__portfolio-strategies-divider" />
               <div class="performance__portfolio-strategy-dropdown-data deposited-to">
                 <p>Lending Protocol Deposited To:</p>
                 <p>{{ asset.lendingProtocolDepositedTo }}</p>
@@ -116,10 +117,9 @@
                 <p>LP Pair</p>
                 <p>{{ asset.lpPair }}</p>
               </div>
+              <div class="performance__portfolio-strategies-divider" />
             </div>
           </div>
-
-          <div class="performance__portfolio-strategies-divider" />
         </div>
         <div
           v-if="type === 'strategies'"
@@ -294,7 +294,7 @@ export default {
 
 .performance__portfolio-strategy-token-data {
   display: flex;
-  align-items: center;
+  align-items: start;
   justify-content: flex-start;
   flex: 2;
 }
@@ -321,11 +321,6 @@ export default {
   font-size: 15px;
   font-weight: 500;
 }
-.performance__portfolio-strategy-token-name {
-    justify-content: flex-start;
-  text-align: left;
-}
-
 .performance__portfolio-total-info {
   padding: 0px 20px;
   display: flex;
@@ -383,6 +378,11 @@ export default {
   margin-bottom: 10px;
   border: 1px solid var(--color-5);
   width: 96%;
+}
+.performance__portfolio-strategies-divider {
+   margin-bottom: 4px;
+  border: 1px solid var(--color-5);
+  width: 100%;
 }
 
 .performance__portfolio-description {
