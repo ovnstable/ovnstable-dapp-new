@@ -4,7 +4,7 @@
     <div class="input-tokens__row">
       <InputComponent
         customClass="input-tokens__field"
-        :value="token.value"
+        :value="isInputToken ? token.value : token.sum"
         is-custom
         placeholder="0"
         full-width
@@ -14,8 +14,8 @@
 
       <div
         v-if="token.selectedToken"
-        @click="selectTokenFunc(token)"
-        @keypress="selectTokenFunc(token)"
+        @click="selectTokenFunc(isInputToken)"
+        @keypress="selectTokenFunc(isInputToken)"
         class="input-tokens__selected"
       >
         <img
@@ -28,8 +28,8 @@
       </div>
       <div
         v-else
-        @click="selectTokenFunc(token)"
-        @keypress="selectTokenFunc(token)"
+        @click="selectTokenFunc(isInputToken)"
+        @keypress="selectTokenFunc(isInputToken)"
         class="input-tokens__select"
       >
         Select token
@@ -49,21 +49,22 @@
     <div class="input-tokens__row">
       <div class="input-tokens__balance">
         <div
-          v-if="token.value
-            && token.selectedToken
-            && token.selectedToken?.balanceData?.balance"
+          v-if="isInputToken && token.selectedToken"
         >
           ~ ${{formatMoney(token.usdValue, 2)}}
         </div>
-        <div v-else-if="token.value && token.selectedToken">
-          ~ ${{formatMoney(token.usdValue, 2)}}
+        <div
+          v-else-if="!isInputToken && token.sum && token.selectedToken"
+        >
+          ~ ${{formatMoney(token.sum * token.selectedToken.price, 2)}}
         </div>
         <div v-else>
           $0
         </div>
       </div>
       <div
-        @click="clickOnBalance()"
+        @click="
+          clickOnBalance()"
         @keypress="clickOnBalance()"
         class="input-tokens__balance"
       >
@@ -96,14 +97,41 @@ export default defineComponent({
     BaseIcon,
     InputComponent,
   },
-  props: [
-    'tokenInfo',
-    'removeItemFunc',
-    'isTokenRemovable',
-    'selectTokenFunc',
-    'updateTokenValueFunc',
-    'disabled',
-  ],
+  props: {
+    // inputToken = token which we want to swap
+    isInputToken: {
+      type: Boolean,
+      required: true,
+    },
+    tokenInfo: {
+      type: Object,
+      required: true,
+      default: () => {},
+    },
+    selectTokenFunc: {
+      type: Function,
+      required: true,
+    },
+    removeItemFunc: {
+      type: Function,
+      required: false,
+      default: () => null,
+    },
+    isTokenRemovable: {
+      type: Boolean,
+      required: true,
+    },
+    updateTokenValueFunc: {
+      type: Function,
+      required: false,
+      default: () => null,
+    },
+    disabled: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+  },
   mounted() {
     this.token.selectedToken = this.tokenInfo.selectedToken;
   },
@@ -120,6 +148,11 @@ export default defineComponent({
     'tokenInfo.value': function (val) {
       if (val) {
         this.token.value = val;
+      }
+    },
+    'tokenInfo.sum': function (val) {
+      if (val) {
+        this.token.sum = val;
       }
     },
     'tokenInfo.usdValue': function (val) {

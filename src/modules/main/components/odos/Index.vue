@@ -57,11 +57,12 @@
                   Decrease Allowance
                 </div>
 
-                <InputToken
+                <TokenForm
                   :token-info="token"
                   :remove-item-func="removeInputToken"
                   :is-token-removable="isInputTokensRemovable"
-                  :select-token-func="selectInputToken"
+                  :select-token-func="selectFormToken"
+                  :is-input-token="true"
                   :update-token-value-func="updateTokenValueMethod"
                 />
               </div>
@@ -105,11 +106,13 @@
                 :data-index="token.id"
                 class="swap-form__body-block__inputs-item"
               >
-                <InputToken
+                <TokenForm
                   :token-info="token"
                   :remove-item-func="removeOutputToken"
                   :is-token-removable="isOutputTokensRemovable"
-                  :select-token-func="selectOutputToken"
+                  :select-token-func="selectFormToken"
+                  :is-input-token="false"
+                  :disabled="true"
                 />
               </div>
 
@@ -183,7 +186,7 @@
               @click="approve(firstInputInQueueForToApprove)"
               btn-size="large"
               full
-              :is-loading="firstSwipeClickOnApprove"
+              :loading="firstSwipeClickOnApprove"
             >
               <span
                 v-if="viewType === 'SWIPE' && !firstSwipeClickOnApprove"
@@ -197,7 +200,7 @@
             </ButtonComponent>
             <ButtonComponent
               v-else
-              @click="swap"
+              @click="swapTrigger"
               btn-size="large"
               full
               :loading="isLoadingSwap"
@@ -217,6 +220,7 @@
       </template>
     </div>
 
+    <!--
     <div v-if="quotaResponseInfo">
       <div class="transaction-info-container">
         <div class="transaction-info-body">
@@ -245,11 +249,6 @@
           >
             <div class="col-6 py-0 with-tooltip">
               <div class="transaction-info-title">Multi-swap Odos fee</div>
-              <div>
-                <!-- <Tooltip
-                  text="This fee is charged by Odos for using multi-input/multi-output"
-                /> -->
-              </div>
             </div>
             <div class="col-6 py-0">
               <div class="transaction-info">
@@ -270,9 +269,6 @@
           <div class="row py-2">
             <div class="col-6 py-0 with-tooltip">
               <div class="transaction-info-title">Single-swap Odos fee</div>
-              <div>
-                <!-- <Tooltip text="Single-input/output swaps are free" /> -->
-              </div>
             </div>
             <div class="col-6 py-0">
               <div class="transaction-info">
@@ -309,27 +305,19 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <SelectTokensModal
       :is-show="isShowSelectTokensModal"
       :set-show-func="showSelectTokensModals"
       :swap-method="swapMethod"
-      :select-token-type="selectTokenType"
+      :select-token-input="selectModalTypeInput"
       :add-selected-token-to-list-func="addSelectedTokenToList"
       :remove-selected-token-from-list-func="removeSelectedTokenFromList"
       :second-tokens="secondTokens"
       :tokens="allTokensList"
       :is-all-data-loaded="isAllDataLoaded"
       :is-ovn-swap="true"
-      :selected-token-count="
-        selectTokenType === 'OVERNIGHT'
-          ? secondTokensSelectedCount
-          : tokensSelectedCount
-      "
-      :max-token-count="
-        selectTokenType === 'OVERNIGHT' ? secondTokens.length : 6
-      "
     />
 
     <!-- <SuccessOdosModal
@@ -350,7 +338,7 @@
 import { defineComponent } from 'vue';
 import { mapActions, mapGetters, mapState } from 'vuex';
 import { useEventBus } from '@vueuse/core';
-import InputToken from '@/modules/main/components/odos/InputToken.vue';
+import TokenForm from '@/modules/main/components/Odos/TokenForm.vue';
 import WaitingModal from '@/components/CustomModals/action/WaitingModal.vue';
 import ErrorModal from '@/components/CustomModals/action/ErrorModal.vue';
 import Spinner from '@/components/Spinner/Index.vue';
@@ -365,9 +353,9 @@ import {
 import { clearApproveToken, getAllowanceValue, approveToken } from '@/utils/contract-approve.ts';
 import odosApiService from '@/services/odos-api-service.ts';
 import { getImageUrl } from '@/utils/const.ts';
-import NetworkNotAvailable from '@/modules/main/components/odos/network-not-available.vue';
-import SelectTokensModal from '@/modules/main/components/odos/TokensModal/Index.vue';
-import SwapSlippageSettings from '@/modules/main/components/odos/SwapSlippageSettings.vue';
+import NetworkNotAvailable from '@/modules/main/components/Odos/network-not-available.vue';
+import SelectTokensModal from '@/modules/main/components/Odos/TokensModal/Index.vue';
+import SwapSlippageSettings from '@/modules/main/components/Odos/SwapSlippageSettings.vue';
 import { onLeaveList, onEnterList, beforeEnterList } from '@/utils/animations.ts';
 
 export default defineComponent({
@@ -380,7 +368,7 @@ export default defineComponent({
     WaitingModal,
     SelectTokensModal,
     SwapSlippageSettings,
-    InputToken,
+    TokenForm,
     BaseIcon,
   },
   props: {
@@ -412,6 +400,7 @@ export default defineComponent({
       maxInputTokens: 6,
       maxOutputTokens: 6,
 
+      selectModalTypeInput: true,
       isShowSelectTokensModal: false,
       swapMethod: 'BUY', // BUY (secondTokens) / SELL (secondTokens)
       selectTokenType: 'OVERNIGHT', // OVERNIGHT / ALL
@@ -449,9 +438,18 @@ export default defineComponent({
     },
     async networkId(newVal) {
       if (newVal) {
-        this.isFirstBalanceLoaded = false;
-        this.isBalancesLoading = false;
-        this.quotaResponseInfo = null;
+        this.$store.commit('odosData/changeState', {
+          field: 'isFirstBalanceLoaded',
+          val: false,
+        });
+        this.$store.commit('odosData/changeState', {
+          field: 'isBalancesLoading',
+          val: false,
+        });
+        this.$store.commit('odosData/changeState', {
+          field: 'quotaResponseInfo',
+          val: null,
+        });
         await this.initContractData();
         await this.initData({
           tokenSeparationScheme: this.tokenSeparationScheme,
@@ -981,7 +979,53 @@ export default defineComponent({
         this.selectedOutputTokens[i].value += 1;
       }
     },
-    async swap() {
+    odosAssembleRequest(requestData: any) {
+      return odosApiService
+        .assembleRequest(requestData)
+        .then((data) => data)
+        .catch((e) => {
+          console.log('Assemble request error: ', e);
+        });
+    },
+    async odosSwapRequest(requestData: any) {
+      return odosApiService
+        .quoteRequest(requestData)
+        .then((data) => {
+          console.log('Response data for odos swap request: ', data);
+          this.$store.commit('odosData/changeState', {
+            field: 'swapResponseInfo',
+            val: data,
+          });
+          return data;
+        })
+        .catch((e) => {
+          console.log('Swap request error: ', e);
+          this.closeWaitingModal();
+          if (e && e.message && e.message.includes('path')) {
+            this.showErrorModalWithMsg({ errorType: 'odos-path', errorMsg: e });
+            return;
+          }
+
+          this.showErrorModalWithMsg({ errorType: 'odos', errorMsg: e });
+        });
+    },
+    quoteRequest(requestData: any) {
+      return odosApiService
+        .quoteRequest(requestData)
+        .then((data) => {
+          console.log('Response data for odos quota request: ', data);
+          this.$store.commit('odosData/changeState', {
+            field: 'quotaResponseInfo',
+            val: data,
+          });
+          return data;
+        })
+        .catch((e) => {
+          console.log('Quota request error: ', e);
+        });
+    },
+    async swapTrigger() {
+      console.log(this.isSwapLoading, 'sWAPP');
       if (this.isSwapLoading) {
         console.log({
           message: 'Swap method not available, prev swap in process.',
@@ -990,6 +1034,7 @@ export default defineComponent({
         return;
       }
 
+      console.log('sWAPP2');
       if (
         this.inputTokensWithSelectedTokensCount < 1
         || this.outputTokensWithSelectedTokensCount < 1
@@ -997,7 +1042,11 @@ export default defineComponent({
         return;
       }
 
-      this.swapSessionId = getRandomString(10);
+      this.$store.commit('odosData/changeState', {
+        field: 'swapSessionId',
+        val: getRandomString(10),
+      });
+
       this.isSwapLoading = true;
 
       const actualGas = await this.getActualGasPrice(this.networkId);
@@ -1016,6 +1065,7 @@ export default defineComponent({
         referralCode: this.odosReferalCode,
       };
 
+      console.log(requestData, 'sWAPP2');
       console.log({
         message: 'Odos Swap quota request data',
         swapSession: this.swapSessionId,
@@ -1023,7 +1073,7 @@ export default defineComponent({
         actualGas,
       });
 
-      odosApiService.swapRequest(requestData)
+      this.odosSwapRequest(requestData)
         .then(async (data: any) => {
           console.log({
             message: 'Odos Swap quota response data',
@@ -1046,7 +1096,7 @@ export default defineComponent({
             data: assembleData,
             actualGas,
           });
-          odosApiService.assembleRequest(assembleData)
+          this.odosAssembleRequest(assembleData)
             .then(async (responseAssembleData: any) => {
               console.log({
                 message: 'Odos Assemble response data',
@@ -1086,9 +1136,11 @@ export default defineComponent({
               }
 
               await this.initWalletTransaction(
-                responseAssembleData,
-                this.selectedInputTokens,
-                this.selectedOutputTokens,
+                {
+                  txData: responseAssembleData,
+                  selectedInputTokens: this.selectedInputTokens,
+                  selectedOutputTokens: this.selectedOutputTokens,
+                },
               );
               this.isSwapLoading = false;
             })
@@ -1123,7 +1175,7 @@ export default defineComponent({
       // this.updatePathViewFunc(this.pathViz, [], []);
     },
     async simulateSwap() {
-      console.log('simulateSwap');
+      console.log(this.isSumulateSwapLoading, 'simulateSwap');
       if (this.isSumulateSwapLoading) {
         return;
       }
@@ -1161,7 +1213,7 @@ export default defineComponent({
 
       this.clearQuotaInfo();
 
-      odosApiService.quoteRequest(requestData)
+      this.quoteRequest(requestData)
         .then((data: any) => {
           this.updateSelectedOutputTokens(data);
 
@@ -1186,6 +1238,7 @@ export default defineComponent({
     // function get data.outTokens and data.outAmounts and find matches in selectedOutputTokens
     // and update selectedOutputTokens with new values
     updateSelectedOutputTokens(data: any) {
+      console.log(data, 'updateSelectedOutputTokens');
       if (!data || !data.outTokens || !data.outAmounts) {
         return;
       }
@@ -1213,6 +1266,8 @@ export default defineComponent({
         ] = token;
       }
 
+      console.log(outTokensCount, 'selectedOutputTokensCount');
+      console.log(selectedOutputTokensMap, 'selectedOutputTokensMap');
       for (let i = 0; i < outTokensCount; i++) {
         const tokenAddress = outTokens[i];
         const tokenAmount = outAmounts[i];
@@ -1225,6 +1280,8 @@ export default defineComponent({
           );
           token.sum = amount;
         }
+
+        this.outputTokens[i] = token;
       }
     },
 
@@ -1444,10 +1501,8 @@ export default defineComponent({
       return tokensPercentage;
     },
 
-    addSelectedTokenToList(selectedToken: any, swapMethod: string, selectTokenType: any) {
-      console.log(swapMethod, '-swapMethod');
-      console.log(selectTokenType, '-selectTokenType');
-      if (this.isInputToken(swapMethod, selectTokenType)) {
+    addSelectedTokenToList(selectedToken: any, isSelectTokenInput: boolean) {
+      if (isSelectTokenInput) {
         this.addSelectedTokenToInputList(selectedToken);
         this.removeOutputToken(selectedToken.id);
         this.addTokensEmptyIsNeeded();
@@ -1587,40 +1642,8 @@ export default defineComponent({
     showSelectTokensModals(isShow: any) {
       this.isShowSelectTokensModal = isShow;
     },
-    selectInputToken() {
-      if (this.swapMethod === 'BUY') {
-        this.openModalWithSelectTokenAndBySwapMethod('ALL');
-        return;
-      }
-
-      if (this.swapMethod === 'SELL') {
-        this.openModalWithSelectTokenAndBySwapMethod('OVERNIGHT');
-        return;
-      }
-
-      console.error(
-        'Swap method type not found when select input tokens. ',
-        this.swapMethod,
-      );
-    },
-    selectOutputToken() {
-      if (this.swapMethod === 'BUY') {
-        this.openModalWithSelectTokenAndBySwapMethod('ALL');
-        return;
-      }
-
-      if (this.swapMethod === 'SELL') {
-        this.openModalWithSelectTokenAndBySwapMethod('ALL');
-        return;
-      }
-
-      console.error(
-        'Swap method type not found when select output tokens. ',
-        this.swapMethod,
-      );
-    },
-    openModalWithSelectTokenAndBySwapMethod(tokenType: any) {
-      this.setSelectTokenType(tokenType);
+    selectFormToken(isInputToken: boolean) {
+      this.selectModalTypeInput = isInputToken;
       this.showSelectTokensModals(true);
     },
     setSwapMethod(method: any) {

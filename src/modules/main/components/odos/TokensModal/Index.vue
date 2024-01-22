@@ -12,16 +12,14 @@
       >
         <div v-if="isOvnSwap">
           <h1
-            v-if="selectTokenType === 'OVERNIGHT'"
+            v-if="selectTokenInput"
           >
-            Select Overnight tokens
-            <span v-if="selectedTokenCount">({{selectedTokenCount}}/{{maxTokenCount}})</span>
+            Select Input token
           </h1>
           <h1
             v-else
           >
-            All tokens
-            <span v-if="selectedTokenCount">({{selectedTokenCount}}/{{maxTokenCount}})</span>
+            Select Output token
           </h1>
         </div>
         <div v-else>
@@ -47,23 +45,11 @@
         </div>
 
         <div v-else>
-          <div v-if="selectTokenType === 'OVERNIGHT'">
-            <SelectTokenShort
-              :tokens="secondTokens"
-              :select-token-func="selectToken"
-              :remove-token-func="removeToken"
-            />
-          </div>
-          <div v-else-if="selectTokenType === 'ALL'">
-            <SelectTokenWithSearch
-              :tokens="tokens"
-              :select-token-func="selectToken"
-              :remove-token-func="removeToken"
-            />
-          </div>
-          <div v-else>
-            select token component not found by type: {{selectTokenType}}
-          </div>
+          <SelectTokenWithSearch
+            :tokens="tokens"
+            :select-token-func="selectToken"
+            :remove-token-func="removeToken"
+          />
         </div>
       </div>
 
@@ -73,15 +59,13 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import SelectTokenShort from '@/modules/main/components/odos/TokensModal/SelectTokenShort.vue';
-import SelectTokenWithSearch from '@/modules/main/components/odos/TokensModal/SelectTokenWithSearch.vue';
+import SelectTokenWithSearch from '@/modules/main/components/Odos/TokensModal/SelectTokenWithSearch.vue';
 import ModalComponent from '@/components/Modal/Index.vue';
 
 export default defineComponent({
   name: 'SelectTokensModal',
   components: {
     SelectTokenWithSearch,
-    SelectTokenShort,
     ModalComponent,
   },
   props: {
@@ -98,8 +82,8 @@ export default defineComponent({
       type: String,
       required: true,
     },
-    selectTokenType: {
-      type: String,
+    selectTokenInput: {
+      type: Boolean,
       required: true,
     },
 
@@ -130,16 +114,6 @@ export default defineComponent({
 
     isOvnSwap: {
       type: Boolean,
-      required: true,
-    },
-
-    selectedTokenCount: {
-      type: Number,
-      required: true,
-    },
-
-    maxTokenCount: {
-      type: Number,
       required: true,
     },
   },
@@ -193,17 +167,17 @@ export default defineComponent({
     },
     selectToken(token: any) {
       // eslint-disable-next-line no-param-reassign
-      console.log('Token select: ', token, this.swapMethod, this.selectTokenType);
+      console.log('Token select: ', token, this.selectTokenInput);
       this.addSelectedTokenToListFunc({
         ...token,
         selected: true,
-      }, this.swapMethod, this.selectTokenType);
+      }, this.selectTokenInput);
     },
     removeToken(token: any) {
       // eslint-disable-next-line no-param-reassign
       token.selected = false;
-      console.log('Token remove: ', token, this.swapMethod, this.selectTokenType);
-      this.removeSelectedTokenFromListFunc(token, this.swapMethod, this.selectTokenType);
+      console.log('Token remove: ', token, this.selectTokenInput);
+      this.removeSelectedTokenFromListFunc(token, this.selectTokenInput);
     },
   },
 });

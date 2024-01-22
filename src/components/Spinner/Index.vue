@@ -24,7 +24,7 @@ export default {
     },
     color: {
       type: String,
-      default: '#E3F2FD',
+      default: '#0497EC',
     },
     size: {
       type: String,
@@ -60,8 +60,8 @@ export default {
     animationStyle2() {
       return {
         top: `${parseFloat(this.size) / 2 - this.moonSize / 2}px`,
-        border: `#0497EC solid ${this.moonSize}px`,
-        borderBottom: `${this.moonSize}px solid ${this.color}`,
+        border: `${this.color} solid ${this.moonSize}px`,
+        borderBottom: `${this.moonSize}px solid white`,
       };
     },
   },
@@ -70,24 +70,14 @@ export default {
 
 <style>
 .v-spinner .v-moon1 {
-  -webkit-animation: v-moonStretchDelay 1s 0s infinite linear;
-  animation: v-moonStretchDelay 1s 0s infinite linear;
-  -webkit-animation-fill-mode: forwards;
+  animation: v-moonStretchDelay 1.6s 0s infinite cubic-bezier(0, 0, 0.49, 1.12);
   animation-fill-mode: forwards;
   position: relative;
 }
 
-@-webkit-keyframes v-moonStretchDelay {
-  100% {
-    -webkit-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
-}
-
 @keyframes v-moonStretchDelay {
   100% {
-    -webkit-transform: rotate(360deg);
-    transform: rotate(360deg);
+    transform: rotate(1080deg);
   }
 }
 </style>

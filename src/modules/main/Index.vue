@@ -32,7 +32,7 @@
 import { mapActions } from 'vuex';
 import SliderComponent from '@/modules/main/components/Slider/Index.vue';
 import TabsComponent from '@/components/Tabs/Index.vue';
-import SwapForm from '@/modules/main/components/odos/Index.vue';
+import SwapForm from '@/modules/main/components/Odos/Index.vue';
 
 export default {
   name: 'MainModule',

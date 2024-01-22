@@ -5,12 +5,12 @@
     :class="{
       [btnStyles]: !!btnStyles,
       [btnSize]: !!btnSize,
-      disabled: disabled || isLoading,
+      disabled: disabled || loading,
       full,
     }"
     @click="$emit('click', $event)"
   >
-    <div v-if="isLoading">
+    <div v-if="loading">
       <Spinner size="24px" />
     </div>
     <slot v-else />
@@ -31,7 +31,7 @@ export default {
     Spinner,
   },
   props: {
-    isLoading: {
+    loading: {
       type: Boolean,
       default: false,
     },

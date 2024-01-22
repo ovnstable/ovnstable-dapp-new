@@ -500,52 +500,6 @@ const actions = {
     commit('changeState', { field: 'secondTokens', val: [] });
   },
 
-  assembleRequest(requestData: any) {
-    return odosApiService
-      .assembleRequest(requestData)
-      .then((data) => data)
-      .catch((e) => {
-        console.log('Assemble request error: ', e);
-      });
-  },
-  swapRequest({
-    commit, state, dispatch, rootState,
-  }: any, requestData: any) {
-    return odosApiService
-      .quoteRequest(requestData)
-      .then((data) => {
-        console.log('Response data for odos swap request: ', data);
-        commit('changeState', { field: 'swapResponseInfo', val: data });
-        return data;
-      })
-      .catch((e) => {
-        console.log('Swap request error: ', e);
-        dispatch('waitingModal/closeWaitingModal');
-        if (e && e.message && e.message.includes('path')) {
-          dispatch('waitingModal/showErrorModalWithMsg', { errorType: 'odos-path', errorMsg: e });
-          return;
-        }
-
-        dispatch('waitingModal/showErrorModalWithMsg', { errorType: 'odos', errorMsg: e });
-      });
-  },
-  oldSwapRequest({
-    commit, state, dispatch, rootState,
-  }: any, requestData: any) {
-    return odosApiService
-      .swapRequest(requestData)
-      .then((data) => {
-        console.log('Response data for odos swap request: ', data);
-        commit('changeState', { field: 'swapResponseInfo', val: data });
-        return data;
-      })
-      .catch((e) => {
-        console.log('Swap request error: ', e);
-        dispatch('waitingModal/closeWaitingModal');
-        dispatch('waitingModal/showErrorModalWithMsg', { errorType: 'odos', errorMsg: e });
-      });
-  },
-
   getTokenByAddress({
     commit, state, dispatch, rootState,
   }: any, address: string) {
@@ -597,7 +551,7 @@ const actions = {
   }: any) {
     state.swapResponseConfirmInfo.waitingConformation = false;
     clearInterval(state.swapResponseConfirmInfo.counterId);
-    dispatch('waitingModal/closeWaitingModal');
+    dispatch('waitingModal/closeWaitingModal', null, { root: true });
     commit('changeState', {
       field: 'swapResponseConfirmInfo',
       val: {
@@ -721,7 +675,7 @@ const actions = {
       await dispatch('addedZkSyncGasHistoryData', transactionData);
     }
 
-    dispatch('waitingModal/showWaitingModal', 'Swapping in process');
+    dispatch('waitingModal/showWaitingModal', 'Swapping in process', { root: true });
 
     const txLogMessage = console.log({
       message: 'Odos send transaction',
@@ -740,7 +694,7 @@ const actions = {
           swapSession: state.swapSessionId,
           data: dataTx,
         });
-        dispatch('waitingModal/closeWaitingModal');
+        dispatch('waitingModal/closeWaitingModal', null, { root: true });
 
         if (rootState.network.networkName === 'zksync' && state.zksyncFeeHistory) {
           try {
