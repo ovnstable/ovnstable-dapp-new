@@ -116,8 +116,8 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex';
-import RefundInfo from '@/components/CustomModals/action/component/RefundInfo.vue';
-import BestAprPromotion from '@/components/CustomModals/action/component/BestAprPromotion.vue';
+import RefundInfo from '@/modules/ModalTemplates/components/RefundInfo.vue';
+import BestAprPromotion from '@/modules/ModalTemplates/components/BestAprPromotion.vue';
 
 export default {
   name: 'SuccessModal',

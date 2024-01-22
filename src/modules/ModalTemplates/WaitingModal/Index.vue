@@ -42,9 +42,9 @@
 
 <script lang="ts">
 import { mapActions, mapGetters } from 'vuex';
-import ModalComponent from '@/components/Modal/Index.vue';
-import Carousel from '@/components/CustomModals/action/component/Carousel.vue';
+import Carousel from '@/modules/ModalTemplates/components/Carousel.vue';
 import Spinner from '@/components/Spinner/Index.vue';
+import ModalComponent from '@/components/Modal/Index.vue';
 
 export default {
   name: 'WaitingModal',

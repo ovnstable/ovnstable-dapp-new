@@ -93,15 +93,15 @@
 <script lang="ts">
 import { mapActions, mapGetters } from 'vuex';
 import ModalComponent from '@/components/Modal/Index.vue';
-import UndefinedError from '@/components/CustomModals/action/errors/UndefinedError.vue';
-import RpcError from '@/components/CustomModals/action/errors/RpcError.vue';
-import GasError from '@/components/CustomModals/action/errors/GasError.vue';
-import SlippageError from '@/components/CustomModals/action/errors/SlippageError.vue';
-import OdosError from '@/components/CustomModals/action/errors/OdosError.vue';
-import HighLoadInfo from '@/components/CustomModals/action/errors/HighLoadInfo.vue';
-import GasPriceIncreaseInfo from '@/components/CustomModals/action/errors/GasPriceIncreaseInfo.vue';
-import OverRateLimitInfo from '@/components/CustomModals/action/errors/OverRateLimitInfo.vue';
-import InsufficientFundsInfo from '@/components/CustomModals/action/errors/InsufficientFundsInfo.vue';
+import UndefinedError from '@/modules/ModalTemplates/errors/UndefinedError.vue';
+import RpcError from '@/modules/ModalTemplates/errors/RpcError.vue';
+import GasError from '@/modules/ModalTemplates/errors/GasError.vue';
+import SlippageError from '@/modules/ModalTemplates/errors/SlippageError.vue';
+import OdosError from '@/modules/ModalTemplates/errors/OdosError.vue';
+import HighLoadInfo from '@/modules/ModalTemplates/errors/HighLoadInfo.vue';
+import GasPriceIncreaseInfo from '@/modules/ModalTemplates/errors/GasPriceIncreaseInfo.vue';
+import OverRateLimitInfo from '@/modules/ModalTemplates/errors/OverRateLimitInfo.vue';
+import InsufficientFundsInfo from '@/modules/ModalTemplates/errors/InsufficientFundsInfo.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 
 export default {

@@ -119,8 +119,7 @@ export default {
     box-shadow: 0px 1px 0px 0px var(--color-1);
 
     &:hover {
-      color: var(--color-3);
-      background-color: var(--color-4);
+      opacity: .7;
     }
   }
 
