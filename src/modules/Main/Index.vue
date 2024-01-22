@@ -116,6 +116,7 @@ export default {
 }
 .bridge-wrap {
   height: 100%;
+  min-height: 530px;
   display: flex;
   align-items: center;
   justify-content: center;

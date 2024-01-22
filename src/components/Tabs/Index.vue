@@ -154,7 +154,7 @@ export default {
 
 <style lang="scss" scoped>
 .tabs-header {
-  min-height: 50px;
+  min-height: 51px;
 }
 
 .tabs-wrap {
@@ -163,7 +163,7 @@ export default {
 }
 
 .tabs-item {
-  height: calc(100% - 50px);
+  height: calc(100% - 51px);
 }
 .tabs-header__ul {
   width: 100%;

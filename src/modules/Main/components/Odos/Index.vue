@@ -1799,6 +1799,7 @@ export default defineComponent({
 }
 
 .swap-form {
+  min-height: 530px;
   padding: 24px 20px;
   background-color: var(--color-4);
   border: 2px solid var(--color-1);
