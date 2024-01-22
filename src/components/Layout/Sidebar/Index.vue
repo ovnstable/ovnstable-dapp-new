@@ -20,6 +20,11 @@
           active-class="active-link"
         >USD+</router-link>
         <router-link
+          to="/market/usdc"
+          class="sidebar__text-market"
+          active-class="active-link"
+        >USDC+</router-link>
+        <router-link
           to="/market/eth"
           class="sidebar__text-market"
           active-class="active-link"
@@ -37,10 +42,15 @@
       </div>
       <div class="sidebar__divider-top" />
 
+      <p
+        to="/insurance"
+        class="sidebar__text-top ovn"
+      >OVN</p>
+
       <router-link
         to="/insurance"
         class="sidebar__text-top"
-      >OVN</router-link>
+      >OVN overview</router-link>
 
       <router-link
         to="/insurance"
@@ -176,10 +186,14 @@ export default {
 .active-link {
   text-decoration: underline;
 }
-.markets {
+.markets,
+.ovn {
   color: var(--color-2);
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 600;
+}
+
+.markets {
   margin-bottom: 20px;
 }
 
