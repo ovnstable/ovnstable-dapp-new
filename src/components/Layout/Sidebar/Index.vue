@@ -15,20 +15,24 @@
 
       <div class="market-container">
         <router-link
-          to="/insurance"
+          to="/market/usd"
           class="sidebar__text-market"
+          active-class="active-link"
         >USD+</router-link>
         <router-link
           to="/market/eth"
           class="sidebar__text-market"
+          active-class="active-link"
         >ETH+</router-link>
         <router-link
-          to="/insurance"
+          to="/market/usdt"
           class="sidebar__text-market"
+          active-class="active-link"
         >USDT+</router-link>
         <router-link
-          to="/insurance"
+          to="/market/dai"
           class="sidebar__text-market"
+          active-class="active-link"
         >DAI+</router-link>
       </div>
       <div class="sidebar__divider-top" />
@@ -169,7 +173,9 @@ export default {
       color: var(--color-4);
   }
 }
-
+.active-link {
+  text-decoration: underline;
+}
 .markets {
   color: var(--color-2);
   font-size: 15px;
