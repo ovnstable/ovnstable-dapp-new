@@ -367,6 +367,10 @@ export default {
   text-align: right;
   flex: none;
 }
+
+.performance__portfolio-total-liquidation-value {
+  margin-right: 15px;
+}
 .performance__portfolio-total > *,
 .performance__portfolio-total-circulation > * {
   text-align: center;
@@ -377,7 +381,7 @@ export default {
 }
 
 .performance__portfolio-total-circulation  {
-   width: 39%;
+   width: 39.8%;
 }
 .performance__portfolio-total-label,
 .performance__portfolio-total-circulation .performance__portfolio-total-label {
@@ -403,7 +407,7 @@ export default {
   width: 96%;
 }
 .performance__portfolio-strategies-divider {
-   margin-bottom: 4px;
+  margin-bottom: 4px;
   border: 1px solid var(--color-5);
   width: 100%;
 }
@@ -442,7 +446,7 @@ export default {
 .performance__portfolio-strategy-progress-bar {
   border-radius: 3px;
   background: var(--color-6);
-  width: 131px;
+  width: 160px;
   height: 12px;
   margin-right: 3px;
 }
@@ -490,29 +494,28 @@ export default {
   flex:7;
 }
 
-.deposited-to {
+.deposited-to p:nth-child(1) {
+  padding-right: 12px;
+}
+
+.deposited-to p:nth-child(2) {
+  flex: 4;
   text-align: center;
-  flex: 1;
+  padding-right: 35px;
 }
 
-.deposited-to:first-child {
-  text-align: left;
-  flex: 2;
-}
-.deposited-to p:nth-child(2)  {
-  flex: 3;
-  margin-right: 90px;
+.deposited-to p:nth-child(3) {
+  flex: 3.2;
+  text-align: center;
+  padding-right: 40px;
 }
 
-.deposited-to p:nth-child(3)  {
-  flex: 2;
+.deposited-to a:nth-child(4) {
+  flex: 3.2;
   text-align: left;
+  padding-right: 45px;
 }
 
-.deposited-to a:nth-child(4){
-  flex: 3;
-  text-align: left;
-}
 
 .performance__portfolio-strategies-stablecoins-specifications p,
 .performance__portfolio-strategy p {
@@ -523,7 +526,7 @@ export default {
 .performance__portfolio-strategies-stablecoins-specifications p:first-child,
 .performance__portfolio-strategy p:first-child {
   text-align: left;
-  flex: 3.2;
+  flex: 2.7;
 }
 
 .performance__portfolio-strategies-stablecoins-specifications p:nth-child(2),
@@ -547,7 +550,6 @@ export default {
 
 .performance__portfolio-total-circulation-number {
   text-align: right;
-  margin-right: -19px;
 }
 
 .performance__portfolio-total-circulation {
@@ -565,18 +567,40 @@ export default {
   width: 22px;
   height: 22px;
 }
+
 @media (max-width: 1024px) {
   .performance__portfolio-strategy-progress-bar {
     width: 50px;
   }
-  .deposited-to p:nth-child(2)  {
-    margin-left: 30px;
-    margin-right: 20px;
+  .deposited-to p {
+    text-align: center;
+    flex: 1;
+    padding: 0;
   }
 
-  .deposited-to p:nth-child(3)  {
-    margin-left: 10px;
-    margin-right: 20px;
+  .deposited-to p:first-child {
+    text-align: left;
+    flex: 2.7;
+    padding: 0;
+  }
+
+  .deposited-to p:nth-child(2),
+  .deposited-to p:nth-child(3) {
+    flex: 4;
+    padding: 0;
+
+  }
+
+  .deposited-to p:nth-child(2) {
+    margin-left: 60px;
+  }
+
+  .deposited-to p:nth-child(4)  {
+    flex: 3.2;
+    display: flex;
+    justify-content: flex-end;
+    text-align: right;
+    padding: 0;
   }
 
   .performance__portfolio-total-label.circulation {

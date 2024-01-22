@@ -1,7 +1,7 @@
 <template>
   <div class="performance__token-data">
     <BaseIcon
-      name="ARB"
+      name="ETH+_token-data"
     />
     <div class="performance__token-data__link-title">
       <p class="performance__token-data__title">{{tokenName}}</p>
@@ -25,10 +25,14 @@
       <p class="performance__token-data__title">Daily APY</p>
       <div class="performance__apy-data__chain">
         <p class="performance__token-data__number apy-number">{{ dailyAPY }}%</p>
-        <BaseIcon
-          :name=chainIcon
+        <div
           class="performance__icon-chain"
-        />
+        >
+          <BaseIcon
+            :name=chainIcon
+          />
+        </div>
+
       </div>
     </div>
     <div class="performance__divider" />
@@ -37,7 +41,9 @@
       <p class="performance__token-data__number">{{ totalTVL }} <span class="performance__token-data__collateral-token">{{ collateralToken }}</span></p>
       <p class="performance__token-data__hours">past 2 hours</p>
     </div>
+    <div class="performance__divider last-divider" />
   </div>
+
   <div class="performance__chain-data">
     <BaseIcon
       :name=chainIcon
@@ -45,6 +51,7 @@
     />
     <p class="performance__chain-data-name">{{ chainName }}</p>
   </div>
+
 </template>
 <script lang="ts">
 
@@ -55,10 +62,6 @@ export default {
     BaseIcon,
   },
   props: {
-    tokenImagePath: {
-      type: String,
-      default: 'assets/icons/currencies/UsdPlus.vue',
-    },
     tokenName: {
       type: String,
       default: 'ETH+',
@@ -113,7 +116,7 @@ export default {
     align-self: flex-start;
     justify-content: center;
     background: var(--color-4);
-    max-width: calc(100% - 40px);
+    width: 100%;
   }
 
   .performance__icon-token {
@@ -127,6 +130,7 @@ export default {
     margin-left: 20px;
   }
   .performance__token-data__title {
+    text-align: center;
     color: var(--color-1);
     font-size: 22px;
     font-weight: 600;
@@ -153,9 +157,13 @@ export default {
   }
 
   .performance__divider {
-    margin-left: 40px;
-    margin-right: 40px;
+    margin-left: 30px;
+    margin-right: 30px;
     border: 1px solid var(--color-7);
+  }
+
+  .last-divider {
+     margin-right: 0px;
   }
 
   .performance__payout-data,
@@ -172,9 +180,10 @@ export default {
     font-weight: 500;
   }
 
-   .performance__token-data__number {
-      margin-top: 20px;
-   }
+  .performance__token-data__number {
+    margin-top: 20px;
+    text-align: center;
+  }
   .apy-number {
      margin-top: 0px;
   }
@@ -183,6 +192,7 @@ export default {
     display: flex;
     flex-direction: row;
     align-items: center;
+
   }
   .performance__icon-chain {
     margin-left: 10px;
@@ -212,6 +222,13 @@ export default {
     font-size: 13px;
     color: var(--color-1)
   }
+
+  .performance__icon-chain-bottom {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0
+  }
+
   @media (max-width: 1024px) {
     .performance__token-data__description {
       margin-left: 20px;
