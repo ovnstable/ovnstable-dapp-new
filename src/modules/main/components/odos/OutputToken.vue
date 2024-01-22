@@ -163,7 +163,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { formatMoney, fixedByPrice } from '@/utils/numbers.ts';
-import Slider from '@/modules/main/components/Odos/SliderSwapsForm.vue';
+import Slider from '@/modules/Main/components/Odos/SliderSwapsForm.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 
 export default defineComponent({

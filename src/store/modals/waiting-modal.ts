@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 const stateData = {
-  show: true,
-  modalText: 'Wait',
+  show: false,
+  modalText: '',
 };
 
 const getters = {

@@ -1,8 +1,6 @@
 <template>
   <div class="carousel-container">
-    <div>
-      <div class="title">Overnight Tips</div>
-    </div>
+    <h1>Overnight Tips</h1>
     <div>
       <span
         class="list-items"
@@ -24,7 +22,7 @@ export default {
     items: [
       {
         id: 1,
-        description: 'Swap Overnight tokens with MINIMAL FEES [here]',
+        description: 'Swap Overnight tokens with MINIMAL FEES, [here]',
         linkWord: 'here',
         link: 'https://app.overnight.fi/swap',
         postfix: 'swap_page',
@@ -98,11 +96,11 @@ export default {
       setTimeout(() => {
         this.currentItemIndex++;
         this.showNextItem();
-      }, 3000); // 3-second delay
+      }, 4000); // 3-second delay
     },
 
     formatDescription(description: any, linkWord: any, link: any) {
-      return description.replace(`[${linkWord}]`, `<a href="${link}" target="_blank">${linkWord}</a>`);
+      return description.replace(`[${linkWord}]`, `<a class="modal-link" href="${link}" target="_blank">${linkWord}</a>`);
     },
 
     trackLinkClick(item: any) {
@@ -121,26 +119,31 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .carousel-container {
     padding-bottom: 30px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-}
+    max-width: 400px;
+    min-width: 400px;
+    min-height: 120px;
+    width: 100%;
 
-.title {
-    font-size: 24px;
-    line-height: 36px;
-    font-weight: 700;
-    color: var(--main-gray-text);
+    h1 {
+        font-size: 24px;
+        line-height: 36px;
+        font-weight: 700;
+        color: var(--color-1);
+        margin-bottom: 8px;
+    }
 }
-
 .list-items {
     font-size: 16px;
     line-height: 22px;
     font-weight: 400;
-    color: var(--main-gray-text);
+    color: var(--color-1);
+    text-align: center;
 }
 </style>

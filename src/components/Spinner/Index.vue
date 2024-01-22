@@ -61,7 +61,7 @@ export default {
       return {
         top: `${parseFloat(this.size) / 2 - this.moonSize / 2}px`,
         border: `${this.color} solid ${this.moonSize}px`,
-        borderBottom: `${this.moonSize}px solid white`,
+        borderBottom: `${this.moonSize}px solid #E3F2FD`,
       };
     },
   },

@@ -29,6 +29,7 @@ import odosData from '@/store/odos/index.ts';
 // modals
 import errorModal from '@/store/modals/error-modal.ts';
 import waitingModal from '@/store/modals/waiting-modal.ts';
+import successModal from '@/store/modals/success-modal.ts';
 
 export default new Vuex.Store({
   modules: {
@@ -36,6 +37,7 @@ export default new Vuex.Store({
     theme,
     errorModal,
     waitingModal,
+    successModal,
 
     accountUI,
     accountData,
