@@ -9,12 +9,6 @@
         <Spinner size="90px" />
       </div>
       <h1>Waiting for confirmation</h1>
-      <!-- <div
-        justify="center"
-        class="mt-8 mb-3"
-      >
-        <p class="loading-sub-label">{{ modalText }}</p>
-      </div> -->
       <p class="modal-content__confirm">Confirm this transaction in your wallet</p>
       <div class="divider" />
 
@@ -59,7 +53,7 @@ export default {
 
 <style lang="scss" scoped>
 .modal-content {
-  padding: 90px 70px 30px 70px;
+  padding: 50px 70px 30px 70px;
 
   h1 {
     font-size: 24px;

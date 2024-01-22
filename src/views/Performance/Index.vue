@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import PerformancePage from '@/modules/main/components/Performance/Index.vue';
+import PerformancePage from '@/modules/Main/components/Performance/Index.vue';
 
 export default {
   name: 'PerformanceView',

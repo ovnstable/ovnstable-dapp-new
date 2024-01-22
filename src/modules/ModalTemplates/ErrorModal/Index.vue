@@ -1,28 +1,10 @@
 <template>
   <ModalComponent
     :modelValue="showModal"
-    :show-close="false"
     type-modal="custom"
+    @close="close"
   >
-    <div class="container_body py-10 px-10">
-      <div
-        class="container_header"
-        flat
-      >
-        <button
-          @click="close"
-          type="button"
-          icon
-          class="ml-auto"
-        >
-          <BaseIcon
-            name="SearchClose"
-            class="sidebar__icon-social"
-            :class="light ? 'sidebar__icon-social--light' : ''"
-          />
-        </button>
-      </div>
-
+    <div class="modal-content">
       <div v-if="errorViewType === 'gas'">
         <GasError
           :error-msg="errorText"
@@ -93,16 +75,15 @@
 <script lang="ts">
 import { mapActions, mapGetters } from 'vuex';
 import ModalComponent from '@/components/Modal/Index.vue';
-import UndefinedError from '@/modules/ModalTemplates/errors/UndefinedError.vue';
-import RpcError from '@/modules/ModalTemplates/errors/RpcError.vue';
-import GasError from '@/modules/ModalTemplates/errors/GasError.vue';
-import SlippageError from '@/modules/ModalTemplates/errors/SlippageError.vue';
-import OdosError from '@/modules/ModalTemplates/errors/OdosError.vue';
-import HighLoadInfo from '@/modules/ModalTemplates/errors/HighLoadInfo.vue';
-import GasPriceIncreaseInfo from '@/modules/ModalTemplates/errors/GasPriceIncreaseInfo.vue';
-import OverRateLimitInfo from '@/modules/ModalTemplates/errors/OverRateLimitInfo.vue';
-import InsufficientFundsInfo from '@/modules/ModalTemplates/errors/InsufficientFundsInfo.vue';
-import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import UndefinedError from '@/modules/ModalTemplates/ErrorModal/UndefinedError.vue';
+import RpcError from '@/modules/ModalTemplates/ErrorModal/RpcError.vue';
+import GasError from '@/modules/ModalTemplates/ErrorModal/GasError.vue';
+import SlippageError from '@/modules/ModalTemplates/ErrorModal/SlippageError.vue';
+import OdosError from '@/modules/ModalTemplates/ErrorModal/OdosError.vue';
+import HighLoadInfo from '@/modules/ModalTemplates/ErrorModal/HighLoadInfo.vue';
+import GasPriceIncreaseInfo from '@/modules/ModalTemplates/ErrorModal/GasPriceIncreaseInfo.vue';
+import OverRateLimitInfo from '@/modules/ModalTemplates/ErrorModal/OverRateLimitInfo.vue';
+import InsufficientFundsInfo from '@/modules/ModalTemplates/ErrorModal/InsufficientFundsInfo.vue';
 
 export default {
   name: 'ErrorModal',
@@ -116,7 +97,6 @@ export default {
     GasError,
     RpcError,
     UndefinedError,
-    BaseIcon,
     ModalComponent,
   },
 
@@ -269,18 +249,8 @@ export default {
 };
 </script>
 
-<style scoped>
-
-.container_body {
-    border-radius: 24px !important;
-    background-color: var(--secondary) !important;
-}
-
-.container_header {
-    background-color: var(--secondary) !important;
-}
-
-.error-container:hover label {
-    color: #333333 !important;
+<style lang="scss" scoped>
+.modal-content {
+  padding: 50px 70px 30px 70px;
 }
 </style>

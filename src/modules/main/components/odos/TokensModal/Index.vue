@@ -59,7 +59,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import SelectTokenWithSearch from '@/modules/main/components/Odos/TokensModal/SelectTokenWithSearch.vue';
+import SelectTokenWithSearch from '@/modules/Main/components/Odos/TokensModal/SelectTokenWithSearch.vue';
 import ModalComponent from '@/components/Modal/Index.vue';
 
 export default defineComponent({

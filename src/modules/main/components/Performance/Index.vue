@@ -13,10 +13,10 @@
 </template>
 
 <script lang="ts">
-import TokenDataPerformance from '@/modules/main/components/Performance/TokenData.vue';
-import GraphicsPerformance from '@/modules/main/components/Performance/Graphics.vue';
-import PortfolioPerformance from '@/modules/main/components/Performance/Portfolio.vue';
-import PortfolioPayouts from '@/modules/main/components/Performance/Payouts.vue';
+import TokenDataPerformance from '@/modules/Main/components/Performance/TokenData.vue';
+import GraphicsPerformance from '@/modules/Main/components/Performance/Graphics.vue';
+import PortfolioPerformance from '@/modules/Main/components/Performance/Portfolio.vue';
+import PortfolioPayouts from '@/modules/Main/components/Performance/Payouts.vue';
 
 export default {
   name: 'PerformancePage',

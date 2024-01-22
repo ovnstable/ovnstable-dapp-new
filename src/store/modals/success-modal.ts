@@ -1,6 +1,6 @@
 const stateData = {
-  show: false,
-  successTxHash: null,
+  show: true,
+  successTxHash: 'qwewqe',
 
   successAction: 'mint',
   etsData: null,

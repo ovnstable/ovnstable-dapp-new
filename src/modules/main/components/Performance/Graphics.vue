@@ -10,7 +10,7 @@
 </template>
 <script lang="ts">
 
-import GraphicComponent from '@/modules/main/components/Performance/SingleStatisticGraphic.vue';
+import GraphicComponent from '@/modules/Main/components/Performance/SingleStatisticGraphic.vue';
 
 export default {
   name: 'GraphicsPerformance',

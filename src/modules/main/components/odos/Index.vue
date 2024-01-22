@@ -320,13 +320,7 @@
       :is-ovn-swap="true"
     />
 
-    <!-- <SuccessOdosModal
-      :is-show="isShowSuccessModal"
-      :set-show-func="showSuccessModal"
-      :success-data="successData"
-      :view-type="viewType"
-    /> -->
-
+    <SuccessOdosModal :show-modal="showSuccessModal" />
     <WaitingModal :show-modal="showWaitModal" />
     <ErrorModal :show-modal="showErrorModalGet" />
   </div>
@@ -338,12 +332,15 @@
 import { defineComponent } from 'vue';
 import { mapActions, mapGetters, mapState } from 'vuex';
 import { useEventBus } from '@vueuse/core';
-import TokenForm from '@/modules/main/components/Odos/TokenForm.vue';
+import TokenForm from '@/modules/Main/components/Odos/TokenForm.vue';
 import WaitingModal from '@/modules/ModalTemplates/WaitingModal/Index.vue';
 import ErrorModal from '@/modules/ModalTemplates/ErrorModal/Index.vue';
 import Spinner from '@/components/Spinner/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import NetworkNotAvailable from '@/modules/Main/components/Odos/network-not-available.vue';
+import SelectTokensModal from '@/modules/Main/components/Odos/TokensModal/Index.vue';
+import SwapSlippageSettings from '@/modules/Main/components/Odos/SwapSlippageSettings.vue';
 import { getWeiMarker } from '@/utils/web3.ts';
 import { formatMoney } from '@/utils/numbers.ts';
 import { getRandomString } from '@/utils/strings.ts';
@@ -353,10 +350,8 @@ import {
 import { clearApproveToken, getAllowanceValue, approveToken } from '@/utils/contract-approve.ts';
 import odosApiService from '@/services/odos-api-service.ts';
 import { getImageUrl } from '@/utils/const.ts';
-import NetworkNotAvailable from '@/modules/main/components/Odos/network-not-available.vue';
-import SelectTokensModal from '@/modules/main/components/Odos/TokensModal/Index.vue';
-import SwapSlippageSettings from '@/modules/main/components/Odos/SwapSlippageSettings.vue';
 import { onLeaveList, onEnterList, beforeEnterList } from '@/utils/animations.ts';
+import SuccessOdosModal from '@/modules/ModalTemplates/SuccessModal/Index.vue';
 
 export default defineComponent({
   name: 'SwapForm',
@@ -367,6 +362,7 @@ export default defineComponent({
     ErrorModal,
     WaitingModal,
     SelectTokensModal,
+    SuccessOdosModal,
     SwapSlippageSettings,
     TokenForm,
     BaseIcon,
@@ -549,6 +545,9 @@ export default defineComponent({
     ]),
     ...mapGetters('waitingModal', {
       showWaitModal: 'show',
+    }),
+    ...mapGetters('successModal', {
+      showSuccessModal: 'show',
     }),
     ...mapGetters('errorModal', {
       showErrorModalGet: 'show',

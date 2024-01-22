@@ -1,76 +1,45 @@
 <template>
   <ModalComponent
     :modelValue="showModal"
-    :show-close="false"
     type-modal="custom"
+    @close="close"
   >
-    <div class="container_body align-center pt-4 px-8 pb-10">
-      <div
-        class="container_header"
-        flat
-      >
-        <button
-          icon
-          class="ml-auto mr-5 mt-10"
-          type="button"
-          @click="close"
-        >
-          <img
-            :src="light ? require('@/assets/icon/swap/search-close.svg') : require('@/assets/icon/light-close.svg')"
-            alt="close icon"
-          >
-        </button>
+    <div class="modal-content">
+      <BaseIcon
+        class="modal-content__icon"
+        name="CommonSuccess"
+      />
+      <h1>
+        You successfully swapped
+      </h1>
+
+      <div class="modal-content__tokens">
+        <div class="modal-content__tokens-col">
+          <h3>From</h3>
+          <span>-100 USDC+</span>
+        </div>
+        <div class="modal-content__tokens-col">
+          <h3>To</h3>
+          <span>+100 DAI</span>
+        </div>
       </div>
-      <div class="px-5 pt-5">
-        <div
-          justify="center"
-          align="center"
-          class="mb-5"
-        >
-          <!-- <div class="loading-img">
-            <div :src="tokenActionIcon" />
-          </div> -->
-          icon
-        </div>
-        <div
-          justify="center"
-          class="mb-8"
-        >
-          <div
-            v-if="successAction === 'swapOdosUsdPlus'"
-            class="success-div"
-          >
-            You successfully swapped USD+
-          </div>
-          <div
-            v-else
-            class="success-div"
-          >
-            Transaction successfully submitted
-          </div>
-        </div>
 
-        <div v-if="zksyncFeeHistory">
-          <RefundInfo :zksync-fee-history="zksyncFeeHistory" />
-        </div>
+      <div v-if="zksyncFeeHistory">
+        <RefundInfo :zksync-fee-history="zksyncFeeHistory" />
+      </div>
 
-        <div
-          v-if="!zksyncFeeHistory"
-          justify="center"
-          class="mb-5"
+      <div
+        v-if="!zksyncFeeHistory"
+        justify="center"
+        class="mb-5"
+      >
+        <ButtonComponent
+          @click="goToTransactionHistory"
         >
-          <button
-            dark
-            height="40"
-            width="300"
-            class="dismiss-btn mb-3"
-            type="button"
-            @click="goToTransactionHistory"
-          >
-            Go to my transaction history
-          </button>
-        </div>
-        <div class="mt-8 mb-5">
+          Close
+        </ButtonComponent>
+      </div>
+      <!-- <div class="mt-8 mb-5">
           <div :cols="$wu.isMobile() ? 12 : 6">
             <div
               :justify="$wu.isMobile() ? 'center' : 'start'"
@@ -105,37 +74,42 @@
               </div>
             </div>
           </div>
-        </div>
-      </div>
-      <div v-if="!isPoolsLoading">
-        <BestAprPromotion :pool="topPool" />
+        </div> -->
+      <div v-if="false">
+        <!-- <BestAprPromotion :pool="topPool" /> -->
       </div>
     </div>
   </ModalComponent>
 </template>
 
-<script>
+<script lang="ts">
 import { mapActions, mapGetters } from 'vuex';
 import RefundInfo from '@/modules/ModalTemplates/components/RefundInfo.vue';
-import BestAprPromotion from '@/modules/ModalTemplates/components/BestAprPromotion.vue';
+// import BestAprPromotion from '@/modules/ModalTemplates/components/BestAprPromotion.vue';
+import ModalComponent from '@/components/Modal/Index.vue';
+import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import ButtonComponent from '@/components/Button/Index.vue';
 
 export default {
   name: 'SuccessModal',
   components: {
-    BestAprPromotion,
+    // BestAprPromotion,
     RefundInfo,
+    ModalComponent,
+    BaseIcon,
+    ButtonComponent,
   },
 
   props: {
     showModal: {
       type: Boolean,
-      default: false,
+      default: true,
     },
   },
   computed: {
     ...mapGetters('network', ['explorerUrl']),
     ...mapGetters('theme', ['light']),
-    ...mapGetters('successModal', ['show', 'successTxHash', 'successAction', 'etsData', 'zksyncFeeHistory']),
+    ...mapGetters('successModal', ['successTxHash', 'successAction', 'etsData', 'zksyncFeeHistory']),
 
     actionSuccessToken() {
       switch (this.successAction) {
@@ -219,12 +193,12 @@ export default {
     //   }
     // },
   },
-  mounted() {
-    this.loadPools();
-  },
+  // mounted() {
+  //   this.loadPools();
+  // },
 
   methods: {
-    ...mapActions('successModal', ['showSuccessModal', 'closeSuccessModal']),
+    ...mapActions('successModal', ['closeSuccessModal']),
     ...mapActions('swapModal', ['showSwapModal', 'showMintView']),
     ...mapActions('tokenAction', ['addUsdPlusToken', 'addDaiPlusToken', 'addUsdtPlusToken', 'addwUsdPlusToken', 'addEthPlusToken', 'addwEthPlusToken', 'addEtsToken', 'addInsuranceToken']),
     ...mapActions('swapModal', ['closeSwapModal']),
@@ -276,12 +250,6 @@ export default {
       }
     },
 
-    openOnExplorer(hash) {
-      if (hash) {
-        window.open(`${this.explorerUrl}tx/${hash}`, '_blank').focus();
-      }
-    },
-
     close() {
       this.closeSuccessModal();
 
@@ -306,110 +274,55 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 50px 70px 30px 70px;
 
-/* mobile */
-@media only screen and (max-width: 960px) {
-
-    .success-div {
-        font-style: normal;
-        font-weight: 400;
-        font-size: 22px;
-        line-height: 30px;
-    }
+  h1 {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--color-1);
+    margin-bottom: 20px;
+  }
 }
 
-/* tablet */
-@media only screen and (min-width: 960px) and (max-width: 1400px) {
-
-    .success-div {
-        font-style: normal;
-        font-weight: 400;
-        font-size: 24px;
-        line-height: 34px;
-    }
+.modal-content__icon {
+  width: 90px;
+  height: 90px;
+  margin-bottom: 20px;
 }
 
-/* full */
-@media only screen and (min-width: 1400px) {
-
-    .success-div {
-        font-style: normal;
-        font-weight: 400;
-        font-size: 26px;
-        line-height: 36px;
-    }
+.modal-content__tokens {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  gap: 50px;
+  margin-bottom: 30px;
 }
 
-.container_body {
-    border-radius: 24px !important;
-    background-color: var(--secondary) !important;
-}
+.modal-content__tokens-col {
+  text-align: center;
 
-.container_header {
-    background-color: var(--secondary) !important;
-}
-
-.loading-img {
-    width: 120px;
-    height: 120px;
-}
-
-.success-div {
-    color: var(--secondary-gray-text);
-    text-align: center !important;
-}
-
-.success-link {
-    cursor: pointer;
-    color: var(--links-blue);
-    font-style: normal;
-    font-weight: normal;
-    font-size: 14px;
-    line-height: 18px;
-}
-
-.success-link:hover {
-    text-decoration: underline;
-}
-
-.dismiss-btn {
-    background: var(--blue-gradient) !important;
-    height: 40px;
-    border-radius: 2px;
-
-    font-style: normal;
-    font-weight: 400;
+  span, h3 {
     font-size: 16px;
-    line-height: 20px;
-    letter-spacing: 0.02em;
-    text-transform: uppercase;
-    font-feature-settings: 'pnum' on, 'lnum' on;
-    color: #FFFFFF;
-}
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
 
-.promo-container {
-    background: rgba(252, 202, 70, 0.05);
-    border-radius: 4px;
-}
+  &:first-child {
+    span {
+      color: var(--color-3);
+    }
+  }
 
-.promo-div-title {
-    text-transform: uppercase;
-    font-feature-settings: 'pnum' on, 'lnum' on;
-    color: var(--secondary-gray-text);
-}
-
-.promo-div-text {
-    color: var(--secondary-gray-text);
-}
-
-.action-icons {
-    width: 20px;
-    height: 20px;
-    margin-top: 2px;
-}
-
-.divider {
-    border-top: 1px solid #ADB3BD;
+  &:last-child {
+    span {
+      color: var(--color-12);
+    }
+  }
 }
 </style>
