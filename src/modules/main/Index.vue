@@ -3,6 +3,7 @@
     <div class="swap-module__form">
       <TabsComponent
         :tabs="tabsData"
+        :active-tab="activeTab"
         @tab-change="changeTab"
       >
         <SwapForm
@@ -16,7 +17,9 @@
         <div
           v-if="activeTab === 1"
           class="bridge-wrap"
-        >MINT/REDEEM</div>
+        >
+          <MintRedeemForm />
+        </div>
         <div
           v-if="activeTab === 2"
           class="bridge-wrap"
@@ -30,6 +33,7 @@
 
 <script lang="ts">
 import { mapActions } from 'vuex';
+import MintRedeemForm from '@/modules/Main/components/MintRedeem/Index.vue';
 import SliderComponent from '@/modules/Main/components/Slider/Index.vue';
 import TabsComponent from '@/components/Tabs/Index.vue';
 import SwapForm from '@/modules/Main/components/Odos/Index.vue';
@@ -39,6 +43,7 @@ export default {
   components: {
     SliderComponent,
     TabsComponent,
+    MintRedeemForm,
     SwapForm,
   },
   data() {
@@ -57,7 +62,7 @@ export default {
           name: 'BRIDGE',
         },
       ],
-      activeTab: 0,
+      activeTab: 1,
       pathViz: null,
       buttonDisabled: true,
       isLoadingData: true,
@@ -117,7 +122,7 @@ export default {
   width: calc(100% + 4px);
   border: 2px solid var(--color-1);
   border-top: 0;
-  padding: 100px 50px;
+  padding: 24px 20px;
   border-radius: 0 0 30px 30px;
 }
 </style>

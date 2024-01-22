@@ -396,6 +396,7 @@ export default defineComponent({
       maxInputTokens: 6,
       maxOutputTokens: 6,
 
+      // input or output choosing
       selectModalTypeInput: true,
       isShowSelectTokensModal: false,
       swapMethod: 'BUY', // BUY (secondTokens) / SELL (secondTokens)

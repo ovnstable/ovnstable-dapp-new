@@ -50,11 +50,16 @@ export default {
       default: () => [],
       type: Array as PropType<ITab[]>,
     },
+    activeTab: {
+      type: Number,
+      required: false,
+      default: 1,
+    },
   },
 
   data() {
     return {
-      activeItem: 0,
+      activeItem: 1,
       uid: '',
     };
   },
@@ -85,9 +90,11 @@ export default {
   },
 
   mounted() {
-    if (this.tabs.length) {
+    if (this.tabs.length && !this.activeTab) {
       this.activeItem = this.tabs[0].id;
       this.onTabClick(this.activeItem);
+    } else {
+      this.onTabClick(this.activeTab);
     }
 
     window.addEventListener('resize', this.resizeMenu);
@@ -138,6 +145,7 @@ export default {
       });
 
       this.activeItem = itemId;
+      console.log(itemId, 'this.onTabClick');
       this.$emit('tab-change', itemId);
     },
   },
