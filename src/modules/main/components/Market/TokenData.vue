@@ -2,6 +2,7 @@
   <div class="performance__token-data">
     <BaseIcon
       name="ETH+_token-data"
+      class="performance__token-data-main-token"
     />
     <div class="performance__token-data__link-title">
       <p class="performance__token-data__title">{{tokenName}}</p>
@@ -51,7 +52,6 @@
     />
     <p class="performance__chain-data-name">{{ chainName }}</p>
   </div>
-
 </template>
 <script lang="ts">
 
@@ -110,10 +110,8 @@ export default {
 
 <style scoped>
   .performance__token-data {
-    justify-content: flex-start;
     display:flex;
     flex-direction: row;
-    align-self: flex-start;
     justify-content: center;
     background: var(--color-4);
     width: 100%;
@@ -230,9 +228,18 @@ export default {
   }
 
   @media (max-width: 1024px) {
+    .performance__token-data-main-token {
+      scale: 65%;
+    }
+    .performance__token-data__collateral-token {
+      margin-left: 2px;
+    }
     .performance__token-data__description {
-      margin-left: 20px;
+      margin-left: 5px;
       max-width: 150px;
+    }
+    .performance__token-data__link-title {
+      margin-left: 5px;
     }
 
     .performance__token-data__title {
@@ -244,12 +251,9 @@ export default {
     .performance__token-data__hours {
       font-size: 12px;
     }
-    .performance__token-data__collateral-token {
-      margin-left: 20px;
-    }
     .performance__divider {
-      margin-left: 30px;
-      margin-right: 30px;
+      margin-left: 5px;
+      margin-right: 5px;
     }
   }
 
