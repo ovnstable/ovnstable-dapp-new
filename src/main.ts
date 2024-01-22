@@ -8,8 +8,8 @@ import store from '@/store/index.ts';
 import App from '@/App.vue';
 
 const app = createApp(App);
-app.config.globalProperties.$store = store;
 
+app.config.globalProperties.$store = store;
 app.use(router);
 app.use(store);
 app.component('PopperComponent', Popper);
