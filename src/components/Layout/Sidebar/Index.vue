@@ -4,39 +4,44 @@
 
       <router-link
         to="/homepage"
-        class="sidebar__text-top"
+        class="sidebar__text-top homepage"
       >Homepage</router-link>
-
-      <router-link
-        to="/pools"
-        class="sidebar__text-top"
-      >All pools</router-link>
 
       <div class="sidebar__divider-top" />
 
-      <router-link
-        to="/performance"
-        class="sidebar__text-top"
-      >Money market</router-link>
+      <p
+        class="sidebar__text-top markets"
+      >MONEY MARKETS</p>
 
+      <div class="market-container">
+        <router-link
+          to="/insurance"
+          class="sidebar__text-market"
+        >USD+</router-link>
+        <router-link
+          to="/market/eth"
+          class="sidebar__text-market"
+        >ETH+</router-link>
+        <router-link
+          to="/insurance"
+          class="sidebar__text-market"
+        >USDT+</router-link>
+        <router-link
+          to="/insurance"
+          class="sidebar__text-market"
+        >DAI+</router-link>
+      </div>
       <div class="sidebar__divider-top" />
 
       <router-link
         to="/insurance"
         class="sidebar__text-top"
+      >OVN</router-link>
+
+      <router-link
+        to="/insurance"
+        class="sidebar__text-top insurance"
       >Insurance</router-link>
-
-      <router-link
-        to="/ovn-lp"
-        class="sidebar__text-top ovn-lp"
-      >OVN LP</router-link>
-
-      <div class="sidebar__divider-top" />
-
-      <router-link
-        to="/calculator"
-        class="sidebar__text-top"
-      >Calculator</router-link>
     </ul>
 
     <ul class="sidebar__bottom">
@@ -151,7 +156,9 @@ export default {
   flex-direction: column;
   max-width: 140px;
 }
-
+.homepage {
+  text-decoration: underline;
+}
 .sidebar__text-top {
   color: var(--color-1);
   font-size: 17px;
@@ -163,15 +170,48 @@ export default {
   }
 }
 
+.markets {
+  color: var(--color-2);
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
 .sidebar__text-top:hover,
 .sidebar__text-bottom:hover {
   cursor: pointer;
   color: #7f8695;
   transition: color 0.15s ease
 }
+.markets:hover {
+  cursor: default;
+  color: var(--color-2);
+}
 
-.ovn-lp {
-  margin-top: 10px;
+.sidebar__text-market {
+  color: var(--color-1);
+  font-size: 17px;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.sidebar__text-market:last-child {
+  margin-bottom: 0;
+}
+.sidebar__text-market:hover {
+  cursor: pointer;
+  color: var(--color-3);
+}
+.market-container {
+  display: flex;
+  flex-direction: column;
+}
+.market-container .sidebar__text-market:last-child {
+  margin-bottom: 0;
+}
+
+.insurance {
+  margin-top: 20px;
 }
 .sidebar__text-top:first-child {
   margin-top: 0;

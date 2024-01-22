@@ -10,9 +10,9 @@ const router = createRouter({
       component: () => import('@/views/Main/Index.vue'),
     },
     {
-      path: '/performance',
-      name: 'performance',
-      component: () => import('@/views/Performance/Index.vue'),
+      path: '/market/eth',
+      name: 'market',
+      component: () => import('@/views/Market/Index.vue'),
     },
   ],
 });
