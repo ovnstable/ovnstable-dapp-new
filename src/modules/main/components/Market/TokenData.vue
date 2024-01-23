@@ -5,14 +5,14 @@
       class="performance__token-data-main-token"
     />
     <div class="performance__token-data__link-title">
-      <p class="performance__token-data__title">{{tokenName}}</p>
+      <p class="performance__token-data__title token">{{tokenName}}</p>
       <a
         :href=tokenLink
         target="_blank"
         rel="noopener noreferrer"
         aria-label="token-address"
         class="performance__token-data__link-address"
-      >token address</a>
+      >Token address</a>
     </div>
     <p class="performance__token-data__description">{{ tokenDescription }}</p>
     <div class="performance__divider" />
@@ -112,14 +112,9 @@ export default {
   .performance__token-data {
     display:flex;
     flex-direction: row;
-    justify-content: center;
+    justify-content: space-between;
     background: var(--color-4);
     width: 100%;
-  }
-
-  .performance__icon-token {
-    width: 90px;
-    height: 90px;
   }
 
   .performance__token-data__link-title {
@@ -128,7 +123,12 @@ export default {
     margin-left: 20px;
   }
   .performance__token-data__title {
-    text-align: center;
+    text-align: left;
+    color: var(--color-2);
+    font-size: 15px;
+    font-weight: 500;
+  }
+  .token {
     color: var(--color-1);
     font-size: 22px;
     font-weight: 600;
@@ -258,9 +258,6 @@ export default {
   }
 
   @media (max-width: 768px) {
-    .performance__icon-token {
-      display: none;
-    }
     .performance__divider {
       margin-left: 20px;
       margin-right: 20px;

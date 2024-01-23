@@ -50,7 +50,7 @@
       <BaseIcon
         name="ArrowDown"
       />
-      <p class="performance__payouts-button-show-text">Show more</p>
+      <p class="performance__payouts-button-show-text">SHOW MORE</p>
       <BaseIcon
         name="ArrowDown"
       />
@@ -203,6 +203,9 @@ export default {
 .performance__payouts-id-link p {
   max-width: fit-content;
   text-decoration: underline;
+  color: var(--color-2);
+  font-size: 15px;
+  font-weight: 400;
 }
 
 .performance__payouts-date-transaction {
