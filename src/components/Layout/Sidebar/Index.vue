@@ -27,56 +27,33 @@
       <div class="sidebar__divider-top" />
 
       <p
-        to="/insurance"
         class="sidebar__text-top sidebar__text-top--ovn"
       >OVN</p>
 
       <router-link
-        to="/insurance"
+        v-for="(link, index) in ovnAndInsuranceLinks"
+        :key="index"
+        :to="link.to"
         class="sidebar__text-top"
-      >OVN overview</router-link>
-
-      <router-link
-        to="/insurance"
-        class="sidebar__text-top sidebar__text-top--insurance"
-      >Insurance</router-link>
+      >
+        {{ link.name }}
+      </router-link>
     </ul>
 
     <ul class="sidebar__bottom">
-      <a
-        href="https://discord.com/channels/933003627444969552/967813123149033542/967813482684760135/"
-        class="sidebar__text-bottom"
-        target="_blank"
-        rel="noopener noreferrer"
-      >Help Center</a>
-
-      <a
-        href="https://docs.overnight.fi/other/terms-of-service"
-        class="sidebar__text-bottom"
-        target="_blank"
-        rel="noopener noreferrer"
-      >Terms of service</a>
-
-      <a
-        href="https://docs.overnight.fi/other/privacy-policy"
-        class="sidebar__text-bottom"
-        target="_blank"
-        rel="noopener noreferrer"
-      >Privacy Policy</a>
-
-      <a
-        href="https://docs.overnight.fi/other/audits"
-        class="sidebar__text-bottom"
-        target="_blank"
-        rel="noopener noreferrer"
-      >Audits</a>
-
-      <a
-        href="https://docs.overnight.fi/advanced/strategies/ets"
-        class="sidebar__text-bottom"
-        target="_blank"
-        rel="noopener noreferrer"
-      >ABOUT ETS</a>
+      <li
+        v-for="link in bottomLinks"
+        :key="link.name"
+      >
+        <a
+          :href="link.url"
+          class="sidebar__text-bottom"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {{ link.name }}
+        </a>
+      </li>
 
       <div class="sidebar__divider-bottom" />
       <div class="sidebar__icons-bottom">
@@ -139,6 +116,17 @@ export default {
         { name: 'USDT+', to: '/market/usdt' },
         { name: 'DAI+', to: '/market/dai' },
       ],
+      bottomLinks: [
+        { name: 'Help Center', url: 'https://discord.com/channels/933003627444969552/967813123149033542/967813482684760135/' },
+        { name: 'Terms of service', url: 'https://docs.overnight.fi/other/terms-of-service' },
+        { name: 'Privacy Policy', url: 'https://docs.overnight.fi/other/privacy-policy' },
+        { name: 'Audits', url: 'https://docs.overnight.fi/other/audits' },
+        { name: 'ABOUT ETS', url: 'https://docs.overnight.fi/advanced/strategies/ets' },
+      ],
+      ovnAndInsuranceLinks: [
+        { name: 'OVN overview', to: '/ovn' },
+        { name: 'Insurance', to: '/insurance' },
+      ],
     };
   },
   methods: {
@@ -160,6 +148,13 @@ export default {
   display: flex;
   flex-direction: column;
   max-width: 140px;
+}
+.sidebar__bottom li {
+  margin-top: 10px;
+}
+
+.sidebar__bottom li:first-child {
+  margin-top: 0;
 }
 .sidebar__text-top {
   color: var(--color-1);
@@ -220,7 +215,6 @@ export default {
 }
 
 .sidebar__text-bottom {
-  margin-top: 10px;
   color: var(--color-2);
   font-size: 15px;
   font-weight: 600;
@@ -229,6 +223,8 @@ export default {
       color: var(--color-3);
   }
 }
+
+
 
 .sidebar__text-bottom:first-child {
   margin-top: 0;
