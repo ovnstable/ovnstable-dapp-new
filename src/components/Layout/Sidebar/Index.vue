@@ -224,8 +224,6 @@ export default {
   }
 }
 
-
-
 .sidebar__text-bottom:first-child {
   margin-top: 0;
 }

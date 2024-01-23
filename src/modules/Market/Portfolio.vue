@@ -20,7 +20,7 @@
 </template>
 
 <script lang="ts">
-import PortfolioStrategies from '@/modules/Main/components/Market/PortfolioStrategies.vue';
+import PortfolioStrategies from '@/modules/Market/PortfolioStrategies.vue';
 
 export default {
   name: 'PortfolioPerformance',

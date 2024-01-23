@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import MarketPage from '@/modules/Main/components/Market/Index.vue';
+import MarketPage from '@/modules/Market/Index.vue';
 
 export default {
   name: 'MarketView',

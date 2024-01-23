@@ -22,7 +22,7 @@
 
 <script lang="ts">
 
-import GraphicInterval from '@/modules/Main/components/Market/GraphicInterval.vue';
+import GraphicInterval from '@/modules/Market/GraphicInterval.vue';
 
 export default {
   name: 'GraphicComponent',

@@ -231,7 +231,8 @@ export default {
       return colors[index % colors.length];
     },
     totalPortfolioValue(assets: any[]) {
-      return assets.reduce((total: any, asset: { netAssetValue: any; }) => total + asset.netAssetValue, 0);
+      return assets
+        .reduce((total: any, asset: { netAssetValue: any; }) => total + asset.netAssetValue, 0);
     },
 
     calculatePercentPortfolio(assetValue: number, totalPortfolioValue: number) {
@@ -497,7 +498,6 @@ export default {
   text-align: left;
   padding-right: 45px;
 }
-
 
 .performance__portfolio-strategies-stables-specs p,
 .performance__portfolio-strategy p {
