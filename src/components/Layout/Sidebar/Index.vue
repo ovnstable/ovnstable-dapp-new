@@ -7,73 +7,53 @@
         class="sidebar__text-top"
       >Homepage</router-link>
 
-      <router-link
-        to="/pools"
-        class="sidebar__text-top"
-      >All pools</router-link>
-
       <div class="sidebar__divider-top" />
 
-      <router-link
-        to="/performance"
-        class="sidebar__text-top"
-      >Money market</router-link>
+      <p
+        class="sidebar__text-top sidebar__text-top--markets"
+      >MONEY MARKETS</p>
 
+      <div class="market-container">
+        <router-link
+          v-for="link in linksData"
+          :key="link.name"
+          :to="link.to"
+          class="sidebar__text-market"
+          active-class="active-link"
+        >
+          {{ link.name }}
+        </router-link>
+      </div>
       <div class="sidebar__divider-top" />
 
+      <p
+        class="sidebar__text-top sidebar__text-top--ovn"
+      >OVN</p>
+
       <router-link
-        to="/insurance"
+        v-for="(link, index) in ovnAndInsuranceLinks"
+        :key="index"
+        :to="link.to"
         class="sidebar__text-top"
-      >Insurance</router-link>
-
-      <router-link
-        to="/ovn-lp"
-        class="sidebar__text-top ovn-lp"
-      >OVN LP</router-link>
-
-      <div class="sidebar__divider-top" />
-
-      <router-link
-        to="/calculator"
-        class="sidebar__text-top"
-      >Calculator</router-link>
+      >
+        {{ link.name }}
+      </router-link>
     </ul>
 
     <ul class="sidebar__bottom">
-      <a
-        href="https://discord.com/channels/933003627444969552/967813123149033542/967813482684760135/"
-        class="sidebar__text-bottom"
-        target="_blank"
-        rel="noopener noreferrer"
-      >Help Center</a>
-
-      <a
-        href="https://docs.overnight.fi/other/terms-of-service"
-        class="sidebar__text-bottom"
-        target="_blank"
-        rel="noopener noreferrer"
-      >Terms of service</a>
-
-      <a
-        href="https://docs.overnight.fi/other/privacy-policy"
-        class="sidebar__text-bottom"
-        target="_blank"
-        rel="noopener noreferrer"
-      >Privacy Policy</a>
-
-      <a
-        href="https://docs.overnight.fi/other/audits"
-        class="sidebar__text-bottom"
-        target="_blank"
-        rel="noopener noreferrer"
-      >Audits</a>
-
-      <a
-        href="https://docs.overnight.fi/advanced/strategies/ets"
-        class="sidebar__text-bottom"
-        target="_blank"
-        rel="noopener noreferrer"
-      >ABOUT ETS</a>
+      <li
+        v-for="link in bottomLinks"
+        :key="link.name"
+      >
+        <a
+          :href="link.url"
+          class="sidebar__text-bottom"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {{ link.name }}
+        </a>
+      </li>
 
       <div class="sidebar__divider-bottom" />
       <div class="sidebar__icons-bottom">
@@ -129,6 +109,24 @@ export default {
   data() {
     return {
       isDarkTheme: false,
+      linksData: [
+        { name: 'USD+', to: '/market/usd' },
+        { name: 'USDC+', to: '/market/usdc' },
+        { name: 'ETH+', to: '/market/eth' },
+        { name: 'USDT+', to: '/market/usdt' },
+        { name: 'DAI+', to: '/market/dai' },
+      ],
+      bottomLinks: [
+        { name: 'Help Center', url: 'https://discord.com/channels/933003627444969552/967813123149033542/967813482684760135/' },
+        { name: 'Terms of service', url: 'https://docs.overnight.fi/other/terms-of-service' },
+        { name: 'Privacy Policy', url: 'https://docs.overnight.fi/other/privacy-policy' },
+        { name: 'Audits', url: 'https://docs.overnight.fi/other/audits' },
+        { name: 'ABOUT ETS', url: 'https://docs.overnight.fi/advanced/strategies/ets' },
+      ],
+      ovnAndInsuranceLinks: [
+        { name: 'OVN overview', to: '/ovn' },
+        { name: 'Insurance', to: '/insurance' },
+      ],
     };
   },
   methods: {
@@ -151,27 +149,56 @@ export default {
   flex-direction: column;
   max-width: 140px;
 }
+.sidebar__bottom li {
+  margin-top: 10px;
+}
 
+.sidebar__bottom li:first-child {
+  margin-top: 0;
+}
 .sidebar__text-top {
   color: var(--color-1);
   font-size: 17px;
   font-weight: 600;
   margin-top:20px;
-
-  [data-theme="dark"] & {
-      color: var(--color-4);
+}
+.active-link {
+  text-decoration: underline;
+}
+.sidebar__text-top--markets,
+.sidebar__text-top--ovn {
+  color: var(--color-2);
+  font-size: 15px;
+  font-weight: 600;
+   [data-theme="dark"] & {
+      color: var(--color-3);
   }
 }
 
-.sidebar__text-top:hover,
-.sidebar__text-bottom:hover {
-  cursor: pointer;
-  color: #7f8695;
-  transition: color 0.15s ease
+.sidebar__text-top--markets {
+  margin-bottom: 20px;
 }
 
-.ovn-lp {
-  margin-top: 10px;
+.sidebar__text-market {
+  color: var(--color-1);
+  font-size: 17px;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.sidebar__text-market:last-child {
+  margin-bottom: 0;
+}
+.market-container {
+  display: flex;
+  flex-direction: column;
+}
+.market-container .sidebar__text-market:last-child {
+  margin-bottom: 0;
+}
+
+.sidebar__text-top--insurance {
+  margin-top: 20px;
 }
 .sidebar__text-top:first-child {
   margin-top: 0;
@@ -188,7 +215,6 @@ export default {
 }
 
 .sidebar__text-bottom {
-  margin-top: 10px;
   color: var(--color-2);
   font-size: 15px;
   font-weight: 600;
@@ -197,6 +223,8 @@ export default {
       color: var(--color-3);
   }
 }
+
+
 
 .sidebar__text-bottom:first-child {
   margin-top: 0;
@@ -232,7 +260,7 @@ export default {
   padding: 0px 14px 0px 6px;
   border-radius: 12px;
   border: 1px solid var( --color-2);
-  background: var(--color-5);
+  background: var(--color-4);
   color: var( --color-2);
   text-align: center;
   font-size: 14px;

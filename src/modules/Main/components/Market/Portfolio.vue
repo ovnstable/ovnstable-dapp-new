@@ -20,7 +20,7 @@
 </template>
 
 <script lang="ts">
-import PortfolioStrategies from '@/modules/Main/components/Performance/PortfolioStrategies.vue';
+import PortfolioStrategies from '@/modules/Main/components/Market/PortfolioStrategies.vue';
 
 export default {
   name: 'PortfolioPerformance',
@@ -82,9 +82,7 @@ export default {
             netAssetValue: 50,
             liquidationValue: 0.0360,
             percentPortfolioPath: 'assets/icons/common/PercentPortfolio.vue',
-            tokenLink: 'https://arbiscan.io/token/0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
             lendingProtocolDepositedTo: 'Sonne Finance',
-            linkDepositedProtocol: '0x454e6869a34dac7ef3f8ec6c1383fea795fdb713',
             depositedAsset: 'USDBC',
             borrowedAsset: 'WETH',
             lpFarmingPlatform: 'Aerodrome',
@@ -94,8 +92,6 @@ export default {
             strategyNameAsset: 'Pendle wstETH',
             netAssetValue: 30,
             liquidationValue: 0.0279,
-            percentPortfolioPath: 'assets/icons/common/PercentPortfolio.vue',
-            tokenLink: 'https://arbiscan.io/token/0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
             lendingProtocolDepositedTo: 'Sonne Finance',
             linkDepositedProtocol: '0x454e6869a34dac7ef3f8ec6c1383fea795fdb713',
             depositedAsset: 'USDBC',

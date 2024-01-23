@@ -17,7 +17,16 @@
   --color-14: #ffba00;
   --color-15: #ffde76;
   --color-16: #e3f2fd;
+  --color-17: #D2D7E0;
   --section-gap: 160px;
+  a:hover,
+  router-link:hover {
+    color: var(--color-3);
+    transition: color 0.15s ease;
+  }
+  .link-ovn {
+    text-decoration: underline;
+  }
 }
 
 [data-theme="dark"] {
@@ -39,6 +48,11 @@
   --color-16: #e3f2fd;
   --color-17: #0f172a;
   --section-gap: 160px;
+  a:hover,
+  router-link:hover {
+      color: var(--color-2);
+      transition: color 0.15s ease;
+    }
 }
 
 html, body, div, span, applet, object, iframe,
@@ -97,6 +111,18 @@ table {
   padding: 0;
   font-weight: normal;
   text-decoration: none;
+}
+
+html 
+
+.link-underline:hover {
+  text-decoration: underline;
+  color: var(--hover-color);
+}
+
+.link-no-underline:hover {
+  text-decoration: none;
+  color: var(--hover-color);
 }
 
 body {

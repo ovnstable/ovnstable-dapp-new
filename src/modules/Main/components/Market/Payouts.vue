@@ -6,15 +6,18 @@
       <p>Annualized yield, % per year</p>
       <p>Explorer</p>
     </div>
-    <TransitionGroup name="list" tag="ul">
-   <div
+    <TransitionGroup
+      name="list"
+      tag="ul"
+    >
+      <div
         v-for="(trx, index) in visibleTransactions"
         :key="trx.id"
         class="performance__payouts-transactions"
       >
         <div class="performance__payouts-transaction">
           <div class="performance__payouts-date-transaction">
-            <p class="performance__payouts-datetime">{{ formatDate(trx.date) }} <span class="date">{{ formatTime(trx.date)
+            <p>{{ formatDate(trx.date) }} <span class="performance__payouts-date">{{ formatTime(trx.date)
             }} </span></p>
           </div>
           <p>{{ trx.sum }} {{ collateralToken }}</p>
@@ -22,10 +25,10 @@
           <div class="performance__payouts-id-link">
             <a
               :href="trx.tokenLink"
-              class="performance__payouts-link"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Link for token"
+              class="link-ovn"
             >
               <p>{{ formatTransactionID(trx.id) }}</p>
             </a>
@@ -37,16 +40,20 @@
         />
       </div>
     </TransitionGroup>
-   
+
     <button
       class="performance__payouts-button-show"
       @click="showMoreTransactions"
       v-if="hasMoreTransactions"
       type="button"
-    >  <!-- TODO Update to image  -->
-      <p>Arrow down</p>
-      <p class="performance__payouts-button-show-text">Show more</p>
-      <p>Arrow  down</p>
+    >
+      <BaseIcon
+        name="ArrowDown"
+      />
+      <p class="performance__payouts-button-show-text">SHOW MORE</p>
+      <BaseIcon
+        name="ArrowDown"
+      />
     </button>
 
   </div>
@@ -54,8 +61,13 @@
 
 <script lang="ts">
 
+import BaseIcon from '@/components/Icon/BaseIcon.vue';
+
 export default {
   name: 'PortfolioPayouts',
+  components: {
+    BaseIcon,
+  },
   data() {
     const originalTransaction = {
       id: '0xd0209d91c53f4c5e574948a07ef3659d8bf2ab5df5983d9f4bec39c1d883c44f',
@@ -141,8 +153,8 @@ export default {
 }
 .performance__payouts-divider {
   border: 1px solid var(--color-17);
-  margin-top: 13px;
-  margin-bottom: 9px;
+  margin-top: 17px;
+  margin-bottom: 13px;
 }
 
 .performance__payouts-transaction {
@@ -161,10 +173,13 @@ export default {
 }
 
 .performance__payouts-transactions p {
-  color: var(--color-1);
   font-size: 15px;
   font-weight: 400;
 }
+.performance__payouts-transactions p:not(:last-child) {
+  color: var(--color-1);
+}
+
 .performance__payouts-titles p:first-child,
 .performance__payouts-transactions p:first-child {
   text-align: left;
@@ -190,21 +205,21 @@ export default {
 
 .performance__payouts-id-link p {
   max-width: fit-content;
+  font-size: 15px;
+  font-weight: 400;
 }
 
 .performance__payouts-date-transaction {
   display: flex;
   flex-direction: row;
   flex: 2;
+  color: var(--color-1);
+  font-size: 15px;
+  font-weight: 400;
 }
 
-.date {
+.performance__payouts-date {
   margin-left: 18px;
-}
-
-.performance__payouts-id-link:hover {
-  cursor: pointer;
-  text-decoration: underline;
 }
 
 .performance__payouts-button-show {
