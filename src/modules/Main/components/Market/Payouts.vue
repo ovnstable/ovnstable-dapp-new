@@ -173,10 +173,13 @@ export default {
 }
 
 .performance__payouts-transactions p {
-  color: var(--color-1);
   font-size: 15px;
   font-weight: 400;
 }
+.performance__payouts-transactions p:not(:last-child) {
+  color: var(--color-1);
+}
+
 .performance__payouts-titles p:first-child,
 .performance__payouts-transactions p:first-child {
   text-align: left;
@@ -202,7 +205,6 @@ export default {
 
 .performance__payouts-id-link p {
   max-width: fit-content;
-  color: var(--color-2);
   font-size: 15px;
   font-weight: 400;
 }
@@ -211,6 +213,9 @@ export default {
   display: flex;
   flex-direction: row;
   flex: 2;
+  color: var(--color-1);
+  font-size: 15px;
+  font-weight: 400;
 }
 
 .performance__payouts-date {

@@ -459,7 +459,6 @@ export default {
 }
 
 .performance__portfolio-dropdown p {
-  color: var(--color-2);
   font-size: 15px;
   font-weight: 400;
 }
