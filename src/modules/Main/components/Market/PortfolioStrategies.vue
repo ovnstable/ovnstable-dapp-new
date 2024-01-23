@@ -25,16 +25,10 @@
   <div class="performance__portfolio-strategies">
     <div class="performance__portfolio-strategies-stables">
       <div class="performance__portfolio-strategies-stables-specs">
-        <p class="performance__portfolio-strategies-spec">
-          {{ type === 'portfolio' ? 'Stablecoin' : 'Strategy' }}
-        </p>
-        <p class="performance__portfolio-strategies-spec score">
-          {{ type === 'portfolio' ? 'Safety score' : 'Net asset value' }}
-        </p>
-        <p class="performance__portfolio-strategies-spec nav">
-          {{ type === 'portfolio' ? 'Net Asset Value' : 'Liquidation value' }}
-        </p>
-        <p class="performance__portfolio-strategies-spec percent">% in portfolio</p>
+        <p>{{ type === 'portfolio' ? 'Stablecoin' : 'Strategy' }}</p>
+        <p>{{ type === 'portfolio' ? 'Safety score' : 'Net asset value' }}</p>
+        <p>{{ type === 'portfolio' ? 'Net Asset Value' : 'Liquidation value' }}</p>
+        <p>% in portfolio</p>
       </div>
       <div class="performance__portfolio-assets">
         <div
@@ -72,9 +66,7 @@
                   {{ type === 'portfolio' ? asset.tokenNameAsset : asset.strategyNameAsset }}
                 </p>
               </div>
-              <p>
-                {{ type === 'portfolio' ? asset.safetyScore : formatCurrency(asset.netAssetValue, collateralToken) }}
-              </p>
+              <p>{{ type === 'portfolio' ? asset.safetyScore : formatCurrency(asset.netAssetValue, collateralToken) }}</p>
               <p>
                 {{ type === 'portfolio' ? formatCurrency(asset.netAssetValue, collateralToken) : formatCurrency(asset.liquidationValue, collateralToken) }}
               </p>
@@ -91,10 +83,10 @@
             </div>
             <div
               v-show="dropdownVisible === asset.strategyNameAsset"
-              class="performance__portfolio-strategy-dropdown-content"
+              class="performance__portfolio-dropdown-content"
             >
               <div class="performance__portfolio-strategies-divider" />
-              <div class="performance__portfolio-strategy-dropdown-data dep-to">
+              <div class="performance__portfolio-dropdown performance__portfolio-dropdown--dep-to">
                 <p>Lending Protocol Deposited To:</p>
                 <p>{{ asset.lendingProtocolDepositedTo }}</p>
                 <p>See on Debank:</p>
@@ -107,19 +99,19 @@
                   <p>{{ formatTransactionID(asset.linkDepositedProtocol) }}</p>
                 </a>
               </div>
-              <div class="performance__portfolio-strategy-dropdown-data dep-asset">
+              <div class="performance__portfolio-dropdown performance__portfolio-dropdown--dep-asset">
                 <p>Deposited asset:</p>
                 <p>{{ asset.depositedAsset }}</p>
               </div>
-              <div class="performance__portfolio-strategy-dropdown-data borrowed-asset">
+              <div class="performance__portfolio-dropdown performance__portfolio-dropdown--borrowed">
                 <p>Borrowed asset:</p>
                 <p>{{ asset.borrowedAsset }}</p>
               </div>
-              <div class="performance__portfolio-strategy-dropdown-data lp-farming">
+              <div class="performance__portfolio-dropdown performance__portfolio-dropdown--lp-farming">
                 <p>LP Farming</p>
                 <p>{{ asset.lpFarmingPlatform }}</p>
               </div>
-              <div class="performance__portfolio-strategy-dropdown-data lp-pair">
+              <div class="performance__portfolio-dropdown performance__portfolio-dropdown--lp-pair">
                 <p>LP Pair</p>
                 <p>{{ asset.lpPair }}</p>
               </div>
@@ -148,7 +140,7 @@
             </p>
           </div>
           <div class="performance__portfolio-total-circl">
-            <p class="performance__portfolio-total-label circl">Total {{ tokenName }} in circulation</p>
+            <p class="performance__portfolio-total-label performance__portfolio-total-label--circl">Total {{ tokenName }} in circulation</p>
             <p class="performance__portfolio-total-circl-number">
               {{ formatCurrency(tokenAmountInCirculation, collateralToken) }}
             </p>
@@ -454,54 +446,54 @@ export default {
   transition: width 0.5s ease-in-out;
 }
 
-.performance__portfolio-strategy-dropdown-content {
+.performance__portfolio-dropdown-content {
   display: flex;
   flex-direction: column;
   margin-left: 20px;
   margin-top: 4px;
   margin-bottom: 7px;
 }
-.performance__portfolio-strategy-dropdown-data {
+.performance__portfolio-dropdown {
   display: flex;
   flex-direction: row;
 }
 
-.performance__portfolio-strategy-dropdown-data p {
+.performance__portfolio-dropdown p {
   color: var(--color-2);
   font-size: 15px;
   font-weight: 400;
 }
 
-.lp-pair p:nth-child(1),
-.lp-farming p:nth-child(1),
-.borrowed-asset p:nth-child(1),
-.dep-asset p:nth-child(1) {
+.performance__portfolio-dropdown--lp-pair p:nth-child(1),
+.performance__portfolio-dropdown--lp-farming p:nth-child(1),
+.performance__portfolio-dropdown--borrowed p:nth-child(1),
+.performance__portfolio-dropdown--dep-asset p:nth-child(1) {
   flex:3;
 }
-.lp-pair p:nth-child(2),
-.lp-farming p:nth-child(2),
-.borrowed-asset p:nth-child(2),
-.dep-asset p:nth-child(2) {
+.performance__portfolio-dropdown--lp-pair p:nth-child(2),
+.performance__portfolio-dropdown--lp-farming p:nth-child(2),
+.performance__portfolio-dropdown--borrowed p:nth-child(2),
+.performance__portfolio-dropdown--dep-asset p:nth-child(2) {
   flex:7;
 }
 
-.dep-to p:nth-child(1) {
+.performance__portfolio-dropdown--dep-to p:nth-child(1) {
   padding-right: 12px;
 }
 
-.dep-to p:nth-child(2) {
+.performance__portfolio-dropdown--dep-to p:nth-child(2) {
   flex: 4;
   text-align: center;
   padding-right: 35px;
 }
 
-.dep-to p:nth-child(3) {
+.performance__portfolio-dropdown--dep-to p:nth-child(3) {
   flex: 3.2;
   text-align: center;
   padding-right: 40px;
 }
 
-.dep-to a:nth-child(4) {
+.performance__portfolio-dropdown--dep-to a:nth-child(4) {
   flex: 3.2;
   text-align: left;
   padding-right: 45px;
@@ -563,30 +555,30 @@ export default {
   .performance__portfolio-strategy-progress-bar {
     width: 50px;
   }
-  .dep-to p {
+  .performance__portfolio-dropdown--dep-to p {
     text-align: center;
     flex: 1;
     padding: 0;
   }
 
-  .dep-to p:first-child {
+  .performance__portfolio-dropdown--dep-to p:first-child {
     text-align: left;
     flex: 2.7;
     padding: 0;
   }
 
-  .dep-to p:nth-child(2),
-  .dep-to p:nth-child(3) {
+  .performance__portfolio-dropdown--dep-to p:nth-child(2),
+  .performance__portfolio-dropdown--dep-to p:nth-child(3) {
     flex: 4;
     padding: 0;
 
   }
 
-  .dep-to p:nth-child(2) {
+  .performance__portfolio-dropdown--dep-to p:nth-child(2) {
     margin-left: 60px;
   }
 
-  .dep-to p:nth-child(4)  {
+  .performance__portfolio-dropdown--dep-to p:nth-child(4)  {
     flex: 3.2;
     display: flex;
     justify-content: flex-end;
@@ -594,7 +586,7 @@ export default {
     padding: 0;
   }
 
-  .performance__portfolio-total-label.circl {
+  .performance__portfolio-total-label--circl {
     margin-right: 90px;
   }
 

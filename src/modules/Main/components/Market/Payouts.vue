@@ -17,7 +17,7 @@
       >
         <div class="performance__payouts-transaction">
           <div class="performance__payouts-date-transaction">
-            <p class="performance__payouts-datetime">{{ formatDate(trx.date) }} <span class="date">{{ formatTime(trx.date)
+            <p>{{ formatDate(trx.date) }} <span class="performance__payouts-date">{{ formatTime(trx.date)
             }} </span></p>
           </div>
           <p>{{ trx.sum }} {{ collateralToken }}</p>
@@ -213,7 +213,7 @@ export default {
   flex: 2;
 }
 
-.date {
+.performance__payouts-date {
   margin-left: 18px;
 }
 

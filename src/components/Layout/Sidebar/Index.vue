@@ -4,13 +4,13 @@
 
       <router-link
         to="/homepage"
-        class="sidebar__text-top link-ovn"
+        class="sidebar__text-top"
       >Homepage</router-link>
 
       <div class="sidebar__divider-top" />
 
       <p
-        class="sidebar__text-top markets"
+        class="sidebar__text-top sidebar__text-top--markets"
       >MONEY MARKETS</p>
 
       <div class="market-container">
@@ -28,7 +28,7 @@
 
       <p
         to="/insurance"
-        class="sidebar__text-top ovn"
+        class="sidebar__text-top sidebar__text-top--ovn"
       >OVN</p>
 
       <router-link
@@ -38,7 +38,7 @@
 
       <router-link
         to="/insurance"
-        class="sidebar__text-top insurance"
+        class="sidebar__text-top sidebar__text-top--insurance"
       >Insurance</router-link>
     </ul>
 
@@ -170,8 +170,8 @@ export default {
 .active-link {
   text-decoration: underline;
 }
-.markets,
-.ovn {
+.sidebar__text-top--markets,
+.sidebar__text-top--ovn {
   color: var(--color-2);
   font-size: 15px;
   font-weight: 600;
@@ -180,7 +180,7 @@ export default {
   }
 }
 
-.markets {
+.sidebar__text-top--markets {
   margin-bottom: 20px;
 }
 
@@ -202,7 +202,7 @@ export default {
   margin-bottom: 0;
 }
 
-.insurance {
+.sidebar__text-top--insurance {
   margin-top: 20px;
 }
 .sidebar__text-top:first-child {
