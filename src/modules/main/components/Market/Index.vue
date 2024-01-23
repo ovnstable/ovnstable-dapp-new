@@ -5,8 +5,8 @@
       <GraphicsPerformance class="market__graphics" />
       <PortfolioPerformance class="market__portfolio" />
     </div>
-    <div class="market__payouts-wrapper">
-      <PortfolioPayouts class="market__payouts" />
+    <div class="market__payouts">
+      <PortfolioPayouts class="market__payout-inner" />
     </div>
   </div>
 
@@ -47,7 +47,7 @@ export default {
 .market__token-data,
 .market__graphics,
 .market__portfolio,
-.market__payouts {
+.market__payout-inner {
     width: 100%;
 }
 .market__graphics{
@@ -61,7 +61,7 @@ export default {
   z-index: 1;
 }
 
-.market__payouts-wrapper {
+.market__payouts {
   width: calc(100% - 40px);
   background: var(--color-8);
   z-index: -1;
@@ -69,7 +69,7 @@ export default {
   border-radius: 0px 0px 30px 30px;
 }
 
-.market__payouts {
+.market__payout-inner {
  border-radius: 0px 0px 30px 30px;
 }
 </style>

@@ -15,30 +15,14 @@
 
       <div class="market-container">
         <router-link
-          to="/market/usd"
+          v-for="link in linksData"
+          :key="link.name"
+          :to="link.to"
           class="sidebar__text-market"
           active-class="active-link"
-        >USD+</router-link>
-        <router-link
-          to="/market/usdc"
-          class="sidebar__text-market"
-          active-class="active-link"
-        >USDC+</router-link>
-        <router-link
-          to="/market/eth"
-          class="sidebar__text-market"
-          active-class="active-link"
-        >ETH+</router-link>
-        <router-link
-          to="/market/usdt"
-          class="sidebar__text-market"
-          active-class="active-link"
-        >USDT+</router-link>
-        <router-link
-          to="/market/dai"
-          class="sidebar__text-market"
-          active-class="active-link"
-        >DAI+</router-link>
+        >
+          {{ link.name }}
+        </router-link>
       </div>
       <div class="sidebar__divider-top" />
 
@@ -148,6 +132,13 @@ export default {
   data() {
     return {
       isDarkTheme: false,
+      linksData: [
+        { name: 'USD+', to: '/market/usd' },
+        { name: 'USDC+', to: '/market/usdc' },
+        { name: 'ETH+', to: '/market/eth' },
+        { name: 'USDT+', to: '/market/usdt' },
+        { name: 'DAI+', to: '/market/dai' },
+      ],
     };
   },
   methods: {

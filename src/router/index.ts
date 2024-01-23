@@ -10,7 +10,7 @@ const router = createRouter({
       component: () => import('@/views/Main/Index.vue'),
     },
     {
-      path: '/market/eth',
+      path: '/market/:id',
       name: 'market',
       component: () => import('@/views/Market/Index.vue'),
     },

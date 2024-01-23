@@ -151,7 +151,7 @@ export default {
     font-size: 12px;
     font-weight: 400;
     max-width: 186px;
-    line-height: normal;
+    line-height: 1.1;
   }
 
   .performance__divider {
@@ -161,7 +161,7 @@ export default {
   }
 
   .last-divider {
-     margin-right: 0px;
+     margin-right: 0;
   }
 
   .performance__payout-data,
