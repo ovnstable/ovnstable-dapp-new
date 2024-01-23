@@ -32,13 +32,13 @@ export default {
 
 .theme-switch-label {
     cursor: pointer;
-    background: var(--color-5);
+    background: var(--color-4);
     display: flex;
     align-items: center;
     justify-content: space-between;
     border-radius: 15px;
     position: relative;
-    border: 1px solid var( --color-2);
+    border: 1px solid var(--color-2);
     padding: 5px 28px 4px 5px;
     [data-theme="dark"] & {
       background: var(--1, #0F172A);
@@ -50,7 +50,7 @@ export default {
     width: 17px;
     height: 17px;
     border: 1px solid var( --color-2);
-    background: var(--background-color);
+    background: var(--color-5);
     border-radius: 50%;
     transition: transform 0.15s;
     [data-theme="dark"] & {

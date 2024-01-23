@@ -25,10 +25,10 @@
           <div class="performance__payouts-id-link">
             <a
               :href="trx.tokenLink"
-              class="performance__payouts-link"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Link for token"
+              class="link-ovn"
             >
               <p>{{ formatTransactionID(trx.id) }}</p>
             </a>
@@ -202,7 +202,6 @@ export default {
 
 .performance__payouts-id-link p {
   max-width: fit-content;
-  text-decoration: underline;
   color: var(--color-2);
   font-size: 15px;
   font-weight: 400;
@@ -216,10 +215,6 @@ export default {
 
 .date {
   margin-left: 18px;
-}
-
-.performance__payouts-id-link:hover {
-  cursor: pointer;
 }
 
 .performance__payouts-button-show {

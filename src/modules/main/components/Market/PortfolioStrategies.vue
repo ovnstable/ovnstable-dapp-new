@@ -8,6 +8,7 @@
       rel="noopener noreferrer"
       :class="{
         'performance__portfolio-description': true,
+        'link-ovn': true,
         strategies: true,
       }"
     >
@@ -101,7 +102,7 @@
                   :href="'https://debank.com/profile/' + asset.linkDepositedProtocol"
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="performance__portfolio-strategy-dropdown-link-dep-protocol"
+                  class="link-ovn"
                 >
                   <p>{{ formatTransactionID(asset.linkDepositedProtocol) }}</p>
                 </a>
@@ -419,10 +420,6 @@ export default {
 }
 .strategies {
   color: var(--color-3);
-  text-decoration: underline;
-}
-.strategies:hover {
-  cursor: pointer;
 }
 .performance__portfolio-assets {
   padding-bottom: 20px;
@@ -473,12 +470,6 @@ export default {
   color: var(--color-2);
   font-size: 15px;
   font-weight: 400;
-}
-
-.performance__portfolio-strategy-dropdown-link-dep-protocol:hover {
-  cursor: pointer;
-  text-decoration: underline;
-  text-decoration-color: var(--color-2);
 }
 
 .lp-pair p:nth-child(1),

@@ -4,7 +4,7 @@
 
       <router-link
         to="/homepage"
-        class="sidebar__text-top homepage"
+        class="sidebar__text-top link-ovn"
       >Homepage</router-link>
 
       <div class="sidebar__divider-top" />
@@ -161,18 +161,11 @@ export default {
   flex-direction: column;
   max-width: 140px;
 }
-.homepage {
-  text-decoration: underline;
-}
 .sidebar__text-top {
   color: var(--color-1);
   font-size: 17px;
   font-weight: 600;
   margin-top:20px;
-
-  [data-theme="dark"] & {
-      color: var(--color-4);
-  }
 }
 .active-link {
   text-decoration: underline;
@@ -182,21 +175,13 @@ export default {
   color: var(--color-2);
   font-size: 15px;
   font-weight: 600;
+   [data-theme="dark"] & {
+      color: var(--color-3);
+  }
 }
 
 .markets {
   margin-bottom: 20px;
-}
-
-.sidebar__text-top:hover,
-.sidebar__text-bottom:hover {
-  cursor: pointer;
-  color: #7f8695;
-  transition: color 0.15s ease
-}
-.markets:hover {
-  cursor: default;
-  color: var(--color-2);
 }
 
 .sidebar__text-market {
@@ -208,10 +193,6 @@ export default {
 
 .sidebar__text-market:last-child {
   margin-bottom: 0;
-}
-.sidebar__text-market:hover {
-  cursor: pointer;
-  color: var(--color-3);
 }
 .market-container {
   display: flex;
@@ -283,7 +264,7 @@ export default {
   padding: 0px 14px 0px 6px;
   border-radius: 12px;
   border: 1px solid var( --color-2);
-  background: var(--color-5);
+  background: var(--color-4);
   color: var( --color-2);
   text-align: center;
   font-size: 14px;

@@ -11,7 +11,7 @@
         target="_blank"
         rel="noopener noreferrer"
         aria-label="token-address"
-        class="performance__token-data__link-address"
+        class="performance__token-data__link-address link-ovn"
       >Token address</a>
     </div>
     <p class="performance__token-data__description">{{ tokenDescription }}</p>
@@ -139,10 +139,6 @@ export default {
     color: var(--color-2);
     font-size: 12px;
     font-weight: 600;
-    text-decoration-line: underline;
-  }
-  .performance__token-data__link-address:hover {
-    color: var(--color-3);
   }
   .performance__token-data__description {
     margin-left: 30px;
