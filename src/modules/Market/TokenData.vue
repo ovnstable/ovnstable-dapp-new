@@ -1,11 +1,11 @@
 <template>
   <div class="performance__token-data">
     <BaseIcon
-      name="ETH+_token-data"
+      :name=tokenData.tokenImageName
       class="performance__token-data-main-token"
     />
     <div class="performance__token-data-link-title">
-      <p class="performance__token-data-title performance__token-data-title--token">{{tokenName}}</p>
+      <p class="performance__token-data-title performance__token-data-title--token">{{ tokenData.tokenName }}</p>
       <a
         :href=tokenLink
         target="_blank"
@@ -14,18 +14,18 @@
         class="performance__token-data-link-addr link-ovn"
       >Token address</a>
     </div>
-    <p class="performance__token-data__description">{{ tokenDescription }}</p>
+    <p class="performance__token-data__description">{{ tokenData.tokenDescription }}</p>
     <div class="performance__divider" />
     <div class="performance__payout-data">
       <p class="performance__token-data-title">Last payout</p>
-      <p class="performance__token-data-num performance__token-data-num--payout-ago">{{ payoutAgo }}</p>
-      <p class="performance__token-data-h">{{ hoursAgo }}</p>
+      <p class="performance__token-data-num performance__token-data-num--payout-ago">{{ tokenData.lastPayout }}</p>
+      <p class="performance__token-data-h">{{ tokenData.payoutHours }}</p>
     </div>
     <div class="performance__divider" />
     <div class="performance__apy-data">
       <p class="performance__token-data-title">Daily APY</p>
       <div class="performance__apy-data-chain">
-        <p class="performance__token-data-num performance__token-data-num--apy-num">{{ dailyAPY }}%</p>
+        <p class="performance__token-data-num performance__token-data-num--apy-num">{{ tokenData.dailyApy }}%</p>
         <div
           class="performance__icon-chain"
         >
@@ -38,8 +38,8 @@
     </div>
     <div class="performance__divider" />
     <div class="performance__tvl-data">
-      <p class="performance__token-data-title">{{ tokenName }} TVL</p>
-      <p class="performance__token-data-num">{{ totalTVL }} <span class="performance__token-data-col-token">{{ collateralToken }}</span></p>
+      <p class="performance__token-data-title">{{ tokenData.tokenName }} TVL</p>
+      <p class="performance__token-data-num">{{ tokenData.tvl }} <span class="performance__token-data-col-token">{{ tokenData.tokenCollateral }}</span></p>
       <p class="performance__token-data-h">past 2 hours</p>
     </div>
     <div class="performance__divider performance__divider--last-divider" />
@@ -62,6 +62,10 @@ export default {
     BaseIcon,
   },
   props: {
+    tokenData: {
+      type: Object,
+      default: () => ({}),
+    },
     tokenName: {
       type: String,
       default: 'ETH+',
