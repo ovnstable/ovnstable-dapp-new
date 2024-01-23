@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import MainModule from '@/modules/main/Index.vue';
+import MainModule from '@/modules/Main/Index.vue';
 
 export default {
   name: 'MainView',

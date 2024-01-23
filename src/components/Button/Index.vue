@@ -5,12 +5,12 @@
     :class="{
       [btnStyles]: !!btnStyles,
       [btnSize]: !!btnSize,
-      disabled: disabled || isLoading,
+      disabled: disabled || loading,
       full,
     }"
     @click="$emit('click', $event)"
   >
-    <div v-if="isLoading">
+    <div v-if="loading">
       <Spinner size="24px" />
     </div>
     <slot v-else />
@@ -22,7 +22,7 @@ import { type PropType } from 'vue';
 import Spinner from '@/components/Spinner/Index.vue';
 
 type btnTypes = 'button' | 'submit';
-type btnStyles = 'primary' | 'secondary' | 'standard';
+type btnStyles = 'primary' | 'secondary' | 'standard' | 'link';
 type btnSize = 'large' | 'default' | 'small';
 
 export default {
@@ -31,7 +31,7 @@ export default {
     Spinner,
   },
   props: {
-    isLoading: {
+    loading: {
       type: Boolean,
       default: false,
     },
@@ -119,8 +119,18 @@ export default {
     box-shadow: 0px 1px 0px 0px var(--color-1);
 
     &:hover {
-      color: var(--color-3);
-      background-color: var(--color-4);
+      opacity: .7;
+    }
+  }
+
+  &.link {
+    background-color: transparent;
+    border: 1px solid var(--color-3);
+    color: var(--color-3);
+
+    &:hover {
+      background-color: var(--color-3);
+      color: var(--color-4);
     }
   }
 

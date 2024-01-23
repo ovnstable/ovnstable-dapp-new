@@ -22,3 +22,12 @@ a {
   color: inherit; /* blue colors for links too */
   text-decoration: inherit; /* no underline */
 }
+
+.modal-link {
+  color: var(--color-3);
+  transition: box-shadow .05s ease;
+
+  &:hover {
+    box-shadow: 0px 1px 0px var(--color-3);
+  }
+}

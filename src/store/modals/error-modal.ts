@@ -21,19 +21,19 @@ const getters = {
 
 const actions = {
 
-  showErrorModal({ commit, dispatch, getters }: any, errorType: any) {
+  showErrorModal({ commit }: any, errorType: any) {
     commit('setErrorType', errorType);
     commit('setErrorMsg', null);
     commit('setShow', true);
   },
 
-  showErrorModalWithMsg({ commit, dispatch, getters }: any, errorProperties: any) {
+  showErrorModalWithMsg({ commit }: any, errorProperties: any) {
     commit('setErrorType', errorProperties.errorType);
     commit('setErrorMsg', errorProperties.errorMsg);
     commit('setShow', true);
   },
 
-  closeErrorModal({ commit, dispatch, getters }: any) {
+  closeErrorModal({ commit }: any) {
     commit('setErrorType', null);
     commit('setErrorMsg', null);
     commit('setShow', false);
