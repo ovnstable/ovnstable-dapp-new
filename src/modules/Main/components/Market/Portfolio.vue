@@ -20,11 +20,7 @@
 </template>
 
 <script lang="ts">
-<<<<<<< HEAD:src/modules/Main/components/Market/Portfolio.vue
-import PortfolioStrategies from '@/modules/main/components/Market/PortfolioStrategies.vue';
-=======
-import PortfolioStrategies from '@/modules/Main/components/Performance/PortfolioStrategies.vue';
->>>>>>> 90985c8a1fbbe7aa8b264fbd315093abd93c3d2d:src/modules/Main/components/Performance/Portfolio.vue
+import PortfolioStrategies from '@/modules/Main/components/Market/PortfolioStrategies.vue';
 
 export default {
   name: 'PortfolioPerformance',
@@ -42,10 +38,7 @@ export default {
             tokenImagePath: 'assets/icons/currencies/WSTEth.vue',
             safetyScore: 'VERY HIGH',
             netAssetValue: 80,
-<<<<<<< HEAD:src/modules/Main/components/Market/Portfolio.vue
-=======
             percentPortfolioPath: 'assets/icons/common/PercentPortfolio.vue',
->>>>>>> 90985c8a1fbbe7aa8b264fbd315093abd93c3d2d:src/modules/Main/components/Performance/Portfolio.vue
             tokenLink: 'https://arbiscan.io/token/0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
           },
           {
@@ -53,10 +46,7 @@ export default {
             tokenImagePath: 'assets/icons/currencies/WSTEth.vue',
             safetyScore: 'VERY HIGH',
             netAssetValue: 50,
-<<<<<<< HEAD:src/modules/Main/components/Market/Portfolio.vue
-=======
             percentPortfolioPath: 'assets/icons/common/PercentPortfolio.vue',
->>>>>>> 90985c8a1fbbe7aa8b264fbd315093abd93c3d2d:src/modules/Main/components/Performance/Portfolio.vue
             tokenLink: 'https://arbiscan.io/token/0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
           },
           {
@@ -64,10 +54,7 @@ export default {
             tokenImagePath: 'assets/icons/currencies/WSTEth.vue',
             safetyScore: 'VERY HIGH',
             netAssetValue: 30,
-<<<<<<< HEAD:src/modules/Main/components/Market/Portfolio.vue
-=======
             percentPortfolioPath: 'assets/icons/common/PercentPortfolio.vue',
->>>>>>> 90985c8a1fbbe7aa8b264fbd315093abd93c3d2d:src/modules/Main/components/Performance/Portfolio.vue
             tokenLink: 'https://arbiscan.io/token/0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
           },
         ],
@@ -81,10 +68,7 @@ export default {
             strategyNameAsset: 'AAVE',
             netAssetValue: 80,
             liquidationValue: 179.9790,
-<<<<<<< HEAD:src/modules/Main/components/Market/Portfolio.vue
-=======
             percentPortfolioPath: 'assets/icons/common/PercentPortfolio.vue',
->>>>>>> 90985c8a1fbbe7aa8b264fbd315093abd93c3d2d:src/modules/Main/components/Performance/Portfolio.vue
             tokenLink: 'https://arbiscan.io/token/0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
             lendingProtocolDepositedTo: 'Sonne Finance',
             linkDepositedProtocol: '0x454e6869a34dac7ef3f8ec6c1383fea795fdb713',
@@ -97,13 +81,8 @@ export default {
             strategyNameAsset: 'ETS',
             netAssetValue: 50,
             liquidationValue: 0.0360,
-<<<<<<< HEAD:src/modules/Main/components/Market/Portfolio.vue
-=======
             percentPortfolioPath: 'assets/icons/common/PercentPortfolio.vue',
->>>>>>> 90985c8a1fbbe7aa8b264fbd315093abd93c3d2d:src/modules/Main/components/Performance/Portfolio.vue
-            tokenLink: 'https://arbiscan.io/token/0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
             lendingProtocolDepositedTo: 'Sonne Finance',
-            linkDepositedProtocol: '0x454e6869a34dac7ef3f8ec6c1383fea795fdb713',
             depositedAsset: 'USDBC',
             borrowedAsset: 'WETH',
             lpFarmingPlatform: 'Aerodrome',
@@ -113,11 +92,6 @@ export default {
             strategyNameAsset: 'Pendle wstETH',
             netAssetValue: 30,
             liquidationValue: 0.0279,
-<<<<<<< HEAD:src/modules/Main/components/Market/Portfolio.vue
-=======
-            percentPortfolioPath: 'assets/icons/common/PercentPortfolio.vue',
->>>>>>> 90985c8a1fbbe7aa8b264fbd315093abd93c3d2d:src/modules/Main/components/Performance/Portfolio.vue
-            tokenLink: 'https://arbiscan.io/token/0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
             lendingProtocolDepositedTo: 'Sonne Finance',
             linkDepositedProtocol: '0x454e6869a34dac7ef3f8ec6c1383fea795fdb713',
             depositedAsset: 'USDBC',

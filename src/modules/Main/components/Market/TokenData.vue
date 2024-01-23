@@ -112,21 +112,14 @@ export default {
   .performance__token-data {
     display:flex;
     flex-direction: row;
-<<<<<<< HEAD:src/modules/Main/components/Market/TokenData.vue
     justify-content: space-between;
     background: var(--color-4);
     width: 100%;
-=======
-    align-self: flex-start;
-    justify-content: center;
-    background: var(--color-4);
-    max-width: calc(100% - 40px);
   }
 
   .performance__icon-token {
     width: 90px;
     height: 90px;
->>>>>>> 90985c8a1fbbe7aa8b264fbd315093abd93c3d2d:src/modules/Main/components/Performance/TokenData.vue
   }
 
   .performance__token-data__link-title {
@@ -151,13 +144,6 @@ export default {
     color: var(--color-2);
     font-size: 12px;
     font-weight: 600;
-<<<<<<< HEAD:src/modules/Main/components/Market/TokenData.vue
-=======
-    text-decoration-line: underline;
-  }
-  .performance__token-data__link-address:hover {
-    color: var(--color-3);
->>>>>>> 90985c8a1fbbe7aa8b264fbd315093abd93c3d2d:src/modules/Main/components/Performance/TokenData.vue
   }
   .performance__token-data__description {
     margin-left: 30px;
@@ -170,7 +156,6 @@ export default {
   }
 
   .performance__divider {
-<<<<<<< HEAD:src/modules/Main/components/Market/TokenData.vue
     margin-left: 30px;
     margin-right: 30px;
     border: 1px solid var(--color-7);
@@ -178,11 +163,6 @@ export default {
 
   .last-divider {
      margin-right: 0;
-=======
-    margin-left: 40px;
-    margin-right: 40px;
-    border: 1px solid var(--color-7);
->>>>>>> 90985c8a1fbbe7aa8b264fbd315093abd93c3d2d:src/modules/Main/components/Performance/TokenData.vue
   }
 
   .performance__payout-data,

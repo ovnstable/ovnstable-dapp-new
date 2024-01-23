@@ -22,11 +22,7 @@
 
 <script lang="ts">
 
-<<<<<<< HEAD:src/modules/Main/components/Market/SingleStatisticGraphic.vue
-import GraphicInterval from '@/modules/main/components/Market/GraphicInterval.vue';
-=======
-import GraphicInterval from '@/modules/Main/components/Performance/GraphicInterval.vue';
->>>>>>> 90985c8a1fbbe7aa8b264fbd315093abd93c3d2d:src/modules/Main/components/Performance/SingleStatisticGraphic.vue
+import GraphicInterval from '@/modules/Main/components/Market/GraphicInterval.vue';
 
 export default {
   name: 'GraphicComponent',
