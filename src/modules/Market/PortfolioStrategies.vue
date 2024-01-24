@@ -534,6 +534,7 @@ export default {
 
 .performance__portfolio-total-circl-number {
   text-align: right;
+  margin-right: 10px;
 }
 
 .performance__portfolio-total-circl {
@@ -551,6 +552,7 @@ export default {
   width: 22px;
   height: 22px;
 }
+
 
 @media (max-width: 1024px) {
   .performance__portfolio-strategy-progress-bar {
@@ -572,7 +574,6 @@ export default {
   .performance__portfolio-dropdown--dep-to p:nth-child(3) {
     flex: 4;
     padding: 0;
-
   }
 
   .performance__portfolio-dropdown--dep-to p:nth-child(2) {
@@ -589,6 +590,9 @@ export default {
 
   .performance__portfolio-total-label--circl {
     margin-right: 90px;
+  }
+  .performance__portfolio-total-circl-number {
+    margin-left: 5px;
   }
 
 }
