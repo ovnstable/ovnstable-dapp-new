@@ -13,7 +13,7 @@ import {
   getFilteredPoolTokens,
   loadBalance,
   loadContractInstance
-} from './helpers.ts';
+} from '@/store/helpers/index.ts';
 import { getNetworkParams } from '../common/web3/network.ts';
 
 const KEY = 'REFERRAL_CODE';
@@ -167,7 +167,6 @@ const actions = {
       return;
     }
 
-    console.log('loadChains');
     commit('changeState', { field: 'isChainsLoading', val: true });
 
     odosApiService
@@ -257,10 +256,9 @@ const actions = {
 
     console.log('init pool swap data for network: ');
     const { networkId } = getNetworkParams(rootState.network.networkName);
-    // state.tokens = await state.getFilteredPoolTokens(networkId, false, listOfBuyTokensAddresses);
     await commit('changeState', {
       field: 'tokens',
-      val: await getFilteredPoolTokens(
+      val: getFilteredPoolTokens(
         networkId,
         false,
         [],
@@ -270,7 +268,7 @@ const actions = {
     });
     await commit('changeState', {
       field: 'secondTokens',
-      val: await getFilteredPoolTokens(
+      val: getFilteredPoolTokens(
         networkId,
         true,
         listOfBuyTokensAddresses,

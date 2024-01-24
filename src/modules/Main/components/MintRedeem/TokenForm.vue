@@ -1,101 +1,106 @@
 <!-- eslint-disable vuejs-accessibility/form-control-has-label -->
 <template>
-  <div class="input-tokens">
-    <div class="input-tokens__row">
-      <InputComponent
-        customClass="input-tokens__field"
-        :value="isInputToken ? token.value : token.sum"
-        is-custom
-        placeholder="0"
-        full-width
-        :disabled="disabled"
-        @input="inputUpdate"
-      />
-
-      <div
-        v-if="token.selectedToken"
-        @click="selectTokenFunc(isInputToken)"
-        @keypress="selectTokenFunc(isInputToken)"
-        class="input-tokens__selected"
-      >
-        <img
-          :src="token.selectedToken.logoUrl"
-          alt="select-token"
-        >
-        <span>
-          {{token.selectedToken.symbol}}
-        </span>
-      </div>
-      <div
-        v-else
-        @click="selectTokenFunc(isInputToken)"
-        @keypress="selectTokenFunc(isInputToken)"
-        class="input-tokens__select"
-      >
-        Select token
-      </div>
-
-      <div
-        v-if="isTokenRemovable"
-        class="input-tokens_rmv-btn"
-        @click="removeItemFunc(tokenInfo.id)"
-        @keypress="removeItemFunc(tokenInfo.id)"
-      >
-        <BaseIcon
-          name="RemoveToken"
+  <div class="token-form">
+    <div
+      class="input-tokens"
+    >
+      <div class="input-tokens__row">
+        <InputComponent
+          customClass="input-tokens__field"
+          :value="tokenInfo.value"
+          is-custom
+          placeholder="0"
+          full-width
+          :disabled="!isInputToken"
+          @input="inputUpdate"
         />
-      </div>
-    </div>
-    <div class="input-tokens__row">
-      <div class="input-tokens__balance">
+
         <div
-          v-if="isInputToken && token.selectedToken"
+          v-if="tokenInfo.selected"
+          @click="toggleSelect"
+          @keypress="toggleSelect"
+          class="input-tokens__selected"
         >
-          ~ ${{formatMoney(token.usdValue, 2)}}
+          <img
+            :src="tokenInfo?.logoUrl"
+            alt="select-token"
+          >
+          <span>
+            {{tokenInfo?.symbol}}
+          </span>
         </div>
         <div
-          v-else-if="!isInputToken && token.sum && token.selectedToken"
+          v-else
+          @click="toggleSelect"
+          @keypress="toggleSelect"
+          class="input-tokens__select"
         >
-          ~ ${{formatMoney(token.sum * token.selectedToken.price, 2)}}
-        </div>
-        <div v-else>
-          $0
+          Select token
         </div>
       </div>
-      <div
-        @click="
-          clickOnBalance()"
-        @keypress="clickOnBalance()"
-        class="input-tokens__balance"
-      >
-        <div class="select-token-balance-text">
-          <div v-if="token.selectedToken && token.selectedToken?.balanceData?.balance">
-            <span class="select-token-balance-text-enabled">
-              {{formatMoney(token.selectedToken.balanceData.balance,
-                            fixedByPrice(token.selectedToken.price))}}
-            </span>
+      <div class="input-tokens__row">
+        <div class="input-tokens__balance">
+          <div
+            v-if="isInputToken && tokenInfo.token?.selectedToken"
+          >
+            ~ ${{formatMoney(tokenInfo.usdValue, 2)}}
+          </div>
+          <div
+            v-else-if="!isInputToken && tokenInfo.sum && tokenInfo.selectedToken"
+          >
+            ~ ${{formatMoney(tokenInfo.sum * tokenInfo.selectedtoken?.price, 2)}}
           </div>
           <div v-else>
-            Balance: 0
+            $0
+          </div>
+        </div>
+        <div
+          class="input-tokens__balance"
+        >
+          <div class="select-token-balance-text">
+            <div v-if="tokenInfo.selectedToken && tokenInfo.selectedToken?.balanceData?.balance">
+              <span class="select-token-balance-text-enabled">
+                {{formatMoney(tokenInfo.selectedtoken?.balanceData.balance,
+                              fixedByPrice(tokenInfo.selectedtoken?.price))}}
+              </span>
+            </div>
+            <div v-else>
+              Balance: 0
+            </div>
           </div>
         </div>
       </div>
     </div>
+
+    <Transition name="slide-fade-small">
+      <TokensChooseForm
+        v-if="showTokenSelect"
+        :tokens-list="tokensList"
+        :active-mint="activeMint"
+        :is-input-token="isInputToken"
+        :selected-token="tokenFullData.symbol"
+        @add-token="addSelectedTokenToList"
+        @remove-token="removeSelectedTokenFromList"
+        @close-select="toggleSelect"
+      />
+    </Transition>
+
   </div>
 </template>
 
 <!-- eslint-disable no-param-reassign -->
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { mapGetters } from 'vuex';
 import InputComponent from '@/components/Input/Index.vue';
 import { formatMoney, fixedByPrice } from '@/utils/numbers.ts';
-import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import TokensChooseForm from '@/modules/Main/components/MintRedeem/TokenSelect/Index.vue';
 
 export default defineComponent({
-  name: 'InputToken',
+  name: 'TokenForm',
   components: {
-    BaseIcon,
     InputComponent,
+    TokensChooseForm,
   },
   props: {
     // inputToken = token which we want to swap
@@ -108,83 +113,90 @@ export default defineComponent({
       required: true,
       default: () => {},
     },
-    selectTokenFunc: {
-      type: Function,
-      required: true,
-    },
-    removeItemFunc: {
-      type: Function,
-      required: false,
-      default: () => null,
-    },
     isTokenRemovable: {
       type: Boolean,
       required: true,
-    },
-    updateTokenValueFunc: {
-      type: Function,
-      required: false,
-      default: () => null,
     },
     disabled: {
       type: Boolean,
       required: false,
       default: false,
     },
-  },
-  mounted() {
-    this.token.selectedToken = this.tokenInfo.selectedToken;
+    activeMint: {
+      type: Boolean,
+      required: true,
+      default: true,
+    },
   },
   data() {
     return {
-      token: {
-        value: null,
-        usdValue: null,
-        selectedToken: null,
-      } as any,
+      showTokenSelect: false,
     };
   },
-  watch: {
-    'tokenInfo.value': function (val) {
-      if (val) {
-        this.token.value = val;
-      }
+  computed: {
+    ...mapGetters('network', ['networkId']),
+    ...mapGetters('mintRedeem', ['tokensListGetter']),
+    tokensList() {
+      const list = this.tokensListGetter[this.networkId];
+
+      if (list && this.isInputToken) return list.map((_: any[]) => _[0]);
+      if (list && !this.isInputToken) return list.map((_: any[]) => _[1]);
+
+      // when first choosen, searching for pair, and return
+      return [];
     },
-    'tokenInfo.sum': function (val) {
-      if (val) {
-        this.token.sum = val;
-      }
-    },
-    'tokenInfo.usdValue': function (val) {
-      if (val) {
-        this.token.usdValue = val;
-      }
+
+    tokenFullData() {
+      return this.tokenInfo;
     },
   },
   methods: {
     formatMoney,
     fixedByPrice,
-    isNumber(evt: any) {
-      evt = (evt) || window.event;
-      const charCode = (evt.which) ? evt.which : evt.keyCode;
+    removeSelectedTokenFromList() {
+      console.log('removeSelectedTokenFromList');
+    },
+    addSelectedTokenToList(token: any, isInputToken: boolean) {
+      this.$emit('add-token', token, isInputToken);
 
-      if ((charCode > 31 && (charCode < 48 || charCode > 57)) && charCode !== 46) {
-        evt.preventDefault();
-      } else if (charCode === 46 && (!this.token.value || this.token.value.includes('.'))) {
-        evt.preventDefault();
-      } else {
-        return true;
+      // if inputToken choosen, we can know output already
+      if (isInputToken) {
+        const output = this.tokensListGetter[this.networkId].find((_: any) => {
+          const index = _.map((item: any) => item.address).indexOf(token.address);
+
+          // pair found, additional checking with mock
+          if (index !== -1 && _[0].address === token.address) return _;
+          return false;
+        });
+
+        this.$emit('add-token', {
+          ...output[1],
+          selected: true,
+        }, !isInputToken);
       }
-      return true;
+
+      // if output choosen, we can know input already
+      if (!isInputToken) {
+        const output = this.tokensListGetter[this.networkId].find((_: any) => {
+          const index = _.map((item: any) => item.address).indexOf(token.address);
+
+          // pair found, additional checking with mock
+          if (index !== -1 && _[1].address === token.address) return _;
+          return false;
+        });
+
+        this.$emit('add-token', {
+          ...output[0],
+          selected: true,
+        }, !isInputToken);
+      }
+      this.toggleSelect();
+    },
+    toggleSelect() {
+      this.showTokenSelect = !this.showTokenSelect;
     },
     inputUpdate(value: any) {
-      this.updateTokenValueFunc(this.tokenInfo, value);
-    },
-    clickOnBalance() {
-      if (this.token.selectedToken && this.token.selectedToken.balanceData.balance) {
-        this.token.value = this.token.selectedToken.balanceData.balance;
-        this.inputUpdate(this.token.value);
-      }
+      this.$emit('update-token', this.tokenFullData, value);
     },
   },
 });
@@ -282,5 +294,10 @@ export default defineComponent({
   &:hover {
     transform: rotate(-90deg);
   }
+}
+
+.token-form {
+  position: relative;
+  margin-bottom: 30px;
 }
 </style>

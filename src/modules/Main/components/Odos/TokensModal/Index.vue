@@ -129,37 +129,6 @@ export default defineComponent({
       this.showModal = currVal;
     },
   },
-  computed: {
-    selectedFromTokens() {
-      return this.fromTokens && this.selectedTokensFromAddresses
-        ? this.fromTokens
-          .filter((item: any) => this.selectedTokensFromAddresses.includes(item.address)) : [];
-    },
-    selectedToTokens() {
-      return this.toTokens && this.selectedTokensToAddresses
-        ? this.toTokens
-          .filter((item: any) => this.selectedTokensToAddresses.includes(item.address)) : [];
-    },
-
-    toTokens() {
-      if (this.swapMethod === 'BUY') {
-        return this.secondTokens;
-      } if (this.swapMethod === 'SELL') {
-        return this.tokens;
-      }
-      console.error('Odos Swap method not found.', this.swapMethod);
-      return [];
-    },
-    fromTokens() {
-      if (this.swapMethod === 'BUY') {
-        return this.tokens;
-      } if (this.swapMethod === 'SELL') {
-        return this.secondTokens;
-      }
-      console.error('Odos Swap method not found.', this.swapMethod);
-      return [];
-    },
-  },
   methods: {
     closeModal() {
       console.log('closeModal');

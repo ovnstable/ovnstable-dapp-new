@@ -344,14 +344,14 @@ import SwapSlippageSettings from '@/modules/Main/components/Odos/SwapSlippageSet
 import { getWeiMarker } from '@/utils/web3.ts';
 import { formatMoney } from '@/utils/numbers.ts';
 import { getRandomString } from '@/utils/strings.ts';
-import {
-  getNewInputToken, getNewOutputToken, maxAll, updateTokenValue, getDefaultSecondtoken,
-} from '@/store/odos/helpers.ts';
 import { clearApproveToken, getAllowanceValue, approveToken } from '@/utils/contract-approve.ts';
 import odosApiService from '@/services/odos-api-service.ts';
 import { getImageUrl } from '@/utils/const.ts';
 import { onLeaveList, onEnterList, beforeEnterList } from '@/utils/animations.ts';
 import SuccessOdosModal from '@/modules/ModalTemplates/SuccessModal/Index.vue';
+import {
+  getNewInputToken, getNewOutputToken, maxAll, updateTokenValue, getDefaultSecondtoken,
+} from '@/store/helpers/index.ts';
 
 export default defineComponent({
   name: 'SwapForm',

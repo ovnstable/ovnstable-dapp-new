@@ -3,12 +3,12 @@
 /* eslint-disable no-await-in-loop */
 import tokenLogo from '@/utils/token-logo.ts';
 import { getWeiMarker } from '@/utils/web3.ts';
-import type { stateData } from './index';
+import type { stateData } from '../odos/index';
 
 const SECONDTOKEN_SECOND_DEFAULT_SYMBOL = 'DAI+';
 const SECONDTOKEN_DEFAULT_SYMBOL = 'USD+';
 
-export const addItemToFilteredTokens = async (
+export const addItemToFilteredTokens = (
   tokens: any,
   key: string | number,
   item: any,
@@ -25,7 +25,7 @@ export const addItemToFilteredTokens = async (
     if (item.symbol === 'OVN') {
       logoUrl = tokenLogo.loadTokenImage(item);
     } else {
-      logoUrl = await tokenLogo.loadOvernightTokenImage(item);
+      logoUrl = tokenLogo.loadOvernightTokenImage(item);
     }
   } else {
     logoUrl = tokenLogo.loadTokenImage(item);
@@ -51,18 +51,19 @@ export const addItemToFilteredTokens = async (
   });
 };
 
-export const getFilteredPoolTokens = async (
+export const getFilteredPoolTokens = (
   chainId: string | number,
-  isIncludeInListAddresses: any,
-  listTokensAddresses: any,
-  ignoreBaseNetworkCurrency: any,
+  isIncludeInListAddresses: boolean,
+  listTokensAddresses: any[],
+  ignoreBaseNetworkCurrency: boolean,
   state: typeof stateData,
-): Promise<any[]> => {
+): any[] => {
   if (!state.tokensMap || !state.tokensMap.chainTokenMap) return [];
   let tokens: any = [];
   const { tokenMap } = state.tokensMap.chainTokenMap[`${chainId}`];
   let leftListTokensAddresses = listTokensAddresses;
   const keys = Object.keys(tokenMap);
+
   for (let i = 0; i < keys.length; i++) {
     const key = keys[i];
     const item = tokenMap[key];
@@ -72,31 +73,22 @@ export const getFilteredPoolTokens = async (
     );
 
     const isNeedTokenIgnore = false;
-    /* if (state.typeOfPoolScheme === 'OVN') {
-                  isNeedTokenIgnore = (item.protocolId === 'overnight' && item.symbol === 'OVN');
-              } */
-
     const isNeedIgnore = key === '0x0000000000000000000000000000000000000000'
         || isNeedTokenIgnore;
-      // key === token address
-    if (ignoreBaseNetworkCurrency && isNeedIgnore) {
-      // eslint-disable-next-line no-continue
-      continue;
-    }
+    if (ignoreBaseNetworkCurrency && isNeedIgnore) continue;
 
     // add only included in list
     if (isIncludeInListAddresses && isKeyIncludeList) {
-      await addItemToFilteredTokens(tokens, key, item);
+      addItemToFilteredTokens(tokens, key, item);
       leftListTokensAddresses = leftListTokensAddresses.filter(
         (address: string) => address.toLowerCase() !== key.toLowerCase(),
       );
-      // eslint-disable-next-line no-continue
       continue;
     }
 
     // add only non-list
     if (!isIncludeInListAddresses && !isKeyIncludeList) {
-      await addItemToFilteredTokens(tokens, key, item);
+      addItemToFilteredTokens(tokens, key, item);
     }
   }
 
@@ -124,7 +116,7 @@ export const getFilteredPoolTokens = async (
   return tokens;
 };
 
-export const getFilteredOvernightTokens = async (
+export const getFilteredOvernightTokens = (
   state: typeof stateData,
   chainId: number,
   isOnlyOvnToken: any,
@@ -143,13 +135,13 @@ export const getFilteredOvernightTokens = async (
         || item.symbol === 'DAI+'
         || item.symbol === 'USDT+'
     ) {
-      await addItemToFilteredTokens(tokens, key, item);
+      addItemToFilteredTokens(tokens, key, item);
       continue;
     }
 
     // add only overnight
     if (!isOnlyOvnToken) {
-      await addItemToFilteredTokens(tokens, key, item);
+      addItemToFilteredTokens(tokens, key, item);
       continue;
     }
   }

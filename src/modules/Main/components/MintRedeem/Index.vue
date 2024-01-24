@@ -1,6 +1,6 @@
 <template>
   <div class="mintredeem-form">
-    <div class="mintredeem-form__tabs">
+    <div class="mintredeem-form__row">
       <SwitchTabs
         :tabs="mintTabs"
         @tab-change="changeMintTab"
@@ -15,50 +15,87 @@
       <TokenForm
         :token-info="inputToken"
         :is-token-removable="true"
-        :select-token-func="selectFormToken"
         :is-input-token="true"
-        :update-token-value-func="updateTokenValueMethod"
+        :active-mint="isMintActive"
+        @add-token="selectFormToken"
+        @update-token="updateTokenValueMethod"
+      />
+      <TokenForm
+        :token-info="outputToken"
+        :is-token-removable="true"
+        :is-input-token="false"
+        :active-mint="isMintActive"
+        @add-token="selectFormToken"
+        @update-token="updateTokenValueMethod"
       />
     </div>
 
-    <SelectTokensModal
-      :is-show="showTokensModal"
-      :set-show-func="showSelectTokensModals"
-      :select-token-input="selectModalTypeInput"
-      :add-selected-token-to-list-func="addSelectedTokenToList"
-      :remove-selected-token-from-list-func="removeSelectedTokenFromList"
-      :tokens="allTokensList"
-      :is-all-data-loaded="isAllDataLoaded"
-      :is-ovn-swap="true"
+    <div class="mintredeem-form__row mintredeem-form__row--fees">
+      <div class="mintredeem-form__row-item">
+        <h1>Overnight Fee:</h1>
+        <span>0.04%</span>
+      </div>
+      <div class="mintredeem-form__row-item">
+        <h1>You mint</h1>
+        <span>$0</span>
+      </div>
+      <div class="mintredeem-form__row-item">
+        <h2>Exchange rates</h2>
+      </div>
+    </div>
+
+    <GasSettings
+      @gas-change="gasChange"
     />
+
+    <div class="mintredeem-form__btns">
+      <ButtonComponent
+        v-if="!account"
+        @click="connectWallet"
+        btn-size="large"
+        full
+      >
+        CONNECT WALLET
+      </ButtonComponent>
+      <ButtonComponent
+        v-else
+        @click="swapTokens"
+        btn-size="large"
+        full
+      >
+        {{isMintActive ? "MINT" : "REDEEM"}}
+      </ButtonComponent>
+    </div>
   </div>
 
 </template>
 
 <script lang="ts">
+import { mapActions, mapGetters } from 'vuex';
 import SwitchTabs from '@/components/SwitchTabs/Index.vue';
+import ButtonComponent from '@/components/Button/Index.vue';
 import TokenForm from '@/modules/Main/components/MintRedeem/TokenForm.vue';
-import SelectTokensModal from '@/modules/Main/components/MintRedeem/TokensModal/Index.vue';
 
 import { mintStatus, wrapStatus } from '@/modules/Main/components/MintRedeem/types/index.ts';
 import {
   getNewInputToken,
-} from '@/store/odos/helpers.ts';
+} from '@/store/helpers/index.ts';
+import GasSettings from '@/modules/Main/components/MintRedeem/GasSettings.vue';
 
 export default {
   name: 'MintRedeem',
   components: {
     SwitchTabs,
     TokenForm,
-    SelectTokensModal,
+    GasSettings,
+    ButtonComponent,
   },
   data() {
     return {
       inputToken: getNewInputToken(),
+      outputToken: getNewInputToken(),
       activeMintTab: 0,
       activeWrapTab: 0,
-      showTokensModal: false,
-      selectModalTypeInput: true,
       allTokensList: [],
       isAllDataLoaded: false,
 
@@ -84,19 +121,31 @@ export default {
       ],
     };
   },
+  mounted() {
+    console.log('initTokens');
+    this.initTokens();
+  },
+  computed: {
+    ...mapGetters('accountData', ['account']),
+
+    isMintActive() {
+      return this.activeMintTab === 0;
+    },
+  },
   methods: {
-    removeSelectedTokenFromList() {
-      console.log('removeSelectedTokenFromList');
+    ...mapActions('walletAction', ['connectWallet']),
+    ...mapActions('mintRedeem', ['initTokens']),
+    gasChange() {
+
     },
-    addSelectedTokenToList() {
-      console.log('addSelectedTokenToList');
-    },
-    showSelectTokensModals() {
-      this.showTokensModal = false;
-    },
-    selectFormToken(isInput: boolean) {
-      this.showTokensModal = true;
-      this.selectModalTypeInput = isInput;
+    selectFormToken(data: any, isInputToken: boolean) {
+      console.log(data, isInputToken, 'selectFormToken');
+      if (isInputToken) {
+        this.inputToken = data;
+        return;
+      }
+
+      this.outputToken = data;
     },
     updateTokenValueMethod(token: any) {
       this.inputToken = token;
@@ -107,23 +156,63 @@ export default {
     changeMintTab(id: number) {
       this.activeMintTab = id;
     },
+    swapTokens() {
+      console.log('swapTokens');
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
 .mintredeem-form {
+  display: flex;
+  flex-direction: column;
   width: 100%;
   height: 100%;
 }
-.mintredeem-form__tabs {
+.mintredeem-form__row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: auto;
+  margin-bottom: 20px;
+
+  h1, span {
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--color-1);
+  }
+
+  h2 {
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--color-2);
+  }
+}
+
+.mintredeem-form__row--fees {
+  margin-bottom: 0;
 }
 
 .mintredeem-form__inputs {
-  margin-top: 16px;
+  margin-bottom: auto;
+}
+
+.mintredeem-form__btns {
+  margin-top: auto;
+}
+
+.mintredeem-form__row-item {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+
+  &:first-child {
+    justify-content: flex-start;
+  }
+
+  &:last-child {
+    justify-content: flex-end;
+  }
 }
 </style>

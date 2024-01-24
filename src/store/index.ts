@@ -25,6 +25,7 @@ import accountData from '@/store/views/account/data.ts';
 import insuranceData from '@/store/views/insurance/data.ts';
 import wrapUI from '@/store/views/wrap/ui.ts';
 import odosData from '@/store/odos/index.ts';
+import mintRedeem from '@/store/mintRedeem/index.ts';
 
 // modals
 import errorModal from '@/store/modals/error-modal.ts';
@@ -34,6 +35,7 @@ import successModal from '@/store/modals/success-modal.ts';
 export default new Vuex.Store({
   modules: {
     odosData,
+    mintRedeem,
     theme,
     errorModal,
     waitingModal,

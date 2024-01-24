@@ -62,7 +62,7 @@ export default {
           name: 'BRIDGE',
         },
       ],
-      activeTab: 1,
+      activeTab: 0,
       pathViz: null,
       buttonDisabled: true,
       isLoadingData: true,
