@@ -1,3 +1,27 @@
+export type Strategy = {
+  address: string;
+  explorerAddress: string;
+  fullName: string;
+  id: string;
+  liquidationValue: number;
+  name: string;
+  netAssetValue: number;
+  riskFactor: number;
+  type: string;
+  weight: number;
+}
+export type Payout = {
+  transactionHash: string;
+  payableDate: string;
+  dailyProfit: number;
+  annualizedYield: number;
+  liquidationValue: number;
+  totalUsdPlus: number;
+  netAssetValue: number;
+  totalUsdc: number;
+  duration: number;
+}
+
 type Tokens = {
   [key: string]: {
     tokenName: string;

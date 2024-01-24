@@ -1,0 +1,38 @@
+/* eslint-disable class-methods-use-this */
+import { type Strategy, type Payout } from '@/utils/market-token-data.ts';
+import { getErrorObject } from '@/utils/errors.ts';
+import apiService from './api-service.ts';
+
+const API_URL = 'https://api.overnight.fi';
+
+class MarketApiService {
+  loadStrategies(chain: string, token: string): any {
+    return new Promise((resolve, reject) => {
+      const url = `${API_URL}/${chain}/${token}/dapp/strategies`;
+      apiService.get(url)
+        .then((response: any) => {
+          const strategies = response as Strategy[];
+          resolve(strategies as Strategy[]);
+        })
+        .catch((e) => {
+          reject(getErrorObject(e));
+        });
+    });
+  }
+
+  loadPayouts(chain: string, token: string): any {
+    return new Promise((resolve, reject) => {
+      const url = `${API_URL}/${chain}/${token}/dapp/payouts`;
+      apiService.get(url)
+        .then((response: any) => {
+          const payouts = response as Payout[];
+          resolve(payouts as Payout[]);
+        })
+        .catch((e) => {
+          reject(getErrorObject(e));
+        });
+    });
+  }
+}
+
+export default new MarketApiService();

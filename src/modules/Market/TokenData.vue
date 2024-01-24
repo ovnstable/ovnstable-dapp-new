@@ -18,8 +18,8 @@
     <div class="performance__divider" />
     <div class="performance__payout-data">
       <p class="performance__token-data-title">Last payout</p>
-      <p class="performance__token-data-num performance__token-data-num--payout-ago">{{ tokenData.lastPayout }}</p>
-      <p class="performance__token-data-h">{{ tokenData.payoutHours }}</p>
+      <p class="performance__token-data-num performance__token-data-num--payout-ago">{{ tokenData.lastPayoutTime }}</p>
+      <p class="performance__token-data-h">{{ tokenData.lastPayoutType }}</p>
     </div>
     <div class="performance__divider" />
     <div class="performance__apy-data">
