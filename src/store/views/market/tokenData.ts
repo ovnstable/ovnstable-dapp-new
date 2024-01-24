@@ -41,7 +41,8 @@ const actions = {
       console.log(strategies);
       const tvl = calculateTvl(strategies);
       const payouts: Payout[] = await MarketApiService.loadPayouts(networkName, `${marketId}+`);
-      console.log(payouts);
+      const totalPlusToken: number = await MarketApiService.loadTotalPlusToken(networkName, `${marketId}+`);
+      console.log(totalPlusToken);
       const { lastPayoutType, lastPayoutTime, dailyApy } = getLastPayout(payouts);
       const combinedData = {
         ...staticData,

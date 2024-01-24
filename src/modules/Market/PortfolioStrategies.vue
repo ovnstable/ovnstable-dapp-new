@@ -38,8 +38,8 @@
         >
           <div
             class="performance__portfolio-strategies-stables"
-            @click="type === 'strategies' && toggleDropdown(asset.strategyNameAsset)"
-            @keydown.enter="type === 'strategies' && toggleDropdown(asset.strategyNameAsset)"
+            @click="type === 'strategies' && toggleDropdown(asset.fullName)"
+            @keydown.enter="type === 'strategies' && toggleDropdown(asset.fullName)"
             tabindex="0"
           >
             <div
@@ -63,7 +63,7 @@
                 <p
                   :class="['performance__portfolio-strategy-token-name', { asset: type === 'strategies' }]"
                 >
-                  {{ type === 'portfolio' ? asset.tokenNameAsset : asset.strategyNameAsset }}
+                  {{ type === 'portfolio' ? asset.tokenNameAsset : asset.fullName }}
                 </p>
               </div>
               <p>{{ type === 'portfolio' ? asset.safetyScore : formatCurrency(asset.netAssetValue, collateralToken) }}</p>
@@ -82,7 +82,7 @@
 
             </div>
             <div
-              v-show="dropdownVisible === asset.strategyNameAsset"
+              v-show="dropdownVisible === asset.fullName"
               class="performance__portfolio-dropdown-content"
             >
               <div class="performance__portfolio-strategies-divider" />
@@ -138,6 +138,7 @@
             <p class="performance__portfolio-total-liquidation-val">
               {{ formatCurrency(totalLiquidationValue(assets, collateralToken), collateralToken) }}
             </p>
+
           </div>
           <div class="performance__portfolio-total-circl">
             <p class="performance__portfolio-total-label performance__portfolio-total-label--circl">Total {{ tokenName }} in circulation</p>
@@ -195,7 +196,7 @@ export default {
       }
     },
     formatCurrency(value:any, collateralToken:string) {
-      if (collateralToken === '$') {
+      if (collateralToken !== 'WETH') {
         return new Intl.NumberFormat('en-US', {
           style: 'currency',
           currency: 'USD',
@@ -227,7 +228,8 @@ export default {
       const colors = [
         getComputedStyle(document.documentElement).getPropertyValue('--color-3').trim(),
         getComputedStyle(document.documentElement).getPropertyValue('--color-11').trim(),
-        getComputedStyle(document.documentElement).getPropertyValue('--color-9').trim()];
+        getComputedStyle(document.documentElement).getPropertyValue('--color-9').trim(),
+        getComputedStyle(document.documentElement).getPropertyValue('--color-10').trim()];
       return colors[index % colors.length];
     },
     totalPortfolioValue(assets: any[]) {

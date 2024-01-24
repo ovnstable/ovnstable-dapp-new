@@ -39,7 +39,9 @@
     <div class="performance__divider" />
     <div class="performance__tvl-data">
       <p class="performance__token-data-title">{{ tokenData.tokenName }} TVL</p>
-      <p class="performance__token-data-num">{{ tokenData.tvl }} <span class="performance__token-data-col-token">{{ tokenData.collateralToken }}</span></p>
+      <p class="performance__token-data-num">{{ tokenData.tvl }}     <span class="performance__token-data-col-token">
+        {{ tokenData.collateralToken === 'WETH' ? tokenData.collateralToken : '$' }}
+      </span></p>
       <p class="performance__token-data-h">past 2 hours</p>
     </div>
     <div class="performance__divider performance__divider--last-divider" />

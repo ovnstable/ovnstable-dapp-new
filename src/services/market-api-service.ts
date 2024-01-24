@@ -33,6 +33,20 @@ class MarketApiService {
         });
     });
   }
+
+  loadTotalPlusToken(chain: string, token: string): any {
+    return new Promise((resolve, reject) => {
+      const url = `${API_URL}/${chain}/${token}/dapp/getTotalUsdPlusValue`;
+      apiService.get(url)
+        .then((response: any) => {
+          const totalVal = response as number;
+          resolve(totalVal as number);
+        })
+        .catch((e) => {
+          reject(getErrorObject(e));
+        });
+    });
+  }
 }
 
 export default new MarketApiService();

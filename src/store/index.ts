@@ -26,6 +26,8 @@ import insuranceData from '@/store/views/insurance/data.ts';
 import wrapUI from '@/store/views/wrap/ui.ts';
 import odosData from '@/store/odos/index.ts';
 import tokenData from '@/store/views/market/tokenData.ts';
+import portfolioData from '@/store/views/market/portfolioData.ts';
+
 
 // modals
 import errorModal from '@/store/modals/error-modal.ts';
@@ -60,6 +62,7 @@ export default new Vuex.Store({
     supplyData,
     referral,
     tokenData,
+    portfolioData,
   },
 
   plugins: [

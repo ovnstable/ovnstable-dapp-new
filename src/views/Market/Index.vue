@@ -1,5 +1,8 @@
 <template>
-  <MarketPage :token-data="tokenData" />
+  <MarketPage
+    :token-data="tokenData"
+    :portfolio-data="portfolioData"
+  />
 </template>
 
 <script lang="ts">
@@ -19,7 +22,7 @@ export default defineComponent({
     const router = useRouter();
 
     const tokenData = computed(() => store.state.tokenData.tokenData || {});
-
+    const portfolioData = computed(() => store.state.portfolioData.portfolioData || {});
     watch(
       () => route.params.id,
       async (newId) => {
@@ -29,6 +32,7 @@ export default defineComponent({
           console.log('from index.vue');
           console.log('marketId:', marketId, 'networkName:', networkName);
           await store.dispatch('tokenData/fetchTokenData', { marketId, networkName });
+          await store.dispatch('portfolioData/fetchPortfolioData', { marketId, networkName });
         }
       },
       { immediate: true },
@@ -40,6 +44,7 @@ export default defineComponent({
 
     return {
       tokenData,
+      portfolioData,
     };
   },
 });

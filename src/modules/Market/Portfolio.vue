@@ -2,16 +2,16 @@
   <div class="performance__portfolio">
     <div class="performance__portfolio-tab-content">
       <PortfolioStrategies
-        :tokenName="dataStrategies.tokenName"
-        :assets="dataStrategies.assets"
-        :type="dataStrategies.type"
-        :tokenAmountInCirculation="dataStrategies.tokenAmountInCirculation"
-        :collateralToken="dataStrategies.collateralToken"
+        :tokenName="portfolioData.tokenName"
+        :assets="portfolioData.strategies"
+        type='strategies'
+        :tokenAmountInCirculation="portfolioData.totalPlusToken"
+        :collateralToken="portfolioData.collateralToken"
       />
       <PortfolioStrategies
         :tokenName="dataPortfolio.tokenName"
         :assets="dataPortfolio.assets"
-        :type="dataPortfolio.type"
+        type='portfolio'
         :collateralToken="dataPortfolio.collateralToken"
       />
       <p class="performance__portfolio-token-payout">{{ dataPortfolio.tokenName }} Payouts</p>
@@ -27,6 +27,13 @@ export default {
   components: {
     PortfolioStrategies,
   },
+  props: {
+    portfolioData: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
+
   data() {
     return {
       dataPortfolio: {
@@ -61,14 +68,11 @@ export default {
         collateralToken: 'WETH',
       },
       dataStrategies: {
-        tokenName: 'ETH+',
-        type: 'strategies',
         assets: [
           {
             strategyNameAsset: 'AAVE',
             netAssetValue: 80,
             liquidationValue: 179.9790,
-            percentPortfolioPath: 'assets/icons/common/PercentPortfolio.vue',
             tokenLink: 'https://arbiscan.io/token/0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
             lendingProtocolDepositedTo: 'Sonne Finance',
             linkDepositedProtocol: '0x454e6869a34dac7ef3f8ec6c1383fea795fdb713',
@@ -100,8 +104,6 @@ export default {
             lpPair: 'WETH/USDBC',
           },
         ],
-        tokenAmountInCirculation: 180.0429,
-        collateralToken: 'WETH',
       },
     };
   },
