@@ -7,14 +7,14 @@
     <div class="performance__token-data-link-title">
       <p class="performance__token-data-title performance__token-data-title--token">{{ tokenData.tokenName }}</p>
       <a
-        :href=tokenLink
+        :href=tokenData.tokenLink
         target="_blank"
         rel="noopener noreferrer"
         aria-label="token-address"
         class="performance__token-data-link-addr link-ovn"
       >Token address</a>
     </div>
-    <p class="performance__token-data__description">{{ tokenData.tokenDescription }}</p>
+    <p class="performance__token-data__description">{{ tokenData.description }}</p>
     <div class="performance__divider" />
     <div class="performance__payout-data">
       <p class="performance__token-data-title">Last payout</p>
@@ -39,7 +39,7 @@
     <div class="performance__divider" />
     <div class="performance__tvl-data">
       <p class="performance__token-data-title">{{ tokenData.tokenName }} TVL</p>
-      <p class="performance__token-data-num">{{ tokenData.tvl }} <span class="performance__token-data-col-token">{{ tokenData.tokenCollateral }}</span></p>
+      <p class="performance__token-data-num">{{ tokenData.tvl }} <span class="performance__token-data-col-token">{{ tokenData.collateralToken }}</span></p>
       <p class="performance__token-data-h">past 2 hours</p>
     </div>
     <div class="performance__divider performance__divider--last-divider" />
@@ -66,18 +66,6 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    tokenName: {
-      type: String,
-      default: 'ETH+',
-    },
-    tokenLink: {
-      type: String,
-      default: 'https://arbiscan.io/address/0xD4939D69B31fbE981ed6904A3aF43Ee1dc777Aab',
-    },
-    tokenDescription: {
-      type: String,
-      default: 'ETH+ is the equivalent of USD+, pegged to WETH 1:1, instantly mintable and redeemable in WETH. 100% collateralized with delta-neutral and other strategies based on the best protocols',
-    },
     payoutAgo: {
       type: String,
       default: '05:02',
@@ -97,10 +85,6 @@ export default {
     totalTVL: {
       type: Number,
       default: 123.631341,
-    },
-    collateralToken: {
-      type: String,
-      default: 'WETH',
     },
     chainName: {
       type: String,

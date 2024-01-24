@@ -25,6 +25,7 @@ import accountData from '@/store/views/account/data.ts';
 import insuranceData from '@/store/views/insurance/data.ts';
 import wrapUI from '@/store/views/wrap/ui.ts';
 import odosData from '@/store/odos/index.ts';
+import tokenData from '@/store/views/market/tokenData.ts';
 
 // modals
 import errorModal from '@/store/modals/error-modal.ts';
@@ -58,6 +59,7 @@ export default new Vuex.Store({
     gasPrice,
     supplyData,
     referral,
+    tokenData,
   },
 
   plugins: [
