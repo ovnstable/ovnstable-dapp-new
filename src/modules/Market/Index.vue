@@ -8,6 +8,7 @@
       <GraphicsPerformance class="market__graphics" />
       <PortfolioPerformance
         :portfolio-data="portfolioData"
+        :collateral-data="collateralData"
         class="market__portfolio"
       />
     </div>
@@ -32,6 +33,10 @@ export default {
       default: () => ({}),
     },
     portfolioData: {
+      type: Object,
+      default: () => ({}),
+    },
+    collateralData: {
       type: Object,
       default: () => ({}),
     },

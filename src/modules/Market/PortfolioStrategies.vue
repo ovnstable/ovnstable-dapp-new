@@ -63,7 +63,7 @@
                 <p
                   :class="['performance__portfolio-strategy-token-name', { asset: type === 'strategies' }]"
                 >
-                  {{ type === 'portfolio' ? asset.tokenNameAsset : asset.fullName }}
+                  {{ type === 'portfolio' ? asset.id.tokenName : asset.fullName }}
                 </p>
               </div>
               <p>{{ type === 'portfolio' ? asset.safetyScore : formatCurrency(asset.netAssetValue, collateralToken) }}</p>

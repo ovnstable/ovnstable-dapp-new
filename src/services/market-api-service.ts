@@ -1,5 +1,5 @@
 /* eslint-disable class-methods-use-this */
-import { type Strategy, type Payout } from '@/utils/market-token-data.ts';
+import { type Strategy, type Payout, type Collateral } from '@/utils/market-token-data.ts';
 import { getErrorObject } from '@/utils/errors.ts';
 import apiService from './api-service.ts';
 
@@ -41,6 +41,20 @@ class MarketApiService {
         .then((response: any) => {
           const totalVal = response as number;
           resolve(totalVal as number);
+        })
+        .catch((e) => {
+          reject(getErrorObject(e));
+        });
+    });
+  }
+
+  loadCollaterlPlusToken(chain: string, token: string): any {
+    return new Promise((resolve, reject) => {
+      const url = `${API_URL}/${chain}/${token}/dapp/collateral/total`;
+      apiService.get(url)
+        .then((response: any) => {
+          const collaterals = response as Collateral[];
+          resolve(collaterals as Collateral[]);
         })
         .catch((e) => {
           reject(getErrorObject(e));

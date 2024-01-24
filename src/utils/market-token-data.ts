@@ -22,6 +22,20 @@ export type Payout = {
   duration: number;
 }
 
+export type Collateral = {
+  id: {
+    strategyName: string;
+    tokenName: string;
+    chain: string;
+    token: string;
+  },
+  strategyAddress: string;
+  tokenAddress: string;
+  percentage: number;
+  netAssetValue: number;
+  updateDate: string;
+}
+
 type Tokens = {
   [key: string]: {
     tokenName: string;

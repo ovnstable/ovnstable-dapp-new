@@ -2,6 +2,7 @@
   <MarketPage
     :token-data="tokenData"
     :portfolio-data="portfolioData"
+    :collateral-data="collateralData"
   />
 </template>
 
@@ -23,6 +24,7 @@ export default defineComponent({
 
     const tokenData = computed(() => store.state.tokenData.tokenData || {});
     const portfolioData = computed(() => store.state.portfolioData.portfolioData || {});
+    const collateralData = computed(() => store.state.collateralData.collateralData || {});
     watch(
       () => route.params.id,
       async (newId) => {
@@ -33,6 +35,7 @@ export default defineComponent({
           console.log('marketId:', marketId, 'networkName:', networkName);
           await store.dispatch('tokenData/fetchTokenData', { marketId, networkName });
           await store.dispatch('portfolioData/fetchPortfolioData', { marketId, networkName });
+          await store.dispatch('collateralData/fetchCollateralData', { marketId, networkName });
         }
       },
       { immediate: true },
@@ -45,6 +48,7 @@ export default defineComponent({
     return {
       tokenData,
       portfolioData,
+      collateralData,
     };
   },
 });

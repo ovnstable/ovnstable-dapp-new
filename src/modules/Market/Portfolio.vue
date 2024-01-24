@@ -1,6 +1,7 @@
 <template>
   <div class="performance__portfolio">
     <div class="performance__portfolio-tab-content">
+      <p>{{ collateralData }}</p>
       <PortfolioStrategies
         :tokenName="portfolioData.tokenName"
         :assets="portfolioData.strategies"
@@ -9,10 +10,10 @@
         :collateralToken="portfolioData.collateralToken"
       />
       <PortfolioStrategies
-        :tokenName="dataPortfolio.tokenName"
-        :assets="dataPortfolio.assets"
+        :tokenName="collateralData.tokenName"
+        :assets="collateralData.colleterals"
         type='portfolio'
-        :collateralToken="dataPortfolio.collateralToken"
+        :collateralToken="collateralData.collateralToken"
       />
       <p class="performance__portfolio-token-payout">{{ dataPortfolio.tokenName }} Payouts</p>
     </div>
@@ -29,6 +30,10 @@ export default {
   },
   props: {
     portfolioData: {
+      type: Object,
+      default: () => ({}),
+    },
+    collateralData: {
       type: Object,
       default: () => ({}),
     },

@@ -26,8 +26,6 @@ const actions = {
 
 const mutations = {
   setPortfolioData(state: any, value: any) {
-    console.log('lets set portfolio data');
-    console.log(value);
     state.portfolioData = value.combinedData;
   },
 };
