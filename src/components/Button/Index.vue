@@ -8,7 +8,7 @@
       disabled: disabled || loading,
       full,
     }"
-    @click="$emit('click', $event)"
+    @click="$emit('on-click', $event)"
   >
     <div v-if="loading">
       <Spinner size="24px" />

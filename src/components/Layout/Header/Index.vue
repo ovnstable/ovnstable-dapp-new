@@ -17,7 +17,7 @@
             v-if="walletConnected && account"
             class="app-header__content-account"
             btn-styles="secondary"
-            @click="disconnectWallet"
+            @on-click="disconnectWallet"
           >
             <span>
               {{ cutString(account, 4, 4)?.toUpperCase() }}
@@ -29,7 +29,7 @@
           </ButtonComponent>
           <ButtonComponent
             v-else
-            @click="connectWallet"
+            @on-click="connectWallet"
           >
             CONNECT
           </ButtonComponent>

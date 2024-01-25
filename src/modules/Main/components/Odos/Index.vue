@@ -166,7 +166,7 @@
         <div class="swap-form__btns">
           <ButtonComponent
             v-if="!account"
-            @click="connectWallet"
+            @on-click="connectWallet"
             btn-size="large"
             full
           >
@@ -183,7 +183,7 @@
             </ButtonComponent>
             <ButtonComponent
               v-else-if="isAnyInputsNeedApprove"
-              @click="approve(firstInputInQueueForToApprove)"
+              @on-click="approve(firstInputInQueueForToApprove)"
               btn-size="large"
               full
               :loading="firstSwipeClickOnApprove"
@@ -200,7 +200,7 @@
             </ButtonComponent>
             <ButtonComponent
               v-else
-              @click="swapTrigger"
+              @on-click="swapTrigger"
               btn-size="large"
               full
               :loading="isLoadingSwap"

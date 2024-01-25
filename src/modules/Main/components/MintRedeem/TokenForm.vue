@@ -171,6 +171,7 @@ export default defineComponent({
 
         this.$emit('add-token', {
           ...output[1],
+          value: '',
           selected: true,
         }, !isInputToken);
       }
@@ -187,6 +188,7 @@ export default defineComponent({
 
         this.$emit('add-token', {
           ...output[0],
+          value: '',
           selected: true,
         }, !isInputToken);
       }
@@ -196,10 +198,15 @@ export default defineComponent({
       this.showTokenSelect = !this.showTokenSelect;
     },
     inputUpdate(value: any) {
+      // todo rates pair
       this.$emit('update-token', {
         ...this.tokenFullData,
         value,
-      });
+      }, this.isInputToken);
+      this.$emit('update-token', {
+        ...this.tokenFullData,
+        value,
+      }, !this.isInputToken);
     },
   },
 });

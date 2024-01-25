@@ -4,8 +4,8 @@
   >
     <div
       class="tokens-select__header"
-      @click="closeModal"
-      @keypress="closeModal"
+      @click="closeSelect"
+      @keypress="closeSelect"
     >
       <h1>
         Choose 1 token to {{activeMint && isInputToken ? "mint" : "redeem"}}
@@ -34,6 +34,7 @@
         :selected-token="selectedToken"
         @select-token="selectToken"
         @remove-token="removeToken"
+        @close-select="closeSelect"
       />
     </template>
 
@@ -75,8 +76,8 @@ export default defineComponent({
     },
   },
   methods: {
-    closeModal() {
-      console.log('closeModal');
+    closeSelect() {
+      console.log('closeSelect');
       this.$emit('close-select', false);
     },
     selectToken(token: any) {

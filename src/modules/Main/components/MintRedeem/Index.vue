@@ -37,7 +37,7 @@
       </div>
       <div class="mintredeem-form__row-item">
         <h1>You mint</h1>
-        <span>$0</span>
+        <span>${{ estimateResult }}</span>
       </div>
       <div class="mintredeem-form__row-item">
         <h2>Exchange rates</h2>
@@ -51,7 +51,7 @@
     <div class="mintredeem-form__btns">
       <ButtonComponent
         v-if="!account"
-        @click="connectWallet"
+        @on-click="connectWallet"
         btn-size="large"
         full
       >
@@ -67,7 +67,7 @@
       </ButtonComponent>
       <ButtonComponent
         v-else-if="!isApprovedToken"
-        @click="approveToken"
+        @on-click="approveToken"
         btn-size="large"
         full
       >
@@ -75,7 +75,7 @@
       </ButtonComponent>
       <ButtonComponent
         v-else
-        @click="swapTokens"
+        @on-click="swapTokens"
         btn-size="large"
         full
       >
@@ -94,7 +94,7 @@ import SwitchTabs from '@/components/SwitchTabs/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import TokenForm from '@/modules/Main/components/MintRedeem/TokenForm.vue';
 import { getAllowanceValue } from '@/utils/contract-approve.ts';
-import { buildContract, chainContractsMap } from '@/utils/contractsMap.ts';
+import { buildContract } from '@/utils/contractsMap.ts';
 import { MINTREDEEM_SCHEME } from '@/store/mintRedeem/mocks.ts';
 import debounce from 'lodash/debounce';
 
@@ -166,6 +166,12 @@ export default {
     isMintActive() {
       return this.activeMintTab === 0;
     },
+
+    estimateResult() {
+      if (!this.inputToken.symbol || !this.inputToken.value) return '0.00';
+      return new BigNumber(this.inputToken.value).times(0.9996).toFixed(2);
+    },
+
   },
   methods: {
     ...mapActions('walletAction', ['connectWallet']),
@@ -211,8 +217,9 @@ export default {
 
       this.outputToken = data;
     },
-    updateTokenValueMethod(token: any) {
-      this.inputToken = token;
+    updateTokenValueMethod(token: any, isInputToken: boolean) {
+      if (isInputToken) this.inputToken = token;
+      if (!isInputToken) this.outputToken = token;
     },
     changeWrapTab(id: number) {
       this.activeWrapTab = id;
@@ -239,6 +246,7 @@ export default {
           asset: actionContract.options.address,
           amount: contractSum,
           referral,
+          exchangeContract,
         }, '---exchangeContract1');
         methodParam = {
           asset: actionContract.options.address,
@@ -334,6 +342,15 @@ export default {
         const estimateOptions = { from, gasPrice: this.gasPriceGwei };
         const blockNum = await this.web3.eth.getBlockNumber();
 
+        console.log(
+          action,
+          account,
+          sum,
+          exchangeContract,
+          exchangeMethodName,
+          actionContract,
+          'PARAMS',
+        );
         const method = await this.getContractMethodWithParams(
           action,
           account,
@@ -353,15 +370,15 @@ export default {
           return;
         }
 
+        console.log(estimateOptions, 'estimateOptions');
+        console.log(method, 'method');
+
         // if (this.networkName === 'zksync') {
         //   await this.addedZkSyncGasHistoryData(method, estimateOptions);
         // }
 
-        await method
+        result = await method
           .estimateGas(estimateOptions)
-          .then((gasAmount: any) => {
-            result = gasAmount;
-          })
           .catch((error: any) => {
             if (error && error.message) {
               const msg = error.message.replace(/(?:\r\n|\r|\n)/g, '');
@@ -391,6 +408,7 @@ export default {
         return -1;
       }
 
+      console.log(result, 'result');
       return result;
     },
     // INSURANCE ESTIMATE
@@ -454,15 +472,15 @@ export default {
         console.log('swapTokens---');
         await this.refreshGasPrice();
         const networkId = this.networkId as keyof typeof MINTREDEEM_SCHEME;
-        const contractsByChain: any = chainContractsMap;
-        let exchangeContract = MINTREDEEM_SCHEME[networkId]
+        const exchangeAddress = MINTREDEEM_SCHEME[networkId]
           .find((_) => _.token0.toLowerCase() === this.inputToken.address.toLowerCase());
+        let exchangeContract = null;
 
-        if (exchangeContract) {
+        if (exchangeAddress) {
           exchangeContract = buildContract(
             ABI_Exchange,
             this.web3,
-            contractsByChain[this.networkName].usdPlus?.exchange ?? null,
+            exchangeAddress.exchange,
           );
         }
 
@@ -474,9 +492,27 @@ export default {
         console.log(this.inputToken.value, '-this.inputToken.value');
         const swapSum = BigNumber(this.inputToken.value)
           .times(10 ** this.inputToken.decimals).toString();
+
+        const estimatedGasValue = await this.estimateGas(
+          action,
+          this.account,
+          swapSum,
+          'test-product',
+          exchangeContract,
+          exchangeMethodName,
+          actionContract,
+        );
+        console.log(estimatedGasValue, '-estimatedGasValue');
+        if (!estimatedGasValue) return;
+
+        const gasValue = new BigNumber(estimatedGasValue)
+          .multipliedBy(1.1)
+          .integerValue(BigNumber.ROUND_DOWN);
+
         const buyParams = {
           from: this.account,
           gasPrice: this.gasPriceGwei,
+          gas: gasValue,
         };
 
         const method = await this.getContractMethodWithParams(

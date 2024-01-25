@@ -1,7 +1,10 @@
 <!-- eslint-disable vuejs-accessibility/form-control-has-label -->
 <template>
   <div class="select-tokens">
-    <div class="select-tokens__list">
+    <div
+      class="select-tokens__list"
+      ref="listBlock"
+    >
       <div
         v-for="token in (tokens as any)"
         class="select-tokens__list-item"
@@ -28,6 +31,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { mapGetters } from 'vuex';
+import { onClickOutside, templateRef } from '@vueuse/core';
 import { formatMoney, fixedByPrice } from '@/utils/numbers.ts';
 
 export default defineComponent({
@@ -57,9 +61,16 @@ export default defineComponent({
   computed: {
     ...mapGetters('theme', ['light']),
   },
+  mounted() {
+    this.initClickOutside();
+  },
   methods: {
     formatMoney,
     fixedByPrice,
+    initClickOutside() {
+      const target: any = templateRef('listBlock');
+      onClickOutside(target, () => this.$emit('close-select'));
+    },
     toggleToken(token: any) {
       console.log(token, 'TOKEN');
       if (!token.selected) {

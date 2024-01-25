@@ -34,7 +34,7 @@
         class="mb-5"
       >
         <ButtonComponent
-          @click="goToTransactionHistory"
+          @on-click="goToTransactionHistory"
         >
           Close
         </ButtonComponent>
