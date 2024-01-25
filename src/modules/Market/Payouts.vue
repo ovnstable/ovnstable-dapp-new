@@ -20,7 +20,7 @@
             <p>{{ formatDateTime(trx.payableDate).date }}</p>
             <span class="performance__payouts-time">{{ formatDateTime(trx.payableDate).time }}</span>
           </div>
-          <p>{{ trx.dailyProfit }} {{ payoutData.collateralToken }}</p>
+          <p>{{ formatProfit(trx.dailyProfit, payoutData.collateralToken) }}</p>
           <p>{{ trx.annualizedYield }}%</p>
           <div class="performance__payouts-id-link">
             <a
@@ -91,6 +91,17 @@ export default {
   methods: {
     formatTransactionID(id: string): string {
       return `${id.substring(0, 5)}...${id.substring(id.length - 4)}`;
+    },
+    formatProfit(profit:any, token:string) {
+      if (token !== 'WETH') {
+        return new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD',
+          minimumFractionDigits: 6,
+          maximumFractionDigits: 6,
+        }).format(profit);
+      }
+      return `${parseFloat(profit).toFixed(6)} WETH`;
     },
     formatDateTime(dateTimeStr:string) {
       const optionsDate = { year: 'numeric', month: '2-digit', day: '2-digit' };
@@ -259,7 +270,6 @@ export default {
   opacity: 0;
   transform: translateY(-20px);
 }
-
 @media (max-width: 1024px) {
   .performance__payouts-date-transaction {
     margin-right: 10px;

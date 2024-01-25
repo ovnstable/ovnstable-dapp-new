@@ -67,7 +67,7 @@
                   {{ type === 'portfolio' ? asset.id.tokenName : asset.fullName }}
                 </p>
               </div>
-              <p>{{ type === 'portfolio' ? asset.safetyScore : formatCurrency(asset.netAssetValue, collateralToken) }}</p>
+              <p>{{ type === 'portfolio' ? 'VERY HIGH' : formatCurrency(asset.netAssetValue, collateralToken) }}</p>
               <p>
                 {{ type === 'portfolio' ? formatCurrency(asset.netAssetValue, collateralToken) : formatCurrency(asset.liquidationValue, collateralToken) }}
               </p>
