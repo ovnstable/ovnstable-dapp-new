@@ -3,6 +3,7 @@
     :token-data="tokenData"
     :portfolio-data="portfolioData"
     :collateral-data="collateralData"
+    :payout-data="payoutData"
   />
 </template>
 
@@ -25,17 +26,17 @@ export default defineComponent({
     const tokenData = computed(() => store.state.tokenData.tokenData || {});
     const portfolioData = computed(() => store.state.portfolioData.portfolioData || {});
     const collateralData = computed(() => store.state.collateralData.collateralData || {});
+    const payoutData = computed(() => store.state.payoutData.payoutData || {});
     watch(
       () => route.params.id,
       async (newId) => {
         const marketId = Array.isArray(newId) ? newId[0] : newId;
         const { networkName } = store.state.network;
         if (typeof marketId === 'string' && networkName) {
-          console.log('from index.vue');
-          console.log('marketId:', marketId, 'networkName:', networkName);
           await store.dispatch('tokenData/fetchTokenData', { marketId, networkName });
           await store.dispatch('portfolioData/fetchPortfolioData', { marketId, networkName });
           await store.dispatch('collateralData/fetchCollateralData', { marketId, networkName });
+          await store.dispatch('payoutData/fetchPayoutData', { marketId, networkName });
         }
       },
       { immediate: true },
@@ -49,6 +50,7 @@ export default defineComponent({
       tokenData,
       portfolioData,
       collateralData,
+      payoutData,
     };
   },
 });

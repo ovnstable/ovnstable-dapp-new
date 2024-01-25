@@ -31,6 +31,7 @@
         <p>% in portfolio</p>
       </div>
       <div class="performance__portfolio-assets">
+
         <div
           v-for="asset in assets as any[]"
           :key="asset.tokenName"
@@ -38,11 +39,11 @@
         >
           <div
             class="performance__portfolio-strategies-stables"
-            @click="type === 'strategies' && toggleDropdown(asset.fullName)"
-            @keydown.enter="type === 'strategies' && toggleDropdown(asset.fullName)"
-            tabindex="0"
           >
             <div
+              @click="handleContainerClick(asset)"
+              @keydown.enter="handleContainerClick(asset)"
+              tabindex="0"
               :class="[
                 'performance__portfolio-strategy',
                 { assets: type === 'portfolio' && assets.indexOf(asset) === assets.length - 1 },
@@ -190,9 +191,11 @@ export default {
     };
   },
   methods: {
-    toggleDropdown(tokenName: string | null) {
+    handleContainerClick(asset:any) {
       if (this.type === 'strategies') {
-        this.dropdownVisible = this.dropdownVisible === tokenName ? null : tokenName;
+        this.dropdownVisible = this.dropdownVisible === asset.fullName ? null : asset.fullName;
+      } else if (this.type === 'portfolio') {
+        window.open(asset.tokenAddress, '_blank');
       }
     },
     formatCurrency(value:any, collateralToken:string) {
@@ -278,7 +281,6 @@ export default {
   flex-direction: column;
   width: 100%;
 }
-
 .performance__portfolio-strategies-stables-specs {
   display: flex;
   padding: 0 20px;
@@ -293,6 +295,10 @@ export default {
   padding: 0px 20px;
   padding-bottom: 10px;
   padding-top: 5px;
+}
+
+.performance__portfolio-strategy:hover {
+  cursor: pointer;
 }
 
 .performance__portfolio-strategy > * {

@@ -24,7 +24,6 @@ const actions = {
 
 const mutations = {
   setCollateralData(state: any, value: any) {
-    console.log(value.combinedData);
     state.collateralData = value.combinedData;
   },
 };

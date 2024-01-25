@@ -13,7 +13,10 @@
       />
     </div>
     <div class="market__payouts">
-      <PortfolioPayouts class="market__payout-inner" />
+      <PortfolioPayouts
+        :payout-data="payoutData"
+        class="market__payout-inner"
+      />
     </div>
   </div>
 
@@ -37,6 +40,10 @@ export default {
       default: () => ({}),
     },
     collateralData: {
+      type: Object,
+      default: () => ({}),
+    },
+    payoutData: {
       type: Object,
       default: () => ({}),
     },
