@@ -22,9 +22,9 @@
 
     <div
       v-if="tokensList?.length === 0"
-      class="cards-list-container"
+      class="token-select__spinner"
     >
-      <Spinner />
+      <Spinner size="40px" />
     </div>
 
     <template v-else>
@@ -142,5 +142,14 @@ export default defineComponent({
   right: 10px;
   top: 14px;
   color: var(--color-3);
+}
+
+.token-select__spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px 0;
+  border: 2px solid var(--color-5);
+  background-color: var(--color-4);
 }
 </style>

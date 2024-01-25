@@ -1336,9 +1336,6 @@ export default defineComponent({
       }
 
       const tokenContract = this.tokensContractMap[selectedToken.address];
-      console.log(tokenContract, '--tokenContract');
-      console.log(this.routerContract, '--this.routerContract');
-      console.log(this.account, '--this.account');
       const allowanceValue = await getAllowanceValue(
         tokenContract,
         this.account,

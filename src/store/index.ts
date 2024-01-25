@@ -31,6 +31,7 @@ import mintRedeem from '@/store/mintRedeem/index.ts';
 import errorModal from '@/store/modals/error-modal.ts';
 import waitingModal from '@/store/modals/waiting-modal.ts';
 import successModal from '@/store/modals/success-modal.ts';
+import accTransaction from '@/store/views/account/transaction.ts';
 
 export default new Vuex.Store({
   modules: {
@@ -43,6 +44,7 @@ export default new Vuex.Store({
 
     accountUI,
     accountData,
+    accTransaction,
     insuranceData,
 
     // web3

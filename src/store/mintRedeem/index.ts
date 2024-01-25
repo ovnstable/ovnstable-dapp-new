@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { getFilteredPoolTokens } from '@/store/helpers/index.ts';
-import { MINTREDEEM_42161 } from './mocks.ts';
+import { MINTREDEEM_SCHEME } from '@/store/mintRedeem/mocks.ts';
 
 type TTokensList = Record<number, any[][]>
 
@@ -22,25 +22,24 @@ const actions = {
       commit, state, dispatch, rootState,
     }: any,
   ) {
-    const { networkId } = rootState.network;
-    const tokens = rootState.odosData.tokensMap;
+    const networkId = rootState.network.networkId as keyof typeof MINTREDEEM_SCHEME;
 
-    console.log(MINTREDEEM_42161, '--MINTREDEEM_42161');
-    console.log(rootState, 'tokens');
-    if (networkId === 42161) {
-      const list = MINTREDEEM_42161.map((_) => getFilteredPoolTokens(
-        networkId,
-        true,
-        _,
-        true,
-        rootState.odosData,
-      ));
+    if (!MINTREDEEM_SCHEME[networkId]) return;
 
-      commit('changeState', {
-        42161: list,
-      });
-      console.log(list, '----list');
-    }
+    // todo: init lists for every networkId on first render
+    // currently its init on networkId change
+    const list = MINTREDEEM_SCHEME[networkId].map((_) => getFilteredPoolTokens(
+      networkId,
+      true,
+      [_.token0, _.token1],
+      true,
+      rootState.odosData,
+    ));
+
+    commit('changeState', {
+      [networkId]: list,
+    });
+    console.log(list, '----list');
     console.log(networkId, 'initTokens');
   },
 };

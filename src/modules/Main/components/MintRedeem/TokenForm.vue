@@ -196,7 +196,10 @@ export default defineComponent({
       this.showTokenSelect = !this.showTokenSelect;
     },
     inputUpdate(value: any) {
-      this.$emit('update-token', this.tokenFullData, value);
+      this.$emit('update-token', {
+        ...this.tokenFullData,
+        value,
+      });
     },
   },
 });

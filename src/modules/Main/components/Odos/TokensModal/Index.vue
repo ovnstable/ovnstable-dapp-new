@@ -32,16 +32,9 @@
       <div class="tokens-container">
         <div
           v-if="!isAllDataLoaded"
-          class="pt-7 pb-7 cards-list-container"
+          class="token-select__spinner"
         >
-          <div class="row">
-            <div
-              align="center"
-              justify="center"
-            >
-              ...loading
-            </div>
-          </div>
+          <Spinner size="40px" />
         </div>
 
         <div v-else>
@@ -61,12 +54,14 @@
 import { defineComponent } from 'vue';
 import SelectTokenWithSearch from '@/modules/Main/components/Odos/TokensModal/SelectTokenWithSearch.vue';
 import ModalComponent from '@/components/Modal/Index.vue';
+import Spinner from '@/components/Spinner/Index.vue';
 
 export default defineComponent({
   name: 'SelectTokensModal',
   components: {
     SelectTokenWithSearch,
     ModalComponent,
+    Spinner,
   },
   props: {
     isShow: {
@@ -168,5 +163,12 @@ export default defineComponent({
       color: var(--color-1);
   }
 }
-
+.token-select__spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px 0;
+  border: 2px solid var(--color-5);
+  background-color: var(--color-4);
+}
 </style>

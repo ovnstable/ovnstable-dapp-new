@@ -13,20 +13,13 @@ import {
   EXCHANGER_INSURANCE_ABI,
   INSURANCE_TOKEN_ABI,
 } from '@/assets/abi/index.ts';
-import { chainContractsMap } from '@/utils/contractsMap.ts';
+import { chainContractsMap, buildContract } from '@/utils/contractsMap.ts';
 
 const contractsByChain: any = chainContractsMap;
 
 const state = {};
 
 const getters = {};
-
-function load(abi: any, web3: any, address: string) {
-  if (address == null) {
-    return null;
-  }
-  return new web3.eth.Contract(abi, address);
-}
 
 const actions = {
   async initContracts({
@@ -39,6 +32,7 @@ const actions = {
     [
       // exchange
       contracts.exchange,
+      contracts.usdcExchange,
       contracts.daiExchange,
       contracts.usdtExchange,
       contracts.wethExchange,
@@ -49,6 +43,7 @@ const actions = {
 
       // pm
       contracts.pm,
+      contracts.usdcPm,
       contracts.daiPm,
       contracts.usdtPm,
       contracts.wethPm,
@@ -56,12 +51,14 @@ const actions = {
 
       // plus
       contracts.usdPlus,
+      contracts.usdcPlus,
       contracts.daiPlus,
       contracts.usdtPlus,
       contracts.ethPlus,
 
       // m2m
       contracts.m2m,
+      contracts.usdcM2m,
       contracts.daiM2m,
       contracts.usdtM2m,
       contracts.wethM2m,
@@ -79,85 +76,172 @@ const actions = {
       contracts.asset_two,
       contracts.dai,
       contracts.usdt,
+      contracts.usdcNative,
       contracts.weth,
       contracts.ovn,
     ] = await Promise.all([
-
       // Exchange
-      load(ABI_Exchange, web3, contractsByChain[network].usdPlus?.exchange ?? null),
-      load(ABI_Exchange, web3, contractsByChain[network].daiPlus?.exchange ?? null),
-      load(ABI_Exchange, web3, contractsByChain[network].usdtPlus?.exchange ?? null),
-      load(ABI_Exchange, web3, contractsByChain[network].ethPlus?.exchange ?? null),
+      buildContract(
+        ABI_Exchange,
+        web3,
+        contractsByChain[network].usdPlus?.exchange ?? null,
+      ),
+      buildContract(
+        ABI_Exchange,
+        web3,
+        contractsByChain[network].usdcPlus?.exchange ?? null,
+      ),
+      buildContract(
+        ABI_Exchange,
+        web3,
+        contractsByChain[network].daiPlus?.exchange ?? null,
+      ),
+      buildContract(
+        ABI_Exchange,
+        web3,
+        contractsByChain[network].usdtPlus?.exchange ?? null,
+      ),
+      buildContract(
+        ABI_Exchange,
+        web3,
+        contractsByChain[network].ethPlus?.exchange ?? null,
+      ),
 
       // ovn
-      load(ABI_Ovn, web3, contractsByChain[network]?.ovn ?? null),
-      load(ABI_OvnGovernor, web3, contractsByChain[network]?.ovnGovernor ?? null),
+      buildContract(ABI_Ovn, web3, contractsByChain[network]?.ovn ?? null),
+      buildContract(
+        ABI_OvnGovernor,
+        web3,
+        contractsByChain[network]?.ovnGovernor ?? null,
+      ),
 
       // PM
-      load(
+      buildContract(
         ABI_PortfolioManager,
         web3,
-
         contractsByChain[network].usdPlus?.portfolioManager ?? null,
       ),
-      load(
+      buildContract(
         ABI_PortfolioManager,
         web3,
-
+        contractsByChain[network].usdcPlus?.portfolioManager ?? null,
+      ),
+      buildContract(
+        ABI_PortfolioManager,
+        web3,
         contractsByChain[network].daiPlus?.portfolioManager ?? null,
       ),
-      load(
+      buildContract(
         ABI_PortfolioManager,
         web3,
-
         contractsByChain[network].usdtPlus?.portfolioManager ?? null,
       ),
-      load(
+      buildContract(
         ABI_PortfolioManager,
         web3,
-
         contractsByChain[network].ethPlus?.portfolioManager ?? null,
       ),
-      load(ABI_OvnTimelock, web3, contractsByChain[network]?.ovnTimelockController ?? null),
+      buildContract(
+        ABI_OvnTimelock,
+        web3,
+        contractsByChain[network]?.ovnTimelockController ?? null,
+      ),
 
       // plus
-      load(ABI_PlusToken, web3, contractsByChain[network].usdPlus?.tokenPlus ?? null),
-      load(ABI_PlusToken, web3, contractsByChain[network].daiPlus?.tokenPlus ?? null),
-      load(ABI_PlusToken, web3, contractsByChain[network].usdtPlus?.tokenPlus ?? null),
-      load(ABI_PlusToken, web3, contractsByChain[network].ethPlus?.tokenPlus ?? null),
+      buildContract(
+        ABI_PlusToken,
+        web3,
+        contractsByChain[network].usdPlus?.tokenPlus ?? null,
+      ),
+      buildContract(
+        ABI_PlusToken,
+        web3,
+        contractsByChain[network].usdcPlus?.tokenPlus ?? null,
+      ),
+      buildContract(
+        ABI_PlusToken,
+        web3,
+        contractsByChain[network].daiPlus?.tokenPlus ?? null,
+      ),
+      buildContract(
+        ABI_PlusToken,
+        web3,
+        contractsByChain[network].usdtPlus?.tokenPlus ?? null,
+      ),
+      buildContract(
+        ABI_PlusToken,
+        web3,
+        contractsByChain[network].ethPlus?.tokenPlus ?? null,
+      ),
 
       // m2m
-      load(ABI_Mark2market, web3, contractsByChain[network].usdPlus?.mark2market ?? null),
-      load(ABI_Mark2market, web3, contractsByChain[network].daiPlus?.mark2market ?? null),
-      load(ABI_Mark2market, web3, contractsByChain[network].usdtPlus?.mark2market ?? null),
-      load(ABI_Mark2market, web3, contractsByChain[network].ethPlus?.mark2market ?? null),
+      buildContract(
+        ABI_Mark2market,
+        web3,
+        contractsByChain[network].usdPlus?.mark2market ?? null,
+      ),
+      buildContract(
+        ABI_Mark2market,
+        web3,
+        contractsByChain[network].usdcPlus?.mark2market ?? null,
+      ),
+      buildContract(
+        ABI_Mark2market,
+        web3,
+        contractsByChain[network].daiPlus?.mark2market ?? null,
+      ),
+      buildContract(
+        ABI_Mark2market,
+        web3,
+        contractsByChain[network].usdtPlus?.mark2market ?? null,
+      ),
+      buildContract(
+        ABI_Mark2market,
+        web3,
+        contractsByChain[network].ethPlus?.mark2market ?? null,
+      ),
 
       // market
-      load(ABI_Market, web3, contractsByChain[network]?.market ?? null),
-      load(ABI_Market, web3, contractsByChain[network]?.marketWeth ?? null),
+      buildContract(ABI_Market, web3, contractsByChain[network]?.market ?? null),
+      buildContract(ABI_Market, web3, contractsByChain[network]?.marketWeth ?? null),
 
       // wusd
-      load(ABI_WusdPlus, web3, contractsByChain[network].usdPlus?.wUsdPlus ?? null),
-      load(ABI_WusdPlus, web3, contractsByChain[network].wEthPlus?.tokenPlus ?? null),
+      buildContract(
+        ABI_WusdPlus,
+        web3,
+        contractsByChain[network].usdPlus?.wUsdPlus ?? null,
+      ),
+      buildContract(
+        ABI_WusdPlus,
+        web3,
+        contractsByChain[network].wEthPlus?.tokenPlus ?? null,
+      ),
 
       // assets
-      load(ERC20_ABI, web3, contractsByChain[network]?.usdc ?? null),
-      load(ERC20_ABI, web3, contractsByChain[network]?.wrapped ?? null),
-      load(ERC20_ABI, web3, contractsByChain[network]?.dai ?? null),
-      load(ERC20_ABI, web3, contractsByChain[network]?.usdt ?? null),
-      load(ERC20_ABI, web3, contractsByChain[network]?.wETH ?? null),
-      load(ERC20_ABI, web3, contractsByChain[network]?.ovn ?? null),
+      buildContract(ERC20_ABI, web3, contractsByChain[network]?.usdc ?? null),
+      buildContract(ERC20_ABI, web3, contractsByChain[network]?.wrapped ?? null),
+      buildContract(ERC20_ABI, web3, contractsByChain[network]?.dai ?? null),
+      buildContract(ERC20_ABI, web3, contractsByChain[network]?.usdt ?? null),
+      buildContract(ERC20_ABI, web3, contractsByChain[network]?.usdcNative ?? null),
+      buildContract(ERC20_ABI, web3, contractsByChain[network]?.wETH ?? null),
+      buildContract(ERC20_ABI, web3, contractsByChain[network]?.ovn ?? null),
     ]);
 
-    const insurances = [
-      { network: 'optimism' },
-    ];
+    const insurances = [{ network: 'optimism' }, { network: 'arbitrum' }];
 
-    for (let i = 0; i < insurances.length; i += 1) {
+    for (let i = 0; i < insurances.length; i++) {
       if (network === insurances[i].network) {
         contracts.insurance = {};
-        contracts.insurance[`${insurances[i].network}_exchanger`] = load(EXCHANGER_INSURANCE_ABI, web3, contractsByChain[network]?.exchange_insurance ?? null);
-        contracts.insurance[`${insurances[i].network}_token`] = load(INSURANCE_TOKEN_ABI, web3, contractsByChain[network]?.token_insurance ?? null);
+        contracts.insurance[`${insurances[i].network}_exchanger`] = buildContract(
+          EXCHANGER_INSURANCE_ABI,
+          web3,
+          contractsByChain[network]?.exchange_insurance ?? null,
+        );
+        contracts.insurance[`${insurances[i].network}_token`] = buildContract(
+          INSURANCE_TOKEN_ABI,
+          web3,
+          contractsByChain[network]?.token_insurance ?? null,
+        );
       }
     }
     commit('web3/setContracts', contracts, { root: true });

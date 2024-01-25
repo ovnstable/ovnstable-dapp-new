@@ -88,6 +88,13 @@ export const chainContractsMap = {
     usdt: '0xA219439258ca9da29E9Cc4cE5596924745e12B93',
   },
   base: {
+    usdcPlus: {
+      tokenPlus: '0x85483696Cc9970Ad9EdD786b2C5ef735F38D156f',
+      exchange: '0x868D69875BF274E7Bd3d8b97b1Acd89dbdeb67af',
+      mark2market: '0x96aa0bBe4D0dea7C4AF4739c53dBFA0300262253',
+      portfolioManager: '0x619A500F1Ae543823B1c33dB63De99F83aC057e4',
+      wUsdPlus: '',
+    },
     usdPlus: {
       tokenPlus: '0xB79DD08EA68A908A97220C76d19A6aA9cBDE4376',
       exchange: '0x7cb1B38591021309C64f451859d79312d8Ca2789',
@@ -103,6 +110,7 @@ export const chainContractsMap = {
     },
     ovn: '0xA3d1a8DEB97B111454B294E2324EfAD13a9d8396',
     usdc: '0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA',
+    usdcNative: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
     market: '0x20FAF24BEb86B81092D63E95A6E764C4fEd85873',
     dai: '0x50c5725949a6f0c72e6c4a641f24049a917db0cb',
   },
@@ -136,3 +144,10 @@ export const chainContractsMap = {
     dai: '0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063',
   },
 };
+
+export function buildContract(abi: any, web3: any, address: string) {
+  if (address == null) {
+    return null;
+  }
+  return new web3.eth.Contract(abi, address);
+}

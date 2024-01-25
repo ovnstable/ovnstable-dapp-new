@@ -354,3 +354,16 @@ export const loadBalance = async (
     };
   }
 };
+
+const KEY = 'REFERRAL_CODE';
+
+export const getReferralCode = () => {
+  const match = document.cookie.match(new RegExp(`(^| )${KEY}=([^;]+)`));
+  if (match) {
+    const referralCode = match[2];
+    console.log(`Referral code found in cookie = [${referralCode}]`);
+    return referralCode;
+  }
+  // console.log('Referral code not found in cookies');
+  return '';
+};
