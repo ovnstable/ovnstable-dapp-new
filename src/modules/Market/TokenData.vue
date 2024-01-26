@@ -54,7 +54,7 @@
       @click="saveNetworkToLocalStore(chain)"
       @keydown.enter="saveNetworkToLocalStore(chain)"
       class="performance__chain-data"
-      :class="{ selected: chain === selectedChain }"
+      :class="{ selected: chain.toLowerCase() === networkName }"
     >
       <BaseIcon
         name='IconArbitrum'
@@ -75,13 +75,17 @@ export default {
   components: {
     BaseIcon,
   },
+  data() {
+    return {
+      selectedChain: 'arbitrum',
+    };
+  },
   setup() {
     const store = useStore();
 
     const saveNetworkToLocalStore = (chain) => {
       console.log(chain.toLowerCase());
       store.dispatch('network/changeDappNetwork', chain.toLowerCase());
-      const dbNetworkName = localStorage.getItem('selectedNetwork');
     };
 
 
@@ -237,10 +241,13 @@ export default {
     align-items: center;
     border-radius: 30px;
     border: 1px solid var(--color-6);
-    background: var(--color-4);
+    background: var(--color-5);
     padding: 5px 10px;
     margin-top: 24px;
     width: fit-content;
+  }
+  .selected {
+    background: var(--color-4);
   }
 
   .performance__chain-data:hover {
