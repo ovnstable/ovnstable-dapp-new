@@ -1,6 +1,9 @@
+/* eslint-disable consistent-return */
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable camelcase */
+import { USER_BALANCES_SCHEME } from '@/store/views/account/mocks.ts';
+
 const state = {
 
   balance: {},
@@ -84,197 +87,20 @@ const actions = {
     commit('accountUI/setLoadingBalance', true, { root: true });
     const { web3 } = rootState;
 
-    const { networkId } = rootState.network;
-    const { assetDecimals } = rootState.network;
+    const networkId = rootState.network.networkId as keyof typeof USER_BALANCES_SCHEME;
+    const balances = await Promise.all(USER_BALANCES_SCHEME[networkId].map(async (_) => {
+      if (!web3.contracts[_.contractName]) return;
+      const result = await web3.contracts[_.contractName].methods
+        .balanceOf(getters.account)
+        .call();
+      return {
+        symbol: _.symbol,
+        balance: result,
+      };
+    }));
 
-    let usdPlus;
-    let originUsdPlus;
-
-    let daiPlus;
-    let originDaiPlus;
-
-    let dai;
-    let originDai;
-
-    let usdtPlus;
-    let originUsdtPlus;
-
-    let ethPlus;
-    let originEthPlus;
-
-    let usdt;
-    let originUsdt;
-
-    let weth;
-    let originWeth;
-
-    let asset;
-    let originAsset;
-
-    let asset_two;
-    let originAsset_two;
-
-    let wUsdPlus;
-    let originWUsdPlus;
-
-    let wEthPlus;
-    let originWethPlus;
-
-    let ovn;
-    let originOvn;
-
-    try {
-      asset = await web3.contracts.asset.methods.balanceOf(getters.account).call();
-      originAsset = asset;
-      asset = asset ? web3.web3.utils.fromWei(asset, assetDecimals === 18 ? 'ether' : 'mwei') : null;
-    } catch (e) {
-      asset = getters.balance.asset;
-      originAsset = getters.originalBalance.asset;
-    }
-
-    // todo: arbitrum usdt ?
-    if (web3.contracts.asset_two) {
-      try {
-        asset_two = await web3.contracts.asset_two.methods.balanceOf(getters.account).call();
-        originAsset_two = asset_two;
-        asset_two = asset_two ? web3.web3.utils.fromWei(asset_two, assetDecimals === 18 ? 'ether' : 'mwei') : null;
-      } catch (e) {
-        asset_two = getters.balance.asset_two;
-        originAsset_two = getters.originalBalance.asset_two;
-      }
-    }
-
-    try {
-      usdPlus = await web3.contracts.usdPlus.methods.balanceOf(getters.account).call();
-      originUsdPlus = usdPlus;
-      usdPlus = usdPlus ? web3.web3.utils.fromWei(usdPlus, 'mwei') : usdPlus;
-    } catch (e) {
-      usdPlus = getters.balance.usdPlus;
-      originUsdPlus = getters.originalBalance.usdPlus;
-    }
-
-    try {
-      daiPlus = await web3.contracts.daiPlus.methods.balanceOf(getters.account).call();
-      originDaiPlus = daiPlus;
-      daiPlus = daiPlus ? web3.web3.utils.fromWei(daiPlus, 'ether') : daiPlus;
-    } catch (e) {
-      daiPlus = getters.balance.daiPlus;
-      originDaiPlus = getters.originalBalance.daiPlus;
-    }
-
-    try {
-      dai = await web3.contracts.dai.methods.balanceOf(getters.account).call();
-      originDai = dai;
-      dai = dai ? web3.web3.utils.fromWei(dai, 'ether') : dai;
-    } catch (e) {
-      dai = getters.balance.dai;
-      originDai = getters.originalBalance.dai;
-    }
-
-    if (networkId === 56 || networkId === 59144 || networkId === 42161) {
-      let unit = 'ether';
-      if (networkId === 59144 || networkId === 42161) {
-        unit = 'mwei';
-      }
-
-      try {
-        usdtPlus = await web3.contracts.usdtPlus.methods.balanceOf(getters.account).call();
-        originUsdtPlus = usdtPlus;
-        usdtPlus = usdtPlus ? web3.web3.utils.fromWei(usdtPlus, unit) : usdtPlus;
-      } catch (e) {
-        usdtPlus = getters.balance.usdtPlus;
-        originUsdtPlus = getters.originalBalance.usdtPlus;
-      }
-
-      try {
-        usdt = await web3.contracts.usdt.methods.balanceOf(getters.account).call();
-        originUsdt = usdt;
-        usdt = usdt ? web3.web3.utils.fromWei(usdt, unit) : usdt;
-      } catch (e) {
-        usdt = getters.balance.usdt;
-        originUsdt = getters.originalBalance.usdt;
-      }
-    }
-
-    // eth contracts
-    if (networkId === 42161) {
-      const unit = 'ether';
-
-      try {
-        ethPlus = await web3.contracts.ethPlus.methods.balanceOf(getters.account).call();
-        wEthPlus = await web3.contracts.wEthPlus.methods.balanceOf(getters.account).call();
-        originEthPlus = ethPlus;
-        originWethPlus = wEthPlus;
-        ethPlus = ethPlus ? web3.web3.utils.fromWei(ethPlus, unit) : ethPlus;
-        wEthPlus = wEthPlus ? web3.web3.utils.fromWei(wEthPlus, unit) : wEthPlus;
-      } catch (e) {
-        ethPlus = getters.balance.ethPlus;
-        originEthPlus = getters.originalBalance.ethPlus;
-      }
-
-      try {
-        weth = await web3.contracts.weth.methods.balanceOf(getters.account).call();
-        originWeth = weth;
-        weth = weth ? web3.web3.utils.fromWei(weth, unit) : weth;
-      } catch (e) {
-        weth = getters.balance.weth;
-        originWeth = getters.originalBalance.weth;
-      }
-    }
-
-    // ovn contracts
-    if (networkId === 10 || networkId === 42161 || networkId === 8453) {
-      try {
-        ovn = await web3.contracts.ovn.methods.balanceOf(getters.account).call();
-        originOvn = ovn;
-        ovn = ovn ? web3.web3.utils.fromWei(ovn, 'ether') : null;
-      } catch (e) {
-        ovn = getters.balance.ovn;
-        originOvn = getters.originalBalance.ovn;
-      }
-    }
-
-    // wrapped contracts
-    if (networkId === 137 || networkId === 10 || networkId === 42161 || networkId === 8453) {
-      try {
-        wUsdPlus = await web3.contracts.wUsdPlus.methods.balanceOf(getters.account).call();
-        originWUsdPlus = wUsdPlus;
-        wUsdPlus = wUsdPlus ? web3.web3.utils.fromWei(wUsdPlus, 'mwei') : null;
-      } catch (e) {
-        wUsdPlus = getters.balance.wUsdPlus;
-        originWUsdPlus = getters.originalBalance.wUsdPlus;
-      }
-    }
-
-    commit('setBalance', {
-      usdPlus,
-      daiPlus,
-      usdtPlus,
-      ethPlus,
-      dai,
-      usdt,
-      weth,
-      asset,
-      asset_two,
-      wUsdPlus,
-      wEthPlus,
-      ovn,
-    });
-
-    commit('setOriginalBalance', {
-      usdPlus: originUsdPlus,
-      daiPlus: originDaiPlus,
-      usdtPlus: originUsdtPlus,
-      ethPlus: originEthPlus,
-      dai: originDai,
-      usdt: originUsdt,
-      weth: originWeth,
-      asset: originAsset,
-      asset_two: originAsset_two,
-      wUsdPlus: originWUsdPlus,
-      wEthPlus: originWethPlus,
-      ovn: originOvn,
-    });
+    // original meaning without decimals
+    commit('setOriginalBalance', balances);
 
     const resultEtsBalance: any = {};
     const resultEtsOriginalBalance: any = {};
@@ -288,11 +114,14 @@ const actions = {
 
         if (ets.chain === networkId) {
           try {
-            etsBalance = await web3
-              .contracts[ets.tokenContract]
-              .methods.balanceOf(getters.account).call();
+            etsBalance = await web3.contracts[ets.tokenContract].methods
+              .balanceOf(getters.account)
+              .call();
             etsOriginalBalance = etsBalance;
-            etsBalance = web3.web3.utils.fromWei(etsBalance, ets.etsTokenDecimals === 18 ? 'ether' : 'mwei');
+            etsBalance = web3.web3.utils.fromWei(
+              etsBalance,
+              ets.etsTokenDecimals === 18 ? 'ether' : 'mwei',
+            );
           } catch (e) {
             etsBalance = getters.etsBalance[ets.name];
             etsOriginalBalance = getters.etsOriginalBalance[ets.name];
@@ -310,13 +139,13 @@ const actions = {
     const resultInsuranceBalance: any = {};
     const resultInsuranceOriginalBalance: any = {};
     const insuranceList = [
-      /*         {
-                chainName: 'polygon',
-                chainId: 137,
-            }, */
       {
         chainName: 'optimism',
         chainId: 10,
+      },
+      {
+        chainName: 'arbitrum',
+        chainId: 42161,
       },
     ];
 
@@ -328,16 +157,25 @@ const actions = {
 
         if (insurance.chainId === networkId) {
           try {
-            insuranceBalance = await web3.contracts.insurance[`${insurance.chainName}_token`].methods.balanceOf(getters.account).call();
+            insuranceBalance = await web3.contracts.insurance[
+              `${insurance.chainName}_token`
+            ].methods
+              .balanceOf(getters.account)
+              .call();
             insuranceOriginalBalance = insuranceBalance;
-            insuranceBalance = web3.web3.utils.fromWei(insuranceBalance, 'ether');
+            insuranceBalance = web3.web3.utils.fromWei(
+              insuranceBalance,
+              'ether',
+            );
           } catch (e) {
             insuranceBalance = getters.insuranceBalance[insurance.chainName];
             insuranceOriginalBalance = getters.insuranceOriginalBalance[insurance.chainName];
           }
 
           resultInsuranceBalance[insurance.chainName] = insuranceBalance;
-          resultInsuranceOriginalBalance[insurance.chainName] = insuranceOriginalBalance;
+          resultInsuranceOriginalBalance[
+            insurance.chainName
+          ] = insuranceOriginalBalance;
         }
       }
     }
@@ -354,19 +192,27 @@ const actions = {
 
         if (!resultActionAssetBalance[ets.actionAsset]) {
           try {
-            actionAssetBalance = await web3
-              .contracts[ets.actionAsset]
-              .methods.balanceOf(getters.account).call();
+            actionAssetBalance = await web3.contracts[ets.actionAsset].methods
+              .balanceOf(getters.account)
+              .call();
 
             switch (ets.actionTokenDecimals) {
               case 6:
-                actionAssetBalance = web3.web3.utils.fromWei(actionAssetBalance, 'mwei');
+                actionAssetBalance = web3.web3.utils.fromWei(
+                  actionAssetBalance,
+                  'mwei',
+                );
                 break;
               case 8:
-                actionAssetBalance = parseFloat(web3.web3.utils.fromWei(actionAssetBalance, 'mwei')) / 100.0;
+                actionAssetBalance = parseFloat(
+                  web3.web3.utils.fromWei(actionAssetBalance, 'mwei'),
+                ) / 100.0;
                 break;
               case 18:
-                actionAssetBalance = web3.web3.utils.fromWei(actionAssetBalance, 'ether');
+                actionAssetBalance = web3.web3.utils.fromWei(
+                  actionAssetBalance,
+                  'ether',
+                );
                 break;
               default:
                 break;

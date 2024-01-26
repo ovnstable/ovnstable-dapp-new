@@ -41,7 +41,7 @@
       <div class="input-tokens__row">
         <div class="input-tokens__balance">
           <div
-            v-if="isInputToken && tokenInfo.token?.selectedToken"
+            v-if="isInputToken && tokenInfo.symbol"
           >
             ~ ${{formatMoney(tokenInfo.usdValue, 2)}}
           </div>
@@ -58,10 +58,9 @@
           class="input-tokens__balance"
         >
           <div class="select-token-balance-text">
-            <div v-if="tokenInfo.selectedToken && tokenInfo.selectedToken?.balanceData?.balance">
+            <div v-if="tokenInfo && tokenInfo.symbol">
               <span class="select-token-balance-text-enabled">
-                {{formatMoney(tokenInfo.selectedtoken?.balanceData.balance,
-                              fixedByPrice(tokenInfo.selectedtoken?.price))}}
+                {{tokenBalance + " " + tokenInfo.symbol}}
               </span>
             </div>
             <div v-else>
@@ -95,6 +94,7 @@ import { mapGetters } from 'vuex';
 import InputComponent from '@/components/Input/Index.vue';
 import { formatMoney, fixedByPrice } from '@/utils/numbers.ts';
 import TokensChooseForm from '@/modules/Main/components/MintRedeem/TokenSelect/Index.vue';
+import BigNumber from 'bignumber.js';
 
 export default defineComponent({
   name: 'TokenForm',
@@ -136,6 +136,15 @@ export default defineComponent({
   computed: {
     ...mapGetters('network', ['networkId']),
     ...mapGetters('mintRedeem', ['tokensListGetter']),
+    ...mapGetters('accountData', ['account', 'originalBalance']),
+    tokenBalance() {
+      const balanceData = this.originalBalance.find((_: any) => _.symbol === this.tokenInfo.symbol);
+      if (!balanceData) return '0';
+
+      const formattedBalance = new BigNumber(balanceData.balance)
+        .div(10 ** this.tokenInfo.decimals).toNumber();
+      return formatMoney(formattedBalance, 2);
+    },
     tokensList() {
       const list = this.tokensListGetter[this.networkId];
 

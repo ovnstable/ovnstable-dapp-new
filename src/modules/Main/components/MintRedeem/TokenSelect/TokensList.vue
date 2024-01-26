@@ -32,7 +32,6 @@
 import { defineComponent } from 'vue';
 import { mapGetters } from 'vuex';
 import { onClickOutside, templateRef } from '@vueuse/core';
-import { formatMoney, fixedByPrice } from '@/utils/numbers.ts';
 
 export default defineComponent({
   name: 'SelectTokens',
@@ -65,8 +64,6 @@ export default defineComponent({
     this.initClickOutside();
   },
   methods: {
-    formatMoney,
-    fixedByPrice,
     initClickOutside() {
       const target: any = templateRef('listBlock');
       onClickOutside(target, () => this.$emit('close-select'));
