@@ -26,7 +26,6 @@
         :is-input-token="false"
         :active-mint="isMintActive"
         @add-token="selectFormToken"
-        @update-token="updateTokenValueMethod"
       />
     </div>
 
@@ -219,7 +218,10 @@ export default {
     },
     updateTokenValueMethod(token: any, isInputToken: boolean) {
       if (isInputToken) this.inputToken = token;
-      if (!isInputToken) this.outputToken = token;
+      this.outputToken = {
+        ...token,
+        value: token.value,
+      };
     },
     changeWrapTab(id: number) {
       this.activeWrapTab = id;

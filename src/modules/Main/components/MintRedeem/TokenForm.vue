@@ -212,10 +212,6 @@ export default defineComponent({
         ...this.tokenFullData,
         value,
       }, this.isInputToken);
-      this.$emit('update-token', {
-        ...this.tokenFullData,
-        value,
-      }, !this.isInputToken);
     },
   },
 });

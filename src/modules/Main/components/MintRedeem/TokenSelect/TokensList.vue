@@ -69,7 +69,6 @@ export default defineComponent({
       onClickOutside(target, () => this.$emit('close-select'));
     },
     toggleToken(token: any) {
-      console.log(token, 'TOKEN');
       if (!token.selected) {
         this.$emit('select-token', token);
         return;
