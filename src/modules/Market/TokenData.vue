@@ -1,5 +1,6 @@
 <template>
   <div class="performance__token-data">
+    <p>{{ networkName }}</p>
     <BaseIcon
       :name=tokenData.tokenImageName
       class="performance__token-data-main-token"
@@ -7,7 +8,7 @@
     <div class="performance__token-data-link-title">
       <p class="performance__token-data-title performance__token-data-title--token">{{ tokenData.tokenName }}</p>
       <a
-        :href=tokenData.tokenLink
+        :href="`${networkScan}token/` + generateHref(tokenData.tokenName, networkName)"
         target="_blank"
         rel="noopener noreferrer"
         aria-label="token-address"
@@ -47,50 +48,92 @@
     <div class="performance__divider performance__divider--last-divider" />
   </div>
 
-  <div class="performance__chain-data">
-    <BaseIcon
-      :name=chainIcon
-      class="performance__icon-chain-bottom"
-    />
-    <p class="performance__chain-data-name">{{ chainName }}</p>
+  <div class="performance__chain-data-container">
+    <div
+      v-for="chain in availableChains"
+      :key="chain"
+      @click="saveNetworkToLocalStore(chain)"
+      @keydown.enter="saveNetworkToLocalStore(chain)"
+      class="performance__chain-data"
+      :class="{ selected: chain === selectedChain }"
+    >
+      <BaseIcon
+        name='IconArbitrum'
+        class="performance__icon-chain-bottom"
+      />
+      <p class="performance__chain-data-name">{{ chain }}</p>
+    </div>
   </div>
+
 </template>
 
 <script lang="ts">
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import { useStore } from 'vuex';
+import { contractAddressMap } from '@/utils/const.ts';
 
 export default {
   components: {
     BaseIcon,
+  },
+  setup() {
+    const store = useStore();
+
+    const saveNetworkToLocalStore = (chain) => {
+      console.log(chain.toLowerCase());
+      store.dispatch('network/saveNetworkToLocalStore', chain.toLowerCase());
+      const dbNetworkName = localStorage.getItem('selectedNetwork');
+      console.log(dbNetworkName);
+    };
+
+    return {
+      saveNetworkToLocalStore,
+    };
+  },
+  data() {
+    return {
+      currentToken: 'USD',
+    };
   },
   props: {
     tokenData: {
       type: Object,
       default: () => ({}),
     },
-    payoutAgo: {
-      type: String,
-      default: '05:02',
-    },
-    hoursAgo: {
-      type: String,
-      default: 'hours ago',
-    },
-    dailyAPY: {
-      type: Number,
-      default: 11.9,
-    },
     chainIcon: {
       type: String,
       default: 'IconArbitrum',
     },
-    totalTVL: {
-      type: Number,
-      default: 123.631341,
-    },
     chainName: {
       type: String,
       default: 'Arbitrum',
+    },
+  },
+  computed: {
+    networkName() {
+      return this.$store.state.network.networkName;
+    },
+    networkScan() {
+      return this.$store.state.network.explorerUrl;
+    },
+    availableChains() {
+      const tokenKey = `${this.tokenData.tokenName.slice(0, -1).toUpperCase()}_PLUS`;
+      console.log(tokenKey);
+      return Object.keys(contractAddressMap[tokenKey] || {});
+    },
+  },
+  methods: {
+    generateHref(tokenName: string, networkName: string): string {
+      const truncatedTokenName = `${tokenName.slice(0, -1)}_PLUS`;
+      const uppercaseNetworkName = networkName.toUpperCase();
+      const address = contractAddressMap[truncatedTokenName]?.[uppercaseNetworkName];
+
+      if (!address) {
+        console.error(`Address not found for ${truncatedTokenName} on ${uppercaseNetworkName}`);
+        return '';
+      }
+
+      return address;
     },
   },
 
@@ -204,6 +247,10 @@ export default {
     width: fit-content;
   }
 
+  .performance__chain-data:hover {
+    cursor: pointer;
+  }
+
   .performance__chain-data-name {
     margin-left: 7px;
     font-weight: 500;
@@ -215,6 +262,15 @@ export default {
     width: 20px;
     height: 20px;
     flex-shrink: 0
+  }
+
+  .performance__chain-data-container {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .performance__chain-data-container > *:not(:last-child) {
+    margin-right: 7px;
   }
 
   @media (max-width: 1024px) {
