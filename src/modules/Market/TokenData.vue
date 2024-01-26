@@ -1,8 +1,7 @@
 <template>
   <div class="performance__token-data">
-    <p>{{ networkName }}</p>
     <BaseIcon
-      :name=tokenData.tokenImageName
+      :name=tokenData.tokenImageName  
       class="performance__token-data-main-token"
     />
     <div class="performance__token-data-link-title">
@@ -81,18 +80,13 @@ export default {
 
     const saveNetworkToLocalStore = (chain) => {
       console.log(chain.toLowerCase());
-      store.dispatch('network/saveNetworkToLocalStore', chain.toLowerCase());
+      store.dispatch('network/changeDappNetwork', chain.toLowerCase());
       const dbNetworkName = localStorage.getItem('selectedNetwork');
-      console.log(dbNetworkName);
     };
+
 
     return {
       saveNetworkToLocalStore,
-    };
-  },
-  data() {
-    return {
-      currentToken: 'USD',
     };
   },
   props: {
@@ -118,12 +112,14 @@ export default {
     },
     availableChains() {
       const tokenKey = `${this.tokenData.tokenName.slice(0, -1).toUpperCase()}_PLUS`;
-      console.log(tokenKey);
       return Object.keys(contractAddressMap[tokenKey] || {});
     },
   },
   methods: {
-    generateHref(tokenName: string, networkName: string): string {
+    generateHref(tokenName: any, networkName: string): any {
+      if (!tokenName) {
+        return '';
+      }
       const truncatedTokenName = `${tokenName.slice(0, -1)}_PLUS`;
       const uppercaseNetworkName = networkName.toUpperCase();
       const address = contractAddressMap[truncatedTokenName]?.[uppercaseNetworkName];
