@@ -97,13 +97,13 @@ import { buildContract } from '@/utils/contractsMap.ts';
 import { MINTREDEEM_SCHEME } from '@/store/mintRedeem/mocks.ts';
 import debounce from 'lodash/debounce';
 
-import { mintStatus, wrapStatus } from '@/modules/Main/components/MintRedeem/types/index.ts';
+import { mintStatus, wrapStatus, mintRedeemTypes } from '@/modules/Main/components/MintRedeem/types/index.ts';
 import {
   getNewInputToken, getReferralCode,
 } from '@/store/helpers/index.ts';
 import GasSettings from '@/modules/Main/components/MintRedeem/GasSettings.vue';
 import BigNumber from 'bignumber.js';
-import { ABI_Exchange } from '@/assets/abi/index.ts';
+import { ABI_Exchange, ABI_Market } from '@/assets/abi/index.ts';
 
 export default {
   name: 'MintRedeem',
@@ -219,8 +219,8 @@ export default {
     updateTokenValueMethod(token: any, isInputToken: boolean) {
       if (isInputToken) this.inputToken = token;
       this.outputToken = {
-        ...token,
-        value: token.value,
+        ...this.outputToken,
+        value: this.estimateResult,
       };
     },
     changeWrapTab(id: number) {
@@ -244,19 +244,11 @@ export default {
       referral = referral || '';
 
       if (exchangeMethodName === 'mint') {
-        console.log({
-          asset: actionContract.options.address,
-          amount: contractSum,
-          referral,
-          exchangeContract,
-        }, '---exchangeContract1');
         methodParam = {
           asset: actionContract.options.address,
           amount: contractSum,
           referral,
         };
-
-        console.log(exchangeContract, '---exchangeContract');
 
         return exchangeContract.methods[exchangeMethodName](methodParam);
       }
@@ -344,15 +336,6 @@ export default {
         const estimateOptions = { from, gasPrice: this.gasPriceGwei };
         const blockNum = await this.web3.eth.getBlockNumber();
 
-        console.log(
-          action,
-          account,
-          sum,
-          exchangeContract,
-          exchangeMethodName,
-          actionContract,
-          'PARAMS',
-        );
         const method = await this.getContractMethodWithParams(
           action,
           account,
@@ -413,88 +396,45 @@ export default {
       console.log(result, 'result');
       return result;
     },
-    // INSURANCE ESTIMATE
-    // async estimateGas(sum: any) {
-    //   const { contracts } = this;
-    //   const from = this.account;
-
-    //   let result = 0;
-    //   const self = this;
-
-    //   try {
-    //     const estimateOptions = { from, gasPrice: this.gasPriceGwei };
-    //     const blockNum = await this.web3.eth.getBlockNumber();
-
-    //     const mintParams = {
-    //       amount: sum,
-    //     };
-
-    //     await contracts.insurance[`${this.networkName}_exchanger`].methods
-    //       .mint(mintParams)
-    //       .estimateGas(estimateOptions)
-    //       .then((gasAmount: any) => {
-    //         result = gasAmount;
-    //       })
-    //       .catch((error: any) => {
-    //         if (error && error.message) {
-    //           const msg = error.message.replace(/(?:\r\n|\r|\n)/g, '');
-
-    //           const errorMsg = {
-    //             product: 'OVN INS',
-    //             data: {
-    //               from,
-    //               to:
-    //                 contracts.insurance[`${self.networkName}_exchanger`].options
-    //                   .address,
-    //               gas: null,
-    //               gasPrice: parseInt(estimateOptions.gasPrice, 16),
-    //               method: contracts.insurance[
-    //                 `${self.networkName}_exchanger`
-    //               ].methods
-    //                 .mint(mintParams)
-    //                 .encodeABI(),
-    //               message: msg,
-    //               block: blockNum,
-    //             },
-    //           };
-
-    //           console.log(errorMsg);
-    //         }
-
-    //         return -1;
-    //       });
-    //   } catch (e) {
-    //     console.log(e);
-    //   }
-
-    //   return result;
-    // },
     async swapTokens() {
       try {
         console.log('swapTokens---');
         await this.refreshGasPrice();
         const networkId = this.networkId as keyof typeof MINTREDEEM_SCHEME;
-        const exchangeAddress = MINTREDEEM_SCHEME[networkId]
+        const pairData = MINTREDEEM_SCHEME[networkId]
           .find((_) => _.token0.toLowerCase() === this.inputToken.address.toLowerCase());
         let exchangeContract = null;
 
-        if (exchangeAddress) {
+        if (pairData) {
+          // abi for wrap/unwrap is different
           exchangeContract = buildContract(
-            ABI_Exchange,
+            pairData?.methodName[0] === mintRedeemTypes.WRAP ? ABI_Market : ABI_Exchange,
             this.web3,
-            exchangeAddress.exchange,
+            pairData.exchange,
           );
         }
 
         const actionContract = Object.values(this.contracts)
           .find((cData: any) => (cData ? cData._address === this.inputToken.address : false));
         const action = 'usdc-swap-invest';
-        const exchangeMethodName = 'mint';
+        // if mint active, using 1st method, else 2nd
+        const exchangeMethodName = this.activeMintTab === 0
+          ? pairData?.methodName[0] : pairData?.methodName[1];
 
         console.log(this.inputToken.value, '-this.inputToken.value');
         const swapSum = BigNumber(this.inputToken.value)
           .times(10 ** this.inputToken.decimals).toString();
 
+        console.log(
+          action,
+          this.account,
+          swapSum,
+          'test-product',
+          exchangeContract,
+          exchangeMethodName,
+          actionContract,
+          '---params',
+        );
         const estimatedGasValue = await this.estimateGas(
           action,
           this.account,

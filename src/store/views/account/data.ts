@@ -89,7 +89,12 @@ const actions = {
 
     const networkId = rootState.network.networkId as keyof typeof USER_BALANCES_SCHEME;
     const balances = await Promise.all(USER_BALANCES_SCHEME[networkId].map(async (_) => {
-      if (!web3.contracts[_.contractName]) return;
+      if (!web3.contracts[_.contractName]) {
+        return {
+          symbol: _.symbol,
+          balance: '0',
+        };
+      }
       const result = await web3.contracts[_.contractName].methods
         .balanceOf(getters.account)
         .call();

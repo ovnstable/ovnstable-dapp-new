@@ -77,6 +77,7 @@ const actions = {
       contracts.dai,
       contracts.usdt,
       contracts.usdcNative,
+      contracts.usdcBridged,
       contracts.weth,
       contracts.ovn,
     ] = await Promise.all([
@@ -223,6 +224,7 @@ const actions = {
       buildContract(ERC20_ABI, web3, contractsByChain[network]?.dai ?? null),
       buildContract(ERC20_ABI, web3, contractsByChain[network]?.usdt ?? null),
       buildContract(ERC20_ABI, web3, contractsByChain[network]?.usdcNative ?? null),
+      buildContract(ERC20_ABI, web3, contractsByChain[network]?.usdc ?? null),
       buildContract(ERC20_ABI, web3, contractsByChain[network]?.wETH ?? null),
       buildContract(ERC20_ABI, web3, contractsByChain[network]?.ovn ?? null),
     ]);

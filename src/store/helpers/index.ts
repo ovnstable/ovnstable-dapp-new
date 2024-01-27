@@ -237,7 +237,7 @@ export const getNewInputToken = () => {
     usdValue: null,
     contractValue: null,
     selectedToken: null,
-  };
+  } as any;
 };
 
 export const getNewOutputToken = () => {
