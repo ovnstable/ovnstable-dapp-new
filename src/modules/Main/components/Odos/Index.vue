@@ -320,9 +320,6 @@
       :is-ovn-swap="true"
     />
 
-    <SuccessOdosModal :show-modal="showSuccessModal" />
-    <WaitingModal :show-modal="showWaitModal" />
-    <ErrorModal :show-modal="showErrorModalGet" />
   </div>
 </template>
 <!-- eslint-disable no-restricted-syntax -->
@@ -333,8 +330,6 @@ import { defineComponent } from 'vue';
 import { mapActions, mapGetters, mapState } from 'vuex';
 import { useEventBus } from '@vueuse/core';
 import TokenForm from '@/modules/Main/components/Odos/TokenForm.vue';
-import WaitingModal from '@/modules/ModalTemplates/WaitingModal/Index.vue';
-import ErrorModal from '@/modules/ModalTemplates/ErrorModal/Index.vue';
 import Spinner from '@/components/Spinner/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
@@ -348,7 +343,6 @@ import { clearApproveToken, getAllowanceValue, approveToken } from '@/utils/cont
 import odosApiService from '@/services/odos-api-service.ts';
 import { getImageUrl } from '@/utils/const.ts';
 import { onLeaveList, onEnterList, beforeEnterList } from '@/utils/animations.ts';
-import SuccessOdosModal from '@/modules/ModalTemplates/SuccessModal/Index.vue';
 import {
   getNewInputToken, getNewOutputToken, maxAll, updateTokenValue, getDefaultSecondtoken,
 } from '@/store/helpers/index.ts';
@@ -359,10 +353,7 @@ export default defineComponent({
     ButtonComponent,
     Spinner,
     NetworkNotAvailable,
-    ErrorModal,
-    WaitingModal,
     SelectTokensModal,
-    SuccessOdosModal,
     SwapSlippageSettings,
     TokenForm,
     BaseIcon,
@@ -544,15 +535,6 @@ export default defineComponent({
       'tokensSelectedCount',
       'isAllDataLoaded',
     ]),
-    ...mapGetters('waitingModal', {
-      showWaitModal: 'show',
-    }),
-    ...mapGetters('successModal', {
-      showSuccessModal: 'show',
-    }),
-    ...mapGetters('errorModal', {
-      showErrorModalGet: 'show',
-    }),
     ...mapGetters('accountData', ['account']),
     ...mapGetters('web3', ['web3']),
     ...mapGetters('network', ['getParams', 'networkId', 'networkName']),
@@ -1724,7 +1706,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .swap-form__body-block {
-  overflow-x: scroll;
+  overflow-x: auto;
   overflow-y: hidden;
 }
 

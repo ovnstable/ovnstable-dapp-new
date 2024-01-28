@@ -28,17 +28,17 @@ export const appNetworksData = [
   {
     chain: 10,
     name: 'Optimism',
-    color: 'red',
+    color: '#fe051f',
   },
   {
     chain: 42161,
     name: 'Arbitrum',
-    color: 'blue',
+    color: '#25a0ee',
   },
   {
     chain: 8453,
     name: 'Base',
-    color: 'blue',
+    color: '#4d8be8',
   },
   {
     chain: 59144,
@@ -48,16 +48,16 @@ export const appNetworksData = [
   {
     chain: 56,
     name: 'BSC',
-    color: 'yellow',
+    color: '#f2ba2f',
   },
   {
     chain: 324,
     name: 'ZkSync',
-    color: 'red',
+    color: '#8b8dfc',
   },
   {
     chain: 137,
     name: 'Polygon',
-    color: 'red',
+    color: '#7b3fe4',
   },
 ];

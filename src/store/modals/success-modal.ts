@@ -1,6 +1,10 @@
 const stateData = {
   show: false,
   successTxHash: '',
+  swapData: {
+    from: {},
+    to: {},
+  },
 
   successAction: 'mint',
   etsData: null,
@@ -8,6 +12,9 @@ const stateData = {
 };
 
 const getters = {
+  swapData(state: typeof stateData) {
+    return state.swapData;
+  },
 
   show(state: typeof stateData) {
     return state.show;
@@ -33,7 +40,10 @@ const getters = {
 const actions = {
   showSuccessModal({ commit }: any, successParams: any) {
     commit('setShow', true);
-    commit('setSuccessTxHash', successParams.successTxHash);
+    commit('setSwapData', {
+      from: successParams.from,
+      to: successParams.to,
+    });
     commit('setSuccessAction', successParams.successAction);
     commit('setEtsData', successParams.etsData);
     commit('setZksyncFeeHistory', successParams.zksyncFeeHistory);
@@ -67,6 +77,10 @@ const mutations = {
 
   setZksyncFeeHistory(state: typeof stateData, value: any) {
     state.zksyncFeeHistory = value;
+  },
+
+  setSwapData(state: typeof stateData, value: any) {
+    state.swapData = value;
   },
 };
 

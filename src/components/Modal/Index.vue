@@ -196,4 +196,7 @@ export default {
   }
 }
 
+.modal__activator {
+  position: absolute;
+}
 </style>

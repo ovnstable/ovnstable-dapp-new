@@ -39,7 +39,7 @@
         <span>${{ estimateResult }}</span>
       </div>
       <div class="mintredeem-form__row-item">
-        <h2>Exchange rates</h2>
+        <h2>{{ inputToken?.symbol ? `1 ${inputToken.symbol} = 1 ${outputToken.symbol}` : 'Exchange rates'}}</h2>
       </div>
     </div>
 
@@ -96,6 +96,7 @@ import { getAllowanceValue } from '@/utils/contract-approve.ts';
 import { buildContract } from '@/utils/contractsMap.ts';
 import { MINTREDEEM_SCHEME } from '@/store/mintRedeem/mocks.ts';
 import debounce from 'lodash/debounce';
+import { fixedByPrice } from '@/utils/numbers.ts';
 
 import { mintStatus, wrapStatus, mintRedeemTypes } from '@/modules/Main/components/MintRedeem/types/index.ts';
 import {
@@ -149,6 +150,15 @@ export default {
     inputToken() {
       this.checkApprove(this);
     },
+    activeMintTab() {
+      if (this.inputToken?.symbol) {
+        const input = this.inputToken;
+        const output = this.outputToken;
+        this.inputToken = output;
+        this.outputToken = input;
+        this.checkApprove(this);
+      }
+    },
     networkId() {
       this.initTokens();
     },
@@ -168,7 +178,8 @@ export default {
 
     estimateResult() {
       if (!this.inputToken.symbol || !this.inputToken.value) return '0.00';
-      return new BigNumber(this.inputToken.value).times(0.9996).toFixed(2);
+      return new BigNumber(this.inputToken.value)
+        .times(0.9996).toFixed(fixedByPrice(this.inputToken.value));
     },
 
   },
@@ -176,7 +187,11 @@ export default {
     ...mapActions('walletAction', ['connectWallet']),
     ...mapActions('mintRedeem', ['initTokens']),
     ...mapActions('gasPrice', ['refreshGasPrice']),
+    ...mapActions('accountData', ['refreshBalance']),
     ...mapActions('accTransaction', ['putTransaction', 'loadTransaction']),
+    ...mapActions('errorModal', ['showErrorModal', 'showErrorModalWithMsg']),
+    ...mapActions('waitingModal', ['showWaitingModal', 'closeWaitingModal']),
+    ...mapActions('successModal', ['showSuccessModal', 'closeSuccessModal']),
     gasChange() {
       console.log('gasChange');
     },
@@ -288,18 +303,20 @@ export default {
         );
       }
 
+      console.log(exchangeMethodName, 'TESSSSTTT____1');
       if (exchangeMethodName === 'redeem') {
         if (action === 'market-redeem') {
           methodParam = {
             sum: contractSum,
           };
         } else if (
-          action === 'swap-redeem'
-          || action === 'dai-swap-redeem'
-          || action === 'usdt-swap-redeem'
-          || action === 'usdc-swap-redeem'
-          || action === 'eth-swap-redeem'
+          action === 'non-market-redeem'
+          // || action === 'dai-swap-redeem'
+          // || action === 'usdt-swap-redeem'
+          // || action === 'usdc-swap-redeem'
+          // || action === 'eth-swap-redeem'
         ) {
+          console.log('TESSSSTTT____');
           methodParam = {
             asset: actionContract.options.address,
             sum: contractSum,
@@ -347,11 +364,11 @@ export default {
         if (!method) {
           const errorMessage = `Exchange Method type not found when create method params in estimate gas. MethodType: ${
             exchangeMethodName}`;
-          console.error(errorMessage);
-          // this.showErrorModalWithMsg({
-          //   errorType: 'approve',
-          //   errorMsg: { code: 1, message: errorMessage },
-          // });
+          this.showErrorModalWithMsg({
+            errorType: 'approve',
+            errorMsg: { code: 1, message: errorMessage },
+          });
+          this.closeWaitingModal();
           return;
         }
 
@@ -389,7 +406,7 @@ export default {
             return -1;
           });
       } catch (e) {
-        // this.showErrorModalWithMsg({ errorType: 'estimateGas', errorMsg: e });
+        this.showErrorModalWithMsg({ errorType: 'estimateGas', errorMsg: e });
         return -1;
       }
 
@@ -398,11 +415,15 @@ export default {
     },
     async swapTokens() {
       try {
-        console.log('swapTokens---');
         await this.refreshGasPrice();
+        this.showWaitingModal('Approving in process');
         const networkId = this.networkId as keyof typeof MINTREDEEM_SCHEME;
         const pairData = MINTREDEEM_SCHEME[networkId]
-          .find((_) => _.token0.toLowerCase() === this.inputToken.address.toLowerCase());
+          .find((_) => {
+            const tokenAddress = this.isMintActive
+              ? _.token0.toLowerCase() : _.token1.toLowerCase();
+            return tokenAddress === this.inputToken.address.toLowerCase();
+          });
         let exchangeContract = null;
 
         if (pairData) {
@@ -415,13 +436,17 @@ export default {
         }
 
         const actionContract = Object.values(this.contracts)
-          .find((cData: any) => (cData ? cData._address === this.inputToken.address : false));
-        const action = 'usdc-swap-invest';
+          .find((cData: any) => {
+            const tokenAddress = this.isMintActive
+              ? this.inputToken.address : this.outputToken.address;
+            return cData ? cData._address === tokenAddress : false;
+          });
+
+        const action = 'non-market-redeem';
         // if mint active, using 1st method, else 2nd
         const exchangeMethodName = this.activeMintTab === 0
           ? pairData?.methodName[0] : pairData?.methodName[1];
 
-        console.log(this.inputToken.value, '-this.inputToken.value');
         const swapSum = BigNumber(this.inputToken.value)
           .times(10 ** this.inputToken.decimals).toString();
 
@@ -465,16 +490,6 @@ export default {
           exchangeMethodName,
           actionContract,
         );
-        if (!method) {
-          const errorMessage = `Exchange Method type not found when create method params in buy action. MethodType: ${
-            exchangeMethodName}`;
-          console.error(errorMessage);
-          // this.showErrorModalWithMsg({
-          //   errorType: 'approve',
-          //   errorMsg: { code: 1, message: errorMessage },
-          // });
-          return;
-        }
 
         console.log(method, '---method');
         console.log(this.gasPriceGwei, '---send');
@@ -487,52 +502,19 @@ export default {
             };
 
             this.putTransaction(tx);
-
-            // if (self.networkName === 'zksync' && self.zksyncFeeHistory) {
-            //   setTimeout(async () => {
-            //     try {
-            //       // get balance from eth token
-            //       console.log('this.account after tx: ', self.account);
-            //       const weiBalance = await self.web3.eth.getBalance(
-            //         self.account,
-            //       );
-            //       const balance = self.web3.utils.fromWei(weiBalance);
-            //       console.log(
-            //         'Balance from eth token after tx',
-            //         balance,
-            //         balance * 1854.91,
-            //       );
-            //       self.zksyncFeeHistory.finalWeiBalance = balance;
-            //     } catch (e) {
-            //       console.error(
-            //         'Error get balance from eth token  after tx',
-            //         e,
-            //       );
-            //     }
-
-            //     self.showSuccessModal({
-            //       successTxHash: hash,
-            //       successAction: resultTxInfo.successAction,
-            //       etsData: resultTxInfo.etsData,
-            //       zksyncFeeHistory: self.zksyncFeeHistory,
-            //     });
-
-            //     self.loadTransaction();
-            //   }, 10000);
-            // } else {
-            //   self.showSuccessModal({
-            //     successTxHash: hash,
-            //     successAction: resultTxInfo.successAction,
-            //     etsData: resultTxInfo.etsData,
-            //     zksyncFeeHistory: self.zksyncFeeHistory,
-            //   });
-
-            //   self.loadTransaction();
-            // }
+            this.closeWaitingModal();
+            this.showSuccessModal({
+              successTxHash: hash,
+              from: this.inputToken,
+              to: this.outputToken,
+            });
           });
+
+        this.refreshBalance();
       } catch (e) {
         console.log(e, '-e');
-        // this.showErrorModalWithMsg({ errorType: 'approve', errorMsg: e });
+        this.closeWaitingModal();
+        this.showErrorModalWithMsg({ errorType: 'approve', errorMsg: e });
       }
     },
   },

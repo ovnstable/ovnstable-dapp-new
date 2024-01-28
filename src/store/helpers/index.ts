@@ -54,7 +54,7 @@ export const addItemToFilteredTokens = (
 export const getFilteredPoolTokens = (
   chainId: string | number,
   isIncludeInListAddresses: boolean,
-  listTokensAddresses: any[],
+  listTokensAddresses: string[],
   ignoreBaseNetworkCurrency: boolean,
   state: typeof stateData,
 ): any[] => {
@@ -63,6 +63,9 @@ export const getFilteredPoolTokens = (
   const { tokenMap } = state.tokensMap.chainTokenMap[`${chainId}`];
   let leftListTokensAddresses = listTokensAddresses;
   const keys = Object.keys(tokenMap);
+
+  console.log(tokenMap, '---tokenMap');
+  console.log(listTokensAddresses, '---listTokensAddresses');
 
   for (let i = 0; i < keys.length; i++) {
     const key = keys[i];

@@ -131,7 +131,6 @@ export default defineComponent({
     },
     selectToken(token: any) {
       // eslint-disable-next-line no-param-reassign
-      console.log('Token select: ', token, this.selectTokenInput);
       this.addSelectedTokenToListFunc({
         ...token,
         selected: true,

@@ -60,7 +60,7 @@
           <div class="select-token-balance-text">
             <div v-if="tokenInfo && tokenInfo.symbol">
               <span class="select-token-balance-text-enabled">
-                {{tokenBalance + " " + tokenInfo.symbol}}
+                Balance: {{tokenBalance + " " + tokenInfo.symbol}}
               </span>
             </div>
             <div v-else>
@@ -138,18 +138,19 @@ export default defineComponent({
     ...mapGetters('mintRedeem', ['tokensListGetter']),
     ...mapGetters('accountData', ['account', 'originalBalance']),
     tokenBalance() {
+      if (!this.originalBalance) return '0';
       const balanceData = this.originalBalance.find((_: any) => _.symbol === this.tokenInfo.symbol);
       if (!balanceData) return '0';
 
       const formattedBalance = new BigNumber(balanceData.balance)
         .div(10 ** this.tokenInfo.decimals).toNumber();
-      return formatMoney(formattedBalance, 2);
+      return formatMoney(formattedBalance, fixedByPrice(formattedBalance));
     },
     tokensList() {
       const list = this.tokensListGetter[this.networkId];
 
-      if (list && this.isInputToken) return list.map((_: any[]) => _[0]);
-      if (list && !this.isInputToken) return list.map((_: any[]) => _[1]);
+      if (list && this.isInputToken) return list.map((_: any[]) => (this.activeMint ? _[0] : _[1]));
+      if (list && !this.isInputToken) return list.map((_: any[]) => (this.activeMint ? _[1] : [0]));
 
       // when first choosen, searching for pair, and return
       return [];
@@ -161,7 +162,6 @@ export default defineComponent({
   },
   methods: {
     formatMoney,
-    fixedByPrice,
     removeSelectedTokenFromList() {
       console.log('removeSelectedTokenFromList');
     },
@@ -172,14 +172,16 @@ export default defineComponent({
       if (isInputToken) {
         const output = this.tokensListGetter[this.networkId].find((_: any) => {
           const index = _.map((item: any) => item.address).indexOf(token.address);
+          const pairAddress = _[this.activeMint ? 0 : 1].address === token.address;
 
           // pair found, additional checking with mock
-          if (index !== -1 && _[0].address === token.address) return _;
+          if (index !== -1 && pairAddress) return _;
           return false;
         });
 
+        if (!output) return;
         this.$emit('add-token', {
-          ...output[1],
+          ...output[this.activeMint ? 1 : 0],
           value: '',
           selected: true,
         }, !isInputToken);
@@ -189,14 +191,15 @@ export default defineComponent({
       if (!isInputToken) {
         const output = this.tokensListGetter[this.networkId].find((_: any) => {
           const index = _.map((item: any) => item.address).indexOf(token.address);
+          const pairAddress = _[this.activeMint ? 1 : 0].address === token.address;
 
           // pair found, additional checking with mock
-          if (index !== -1 && _[1].address === token.address) return _;
+          if (index !== -1 && pairAddress) return _;
           return false;
         });
 
         this.$emit('add-token', {
-          ...output[0],
+          ...output[this.activeMint ? 0 : 1],
           value: '',
           selected: true,
         }, !isInputToken);

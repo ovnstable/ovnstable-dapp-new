@@ -16,11 +16,11 @@
       <div class="modal-content__tokens">
         <div class="modal-content__tokens-col">
           <h3>From</h3>
-          <span>-100 USDC+</span>
+          <span>-{{ swapData?.from?.value }} {{ swapData?.from?.symbol }}</span>
         </div>
         <div class="modal-content__tokens-col">
           <h3>To</h3>
-          <span>+100 DAI</span>
+          <span>+{{ swapData?.to?.value }} {{ swapData?.to?.symbol }}</span>
         </div>
       </div>
 
@@ -109,7 +109,7 @@ export default {
   computed: {
     ...mapGetters('network', ['explorerUrl']),
     ...mapGetters('theme', ['light']),
-    ...mapGetters('successModal', ['successTxHash', 'successAction', 'etsData', 'zksyncFeeHistory']),
+    ...mapGetters('successModal', ['successTxHash', 'swapData', 'successAction', 'etsData', 'zksyncFeeHistory']),
 
     actionSuccessToken() {
       switch (this.successAction) {
@@ -201,9 +201,6 @@ export default {
     ...mapActions('successModal', ['closeSuccessModal']),
     ...mapActions('swapModal', ['showSwapModal', 'showMintView']),
     ...mapActions('tokenAction', ['addUsdPlusToken', 'addDaiPlusToken', 'addUsdtPlusToken', 'addwUsdPlusToken', 'addEthPlusToken', 'addwEthPlusToken', 'addEtsToken', 'addInsuranceToken']),
-    ...mapActions('swapModal', ['closeSwapModal']),
-    ...mapActions('wrapModal', ['closeWrapModal']),
-    ...mapActions('investModal', ['closeInvestModal']),
     ...mapActions('track', ['trackClick']),
     ...mapActions('accountUI', ['showTxHistory']),
 
@@ -262,10 +259,6 @@ export default {
     },
 
     goToTransactionHistory() {
-      this.closeSwapModal();
-      this.closeWrapModal();
-      this.closeInvestModal();
-
       this.showTxHistory();
 
       this.close();

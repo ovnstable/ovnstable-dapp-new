@@ -27,6 +27,17 @@ const chains_56_59144_42161 = [
   },
 ];
 
+const chains_56_324_137 = [
+  {
+    symbol: 'USD+',
+    contractName: 'usdPlus',
+  },
+  {
+    symbol: 'USDC',
+    contractName: 'usdcBridged',
+  },
+];
+
 const ovnToken = {
   symbol: 'OVN',
   contractName: 'ovn',
@@ -67,23 +78,33 @@ export const USER_BALANCES_SCHEME = {
     // bridged usdc.e
     {
       symbol: 'USDC.e',
-      contractName: 'usdcNative',
+      contractName: 'usdcBridged',
     },
     // native usdc
     {
       symbol: 'USDC',
-      contractName: 'usdc',
+      contractName: 'usdcNative',
     },
   ],
   56: [
     ...chains_56_59144_42161,
+    ...chains_56_324_137,
   ],
   137: [
     wUsdToken,
+    ...chains_56_324_137,
   ],
   10: [
+    ...allChainsTokens,
     ovnToken,
     wUsdToken,
+    {
+      symbol: 'USDC.e',
+      contractName: 'usdcBridged',
+    },
+  ],
+  324: [
+    ...chains_56_324_137,
   ],
   59144: [],
 };

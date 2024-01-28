@@ -180,7 +180,7 @@ export default {
       if (this.errorMsg.code === 4001) {
         // user cancel transaction
         console.log('User cancel transaction');
-        this.closeErrorModal();
+        // this.closeErrorModal();
         return;
       }
 
@@ -252,5 +252,6 @@ export default {
 <style lang="scss" scoped>
 .modal-content {
   padding: 50px 70px 30px 70px;
+  max-width: 538px;
 }
 </style>
