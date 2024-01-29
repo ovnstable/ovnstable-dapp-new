@@ -1,31 +1,31 @@
 <template>
   <div class="performance__token-data">
     <BaseIcon
-      name="ETH+_token-data"
+      :name="tokenData.tokenImageName"
       class="performance__token-data-main-token"
     />
     <div class="performance__token-data-link-title">
-      <p class="performance__token-data-title performance__token-data-title--token">{{tokenName}}</p>
+      <p class="performance__token-data-title performance__token-data-title--token">{{ tokenData.tokenName }}</p>
       <a
-        :href=tokenLink
+        :href="`${networkScan}token/` + generateHref(tokenData.tokenName, networkName)"
         target="_blank"
         rel="noopener noreferrer"
         aria-label="token-address"
         class="performance__token-data-link-addr link-ovn"
       >Token address</a>
     </div>
-    <p class="performance__token-data__description">{{ tokenDescription }}</p>
+    <p class="performance__token-data__description">{{ tokenData.description }}</p>
     <div class="performance__divider" />
     <div class="performance__payout-data">
       <p class="performance__token-data-title">Last payout</p>
-      <p class="performance__token-data-num performance__token-data-num--payout-ago">{{ payoutAgo }}</p>
-      <p class="performance__token-data-h">{{ hoursAgo }}</p>
+      <p class="performance__token-data-num performance__token-data-num--payout-ago">{{ tokenData.lastPayoutTime }}</p>
+      <p class="performance__token-data-h">{{ tokenData.lastPayoutType }}</p>
     </div>
     <div class="performance__divider" />
     <div class="performance__apy-data">
       <p class="performance__token-data-title">Daily APY</p>
       <div class="performance__apy-data-chain">
-        <p class="performance__token-data-num performance__token-data-num--apy-num">{{ dailyAPY }}%</p>
+        <p class="performance__token-data-num performance__token-data-num--apy-num">{{ tokenData.dailyApy }}%</p>
         <div
           class="performance__icon-chain"
         >
@@ -38,69 +38,101 @@
     </div>
     <div class="performance__divider" />
     <div class="performance__tvl-data">
-      <p class="performance__token-data-title">{{ tokenName }} TVL</p>
-      <p class="performance__token-data-num">{{ totalTVL }} <span class="performance__token-data-col-token">{{ collateralToken }}</span></p>
+      <p class="performance__token-data-title">{{ tokenData.tokenName }} TVL</p>
+      <p class="performance__token-data-num">{{ tokenData.tvl }}     <span class="performance__token-data-col-token">
+        {{ tokenData.collateralToken === 'WETH' ? tokenData.collateralToken : '$' }}
+      </span></p>
       <p class="performance__token-data-h">past 2 hours</p>
     </div>
     <div class="performance__divider performance__divider--last-divider" />
   </div>
 
-  <div class="performance__chain-data">
-    <BaseIcon
-      :name=chainIcon
-      class="performance__icon-chain-bottom"
-    />
-    <p class="performance__chain-data-name">{{ chainName }}</p>
+  <div class="performance__chain-data-container">
+    <div
+      v-for="chain in availableChains"
+      :key="chain"
+      @click="saveNetworkToLocalStore(chain)"
+      @keydown.enter="saveNetworkToLocalStore(chain)"
+      class="performance__chain-data"
+      :class="{ selected: chain.toLowerCase() === networkName }"
+    >
+      <BaseIcon
+        name='IconArbitrum'
+        class="performance__icon-chain-bottom"
+      />
+      <p class="performance__chain-data-name">{{ chain }}</p>
+    </div>
   </div>
+
 </template>
 
 <script lang="ts">
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import { useStore } from 'vuex';
+import { contractAddressMap } from '@/utils/const.ts';
 
 export default {
   components: {
     BaseIcon,
   },
+  data() {
+    return {
+      selectedChain: 'arbitrum',
+    };
+  },
+  setup() {
+    const store = useStore();
+
+    const saveNetworkToLocalStore = (chain: string) => {
+      console.log(chain.toLowerCase());
+      store.dispatch('network/changeDappNetwork', chain.toLowerCase());
+    };
+
+    return {
+      saveNetworkToLocalStore,
+    };
+  },
   props: {
-    tokenName: {
-      type: String,
-      default: 'ETH+',
-    },
-    tokenLink: {
-      type: String,
-      default: 'https://arbiscan.io/address/0xD4939D69B31fbE981ed6904A3aF43Ee1dc777Aab',
-    },
-    tokenDescription: {
-      type: String,
-      default: 'ETH+ is the equivalent of USD+, pegged to WETH 1:1, instantly mintable and redeemable in WETH. 100% collateralized with delta-neutral and other strategies based on the best protocols',
-    },
-    payoutAgo: {
-      type: String,
-      default: '05:02',
-    },
-    hoursAgo: {
-      type: String,
-      default: 'hours ago',
-    },
-    dailyAPY: {
-      type: Number,
-      default: 11.9,
+    tokenData: {
+      type: Object,
+      default: () => ({}),
     },
     chainIcon: {
       type: String,
       default: 'IconArbitrum',
     },
-    totalTVL: {
-      type: Number,
-      default: 123.631341,
-    },
-    collateralToken: {
-      type: String,
-      default: 'WETH',
-    },
     chainName: {
       type: String,
       default: 'Arbitrum',
+    },
+  },
+  computed: {
+    networkName() {
+      return this.$store.state.network.networkName;
+    },
+    networkScan() {
+      return this.$store.state.network.explorerUrl;
+    },
+    availableChains() {
+      const tokenKey = `${this.tokenData.tokenName.slice(0, -1).toUpperCase()}_PLUS`;
+      return Object.keys(contractAddressMap[tokenKey] || {});
+    },
+  },
+  methods: {
+    generateHref(tokenName: any, networkName: string): any {
+      if (!tokenName) {
+        return '';
+      }
+      const truncatedTokenName = `${tokenName.slice(0, -1)}_PLUS`;
+      const uppercaseNetworkName = networkName.toUpperCase();
+      const address = contractAddressMap[truncatedTokenName]?.[uppercaseNetworkName];
+
+      if (!address) {
+        console.error(`Address not found for ${truncatedTokenName} on ${uppercaseNetworkName}`);
+        return '';
+      }
+
+      return address;
     },
   },
 
@@ -208,10 +240,17 @@ export default {
     align-items: center;
     border-radius: 30px;
     border: 1px solid var(--color-6);
-    background: var(--color-4);
+    background: var(--color-5);
     padding: 5px 10px;
     margin-top: 24px;
     width: fit-content;
+  }
+  .selected {
+    background: var(--color-4);
+  }
+
+  .performance__chain-data:hover {
+    cursor: pointer;
   }
 
   .performance__chain-data-name {
@@ -225,6 +264,15 @@ export default {
     width: 20px;
     height: 20px;
     flex-shrink: 0
+  }
+
+  .performance__chain-data-container {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .performance__chain-data-container > *:not(:last-child) {
+    margin-right: 7px;
   }
 
   @media (max-width: 1024px) {

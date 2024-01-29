@@ -25,6 +25,10 @@ import accountData from '@/store/views/account/data.ts';
 import insuranceData from '@/store/views/insurance/data.ts';
 import wrapUI from '@/store/views/wrap/ui.ts';
 import odosData from '@/store/odos/index.ts';
+import tokenData from '@/store/views/market/tokenData.ts';
+import portfolioData from '@/store/views/market/portfolioData.ts';
+import collateralData from '@/store/views/market/collateralData.ts';
+import payoutData from '@/store/views/market/payoutData.ts';
 import mintRedeem from '@/store/mintRedeem/index.ts';
 
 // modals
@@ -62,6 +66,10 @@ export default new Vuex.Store({
     gasPrice,
     supplyData,
     referral,
+    tokenData,
+    portfolioData,
+    collateralData,
+    payoutData,
   },
 
   plugins: [

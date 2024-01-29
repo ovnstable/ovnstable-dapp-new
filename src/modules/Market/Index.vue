@@ -1,12 +1,22 @@
 <template>
   <div class="market-wrapper">
     <div class="market">
-      <TokenDataPerformance class="market__token-data" />
+      <TokenDataPerformance
+        :token-data="tokenData"
+        class="market__token-data"
+      />
       <GraphicsPerformance class="market__graphics" />
-      <PortfolioPerformance class="market__portfolio" />
+      <PortfolioPerformance
+        :portfolio-data="portfolioData"
+        :collateral-data="collateralData"
+        class="market__portfolio"
+      />
     </div>
     <div class="market__payouts">
-      <PortfolioPayouts class="market__payout-inner" />
+      <PortfolioPayouts
+        :payout-data="payoutData"
+        class="market__payout-inner"
+      />
     </div>
   </div>
 
@@ -20,6 +30,24 @@ import PortfolioPayouts from '@/modules/Market/Payouts.vue';
 
 export default {
   name: 'MarketPage',
+  props: {
+    tokenData: {
+      type: Object,
+      default: () => ({}),
+    },
+    portfolioData: {
+      type: Object,
+      default: () => ({}),
+    },
+    collateralData: {
+      type: Object,
+      default: () => ({}),
+    },
+    payoutData: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
   components: {
     TokenDataPerformance,
     GraphicsPerformance,

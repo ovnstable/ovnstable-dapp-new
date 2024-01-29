@@ -2,7 +2,7 @@
   <div class="performance__payouts">
     <div class="performance__payouts-titles">
       <p>Payable date, UTC</p>
-      <p>Daily profit, {{ collateralToken }} per {{ tokenName }}</p>
+      <p>Daily profit, {{ payoutData.collateralToken }} per {{ payoutData.tokenName }}</p>
       <p>Annualized yield, % per year</p>
       <p>Explorer</p>
     </div>
@@ -17,11 +17,11 @@
       >
         <div class="performance__payouts-transaction">
           <div class="performance__payouts-date-transaction">
-            <p>{{ formatDate(trx.date) }} <span class="performance__payouts-date">{{ formatTime(trx.date)
-            }} </span></p>
+            <p>{{ formatDateTime(trx.payableDate).date }}</p>
+            <span class="performance__payouts-time">{{ formatDateTime(trx.payableDate).time }}</span>
           </div>
-          <p>{{ trx.sum }} {{ collateralToken }}</p>
-          <p>{{ trx.apy }}%</p>
+          <p>{{ formatProfit(trx.dailyProfit, payoutData.collateralToken) }}</p>
+          <p>{{ trx.annualizedYield }}%</p>
           <div class="performance__payouts-id-link">
             <a
               :href="trx.tokenLink"
@@ -30,7 +30,7 @@
               aria-label="Link for token"
               class="link-ovn"
             >
-              <p>{{ formatTransactionID(trx.id) }}</p>
+              <p>{{ formatTransactionID(trx.transactionHash) }}</p>
             </a>
           </div>
         </div>
@@ -68,51 +68,53 @@ export default {
   components: {
     BaseIcon,
   },
+  props: {
+    payoutData: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
   data() {
-    const originalTransaction = {
-      id: '0xd0209d91c53f4c5e574948a07ef3659d8bf2ab5df5983d9f4bec39c1d883c44f',
-      date: '1705487006275',
-      sum: 0.000123,
-      apy: 0.444,
-      tokenLink: 'https://basescan.org/tx/0xd0209d91c53f4c5e574948a07ef3659d8bf2ab5df5983d9f4bec39c1d883c44f',
-    };
-    const transactionsData = [];
-
-    for (let i = 0; i < 21; i++) {
-      transactionsData.push({ ...originalTransaction });
-    }
     return {
-      tokenName: 'ETH+',
-      collateralToken: 'WETH',
-      transactionsData,
       showMore: false,
       visibleTransactionCount: 6,
     };
   },
   computed: {
     visibleTransactions() {
-      return this.transactionsData.slice(0, this.visibleTransactionCount);
+      return this.payoutData.payouts.slice(0, this.visibleTransactionCount);
     },
     hasMoreTransactions() {
-      return this.transactionsData.length > this.visibleTransactionCount;
+      return this.payoutData.payouts.length > this.visibleTransactionCount;
     },
   },
   methods: {
     formatTransactionID(id: string): string {
       return `${id.substring(0, 5)}...${id.substring(id.length - 4)}`;
     },
-    formatDate(dateStr: string): string {
-      const date = new Date(Number(dateStr));
-      const day = date.getUTCDate().toString().padStart(2, '0');
-      const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
-      const year = date.getUTCFullYear();
-      return `${day}.${month}.${year}`;
+    formatProfit(profit:any, token:string) {
+      if (token !== 'WETH') {
+        return new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD',
+          minimumFractionDigits: 6,
+          maximumFractionDigits: 6,
+        }).format(profit);
+      }
+      return `${parseFloat(profit).toFixed(6)} WETH`;
     },
-    formatTime(dateStr: string): string {
-      const date = new Date(Number(dateStr));
-      const hours = date.getUTCHours().toString().padStart(2, '0');
-      const minutes = date.getUTCMinutes().toString().padStart(2, '0');
-      return `${hours}:${minutes}`;
+    formatDateTime(dateTimeStr:string) {
+      const optionsDate = { year: 'numeric', month: '2-digit', day: '2-digit' } as any;
+      const optionsTime = { hour: '2-digit', minute: '2-digit' } as any;
+
+      const date = new Date(dateTimeStr);
+      const formattedDate = new Intl.DateTimeFormat('en-GB', optionsDate).format(date).replace(/\//g, '.');
+      const formattedTime = new Intl.DateTimeFormat('en-GB', optionsTime).format(date);
+
+      return {
+        date: formattedDate,
+        time: formattedTime,
+      };
     },
     showMoreTransactions() {
       this.visibleTransactionCount += 14;
@@ -216,10 +218,14 @@ export default {
   color: var(--color-1);
   font-size: 15px;
   font-weight: 400;
+  max-width: 160px;
+  justify-content: space-between;
+  margin-right: 30px;
+  padding-right: 30px;
 }
 
-.performance__payouts-date {
-  margin-left: 18px;
+.performance__payouts-time {
+  white-space: nowrap;
 }
 
 .performance__payouts-button-show {
@@ -247,13 +253,27 @@ export default {
   font-weight: 600;
 }
 
-.list-enter-active,
-.list-leave-active {
-  transition: all 0.7s ease;
+/* Enter transition */
+.list-enter-active {
+  transition: opacity 0.5s ease, transform 0.5s ease;
 }
-.list-enter-from,
+.list-enter-from {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+/* Leave transition */
+.list-leave-active {
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
 .list-leave-to {
   opacity: 0;
-  transform: translateZ(-30px);
+  transform: translateY(-20px);
 }
+@media (max-width: 1024px) {
+  .performance__payouts-date-transaction {
+    margin-right: 10px;
+  }
+}
+
 </style>

@@ -24,6 +24,25 @@ export const svgIconsMap = (() => {
   return svgMap;
 })();
 
+// todo in contractsmap
+interface ContractAddressMap {
+  [token: string]: {
+    [network: string]: string;
+  };
+}
+
+export const contractAddressMap:ContractAddressMap = {
+  USD_PLUS: {
+    OPTIMISM: '0x73cb180bf0521828d8849bc8CF2B920918e23032',
+    ARBITRUM: '0xe80772Eaf6e2E18B651F160Bc9158b2A5caFCA65',
+    ZKSYNC: '0x8E86e46278518EFc1C5CEd245cBA2C7e3ef11557',
+    BSC: '0xe80772Eaf6e2E18B651F160Bc9158b2A5caFCA65',
+    POLYGON: '0x236eeC6359fb44CCe8f97E99387aa7F8cd5cdE1f',
+    BASE: '0xB79DD08EA68A908A97220C76d19A6aA9cBDE4376',
+    LINEA: '0xB79DD08EA68A908A97220C76d19A6aA9cBDE4376',
+  },
+};
+
 export const appNetworksData = [
   {
     chain: 10,

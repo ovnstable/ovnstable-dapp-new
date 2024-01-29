@@ -31,6 +31,7 @@
         <p>% in portfolio</p>
       </div>
       <div class="performance__portfolio-assets">
+
         <div
           v-for="asset in assets as any[]"
           :key="asset.tokenName"
@@ -38,11 +39,11 @@
         >
           <div
             class="performance__portfolio-strategies-stables"
-            @click="type === 'strategies' && toggleDropdown(asset.strategyNameAsset)"
-            @keydown.enter="type === 'strategies' && toggleDropdown(asset.strategyNameAsset)"
-            tabindex="0"
           >
             <div
+              @click="handleContainerClick(asset)"
+              @keydown.enter="handleContainerClick(asset)"
+              tabindex="0"
               :class="[
                 'performance__portfolio-strategy',
                 { assets: type === 'portfolio' && assets.indexOf(asset) === assets.length - 1 },
@@ -63,10 +64,10 @@
                 <p
                   :class="['performance__portfolio-strategy-token-name', { asset: type === 'strategies' }]"
                 >
-                  {{ type === 'portfolio' ? asset.tokenNameAsset : asset.strategyNameAsset }}
+                  {{ type === 'portfolio' ? asset.id.tokenName : asset.fullName }}
                 </p>
               </div>
-              <p>{{ type === 'portfolio' ? asset.safetyScore : formatCurrency(asset.netAssetValue, collateralToken) }}</p>
+              <p>{{ type === 'portfolio' ? 'VERY HIGH' : formatCurrency(asset.netAssetValue, collateralToken) }}</p>
               <p>
                 {{ type === 'portfolio' ? formatCurrency(asset.netAssetValue, collateralToken) : formatCurrency(asset.liquidationValue, collateralToken) }}
               </p>
@@ -82,7 +83,7 @@
 
             </div>
             <div
-              v-show="dropdownVisible === asset.strategyNameAsset"
+              v-show="dropdownVisible === asset.fullName"
               class="performance__portfolio-dropdown-content"
             >
               <div class="performance__portfolio-strategies-divider" />
@@ -138,6 +139,7 @@
             <p class="performance__portfolio-total-liquidation-val">
               {{ formatCurrency(totalLiquidationValue(assets, collateralToken), collateralToken) }}
             </p>
+
           </div>
           <div class="performance__portfolio-total-circl">
             <p class="performance__portfolio-total-label performance__portfolio-total-label--circl">Total {{ tokenName }} in circulation</p>
@@ -189,13 +191,15 @@ export default {
     };
   },
   methods: {
-    toggleDropdown(tokenName: string | null) {
+    handleContainerClick(asset:any) {
       if (this.type === 'strategies') {
-        this.dropdownVisible = this.dropdownVisible === tokenName ? null : tokenName;
+        this.dropdownVisible = this.dropdownVisible === asset.fullName ? null : asset.fullName;
+      } else if (this.type === 'portfolio') {
+        window.open(asset.tokenAddress, '_blank');
       }
     },
     formatCurrency(value:any, collateralToken:string) {
-      if (collateralToken === '$') {
+      if (collateralToken !== 'WETH') {
         return new Intl.NumberFormat('en-US', {
           style: 'currency',
           currency: 'USD',
@@ -227,7 +231,8 @@ export default {
       const colors = [
         getComputedStyle(document.documentElement).getPropertyValue('--color-3').trim(),
         getComputedStyle(document.documentElement).getPropertyValue('--color-11').trim(),
-        getComputedStyle(document.documentElement).getPropertyValue('--color-9').trim()];
+        getComputedStyle(document.documentElement).getPropertyValue('--color-9').trim(),
+        getComputedStyle(document.documentElement).getPropertyValue('--color-10').trim()];
       return colors[index % colors.length];
     },
     totalPortfolioValue(assets: any[]) {
@@ -276,7 +281,6 @@ export default {
   flex-direction: column;
   width: 100%;
 }
-
 .performance__portfolio-strategies-stables-specs {
   display: flex;
   padding: 0 20px;
@@ -291,6 +295,10 @@ export default {
   padding: 0px 20px;
   padding-bottom: 10px;
   padding-top: 5px;
+}
+
+.performance__portfolio-strategy:hover {
+  cursor: pointer;
 }
 
 .performance__portfolio-strategy > * {
@@ -532,6 +540,7 @@ export default {
 
 .performance__portfolio-total-circl-number {
   text-align: right;
+  margin-right: 10px;
 }
 
 .performance__portfolio-total-circl {
@@ -549,6 +558,7 @@ export default {
   width: 22px;
   height: 22px;
 }
+
 
 @media (max-width: 1024px) {
   .performance__portfolio-strategy-progress-bar {
@@ -570,7 +580,6 @@ export default {
   .performance__portfolio-dropdown--dep-to p:nth-child(3) {
     flex: 4;
     padding: 0;
-
   }
 
   .performance__portfolio-dropdown--dep-to p:nth-child(2) {
@@ -587,6 +596,9 @@ export default {
 
   .performance__portfolio-total-label--circl {
     margin-right: 90px;
+  }
+  .performance__portfolio-total-circl-number {
+    margin-left: 5px;
   }
 
 }
