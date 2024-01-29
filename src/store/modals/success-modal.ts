@@ -2,8 +2,8 @@ const stateData = {
   show: false,
   successTxHash: '',
   swapData: {
-    from: {},
-    to: {},
+    from: [],
+    to: [],
   },
 
   successAction: 'mint',

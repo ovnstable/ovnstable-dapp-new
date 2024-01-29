@@ -16,11 +16,23 @@
       <div class="modal-content__tokens">
         <div class="modal-content__tokens-col">
           <h3>From</h3>
-          <span>-{{ swapData?.from?.value }} {{ swapData?.from?.symbol }}</span>
+          <div
+            v-for="(item, key) in swapData?.from"
+            :key="key"
+            class="modal-content__tokens-col-item"
+          >
+            <span>-{{ item?.value }} {{ item?.symbol }}</span>
+          </div>
         </div>
         <div class="modal-content__tokens-col">
           <h3>To</h3>
-          <span>+{{ swapData?.to?.value }} {{ swapData?.to?.symbol }}</span>
+          <div
+            v-for="(item, key) in swapData?.to"
+            :key="key"
+            class="modal-content__tokens-col-item"
+          >
+            <span>+{{ item.value }} {{ item.symbol }}</span>
+          </div>
         </div>
       </div>
 

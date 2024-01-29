@@ -28,6 +28,7 @@ const actions = {
   },
 
   showErrorModalWithMsg({ commit }: any, errorProperties: any) {
+    console.log(errorProperties, 'showErrorModalWithMsg');
     commit('setErrorType', errorProperties.errorType);
     commit('setErrorMsg', errorProperties.errorMsg);
     commit('setShow', true);

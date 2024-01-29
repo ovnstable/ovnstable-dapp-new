@@ -14,6 +14,7 @@ import {
   loadBalance,
   loadContractInstance
 } from '@/store/helpers/index.ts';
+import BigNumber from 'bignumber.js';
 import { getNetworkParams } from '../common/web3/network.ts';
 
 const KEY = 'REFERRAL_CODE';
@@ -682,7 +683,7 @@ const actions = {
       log: ` | Current block: ${await rootState.web3.web3.eth.getBlockNumber()}`,
     });
     console.debug(txLogMessage);
-    const result = rootState.web3.web3.eth
+    rootState.web3.web3.eth
       .sendTransaction(transactionData)
       .then(async (dataTx: any) => {
         console.log('Call result: ', dataTx);
@@ -725,6 +726,17 @@ const actions = {
         const bus = useEventBus('odos-transaction-finished');
         bus.emit(true);
 
+        dispatch('successModal/showSuccessModal', {
+          successTxHash: dataTx.hash,
+          from: inputTokens.map((_) => ({
+            symbol: _.selectedToken.symbol,
+            value: new BigNumber(_.value).toFixed(5)
+          })),
+          to: outputTokens.map((_) => ({
+            symbol: _.selectedToken.symbol,
+            value: new BigNumber(_.sum).toFixed(5)
+          })),
+        }, { root: true });
         dispatch('stopSwapConfirmTimer');
 
         setTimeout(() => {
@@ -733,6 +745,7 @@ const actions = {
       })
       .catch((e: any) => {
         console.log(e);
+        dispatch('errorModal/showErrorModalWithMsg', { errorType: 'estimateGas', errorMsg: e }, { root: true });
         dispatch('stopSwapConfirmTimer');
       });
   },

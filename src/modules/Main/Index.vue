@@ -35,7 +35,7 @@
       :is-loading-data="isLoadingData"
     />
     <WaitingModal :show-modal="showWaitModal" />
-    <ErrorModal :show-modal="showErrorModalGet" />
+    <ErrorModal :show-modal="showErrorModal" />
     <SuccessModal :show-modal="showSuccessModal" />
   </div>
 </template>
@@ -91,7 +91,7 @@ export default {
   },
   computed: {
     ...mapGetters('waitingModal', { showWaitModal: 'show' }),
-    ...mapGetters('errorModal', { showErrorModalGet: 'show' }),
+    ...mapGetters('errorModal', { showErrorModal: 'show' }),
     ...mapGetters('successModal', { showSuccessModal: 'show' }),
   },
   methods: {
@@ -105,7 +105,6 @@ export default {
       this.showSwapModal();
     },
     updatePathView(data: any) {
-      console.log(data, '---updatePathView');
       this.pathViz = data.path;
       this.inputTokens = data.input;
       this.outputTokens = data.output;

@@ -239,7 +239,6 @@ export default defineComponent({
   font-size: 20px;
   color: var(--color-1);
   font-weight: 600;
-  margin-right: 30px;
   transition: box-shadow .2s ease;
 
   &:hover, &:focus-within {

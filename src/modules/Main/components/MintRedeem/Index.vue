@@ -505,8 +505,8 @@ export default {
             this.closeWaitingModal();
             this.showSuccessModal({
               successTxHash: hash,
-              from: this.inputToken,
-              to: this.outputToken,
+              from: [this.inputToken],
+              to: [this.outputToken],
             });
           });
 

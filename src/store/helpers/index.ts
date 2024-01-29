@@ -1,8 +1,10 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-continue */
 /* eslint-disable no-await-in-loop */
 import tokenLogo from '@/utils/token-logo.ts';
 import { getWeiMarker } from '@/utils/web3.ts';
+import BigNumber from 'bignumber.js';
 import type { stateData } from '../odos/index';
 
 const SECONDTOKEN_SECOND_DEFAULT_SYMBOL = 'DAI+';
@@ -251,9 +253,14 @@ export const getNewOutputToken = () => {
   };
 };
 
-export const updateTokenValue = (token: any, value: any, toWeiFunc: any) => {
+export const updateTokenValue = (
+  token: any,
+  value: any,
+  checkApprove: (tokenData: any, val: string) => void,
+  updateQuotaInfo: () => void,
+) => {
   token.value = value;
-  // state.updateQuotaInfo();
+  updateQuotaInfo();
 
   if (!value) {
     token.usdValue = 0;
@@ -263,11 +270,8 @@ export const updateTokenValue = (token: any, value: any, toWeiFunc: any) => {
 
   const { selectedToken } = token;
   if (selectedToken) {
-    const sum = token.decimals === 6 ? `${token.value * 100}` : `${token.value}`;
-    token.contractValue = toWeiFunc(
-      sum,
-      token.selectedToken.weiMarker,
-    );
+    token.contractValue = new BigNumber(token.value)
+      .times(10 ** token.selectedToken.decimals).toString();
     token.usdValue = token.value * selectedToken.price;
 
     if (
@@ -279,17 +283,19 @@ export const updateTokenValue = (token: any, value: any, toWeiFunc: any) => {
       );
       selectedToken.approveData.approved = true;
     }
+
+    checkApprove(token, token.contractValue);
   }
 };
 
-export const maxAll = (selectedInputTokens: any[], toWeiFunc: any) => {
+export const maxAll = (
+  selectedInputTokens: any[],
+  checkApprove: (tokenData: any, val: string) => void,
+  updateQuotaInfo: () => void,
+) => {
   for (let i = 0; i < selectedInputTokens.length; i++) {
     const token = selectedInputTokens[i];
-    console.log(
-      token.selectedToken.balanceData.balance,
-      'token.selectedToken.balanceData.balance',
-    );
-    updateTokenValue(token, token.selectedToken.balanceData.balance, toWeiFunc);
+    updateTokenValue(token, token.selectedToken.balanceData.balance, checkApprove, updateQuotaInfo);
   }
 };
 

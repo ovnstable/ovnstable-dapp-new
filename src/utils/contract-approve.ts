@@ -14,11 +14,8 @@ export const approveToken = async (
   fromAcc: string,
   gasPrice: string,
 ) => {
-  console.log('approveToken: ', contract, contractAddressForApprove, value);
   const from = fromAcc;
   const approveParams: any = { gasPrice, from };
-
-  console.log('approveToken: ', contract, contractAddressForApprove, value, approveParams);
   return contract.methods.approve(contractAddressForApprove, value).send(approveParams);
 };
 
@@ -28,19 +25,9 @@ export const clearApproveToken = async (
   fromAcc: string,
   gasPrice: string,
 ) => {
-  console.log('clearApproveToken: ', contract, contractAddressForDisapprove);
   const from = fromAcc;
   const allowanceValue = await getAllowanceValue(contract, from, contractAddressForDisapprove);
   const approveParams = { gasPrice, from };
-
-  console.log(
-    'clearApproveToken: ',
-    contract,
-    contractAddressForDisapprove,
-    allowanceValue,
-    approveParams,
-  );
-
   return contract.methods
     .decreaseAllowance(contractAddressForDisapprove, allowanceValue).send(approveParams);
 };

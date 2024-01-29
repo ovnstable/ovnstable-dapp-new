@@ -309,15 +309,14 @@
 
     <SelectTokensModal
       :is-show="isShowSelectTokensModal"
-      :set-show-func="showSelectTokensModals"
-      :swap-method="swapMethod"
       :select-token-input="selectModalTypeInput"
-      :add-selected-token-to-list-func="addSelectedTokenToList"
-      :remove-selected-token-from-list-func="removeSelectedTokenFromList"
-      :second-tokens="secondTokens"
       :tokens="allTokensList"
       :is-all-data-loaded="isAllDataLoaded"
       :is-ovn-swap="true"
+      :selected-tokens="selectModalTypeInput ? inputTokens : outputTokens"
+      @set-show="showSelectTokensModals"
+      @add-token-to-list="addSelectedTokenToList"
+      @remove-token-from-list="removeSelectedTokenFromList"
     />
 
   </div>
@@ -377,11 +376,9 @@ export default defineComponent({
       swapMethod: 'BUY', // BUY (secondTokens) / SELL (secondTokens)
       selectTokenType: 'OVERNIGHT', // OVERNIGHT / ALL
 
-      isShowSettingsModal: false,
       isSwapLoading: false,
       isSumulateSwapLoading: false,
       isSumulateIntervalStarted: false,
-      pathViz: null,
       slippagePercent: 0.05,
       multiSwapOdosFeePercent: 0.01,
 
@@ -389,7 +386,6 @@ export default defineComponent({
       tokensQuotaCheckerSec: 0,
 
       firstSwipeClickOnApprove: false,
-      ifMoreThanOneTokensAdded: false,
     };
   },
   watch: {
@@ -452,7 +448,6 @@ export default defineComponent({
     sumOfAllSelectedTokensInUsd() {
       this.recalculateOutputTokensSum();
     },
-
     isTokensLoadedAndFiltered(val) {
       if (val) this.clearForm();
     },
@@ -461,15 +456,8 @@ export default defineComponent({
         this.clearQuotaInfo();
       }
     },
-
-    isFirstBalanceLoaded(val) {
-      if (val) {
-        this.initTopInputTokensByBalance(this.stablecoinWithoutSecondTokens);
-      }
-    },
   },
   mounted() {
-    console.log('---mounted');
     this.$store.commit('odosData/changeState', {
       field: 'baseViewType',
       val: this.viewType,
@@ -483,11 +471,6 @@ export default defineComponent({
     // its init input/output default tokens
     this.clearForm();
 
-    if (!this.isAvailableOnNetwork) {
-      this.mintAction();
-      return;
-    }
-
     if (this.$route.query.action === 'swap-out') {
       this.changeSwap();
     }
@@ -499,13 +482,11 @@ export default defineComponent({
       'routerContract',
       'swapSessionId',
       'odosReferalCode',
-      'secondTokens',
       'quotaResponseInfo',
       'isShowDecreaseAllowance',
       'tokenSeparationScheme',
       'listOfBuyTokensAddresses',
       'dataBeInited',
-      'isFirstBalanceLoaded',
       'isBalancesLoading',
     ]),
     ...mapGetters('odosData', [
@@ -513,9 +494,6 @@ export default defineComponent({
       'isAvailableOnNetwork',
       'swapResponseConfirmGetter',
       'isAllLoaded',
-      'stablecoinWithoutSecondTokens',
-      'secondTokensSelectedCount',
-      'tokensSelectedCount',
       'isAllDataLoaded',
     ]),
     ...mapGetters('accountData', ['account']),
@@ -526,7 +504,6 @@ export default defineComponent({
       'show',
       'gasPrice',
       'gasPriceGwei',
-      'gasPriceStation',
     ]),
 
     isInputTokensRemovable() {
@@ -734,8 +711,7 @@ export default defineComponent({
         'loadPricesInfo',
       ],
     ),
-    ...mapActions('swapModal', ['showSwapModal', 'showMintView']),
-    ...mapActions('errorModal', ['showErrorModal', 'showErrorModalWithMsg']),
+    ...mapActions('errorModal', ['showErrorModalWithMsg']),
     ...mapActions('waitingModal', ['showWaitingModal', 'closeWaitingModal']),
     ...mapActions('walletAction', ['connectWallet']),
 
@@ -745,17 +721,12 @@ export default defineComponent({
     beforeEnterList,
     onEnterList,
     maxAllMethod() {
-      maxAll(this.selectedInputTokens, this.web3.utils.toWei);
+      maxAll(this.selectedInputTokens, this.checkApproveForToken, this.updateQuotaInfo);
     },
     updateTokenValueMethod(token:any, val: any) {
-      updateTokenValue(token, val, this.web3.utils.toWei);
+      updateTokenValue(token, val, this.checkApproveForToken, this.updateQuotaInfo);
       this.updateQuotaInfo();
     },
-    mintAction() {
-      this.showMintView();
-      this.showSwapModal();
-    },
-
     init() {
       this.loadChains();
       this.loadTokens();
@@ -1088,15 +1059,10 @@ export default defineComponent({
                   actualGas,
                 });
 
-                if (errMsg && errMsg.toLowerCase().includes('slippage')) {
-                  this.showErrorModalWithMsg({
-                    errorType: 'slippage',
-                    errorMsg: errMsg,
-                  });
-                } else {
-                  console.log(errMsg, 'errMsg');
-                }
-
+                this.showErrorModalWithMsg({
+                  errorType: 'approve',
+                  errorMsg: errMsg,
+                });
                 this.isSwapLoading = false;
                 return;
               }
@@ -1129,7 +1095,6 @@ export default defineComponent({
         });
     },
     clearQuotaInfo() {
-      this.pathViz = null;
       this.$store.commit('odosData/changeState', {
         field: 'quotaResponseInfo',
         val: null,
@@ -1138,7 +1103,6 @@ export default defineComponent({
         field: 'swapResponseInfo',
         val: null,
       });
-      // this.updatePathViewFunc(this.pathViz, [], []);
     },
     async simulateSwap() {
       console.log(this.isSumulateSwapLoading, 'simulateSwap');
@@ -1193,7 +1157,6 @@ export default defineComponent({
             input: this.selectedInputTokens,
             output: this.selectedOutputTokens,
           });
-          this.pathViz = data.pathViz;
           this.$emit('update-is-loading-data', false);
         })
         .catch((e) => {
@@ -1294,7 +1257,7 @@ export default defineComponent({
     },
     async checkApproveForToken(token: any, checkedAllowanceValue?: any) {
       // checkedAllowanceValue in wei
-      console.log('--checkApproveForToken');
+      console.log(token, checkedAllowanceValue, '--checkApproveForToken');
       const { selectedToken } = token;
       if (
         selectedToken.address === '0x0000000000000000000000000000000000000000'
@@ -1466,16 +1429,16 @@ export default defineComponent({
       return tokensPercentage;
     },
 
-    addSelectedTokenToList(selectedToken: any, isSelectTokenInput: boolean) {
-      if (isSelectTokenInput) {
-        this.addSelectedTokenToInputList(selectedToken);
-        this.removeOutputToken(selectedToken.id);
+    addSelectedTokenToList(data: any) {
+      if (data.isInput) {
+        this.addSelectedTokenToInputList(data.tokenData);
+        this.removeOutputToken(data.tokenData.id);
         this.addTokensEmptyIsNeeded();
         return;
       }
 
-      this.addSelectedTokenToOutputList(selectedToken);
-      this.removeInputToken(selectedToken.id);
+      this.addSelectedTokenToOutputList(data.tokenData);
+      this.removeInputToken(data.tokenData.id);
       this.addTokensEmptyIsNeeded();
     },
     addTokensEmptyIsNeeded() {
@@ -1498,7 +1461,7 @@ export default defineComponent({
       this.inputTokens.push(newInputToken);
       this.removeAllWithoutSelectedTokens(this.inputTokens);
 
-      this.checkApproveForToken(newInputToken);
+      this.checkApproveForToken(newInputToken, newInputToken.contractValue);
     },
     addSelectedTokenToOutputList(selectedToken: any) {
       const newOutputToken = getNewOutputToken();
@@ -1509,16 +1472,16 @@ export default defineComponent({
       this.recalculateOutputTokensSum();
       this.resetOutputs();
     },
-    removeSelectedTokenFromList(selectedToken: any, swapMethod: any, selectTokenType: any) {
-      if (this.isInputToken(swapMethod, selectTokenType)) {
-        this.removeInputToken(selectedToken.id);
+    removeSelectedTokenFromList(data: any) {
+      if (data.isInput) {
+        this.removeInputToken(data.tokenData.id);
         if (this.inputTokens.length === 0) {
           this.addNewInputToken();
         }
         return;
       }
 
-      this.removeOutputToken(selectedToken.id);
+      this.removeOutputToken(data.tokenData.id);
       if (this.outputTokens.length === 0) {
         this.addNewOutputToken();
       }
@@ -1675,7 +1638,7 @@ export default defineComponent({
       }
 
       setTimeout(() => {
-        maxAll(this.selectedInputTokens, this.web3.utils.toWei);
+        maxAll(this.selectedInputTokens, this.checkApproveForToken, this.updateQuotaInfo);
         this.$emit('update-stablecoins-list', tokens);
       });
     },

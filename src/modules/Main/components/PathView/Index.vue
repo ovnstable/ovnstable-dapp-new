@@ -246,8 +246,6 @@ export default defineComponent({
     getDuplicateClearedRoot(root: any) {
       if (!root) return root;
 
-      console.log(root, 'root----');
-
       const existsPathMap = new Map(); // write full path by queue of symbol
 
       const newRoot = new Map();
