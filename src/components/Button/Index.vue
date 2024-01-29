@@ -8,7 +8,7 @@
       disabled: disabled || loading,
       full,
     }"
-    @click="$emit('click', $event)"
+    @click="$emit('on-click', $event)"
   >
     <div v-if="loading">
       <Spinner size="24px" />
@@ -79,7 +79,7 @@ export default {
   transition: transform .15s ease, background-color .2s ease, color .2s ease, opacity .2s ease;
 
   &:active {
-    transform: scale(0.92);
+    transform: scale(0.96);
   }
 
   &.large {

@@ -29,15 +29,18 @@ import tokenData from '@/store/views/market/tokenData.ts';
 import portfolioData from '@/store/views/market/portfolioData.ts';
 import collateralData from '@/store/views/market/collateralData.ts';
 import payoutData from '@/store/views/market/payoutData.ts';
+import mintRedeem from '@/store/mintRedeem/index.ts';
 
 // modals
 import errorModal from '@/store/modals/error-modal.ts';
 import waitingModal from '@/store/modals/waiting-modal.ts';
 import successModal from '@/store/modals/success-modal.ts';
+import accTransaction from '@/store/views/account/transaction.ts';
 
 export default new Vuex.Store({
   modules: {
     odosData,
+    mintRedeem,
     theme,
     errorModal,
     waitingModal,
@@ -45,6 +48,7 @@ export default new Vuex.Store({
 
     accountUI,
     accountData,
+    accTransaction,
     insuranceData,
 
     // web3

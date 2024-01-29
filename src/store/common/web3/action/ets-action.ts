@@ -32,9 +32,7 @@ const getters = {
 };
 
 const actions = {
-  async initEtsList({
-    commit, dispatch, getters, rootState,
-  }: any) {
+  async initEtsList({ commit }: any) {
     const list = [];
 
     const etsesFullData = await loadJSON(`${ROOT_API}/product/ets/all`);

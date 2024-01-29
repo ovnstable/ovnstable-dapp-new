@@ -13,7 +13,7 @@ import {
   getFilteredPoolTokens,
   loadBalance,
   loadContractInstance
-} from './helpers.ts';
+} from '@/store/helpers/index.ts';
 import { getNetworkParams } from '../common/web3/network.ts';
 
 const KEY = 'REFERRAL_CODE';
@@ -80,8 +80,6 @@ export const stateData = {
   lastPutIntoPoolEvent: null,
   lastReturnedToUserEvent: null,
 
-  isShowSuccessModal: false,
-  isShowSuccessPoolModal: false,
   successData: {
     inputTokens: [] as any[],
     outputTokens: [] as any[],
@@ -167,7 +165,6 @@ const actions = {
       return;
     }
 
-    console.log('loadChains');
     commit('changeState', { field: 'isChainsLoading', val: true });
 
     odosApiService
@@ -257,10 +254,9 @@ const actions = {
 
     console.log('init pool swap data for network: ');
     const { networkId } = getNetworkParams(rootState.network.networkName);
-    // state.tokens = await state.getFilteredPoolTokens(networkId, false, listOfBuyTokensAddresses);
     await commit('changeState', {
       field: 'tokens',
-      val: await getFilteredPoolTokens(
+      val: getFilteredPoolTokens(
         networkId,
         false,
         [],
@@ -270,7 +266,7 @@ const actions = {
     });
     await commit('changeState', {
       field: 'secondTokens',
-      val: await getFilteredPoolTokens(
+      val: getFilteredPoolTokens(
         networkId,
         true,
         listOfBuyTokensAddresses,
@@ -723,14 +719,6 @@ const actions = {
           (item) => item.selectedToken.address,
         );
 
-        dispatch(
-          'showSuccessModal',
-          true,
-          inputTokens,
-          outputTokens,
-          data.txData.transactionHash,
-          data.txData,
-        );
         // event
         const bus = useEventBus('odos-transaction-finished');
         bus.emit(true);
@@ -781,66 +769,6 @@ const actions = {
     }
 
     return actualGas;
-  },
-  showSuccessModal(
-    {
-      commit, state, dispatch, rootState,
-    }: any,
-    data: {
-      isShow: any,
-      inputTokens: any,
-      outputTokens: any,
-      hash: any,
-      txData: any,
-    }
-  ) {
-    commit('changeState', {
-      field: 'successData',
-      val: {
-        inputTokens: data.inputTokens,
-        outputTokens: data.outputTokens,
-        hash: data.hash,
-        chain: rootState.network.networkId,
-        zksyncFeeHistory: state.zksyncFeeHistory,
-        txData: data.txData,
-      }
-    });
-
-    commit('changeState', { field: 'isShowSuccessModal', val: data.isShow });
-
-    if (!data.isShow) {
-      commit('changeState', { field: 'zksyncFeeHistory', val: null });
-      commit('changeState', { field: 'successData', val: null });
-    }
-  },
-
-  showSuccessPoolModal(
-    {
-      commit, state, dispatch, rootState,
-    }: any,
-    data: {
-      isShow: any,
-      inputTokens: any,
-      outputTokens: any,
-      hash: string,
-      putIntoPoolEvent: any,
-      returnedToUserEvent: any,
-      pool: any,
-    }
-  ) {
-    commit('changeState', {
-      field: 'successData',
-      val: {
-        inputTokens: data.inputTokens,
-        outputTokens: data.outputTokens,
-        hash: data.hash,
-        chain: rootState.network.networkId,
-        putIntoPoolEvent: data.putIntoPoolEvent,
-        returnedToUserEvent: data.returnedToUserEvent,
-        pool: data.pool,
-      }
-    });
-    commit('changeState', { field: 'isShowSuccessPoolModal', val: data.isShow });
   },
 };
 

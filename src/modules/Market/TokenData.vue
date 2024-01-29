@@ -1,7 +1,7 @@
 <template>
   <div class="performance__token-data">
     <BaseIcon
-      :name=tokenData.tokenImageName  
+      :name="tokenData.tokenImageName"
       class="performance__token-data-main-token"
     />
     <div class="performance__token-data-link-title">
@@ -87,7 +87,6 @@ export default {
       console.log(chain.toLowerCase());
       store.dispatch('network/changeDappNetwork', chain.toLowerCase());
     };
-
 
     return {
       saveNetworkToLocalStore,

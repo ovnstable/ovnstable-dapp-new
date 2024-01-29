@@ -14,7 +14,7 @@ export default {
     }
   },
 
-  async loadOvernightTokenImage(token: any) {
+  loadOvernightTokenImage(token: any) {
     try {
       // let tokenUrl = await this.loadCoingeckoOvernightTokenImage(token.symbol);
       // if (tokenUrl) {

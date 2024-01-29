@@ -7,7 +7,7 @@ import DaiPlusImage from '@/assets/jsonImages/daiPlus.json';
 import EthPlusImage from '@/assets/jsonImages/ethPlus.json';
 import OptimismInsurance from '@/assets/jsonImages/optimism_insurance.json';
 import OvnImage from '@/assets/jsonImages/ovn.json';
-import { USDT_PLUS_CONTRACT_ADDRESS_BSC } from '@/utils/const.ts';
+import { chainContractsMap } from '@/utils/contractsMap.ts';
 
 const state = {};
 
@@ -73,7 +73,7 @@ const actions = {
     const option = {
       address,
       symbol: process.env.VUE_APP_USDT_TOKEN_NAME,
-      decimals: address.toLowerCase() === USDT_PLUS_CONTRACT_ADDRESS_BSC.toLowerCase() ? 18 : 6,
+      decimals: address.toLowerCase() === chainContractsMap.bsc.usdtPlus ? 18 : 6,
       image: UsdtPlusImage.image,
     };
 

@@ -28,15 +28,21 @@
     </div>
 
     <SliderComponent />
+    <WaitingModal :show-modal="showWaitModal" />
+    <ErrorModal :show-modal="showErrorModalGet" />
+    <SuccessModal :show-modal="showSuccessModal" />
   </div>
 </template>
 
 <script lang="ts">
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import MintRedeemForm from '@/modules/Main/components/MintRedeem/Index.vue';
 import SliderComponent from '@/modules/Main/components/Slider/Index.vue';
 import TabsComponent from '@/components/Tabs/Index.vue';
 import SwapForm from '@/modules/Main/components/Odos/Index.vue';
+import WaitingModal from '@/modules/ModalTemplates/WaitingModal/Index.vue';
+import ErrorModal from '@/modules/ModalTemplates/ErrorModal/Index.vue';
+import SuccessModal from '@/modules/ModalTemplates/SuccessModal/Index.vue';
 
 export default {
   name: 'MainModule',
@@ -45,6 +51,9 @@ export default {
     TabsComponent,
     MintRedeemForm,
     SwapForm,
+    ErrorModal,
+    WaitingModal,
+    SuccessModal,
   },
   data() {
     return {
@@ -62,12 +71,17 @@ export default {
           name: 'BRIDGE',
         },
       ],
-      activeTab: 1,
+      activeTab: 0,
       pathViz: null,
       buttonDisabled: true,
       isLoadingData: true,
       stablecoinTokens: [],
     };
+  },
+  computed: {
+    ...mapGetters('waitingModal', { showWaitModal: 'show' }),
+    ...mapGetters('errorModal', { showErrorModalGet: 'show' }),
+    ...mapGetters('successModal', { showSuccessModal: 'show' }),
   },
   methods: {
     ...mapActions('swapModal', ['showSwapModal', 'showMintView']),

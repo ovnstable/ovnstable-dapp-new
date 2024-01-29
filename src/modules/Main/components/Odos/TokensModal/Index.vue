@@ -32,16 +32,9 @@
       <div class="tokens-container">
         <div
           v-if="!isAllDataLoaded"
-          class="pt-7 pb-7 cards-list-container"
+          class="token-select__spinner"
         >
-          <div class="row">
-            <div
-              align="center"
-              justify="center"
-            >
-              ...loading
-            </div>
-          </div>
+          <Spinner size="40px" />
         </div>
 
         <div v-else>
@@ -61,12 +54,14 @@
 import { defineComponent } from 'vue';
 import SelectTokenWithSearch from '@/modules/Main/components/Odos/TokensModal/SelectTokenWithSearch.vue';
 import ModalComponent from '@/components/Modal/Index.vue';
+import Spinner from '@/components/Spinner/Index.vue';
 
 export default defineComponent({
   name: 'SelectTokensModal',
   components: {
     SelectTokenWithSearch,
     ModalComponent,
+    Spinner,
   },
   props: {
     isShow: {
@@ -129,37 +124,6 @@ export default defineComponent({
       this.showModal = currVal;
     },
   },
-  computed: {
-    selectedFromTokens() {
-      return this.fromTokens && this.selectedTokensFromAddresses
-        ? this.fromTokens
-          .filter((item: any) => this.selectedTokensFromAddresses.includes(item.address)) : [];
-    },
-    selectedToTokens() {
-      return this.toTokens && this.selectedTokensToAddresses
-        ? this.toTokens
-          .filter((item: any) => this.selectedTokensToAddresses.includes(item.address)) : [];
-    },
-
-    toTokens() {
-      if (this.swapMethod === 'BUY') {
-        return this.secondTokens;
-      } if (this.swapMethod === 'SELL') {
-        return this.tokens;
-      }
-      console.error('Odos Swap method not found.', this.swapMethod);
-      return [];
-    },
-    fromTokens() {
-      if (this.swapMethod === 'BUY') {
-        return this.tokens;
-      } if (this.swapMethod === 'SELL') {
-        return this.secondTokens;
-      }
-      console.error('Odos Swap method not found.', this.swapMethod);
-      return [];
-    },
-  },
   methods: {
     closeModal() {
       console.log('closeModal');
@@ -167,7 +131,6 @@ export default defineComponent({
     },
     selectToken(token: any) {
       // eslint-disable-next-line no-param-reassign
-      console.log('Token select: ', token, this.selectTokenInput);
       this.addSelectedTokenToListFunc({
         ...token,
         selected: true,
@@ -199,5 +162,12 @@ export default defineComponent({
       color: var(--color-1);
   }
 }
-
+.token-select__spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px 0;
+  border: 2px solid var(--color-5);
+  background-color: var(--color-4);
+}
 </style>

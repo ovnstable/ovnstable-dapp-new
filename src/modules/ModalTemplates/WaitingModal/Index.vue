@@ -76,6 +76,7 @@ export default {
   font-weight: 600;
   color: var(--color-2);
   margin-bottom: 40px;
+  text-align: center;
 }
 
 .divider {

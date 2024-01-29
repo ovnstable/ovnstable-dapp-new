@@ -3,7 +3,7 @@
     <ul class="sidebar__top">
 
       <router-link
-        to="/homepage"
+        to="/"
         class="sidebar__text-top"
       >Homepage</router-link>
 

@@ -53,13 +53,13 @@ export default {
     activeTab: {
       type: Number,
       required: false,
-      default: 1,
+      default: 0,
     },
   },
 
   data() {
     return {
-      activeItem: 1,
+      activeItem: 0,
       uid: '',
     };
   },
@@ -209,7 +209,7 @@ export default {
   width: 100%;
   text-decoration: none;
   border: 2px solid var(--color-1);
-  transition: padding .15s ease .1s,
+  transition: padding .2s ease,
     border-radius .2s ease, color .2s ease;
 
   font-size: 14px;
@@ -254,6 +254,7 @@ export default {
   -moz-border-radius-topright: 30px;
   border-top-left-radius: 30px;
   border-top-right-radius: 30px;
+
   [data-theme="dark"] & {
       background: var(--color-17);
       color: var(--color-4);
@@ -277,7 +278,7 @@ export default {
   content: "";
 }
 .tabs-header__ul .active:before, .tabs-header__ul .active:after {
-  background: var(--color-5);
+  background: var(--color-4);
 
   /* Squares below circles */
   z-index: 1;
