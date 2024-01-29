@@ -163,6 +163,7 @@ export default {
 }
 
 .tabs-item {
+  width: calc(100% + 3px);
   height: calc(100% - 51px);
 }
 .tabs-header__ul {

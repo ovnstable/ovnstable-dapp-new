@@ -363,22 +363,6 @@ export default defineComponent({
       type: String,
       required: true,
     },
-    updatePathViewFunc: {
-      type: Function,
-      required: true,
-    },
-    updateButtonDisabledFunc: {
-      type: Function,
-      required: true,
-    },
-    updateIsLoadingDataFunc: {
-      type: Function,
-      required: true,
-    },
-    updateStablecoinsListFunc: {
-      type: Function,
-      required: true,
-    },
   },
   data() {
     return {
@@ -476,7 +460,6 @@ export default defineComponent({
       if (val) {
         this.clearQuotaInfo();
       }
-      this.updateButtonDisabledFunc(val);
     },
 
     isFirstBalanceLoaded(val) {
@@ -766,6 +749,7 @@ export default defineComponent({
     },
     updateTokenValueMethod(token:any, val: any) {
       updateTokenValue(token, val, this.web3.utils.toWei);
+      this.updateQuotaInfo();
     },
     mintAction() {
       this.showMintView();
@@ -1194,6 +1178,7 @@ export default defineComponent({
       };
 
       this.clearQuotaInfo();
+      this.$emit('update-is-loading-data', true);
 
       this.quoteRequest(requestData)
         .then((data: any) => {
@@ -1201,20 +1186,21 @@ export default defineComponent({
 
           this.isSumulateSwapLoading = false;
           this.isSumulateIntervalStarted = false;
-          this.updateIsLoadingDataFunc(false);
 
-          this.updatePathViewFunc(
-            data.pathViz,
-            this.selectedInputTokens,
-            this.selectedOutputTokens,
-          );
+          console.log('EMIT');
+          this.$emit('update-path-view', {
+            path: data.pathViz,
+            input: this.selectedInputTokens,
+            output: this.selectedOutputTokens,
+          });
           this.pathViz = data.pathViz;
+          this.$emit('update-is-loading-data', false);
         })
         .catch((e) => {
           console.error('Odos simulate swap request failed', e);
           this.isSumulateSwapLoading = false;
           this.isSumulateIntervalStarted = false;
-          this.updateIsLoadingDataFunc(false);
+          this.$emit('update-is-loading-data', false);
         });
     },
     // function get data.outTokens and data.outAmounts and find matches in selectedOutputTokens
@@ -1690,7 +1676,7 @@ export default defineComponent({
 
       setTimeout(() => {
         maxAll(this.selectedInputTokens, this.web3.utils.toWei);
-        this.updateStablecoinsListFunc(tokens);
+        this.$emit('update-stablecoins-list', tokens);
       });
     },
 
@@ -1732,6 +1718,7 @@ export default defineComponent({
 
 .swap-form__body-block__inputs-item {
   width: 100%;
+  height: auto;
   transition: opacity .2s ease, transform .3s ease;
 }
 
@@ -1765,7 +1752,7 @@ export default defineComponent({
 }
 .swap-form, .swap-container {
   height: 100%;
-  width: calc(100% + 4px);
+  // width: calc(100% + 4px);
   border-radius: 0 0 30px 30px;
 }
 

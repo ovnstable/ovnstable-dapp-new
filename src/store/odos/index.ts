@@ -344,16 +344,18 @@ const actions = {
 
       for (let i = 0; i < tokens.length; i++) {
         const token: any = tokens[i];
-        if (addresses.includes(token.address)) {
-          // eslint-disable-next-line no-await-in-loop
-          token.balanceData = await loadBalance(
-            rootState,
-            {
-              contract: state.tokensContractMap[token.address],
-              token
-            }
-          );
-        }
+
+        // currently LOADING extra tokens balances deprecated
+        // if (addresses.includes(token.address)) {
+        //   // eslint-disable-next-line no-await-in-loop
+        //   token.balanceData = await loadBalance(
+        //     rootState,
+        //     {
+        //       contract: state.tokensContractMap[token.address],
+        //       token
+        //     }
+        //   );
+        // }
       }
     } catch (e) {
       console.error('Error when update direct balance', e);

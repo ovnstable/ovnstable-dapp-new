@@ -198,6 +198,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .input-tokens {
+  height: 100%;
   position: relative;
   background-color: var(--color-5);
   border-radius: 10px;

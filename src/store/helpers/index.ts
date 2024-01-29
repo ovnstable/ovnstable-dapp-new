@@ -64,9 +64,6 @@ export const getFilteredPoolTokens = (
   let leftListTokensAddresses = listTokensAddresses;
   const keys = Object.keys(tokenMap);
 
-  console.log(tokenMap, '---tokenMap');
-  console.log(listTokensAddresses, '---listTokensAddresses');
-
   for (let i = 0; i < keys.length; i++) {
     const key = keys[i];
     const item = tokenMap[key];
