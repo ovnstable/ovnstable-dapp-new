@@ -1,3 +1,5 @@
+import { ethers } from 'ethers';
+
 /* eslint-disable no-unused-vars */
 const POLYGON_PARAMS = {
   appApiUrl: 'https://app.overnight.fi/api',
@@ -371,8 +373,7 @@ const actions = {
       try {
         await rootState.web3.provider.request({
           method: 'wallet_switchEthereumChain',
-          // eslint-disable-next-line radix
-          params: [{ chainId: rootState.web3.web3.utils.toHex(parseInt(network)) }],
+          params: [{ chainId: ethers.hexlify(ethers.toUtf8Bytes(network)) }],
         });
 
         commit('walletAction/setWalletConnected', true, { root: true });
@@ -386,7 +387,7 @@ const actions = {
             case '137':
             case '31337':
               params = {
-                chainId: rootState.web3.web3.utils.toHex(137),
+                chainId: ethers.hexlify(ethers.toUtf8Bytes('137')),
                 rpcUrls: ['https://polygon-rpc.com/'],
                 blockExplorerUrls: ['https://polygonscan.com/'],
                 chainName: 'Polygon Mainnet',
@@ -400,7 +401,7 @@ const actions = {
             case 'bsc':
             case '56':
               params = {
-                chainId: rootState.web3.web3.utils.toHex(56),
+                chainId: ethers.hexlify(ethers.toUtf8Bytes('56')),
                 rpcUrls: ['https://bsc-dataseed.binance.org/'],
                 blockExplorerUrls: ['https://bscscan.com/'],
                 chainName: 'Smart Chain',
@@ -415,7 +416,7 @@ const actions = {
             case 'optimism':
             case '10':
               params = {
-                chainId: rootState.web3.web3.utils.toHex(10),
+                chainId: ethers.hexlify(ethers.toUtf8Bytes('10')),
                 rpcUrls: ['https://optimism.llamarpc.com'],
                 blockExplorerUrls: ['https://optimistic.etherscan.io/'],
                 chainName: 'Optimism',
@@ -430,7 +431,7 @@ const actions = {
             case 'arbitrum':
             case '42161':
               params = {
-                chainId: rootState.web3.web3.utils.toHex(42161),
+                chainId: ethers.hexlify(ethers.toUtf8Bytes('42161')),
                 rpcUrls: ['https://arb1.arbitrum.io/rpc'],
                 blockExplorerUrls: ['https://arbiscan.io/'],
                 chainName: 'Arbitrum',
@@ -445,7 +446,7 @@ const actions = {
             case 'zksync':
             case '324':
               params = {
-                chainId: rootState.web3.web3.utils.toHex(324),
+                chainId: ethers.hexlify(ethers.toUtf8Bytes('324')),
                 // rpcUrls: ['https://zksync2-testnet.zksync.dev'],
                 rpcUrls: ['https://mainnet.era.zksync.io'],
                 blockExplorerUrls: ['https://explorer.zksync.io'],
@@ -461,7 +462,7 @@ const actions = {
             case 'base':
             case '8453':
               params = {
-                chainId: rootState.web3.web3.utils.toHex(8453),
+                chainId: ethers.hexlify(ethers.toUtf8Bytes('8453')),
                 rpcUrls: ['https://mainnet.base.org'],
                 blockExplorerUrls: ['https://basescan.org'],
                 chainName: 'Base',
@@ -476,7 +477,7 @@ const actions = {
             case 'linea':
             case '59144':
               params = {
-                chainId: rootState.web3.web3.utils.toHex(59144),
+                chainId: ethers.hexlify(ethers.toUtf8Bytes('59144')),
                 rpcUrls: ['https://linea.drpc.org'],
                 blockExplorerUrls: ['https://lineascan.build'],
                 chainName: 'Linea',

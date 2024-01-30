@@ -3,6 +3,7 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable camelcase */
 import { USER_BALANCES_SCHEME } from '@/store/views/account/mocks.ts';
+import BigNumber from 'bignumber.js';
 
 const state = {
 
@@ -123,10 +124,7 @@ const actions = {
               .balanceOf(getters.account)
               .call();
             etsOriginalBalance = etsBalance;
-            etsBalance = web3.web3.utils.fromWei(
-              etsBalance,
-              ets.etsTokenDecimals === 18 ? 'ether' : 'mwei',
-            );
+            etsBalance = new BigNumber(etsBalance).div(10 ** ets.etsTokenDecimals === 18 ? 18 : 6);
           } catch (e) {
             etsBalance = getters.etsBalance[ets.name];
             etsOriginalBalance = getters.etsOriginalBalance[ets.name];
@@ -168,10 +166,8 @@ const actions = {
               .balanceOf(getters.account)
               .call();
             insuranceOriginalBalance = insuranceBalance;
-            insuranceBalance = web3.web3.utils.fromWei(
-              insuranceBalance,
-              'ether',
-            );
+            insuranceBalance = new BigNumber(insuranceBalance)
+              .div(10 ** 18).toString();
           } catch (e) {
             insuranceBalance = getters.insuranceBalance[insurance.chainName];
             insuranceOriginalBalance = getters.insuranceOriginalBalance[insurance.chainName];
@@ -201,27 +197,8 @@ const actions = {
               .balanceOf(getters.account)
               .call();
 
-            switch (ets.actionTokenDecimals) {
-              case 6:
-                actionAssetBalance = web3.web3.utils.fromWei(
-                  actionAssetBalance,
-                  'mwei',
-                );
-                break;
-              case 8:
-                actionAssetBalance = parseFloat(
-                  web3.web3.utils.fromWei(actionAssetBalance, 'mwei'),
-                ) / 100.0;
-                break;
-              case 18:
-                actionAssetBalance = web3.web3.utils.fromWei(
-                  actionAssetBalance,
-                  'ether',
-                );
-                break;
-              default:
-                break;
-            }
+            actionAssetBalance = new BigNumber(actionAssetBalance)
+              .div(10 ** ets.actionTokenDecimals).toString();
           } catch (e) {
             return;
           }

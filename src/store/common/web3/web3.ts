@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import Web3 from 'web3';
+import { ethers } from 'ethers';
 
 const SUPPORTED_NETWORKS = [137, 31337, 56, 10, 42161, 324, 8453, 59144];
 
@@ -7,13 +8,14 @@ const state = {
   contracts: null,
   web3: null,
   provider: null,
+  evmProvider: null,
+  evmSigner: null,
 
   loadingWeb3: true,
   isProviderDefault: true,
 };
 
 const getters = {
-
   provider(state: any) {
     return state.provider;
   },
@@ -37,22 +39,21 @@ const getters = {
 
 const actions = {
 
-  async initDefaultProvider({
+  initDefaultProvider({
     commit, dispatch, getters, rootState,
   }: any) {
     const { rpcUrl } = rootState.network;
 
-    const provider = await new Web3.providers.HttpProvider(rpcUrl);
-    const web3 = await new Web3(provider);
-    /* getters.provider.on("accountsChanged", (data) => {
-            console.log("provider callback def accountsChanged", data);
-        });
-        getters.provider.on("chainChanged",  (data) => {
-            console.log("provider callback def chainChanged", data);
-        });
-        getters.provider.on("disconnect",  (data) => {
-            console.log("provider callback def disconnect", data);
-        }); */
+    const provider = new Web3.providers.HttpProvider(rpcUrl);
+    const web3 = new Web3(provider);
+
+    let evmProvider;
+    if (window.ethereum == null) {
+      console.log('MetaMask not installed; using read-only defaults');
+      evmProvider = new ethers.JsonRpcProvider(rpcUrl);
+    } else {
+      evmProvider = new ethers.BrowserProvider(window.ethereum);
+    }
 
     commit('setIsProviderDefault', true);
     commit('setProvider', provider);
@@ -62,19 +63,8 @@ const actions = {
   async initCustomProvider({
     commit, dispatch, getters, rootState,
   }: any, provider: any) {
-    const web3 = await new Web3(provider);
+    const web3 = new Web3(provider);
     dispatch('network/saveNetworkToLocalStore', rootState.network.networkName, { root: true });
-
-    /*
-        getters.provider.on("accountsChanged", (data) => {
-            console.log("provider callback accountsChanged", data);
-        });
-        getters.provider.on("chainChanged",  (data) => {
-            console.log("provider callback chainChanged", data);
-        });
-        getters.provider.on("disconnect",  (data) => {
-            console.log("provider callback disconnect", data);
-        }); */
 
     commit('setIsProviderDefault', false);
     commit('setProvider', provider);
@@ -123,7 +113,6 @@ const actions = {
 };
 
 const mutations = {
-
   setProvider(state: any, provider: any) {
     state.provider = provider;
   },

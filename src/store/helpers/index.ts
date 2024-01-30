@@ -3,7 +3,6 @@
 /* eslint-disable no-continue */
 /* eslint-disable no-await-in-loop */
 import tokenLogo from '@/utils/token-logo.ts';
-import { getWeiMarker } from '@/utils/web3.ts';
 import BigNumber from 'bignumber.js';
 import type { stateData } from '../odos/index';
 
@@ -41,7 +40,6 @@ export const addItemToFilteredTokens = (
     name: item.name,
     symbol: item.symbol,
     logoUrl,
-    weiMarker: getWeiMarker(item.decimals),
     selected: false,
     balanceData: {},
     approveData: {
@@ -311,14 +309,11 @@ export const loadBalance = async (
     // balance for network currency
     if (data.token.address === '0x0000000000000000000000000000000000000000') {
       const ethBalance = await rootState.web3.web3.eth.getBalance(rootState.accountData.account);
-      const balance = rootState.web3.web3.utils.fromWei(
-        ethBalance,
-        getWeiMarker(data.token.decimals),
-      );
+      const balance = new BigNumber(ethBalance).div(10 ** data.token.decimals);
       data.token.balanceData = {
         name: data.token.symbol,
         balance,
-        balanceInUsd: balance * data.token.price,
+        balanceInUsd: balance.times(data.token.price).toString(),
         originalBalance: ethBalance,
         decimal: data.token.decimals,
       };
@@ -326,7 +321,7 @@ export const loadBalance = async (
       return {
         name: data.token.symbol,
         balance,
-        balanceInUsd: balance * data.token.price,
+        balanceInUsd: balance.times(data.token.price).toString(),
         originalBalance: ethBalance,
         decimal: data.token.decimals,
       };
@@ -337,15 +332,12 @@ export const loadBalance = async (
       .balanceOf(rootState.accountData.account)
       .call();
 
-    const balance = rootState.web3.web3.utils.fromWei(
-      erc20Balance,
-      getWeiMarker(data.token.decimals),
-    );
+    const balance = new BigNumber(erc20Balance).div(10 ** data.token.decimals);
 
     return {
       name: data.token.symbol,
       balance,
-      balanceInUsd: balance * data.token.price,
+      balanceInUsd: balance.times(data.token.price).toString(),
       originalBalance: erc20Balance,
       decimal: data.token.decimals,
     };

@@ -161,6 +161,7 @@ const actions = {
     try {
       const netId = await rootState.web3.web3.eth.net.getId();
 
+      console.log(netId, '----netId');
       if (netId) {
         if (getters.onboard) {
           await getters.onboard.setChain({ chainId: netId });

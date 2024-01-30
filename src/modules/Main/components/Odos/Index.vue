@@ -335,7 +335,6 @@ import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import NetworkNotAvailable from '@/modules/Main/components/Odos/network-not-available.vue';
 import SelectTokensModal from '@/modules/Main/components/Odos/TokensModal/Index.vue';
 import SwapSlippageSettings from '@/modules/Main/components/Odos/SwapSlippageSettings.vue';
-import { getWeiMarker } from '@/utils/web3.ts';
 import { formatMoney } from '@/utils/numbers.ts';
 import { getRandomString } from '@/utils/strings.ts';
 import { clearApproveToken, getAllowanceValue, approveToken } from '@/utils/contract-approve.ts';
@@ -345,6 +344,7 @@ import { onLeaveList, onEnterList, beforeEnterList } from '@/utils/animations.ts
 import {
   getNewInputToken, getNewOutputToken, maxAll, updateTokenValue, getDefaultSecondtoken,
 } from '@/store/helpers/index.ts';
+import BigNumber from 'bignumber.js';
 
 export default defineComponent({
   name: 'SwapForm',
@@ -1205,11 +1205,7 @@ export default defineComponent({
         const token: any = selectedOutputTokensMap[tokenAddress.toLowerCase()];
         if (token) {
           const { selectedToken } = token;
-          const amount = this.web3.utils.fromWei(
-            tokenAmount,
-            getWeiMarker(selectedToken.decimals),
-          );
-          token.sum = amount;
+          token.sum = new BigNumber(tokenAmount).div(10 ** selectedToken.decimals).toString();
         }
 
         this.outputTokens[i] = token;
@@ -1302,10 +1298,7 @@ export default defineComponent({
       }
 
       const tokenContract = this.tokensContractMap[selectedToken.address];
-      const approveValue = this.web3.utils.toWei(
-        '10000000',
-        token.selectedToken.weiMarker,
-      );
+      const approveValue = '10000000000000';
 
       approveToken(
         tokenContract,

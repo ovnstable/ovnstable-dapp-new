@@ -6,7 +6,6 @@
 /* eslint-disable no-unused-vars */
 import odosApiService from '@/services/odos-api-service.ts';
 import { loadJSON } from '@/utils/http-utils.ts';
-import { getWeiMarker } from '@/utils/web3.ts';
 import { useEventBus } from '@vueuse/core';
 import {
   getFilteredOvernightTokens,
@@ -471,10 +470,7 @@ const actions = {
           const token: any = tokens[i];
           token.price = tokenPricesMap[token.address];
           try {
-            token.estimatePerOne = rootState.web3.web3.utils.fromWei(
-              '1',
-              getWeiMarker(token.decimals),
-            );
+            token.estimatePerOne = new BigNumber(1).div(10 ** token.decimals).toString();
           } catch (e) {
             console.error(
               'token.estimatePerOne error',

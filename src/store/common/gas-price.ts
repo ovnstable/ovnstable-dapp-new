@@ -1,5 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { axios } from '@/utils/http-utils.ts';
+import BigNumber from 'bignumber.js';
+import { ethers } from 'ethers';
 
 const state = {
 
@@ -71,20 +73,23 @@ const actions = {
       let gasPriceWei;
       let gasPriceGwei;
       try {
-        gasPriceWei = await rootState.web3.web3.eth.getGasPrice();
+        const evmProvider = new ethers.BrowserProvider(rootState.web3.provider);
+        gasPriceWei = (await evmProvider.getFeeData()).gasPrice?.toString();
+
+        if (!gasPriceWei) return;
 
         if (networkId === 324) {
           console.log('Gas price on ZkSync: ', gasPriceWei);
-          gasPriceWei = `${gasPriceWei * 1.05}`; // added 5% to up
+          gasPriceWei = `${+gasPriceWei * 1.05}`; // added 5% to up
           console.log('Gas price on ZkSync + 5%: ', gasPriceWei);
         }
 
-        gasPriceGwei = rootState.web3.web3.utils.fromWei(gasPriceWei, 'gwei');
+        gasPriceGwei = new BigNumber(gasPriceWei).div(10 ** 9).toString();
       } catch (e) {
         console.error(`Error getGasPrice from provider: ${e} => use hardcode value gasPrice`);
         gasPriceGwei = networkId === 10
           ? 0.001 : 0.1; // Support hardcode value only for Arbitrum and Optimism
-        gasPriceWei = rootState.web3.web3.utils.toWei(`${gasPriceGwei}`, 'gwei');
+        gasPriceWei = new BigNumber(gasPriceGwei).times(10 ** 9).toString();
       }
 
       const priceStationValues = {
@@ -92,7 +97,6 @@ const actions = {
         standard: gasPriceGwei,
         fast: gasPriceGwei,
         ultra: gasPriceGwei,
-
         usdPrice: 0,
       };
       commit('setGasPriceStation', priceStationValues);
@@ -115,9 +119,9 @@ const actions = {
       commit('setGasPriceStation', price);
 
       const element = price[getters.gasPriceType];
-
+      console.log(element, '-GWEI0');
       commit('setGasPrice', element);
-      commit('setGasPriceGwei', rootState.web3.web3.utils.toWei(`${element}`, 'gwei'));
+      commit('setGasPriceGwei', new BigNumber(element).times(10 ** 9).toString());
     }).catch((reason) => {
       console.debug(`Error get gas price: ${reason}`);
     });
