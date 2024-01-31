@@ -4,7 +4,10 @@ export const getAllowanceValue = async (
   contract: any,
   from: string,
   checkContractAddress: any,
-): Promise<number> => contract.allowance(from, checkContractAddress);
+): Promise<string> => {
+  const allow = contract.allowance(from, checkContractAddress);
+  return allow ? allow.toString() : '0';
+};
 
 export const approveToken = async (
   contract: any,

@@ -1268,7 +1268,8 @@ export default defineComponent({
         this.routerContract.target,
       );
 
-      selectedToken.approveData.allowanceValue = allowanceValue * 1;
+      console.log(allowanceValue, '--allowanceValue');
+      selectedToken.approveData.allowanceValue = allowanceValue;
       if (!selectedToken.approveData.allowanceValue) {
         selectedToken.approveData.approved = false;
         return;
