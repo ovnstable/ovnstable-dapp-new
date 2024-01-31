@@ -66,7 +66,7 @@
       </ButtonComponent>
       <ButtonComponent
         v-else-if="!isApprovedToken"
-        @on-click="approveToken"
+        @on-click="approveTrigger"
         btn-size="large"
         full
       >
@@ -88,12 +88,12 @@
 <!-- eslint-disable consistent-return -->
 <!-- eslint-disable no-underscore-dangle -->
 <script lang="ts">
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 import SwitchTabs from '@/components/SwitchTabs/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import TokenForm from '@/modules/Main/components/MintRedeem/TokenForm.vue';
-import { getAllowanceValue } from '@/utils/contract-approve.ts';
-import { buildContract } from '@/utils/contractsMap.ts';
+import { getAllowanceValue, approveToken } from '@/utils/contract-approve.ts';
+import { buildEvmContract } from '@/utils/contractsMap.ts';
 import { MINTREDEEM_SCHEME } from '@/store/mintRedeem/mocks.ts';
 import debounce from 'lodash/debounce';
 import { fixedByPrice } from '@/utils/numbers.ts';
@@ -169,8 +169,9 @@ export default {
   computed: {
     ...mapGetters('network', ['networkId', 'networkName']),
     ...mapGetters('accountData', ['account']),
-    ...mapGetters('web3', ['contracts', 'web3']),
+    ...mapGetters('web3', ['contracts', 'evmProvider']),
     ...mapGetters('gasPrice', ['gasPriceGwei']),
+    ...mapState('odosData', ['tokensContractMap']),
 
     isMintActive() {
       return this.activeMintTab === 0;
@@ -195,16 +196,59 @@ export default {
     gasChange() {
       console.log('gasChange');
     },
-    approveToken() {
-      console.log('approveToken');
+    // checkForApprove(token: any, val: string) {
+
+    // },
+    async approveTrigger() {
+      this.showWaitingModal('Approving in process');
+
+      const tokenData = this.inputToken;
+      const tokenContract = this.tokensContractMap[tokenData.address];
+      const approveValue = '10000000000000';
+
+      const networkId = this.networkId as keyof typeof MINTREDEEM_SCHEME;
+      const pairData = MINTREDEEM_SCHEME[networkId]
+        .find((_) => {
+          const tokenAddress = this.isMintActive
+            ? _.token0.toLowerCase() : _.token1.toLowerCase();
+          return tokenAddress === this.inputToken.address.toLowerCase();
+        });
+      let exchangeAddress = null;
+
+      if (pairData) exchangeAddress = pairData.exchange;
+      if (!exchangeAddress) return;
+
+      const transaction = await approveToken(
+        tokenContract,
+        exchangeAddress,
+        approveValue,
+        this.account,
+        this.gasPriceGwei,
+      )
+        .catch((e) => {
+          console.error('Error when approve token.', e);
+          this.closeWaitingModal();
+          this.showErrorModalWithMsg({ errorType: 'approve', errorMsg: e });
+        });
+
+      if (transaction) {
+        transaction.wait();
+        this.closeWaitingModal();
+        this.checkApprove(this);
+      }
     },
     checkApprove: debounce(async (self: any) => {
       const networkId = self.networkId as keyof typeof MINTREDEEM_SCHEME;
       const exchangeContract = MINTREDEEM_SCHEME[networkId]
         .find((_) => _.token0.toLowerCase() === self.inputToken.address.toLowerCase());
       const tokenAddress = Object.values(self.contracts)
-        .find((cData: any) => (cData ? cData._address === self.inputToken.address : false));
+        .find((cData: any) => (
+          cData ? cData.target.toLowerCase() === self.inputToken.address.toLowerCase() : false
+        ));
 
+      console.log(self.inputToken.address, '-self.self.inputToken.address');
+      console.log(self.contracts, '-self.contracts');
+      console.log(tokenAddress, '-self.tokenAddress');
       if (!exchangeContract || !tokenAddress) return;
 
       const allowanceValue = await getAllowanceValue(
@@ -351,7 +395,7 @@ export default {
 
       try {
         const estimateOptions = { from, gasPrice: this.gasPriceGwei };
-        const blockNum = await this.web3.eth.getBlockNumber();
+        const blockNum = await this.evmProvider.getBlockNumber();
 
         const method = await this.getContractMethodWithParams(
           action,
@@ -416,7 +460,7 @@ export default {
     async swapTokens() {
       try {
         await this.refreshGasPrice();
-        this.showWaitingModal('Approving in process');
+        this.showWaitingModal('swaping in process');
         const networkId = this.networkId as keyof typeof MINTREDEEM_SCHEME;
         const pairData = MINTREDEEM_SCHEME[networkId]
           .find((_) => {
@@ -428,9 +472,9 @@ export default {
 
         if (pairData) {
           // abi for wrap/unwrap is different
-          exchangeContract = buildContract(
+          exchangeContract = buildEvmContract(
             pairData?.methodName[0] === mintRedeemTypes.WRAP ? ABI_Market : ABI_Exchange,
-            this.web3,
+            this.evmProvider,
             pairData.exchange,
           );
         }

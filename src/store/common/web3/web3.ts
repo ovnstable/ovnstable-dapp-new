@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import Web3 from 'web3';
 import { ethers } from 'ethers';
+import { markRaw } from 'vue';
 
 const SUPPORTED_NETWORKS = [137, 31337, 56, 10, 42161, 324, 8453, 59144];
 
@@ -16,6 +17,12 @@ const state = {
 };
 
 const getters = {
+  evmProvider(state: any) {
+    return state.evmProvider;
+  },
+  evmSigner(state: any) {
+    return state.evmSigner;
+  },
   provider(state: any) {
     return state.provider;
   },
@@ -38,7 +45,6 @@ const getters = {
 };
 
 const actions = {
-
   initDefaultProvider({
     commit, dispatch, getters, rootState,
   }: any) {
@@ -47,15 +53,16 @@ const actions = {
     const provider = new Web3.providers.HttpProvider(rpcUrl);
     const web3 = new Web3(provider);
 
+    console.log(rpcUrl, '--rpcUrl');
+    console.log(new ethers.JsonRpcProvider(), '---DEFAULT');
     let evmProvider;
     if (window.ethereum == null) {
       console.log('MetaMask not installed; using read-only defaults');
-      evmProvider = new ethers.JsonRpcProvider(rpcUrl);
+      evmProvider = new ethers.JsonRpcProvider(rpcUrl, 'any');
     } else {
-      evmProvider = new ethers.BrowserProvider(window.ethereum);
+      evmProvider = new ethers.BrowserProvider(window.ethereum, 'any');
     }
 
-    commit('setIsProviderDefault', true);
     commit('setProvider', provider);
     commit('setWeb3', web3);
   },
@@ -64,25 +71,31 @@ const actions = {
     commit, dispatch, getters, rootState,
   }: any, provider: any) {
     const web3 = new Web3(provider);
+    const evmProvider = new ethers.BrowserProvider(provider, 'any');
+    const signer = await evmProvider.getSigner();
     dispatch('network/saveNetworkToLocalStore', rootState.network.networkName, { root: true });
 
     commit('setIsProviderDefault', false);
     commit('setProvider', provider);
-    commit('setWeb3', web3);
+    commit('setEvmProvider', {
+      provider: markRaw(evmProvider),
+      signer: markRaw(signer),
+    });
+    commit('setWeb3', markRaw(web3));
   },
 
   async initWeb3({
     commit, dispatch, getters, rootState,
   }: any) {
     commit('setLoadingWeb3', true);
+    // await dispatch('initDefaultProvider');
 
-    if (getters.provider === undefined || getters.provider === null || getters.isProviderDefault) {
-      await dispatch('initDefaultProvider');
-    } else {
+    console.log(getters.provider, 'initWeb3');
+    if (getters.provider) {
       try {
         await dispatch('initCustomProvider', getters.provider);
       } catch (e) {
-        await dispatch('initDefaultProvider');
+        console.log(e, '---error provider init');
       }
     }
 
@@ -92,27 +105,32 @@ const actions = {
     dispatch('gasPrice/refreshGasPrice', null, { root: true });
     dispatch('insuranceData/refreshInsurance', null, { root: true });
 
-    if (!getters.isProviderDefault) {
-      let currentWalletNetworkId = await getters.web3.eth.net.getId();
-      // eslint-disable-next-line radix
-      currentWalletNetworkId = parseInt(currentWalletNetworkId);
+    // if (!getters.isProviderDefault) {
+    //   let currentWalletNetworkId = await getters.web3.eth.net.getId();
+    //   // eslint-disable-next-line radix
+    //   currentWalletNetworkId = parseInt(currentWalletNetworkId);
 
-      if (SUPPORTED_NETWORKS.includes(currentWalletNetworkId)) {
-        commit('network/setSwitchToOtherNetwork', false, { root: true });
+    //   if (SUPPORTED_NETWORKS.includes(currentWalletNetworkId)) {
+    //     commit('network/setSwitchToOtherNetwork', false, { root: true });
 
-        if (currentWalletNetworkId !== rootState.network.networkId) {
-          dispatch('network/changeDappNetwork', currentWalletNetworkId.toString(), { root: true });
-        }
-      } else {
-        commit('network/setSwitchToOtherNetwork', true, { root: true });
-      }
-    }
+    //     if (currentWalletNetworkId !== rootState.network.networkId) {
+    //       dispatch('network/changeDappNetwork',
+    // currentWalletNetworkId.toString(), { root: true });
+    //     }
+    //   } else {
+    //     commit('network/setSwitchToOtherNetwork', true, { root: true });
+    //   }
+    // }
 
     commit('setLoadingWeb3', false);
   },
 };
 
 const mutations = {
+  setEvmProvider(state: any, providerData: any) {
+    state.evmProvider = providerData.provider;
+    state.evmSigner = providerData.signer;
+  },
   setProvider(state: any, provider: any) {
     state.provider = provider;
   },

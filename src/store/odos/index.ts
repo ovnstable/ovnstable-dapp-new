@@ -11,10 +11,10 @@ import {
   getFilteredOvernightTokens,
   getFilteredPoolTokens,
   loadBalance,
-  loadContractInstance
 } from '@/store/helpers/index.ts';
 import BigNumber from 'bignumber.js';
-import { getNetworkParams } from '../common/web3/network.ts';
+import { getNetworkParams } from '@/store/common/web3/network.ts';
+import { buildEvmContract } from '@/utils/contractsMap.ts';
 
 const KEY = 'REFERRAL_CODE';
 
@@ -305,18 +305,18 @@ const actions = {
   }: any, contractFile: any) {
     for (let i = 0; i < state.secondTokens.length; i++) {
       const secondtoken: any = state.secondTokens[i];
-      state.tokensContractMap[secondtoken.address] = loadContractInstance(
-        contractFile,
-        rootState.web3.web3,
+      state.tokensContractMap[secondtoken.address] = buildEvmContract(
+        contractFile.abi,
+        rootState.web3.evmSigner,
         secondtoken.address,
       );
     }
 
     for (let i = 0; i < state.tokens.length; i++) {
       const token: any = state.tokens[i];
-      state.tokensContractMap[token.address] = loadContractInstance(
-        contractFile,
-        rootState.web3.web3,
+      state.tokensContractMap[token.address] = buildEvmContract(
+        contractFile.abi,
+        rootState.web3.evmSigner,
         token.address,
       );
     }
@@ -410,12 +410,8 @@ const actions = {
       return;
     }
 
-    console.log(rootState, '-----rootState');
     const { networkId } = getNetworkParams(rootState.network.networkName);
     dispatch('loadContract', networkId);
-    // .then(() => {
-    //     console.log("Contracts loaded", state.routerContract, state.executorContract);
-    // })
   },
   async loadContract({
     commit, state, getters, rootState,
@@ -429,21 +425,21 @@ const actions = {
     return odosApiService
       .loadContractData(chainId)
       .then((data: any) => {
-        console.log(data, '--data');
+        console.log(data, rootState.web3.evmProvider, '--loadContracts');
         commit('changeState', { field: 'contractData', val: data });
         commit('changeState', {
           field: 'routerContract',
-          val: loadContractInstance(
-            data.routerAbi,
-            rootState.web3.web3,
+          val: buildEvmContract(
+            data.routerAbi.abi,
+            rootState.web3.evmSigner,
             data.routerAddress,
           )
         });
         commit('changeState', {
           field: 'executorContract',
-          val: loadContractInstance(
-            data.erc20Abi,
-            rootState.web3.web3,
+          val: buildEvmContract(
+            data.erc20Abi.abi,
+            rootState.web3.evmSigner,
             data.executorAddress,
           )
         });
@@ -452,6 +448,7 @@ const actions = {
       .catch((e) => {
         console.log('Error load contract', e);
         commit('changeState', { field: 'isContractLoading', val: false });
+        throw e;
       });
   },
   loadPricesInfo({
@@ -576,21 +573,8 @@ const actions = {
 
     try {
       // get balance from eth token
-      console.log('OdosSwap state.account: ', rootState.accountData.account);
-      const weiBalance = await rootState.web3.web3.eth.getBalance(rootState.accountData.account);
-      const balance = rootState.web3.web3.utils.fromWei(weiBalance);
-      console.log(
-        'OdosSwap Balance from eth token',
-        balance,
-        balance * 1854.91,
-      );
-
-      // 'gasPrice', 'gasPriceGwei', 'gasPriceStation'
-      // console.log(
-      //   'OdosSwap Get gasPrice ',
-      //   rootState.accountData.gasPrice,
-      //   state.gasPrice * 1854.91,
-      // );
+      const weiBalance = await rootState.web3.evmProvider.getBalance(rootState.accountData.account);
+      const balance = new BigNumber(weiBalance).div(10 ** 18).toString();
       commit('changeState', {
         field: 'zksyncFeeHistory',
         val: {
@@ -604,31 +588,20 @@ const actions = {
       console.error('OdosSwap Error get balance from eth token', e);
     }
 
-    await rootState.web3.web3.eth.estimateGas(transactionData, (error: any, gasLimit: any) => {
+    await rootState.web3.evmProvider.estimateGas(transactionData, (error: any, gasLimit: any) => {
       if (error) {
         console.error('OdosSwap Error estimating gas:', error);
       } else {
         console.log('OdosSwap estimating gasLimit:', gasLimit);
-        rootState.web3.web3.eth.getGasPrice().then((gasPrice: any) => {
-          console.log('OdosSwap estimating gasPrice:', gasPrice);
-          const feeInWei = gasLimit * 262500000;
-          console.log('OdosSwap estimating feeInWei:', feeInWei);
-          const feeInEther = rootState.web3.web3.utils.fromWei(
-            feeInWei.toString(),
-            'ether',
-          );
-          console.log(
-            'OdosSwap Estimated transaction fee in Ether:',
-            feeInEther,
-            feeInEther * 1854.91,
-          );
-          commit('changeState', {
-            field: 'zksyncFeeHistory',
-            val: {
-              ...state.zksyncFeeHistory,
-              estimateFeeInEther: feeInEther,
-            }
-          });
+        const feeInWei = gasLimit * 262500000;
+        console.log('OdosSwap estimating feeInWei:', feeInWei);
+        const feeInEther = new BigNumber(feeInWei).div(10 ** 18).toString();
+        commit('changeState', {
+          field: 'zksyncFeeHistory',
+          val: {
+            ...state.zksyncFeeHistory,
+            estimateFeeInEther: feeInEther,
+          }
         });
       }
     });
@@ -676,10 +649,10 @@ const actions = {
       message: 'Odos send transaction',
       swapSession: state.swapSessionId,
       data: transactionData,
-      log: ` | Current block: ${await rootState.web3.web3.eth.getBlockNumber()}`,
+      log: ` | Current block: ${await rootState.web3.evmProvider.getBlockNumber()}`,
     });
     console.debug(txLogMessage);
-    rootState.web3.web3.eth
+    rootState.web3.evmSigner
       .sendTransaction(transactionData)
       .then(async (dataTx: any) => {
         console.log('Call result: ', dataTx);
@@ -695,9 +668,9 @@ const actions = {
           try {
             // get balance from eth token
             console.log('state.account after tx: ', rootState.accountData.account);
-            const weiBalance = await rootState.web3.web3.eth
+            const weiBalance = await rootState.web3.evmProvider
               .getBalance(rootState.accountData.account);
-            const balance = rootState.web3.web3.utils.fromWei(weiBalance);
+            const balance = new BigNumber(weiBalance).div(10 ** 18).toString();
             console.log(
               'Balance from eth token after tx',
               balance,

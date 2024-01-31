@@ -73,10 +73,10 @@ const actions = {
       let gasPriceWei;
       let gasPriceGwei;
       try {
-        const evmProvider = new ethers.BrowserProvider(rootState.web3.provider);
-        gasPriceWei = (await evmProvider.getFeeData()).gasPrice?.toString();
-
+        gasPriceWei = (await rootState.web3.evmProvider.getFeeData()).gasPrice?.toString();
         if (!gasPriceWei) return;
+
+        console.log((await rootState.web3.evmProvider.getBalance(rootState.accountData.account)).toString(), 'RECEPT');
 
         if (networkId === 324) {
           console.log('Gas price on ZkSync: ', gasPriceWei);

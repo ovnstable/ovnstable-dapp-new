@@ -18,7 +18,7 @@ const actions = {
     commit, dispatch, getters, rootState,
   }: any) {
     const option = {
-      address: rootState.web3.contracts.usdPlus.options.address,
+      address: rootState.web3.contracts.usdPlus.target,
       symbol: process.env.VUE_APP_USD_TOKEN_NAME,
       decimals: 6,
       image: UsdPlusImage.image,
@@ -44,7 +44,7 @@ const actions = {
     commit, dispatch, getters, rootState,
   }: any) {
     const option = {
-      address: rootState.web3.contracts.daiPlus.options.address,
+      address: rootState.web3.contracts.daiPlus.target,
       symbol: process.env.VUE_APP_DAI_TOKEN_NAME,
       decimals: 18,
       image: DaiPlusImage.image,
@@ -97,7 +97,7 @@ const actions = {
     commit, dispatch, getters, rootState,
   }: any) {
     const option = {
-      address: rootState.web3.contracts.ethPlus.options.address,
+      address: rootState.web3.contracts.ethPlus.target,
       symbol: process.env.VUE_APP_ETH_TOKEN_NAME,
       decimals: 18,
       image: EthPlusImage.image,
@@ -123,7 +123,7 @@ const actions = {
     commit, dispatch, getters, rootState,
   }: any) {
     const option = {
-      address: rootState.web3.contracts.wEthPlus.options.address,
+      address: rootState.web3.contracts.wEthPlus.target,
       symbol: process.env.VUE_APP_WRAPPED_ETH_TOKEN_NAME,
       decimals: 18,
       image: wETHPlusImage.image,
@@ -149,7 +149,7 @@ const actions = {
     commit, dispatch, getters, rootState,
   }: any) {
     const option = {
-      address: rootState.web3.contracts.wUsdPlus.options.address,
+      address: rootState.web3.contracts.wUsdPlus.target,
       symbol: process.env.VUE_APP_WRAPPED_USD_TOKEN_NAME,
       decimals: 6,
       image: WrappedUsdPlusImage.image,
@@ -175,7 +175,7 @@ const actions = {
     commit, dispatch, getters, rootState,
   }: any) {
     const option = {
-      address: rootState.web3.contracts.insurance.optimism_token.options.address,
+      address: rootState.web3.contracts.insurance.optimism_token.target,
       symbol: 'OVN INS',
       decimals: 18,
       image: OptimismInsurance.image,
@@ -204,7 +204,7 @@ const actions = {
     const etsImage = require(`@/assets/${etsData.iconName}.json`);
 
     const option = {
-      address: rootState.web3.contracts[etsData.tokenContract].options.address,
+      address: rootState.web3.contracts[etsData.tokenContract].target,
       symbol: etsData.nameToken,
       decimals: etsData.etsTokenDecimals,
       image: etsImage.image,
@@ -235,7 +235,7 @@ const actions = {
         params: {
           type: 'ERC20',
           options: {
-            address: rootState.web3.contracts.govToken.options.address,
+            address: rootState.web3.contracts.govToken.target,
             symbol: process.env.VUE_APP_OVN_TOKEN_NAME,
             decimals: 18,
             image: OvnImage.image,

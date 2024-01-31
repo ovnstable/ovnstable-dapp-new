@@ -60,7 +60,7 @@ const actions = {
       const delay = (t: number) => new Promise((resolve) => { setTimeout(resolve, t); });
 
       const transactionReceiptRetry = () => rootState
-        .web3.web3.eth.getTransactionReceipt(transaction.hash)
+        .web3.evmProvider.getTransactionReceipt(transaction.hash)
         .then((receipt: any) => {
           if (transaction.chain !== rootState.network.networkId) {
             return delay(1000).then(transactionReceiptRetry);

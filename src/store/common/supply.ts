@@ -38,7 +38,7 @@ const actions = {
       if (ets.chain === networkId) {
         try {
           // eslint-disable-next-line no-await-in-loop
-          etsSupply = await web3.contracts[ets.tokenContract].methods.totalSupply().call();
+          etsSupply = await web3.contracts[ets.tokenContract].totalSupply();
           etsSupply = new BigNumber(etsSupply).div(10 ** ets.etsTokenDecimals);
         } catch (e) {
           try {
@@ -89,7 +89,7 @@ const actions = {
       if (insurance.chainId === networkId) {
         try {
           // eslint-disable-next-line no-await-in-loop
-          supply = await web3.contracts.insurance[`${insurance.chainName}_m2m`].methods.totalNetAssets().call();
+          supply = await web3.contracts.insurance[`${insurance.chainName}_m2m`].totalNetAssets();
           supply = new BigNumber(supply).div(10 ** 6);
         } catch (e) {
           supply = rootState.insuranceData.insuranceStrategyData[insurance.chainName].lastTvl;

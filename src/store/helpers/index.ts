@@ -4,6 +4,7 @@
 /* eslint-disable no-await-in-loop */
 import tokenLogo from '@/utils/token-logo.ts';
 import BigNumber from 'bignumber.js';
+import { ethers } from 'ethers';
 import type { stateData } from '../odos/index';
 
 const SECONDTOKEN_SECOND_DEFAULT_SYMBOL = 'DAI+';
@@ -308,7 +309,8 @@ export const loadBalance = async (
   try {
     // balance for network currency
     if (data.token.address === '0x0000000000000000000000000000000000000000') {
-      const ethBalance = await rootState.web3.web3.eth.getBalance(rootState.accountData.account);
+      // const evmProvider = new ethers.BrowserProvider(rootState.web3.provider);
+      const ethBalance = await rootState.web3.evmProvider.getBalance(rootState.accountData.account);
       const balance = new BigNumber(ethBalance).div(10 ** data.token.decimals);
       data.token.balanceData = {
         name: data.token.symbol,
@@ -328,10 +330,7 @@ export const loadBalance = async (
     }
 
     // balance for ERC20
-    const erc20Balance = await data.contract.methods
-      .balanceOf(rootState.accountData.account)
-      .call();
-
+    const erc20Balance = await data.contract.balanceOf(rootState.accountData.account);
     const balance = new BigNumber(erc20Balance).div(10 ** data.token.decimals);
 
     return {

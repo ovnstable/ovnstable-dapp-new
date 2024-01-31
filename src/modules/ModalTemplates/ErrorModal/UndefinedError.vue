@@ -106,6 +106,8 @@ h1 {
 }
 
 .error-content__msg {
+  max-width: 100%;
+  word-break: break-all;
   font-size: 20px;
   margin-bottom: 20px;
   color: var(--color-7);

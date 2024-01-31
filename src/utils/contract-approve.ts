@@ -1,11 +1,10 @@
+import type { ethers } from 'ethers';
+
 export const getAllowanceValue = async (
   contract: any,
   from: string,
   checkContractAddress: any,
-) => contract
-  .methods
-  .allowance(from, checkContractAddress)
-  .call();
+): Promise<number> => contract.allowance(from, checkContractAddress);
 
 export const approveToken = async (
   contract: any,
@@ -13,10 +12,10 @@ export const approveToken = async (
   value: string | number,
   fromAcc: string,
   gasPrice: string,
-) => {
+): Promise<ethers.TransactionResponse> => {
   const from = fromAcc;
   const approveParams: any = { gasPrice, from };
-  return contract.methods.approve(contractAddressForApprove, value).send(approveParams);
+  return contract.approve(contractAddressForApprove, value, approveParams);
 };
 
 export const clearApproveToken = async (
@@ -24,10 +23,10 @@ export const clearApproveToken = async (
   contractAddressForDisapprove: string,
   fromAcc: string,
   gasPrice: string,
-) => {
+): Promise<ethers.TransactionResponse> => {
   const from = fromAcc;
   const allowanceValue = await getAllowanceValue(contract, from, contractAddressForDisapprove);
   const approveParams = { gasPrice, from };
-  return contract.methods
-    .decreaseAllowance(contractAddressForDisapprove, allowanceValue).send(approveParams);
+  return contract
+    .decreaseAllowance(contractAddressForDisapprove, allowanceValue, approveParams);
 };

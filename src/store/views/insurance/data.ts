@@ -236,7 +236,7 @@ const actions = {
         return;
       }
 
-      let date = await contract.methods.withdrawRequests(account).call();
+      let date = await contract.withdrawRequests(account);
       try {
         date = parseFloat(date);
       } catch (e) {
@@ -259,7 +259,7 @@ const actions = {
           const currentDate = new Date();
 
           if (currentDate.getTime() > date.getTime()) {
-            const withdrawPeriod = await web3.contracts.insurance[`${insurance.chainName}_exchanger`].methods.withdrawPeriod().call();
+            const withdrawPeriod = await web3.contracts.insurance[`${insurance.chainName}_exchanger`].withdrawPeriod();
             const withdrawDate = new Date(date.getTime() + (withdrawPeriod * 1000));
 
             if (withdrawDate.getTime() > currentDate.getTime()) {

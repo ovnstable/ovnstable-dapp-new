@@ -345,6 +345,7 @@ import {
   getNewInputToken, getNewOutputToken, maxAll, updateTokenValue, getDefaultSecondtoken,
 } from '@/store/helpers/index.ts';
 import BigNumber from 'bignumber.js';
+import { ethers } from 'ethers';
 
 export default defineComponent({
   name: 'SwapForm',
@@ -992,7 +993,7 @@ export default defineComponent({
         inputTokens: this.getRequestInputTokens(),
         outputTokens: this.getRequestOutputTokens(),
         gasPrice: actualGas,
-        userAddr: this.web3.utils.toChecksumAddress(this.account.toLowerCase()),
+        userAddr: ethers.getAddress(this.account.toLowerCase()),
         slippageLimitPercent: this.getSlippagePercent(),
         sourceBlacklist: this.getSourceBlackList(this.networkId),
         sourceWhitelist: [],
@@ -1020,7 +1021,7 @@ export default defineComponent({
           });
 
           const assembleData = {
-            userAddr: this.web3.utils.toChecksumAddress(
+            userAddr: ethers.getAddress(
               this.account.toLowerCase(),
             ),
             pathId: data.pathId,
@@ -1133,7 +1134,7 @@ export default defineComponent({
         inputTokens: input,
         outputTokens: output,
         gasPrice: actualGas,
-        userAddr: this.web3.utils.toChecksumAddress(this.account.toLowerCase()),
+        userAddr: ethers.getAddress(this.account.toLowerCase()),
         slippageLimitPercent: this.getSlippagePercent(),
         sourceBlacklist: this.getSourceBlackList(this.networkId),
         sourceWhitelist: [],
@@ -1232,7 +1233,7 @@ export default defineComponent({
       const tokenContract = this.tokensContractMap[selectedToken.address];
       clearApproveToken(
         tokenContract,
-        this.routerContract.options.address,
+        this.routerContract.target,
         this.account,
         this.gasPriceGwei,
       )
@@ -1253,7 +1254,7 @@ export default defineComponent({
     },
     async checkApproveForToken(token: any, checkedAllowanceValue?: any) {
       // checkedAllowanceValue in wei
-      console.log(token, checkedAllowanceValue, '--checkApproveForToken');
+      console.log(this.routerContract, '--this.routerContract');
       const { selectedToken } = token;
       if (
         selectedToken.address === '0x0000000000000000000000000000000000000000'
@@ -1266,7 +1267,7 @@ export default defineComponent({
       const allowanceValue = await getAllowanceValue(
         tokenContract,
         this.account,
-        this.routerContract.options.address,
+        this.routerContract.target,
       );
 
       console.log(allowanceValue, '--checkApproveForToken2');
@@ -1302,7 +1303,7 @@ export default defineComponent({
 
       approveToken(
         tokenContract,
-        this.routerContract.options.address,
+        this.routerContract.target,
         approveValue,
         this.account,
         this.gasPriceGwei,

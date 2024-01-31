@@ -96,9 +96,7 @@ const actions = {
           balance: '0',
         };
       }
-      const result = await web3.contracts[_.contractName].methods
-        .balanceOf(getters.account)
-        .call();
+      const result = await web3.contracts[_.contractName].balanceOf(getters.account);
       return {
         symbol: _.symbol,
         balance: result,
@@ -120,9 +118,7 @@ const actions = {
 
         if (ets.chain === networkId) {
           try {
-            etsBalance = await web3.contracts[ets.tokenContract].methods
-              .balanceOf(getters.account)
-              .call();
+            etsBalance = await web3.contracts[ets.tokenContract].balanceOf(getters.account);
             etsOriginalBalance = etsBalance;
             etsBalance = new BigNumber(etsBalance).div(10 ** ets.etsTokenDecimals === 18 ? 18 : 6);
           } catch (e) {
@@ -162,9 +158,7 @@ const actions = {
           try {
             insuranceBalance = await web3.contracts.insurance[
               `${insurance.chainName}_token`
-            ].methods
-              .balanceOf(getters.account)
-              .call();
+            ].balanceOf(getters.account);
             insuranceOriginalBalance = insuranceBalance;
             insuranceBalance = new BigNumber(insuranceBalance)
               .div(10 ** 18).toString();
@@ -193,10 +187,7 @@ const actions = {
 
         if (!resultActionAssetBalance[ets.actionAsset]) {
           try {
-            actionAssetBalance = await web3.contracts[ets.actionAsset].methods
-              .balanceOf(getters.account)
-              .call();
-
+            actionAssetBalance = await web3.contracts[ets.actionAsset].balanceOf(getters.account);
             actionAssetBalance = new BigNumber(actionAssetBalance)
               .div(10 ** ets.actionTokenDecimals).toString();
           } catch (e) {

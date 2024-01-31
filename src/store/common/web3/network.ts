@@ -367,13 +367,14 @@ const actions = {
   async setWalletNetwork({
     commit, dispatch, getters, rootState,
   }: any, network: any) {
-    if (rootState.web3.provider && !rootState.web3.isProviderDefault) {
+    if (rootState.web3.provider) {
       dispatch('saveNetworkToLocalStore', network);
 
       try {
+        console.log(ethers.toBeHex(network), network, '-network');
         await rootState.web3.provider.request({
           method: 'wallet_switchEthereumChain',
-          params: [{ chainId: ethers.hexlify(ethers.toUtf8Bytes(network)) }],
+          params: [{ chainId: ethers.toBeHex(network) }],
         });
 
         commit('walletAction/setWalletConnected', true, { root: true });
@@ -387,7 +388,7 @@ const actions = {
             case '137':
             case '31337':
               params = {
-                chainId: ethers.hexlify(ethers.toUtf8Bytes('137')),
+                chainId: ethers.toBeHex(137),
                 rpcUrls: ['https://polygon-rpc.com/'],
                 blockExplorerUrls: ['https://polygonscan.com/'],
                 chainName: 'Polygon Mainnet',
@@ -401,7 +402,7 @@ const actions = {
             case 'bsc':
             case '56':
               params = {
-                chainId: ethers.hexlify(ethers.toUtf8Bytes('56')),
+                chainId: ethers.toBeHex('56'),
                 rpcUrls: ['https://bsc-dataseed.binance.org/'],
                 blockExplorerUrls: ['https://bscscan.com/'],
                 chainName: 'Smart Chain',
@@ -416,7 +417,7 @@ const actions = {
             case 'optimism':
             case '10':
               params = {
-                chainId: ethers.hexlify(ethers.toUtf8Bytes('10')),
+                chainId: ethers.toBeHex('10'),
                 rpcUrls: ['https://optimism.llamarpc.com'],
                 blockExplorerUrls: ['https://optimistic.etherscan.io/'],
                 chainName: 'Optimism',
@@ -431,7 +432,7 @@ const actions = {
             case 'arbitrum':
             case '42161':
               params = {
-                chainId: ethers.hexlify(ethers.toUtf8Bytes('42161')),
+                chainId: ethers.toBeHex('42161'),
                 rpcUrls: ['https://arb1.arbitrum.io/rpc'],
                 blockExplorerUrls: ['https://arbiscan.io/'],
                 chainName: 'Arbitrum',
@@ -446,7 +447,7 @@ const actions = {
             case 'zksync':
             case '324':
               params = {
-                chainId: ethers.hexlify(ethers.toUtf8Bytes('324')),
+                chainId: ethers.toBeHex('324'),
                 // rpcUrls: ['https://zksync2-testnet.zksync.dev'],
                 rpcUrls: ['https://mainnet.era.zksync.io'],
                 blockExplorerUrls: ['https://explorer.zksync.io'],
@@ -462,7 +463,7 @@ const actions = {
             case 'base':
             case '8453':
               params = {
-                chainId: ethers.hexlify(ethers.toUtf8Bytes('8453')),
+                chainId: ethers.toBeHex('8453'),
                 rpcUrls: ['https://mainnet.base.org'],
                 blockExplorerUrls: ['https://basescan.org'],
                 chainName: 'Base',
@@ -477,7 +478,7 @@ const actions = {
             case 'linea':
             case '59144':
               params = {
-                chainId: ethers.hexlify(ethers.toUtf8Bytes('59144')),
+                chainId: ethers.toBeHex('5914'),
                 rpcUrls: ['https://linea.drpc.org'],
                 blockExplorerUrls: ['https://lineascan.build'],
                 chainName: 'Linea',

@@ -1,3 +1,5 @@
+import { ethers } from 'ethers';
+
 /* eslint-disable import/prefer-default-export */
 export const chainContractsMap = {
   optimism: {
@@ -145,9 +147,23 @@ export const chainContractsMap = {
   },
 };
 
-export function buildContract(abi: any, web3: any, address: string) {
-  if (address == null) {
-    return null;
-  }
-  return new web3.eth.Contract(abi, address);
+export const buildEvmContract = (abi: any, signer: any, address: string) => {
+  let contractAdd = address;
+
+  if (!address) contractAdd = abi.address;
+
+  return new ethers.Contract(
+    contractAdd,
+    abi,
+    signer,
+  );
+};
+
+export function buildEvmContractForChain(abi: any, signer: any, address: string) {
+  if (!address) return null;
+  return new ethers.Contract(
+    address,
+    abi,
+    signer,
+  );
 }
