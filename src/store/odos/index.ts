@@ -496,21 +496,6 @@ const actions = {
     commit('changeState', { field: 'secondTokens', val: [] });
   },
 
-  getTokenByAddress({
-    commit, state, dispatch, rootState,
-  }: any, address: string) {
-    const tokens: any = [...state.secondTokens, ...state.tokens];
-    for (let i = 0; i < tokens.length; i++) {
-      const token = tokens[i];
-      console.log('Find tokens: ', token);
-      if (token.address === address) {
-        return token;
-      }
-    }
-
-    return null;
-  },
-
   quoteRequest({
     commit, state, dispatch, rootState,
   }: any, requestData: any) {
@@ -655,6 +640,7 @@ const actions = {
       data: transactionData,
       log: ` | Current block: ${await rootState.web3.evmProvider.getBlockNumber()}`,
     });
+
     console.debug(txLogMessage);
     rootState.web3.evmSigner
       .sendTransaction(transactionData)
@@ -670,15 +656,10 @@ const actions = {
 
         if (rootState.network.networkName === 'zksync' && state.zksyncFeeHistory) {
           try {
-            // get balance from eth token
             console.log('state.account after tx: ', rootState.accountData.account);
             const weiBalance = await rootState.web3.evmProvider
               .getBalance(rootState.accountData.account);
             const balance = new BigNumber(weiBalance).div(10 ** 18).toString();
-            console.log(
-              'Balance from eth token after tx',
-              balance,
-            );
             state.zksyncFeeHistory.finalWeiBalance = balance;
           } catch (e) {
             console.log({
