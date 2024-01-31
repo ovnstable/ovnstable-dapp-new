@@ -1270,7 +1270,6 @@ export default defineComponent({
         this.routerContract.target,
       );
 
-      console.log(allowanceValue, '--checkApproveForToken2');
       selectedToken.approveData.allowanceValue = allowanceValue * 1;
       if (!selectedToken.approveData.allowanceValue) {
         selectedToken.approveData.approved = false;

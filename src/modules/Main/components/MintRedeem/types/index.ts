@@ -17,3 +17,9 @@ export enum mintRedeemTypes {
   REDEEM = 'redeem',
   BUY = 'buy'
 }
+
+export interface IMethodData {
+  name: string,
+  params: any,
+  iterateArgs: boolean
+}
