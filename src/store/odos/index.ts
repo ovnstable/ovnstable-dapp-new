@@ -1,31 +1,27 @@
+/* eslint-disable no-await-in-loop */
 /* eslint-disable comma-dangle */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable consistent-return */
-/* eslint-disable no-continue */
-/* eslint-disable no-param-reassign */
 /* eslint-disable no-unused-vars */
 import odosApiService from '@/services/odos-api-service.ts';
-import { loadJSON } from '@/utils/http-utils.ts';
 import { useEventBus } from '@vueuse/core';
 import {
   getFilteredOvernightTokens,
   getFilteredPoolTokens,
-  loadBalance,
+  loadPrices,
 } from '@/store/helpers/index.ts';
 import BigNumber from 'bignumber.js';
-import { getNetworkParams } from '@/store/common/web3/network.ts';
+import { getNetworkParams } from '@/store/web3/network.ts';
 import { buildEvmContract } from '@/utils/contractsMap.ts';
+import { loadJSON } from '@/utils/httpUtils.ts';
+// import { awaitDelay } from '@/utils/const.ts';
+import { MulticallWrapper } from 'ethers-multicall-provider';
+import { ethers } from 'ethers';
+import { ERC20_ABI } from '@/assets/abi/index.ts';
+import { fixedByPrice } from '@/utils/numbers.ts';
 
-const KEY = 'REFERRAL_CODE';
+// const KEY = 'REFERRAL_CODE';
 
 const ODOS_DURATION_CONFIRM_REQUEST = 60;
-
-const loadPrices = async (chainId: number | string) => odosApiService
-  .loadPrices(chainId)
-  .then((data: any) => data.tokenPrices)
-  .catch((e) => {
-    console.error('Error load contract', e);
-  });
 
 export const stateData = {
   baseViewType: 'SWAP',
@@ -367,9 +363,7 @@ const actions = {
   async loadBalances({
     commit, state, getters, rootState, dispatch,
   }: any) {
-    if (state.isBalancesLoading) {
-      return;
-    }
+    if (state.isBalancesLoading) return;
 
     state.isBalancesLoading = true;
     if (!rootState.accountData.account) {
@@ -378,17 +372,34 @@ const actions = {
     }
 
     try {
+      const provider = rootState.web3.evmProvider;
+      const multicaller = MulticallWrapper.wrap(provider);
       const tokens = getters.tokensToBalanceUpdate;
+      const requests = tokens
+        .map((_: any) => new ethers.Contract(
+          _.address,
+          ERC20_ABI,
+          multicaller,
+        ).balanceOf(rootState.accountData.account).catch(() => '0'));
+
+      if (!MulticallWrapper.isMulticallProvider(provider)) return;
+
+      const balancesData = await Promise.all(requests);
+
       for (let i = 0; i < tokens.length; i++) {
         const token = tokens[i];
-        // eslint-disable-next-line no-await-in-loop
-        token.balanceData = await loadBalance(
-          rootState,
-          {
-            contract: state.tokensContractMap[token.address],
-            token
-          }
-        );
+        const balance = balancesData[i] ? balancesData[i].toString() : '0';
+
+        const balanceFormatted = new BigNumber(balance).div(10 ** token.decimals);
+        const fixedBy = balanceFormatted.gt(0) ? fixedByPrice(balanceFormatted.toNumber()) : 2;
+
+        token.balanceData = {
+          name: token.symbol,
+          balance: balanceFormatted.toFixed(fixedBy),
+          balanceInUsd: new BigNumber(balanceFormatted).times(token.price).toString(),
+          originalBalance: balance,
+          decimal: token.decimals,
+        };
       }
     } catch (e) {
       console.error('Error when load balance', e);
@@ -454,9 +465,7 @@ const actions = {
   loadPricesInfo({
     commit, state, dispatch, rootState,
   }: any, chainId: string | number) {
-    if (state.isPricesLoading) {
-      return;
-    }
+    if (state.isPricesLoading) return;
 
     commit('changeState', { field: 'isPricesLoading', val: true });
 
@@ -465,9 +474,9 @@ const actions = {
         const tokens = [...state.secondTokens, ...state.tokens];
         for (let i = 0; i < tokens.length; i++) {
           const token: any = tokens[i];
-          token.price = tokenPricesMap[token.address];
+          token.price = new BigNumber(tokenPricesMap[token.address]).toFixed(20);
           try {
-            token.estimatePerOne = new BigNumber(1).div(10 ** token.decimals).toString();
+            token.estimatePerOne = new BigNumber(1).div(10 ** token.decimals).toFixed(20);
           } catch (e) {
             console.error(
               'token.estimatePerOne error',
@@ -475,7 +484,6 @@ const actions = {
               e,
             );
           }
-          // console.log("token.price", token.price);
         }
 
         commit('changeState', { field: 'isPricesLoading', val: false });

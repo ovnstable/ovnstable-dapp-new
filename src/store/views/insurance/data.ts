@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-restricted-syntax */
 import dayjs from 'dayjs';
-import { axios } from '@/utils/http-utils.ts';
+import { axios } from '@/utils/httpUtils.ts';
 import duration from 'dayjs/plugin/duration';
 
 dayjs.extend(duration);

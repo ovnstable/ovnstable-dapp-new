@@ -64,10 +64,10 @@
           </div>
           <div class="search-tokens__list-item__right">
             <span class="token-balance">
-              {{token.balanceData.balance ? formatMoney(token.balanceData.balance, fixedByPrice(token.price)) : '0'}}
+              {{token.balanceData.balance ? token.balanceData.balance : '0'}}
             </span>
             <span class="token-usd-balance">
-              ${{token.balanceData.balance ? formatMoney(token.balanceData.balance * token.price, 2) : '0'}}
+              ${{token.balanceData.balance ? formatMoney(token.balanceData.balanceInUsd, fixedByPrice(token.price)) : '0'}}
             </span>
           </div>
         </div>

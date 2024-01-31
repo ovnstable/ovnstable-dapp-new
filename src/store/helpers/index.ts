@@ -2,10 +2,10 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-continue */
 /* eslint-disable no-await-in-loop */
-import tokenLogo from '@/utils/token-logo.ts';
 import BigNumber from 'bignumber.js';
-import { ethers } from 'ethers';
-import type { stateData } from '../odos/index';
+import tokenLogo from '@/utils/tokenLogo.ts';
+import odosApiService from '@/services/odos-api-service.ts';
+import type { stateData } from '@/store/odos/index';
 
 const SECONDTOKEN_SECOND_DEFAULT_SYMBOL = 'DAI+';
 const SECONDTOKEN_DEFAULT_SYMBOL = 'USD+';
@@ -364,3 +364,10 @@ export const getReferralCode = () => {
   // console.log('Referral code not found in cookies');
   return '';
 };
+
+export const loadPrices = async (chainId: number | string) => odosApiService
+  .loadPrices(chainId)
+  .then((data: any) => data.tokenPrices)
+  .catch((e: any) => {
+    console.error('Error load contract', e);
+  });

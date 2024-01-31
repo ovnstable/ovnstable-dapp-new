@@ -1,4 +1,4 @@
-import { loadJSON } from '@/utils/http-utils.ts';
+import { loadJSON } from '@/utils/httpUtils.ts';
 
 export default {
   loadTokenImage(item: any) {

@@ -1,5 +1,5 @@
 import MarketApiService from '@/services/market-api-service.ts';
-import { TOKENS, type Strategy } from '@/utils/market-token-data.ts';
+import { TOKENS, type Strategy } from '@/store/views/market/types/index.ts';
 
 const state = {
   portfolioData: {},

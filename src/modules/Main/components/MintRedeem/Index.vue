@@ -92,7 +92,6 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 import SwitchTabs from '@/components/SwitchTabs/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import TokenForm from '@/modules/Main/components/MintRedeem/TokenForm.vue';
-import { getAllowanceValue, approveToken } from '@/utils/contract-approve.ts';
 import { buildEvmContract } from '@/utils/contractsMap.ts';
 import { MINTREDEEM_SCHEME } from '@/store/mintRedeem/mocks.ts';
 import debounce from 'lodash/debounce';
@@ -107,6 +106,7 @@ import {
 import GasSettings from '@/modules/Main/components/MintRedeem/GasSettings.vue';
 import BigNumber from 'bignumber.js';
 import { ABI_Exchange, ABI_Market } from '@/assets/abi/index.ts';
+import { getAllowanceValue, approveToken } from '@/utils/contractApprove.ts';
 
 export default {
   name: 'MintRedeem',
@@ -642,3 +642,4 @@ export default {
   }
 }
 </style>
+@/utils/contractApprove

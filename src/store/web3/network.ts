@@ -75,7 +75,7 @@ const BASE_PARAMS = {
   appApiUrl: 'https://base.overnight.fi/api',
   networkName: 'base',
   networkId: 8453,
-  rpcUrl: 'https://mainnet.base.org',
+  rpcUrl: 'https://base.drpc.org',
   explorerUrl: 'https://basescan.org/',
   assetName: 'USDC',
   assetDecimals: 6,

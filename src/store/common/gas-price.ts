@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
-import { axios } from '@/utils/http-utils.ts';
+import { axios } from '@/utils/httpUtils.ts';
 import BigNumber from 'bignumber.js';
-import { ethers } from 'ethers';
 
 const state = {
 

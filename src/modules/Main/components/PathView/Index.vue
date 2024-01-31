@@ -110,7 +110,7 @@
 <!-- eslint-disable no-await-in-loop -->
 <script lang="ts">
 import { defineComponent } from 'vue';
-import tokenLogo from '@/utils/token-logo.ts';
+import tokenLogo from '@/utils/tokenLogo.ts';
 import Spinner from '@/components/Spinner/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 
@@ -565,3 +565,4 @@ export default defineComponent({
   -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
 }
 </style>
+@/utils/tokenLogo

@@ -39,8 +39,6 @@ const actions = {
     commit('changeState', {
       [networkId]: list,
     });
-    console.log(list, '----list');
-    console.log(networkId, 'initTokens');
   },
 };
 

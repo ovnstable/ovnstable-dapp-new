@@ -75,9 +75,13 @@ export const USER_BALANCES_SCHEME = {
     ...allChainsTokens,
     ovnToken,
     wUsdToken,
+    {
+      symbol: 'USDC+',
+      contractName: 'usdcPlus',
+    },
     // bridged usdc.e
     {
-      symbol: 'USDC.e',
+      symbol: 'USDbC',
       contractName: 'usdcBridged',
     },
     // native usdc

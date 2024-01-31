@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { loadJSON } from '@/utils/http-utils.ts';
+import { loadJSON } from '@/utils/httpUtils.ts';
 
 const ROOT_API = 'https://api.overnight.fi/root';
 
