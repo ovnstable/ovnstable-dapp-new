@@ -1,9 +1,8 @@
 /* eslint-disable no-unused-vars */
-import Web3 from 'web3';
 import { ethers } from 'ethers';
 import { markRaw } from 'vue';
 
-const SUPPORTED_NETWORKS = [137, 31337, 56, 10, 42161, 324, 8453, 59144];
+// const SUPPORTED_NETWORKS = [137, 31337, 56, 10, 42161, 324, 8453, 59144];
 
 const state = {
   contracts: null,
@@ -50,9 +49,6 @@ const actions = {
   }: any) {
     const { rpcUrl } = rootState.network;
 
-    const provider = new Web3.providers.HttpProvider(rpcUrl);
-    const web3 = new Web3(provider);
-
     console.log(rpcUrl, '--rpcUrl');
     console.log(new ethers.JsonRpcProvider(), '---DEFAULT');
     let evmProvider;
@@ -63,14 +59,12 @@ const actions = {
       evmProvider = new ethers.BrowserProvider(window.ethereum, 'any');
     }
 
-    commit('setProvider', provider);
-    commit('setWeb3', web3);
+    commit('setProvider', markRaw(evmProvider));
   },
 
   async initCustomProvider({
     commit, dispatch, getters, rootState,
   }: any, provider: any) {
-    const web3 = new Web3(provider);
     const evmProvider = new ethers.BrowserProvider(provider, 'any');
     const signer = await evmProvider.getSigner();
     dispatch('network/saveNetworkToLocalStore', rootState.network.networkName, { root: true });
@@ -81,7 +75,6 @@ const actions = {
       provider: markRaw(evmProvider),
       signer: markRaw(signer),
     });
-    commit('setWeb3', markRaw(web3));
   },
 
   async initWeb3({
