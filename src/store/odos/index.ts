@@ -207,10 +207,8 @@ const actions = {
       listOfBuyTokensAddresses: any,
     }
   ) {
-    console.log(data, '----datainitData1');
     dispatch('clearInputData');
 
-    console.log(data, '----datainitData');
     if (!data.tokenSeparationScheme) {
       console.error('Not found separation scheme, when init data.');
       commit('changeState', { field: 'isTokensLoadedAndFiltered', val: true });
@@ -279,7 +277,6 @@ const actions = {
     commit, state, dispatch, rootState,
   }: any) {
     const { networkId } = getNetworkParams(rootState.network.networkName);
-    console.log(await getFilteredOvernightTokens(state, networkId, false), '-test');
     await commit('changeState', { field: 'tokens', val: await getFilteredOvernightTokens(state, networkId, false) });
     await commit('changeState', { field: 'secondTokens', val: await getFilteredOvernightTokens(state, networkId, true) });
     state.isTokensLoadedAndFiltered = true;
@@ -436,7 +433,6 @@ const actions = {
     return odosApiService
       .loadContractData(chainId)
       .then((data: any) => {
-        console.log(data, rootState.web3.evmProvider, '--loadContracts');
         commit('changeState', { field: 'contractData', val: data });
         commit('changeState', {
           field: 'routerContract',

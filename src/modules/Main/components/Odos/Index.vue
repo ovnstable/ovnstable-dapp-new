@@ -753,7 +753,6 @@ export default defineComponent({
       ovnSelectedToken.selected = true;
 
       if (this.swapMethod === 'BUY') {
-        console.log(ovnSelectedToken, '---ovnSelectedToken');
         this.addSelectedTokenToOutputList(ovnSelectedToken);
         this.addNewInputToken();
         return;
@@ -772,7 +771,6 @@ export default defineComponent({
     },
     addNewOutputToken() {
       const newToken = getNewOutputToken();
-      console.log(newToken, '----newToken');
       this.outputTokens.push(newToken);
     },
     removeOutputToken(id: any) {
@@ -1458,7 +1456,6 @@ export default defineComponent({
     },
     addSelectedTokenToOutputList(selectedToken: any) {
       const newOutputToken = getNewOutputToken();
-      console.log(newOutputToken, selectedToken, 'addSelectedTokenToOutputList');
       newOutputToken.selectedToken = selectedToken;
       this.outputTokens.push(newOutputToken);
       this.removeAllWithoutSelectedTokens(this.outputTokens);

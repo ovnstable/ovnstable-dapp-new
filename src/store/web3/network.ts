@@ -322,7 +322,9 @@ const actions = {
   saveNetworkToLocalStore({
     commit, dispatch, getters, rootState,
   }: any, network: any) {
-    switch (network) {
+    const networkId = `${network}`;
+    console.log(networkId, 'TO LOCALSTORE NETWORK');
+    switch (networkId) {
       case 'polygon':
       case 'polygon_dev':
       case '137':
@@ -371,24 +373,24 @@ const actions = {
       dispatch('saveNetworkToLocalStore', network);
 
       try {
-        console.log(ethers.toBeHex(network), network, '-network');
         await rootState.web3.provider.request({
           method: 'wallet_switchEthereumChain',
-          params: [{ chainId: ethers.toBeHex(network) }],
+          params: [{ chainId: ethers.toQuantity(network) }],
         });
 
         commit('walletAction/setWalletConnected', true, { root: true });
       } catch (switchError) {
         try {
+          const networkId = `${network}`;
           let params;
 
-          switch (network) {
+          switch (networkId) {
             case 'polygon':
             case 'polygon_dev':
             case '137':
             case '31337':
               params = {
-                chainId: ethers.toBeHex(137),
+                chainId: ethers.toBeHex('137'),
                 rpcUrls: ['https://polygon-rpc.com/'],
                 blockExplorerUrls: ['https://polygonscan.com/'],
                 chainName: 'Polygon Mainnet',

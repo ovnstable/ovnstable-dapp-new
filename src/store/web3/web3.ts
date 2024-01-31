@@ -83,7 +83,6 @@ const actions = {
     commit('setLoadingWeb3', true);
     // await dispatch('initDefaultProvider');
 
-    console.log(getters.provider, 'initWeb3');
     if (getters.provider) {
       try {
         await dispatch('initCustomProvider', getters.provider);
