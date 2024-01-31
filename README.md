@@ -21,3 +21,6 @@ npm run build
 ```sh
 npm run lint
 ```
+
+### FOR bundle analyze
+- npx vite-bundle-visualizer
