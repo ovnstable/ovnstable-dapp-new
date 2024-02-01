@@ -22,7 +22,9 @@
         <div
           v-if="activeTab === 2"
           class="bridge-wrap"
-        >Bridge</div>
+        >
+          <BridgeComponent />
+        </div>
       </TabsComponent>
     </div>
 
@@ -46,6 +48,7 @@ import MintRedeemForm from '@/modules/Main/components/MintRedeem/Index.vue';
 import SliderComponent from '@/modules/Main/components/Slider/Index.vue';
 import TabsComponent from '@/components/Tabs/Index.vue';
 import SwapForm from '@/modules/Main/components/Odos/Index.vue';
+import BridgeComponent from '@/modules/Main/components/Bridge/Index.vue';
 import PathView from '@/modules/Main/components/PathView/Index.vue';
 import WaitingModal from '@/modules/ModalTemplates/WaitingModal/Index.vue';
 import ErrorModal from '@/modules/ModalTemplates/ErrorModal/Index.vue';
@@ -57,6 +60,7 @@ export default {
     SliderComponent,
     TabsComponent,
     MintRedeemForm,
+    BridgeComponent,
     SwapForm,
     PathView,
     ErrorModal,
@@ -145,7 +149,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  /* width: calc(100% + 4px); */
+  background-color: var(--color-4);
   border: 2px solid var(--color-1);
   border-top: 0;
   padding: 24px 20px;
