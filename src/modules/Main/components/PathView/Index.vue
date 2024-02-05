@@ -1,141 +1,107 @@
 <template>
-  <div>
-    <div>
-      <div class="path-view-container">
-        <div class="path-view-title container">
-          <div class="row">
-            <div class="col-lg-4 col-md-4 col-sm-12">
-              <div class="routing-plan-container">
-                <div
-                  v-if="isLoadingData || !isAllDataLoaded"
-                  class="routing-plan-loader"
-                >
-                  <v-progress-circular
-                    width="2"
-                    size="24"
-                    color="#186ADE"
-                    indeterminate
-                  />
-                </div>
-                <div
-                  :class="isLoadingData || !isAllDataLoaded ? 'routing-plan-loading' : ''"
-                  class="routing-plan"
-                >
-                  Routing plan
-                </div>
-              </div>
-            </div>
-            <div class="col-lg-8 col-md-8 col-sm-12">
-              <div class="routing-info-container">
-                <div class="routing-info-image">
-                  <img
-                    :src="require('@/assets/icon/swap/path/alert.svg')"
-                    class="routing-info-image-config"
-                    alt="!"
-                  >
-                </div>
-                <div class="routing-info">
-                  The route is preliminary and can be changed before you press swap.
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="pools-hr mt-3" />
+  <div class="path-wrap">
+    <div
+      v-if="isLoadingData || !isAllDataLoaded"
+      class="path-wrap__loader"
+    >
+      <Spinner />
+    </div>
 
-          <div class="row path-tokens">
-            <div class="">
-              <div class="table-info table-tokens">
-                Tokens
-              </div>
-            </div>
-            <div class="">
-              <div class="table-info table-transaction">
-                Transaction type
-              </div>
-            </div>
-          </div>
+    <Transition name="slide-fade">
+      <div
+        class="path-wrap__animation"
+        v-if="!isLoadingData && isAllDataLoaded"
+      >
+        <h1>
+          Routing plan
+        </h1>
 
+        <div class="path-wrap__row">
+          <span>
+            Tokens
+          </span>
+          <span>
+            Transaction type
+          </span>
         </div>
 
-        <template
+        <div
+          class="path-wrap__overflow"
           v-if="root"
         >
           <div
             v-for="(branch, index) in (Array.from(root.values()) as any)"
             :key="index"
-            class="branch-container"
+            class="path-wrap__branch"
           >
 
-            <div class="row">
-              <div class="col-8">
+            <div class="path-wrap__branch-row">
+              <div class="path-wrap__branch-row-tokens">
                 <div
                   v-for="(token, tokenIndex) in (branch as any[])"
                   :key="token.id + index + tokenIndex"
-                  class="token-container"
+                  class="path-wrap__branch-row__item"
                 >
-                  <div class="token-image-container">
-                    <img
-                      :src="token.logoUrl"
-                      class="token-image"
-                      :alt="token.symbol"
-                    >
-                    <div
-                      v-if="tokenIndex < branch.length - 1"
-                      class="token-arrow-image"
-                    >
-                      <img
-                        :src="require('@/assets/icon/swap/path/arrow.svg')"
-                        alt="->"
-                      >
-                    </div>
-                  </div>
+                  <img
+                    :src="token.logoUrl"
+                    :alt="token.symbol"
+                  >
+                  <BaseIcon
+                    v-if="tokenIndex + 1 !== branch.length"
+                    name="ArrowRightPath"
+                  />
                 </div>
-
               </div>
-              <div class="col-4">
-                <div class="pool-info-container">
-                  <div
-                    v-if="getUniquePools(branch).length <= 1
-                      && (getUniquePools(branch).includes('Overnight Wrapper') || getUniquePools(branch).includes('Overnight Exchange'))"
-                    class="swap-name-container"
-                  >
-                    MINT
-                  </div>
-                  <div
-                    v-else
-                    class="swap-name-container"
-                  >
-                    SWAP
-                  </div>
-                </div>
+
+              <div class="path-wrap__branch-row__type">
+                <span
+                  v-if="getUniquePools(branch).length <= 1
+                    && (getUniquePools(branch).includes('Overnight Wrapper') || getUniquePools(branch).includes('Overnight Exchange'))"
+                >
+                  MINT
+                </span>
+                <span
+                  v-else
+                >
+                  SWAP
+                </span>
               </div>
             </div>
 
             <div
               v-if="isPoolOpenMap[index]"
-              class="pools-container"
+              class="path-wrap__branch-row-pools"
             >
-              <div class="pools-hr" />
               <div
                 v-for="(pool, index) in (getUniquePools(branch) as any)"
                 :key="pool"
-                class="pools-names-container"
+                class="path-wrap__branch-row__pool"
               >
-                <div class="pools-name">
+                <span class="pools-name">
                   {{pool}}
-                </div>
-                <div
+                </span>
+                <span
                   v-if="index < getUniquePools(branch).length - 1"
-                  class="pool-dot"
+                  class="path-wrap__branch-row__empty"
                 >
                   -
-                </div>
+                </span>
               </div>
             </div>
+
+            <div class="path-wrap__branch-hr" />
           </div>
-        </template>
+        </div>
+        <div class="path-wrap__branch-footer">
+          <h2>
+            The route is preliminary and can be changed before you press swap.
+          </h2>
+          <div class="path-wrap__branch-footer__info">
+            !
+          </div>
+        </div>
       </div>
-    </div>
+    </Transition>
   </div>
 </template>
 
@@ -144,10 +110,16 @@
 <!-- eslint-disable no-await-in-loop -->
 <script lang="ts">
 import { defineComponent } from 'vue';
-import tokenLogo from '@/utils/token-logo.ts';
+import tokenLogo from '@/utils/tokenLogo.ts';
+import Spinner from '@/components/Spinner/Index.vue';
+import BaseIcon from '@/components/Icon/BaseIcon.vue';
 
 export default defineComponent({
   name: 'PathView',
+  components: {
+    Spinner,
+    BaseIcon,
+  },
   props: {
     pathObject: {
       type: Object,
@@ -173,8 +145,8 @@ export default defineComponent({
   },
   data() {
     return {
-      root: {} as any,
-      pathViz: {} as any,
+      root: null as any,
+      pathViz: null as any,
       isRootLoading: true,
       isImagesLoading: true,
       poolLabelsMap: {}, // key = set() (unique values)
@@ -272,9 +244,7 @@ export default defineComponent({
     },
 
     getDuplicateClearedRoot(root: any) {
-      if (!root) {
-        return root;
-      }
+      if (!root) return root;
 
       const existsPathMap = new Map(); // write full path by queue of symbol
 
@@ -454,215 +424,145 @@ export default defineComponent({
 
 </script>
 
-<style scoped>
-/*Mobile*/
-@media only screen and (max-width: 960px) {
-    .path-tokens {
-        display: flex;
-        justify-content: space-between;
-        padding: 10px;
-    }
-}
+<style lang="scss" scoped>
+.path-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  max-height: 580px;
 
-/* tablet */
-@media only screen and (min-width: 960px) and (max-width: 1400px) {
-    .path-tokens {
-        display: flex;
-        justify-content: space-between;
-        padding: 10px;
-    }
-}
-
-/* full */
-@media only screen and (min-width: 1400px) {
-    .path-tokens {
-        display: flex;
-        justify-content: space-between;
-        padding: 10px;
-    }
-}
-
-@media only screen and (min-width: 1300px) {
-    .path-tokens {
-        display: flex;
-        justify-content: space-between;
-        padding: 10px;
-    }
-}
-
-.branch-container {
-    padding: 12px 16px;
-
-    min-height: 52px;
-
-    background: var(--swap-main-banner-background);
-    border-radius: 8px;
-    margin-bottom: 8px;
-}
-
-.token-container {
-    display: inline-block;
-    padding-right: 32px;
-    padding-top: 5px;
-}
-
-.token-image {
-    height: 24px;
-}
-
-.token-image-container {
-    display: inline-block;
-    position: relative;
-}
-.token-arrow-image {
-    position: absolute;
-    display: inline-block;
-    padding-left: 6px;
-    padding-right: 4px;
-}
-
-.pools-hr {
-    border: 1px solid var(--dividers);
-    margin-bottom: 5px;
-}
-
-.pool-dot {
-    display: inline-block;
-    font-style: normal;
-    font-weight: 400;
+  h1 {
     font-size: 16px;
-    line-height: 24px;
-    color: #707A8B;
-
-    padding-left: 5px;
-    padding-right: 5px;
+    color: var(--color-1);
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+  }
 }
 
-.pools-name {
-    display: inline-block;
-    font-style: normal;
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 24px;
-    color: #707A8B;
+.path-wrap__animation {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
-.pools-names-container {
-    display: inline;
-}
+.path-wrap__row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  padding-right: 4px;
 
-.pools-container {
-    display: inline;
-    min-height: 52px;
-}
-
-.arrow-container {
-    position: absolute;
-    display: inline-block;
-    right: 5px;
-    top: 4px;
-
-}
-
-.swap-name-container {
-    display: inline-block;
-    font-style: normal;
-    font-weight: 400;
-    font-size: 18px;
-    line-height: 28px;
-    padding-right: 30px;
-    color: var(--main-gray-text);
-}
-
-.pool-info-container {
-    position: relative;
-    text-align: end;
-}
-
-.table-info {
-    font-style: normal;
-    font-weight: 400;
+  span {
+    color: var(--color-2);
     font-size: 14px;
-    line-height: 22px;
-    color: #ADB3BD;
+  }
 }
 
-.table-tokens {
+.path-wrap__branch-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
 
+  h2 {
+    color: var(--color-2);
+    font-size: 14px;
+  }
 }
 
-.table-transaction {
-    text-align: end;
+.path-wrap__branch-row-pools {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
-.routing-plan {
-    font-style: normal;
-    font-weight: 400;
-    font-size: 24px;
-    line-height: 36px;
-    color: var(--main-gray-text);
-    display: inline-block;
-
+.path-wrap__branch-row-tokens {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
 }
 
-.routing-plan-loading {
-    padding-left: 30px;
+.path-wrap__branch-row__item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+
+  img {
+    width: 22px;
+    height: 22px;
+  }
+
+  svg {
+    margin: 0 10px;
+  }
 }
 
-.routing-info {
-    font-style: normal;
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 24px;
-    color: #707A8B;
-
-    display: inline-block;
-    text-align: end;
+.path-wrap__branch-row__type {
+  color: var(--color-1);
+  font-weight: 600;
+  margin-left: auto;
 }
 
-.routing-info-container {
-    text-align: end;
+.path-wrap__branch-row__empty {
+  margin: 0 10px;
 }
 
-.routing-info-image {
-    position: absolute;
-    display: inline-block;
+.path-wrap__branch-hr {
+  display: block;
+  height: 1px;
+  background-color: var(--color-2);
+  width: 100%;
+  margin: 5px 0 15px 0;
 }
 
-.routing-info-image-config {
-    position: absolute;
-    right: 2px;
-    top: 2px;
+.path-wrap__branch-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
 }
 
-.routing-plan-loader {
-    display: inline-block;
-    padding-bottom: 5px;
-    position: absolute;
-    top: 3px;
-
+.path-wrap__branch-footer__info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  min-height: 24px;
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--color-2);
+  border: 1px solid var(--color-2);
+  border-radius: 50%;
+  margin-left: 15px;
 }
 
-.routing-plan-container {
-    position: absolute;
+.path-wrap__loader {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* mobile */
-@media only screen and (max-width: 960px) {
-    .routing-info-container {
-        padding-top: 20px;
-    }
-
-    .routing-plan {
-        font-size: 18px;
-    }
-
-    .routing-info {
-        text-align: center;
-    }
+.path-wrap__overflow {
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 4px;
 }
 
-/* tablet */
-@media only screen and (min-width: 960px) and (max-width: 1400px) {
+::-webkit-scrollbar {
+  -webkit-appearance: none;
+  width: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background-color: rgba(0,0,0,.5);
+  -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
 }
 </style>
+@/utils/tokenLogo

@@ -1,31 +1,27 @@
+/* eslint-disable no-await-in-loop */
 /* eslint-disable comma-dangle */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable consistent-return */
-/* eslint-disable no-continue */
-/* eslint-disable no-param-reassign */
 /* eslint-disable no-unused-vars */
 import odosApiService from '@/services/odos-api-service.ts';
-import { loadJSON } from '@/utils/http-utils.ts';
-import { getWeiMarker } from '@/utils/web3.ts';
 import { useEventBus } from '@vueuse/core';
 import {
   getFilteredOvernightTokens,
   getFilteredPoolTokens,
-  loadBalance,
-  loadContractInstance
+  loadPrices,
 } from '@/store/helpers/index.ts';
-import { getNetworkParams } from '../common/web3/network.ts';
+import BigNumber from 'bignumber.js';
+import { getNetworkParams } from '@/store/web3/network.ts';
+import { buildEvmContract } from '@/utils/contractsMap.ts';
+import { loadJSON } from '@/utils/httpUtils.ts';
+// import { awaitDelay } from '@/utils/const.ts';
+import { MulticallWrapper } from 'ethers-multicall-provider';
+import { ethers } from 'ethers';
+import { ERC20_ABI } from '@/assets/abi/index.ts';
+import { fixedByPrice } from '@/utils/numbers.ts';
 
-const KEY = 'REFERRAL_CODE';
+// const KEY = 'REFERRAL_CODE';
 
 const ODOS_DURATION_CONFIRM_REQUEST = 60;
-
-const loadPrices = async (chainId: number | string) => odosApiService
-  .loadPrices(chainId)
-  .then((data: any) => data.tokenPrices)
-  .catch((e) => {
-    console.error('Error load contract', e);
-  });
 
 export const stateData = {
   baseViewType: 'SWAP',
@@ -211,10 +207,8 @@ const actions = {
       listOfBuyTokensAddresses: any,
     }
   ) {
-    console.log(data, '----datainitData1');
     dispatch('clearInputData');
 
-    console.log(data, '----datainitData');
     if (!data.tokenSeparationScheme) {
       console.error('Not found separation scheme, when init data.');
       commit('changeState', { field: 'isTokensLoadedAndFiltered', val: true });
@@ -283,7 +277,6 @@ const actions = {
     commit, state, dispatch, rootState,
   }: any) {
     const { networkId } = getNetworkParams(rootState.network.networkName);
-    console.log(await getFilteredOvernightTokens(state, networkId, false), '-test');
     await commit('changeState', { field: 'tokens', val: await getFilteredOvernightTokens(state, networkId, false) });
     await commit('changeState', { field: 'secondTokens', val: await getFilteredOvernightTokens(state, networkId, true) });
     state.isTokensLoadedAndFiltered = true;
@@ -305,18 +298,18 @@ const actions = {
   }: any, contractFile: any) {
     for (let i = 0; i < state.secondTokens.length; i++) {
       const secondtoken: any = state.secondTokens[i];
-      state.tokensContractMap[secondtoken.address] = loadContractInstance(
-        contractFile,
-        rootState.web3.web3,
+      state.tokensContractMap[secondtoken.address] = buildEvmContract(
+        contractFile.abi,
+        rootState.web3.evmSigner,
         secondtoken.address,
       );
     }
 
     for (let i = 0; i < state.tokens.length; i++) {
       const token: any = state.tokens[i];
-      state.tokensContractMap[token.address] = loadContractInstance(
-        contractFile,
-        rootState.web3.web3,
+      state.tokensContractMap[token.address] = buildEvmContract(
+        contractFile.abi,
+        rootState.web3.evmSigner,
         token.address,
       );
     }
@@ -344,16 +337,18 @@ const actions = {
 
       for (let i = 0; i < tokens.length; i++) {
         const token: any = tokens[i];
-        if (addresses.includes(token.address)) {
-          // eslint-disable-next-line no-await-in-loop
-          token.balanceData = await loadBalance(
-            rootState,
-            {
-              contract: state.tokensContractMap[token.address],
-              token
-            }
-          );
-        }
+
+        // currently LOADING extra tokens balances deprecated
+        // if (addresses.includes(token.address)) {
+        //   // eslint-disable-next-line no-await-in-loop
+        //   token.balanceData = await loadBalance(
+        //     rootState,
+        //     {
+        //       contract: state.tokensContractMap[token.address],
+        //       token
+        //     }
+        //   );
+        // }
       }
     } catch (e) {
       console.error('Error when update direct balance', e);
@@ -365,9 +360,7 @@ const actions = {
   async loadBalances({
     commit, state, getters, rootState, dispatch,
   }: any) {
-    if (state.isBalancesLoading) {
-      return;
-    }
+    if (state.isBalancesLoading) return;
 
     state.isBalancesLoading = true;
     if (!rootState.accountData.account) {
@@ -376,17 +369,34 @@ const actions = {
     }
 
     try {
+      const provider = rootState.web3.evmProvider;
+      const multicaller = MulticallWrapper.wrap(provider);
       const tokens = getters.tokensToBalanceUpdate;
+      const requests = tokens
+        .map((_: any) => new ethers.Contract(
+          _.address,
+          ERC20_ABI,
+          multicaller,
+        ).balanceOf(rootState.accountData.account).catch(() => '0'));
+
+      if (!MulticallWrapper.isMulticallProvider(provider)) return;
+
+      const balancesData = await Promise.all(requests);
+
       for (let i = 0; i < tokens.length; i++) {
         const token = tokens[i];
-        // eslint-disable-next-line no-await-in-loop
-        token.balanceData = await loadBalance(
-          rootState,
-          {
-            contract: state.tokensContractMap[token.address],
-            token
-          }
-        );
+        const balance = balancesData[i] ? balancesData[i].toString() : '0';
+
+        const balanceFormatted = new BigNumber(balance).div(10 ** token.decimals);
+        const fixedBy = balanceFormatted.gt(0) ? fixedByPrice(balanceFormatted.toNumber()) : 2;
+
+        token.balanceData = {
+          name: token.symbol,
+          balance: balanceFormatted.toFixed(fixedBy),
+          balanceInUsd: new BigNumber(balanceFormatted).times(token.price).toString(),
+          originalBalance: balance,
+          decimal: token.decimals,
+        };
       }
     } catch (e) {
       console.error('Error when load balance', e);
@@ -408,12 +418,8 @@ const actions = {
       return;
     }
 
-    console.log(rootState, '-----rootState');
     const { networkId } = getNetworkParams(rootState.network.networkName);
     dispatch('loadContract', networkId);
-    // .then(() => {
-    //     console.log("Contracts loaded", state.routerContract, state.executorContract);
-    // })
   },
   async loadContract({
     commit, state, getters, rootState,
@@ -427,21 +433,20 @@ const actions = {
     return odosApiService
       .loadContractData(chainId)
       .then((data: any) => {
-        console.log(data, '--data');
         commit('changeState', { field: 'contractData', val: data });
         commit('changeState', {
           field: 'routerContract',
-          val: loadContractInstance(
-            data.routerAbi,
-            rootState.web3.web3,
+          val: buildEvmContract(
+            data.routerAbi.abi,
+            rootState.web3.evmSigner,
             data.routerAddress,
           )
         });
         commit('changeState', {
           field: 'executorContract',
-          val: loadContractInstance(
-            data.erc20Abi,
-            rootState.web3.web3,
+          val: buildEvmContract(
+            data.erc20Abi.abi,
+            rootState.web3.evmSigner,
             data.executorAddress,
           )
         });
@@ -450,14 +455,13 @@ const actions = {
       .catch((e) => {
         console.log('Error load contract', e);
         commit('changeState', { field: 'isContractLoading', val: false });
+        throw e;
       });
   },
   loadPricesInfo({
     commit, state, dispatch, rootState,
   }: any, chainId: string | number) {
-    if (state.isPricesLoading) {
-      return;
-    }
+    if (state.isPricesLoading) return;
 
     commit('changeState', { field: 'isPricesLoading', val: true });
 
@@ -466,12 +470,9 @@ const actions = {
         const tokens = [...state.secondTokens, ...state.tokens];
         for (let i = 0; i < tokens.length; i++) {
           const token: any = tokens[i];
-          token.price = tokenPricesMap[token.address];
+          token.price = new BigNumber(tokenPricesMap[token.address]).toFixed(20);
           try {
-            token.estimatePerOne = rootState.web3.web3.utils.fromWei(
-              '1',
-              getWeiMarker(token.decimals),
-            );
+            token.estimatePerOne = new BigNumber(1).div(10 ** token.decimals).toFixed(20);
           } catch (e) {
             console.error(
               'token.estimatePerOne error',
@@ -479,7 +480,6 @@ const actions = {
               e,
             );
           }
-          // console.log("token.price", token.price);
         }
 
         commit('changeState', { field: 'isPricesLoading', val: false });
@@ -494,21 +494,6 @@ const actions = {
   }: any) {
     commit('changeState', { field: 'tokens', val: [] });
     commit('changeState', { field: 'secondTokens', val: [] });
-  },
-
-  getTokenByAddress({
-    commit, state, dispatch, rootState,
-  }: any, address: string) {
-    const tokens: any = [...state.secondTokens, ...state.tokens];
-    for (let i = 0; i < tokens.length; i++) {
-      const token = tokens[i];
-      console.log('Find tokens: ', token);
-      if (token.address === address) {
-        return token;
-      }
-    }
-
-    return null;
   },
 
   quoteRequest({
@@ -577,21 +562,8 @@ const actions = {
 
     try {
       // get balance from eth token
-      console.log('OdosSwap state.account: ', rootState.accountData.account);
-      const weiBalance = await rootState.web3.web3.eth.getBalance(rootState.accountData.account);
-      const balance = rootState.web3.web3.utils.fromWei(weiBalance);
-      console.log(
-        'OdosSwap Balance from eth token',
-        balance,
-        balance * 1854.91,
-      );
-
-      // 'gasPrice', 'gasPriceGwei', 'gasPriceStation'
-      // console.log(
-      //   'OdosSwap Get gasPrice ',
-      //   rootState.accountData.gasPrice,
-      //   state.gasPrice * 1854.91,
-      // );
+      const weiBalance = await rootState.web3.evmProvider.getBalance(rootState.accountData.account);
+      const balance = new BigNumber(weiBalance).div(10 ** 18).toString();
       commit('changeState', {
         field: 'zksyncFeeHistory',
         val: {
@@ -605,31 +577,20 @@ const actions = {
       console.error('OdosSwap Error get balance from eth token', e);
     }
 
-    await rootState.web3.web3.eth.estimateGas(transactionData, (error: any, gasLimit: any) => {
+    await rootState.web3.evmProvider.estimateGas(transactionData, (error: any, gasLimit: any) => {
       if (error) {
         console.error('OdosSwap Error estimating gas:', error);
       } else {
         console.log('OdosSwap estimating gasLimit:', gasLimit);
-        rootState.web3.web3.eth.getGasPrice().then((gasPrice: any) => {
-          console.log('OdosSwap estimating gasPrice:', gasPrice);
-          const feeInWei = gasLimit * 262500000;
-          console.log('OdosSwap estimating feeInWei:', feeInWei);
-          const feeInEther = rootState.web3.web3.utils.fromWei(
-            feeInWei.toString(),
-            'ether',
-          );
-          console.log(
-            'OdosSwap Estimated transaction fee in Ether:',
-            feeInEther,
-            feeInEther * 1854.91,
-          );
-          commit('changeState', {
-            field: 'zksyncFeeHistory',
-            val: {
-              ...state.zksyncFeeHistory,
-              estimateFeeInEther: feeInEther,
-            }
-          });
+        const feeInWei = gasLimit * 262500000;
+        console.log('OdosSwap estimating feeInWei:', feeInWei);
+        const feeInEther = new BigNumber(feeInWei).div(10 ** 18).toString();
+        commit('changeState', {
+          field: 'zksyncFeeHistory',
+          val: {
+            ...state.zksyncFeeHistory,
+            estimateFeeInEther: feeInEther,
+          }
         });
       }
     });
@@ -677,10 +638,11 @@ const actions = {
       message: 'Odos send transaction',
       swapSession: state.swapSessionId,
       data: transactionData,
-      log: ` | Current block: ${await rootState.web3.web3.eth.getBlockNumber()}`,
+      log: ` | Current block: ${await rootState.web3.evmProvider.getBlockNumber()}`,
     });
+
     console.debug(txLogMessage);
-    const result = rootState.web3.web3.eth
+    rootState.web3.evmSigner
       .sendTransaction(transactionData)
       .then(async (dataTx: any) => {
         console.log('Call result: ', dataTx);
@@ -694,15 +656,10 @@ const actions = {
 
         if (rootState.network.networkName === 'zksync' && state.zksyncFeeHistory) {
           try {
-            // get balance from eth token
             console.log('state.account after tx: ', rootState.accountData.account);
-            const weiBalance = await rootState.web3.web3.eth
+            const weiBalance = await rootState.web3.evmProvider
               .getBalance(rootState.accountData.account);
-            const balance = rootState.web3.web3.utils.fromWei(weiBalance);
-            console.log(
-              'Balance from eth token after tx',
-              balance,
-            );
+            const balance = new BigNumber(weiBalance).div(10 ** 18).toString();
             state.zksyncFeeHistory.finalWeiBalance = balance;
           } catch (e) {
             console.log({
@@ -723,6 +680,17 @@ const actions = {
         const bus = useEventBus('odos-transaction-finished');
         bus.emit(true);
 
+        dispatch('successModal/showSuccessModal', {
+          successTxHash: dataTx.hash,
+          from: inputTokens.map((_) => ({
+            symbol: _.selectedToken.symbol,
+            value: new BigNumber(_.value).toFixed(5)
+          })),
+          to: outputTokens.map((_) => ({
+            symbol: _.selectedToken.symbol,
+            value: new BigNumber(_.sum).toFixed(5)
+          })),
+        }, { root: true });
         dispatch('stopSwapConfirmTimer');
 
         setTimeout(() => {
@@ -731,6 +699,7 @@ const actions = {
       })
       .catch((e: any) => {
         console.log(e);
+        dispatch('errorModal/showErrorModalWithMsg', { errorType: 'estimateGas', errorMsg: e }, { root: true });
         dispatch('stopSwapConfirmTimer');
       });
   },

@@ -6,19 +6,17 @@ import theme from '@/store/theme/index.ts';
 
 // Web3
 import createPersistedState from 'vuex-persistedstate';
-import network from '@/store/common/web3/network.ts';
-import walletAction from '@/store/common/web3/action/wallet-action.ts';
-import contractAction from '@/store/common/web3/action/contract-action.ts';
-import web3 from '@/store/common/web3/web3.ts';
-import tokenAction from '@/store/common/web3/action/token-action.ts';
-import dappDataAction from '@/store/common/web3/action/dapp/dapp-data-action.ts';
-import dappUIAction from '@/store/common/web3/action/dapp/dapp-ui-action.ts';
+import network from '@/store/web3/network.ts';
+import walletAction from '@/store/web3/legacy/wallet-action.ts';
+import contractAction from '@/store/web3/legacy/contract-action.ts';
+import web3 from '@/store/web3/web3.ts';
+import tokenAction from '@/store/web3/legacy/token-action.ts';
 
 // Common
 import gasPrice from '@/store/common/gas-price.ts';
 import supplyData from '@/store/common/supply.ts';
 import referral from '@/store/common/referral.ts';
-import etsAction from '@/store/common/web3/action/ets-action.ts';
+import etsAction from '@/store/web3/legacy/ets-action.ts';
 
 import accountUI from '@/store/views/account/ui.ts';
 import accountData from '@/store/views/account/data.ts';
@@ -36,6 +34,8 @@ import errorModal from '@/store/modals/error-modal.ts';
 import waitingModal from '@/store/modals/waiting-modal.ts';
 import successModal from '@/store/modals/success-modal.ts';
 import accTransaction from '@/store/views/account/transaction.ts';
+import dappUIAction from '@/store/web3/legacy/dapp-ui-action.ts';
+import dappDataAction from '@/store/web3/legacy/dapp-data-action.ts';
 
 export default new Vuex.Store({
   modules: {

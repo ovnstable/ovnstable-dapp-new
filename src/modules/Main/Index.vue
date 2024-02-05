@@ -9,10 +9,9 @@
         <SwapForm
           v-if="activeTab === 0"
           view-type="SWAP"
-          :update-path-view-func="updatePathView"
-          :update-button-disabled-func="updateButtonDisabled"
-          :update-is-loading-data-func="updateIsLoadingData"
-          :update-stablecoins-list-func="updateStablecoinsList"
+          @update-path-view="updatePathView"
+          @update-is-loading-data="updateIsLoadingData"
+          @update-stablecoins-list="updateStablecoinsList"
         />
         <div
           v-if="activeTab === 1"
@@ -23,13 +22,22 @@
         <div
           v-if="activeTab === 2"
           class="bridge-wrap"
-        >Bridge</div>
+        >
+          <BridgeComponent />
+        </div>
       </TabsComponent>
     </div>
 
-    <SliderComponent />
+    <SliderComponent v-if="isFirstInitializationForPath" />
+    <PathView
+      v-else
+      :path-object="pathViz"
+      :input-tokens="inputTokens"
+      :output-tokens="outputTokens"
+      :is-loading-data="isLoadingData"
+    />
     <WaitingModal :show-modal="showWaitModal" />
-    <ErrorModal :show-modal="showErrorModalGet" />
+    <ErrorModal :show-modal="showErrorModal" />
     <SuccessModal :show-modal="showSuccessModal" />
   </div>
 </template>
@@ -40,6 +48,8 @@ import MintRedeemForm from '@/modules/Main/components/MintRedeem/Index.vue';
 import SliderComponent from '@/modules/Main/components/Slider/Index.vue';
 import TabsComponent from '@/components/Tabs/Index.vue';
 import SwapForm from '@/modules/Main/components/Odos/Index.vue';
+import BridgeComponent from '@/modules/Main/components/Bridge/Index.vue';
+import PathView from '@/modules/Main/components/PathView/Index.vue';
 import WaitingModal from '@/modules/ModalTemplates/WaitingModal/Index.vue';
 import ErrorModal from '@/modules/ModalTemplates/ErrorModal/Index.vue';
 import SuccessModal from '@/modules/ModalTemplates/SuccessModal/Index.vue';
@@ -50,7 +60,9 @@ export default {
     SliderComponent,
     TabsComponent,
     MintRedeemForm,
+    BridgeComponent,
     SwapForm,
+    PathView,
     ErrorModal,
     WaitingModal,
     SuccessModal,
@@ -72,15 +84,18 @@ export default {
         },
       ],
       activeTab: 0,
-      pathViz: null,
+      pathViz: null as any,
       buttonDisabled: true,
       isLoadingData: true,
+      inputTokens: [] as any[],
+      outputTokens: [] as any[],
       stablecoinTokens: [],
+      isFirstInitializationForPath: true,
     };
   },
   computed: {
     ...mapGetters('waitingModal', { showWaitModal: 'show' }),
-    ...mapGetters('errorModal', { showErrorModalGet: 'show' }),
+    ...mapGetters('errorModal', { showErrorModal: 'show' }),
     ...mapGetters('successModal', { showSuccessModal: 'show' }),
   },
   methods: {
@@ -93,11 +108,11 @@ export default {
       this.showMintView();
       this.showSwapModal();
     },
-    updatePathView(path: any) {
-      this.pathViz = path;
-    },
-    updateButtonDisabled(value: any) {
-      this.buttonDisabled = value;
+    updatePathView(data: any) {
+      this.pathViz = data.path;
+      this.inputTokens = data.input;
+      this.outputTokens = data.output;
+      this.isFirstInitializationForPath = false;
     },
     updateIsLoadingData(value: any) {
       this.isLoadingData = value;
@@ -134,7 +149,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: calc(100% + 4px);
+  background-color: var(--color-4);
   border: 2px solid var(--color-1);
   border-top: 0;
   padding: 24px 20px;

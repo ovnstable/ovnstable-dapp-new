@@ -1,3 +1,5 @@
+import BigNumber from 'bignumber.js';
+
 /* eslint-disable no-unused-vars */
 const state = {
 
@@ -36,8 +38,8 @@ const actions = {
       if (ets.chain === networkId) {
         try {
           // eslint-disable-next-line no-await-in-loop
-          etsSupply = await web3.contracts[ets.tokenContract].methods.totalSupply().call();
-          etsSupply = web3.web3.utils.fromWei(etsSupply, ets.etsTokenDecimals === 18 ? 'ether' : 'mwei');
+          etsSupply = await web3.contracts[ets.tokenContract].totalSupply();
+          etsSupply = new BigNumber(etsSupply).div(10 ** ets.etsTokenDecimals);
         } catch (e) {
           try {
             etsSupply = rootState.marketData.etsStrategyData[ets.name].tvl;
@@ -87,8 +89,8 @@ const actions = {
       if (insurance.chainId === networkId) {
         try {
           // eslint-disable-next-line no-await-in-loop
-          supply = await web3.contracts.insurance[`${insurance.chainName}_m2m`].methods.totalNetAssets().call();
-          supply = web3.web3.utils.fromWei(supply, 'mwei');
+          supply = await web3.contracts.insurance[`${insurance.chainName}_m2m`].totalNetAssets();
+          supply = new BigNumber(supply).div(10 ** 6);
         } catch (e) {
           supply = rootState.insuranceData.insuranceStrategyData[insurance.chainName].lastTvl;
         }

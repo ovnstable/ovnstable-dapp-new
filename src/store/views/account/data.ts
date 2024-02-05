@@ -3,6 +3,7 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable camelcase */
 import { USER_BALANCES_SCHEME } from '@/store/views/account/mocks.ts';
+import BigNumber from 'bignumber.js';
 
 const state = {
 
@@ -89,20 +90,27 @@ const actions = {
 
     const networkId = rootState.network.networkId as keyof typeof USER_BALANCES_SCHEME;
     const balances = await Promise.all(USER_BALANCES_SCHEME[networkId].map(async (_) => {
-      if (!web3.contracts[_.contractName]) {
+      try {
+        if (!web3.contracts[_.contractName]) {
+          return {
+            symbol: _.symbol,
+            balance: '0',
+          };
+        }
+        const result = await web3.contracts[_.contractName].balanceOf(getters.account);
+        return {
+          symbol: _.symbol,
+          balance: result.toString(),
+        };
+      } catch (e) {
         return {
           symbol: _.symbol,
           balance: '0',
         };
       }
-      const result = await web3.contracts[_.contractName].methods
-        .balanceOf(getters.account)
-        .call();
-      return {
-        symbol: _.symbol,
-        balance: result,
-      };
     }));
+
+    console.log(balances, '----balances');
 
     // original meaning without decimals
     commit('setOriginalBalance', balances);
@@ -119,14 +127,9 @@ const actions = {
 
         if (ets.chain === networkId) {
           try {
-            etsBalance = await web3.contracts[ets.tokenContract].methods
-              .balanceOf(getters.account)
-              .call();
+            etsBalance = await web3.contracts[ets.tokenContract].balanceOf(getters.account);
             etsOriginalBalance = etsBalance;
-            etsBalance = web3.web3.utils.fromWei(
-              etsBalance,
-              ets.etsTokenDecimals === 18 ? 'ether' : 'mwei',
-            );
+            etsBalance = new BigNumber(etsBalance).div(10 ** ets.etsTokenDecimals === 18 ? 18 : 6);
           } catch (e) {
             etsBalance = getters.etsBalance[ets.name];
             etsOriginalBalance = getters.etsOriginalBalance[ets.name];
@@ -164,14 +167,10 @@ const actions = {
           try {
             insuranceBalance = await web3.contracts.insurance[
               `${insurance.chainName}_token`
-            ].methods
-              .balanceOf(getters.account)
-              .call();
+            ].balanceOf(getters.account);
             insuranceOriginalBalance = insuranceBalance;
-            insuranceBalance = web3.web3.utils.fromWei(
-              insuranceBalance,
-              'ether',
-            );
+            insuranceBalance = new BigNumber(insuranceBalance)
+              .div(10 ** 18).toString();
           } catch (e) {
             insuranceBalance = getters.insuranceBalance[insurance.chainName];
             insuranceOriginalBalance = getters.insuranceOriginalBalance[insurance.chainName];
@@ -197,31 +196,9 @@ const actions = {
 
         if (!resultActionAssetBalance[ets.actionAsset]) {
           try {
-            actionAssetBalance = await web3.contracts[ets.actionAsset].methods
-              .balanceOf(getters.account)
-              .call();
-
-            switch (ets.actionTokenDecimals) {
-              case 6:
-                actionAssetBalance = web3.web3.utils.fromWei(
-                  actionAssetBalance,
-                  'mwei',
-                );
-                break;
-              case 8:
-                actionAssetBalance = parseFloat(
-                  web3.web3.utils.fromWei(actionAssetBalance, 'mwei'),
-                ) / 100.0;
-                break;
-              case 18:
-                actionAssetBalance = web3.web3.utils.fromWei(
-                  actionAssetBalance,
-                  'ether',
-                );
-                break;
-              default:
-                break;
-            }
+            actionAssetBalance = await web3.contracts[ets.actionAsset].balanceOf(getters.account);
+            actionAssetBalance = new BigNumber(actionAssetBalance)
+              .div(10 ** ets.actionTokenDecimals).toString();
           } catch (e) {
             return;
           }

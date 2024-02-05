@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-restricted-syntax */
 import dayjs from 'dayjs';
-import { axios } from '@/utils/http-utils.ts';
+import { axios } from '@/utils/httpUtils.ts';
 import duration from 'dayjs/plugin/duration';
 
 dayjs.extend(duration);
@@ -73,7 +73,7 @@ const actions = {
     // dispatch('refreshUsdPlusPayoutsData', "arbitrum");
     // dispatch('refreshUsdPlusPayoutsData', "zksync");
 
-    dispatch('accountData/refreshBalance', null, { root: true });
+    // dispatch('accountData/refreshBalance', null, { root: true });
     // dispatch('supplyData/refreshInsuranceSupply', null, {root:true});
   },
 
@@ -236,7 +236,7 @@ const actions = {
         return;
       }
 
-      let date = await contract.methods.withdrawRequests(account).call();
+      let date = await contract.withdrawRequests(account);
       try {
         date = parseFloat(date);
       } catch (e) {
@@ -259,7 +259,7 @@ const actions = {
           const currentDate = new Date();
 
           if (currentDate.getTime() > date.getTime()) {
-            const withdrawPeriod = await web3.contracts.insurance[`${insurance.chainName}_exchanger`].methods.withdrawPeriod().call();
+            const withdrawPeriod = await web3.contracts.insurance[`${insurance.chainName}_exchanger`].withdrawPeriod();
             const withdrawDate = new Date(date.getTime() + (withdrawPeriod * 1000));
 
             if (withdrawDate.getTime() > currentDate.getTime()) {

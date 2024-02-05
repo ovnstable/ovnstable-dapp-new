@@ -104,8 +104,8 @@ export default {
       return `${parseFloat(profit).toFixed(6)} WETH`;
     },
     formatDateTime(dateTimeStr:string) {
-      const optionsDate = { year: 'numeric', month: '2-digit', day: '2-digit' };
-      const optionsTime = { hour: '2-digit', minute: '2-digit' };
+      const optionsDate = { year: 'numeric', month: '2-digit', day: '2-digit' } as any;
+      const optionsTime = { hour: '2-digit', minute: '2-digit' } as any;
 
       const date = new Date(dateTimeStr);
       const formattedDate = new Intl.DateTimeFormat('en-GB', optionsDate).format(date).replace(/\//g, '.');

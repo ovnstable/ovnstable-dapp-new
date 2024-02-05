@@ -1,3 +1,4 @@
+/* eslint-disable no-promise-executor-return */
 export const getImageUrl = (path: string) => new URL(`../${path}`, import.meta.url).href;
 
 export const svgIconsMap = (() => {
@@ -80,3 +81,5 @@ export const appNetworksData = [
     color: '#7b3fe4',
   },
 ];
+
+export const awaitDelay = async (time: number) => new Promise((res) => setTimeout(res, time));

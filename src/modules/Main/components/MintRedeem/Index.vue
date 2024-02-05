@@ -66,7 +66,7 @@
       </ButtonComponent>
       <ButtonComponent
         v-else-if="!isApprovedToken"
-        @on-click="approveToken"
+        @on-click="approveTrigger"
         btn-size="large"
         full
       >
@@ -88,23 +88,25 @@
 <!-- eslint-disable consistent-return -->
 <!-- eslint-disable no-underscore-dangle -->
 <script lang="ts">
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 import SwitchTabs from '@/components/SwitchTabs/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import TokenForm from '@/modules/Main/components/MintRedeem/TokenForm.vue';
-import { getAllowanceValue } from '@/utils/contract-approve.ts';
-import { buildContract } from '@/utils/contractsMap.ts';
+import { buildEvmContract } from '@/utils/contractsMap.ts';
 import { MINTREDEEM_SCHEME } from '@/store/mintRedeem/mocks.ts';
 import debounce from 'lodash/debounce';
 import { fixedByPrice } from '@/utils/numbers.ts';
 
-import { mintStatus, wrapStatus, mintRedeemTypes } from '@/modules/Main/components/MintRedeem/types/index.ts';
+import {
+  mintStatus, wrapStatus, mintRedeemTypes, type IMethodData,
+} from '@/modules/Main/components/MintRedeem/types/index.ts';
 import {
   getNewInputToken, getReferralCode,
 } from '@/store/helpers/index.ts';
 import GasSettings from '@/modules/Main/components/MintRedeem/GasSettings.vue';
 import BigNumber from 'bignumber.js';
 import { ABI_Exchange, ABI_Market } from '@/assets/abi/index.ts';
+import { getAllowanceValue, approveToken } from '@/utils/contractApprove.ts';
 
 export default {
   name: 'MintRedeem',
@@ -169,8 +171,9 @@ export default {
   computed: {
     ...mapGetters('network', ['networkId', 'networkName']),
     ...mapGetters('accountData', ['account']),
-    ...mapGetters('web3', ['contracts', 'web3']),
+    ...mapGetters('web3', ['contracts', 'evmProvider', 'evmSigner']),
     ...mapGetters('gasPrice', ['gasPriceGwei']),
+    ...mapState('odosData', ['tokensContractMap']),
 
     isMintActive() {
       return this.activeMintTab === 0;
@@ -195,15 +198,55 @@ export default {
     gasChange() {
       console.log('gasChange');
     },
-    approveToken() {
-      console.log('approveToken');
+    // checkForApprove(token: any, val: string) {
+
+    // },
+    async approveTrigger() {
+      this.showWaitingModal('Approving in process');
+
+      const tokenData = this.inputToken;
+      const tokenContract = this.tokensContractMap[tokenData.address];
+      const approveValue = '10000000000000';
+
+      const networkId = this.networkId as keyof typeof MINTREDEEM_SCHEME;
+      const pairData = MINTREDEEM_SCHEME[networkId]
+        .find((_) => {
+          const tokenAddress = this.isMintActive
+            ? _.token0.toLowerCase() : _.token1.toLowerCase();
+          return tokenAddress === this.inputToken.address.toLowerCase();
+        });
+      let exchangeAddress = null;
+
+      if (pairData) exchangeAddress = pairData.exchange;
+      if (!exchangeAddress) return;
+
+      const transaction = await approveToken(
+        tokenContract,
+        exchangeAddress,
+        approveValue,
+        this.account,
+        this.gasPriceGwei,
+      )
+        .catch((e) => {
+          console.error('Error when approve token.', e);
+          this.closeWaitingModal();
+          this.showErrorModalWithMsg({ errorType: 'approve', errorMsg: e });
+        });
+
+      if (transaction) {
+        transaction.wait();
+        this.closeWaitingModal();
+        this.checkApprove(this);
+      }
     },
     checkApprove: debounce(async (self: any) => {
       const networkId = self.networkId as keyof typeof MINTREDEEM_SCHEME;
       const exchangeContract = MINTREDEEM_SCHEME[networkId]
         .find((_) => _.token0.toLowerCase() === self.inputToken.address.toLowerCase());
       const tokenAddress = Object.values(self.contracts)
-        .find((cData: any) => (cData ? cData._address === self.inputToken.address : false));
+        .find((cData: any) => (
+          cData ? cData.target.toLowerCase() === self.inputToken.address.toLowerCase() : false
+        ));
 
       if (!exchangeContract || !tokenAddress) return;
 
@@ -245,27 +288,29 @@ export default {
       this.activeMintTab = id;
     },
 
-    async getContractMethodWithParams(
+    getContractMethodWithParams(
       action: any,
       account: any,
       contractSum: any,
-      exchangeContract: any,
       exchangeMethodName: any,
       actionContract: any,
-    ) {
+    ): IMethodData | null {
       let methodParam;
 
-      let referral = getReferralCode();
-      referral = referral || '';
+      const referral = getReferralCode() || '0x4473D652fb0b40b36d549545e5fF6A363c9cd686';
 
       if (exchangeMethodName === 'mint') {
         methodParam = {
-          asset: actionContract.options.address,
+          asset: actionContract.target,
           amount: contractSum,
           referral,
         };
 
-        return exchangeContract.methods[exchangeMethodName](methodParam);
+        return {
+          name: exchangeMethodName,
+          params: methodParam,
+          iterateArgs: false,
+        };
       }
 
       if (exchangeMethodName === 'buy') {
@@ -274,33 +319,39 @@ export default {
           referral,
         };
 
-        return exchangeContract.methods[exchangeMethodName](
-          ...Object.values(methodParam),
-        );
+        return {
+          name: exchangeMethodName,
+          params: { ...Object.values(methodParam) },
+          iterateArgs: true,
+        };
       }
 
       if (exchangeMethodName === 'wrap') {
         methodParam = {
-          asset: actionContract.options.address,
+          asset: actionContract.target,
           sum: contractSum,
           account,
         };
 
-        return exchangeContract.methods[exchangeMethodName](
-          ...Object.values(methodParam),
-        );
+        return {
+          name: exchangeMethodName,
+          params: { ...Object.values(methodParam) },
+          iterateArgs: true,
+        };
       }
 
       if (exchangeMethodName === 'unwrap') {
         methodParam = {
-          asset: actionContract.options.address,
+          asset: actionContract.target,
           sum: contractSum,
           account,
         };
 
-        return exchangeContract.methods[exchangeMethodName](
-          ...Object.values(methodParam),
-        );
+        return {
+          name: exchangeMethodName,
+          params: { ...Object.values(methodParam) },
+          iterateArgs: true,
+        };
       }
 
       console.log(exchangeMethodName, 'TESSSSTTT____1');
@@ -318,7 +369,7 @@ export default {
         ) {
           console.log('TESSSSTTT____');
           methodParam = {
-            asset: actionContract.options.address,
+            asset: actionContract.target,
             sum: contractSum,
           };
         } else {
@@ -329,9 +380,11 @@ export default {
           return null;
         }
 
-        return exchangeContract.methods[exchangeMethodName](
-          ...Object.values(methodParam),
-        );
+        return {
+          name: exchangeMethodName,
+          params: { ...Object.values(methodParam) },
+          iterateArgs: true,
+        };
       }
 
       return null;
@@ -347,21 +400,22 @@ export default {
       actionContract: any,
     ) {
       const from = account;
+      let blockNum = 0;
       let result = 0;
 
       try {
         const estimateOptions = { from, gasPrice: this.gasPriceGwei };
-        const blockNum = await this.web3.eth.getBlockNumber();
+        blockNum = await this.evmProvider.getBlockNumber();
 
-        const method = await this.getContractMethodWithParams(
+        const methodData = this.getContractMethodWithParams(
           action,
           account,
           sum,
-          exchangeContract,
           exchangeMethodName,
           actionContract,
         );
-        if (!method) {
+
+        if (!methodData) {
           const errorMessage = `Exchange Method type not found when create method params in estimate gas. MethodType: ${
             exchangeMethodName}`;
           this.showErrorModalWithMsg({
@@ -373,40 +427,41 @@ export default {
         }
 
         console.log(estimateOptions, 'estimateOptions');
-        console.log(method, 'method');
+        console.log(methodData, 'method');
 
         // if (this.networkName === 'zksync') {
         //   await this.addedZkSyncGasHistoryData(method, estimateOptions);
         // }
 
-        result = await method
-          .estimateGas(estimateOptions)
-          .catch((error: any) => {
-            if (error && error.message) {
-              const msg = error.message.replace(/(?:\r\n|\r|\n)/g, '');
+        if (methodData.iterateArgs) {
+          result = await exchangeContract[methodData.name]
+            .estimateGas(...Object.values(methodData.params), estimateOptions);
+        } else {
+          result = await exchangeContract[methodData.name]
+            .estimateGas(methodData.params, estimateOptions);
+        }
+      } catch (error: any) {
+        this.showErrorModalWithMsg({ errorType: 'estimateGas', errorMsg: error });
+        if (error && error.message) {
+          const msg = error.message.replace(/(?:\r\n|\r|\n)/g, '');
 
-              const errorMsg = {
-                product: productName,
-                data: {
-                  from,
-                  to: actionContract.options.address,
-                  gas: null,
-                  gasPrice: parseInt(estimateOptions.gasPrice, 16),
-                  method: method.encodeABI(),
-                  message: msg,
-                  block: blockNum,
-                },
-              };
+          const errorMsg = {
+            product: productName,
+            data: {
+              from,
+              to: actionContract.target,
+              gas: null,
+              contract: 'ENCODEDABI',
+              message: msg,
+              block: blockNum,
+            },
+          };
 
-              console.error(errorMsg);
-            } else {
-              console.error(error);
-            }
+          console.error(errorMsg);
+        } else {
+          console.error(error);
+        }
 
-            return -1;
-          });
-      } catch (e) {
-        this.showErrorModalWithMsg({ errorType: 'estimateGas', errorMsg: e });
         return -1;
       }
 
@@ -416,7 +471,7 @@ export default {
     async swapTokens() {
       try {
         await this.refreshGasPrice();
-        this.showWaitingModal('Approving in process');
+        this.showWaitingModal('swaping in process');
         const networkId = this.networkId as keyof typeof MINTREDEEM_SCHEME;
         const pairData = MINTREDEEM_SCHEME[networkId]
           .find((_) => {
@@ -428,18 +483,20 @@ export default {
 
         if (pairData) {
           // abi for wrap/unwrap is different
-          exchangeContract = buildContract(
+          exchangeContract = buildEvmContract(
             pairData?.methodName[0] === mintRedeemTypes.WRAP ? ABI_Market : ABI_Exchange,
-            this.web3,
+            this.evmSigner,
             pairData.exchange,
           );
         }
+
+        if (!exchangeContract) return;
 
         const actionContract = Object.values(this.contracts)
           .find((cData: any) => {
             const tokenAddress = this.isMintActive
               ? this.inputToken.address : this.outputToken.address;
-            return cData ? cData._address === tokenAddress : false;
+            return cData ? cData.target.toLowerCase() === tokenAddress.toLowerCase() : false;
           });
 
         const action = 'non-market-redeem';
@@ -482,34 +539,45 @@ export default {
           gas: gasValue,
         };
 
-        const method = await this.getContractMethodWithParams(
+        const method = this.getContractMethodWithParams(
           action,
           this.account,
           swapSum,
-          exchangeContract,
           exchangeMethodName,
           actionContract,
         );
 
+        if (!method) return;
+
         console.log(method, '---method');
         console.log(this.gasPriceGwei, '---send');
-        await method
-          .send(buyParams)
-          .on('transactionHash', async (hash: string) => {
-            const tx = {
-              hash,
-              amount: this.inputToken.value,
-            };
+        const txData = method.iterateArgs
+          ? await exchangeContract[method.name](
+            ...Object.values(method.params),
+            { ...buyParams },
+          )
+          : await exchangeContract[method.name](
+            method.params,
+            { ...buyParams },
+          );
 
-            this.putTransaction(tx);
-            this.closeWaitingModal();
-            this.showSuccessModal({
-              successTxHash: hash,
-              from: this.inputToken,
-              to: this.outputToken,
-            });
+        if (txData) {
+          await txData.wait();
+          const tx = {
+            hash: txData.hash,
+            amount: this.inputToken.value,
+          };
+
+          this.putTransaction(tx);
+          this.closeWaitingModal();
+          this.showSuccessModal({
+            successTxHash: txData.hash,
+            from: [this.inputToken],
+            to: [this.outputToken],
           });
+        }
 
+        console.log(txData, '---txData');
         this.refreshBalance();
       } catch (e) {
         console.log(e, '-e');
@@ -574,3 +642,4 @@ export default {
   }
 }
 </style>
+@/utils/contractApprove

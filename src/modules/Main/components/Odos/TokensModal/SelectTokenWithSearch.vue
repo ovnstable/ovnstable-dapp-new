@@ -43,7 +43,7 @@
         <div
           v-for="token in (queryTokens as any)"
           class="search-tokens__list-item"
-          :class="token.selected ? 'search-tokens__list-item--selected' : ''"
+          :class="selectedTokensAddress.includes(token.address) ? 'search-tokens__list-item--selected' : ''"
           :key="token.id"
           @click="toggleToken(token, !token.selected)"
           @keydown="toggleToken(token, !token.selected)"
@@ -64,10 +64,10 @@
           </div>
           <div class="search-tokens__list-item__right">
             <span class="token-balance">
-              {{token.balanceData.balance ? formatMoney(token.balanceData.balance, fixedByPrice(token.price)) : '0'}}
+              {{token.balanceData.balance ? token.balanceData.balance : '0'}}
             </span>
             <span class="token-usd-balance">
-              ${{token.balanceData.balance ? formatMoney(token.balanceData.balance * token.price, 2) : '0'}}
+              ${{token.balanceData.balance ? formatMoney(token.balanceData.balanceInUsd, fixedByPrice(token.price)) : '0'}}
             </span>
           </div>
         </div>
@@ -96,12 +96,8 @@ export default defineComponent({
       type: Array,
       required: true,
     },
-    selectTokenFunc: {
-      type: Function,
-      required: true,
-    },
-    removeTokenFunc: {
-      type: Function,
+    selectedTokens: {
+      type: Array,
       required: true,
     },
   },
@@ -113,7 +109,12 @@ export default defineComponent({
   },
   computed: {
     selectedTokensList() {
-      return this.tokens.filter((item: any) => item.selected);
+      if (!(this.selectedTokens[0] as any).selectedToken) return [];
+      return this.selectedTokens.map((item: any) => item?.selectedToken).filter((_) => _?.selected);
+    },
+    selectedTokensAddress() {
+      if (this.selectedTokensList?.length > 0) return this.selectedTokensList.map((_) => _.address);
+      return [];
     },
     queryTokens() {
       if (!this.searchQuery) {
@@ -168,11 +169,11 @@ export default defineComponent({
     },
     toggleToken(token: any, isSelect: any) {
       if (isSelect && this.isAvailableCountForSelect) {
-        this.selectTokenFunc(token);
+        this.$emit('add-token', token);
         return;
       }
 
-      this.removeTokenFunc(token);
+      this.$emit('remove-token', token);
     },
     clearSearchQuery() {
       this.searchQuery = '';

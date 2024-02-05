@@ -40,8 +40,9 @@
         <div v-else>
           <SelectTokenWithSearch
             :tokens="tokens"
-            :select-token-func="selectToken"
-            :remove-token-func="removeToken"
+            :selected-tokens="selectedTokens"
+            @add-token="selectToken"
+            @remove-token="removeToken"
           />
         </div>
       </div>
@@ -68,45 +69,22 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
-    setShowFunc: {
-      type: Function,
-      required: true,
-    },
-
-    swapMethod: {
-      type: String,
-      required: true,
-    },
     selectTokenInput: {
       type: Boolean,
       required: true,
     },
-
-    removeSelectedTokenFromListFunc: {
-      type: Function,
-      required: true,
-    },
-
-    addSelectedTokenToListFunc: {
-      type: Function,
-      required: true,
-    },
-
-    secondTokens: {
+    selectedTokens: {
       type: Array,
       required: true,
     },
-
     tokens: {
       type: Array,
       required: true,
     },
-
     isAllDataLoaded: {
       type: Boolean,
       required: true,
     },
-
     isOvnSwap: {
       type: Boolean,
       required: true,
@@ -114,8 +92,6 @@ export default defineComponent({
   },
   data() {
     return {
-      selectedTokensFromAddresses: [] as any[],
-      selectedTokensToAddresses: [] as any[],
       showModal: false,
     };
   },
@@ -126,21 +102,29 @@ export default defineComponent({
   },
   methods: {
     closeModal() {
-      console.log('closeModal');
-      this.setShowFunc(false);
+      this.$emit('set-show', false);
     },
     selectToken(token: any) {
       // eslint-disable-next-line no-param-reassign
-      this.addSelectedTokenToListFunc({
-        ...token,
-        selected: true,
-      }, this.selectTokenInput);
+      token.selected = true;
+      this.$emit('add-token-to-list', {
+        tokenData: {
+          ...token,
+          selected: true,
+        },
+        isInput: this.selectTokenInput,
+      });
     },
     removeToken(token: any) {
       // eslint-disable-next-line no-param-reassign
       token.selected = false;
-      console.log('Token remove: ', token, this.selectTokenInput);
-      this.removeSelectedTokenFromListFunc(token, this.selectTokenInput);
+      this.$emit('remove-token-from-list', {
+        tokenData: {
+          ...token,
+          selected: false,
+        },
+        isInput: this.selectTokenInput,
+      });
     },
   },
 });

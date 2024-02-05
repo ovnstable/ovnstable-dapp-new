@@ -83,7 +83,7 @@ export default {
   setup() {
     const store = useStore();
 
-    const saveNetworkToLocalStore = (chain) => {
+    const saveNetworkToLocalStore = (chain: string) => {
       console.log(chain.toLowerCase());
       store.dispatch('network/changeDappNetwork', chain.toLowerCase());
     };

@@ -1,9 +1,11 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-continue */
 /* eslint-disable no-await-in-loop */
-import tokenLogo from '@/utils/token-logo.ts';
-import { getWeiMarker } from '@/utils/web3.ts';
-import type { stateData } from '../odos/index';
+import BigNumber from 'bignumber.js';
+import tokenLogo from '@/utils/tokenLogo.ts';
+import odosApiService from '@/services/odos-api-service.ts';
+import type { stateData } from '@/store/odos/index';
 
 const SECONDTOKEN_SECOND_DEFAULT_SYMBOL = 'DAI+';
 const SECONDTOKEN_DEFAULT_SYMBOL = 'USD+';
@@ -39,7 +41,6 @@ export const addItemToFilteredTokens = (
     name: item.name,
     symbol: item.symbol,
     logoUrl,
-    weiMarker: getWeiMarker(item.decimals),
     selected: false,
     balanceData: {},
     approveData: {
@@ -63,9 +64,6 @@ export const getFilteredPoolTokens = (
   const { tokenMap } = state.tokensMap.chainTokenMap[`${chainId}`];
   let leftListTokensAddresses = listTokensAddresses;
   const keys = Object.keys(tokenMap);
-
-  console.log(tokenMap, '---tokenMap');
-  console.log(listTokensAddresses, '---listTokensAddresses');
 
   for (let i = 0; i < keys.length; i++) {
     const key = keys[i];
@@ -254,9 +252,14 @@ export const getNewOutputToken = () => {
   };
 };
 
-export const updateTokenValue = (token: any, value: any, toWeiFunc: any) => {
+export const updateTokenValue = (
+  token: any,
+  value: any,
+  checkApprove: (tokenData: any, val: string) => void,
+  updateQuotaInfo: () => void,
+) => {
   token.value = value;
-  // state.updateQuotaInfo();
+  updateQuotaInfo();
 
   if (!value) {
     token.usdValue = 0;
@@ -266,11 +269,8 @@ export const updateTokenValue = (token: any, value: any, toWeiFunc: any) => {
 
   const { selectedToken } = token;
   if (selectedToken) {
-    const sum = token.decimals === 6 ? `${token.value * 100}` : `${token.value}`;
-    token.contractValue = toWeiFunc(
-      sum,
-      token.selectedToken.weiMarker,
-    );
+    token.contractValue = new BigNumber(token.value)
+      .times(10 ** token.selectedToken.decimals).toString();
     token.usdValue = token.value * selectedToken.price;
 
     if (
@@ -282,17 +282,19 @@ export const updateTokenValue = (token: any, value: any, toWeiFunc: any) => {
       );
       selectedToken.approveData.approved = true;
     }
+
+    checkApprove(token, token.contractValue);
   }
 };
 
-export const maxAll = (selectedInputTokens: any[], toWeiFunc: any) => {
+export const maxAll = (
+  selectedInputTokens: any[],
+  checkApprove: (tokenData: any, val: string) => void,
+  updateQuotaInfo: () => void,
+) => {
   for (let i = 0; i < selectedInputTokens.length; i++) {
     const token = selectedInputTokens[i];
-    console.log(
-      token.selectedToken.balanceData.balance,
-      'token.selectedToken.balanceData.balance',
-    );
-    updateTokenValue(token, token.selectedToken.balanceData.balance, toWeiFunc);
+    updateTokenValue(token, token.selectedToken.balanceData.balance, checkApprove, updateQuotaInfo);
   }
 };
 
@@ -307,15 +309,13 @@ export const loadBalance = async (
   try {
     // balance for network currency
     if (data.token.address === '0x0000000000000000000000000000000000000000') {
-      const ethBalance = await rootState.web3.web3.eth.getBalance(rootState.accountData.account);
-      const balance = rootState.web3.web3.utils.fromWei(
-        ethBalance,
-        getWeiMarker(data.token.decimals),
-      );
+      // const evmProvider = new ethers.BrowserProvider(rootState.web3.provider);
+      const ethBalance = await rootState.web3.evmProvider.getBalance(rootState.accountData.account);
+      const balance = new BigNumber(ethBalance).div(10 ** data.token.decimals);
       data.token.balanceData = {
         name: data.token.symbol,
         balance,
-        balanceInUsd: balance * data.token.price,
+        balanceInUsd: balance.times(data.token.price).toString(),
         originalBalance: ethBalance,
         decimal: data.token.decimals,
       };
@@ -323,26 +323,20 @@ export const loadBalance = async (
       return {
         name: data.token.symbol,
         balance,
-        balanceInUsd: balance * data.token.price,
+        balanceInUsd: balance.times(data.token.price).toString(),
         originalBalance: ethBalance,
         decimal: data.token.decimals,
       };
     }
 
     // balance for ERC20
-    const erc20Balance = await data.contract.methods
-      .balanceOf(rootState.accountData.account)
-      .call();
-
-    const balance = rootState.web3.web3.utils.fromWei(
-      erc20Balance,
-      getWeiMarker(data.token.decimals),
-    );
+    const erc20Balance = await data.contract.balanceOf(rootState.accountData.account);
+    const balance = new BigNumber(erc20Balance).div(10 ** data.token.decimals);
 
     return {
       name: data.token.symbol,
       balance,
-      balanceInUsd: balance * data.token.price,
+      balanceInUsd: balance.times(data.token.price).toString(),
       originalBalance: erc20Balance,
       decimal: data.token.decimals,
     };
@@ -370,3 +364,10 @@ export const getReferralCode = () => {
   // console.log('Referral code not found in cookies');
   return '';
 };
+
+export const loadPrices = async (chainId: number | string) => odosApiService
+  .loadPrices(chainId)
+  .then((data: any) => data.tokenPrices)
+  .catch((e: any) => {
+    console.error('Error load contract', e);
+  });
