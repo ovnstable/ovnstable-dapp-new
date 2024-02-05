@@ -57,7 +57,7 @@
       :class="{ selected: chain.toLowerCase() === networkName }"
     >
       <BaseIcon
-        name='IconArbitrum'
+        :name="getIconName(chain)"
         class="performance__icon-chain-bottom"
       />
       <p class="performance__chain-data-name">{{ chain }}</p>
@@ -84,7 +84,6 @@ export default {
     const store = useStore();
 
     const saveNetworkToLocalStore = (chain: string) => {
-      console.log(chain.toLowerCase());
       store.dispatch('network/changeDappNetwork', chain.toLowerCase());
     };
 
@@ -134,6 +133,17 @@ export default {
 
       return address;
     },
+    getIconName(chain: string) {
+      const selectedChain = this.$store.state.network.networkName;
+      const formattedChain = chain.charAt(0).toUpperCase() + chain.slice(1).toLowerCase();
+
+      if (chain.toLowerCase() !== selectedChain.toLowerCase()) {
+        return `Icon${formattedChain}Off`;
+      }
+
+      return `Icon${formattedChain}On`;
+    },
+
   },
 
   name: 'TokenDataPerformance',
@@ -244,17 +254,26 @@ export default {
     padding: 5px 10px;
     margin-top: 24px;
     width: fit-content;
+    transition: background 0.3s ease, border 0.3s ease;
   }
   .selected {
     background: var(--color-4);
   }
 
+  .performance__chain-data-container .selected:hover {
+    background: var(--color-4);
+    cursor: default;
+  }
+
   .performance__chain-data:hover {
     cursor: pointer;
+    border: 1px solid var(--color-7);
+    background: var(--color-6);
+    transition: background 0.3s ease, border 0.3s ease;
   }
 
   .performance__chain-data-name {
-    margin-left: 7px;
+    margin-left: 8px;
     font-weight: 500;
     font-size: 13px;
     color: var(--color-1)
