@@ -28,22 +28,22 @@ export default defineComponent({
     const collateralData = computed(() => store.state.collateralData.collateralData || {});
     const payoutData = computed(() => store.state.payoutData.payoutData || {});
     watch(
-      () => route.params.id,
-      async (newId) => {
+      [() => route.params.id, () => store.state.network.networkName],
+      async ([newId, newNetworkName]) => {
         const marketId = Array.isArray(newId) ? newId[0] : newId;
-        const { networkName } = store.state.network;
-        if (typeof marketId === 'string' && networkName) {
-          await store.dispatch('tokenData/fetchTokenData', { marketId, networkName });
-          await store.dispatch('portfolioData/fetchPortfolioData', { marketId, networkName });
-          await store.dispatch('collateralData/fetchCollateralData', { marketId, networkName });
-          await store.dispatch('payoutData/fetchPayoutData', { marketId, networkName });
+
+        if (typeof marketId === 'string' && newNetworkName) {
+          await store.dispatch('tokenData/fetchTokenData', { marketId, networkName: newNetworkName });
+          await store.dispatch('portfolioData/fetchPortfolioData', { marketId, networkName: newNetworkName });
+          await store.dispatch('collateralData/fetchCollateralData', { marketId, networkName: newNetworkName });
+          await store.dispatch('payoutData/fetchPayoutData', { marketId, networkName: newNetworkName });
         }
       },
       { immediate: true },
     );
 
     if (!route.params.id) {
-      router.push({ name: 'market', params: { id: 'default-market-id' } });
+      router.push({ name: 'market', params: { id: 'usd' } });
     }
 
     return {

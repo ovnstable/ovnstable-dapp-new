@@ -297,18 +297,6 @@ export default {
   padding-top: 5px;
 }
 
-.performance__portfolio-strategy:hover {
-  cursor: pointer;
-}
-
-.performance__portfolio-strategy > * {
-  flex: 1;
-  text-align: center;
-  color: var(--color-1);
-  font-size: 15px;
-  font-weight: 500;
-}
-
 .performance__portfolio-strategy-token-data {
   display: flex;
   align-items: center;
@@ -337,14 +325,16 @@ export default {
   color: var(--color-1);
   font-size: 15px;
   font-weight: 500;
+  text-align: right;
 }
 .performance__portfolio-strategy-token-name {
   margin-left: 17px;
   display: flex;
-  min-width: 153px;
+  width: 300px;
 }
 .asset {
-    margin-left: 6px;
+  margin-left: 6px;
+
 }
 .performance__portfolio-total-info {
   padding: 0px 20px;
@@ -363,45 +353,6 @@ export default {
   justify-content: space-between;
 }
 
-.performance__portfolio-total-nav-val,
-.performance__portfolio-total-liquidation-val,
-.performance__portfolio-total-circl-number {
-  text-align: right;
-  flex: none;
-}
-
-.performance__portfolio-total-liquidation-val {
-  margin-right: 15px;
-}
-.performance__portfolio-total > *,
-.performance__portfolio-total-circl > * {
-  text-align: center;
-}
-
-.performance__portfolio-total{
-  width: 70%;
-}
-
-.performance__portfolio-total-circl  {
-   width: 39.8%;
-}
-.performance__portfolio-total-label,
-.performance__portfolio-total-circl .performance__portfolio-total-label {
-  text-align: left;
-}
-
-.performance__portfolio-total-label,
-.performance__portfolio-total-circl .performance__portfolio-total-label {
-  text-align: left;
-}
-.performance__portfolio-total-label,
-.performance__portfolio-total-nav-val,
-.performance__portfolio-total-liquidation-val {
-  flex: 1;
-}
-.performance__portfolio-total-liquidation-val {
-  text-align: right;
-}
 
 .performance__portfolio-divider {
   margin-bottom: 10px;
@@ -433,20 +384,11 @@ export default {
   font-weight: 500;
 }
 
-.assets {
-  padding-bottom: 0px;
-}
-
-.performance__portfolio-strategy-token-img {
-  margin-right: 17px;
-}
-
 .performance__portfolio-strategy-progress-bar {
   border-radius: 3px;
   background: var(--color-6);
-  width: 160px;
+  width: 200px;
   height: 12px;
-  margin-right: 3px;
 }
 
 .performance__portfolio-strategy-progress {
@@ -506,37 +448,33 @@ export default {
   text-align: left;
   padding-right: 45px;
 }
-
-.performance__portfolio-strategies-stables-specs p,
-.performance__portfolio-strategy p {
+.performance__portfolio-strategies-stables-specs,
+.performance__portfolio-strategy {
+  display: grid;
+  grid-template-columns: 1.8fr 1fr 1fr 1.5fr;
   text-align: center;
-  flex: 1;
+}
+
+.performance__portfolio-strategy {
+  transition: background-color 0.3s ease;
+}
+.performance__portfolio-strategy > * {
+  color: var(--color-1);
+  font-size: 15px;
+  font-weight: 500;
+}
+.performance__portfolio-strategy:hover {
+  background-color: var(--color-6);
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .performance__portfolio-strategies-stables-specs p:first-child,
-.performance__portfolio-strategy p:first-child {
+.performance__portfolio-strategies-stables-specs p:last-child {
   text-align: left;
-  flex: 2.7;
 }
 
-.performance__portfolio-strategies-stables-specs p:nth-child(2),
-.performance__portfolio-strategies-stables-specs p:nth-child(3),
-.performance__portfolio-strategy p:nth-child(2),
-.performance__portfolio-strategy p:nth-child(3) {
-  flex: 4;
-}
-
-.performance__portfolio-strategies-stables-specs p:nth-child(4),
-.performance__portfolio-strategy p:nth-child(4) {
-  flex: 3.2;
-  display: flex;
-  justify-content: flex-end;
-  text-align: right;
-}
-
-.performance__portfolio-strategies-stables-specs p:nth-child(4) {
-  justify-content: flex-start;
-}
 
 .performance__portfolio-total-circl-number {
   text-align: right;
@@ -559,6 +497,20 @@ export default {
   height: 22px;
 }
 
+.performance__portfolio-total,
+.performance__portfolio-total-circl {
+  display: grid;
+  grid-template-columns: 1.8fr 1fr 1fr 1.5fr;
+  text-align: center;
+}
+.performance__portfolio-total p:first-child {
+  text-align: left;
+}
+
+.performance__portfolio-total-circl p:nth-child(2) {
+  text-align: center;
+  margin: 0;
+}
 
 @media (max-width: 1024px) {
   .performance__portfolio-strategy-progress-bar {

@@ -75,11 +75,6 @@ export default {
   components: {
     BaseIcon,
   },
-  data() {
-    return {
-      selectedChain: 'arbitrum',
-    };
-  },
   setup() {
     const store = useStore();
 
@@ -102,7 +97,7 @@ export default {
     },
     chainName: {
       type: String,
-      default: 'Arbitrum',
+      default: 'Optimism',
     },
   },
   computed: {
@@ -280,8 +275,6 @@ export default {
   }
 
   .performance__icon-chain-bottom {
-    width: 20px;
-    height: 20px;
     flex-shrink: 0
   }
 
