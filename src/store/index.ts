@@ -18,24 +18,24 @@ import supplyData from '@/store/common/supply.ts';
 import referral from '@/store/common/referral.ts';
 import etsAction from '@/store/web3/legacy/ets-action.ts';
 
+// views
 import accountUI from '@/store/views/account/ui.ts';
 import accountData from '@/store/views/account/data.ts';
 import insuranceData from '@/store/views/insurance/data.ts';
-import wrapUI from '@/store/views/wrap/ui.ts';
-import odosData from '@/store/odos/index.ts';
 import tokenData from '@/store/views/market/tokenData.ts';
 import portfolioData from '@/store/views/market/portfolioData.ts';
 import collateralData from '@/store/views/market/collateralData.ts';
 import payoutData from '@/store/views/market/payoutData.ts';
-import mintRedeem from '@/store/mintRedeem/index.ts';
 
 // modals
 import errorModal from '@/store/modals/error-modal.ts';
 import waitingModal from '@/store/modals/waiting-modal.ts';
 import successModal from '@/store/modals/success-modal.ts';
 import accTransaction from '@/store/views/account/transaction.ts';
-import dappUIAction from '@/store/web3/legacy/dapp-ui-action.ts';
 import dappDataAction from '@/store/web3/legacy/dapp-data-action.ts';
+import mintRedeem from '@/store/views/main/mintRedeem/index.ts';
+import odosData from '@/store/views/main/odos/index.ts';
+import poolsData from '@/store/views/main/pools/index.ts';
 
 export default new Vuex.Store({
   modules: {
@@ -46,8 +46,10 @@ export default new Vuex.Store({
     waitingModal,
     successModal,
 
+    // views
     accountUI,
     accountData,
+    poolsData,
     accTransaction,
     insuranceData,
 
@@ -58,9 +60,7 @@ export default new Vuex.Store({
     web3,
     tokenAction,
     dappDataAction,
-    dappUIAction,
     etsAction,
-    wrapUI,
 
     // common
     gasPrice,

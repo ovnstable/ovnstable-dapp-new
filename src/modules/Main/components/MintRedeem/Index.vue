@@ -93,7 +93,7 @@ import SwitchTabs from '@/components/SwitchTabs/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import TokenForm from '@/modules/Main/components/MintRedeem/TokenForm.vue';
 import { buildEvmContract } from '@/utils/contractsMap.ts';
-import { MINTREDEEM_SCHEME } from '@/store/mintRedeem/mocks.ts';
+import { MINTREDEEM_SCHEME } from '@/store/views/main/mintRedeem/mocks.ts';
 import debounce from 'lodash/debounce';
 import { fixedByPrice } from '@/utils/numbers.ts';
 

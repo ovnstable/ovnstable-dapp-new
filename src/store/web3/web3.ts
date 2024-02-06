@@ -93,7 +93,6 @@ const actions = {
 
     await dispatch('contractAction/initContracts', null, { root: true });
 
-    dispatch('dappUIAction/updateDappPages', null, { root: true });
     dispatch('gasPrice/refreshGasPrice', null, { root: true });
     dispatch('insuranceData/refreshInsurance', null, { root: true });
 

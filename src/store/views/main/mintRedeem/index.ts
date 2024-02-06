@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { getFilteredPoolTokens } from '@/store/helpers/index.ts';
-import { MINTREDEEM_SCHEME } from '@/store/mintRedeem/mocks.ts';
+import { MINTREDEEM_SCHEME } from '@/store/views/main/mintRedeem/mocks.ts';
 
 type TTokensList = Record<number, any[][]>
 
