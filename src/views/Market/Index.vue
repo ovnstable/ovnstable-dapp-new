@@ -16,6 +16,7 @@ import {
 import MarketPage from '@/modules/Market/Index.vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
+import { contractAddressMap } from '@/utils/const.ts';
 
 export default defineComponent({
   name: 'MarketView',
@@ -33,28 +34,51 @@ export default defineComponent({
     const previousId = ref('');
     const previousNetworkName = ref('');
 
+    const saveNetworkToLocalStore = (chain: string) => {
+      store.dispatch('network/changeDappNetwork', chain.toLowerCase());
+    };
+
     watch(
       () => route.params.id,
       async (newId) => {
         const marketId = Array.isArray(newId) ? newId[0] : newId;
-        if (typeof marketId === 'string') {
-          try {
-            if (marketId !== previousId.value) {
-              await Promise.all([
-                store.dispatch('tokenData/fetchTokenData', { marketId, networkName: store.state.network.networkName }),
-                store.dispatch('portfolioData/fetchPortfolioData', { marketId, networkName: store.state.network.networkName }),
-                store.dispatch('collateralData/fetchCollateralData', { marketId, networkName: store.state.network.networkName }),
-                store.dispatch('payoutData/fetchPayoutData', { marketId, networkName: store.state.network.networkName })
-              ]);
-              previousId.value = marketId;
+        if (marketId !== previousId.value) {
+          console.log(`this is market id ${marketId}`);
+
+          const normalizedMarketId = `${marketId.toUpperCase()}_PLUS`;
+          console.log(contractAddressMap[normalizedMarketId]);
+          console.log(store.state.network.networkName.toUpperCase());
+
+          const currentNetworkName = store.state.network.networkName.toUpperCase();
+          const availableChains = Object.keys(contractAddressMap[normalizedMarketId] || {});
+          const fetchDataForMarketId = async (marketId:string, networkName:string) => {
+            await Promise.all([
+              store.dispatch('tokenData/fetchTokenData', { marketId, networkName }),
+              store.dispatch('portfolioData/fetchPortfolioData', { marketId, networkName }),
+              store.dispatch('collateralData/fetchCollateralData', { marketId, networkName }),
+              store.dispatch('payoutData/fetchPayoutData', { marketId, networkName }),
+            ]);
+          };
+
+          if (!availableChains.includes(currentNetworkName)) {
+            const firstAvailableChain = availableChains.length > 0 ? availableChains[0] : null;
+            if (firstAvailableChain) {
+              console.log(`Switching network to the first available chain: ${firstAvailableChain}`);
+              saveNetworkToLocalStore(firstAvailableChain.toLowerCase());
+              await fetchDataForMarketId(marketId, store.state.network.networkName);
+            } else {
+              console.error('No available chains found for this market ID.');
             }
-          } catch (error) {
-            console.error('Error fetching data:', error);
+          } else {
+            await fetchDataForMarketId(marketId, store.state.network.networkName);
           }
+
+          previousId.value = marketId;
         }
       },
       { immediate: true },
     );
+
 
     watch(
       () => store.state.network.networkName,
