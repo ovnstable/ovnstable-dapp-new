@@ -58,7 +58,7 @@
                 />
                 <BaseIcon
                   v-if="type === 'portfolio'"
-                  name="ARB"
+                  :name="getIconName(asset.id.tokenName)"
                   class="performance__portfolio-asset-icon"
                 />
                 <p
@@ -237,6 +237,23 @@ export default {
         getComputedStyle(document.documentElement).getPropertyValue('--color-10').trim()];
       return colors[index % colors.length];
     },
+    getIconName(tokenName: any) {
+      const tokenNameMapping: { [key: string]: string } = {
+        'USDbC (delta-neutral)': 'USDC',
+      };
+
+      const normalizedTokenName = tokenName.toLowerCase();
+
+      const matchedKey = Object.keys(tokenNameMapping)
+        .find((key) => normalizedTokenName === key.toLowerCase());
+
+      if (matchedKey) {
+        return tokenNameMapping[matchedKey];
+      }
+
+      return normalizedTokenName.includes('usdc') ? 'USDC' : tokenName;
+    },
+
     totalPortfolioValue(assets: any[]) {
       return assets
         .reduce((total: any, asset: { netAssetValue: any; }) => total + asset.netAssetValue, 0);
