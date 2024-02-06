@@ -6,8 +6,13 @@
 
 import { poolApiService } from '@/services/pool-api-service.ts';
 import {
-  getSortedPools, getSortedSecondPools, initAggregators, initFeature, initReversePools,
+  getSortedPools,
+  getSortedSecondPools,
+  initAggregators,
+  initFeature,
+  initReversePools,
 } from '@/store/views/main/pools/helpers.ts';
+import { zapPlatformSupportList } from '@/store/views/main/pools/mocks.ts';
 
 const stateData = {
   sortedPoolList: [],
@@ -64,17 +69,18 @@ const actions = {
       field: 'allPools',
       val: [],
     });
-    const networkConfigList = [...state.allNetworkConfigs];
+    const networkConfigList = [...rootState.network.allNetworkConfigs];
 
     for (const networkConfig of networkConfigList) {
       await poolApiService
         .getAllPools(networkConfig.appApiUrl)
         .then((data: any) => {
           if (data) {
+            console.log(data, '---data');
             const buildPools = data.map((pool: any) => {
               if (
                 state.typeOfPool === 'OVN'
-                && !pool.id.name.toLowerCase().includes('ovn')
+                && !pool.id?.name?.toLowerCase().includes('ovn')
               ) {
                 return null;
               }
@@ -95,7 +101,7 @@ const actions = {
 
               if (
                 pool
-                && state.zapPlatformSupportList.includes(pool.platform)
+                && zapPlatformSupportList?.includes(pool.platform)
                 && Object.keys(state.poolTokensForZapMap).some(
                   (item) => item.toLowerCase() === pool.id.address.toLowerCase(),
                 )
@@ -167,6 +173,8 @@ const actions = {
           console.log(`Error get pools data: ${e}`);
         });
     }
+
+    console.log(state.allPools, 'state.allPools');
 
     if (state.allPools && state.allPools.length) {
       // init pool at aggregator
