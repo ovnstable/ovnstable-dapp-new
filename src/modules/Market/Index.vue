@@ -82,9 +82,10 @@ export default {
 }
 
 .market-wrapper {
-  display: flex-shrink;
+  display: flex;
   flex-direction: column;
   width: calc(100% - 40px);
+  min-height: 1500px;
   z-index: 1;
 }
 
