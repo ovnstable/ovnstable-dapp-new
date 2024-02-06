@@ -197,7 +197,7 @@ export default {
       if (this.type === 'strategies') {
         this.dropdownVisible = this.dropdownVisible === asset.fullName ? null : asset.fullName;
       } else if (this.type === 'portfolio') {
-        window.open(asset.tokenAddress, '_blank');
+        window.open(`${this.$store.state.network.explorerUrl}address/${asset.tokenAddress}`, '_blank');
       }
     },
     formatCurrency(value:any, collateralToken:string) {
