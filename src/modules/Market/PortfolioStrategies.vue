@@ -200,7 +200,7 @@ export default {
         window.open(`${this.$store.state.network.explorerUrl}address/${asset.tokenAddress}`, '_blank');
       }
     },
-    formatCurrency(value:any, collateralToken:string) {
+    formatCurrency(value: any, collateralToken:string) {
       if (collateralToken !== 'WETH') {
         return new Intl.NumberFormat('en-US', {
           style: 'currency',
@@ -208,7 +208,7 @@ export default {
           maximumFractionDigits: 2,
         }).format(value).replace(/,/g, ' ');
       }
-      return `${value} ${collateralToken}`;
+      return `${Number(value).toFixed(6)} ${collateralToken}`;
     },
     totalNAV(assets: any[], collateralToken: string) {
       const totalValue = assets.reduce((total, asset) => total + asset.netAssetValue, 0);
@@ -252,7 +252,6 @@ export default {
         return tokenNameMapping[matchedKey];
       }
 
-      // Check for both 'usdc' and 'usdt' in the token name
       if (normalizedTokenName.includes('usdc')) {
         return 'USDC';
       } if (normalizedTokenName.includes('usdt')) {
