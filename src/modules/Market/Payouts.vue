@@ -210,7 +210,9 @@ export default {
   font-size: 15px;
   font-weight: 400;
 }
-
+.performance__payouts-id-link:hover {
+  cursor: pointer;
+}
 .performance__payouts-date-transaction {
   display: flex;
   flex-direction: row;

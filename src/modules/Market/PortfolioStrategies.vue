@@ -500,7 +500,7 @@ export default {
 .performance__portfolio-total,
 .performance__portfolio-total-circl {
   display: grid;
-  grid-template-columns: 1.9fr 1fr 1fr 1.5fr;
+  grid-template-columns: 1.8fr 1fr 1fr 1.5fr;
   text-align: center;
 }
 .performance__portfolio-total p:first-child {

@@ -1,35 +1,10 @@
 <template>
-  <div>
-    <div
-      v-if="isLoading"
-    >
-      <ModalComponent
-        :modelValue="showModal"
-        :show-close="false"
-        type-modal="custom"
-      >
-        <div class="modal-content">
-          <div class="modal-content__spin">
-            <Spinner size="90px" />
-          </div>
-          <h1>Waiting for loading page data</h1>
-          <div class="divider" />
-
-          <div class="modal-content__tips">
-            <Carousel />
-          </div>
-
-        </div>
-      </ModalComponent>
-    </div>
-    <MarketPage
-      v-if="!isLoading"
-      :token-data="tokenData"
-      :portfolio-data="portfolioData"
-      :collateral-data="collateralData"
-      :payout-data="payoutData"
-    />
-  </div>
+  <MarketPage
+    :token-data="tokenData"
+    :portfolio-data="portfolioData"
+    :collateral-data="collateralData"
+    :payout-data="payoutData"
+  />
 </template>
 
 <script lang="ts">
@@ -37,9 +12,7 @@
 import {
   defineComponent, watch, computed, ref,
 } from 'vue';
-import ModalComponent from '@/components/Modal/Index.vue';
-import Carousel from '@/modules/ModalTemplates/components/Carousel.vue';
-import Spinner from '@/components/Spinner/Index.vue';
+
 import MarketPage from '@/modules/Market/Index.vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
@@ -48,45 +21,57 @@ export default defineComponent({
   name: 'MarketView',
   components: {
     MarketPage,
-    ModalComponent,
-    Carousel,
-    Spinner,
-  },
-  props: {
-    showModal: {
-      type: Boolean,
-      default: true,
-    },
   },
   setup() {
     const store = useStore();
     const route = useRoute();
     const router = useRouter();
-
     const tokenData = computed(() => store.state.tokenData.tokenData || {});
     const portfolioData = computed(() => store.state.portfolioData.portfolioData || {});
     const collateralData = computed(() => store.state.collateralData.collateralData || {});
     const payoutData = computed(() => store.state.payoutData.payoutData || {});
-
-    const isLoading = ref(false);
+    const previousId = ref('');
+    const previousNetworkName = ref('');
 
     watch(
-      [() => route.params.id, () => store.state.network.networkName],
-      async ([newId, newNetworkName]) => {
+      () => route.params.id,
+      async (newId) => {
         const marketId = Array.isArray(newId) ? newId[0] : newId;
-
-        if (typeof marketId === 'string' && newNetworkName) {
-          isLoading.value = true;
-
+        if (typeof marketId === 'string') {
           try {
-            await store.dispatch('tokenData/fetchTokenData', { marketId, networkName: newNetworkName });
-            await store.dispatch('portfolioData/fetchPortfolioData', { marketId, networkName: newNetworkName });
-            await store.dispatch('collateralData/fetchCollateralData', { marketId, networkName: newNetworkName });
-            await store.dispatch('payoutData/fetchPayoutData', { marketId, networkName: newNetworkName });
+            if (marketId !== previousId.value) {
+              await Promise.all([
+                store.dispatch('tokenData/fetchTokenData', { marketId, networkName: store.state.network.networkName }),
+                store.dispatch('portfolioData/fetchPortfolioData', { marketId, networkName: store.state.network.networkName }),
+                store.dispatch('collateralData/fetchCollateralData', { marketId, networkName: store.state.network.networkName }),
+                store.dispatch('payoutData/fetchPayoutData', { marketId, networkName: store.state.network.networkName })
+              ]);
+              previousId.value = marketId;
+            }
           } catch (error) {
             console.error('Error fetching data:', error);
-          } finally {
-            isLoading.value = false;
+          }
+        }
+      },
+      { immediate: true },
+    );
+
+    watch(
+      () => store.state.network.networkName,
+      async (newNetworkName, oldNetworkName) => {
+        if (newNetworkName !== oldNetworkName) {
+          const marketId = Array.isArray(route.params.id) ? route.params.id[0] : route.params.id;
+          try {
+            if (newNetworkName !== previousNetworkName.value) {
+              await Promise.all([
+                store.dispatch('portfolioData/fetchPortfolioData', { marketId, networkName: newNetworkName }),
+                store.dispatch('collateralData/fetchCollateralData', { marketId, networkName: newNetworkName }),
+                store.dispatch('payoutData/fetchPayoutData', { marketId, networkName: newNetworkName }),
+              ]);
+              previousNetworkName.value = newNetworkName;
+            }
+          } catch (error) {
+            console.error('Error fetching data:', error);
           }
         }
       },
@@ -102,7 +87,6 @@ export default defineComponent({
       portfolioData,
       collateralData,
       payoutData,
-      isLoading,
     };
   },
 });
@@ -145,4 +129,5 @@ export default defineComponent({
 .modal-content__tips {
   margin-top: 40px;
 }
+
 </style>
