@@ -67,7 +67,9 @@
                   {{ type === 'portfolio' ? asset.id.tokenName : asset.fullName }}
                 </p>
               </div>
-              <p>{{ type === 'portfolio' ? 'VERY HIGH' : formatCurrency(asset.netAssetValue, collateralToken) }}</p>
+              <p :class="{ 'performance__portfolio-strategies-stables-score': type === 'portfolio' }">
+                {{ type === 'portfolio' ? 'VERY HIGH' : formatCurrency(asset.netAssetValue, collateralToken) }}
+              </p>
               <p>
                 {{ type === 'portfolio' ? formatCurrency(asset.netAssetValue, collateralToken) : formatCurrency(asset.liquidationValue, collateralToken) }}
               </p>
@@ -510,6 +512,10 @@ export default {
 .performance__portfolio-total-circl p:nth-child(2) {
   text-align: center;
   margin: 0;
+}
+
+.performance__portfolio-strategies-stables-score {
+  margin-right: 20px;
 }
 
 @media (max-width: 1024px) {
