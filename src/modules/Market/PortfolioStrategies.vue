@@ -237,9 +237,10 @@ export default {
         getComputedStyle(document.documentElement).getPropertyValue('--color-10').trim()];
       return colors[index % colors.length];
     },
-    getIconName(tokenName: any) {
+    getIconName(tokenName: string) {
       const tokenNameMapping: { [key: string]: string } = {
         'USDbC (delta-neutral)': 'USDC',
+        'USDT (delta-neutral)': 'USDT',
       };
 
       const normalizedTokenName = tokenName.toLowerCase();
@@ -251,7 +252,14 @@ export default {
         return tokenNameMapping[matchedKey];
       }
 
-      return normalizedTokenName.includes('usdc') ? 'USDC' : tokenName;
+      // Check for both 'usdc' and 'usdt' in the token name
+      if (normalizedTokenName.includes('usdc')) {
+        return 'USDC';
+      } if (normalizedTokenName.includes('usdt')) {
+        return 'USDT';
+      }
+
+      return tokenName;
     },
 
     totalPortfolioValue(assets: any[]) {
