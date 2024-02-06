@@ -5,7 +5,7 @@ export const getAllowanceValue = async (
   from: string,
   checkContractAddress: any,
 ): Promise<string> => {
-  const allow = contract.allowance(from, checkContractAddress);
+  const allow = await contract.allowance(from, checkContractAddress);
   return allow ? allow.toString() : '0';
 };
 

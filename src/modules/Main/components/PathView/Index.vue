@@ -431,7 +431,7 @@ export default defineComponent({
   max-width: 300px;
   margin: 0 auto;
   padding: 40px 20px;
-  max-height: 580px;
+  max-height: 100%;
 
   h1 {
     font-size: 16px;
