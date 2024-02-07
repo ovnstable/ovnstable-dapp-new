@@ -43,6 +43,9 @@ export default {
   justify-content: space-between;
   align-items: center;
   background: var(--color-4);
+  [data-theme="dark"] & {
+      background: var(--color-6);
+  }
 }
 
 @media (max-width: 1024px) {

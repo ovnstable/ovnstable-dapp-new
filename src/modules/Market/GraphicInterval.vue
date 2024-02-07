@@ -30,22 +30,31 @@ export default {
 
 <style scoped>
 .interval-option {
-    display: inline-block;
-    padding: 2px 5px;
-    margin: 0 2px;
-    border-radius: 5px;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    color: var(--color-2);
+  display: inline-block;
+  padding: 2px 5px;
+  margin: 0 2px;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--color-2);
+  [data-theme="dark"] & {
+    color: var(--color-3);
+  }
 }
 
 .interval-option:hover {
+  color: var(--color-1);
+  [data-theme="dark"] & {
     color: var(--color-1);
+  }
 }
 
 .interval-selected {
-    color: var(--color-1);
-    font-weight: 800;
+  color: var(--color-1);
+  font-weight: 800;
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
 }
 </style>

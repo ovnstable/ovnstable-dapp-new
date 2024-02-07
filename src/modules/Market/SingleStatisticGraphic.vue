@@ -79,18 +79,27 @@ export default {
     color: var(--color-1);
     font-size: 15px;
     font-weight: 600;
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
 }
 
 .performance__graphic-value {
     color: var(--color-1);
     font-size: 20px;
     font-weight: 600;
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
 }
 
 .performance__graphic-date {
     color: var(--color-1);
     font-size: 12px;
     font-weight: 500;
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
 }
 
 @media (max-width: 1250px) {
