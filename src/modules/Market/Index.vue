@@ -70,6 +70,9 @@ export default {
   padding-right: 25px;
   padding-bottom: 20px;
   width: calc(100% - 40px);
+  [data-theme="dark"] & {
+      background: var(--color-6);
+  }
 }
 .market__token-data,
 .market__graphics,

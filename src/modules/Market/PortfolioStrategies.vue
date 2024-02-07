@@ -399,6 +399,9 @@ export default {
 .strategies {
   color: var(--color-3);
 }
+.strategies:hover {
+  color: var(--color-1);
+}
 .performance__portfolio-assets {
   padding-bottom: 20px;
   padding-top: 20px;

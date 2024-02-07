@@ -158,6 +158,9 @@ export default {
     justify-content: space-between;
     background: var(--color-4);
     width: 100%;
+    [data-theme="dark"] & {
+      background: var(--color-6);
+  }
   }
 
   .performance__icon-token {
@@ -174,11 +177,17 @@ export default {
     color: var(--color-2);
     font-size: 15px;
     font-weight: 500;
+    [data-theme="dark"] & {
+       color: var(--color-3);
+  }
   }
   .performance__token-data-title--token {
     color: var(--color-1);
     font-size: 22px;
     font-weight: 600;
+    [data-theme="dark"] & {
+      color: var(--color-4);
+  }
   }
   .performance__token-data-link-addr {
     margin-top: 10px;
@@ -186,6 +195,9 @@ export default {
     color: var(--color-2);
     font-size: 12px;
     font-weight: 600;
+    [data-theme="dark"] & {
+      color: var(--color-3);
+    }
   }
   .performance__token-data__description {
     margin-left: 30px;
@@ -195,12 +207,18 @@ export default {
     font-weight: 400;
     max-width: 186px;
     line-height: 1.1;
+    [data-theme="dark"] & {
+      color: var(--color-3);
+    }
   }
 
   .performance__divider {
     margin-left: 30px;
     margin-right: 30px;
     border: 1px solid var(--color-7);
+    [data-theme="dark"] & {
+      border: 1px solid var(--color-4);
+  }
   }
 
   .performance__divider--last-divider {
@@ -224,6 +242,9 @@ export default {
   .performance__token-data-num {
     margin-top: 20px;
     text-align: center;
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
   }
   .performance__token-data-num--apy-num {
      margin-top: 0px;
@@ -243,6 +264,9 @@ export default {
     color: var(--color-1);
     font-size: 15px;
     font-weight: 500;
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
   }
 
   .performance__chain-data {
@@ -259,11 +283,17 @@ export default {
   }
   .selected {
     background: var(--color-4);
+    [data-theme="dark"] & {
+      background: var(--color-2);
+    }
   }
 
   .performance__chain-data-container .selected:hover {
     background: var(--color-4);
     cursor: default;
+    [data-theme="dark"] & {
+      background: var(--color-2);
+    }
   }
 
   .performance__chain-data:hover {
@@ -271,13 +301,19 @@ export default {
     border: 1px solid var(--color-7);
     background: var(--color-6);
     transition: background 0.3s ease, border 0.3s ease;
+    [data-theme="dark"] & {
+      background: var(--color-7);
+    }
   }
 
   .performance__chain-data-name {
     margin-left: 8px;
     font-weight: 500;
     font-size: 13px;
-    color: var(--color-1)
+    color: var(--color-1);
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
   }
 
   .performance__icon-chain-bottom {
