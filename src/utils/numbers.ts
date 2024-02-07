@@ -21,3 +21,31 @@ export const fixedByPrice = (price: number) => {
   const num = Math.max(2, orderOfMagnitude > 0 ? orderOfMagnitude + 2 : orderOfMagnitude * -1 + 2);
   return num > 8 ? 8 : num;
 };
+
+export const formatMoneyComma = (number = 0, count = 6) => {
+  if (!number) {
+    return 0;
+  }
+
+  return formatMonAcc(number, {
+    symbol: '',
+    precision: count,
+    thousand: ',',
+  });
+};
+
+export const formatNumberToMln = (num: number, count = 3) => {
+  const res = num / 1000000;
+  let countVal = count;
+  if (res < 1) countVal = 3;
+
+  return (res).toFixed(countVal);
+};
+
+export const formatNumberToThousands = (num:number, count = 3) => {
+  const res = num / 1000;
+  let countVal = count;
+  if (res < 1) countVal = 3;
+
+  return (res).toFixed(countVal);
+};

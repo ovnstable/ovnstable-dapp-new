@@ -1,43 +1,13 @@
 <template>
-  <div class="mb-15">
-    <div class="row">
-      <div class="col-12 col-lg-6 col-md-6 col-sm-6">
-        <div class="mt-lg-5 mt-md-5 mt-sm-5 mb-lg-10 mb-md-5 mb-sm-5">
-          <div
-            v-if="type === 'OVN'"
-            class="title-label"
-          >
-            OVN POOLS
-          </div>
-          <div
-            v-else
-            class="title-label"
-          >
-            ALL POOLS
-          </div>
-        </div>
+  <div class="pools-wrap">
+    <!-- for debug -->
+    <div v-if="false"> {{ lastUpdateAgoMinutes }}</div>
 
-      </div>
-      <div
-        v-if="lastUpdateAgoMinutes"
-        class="col-12 col-lg-6 col-md-6 col-sm-6"
-      >
-        <div class="mt-lg-10 mt-md-5 mt-sm-3 mb-lg-10 mb-md-5 mb-sm-3">
-          <div class="updated-title">
-            Data updated <span class="update-time">{{lastUpdateAgoMinutes}}</span> min ago
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div v-if="isPoolsLoading">
-      <div
-        align="center"
-        justify="center"
-        class="py-15"
-      >
-        <Spinner />
-      </div>
+    <div
+      class="pools-wrap__loader"
+      v-if="isPoolsLoading"
+    >
+      <Spinner />
     </div>
 
     <div v-else>
@@ -82,15 +52,7 @@
     /> -->
 
     <template v-if="!isPoolsLoading && typeOfPool === 'ALL'">
-      <div
-        class="ma-0 mb-1 mt-5"
-        align="center"
-      >
-        <div
-          class="circle-icon"
-        >
-          <BaseIcon name="CircleMultiple" />
-        </div>
+      <div>
         <div
           class="show-more ml-2"
           @click="openPoolList = !openPoolList"
@@ -113,7 +75,6 @@
 
       <template v-if="openPoolList">
         <PoolTable
-          class="mt-2"
           :pools="filteredPoolsForSecondTab"
           :is-show-only-zap="isShowOnlyZap"
           :is-show-apr-limit="isShowAprLimit"
@@ -129,7 +90,9 @@
 
 <script lang="ts">
 
-import { mapActions, mapGetters, mapState } from 'vuex';
+import {
+  mapActions, mapGetters, mapState, mapMutations,
+} from 'vuex';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import {
   getSortedSecondPools, getSortedPools,
@@ -190,13 +153,15 @@ export default {
 
       if (this.orderType === 'APR_UP') {
         // last step filter
-        return this.filteredBySearchQueryPools.slice()
+        return this.filteredBySearchQueryPools
+          .slice()
           .sort((a: any, b: any) => b.apr - a.apr);
       }
 
       if (this.orderType === 'APR_DOWN') {
         // last step filter
-        return this.filteredBySearchQueryPools.slice()
+        return this.filteredBySearchQueryPools
+          .slice()
           .sort((a: any, b: any) => a.apr - b.apr);
       }
 
@@ -207,13 +172,15 @@ export default {
 
       if (this.orderType === 'TVL_UP') {
         // last step filter
-        return this.filteredBySearchQueryPools.slice()
+        return this.filteredBySearchQueryPools
+          .slice()
           .sort((a: any, b: any) => b.tvl - a.tvl);
       }
 
       if (this.orderType === 'TVL_DOWN') {
         // last step filter
-        return this.filteredBySearchQueryPools.slice()
+        return this.filteredBySearchQueryPools
+          .slice()
           .sort((a: any, b: any) => a.tvl - b.tvl);
       }
 
@@ -229,13 +196,15 @@ export default {
 
       if (this.orderType === 'APR_UP') {
         // last step filter
-        return this.filteredBySearchQuerySecondPools.slice()
+        return this.filteredBySearchQuerySecondPools
+          .slice()
           .sort((a: any, b: any) => b.apr - a.apr);
       }
 
       if (this.orderType === 'APR_DOWN') {
         // last step filter
-        return this.filteredBySearchQuerySecondPools.slice()
+        return this.filteredBySearchQuerySecondPools
+          .slice()
           .sort((a: any, b: any) => a.apr - b.apr);
       }
 
@@ -246,13 +215,15 @@ export default {
 
       if (this.orderType === 'TVL_UP') {
         // last step filter
-        return this.filteredBySearchQuerySecondPools.slice()
+        return this.filteredBySearchQuerySecondPools
+          .slice()
           .sort((a: any, b: any) => b.tvl - a.tvl);
       }
 
       if (this.orderType === 'TVL_DOWN') {
         // last step filter
-        return this.filteredBySearchQuerySecondPools.slice()
+        return this.filteredBySearchQuerySecondPools
+          .slice()
           .sort((a: any, b: any) => a.tvl - b.tvl);
       }
 
@@ -356,11 +327,17 @@ export default {
     },
   },
   async mounted() {
-    // if (this.type === 'OVN') {
-    //   this.typeOfPool = 'OVN';
-    // } else {
-    //   this.typeOfPool = 'ALL';
-    // }
+    if (this.type === 'OVN') {
+      this.changeState({
+        field: 'typeOfPool',
+        val: 'OVN',
+      });
+    } else {
+      this.changeState({
+        field: 'typeOfPool',
+        val: 'ALL',
+      });
+    }
 
     this.clearAllFilters();
     await this.loadPools();
@@ -368,6 +345,7 @@ export default {
 
   methods: {
     ...mapActions('poolsData', ['loadPools', 'openZapIn']),
+    ...mapMutations('poolsData', ['changeState']),
 
     updateSearch(searchQuery: string) {
       this.searchQuery = searchQuery;
@@ -425,98 +403,15 @@ export default {
 </script>
 
 <style scoped>
-
-/* mobile */
-@media only screen and (max-width: 960px) {
-  .title-label {
-
-      font-style: normal;
-      font-weight: 300;
-      font-size: 32px;
-      line-height: 40px;
-  }
-
-  .updated-title {
-      text-align: left!important;
-  }
-
-}
-/* tablet */
-@media only screen and (min-width: 960px) and (max-width: 1400px) {
-  .title-label {
-      font-style: normal;
-      font-weight: 300;
-      font-size: 54px;
-      line-height: 60px;
-  }
+.pools-wrap {
+  margin-top: 30px;
 }
 
-/* full */
-@media only screen and (min-width: 1400px) {
-  .title-label {
-      font-style: normal;
-      font-weight: 300;
-      font-size: 54px;
-      line-height: 60px;
-  }
-}
-
-@media only screen and (min-width: 1300px) {
-  .title-label {
-      font-style: normal;
-      font-weight: 300;
-      font-size: 48px;
-      line-height: 60px;
-  }
-}
-
-.title-label {
-  text-transform: uppercase;
-  font-feature-settings: 'pnum' on, 'lnum' on;
-  color: var(--main-gray-text);
-}
-
-.updated-title {
-  text-align: right;
-  font-style: normal;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 22px;
-  color: var(--pools-updated-time-color);
-}
-
-.update-time {
-  color: var(--pools-updated-time-minutes-color);
-}
-
-.show-more {
-  font-style: normal;
-  font-weight: 700;
-  font-size: 18px;
-  line-height: 22px;
-  color: var(--main-gray-text);
-  cursor: pointer;
-  text-transform: uppercase;
-}
-
-.prototypes-list-divider {
-  border-color: var(--fourth-gray-text) !important;
-}
-
-.arrow {
-  margin-top: 5px;
-  width: 12px;
-  height: 12px;
-}
-
-.circle-img-icon {
-  margin-top: 5px;
-  width: 20px;
-  height: 20px;
-}
-
-.circle-icon {
-  width: 24px;
-  height: 24px;
+.pools-wrap__loader {
+  min-height: 300px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

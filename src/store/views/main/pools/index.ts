@@ -150,7 +150,7 @@ const actions = {
             const filteredPools = buildPools.filter((_: any) => !!_);
             commit('changeState', {
               field: 'allPools',
-              val: filteredPools,
+              val: state.allPools?.concat(filteredPools),
             });
           }
         })
@@ -229,7 +229,7 @@ const actions = {
       });
     }
 
-    console.log(state, '---getSortedPools');
+    console.log(getSortedPools(state.allPools, false), '---getSortedPools');
     commit('changeState', {
       field: 'allPools',
       val: initFeature(state.allPools),
@@ -247,7 +247,7 @@ const actions = {
     } else {
       commit('changeState', {
         field: 'sortedPoolList',
-        val: getSortedPools(state.allPools, true),
+        val: getSortedPools(state.allPools, false),
       });
 
       commit('changeState', {

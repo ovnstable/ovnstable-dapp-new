@@ -1,23 +1,11 @@
 <template>
   <div>
-    <div class="pools-header">
-      <div class="col-3 col-xl-2 col-lg-2 col-md-2 col-sm-3">
-        <div class="pool-table-header-item">Chain {{ typeOfPool }}</div>
-      </div>
-      <div class="col-3 col-xl-2 col-lg-2 col-md-2 col-sm-3">
-        <div class="pool-table-header-item">Tokens</div>
-      </div>
-      <div class="col-3 col-xl-6 col-lg-6 col-md-6 col-sm-3">
-        <div class="pool-table-header-item">Pool name</div>
-      </div>
-    </div>
-
     <!--          Hide on mobile          -->
-    <div
+    <!-- <div
       class="pools-filters"
     >
       <div class="col-4 col-xl-4 col-lg-4 col-md-4 col-sm-4">
-        <div class="pool-table-header-item">Staking platform</div>
+        <div class="pools-header__item">Staking platform</div>
       </div>
 
       <div
@@ -27,9 +15,9 @@
       >
         <div
           :class="
-            orderType.startsWith('APR') ? 'pool-table-header-item-selected' : ''
+            orderType.startsWith('APR') ? 'pools-header__item-selected' : ''
           "
-          class="pool-table-header-item"
+          class="pools-header__item"
         >
           APR
           <div
@@ -61,9 +49,9 @@
       >
         <div
           :class="
-            orderType.startsWith('TVL') ? 'pool-table-header-item-selected' : ''
+            orderType.startsWith('TVL') ? 'pools-header__item-selected' : ''
           "
-          class="pool-table-header-item"
+          class="pools-header__item"
         >
           TVL
 
@@ -89,9 +77,14 @@
           </div>
         </div>
       </div>
-      <div class="col-4 col-xl-4 col-lg-4 col-md-4 col-sm-12">
-        <div class="pool-table-header-item" />
-      </div>
+    </div> -->
+
+    <div class="pools-header">
+      <div class="pools-header__item">Chain</div>
+      <div class="pools-header__item">Pool tokens</div>
+      <div class="pools-header__item">Staking platform</div>
+      <div class="pools-header__item">APR</div>
+      <div class="pools-header__item">TVL</div>
     </div>
 
     <div class="pools-table">
@@ -102,7 +95,7 @@
         @click="toggleDetails(pool)"
         @keypress="toggleDetails(pool)"
       >
-        <div class="pools-table__row-chain">
+        <div class="pools-table__chain">
           <BaseIcon :name="pool.chainName" />
         </div>
         <div class="pools-table__tokens">
@@ -143,54 +136,69 @@
             />
           </div>
         </div>
-        <div class="col-3 col-xl-6 col-lg-6 col-md-6 col-sm-3">
-          <div
-            v-if="pool.address === '0x4b9f00860d7f42870addeb687fa4e47062df71d9'"
-            class="pool-table-body-item d-inline-block mr-2"
-          >
-            <!--                                        {{pool.name}} LP {{pool.address}}-->
-            {{ pool.name }} LP V1
-          </div>
-          <div
-            v-else-if="
-              pool.address === '0xf5E67261CB357eDb6C7719fEFAFaaB280cB5E2A6'
-            "
-            class="pool-table-body-item d-inline-block mr-2"
-          >
-            <!--                                        {{pool.name}} LP {{pool.address}}-->
-            {{ pool.name }} LP V2
-          </div>
-          <div
-            v-else
-            class="pool-table-body-item d-inline-block mr-2"
-          >
-            <!--                                        {{pool.name}} LP {{pool.address}}-->
-            {{ pool.name }} LP
-          </div>
+        <div class="pools-table__platform">
 
           <div class="platform-label-container d-inline-block">
-            <div class="platform-label">
-              <div v-if="pool.platform === 'Swapbased'">
-                <!-- <Tooltip
+            <div v-if="pool.platform === 'Swapbased'">
+              <!-- <Tooltip
                           text="This pool have 1% deposit fee"
                           bottom
                         /> -->
-              </div>
-
-              <span v-if="pool.poolNameForAgregator">
-                {{ pool.poolNameForAgregator.toUpperCase() }}
-              </span>
-              <span v-else>
-                {{
-                  pool.platform === "Shekel"
-                    ? "Shekelswap"
-                    : pool.platform.toUpperCase()
-                }}
-              </span>
             </div>
+
+            <span v-if="pool.poolNameForAgregator">
+              {{ pool.poolNameForAgregator.toUpperCase() }}
+            </span>
+            <span v-else>
+              {{
+                pool.platform === "Shekel"
+                  ? "Shekelswap"
+                  : pool.platform.toUpperCase()
+              }}
+            </span>
           </div>
         </div>
 
+        <div class="pools-table__apy">
+          <div
+            v-if="pool.apr"
+            class="card-label text-center"
+          >
+            {{ formatMoneyComma(pool.apr, 2) }}%<sup
+              v-if="pool.platform === 'Beefy'"
+            >apy</sup>
+          </div>
+          <div
+            v-else
+            class="card-label see-on-dex-label see-on-dex-another"
+          >
+            see on platform
+          </div>
+        </div>
+        <div class="col-2 col-xl-2 col-lg-2 col-md-2 col-sm-2">
+          <div class="pool-table-header-item">
+            <div
+              v-if="pool.tvl"
+              class="card-label"
+            >
+              <template v-if="pool.tvl >= 1000000">
+                ${{ formatNumberToMln(pool.tvl, 2) }}M
+              </template>
+              <template v-if="pool.tvl < 1000000">
+                ${{ formatNumberToThousands(pool.tvl, 0) }}K
+              </template>
+            </div>
+            <div
+              v-else
+              class="card-label see-on-dex-label see-on-dex-another"
+            >
+              see on platform
+            </div>
+          </div>
+        </div>
+        <div>
+          button
+        </div>
         <!--          Hide on mobile          -->
         <!-- <PoolTableDetails
                 :pool="pool"
@@ -201,7 +209,7 @@
               /> -->
 
         <!-- <div
-            v-if="!isShowOnlyZap && pool.aggregators && pool.aggregators.length"
+            v-if="!isShowOnlyZap && pools && pools.length"
             @click="toggleDetails(pool)"
             @keypress="toggleDetails(pool)"
             class="toggle-icon-container"
@@ -222,6 +230,7 @@
 import { defineComponent } from 'vue';
 import { mapGetters } from 'vuex';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import { formatMoneyComma, formatNumberToMln, formatNumberToThousands } from '@/utils/numbers.ts';
 // import PoolTableDetails from '@/components/pool/PoolTableDetails.vue';
 
 export default defineComponent({
@@ -265,10 +274,27 @@ export default defineComponent({
   computed: {
     ...mapGetters('theme', ['light']),
     ...mapGetters('network', ['getParams']),
+
+    // getPoolType() {
+    //   return (pool) => {
+    //     if (pool.address === '0x4b9f00860d7f42870addeb687fa4e47062df71d9') {
+    //       return 'LP V1';
+    //     }
+
+    //     if (pool.address === '0xf5E67261CB357eDb6C7719fEFAFaaB280cB5E2A6') {
+    //       return 'LP V2';
+    //     }
+
+    //     return 'LP';
+    //   };
+    // },
   },
   methods: {
+    formatMoneyComma,
+    formatNumberToMln,
+    formatNumberToThousands,
     toggleDetails(pool) {
-      if (pool.aggregators && pool.aggregators.length) {
+      if (this.pools && this.pools.length) {
         pool.isOpened = !pool.isOpened;
         return;
       }
@@ -331,20 +357,30 @@ export default defineComponent({
 .pools-table {
   width: 100%;
   background-color: var(--color-8);
+  color: var(--color-1);
+  font-weight: 500;
+  font-size: 14px;
   padding: 20px;
   border-radius: 30px;
 }
 .pools-table__row {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr 1fr 1fr 1fr;
   justify-content: space-between;
   width: 100%;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--color-17);
 }
 
 .pools-header {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr 1fr 1fr 1fr;
   width: 100%;
   margin: 20px 0;
+}
+
+.pools-header__item {
+  font-size: 15px;
 }
 
 .pools-filters {
@@ -354,9 +390,10 @@ export default defineComponent({
   margin: 20px 0;
 }
 
-.pools-table__row-chain {
-  width: 30px;
-  height: 30px;
+.pools-table__chain {
+  min-width: 34px;
+  min-height: 34px;
+  max-width: 34px;
   border-radius: 50%;
   padding: 4px;
   background-color: var(--color-4);
@@ -372,5 +409,9 @@ export default defineComponent({
     width: 30px;
     height: 30px;
   }
+}
+
+.pools-table__platform {
+  display: flex;
 }
 </style>
