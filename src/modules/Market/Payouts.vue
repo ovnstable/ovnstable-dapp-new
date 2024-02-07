@@ -24,7 +24,7 @@
           <p>{{ trx.annualizedYield }}%</p>
           <div class="performance__payouts-id-link">
             <a
-              :href="trx.tokenLink"
+              :href="`${networkScan}tx/${trx.transactionHash}`"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Link for token"
@@ -81,6 +81,9 @@ export default {
     };
   },
   computed: {
+    networkScan() {
+      return this.$store.state.network.explorerUrl;
+    },
     visibleTransactions() {
       return this.payoutData.payouts.slice(0, this.visibleTransactionCount);
     },
@@ -210,7 +213,9 @@ export default {
   font-size: 15px;
   font-weight: 400;
 }
-
+.performance__payouts-id-link:hover {
+  cursor: pointer;
+}
 .performance__payouts-date-transaction {
   display: flex;
   flex-direction: row;

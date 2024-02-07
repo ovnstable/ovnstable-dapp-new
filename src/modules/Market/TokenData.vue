@@ -7,7 +7,7 @@
     <div class="performance__token-data-link-title">
       <p class="performance__token-data-title performance__token-data-title--token">{{ tokenData.tokenName }}</p>
       <a
-        :href="`${networkScan}token/` + generateHref(tokenData.tokenName, networkName)"
+        :href="`${networkScan}address/` + generateHref(tokenData.tokenName, networkName)"
         target="_blank"
         rel="noopener noreferrer"
         aria-label="token-address"
@@ -57,7 +57,7 @@
       :class="{ selected: chain.toLowerCase() === networkName }"
     >
       <BaseIcon
-        name='IconArbitrum'
+        :name="getIconName(chain)"
         class="performance__icon-chain-bottom"
       />
       <p class="performance__chain-data-name">{{ chain }}</p>
@@ -68,29 +68,11 @@
 
 <script lang="ts">
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
-import { useStore } from 'vuex';
-import { contractAddressMap } from '@/utils/const.ts';
+import { chainContractsMap } from '@/utils/contractsMap.ts';
 
 export default {
   components: {
     BaseIcon,
-  },
-  data() {
-    return {
-      selectedChain: 'arbitrum',
-    };
-  },
-  setup() {
-    const store = useStore();
-
-    const saveNetworkToLocalStore = (chain: string) => {
-      console.log(chain.toLowerCase());
-      store.dispatch('network/changeDappNetwork', chain.toLowerCase());
-    };
-
-    return {
-      saveNetworkToLocalStore,
-    };
   },
   props: {
     tokenData: {
@@ -103,7 +85,7 @@ export default {
     },
     chainName: {
       type: String,
-      default: 'Arbitrum',
+      default: 'Optimism',
     },
   },
   computed: {
@@ -114,31 +96,60 @@ export default {
       return this.$store.state.network.explorerUrl;
     },
     availableChains() {
-      const tokenKey = `${this.tokenData.tokenName.slice(0, -1).toUpperCase()}_PLUS`;
-      return Object.keys(contractAddressMap[tokenKey] || {});
+      const tokenKey = `${this.tokenData.tokenName.toLowerCase().slice(0, -1)}Plus`;
+      const availableNetworks = Object.entries(chainContractsMap)
+        .reduce((acc, [network, tokens]) => {
+          if ((tokenKey in tokens) && (tokens as any)[tokenKey].tokenPlus) {
+            acc.push(network.charAt(0).toUpperCase() + network.slice(1));
+          }
+          return acc;
+        }, []);
+
+      return availableNetworks;
     },
   },
   methods: {
-    generateHref(tokenName: any, networkName: string): any {
+    saveNetworkToLocalStore(chain:string) {
+      this.$store.dispatch('network/changeDappNetwork', chain.toLowerCase());
+    },
+    generateHref(tokenName:string, networkName:string) {
       if (!tokenName) {
         return '';
       }
-      const truncatedTokenName = `${tokenName.slice(0, -1)}_PLUS`;
-      const uppercaseNetworkName = networkName.toUpperCase();
-      const address = contractAddressMap[truncatedTokenName]?.[uppercaseNetworkName];
 
-      if (!address) {
-        console.error(`Address not found for ${truncatedTokenName} on ${uppercaseNetworkName}`);
+      const tokenKey = `${tokenName.toLowerCase().slice(0, -1)}Plus`;
+      const networkContracts = chainContractsMap[networkName.toLowerCase()];
+      if (!networkContracts || !(tokenKey in networkContracts)) {
+        console.error(`Contracts not found for ${tokenKey} on ${networkName}`);
         return '';
       }
 
-      return address;
+      const { tokenPlus } = networkContracts[tokenKey];
+
+      if (!tokenPlus) {
+        console.error(`Address not found for ${tokenKey} on ${networkName}`);
+        return '';
+      }
+
+      return tokenPlus;
+    },
+
+    getIconName(chain:string) {
+      const selectedChain = this.$store.state.network.networkName;
+      const formattedChain = chain.charAt(0).toUpperCase() + chain.slice(1).toLowerCase();
+
+      if (chain.toLowerCase() !== selectedChain.toLowerCase()) {
+        return `Icon${formattedChain}Off`;
+      }
+
+      return `Icon${formattedChain}On`;
     },
   },
 
   name: 'TokenDataPerformance',
 };
 </script>
+
 
 <style scoped>
   .performance__token-data {
@@ -244,25 +255,32 @@ export default {
     padding: 5px 10px;
     margin-top: 24px;
     width: fit-content;
+    transition: background 0.3s ease, border 0.3s ease;
   }
   .selected {
     background: var(--color-4);
   }
 
+  .performance__chain-data-container .selected:hover {
+    background: var(--color-4);
+    cursor: default;
+  }
+
   .performance__chain-data:hover {
     cursor: pointer;
+    border: 1px solid var(--color-7);
+    background: var(--color-6);
+    transition: background 0.3s ease, border 0.3s ease;
   }
 
   .performance__chain-data-name {
-    margin-left: 7px;
+    margin-left: 8px;
     font-weight: 500;
     font-size: 13px;
     color: var(--color-1)
   }
 
   .performance__icon-chain-bottom {
-    width: 20px;
-    height: 20px;
     flex-shrink: 0
   }
 
@@ -276,6 +294,16 @@ export default {
   }
 
   @media (max-width: 1024px) {
+    .performance__chain-data {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border-radius: 30px;
+    border: 1px solid var(--color-6);
+    background: var(--color-5);
+    padding: 2px 5px;
+    margin-top: 24px;
+  }
     .performance__token-data-main-token {
       scale: 65%;
     }

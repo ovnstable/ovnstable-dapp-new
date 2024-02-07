@@ -61,7 +61,6 @@ export default {
 .market {
   display: flex;
   flex-direction: column;
-  width: 100%;
   border-radius: 20px;
   border: 1px solid var(--color-1);
   background: var(--color-4);
@@ -86,6 +85,7 @@ export default {
   display: flex;
   flex-direction: column;
   width: calc(100% - 40px);
+  min-height: 1500px;
   z-index: 1;
 }
 
