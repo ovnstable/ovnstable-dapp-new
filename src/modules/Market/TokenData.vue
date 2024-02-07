@@ -7,7 +7,7 @@
     <div class="performance__token-data-link-title">
       <p class="performance__token-data-title performance__token-data-title--token">{{ tokenData.tokenName }}</p>
       <a
-        :href="`${networkScan}token/` + generateHref(tokenData.tokenName, networkName)"
+        :href="`${networkScan}address/` + generateHref(tokenData.tokenName, networkName)"
         target="_blank"
         rel="noopener noreferrer"
         aria-label="token-address"
@@ -288,6 +288,16 @@ export default {
   }
 
   @media (max-width: 1024px) {
+    .performance__chain-data {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border-radius: 30px;
+    border: 1px solid var(--color-6);
+    background: var(--color-5);
+    padding: 2px 5px;
+    margin-top: 24px;
+  }
     .performance__token-data-main-token {
       scale: 65%;
     }

@@ -543,9 +543,27 @@ export default {
 }
 
 @media (max-width: 1024px) {
-  .performance__portfolio-strategy-progress-bar {
-    width: 50px;
+  .performance__portfolio-strategy-token-name {
+    text-align: left;
+    margin-left: 10px;
+    display: flex;
+    width: 150px;
   }
+
+  .performance__portfolio-strategy-progress-bar {
+    width: 100px;
+  }
+
+  .performance__portfolio-strategies-stables-specs,
+  .performance__portfolio-strategy,
+  .performance__portfolio-total,
+  .performance__portfolio-total-circl {
+    grid-template-columns: 1.8fr 1fr 1.3fr 1.5fr;
+  }
+  .performance__portfolio-strategies-stables-score {
+    margin: 0;
+  }
+
   .performance__portfolio-dropdown--dep-to p {
     text-align: center;
     flex: 1;
