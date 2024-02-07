@@ -98,58 +98,49 @@
       <div
         v-for="pool in pools"
         :key="pool.id"
-        :style="poolTableBodyStyle(pool)"
         class="pools-table__row"
         @click="toggleDetails(pool)"
         @keypress="toggleDetails(pool)"
       >
-        <div class="pool-table-body-item">
-          <div class="icon mr-3">
-            {{ pool.chainName }}
-            <BaseIcon :name="pool.chainName" />
-          </div>
+        <div class="pools-table__row-chain">
+          <BaseIcon :name="pool.chainName" />
         </div>
-        <div class="pool-table-body-item pt-3">
+        <div class="pools-table__tokens">
           <div
-            justify="start"
-            align="center"
+            v-if="pool.token0Icon"
+            class="pools-table__tokens-item"
           >
-            <div
-              v-if="pool.token0Icon"
-              class="icon"
-            >
-              <img
-                alt="token"
-                :src="pool.token0Icon"
-              />
-            </div>
-            <div
-              v-if="pool.token1Icon"
-              class="icon ml-n2 mr-2"
-            >
-              <img
-                alt="token"
-                :src="pool.token1Icon"
-              />
-            </div>
-            <div
-              v-if="pool.token2Icon"
-              class="icon ml-n2 mr-2"
-            >
-              <img
-                alt="token"
-                :src="pool.token2Icon"
-              />
-            </div>
-            <div
-              v-if="pool.token3Icon"
-              class="icon ml-n2 mr-2"
-            >
-              <img
-                alt="token"
-                :src="pool.token3Icon"
-              />
-            </div>
+            <img
+              alt="token"
+              :src="pool.token0Icon"
+            />
+          </div>
+          <div
+            v-if="pool.token1Icon"
+            class="pools-table__tokens-item"
+          >
+            <img
+              alt="token"
+              :src="pool.token1Icon"
+            />
+          </div>
+          <div
+            v-if="pool.token2Icon"
+            class="pools-table__tokens-item"
+          >
+            <img
+              alt="token"
+              :src="pool.token2Icon"
+            />
+          </div>
+          <div
+            v-if="pool.token3Icon"
+            class="pools-table__tokens-item"
+          >
+            <img
+              alt="token"
+              :src="pool.token3Icon"
+            />
           </div>
         </div>
         <div class="col-3 col-xl-6 col-lg-6 col-md-6 col-sm-3">
@@ -274,27 +265,6 @@ export default defineComponent({
   computed: {
     ...mapGetters('theme', ['light']),
     ...mapGetters('network', ['getParams']),
-
-    poolTableBodyStyle() {
-      return (pool) => {
-        if (!pool) {
-          return '';
-        }
-
-        if (this.typeOfPool === 'OVN') {
-          return '';
-        }
-
-        let style = pool.feature
-          ? `background: linear-gradient(76.21deg, ${
-            this.getParams(pool.chain).networkColor
-          } -77%, var(--swap-main-banner-background) 36%);`
-          : '';
-
-        style += pool.aggregators && pool.aggregators.length ? 'cursor:pointer;' : '';
-        return style;
-      };
-    },
   },
   methods: {
     toggleDetails(pool) {
@@ -357,9 +327,12 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .pools-table {
   width: 100%;
+  background-color: var(--color-8);
+  padding: 20px;
+  border-radius: 30px;
 }
 .pools-table__row {
   display: flex;
@@ -379,5 +352,25 @@ export default defineComponent({
   justify-content: space-between;
   width: 100%;
   margin: 20px 0;
+}
+
+.pools-table__row-chain {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  padding: 4px;
+  background-color: var(--color-4);
+  border: 1px solid var(--color-17);
+}
+
+.pools-table__tokens {
+  display: flex;
+}
+
+.pools-table__tokens-item {
+  img {
+    width: 30px;
+    height: 30px;
+  }
 }
 </style>

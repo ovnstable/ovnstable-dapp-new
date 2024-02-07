@@ -3,7 +3,7 @@
 /* eslint-disable no-continue */
 /* eslint-disable no-await-in-loop */
 import BigNumber from 'bignumber.js';
-import tokenLogo from '@/utils/tokenLogo.ts';
+import { loadTokenImage, loadOvernightTokenImage } from '@/utils/tokenLogo.ts';
 import odosApiService from '@/services/odos-api-service.ts';
 import type { stateData } from '@/store/views/main/odos/index';
 
@@ -25,12 +25,12 @@ export const addItemToFilteredTokens = (
       || item.symbol === 'OVN'
   ) {
     if (item.symbol === 'OVN') {
-      logoUrl = tokenLogo.loadTokenImage(item);
+      logoUrl = loadTokenImage(item?.symbol);
     } else {
-      logoUrl = tokenLogo.loadOvernightTokenImage(item);
+      logoUrl = loadOvernightTokenImage(item?.symbol);
     }
   } else {
-    logoUrl = tokenLogo.loadTokenImage(item);
+    logoUrl = loadTokenImage(item?.symbol);
   }
 
   tokens.push({

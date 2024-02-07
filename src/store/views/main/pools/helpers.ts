@@ -288,7 +288,6 @@ export const getSortedPools = (pools: any[], isOvnPools: boolean) => {
     return true;
   });
 
-  console.log(filteredPools, pools, '---filteredPools');
   if (!isOvnPools) {
     topPools = filteredPools
       .filter((pool) => (promotePools.includes(pool.address) ? pool : pool.tvl >= 300000));

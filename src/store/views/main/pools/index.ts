@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-param-reassign */
-/* eslint-disable prefer-const */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
 
@@ -13,6 +12,7 @@ import {
   initReversePools,
 } from '@/store/views/main/pools/helpers.ts';
 import { poolTokensForZapMap, zapPlatformSupportList } from '@/store/views/main/pools/mocks.ts';
+import { loadTokenImage } from '@/utils/tokenLogo.ts';
 
 const stateData = {
   sortedPoolList: [],
@@ -79,18 +79,10 @@ const actions = {
             console.log(data, '---data');
             const buildPools = data.map((pool: any) => {
               const tokenNames = pool.id.name.split('/');
-              let token0Icon = new URL(`../../../assets/currencies/farm/${tokenNames[0]}.svg`, import.meta.url);
-              let token1Icon = new URL(`../../../assets/currencies/farm/${tokenNames[1]}.svg`, import.meta.url);
-              let token2Icon = null;
-              let token3Icon = null;
-
-              if (tokenNames[2]) {
-                token2Icon = new URL(`../../../assets/currencies/farm/${tokenNames[2]}.svg`, import.meta.url);
-              }
-
-              if (tokenNames[3]) {
-                token3Icon = new URL(`../../../assets/currencies/farm/${tokenNames[3]}.svg`, import.meta.url);
-              }
+              const token0Icon = loadTokenImage(tokenNames[0]);
+              const token1Icon = loadTokenImage(tokenNames[1]);
+              const token2Icon = tokenNames[2] ? loadTokenImage(tokenNames[2]) : null;
+              const token3Icon = tokenNames[3] ? loadTokenImage(tokenNames[3]) : null;
 
               if (
                 pool

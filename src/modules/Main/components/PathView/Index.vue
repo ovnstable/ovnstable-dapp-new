@@ -110,7 +110,7 @@
 <!-- eslint-disable no-await-in-loop -->
 <script lang="ts">
 import { defineComponent } from 'vue';
-import tokenLogo from '@/utils/tokenLogo.ts';
+import { loadTokenImage, loadOvernightTokenImage } from '@/utils/tokenLogo.ts';
 import Spinner from '@/components/Spinner/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 
@@ -192,11 +192,11 @@ export default defineComponent({
       for (let i = 0; i < pathViz.nodes.length; i++) {
         const node = pathViz.nodes[i];
         if (this.ovnMarkers.includes(node.symbol)) {
-          node.logoUrl = await tokenLogo.loadOvernightTokenImage(node);
+          node.logoUrl = loadOvernightTokenImage(node?.symbol);
           continue;
         }
 
-        node.logoUrl = tokenLogo.loadTokenImage(node);
+        node.logoUrl = loadTokenImage(node?.symbol);
       }
     },
     getInitedRoot(pathViz: any) {
