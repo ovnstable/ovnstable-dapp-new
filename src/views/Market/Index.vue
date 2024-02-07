@@ -16,7 +16,7 @@ import {
 import MarketPage from '@/modules/Market/Index.vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
-import { contractAddressMap } from '@/utils/const.ts';
+import { chainContractsMap } from '@/utils/contractsMap.ts';
 
 export default defineComponent({
   name: 'MarketView',
@@ -43,14 +43,19 @@ export default defineComponent({
       async (newId) => {
         const marketId = Array.isArray(newId) ? newId[0] : newId;
         if (marketId !== previousId.value) {
-          console.log(`this is market id ${marketId}`);
-
-          const normalizedMarketId = `${marketId.toUpperCase()}_PLUS`;
-          console.log(contractAddressMap[normalizedMarketId]);
-          console.log(store.state.network.networkName.toUpperCase());
+          const normalizedMarketId = `${marketId.toLowerCase()}Plus`;
 
           const currentNetworkName = store.state.network.networkName.toUpperCase();
-          const availableChains = Object.keys(contractAddressMap[normalizedMarketId] || {});
+
+          const availableNetworks = Object.entries(chainContractsMap)
+            .reduce((acc, [network, tokens]) => {
+              if ((normalizedMarketId in tokens) && (tokens as any)[normalizedMarketId].tokenPlus) {
+                acc.push(network.charAt(0).toUpperCase() + network.slice(1));
+              }
+              return acc;
+            }, []);
+          console.log(availableNetworks);
+
           const fetchDataForMarketId = async (marketId:string, networkName:string) => {
             await Promise.all([
               store.dispatch('tokenData/fetchTokenData', { marketId, networkName }),
@@ -60,8 +65,8 @@ export default defineComponent({
             ]);
           };
 
-          if (!availableChains.includes(currentNetworkName)) {
-            const firstAvailableChain = availableChains.length > 0 ? availableChains[0] : null;
+          if (!availableNetworks.includes(currentNetworkName)) {
+            const firstAvailableChain = availableNetworks.length > 0 ? availableNetworks[0] : null;
             if (firstAvailableChain) {
               console.log(`Switching network to the first available chain: ${firstAvailableChain}`);
               saveNetworkToLocalStore(firstAvailableChain.toLowerCase());
@@ -78,7 +83,6 @@ export default defineComponent({
       },
       { immediate: true },
     );
-
 
     watch(
       () => store.state.network.networkName,
@@ -115,7 +119,14 @@ export default defineComponent({
   },
 });
 </script>
-
+   const fetchDataForMarketId = async (marketId:string, networkName:string) => {
+            await Promise.all([
+              store.dispatch('tokenData/fetchTokenData', { marketId, networkName }),
+              store.dispatch('portfolioData/fetchPortfolioData', { marketId, networkName }),
+              store.dispatch('collateralData/fetchCollateralData', { marketId, networkName }),
+              store.dispatch('payoutData/fetchPayoutData', { marketId, networkName }),
+            ]);
+          };
 <style>
 .modal-content {
   padding: 50px 70px 30px 70px;

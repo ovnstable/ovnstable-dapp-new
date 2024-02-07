@@ -69,7 +69,7 @@
 <script lang="ts">
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { useStore } from 'vuex';
-import { contractAddressMap } from '@/utils/const.ts';
+import { chainContractsMap } from '@/utils/contractsMap.ts';
 
 export default {
   components: {
@@ -108,8 +108,16 @@ export default {
       return this.$store.state.network.explorerUrl;
     },
     availableChains() {
-      const tokenKey = `${this.tokenData.tokenName.slice(0, -1).toUpperCase()}_PLUS`;
-      return Object.keys(contractAddressMap[tokenKey] || {});
+      const tokenKey = `${this.tokenData.tokenName.toLowerCase().slice(0, -1)}Plus`;
+      const availableNetworks = Object.entries(chainContractsMap)
+        .reduce((acc, [network, tokens]) => {
+          if ((tokenKey in tokens) && (tokens as any)[tokenKey].tokenPlus) {
+            acc.push(network.charAt(0).toUpperCase() + network.slice(1));
+          }
+          return acc;
+        }, []);
+
+      return availableNetworks;
     },
   },
   methods: {
@@ -117,17 +125,24 @@ export default {
       if (!tokenName) {
         return '';
       }
-      const truncatedTokenName = `${tokenName.slice(0, -1)}_PLUS`;
-      const uppercaseNetworkName = networkName.toUpperCase();
-      const address = contractAddressMap[truncatedTokenName]?.[uppercaseNetworkName];
 
-      if (!address) {
-        console.error(`Address not found for ${truncatedTokenName} on ${uppercaseNetworkName}`);
+      const tokenKey = `${tokenName.toLowerCase().slice(0, -1)}Plus`;
+      const networkContracts = chainContractsMap[networkName.toLowerCase()];
+      if (!networkContracts || !(tokenKey in networkContracts)) {
+        console.error(`Contracts not found for ${tokenKey} on ${networkName}`);
         return '';
       }
 
-      return address;
+      const { tokenPlus } = networkContracts[tokenKey];
+
+      if (!tokenPlus) {
+        console.error(`Address not found for ${tokenKey} on ${networkName}`);
+        return '';
+      }
+
+      return tokenPlus;
     },
+
     getIconName(chain: string) {
       const selectedChain = this.$store.state.network.networkName;
       const formattedChain = chain.charAt(0).toUpperCase() + chain.slice(1).toLowerCase();
