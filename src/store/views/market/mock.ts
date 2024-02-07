@@ -1,4 +1,4 @@
-import { type Tokens } from '@/modules/Market/types';
+import { type Tokens } from '@/modules/Market/types/index.ts';
 
 // eslint-disable-next-line import/prefer-default-export
 export const TOKENS: Tokens = {
