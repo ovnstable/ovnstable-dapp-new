@@ -68,23 +68,11 @@
 
 <script lang="ts">
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
-import { useStore } from 'vuex';
 import { chainContractsMap } from '@/utils/contractsMap.ts';
 
 export default {
   components: {
     BaseIcon,
-  },
-  setup() {
-    const store = useStore();
-
-    const saveNetworkToLocalStore = (chain: string) => {
-      store.dispatch('network/changeDappNetwork', chain.toLowerCase());
-    };
-
-    return {
-      saveNetworkToLocalStore,
-    };
   },
   props: {
     tokenData: {
@@ -121,7 +109,10 @@ export default {
     },
   },
   methods: {
-    generateHref(tokenName: any, networkName: string): any {
+    saveNetworkToLocalStore(chain:string) {
+      this.$store.dispatch('network/changeDappNetwork', chain.toLowerCase());
+    },
+    generateHref(tokenName:string, networkName:string) {
       if (!tokenName) {
         return '';
       }
@@ -143,7 +134,7 @@ export default {
       return tokenPlus;
     },
 
-    getIconName(chain: string) {
+    getIconName(chain:string) {
       const selectedChain = this.$store.state.network.networkName;
       const formattedChain = chain.charAt(0).toUpperCase() + chain.slice(1).toLowerCase();
 
@@ -153,12 +144,12 @@ export default {
 
       return `Icon${formattedChain}On`;
     },
-
   },
 
   name: 'TokenDataPerformance',
 };
 </script>
+
 
 <style scoped>
   .performance__token-data {
