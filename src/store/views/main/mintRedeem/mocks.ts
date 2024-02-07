@@ -1,10 +1,8 @@
 /* eslint-disable import/prefer-default-export */
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-shadow */
 import { chainContractsMap } from '@/utils/contractsMap.ts';
 import { mintRedeemTypes } from '@/modules/Main/components/MintRedeem/types/index.ts';
 
-// configs for all CHAINS where ---> FROM[0] - TO[1]
+// configs for all CHAINS
 export const MINTREDEEM_SCHEME = {
   // arbitrum
   42161: [

@@ -12,7 +12,7 @@ import {
   initFeature,
   initReversePools,
 } from '@/store/views/main/pools/helpers.ts';
-import { zapPlatformSupportList } from '@/store/views/main/pools/mocks.ts';
+import { poolTokensForZapMap, zapPlatformSupportList } from '@/store/views/main/pools/mocks.ts';
 
 const stateData = {
   sortedPoolList: [],
@@ -26,7 +26,7 @@ const stateData = {
   aerodromePool: null,
   velodromePool: null,
 
-  typeOfPool: 'ALL', // ALL, OVN
+  typeOfPool: 'OVN', // ALL, OVN
 
   isZapModalShow: false,
   currentZapPool: null,
@@ -78,13 +78,6 @@ const actions = {
           if (data) {
             console.log(data, '---data');
             const buildPools = data.map((pool: any) => {
-              if (
-                state.typeOfPool === 'OVN'
-                && !pool.id?.name?.toLowerCase().includes('ovn')
-              ) {
-                return null;
-              }
-
               const tokenNames = pool.id.name.split('/');
               let token0Icon = new URL(`../../../assets/currencies/farm/${tokenNames[0]}.svg`, import.meta.url);
               let token1Icon = new URL(`../../../assets/currencies/farm/${tokenNames[1]}.svg`, import.meta.url);
@@ -102,7 +95,7 @@ const actions = {
               if (
                 pool
                 && zapPlatformSupportList?.includes(pool.platform)
-                && Object.keys(state.poolTokensForZapMap).some(
+                && Object.keys(poolTokensForZapMap).some(
                   (item) => item.toLowerCase() === pool.id.address.toLowerCase(),
                 )
               ) {
@@ -162,7 +155,7 @@ const actions = {
               return null;
             });
 
-            const filteredPools = buildPools.filter((_: any) => (!!_));
+            const filteredPools = buildPools.filter((_: any) => !!_);
             commit('changeState', {
               field: 'allPools',
               val: filteredPools,
@@ -173,8 +166,6 @@ const actions = {
           console.log(`Error get pools data: ${e}`);
         });
     }
-
-    console.log(state.allPools, 'state.allPools');
 
     if (state.allPools && state.allPools.length) {
       // init pool at aggregator
@@ -246,9 +237,9 @@ const actions = {
       });
     }
 
-    state.allPools = initFeature(state.allPools);
+    console.log(state, '---getSortedPools');
     commit('changeState', {
-      field: 'aerodromePool',
+      field: 'allPools',
       val: initFeature(state.allPools),
     });
 
@@ -264,7 +255,7 @@ const actions = {
     } else {
       commit('changeState', {
         field: 'sortedPoolList',
-        val: getSortedPools(state.allPools, false),
+        val: getSortedPools(state.allPools, true),
       });
 
       commit('changeState', {

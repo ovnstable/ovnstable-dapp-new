@@ -75,8 +75,6 @@
     </div>
   </div>
 </template>
-<!-- eslint-disable vue/no-side-effects-in-computed-properties -->
-<!-- eslint-disable vue/no-mutating-props -->
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { mapGetters } from 'vuex';
@@ -119,6 +117,7 @@ export default defineComponent({
     queryTokens() {
       if (!this.searchQuery) {
         return this.tokens
+          .slice()
           .sort((a: any, b: any) => {
             if (b.price * b.balanceData.balance < a.price * a.balanceData.balance) {
               return -1;

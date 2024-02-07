@@ -30,20 +30,15 @@
       </div>
     </div>
 
-    <v-row v-if="isPoolsLoading">
-      <v-row
+    <div v-if="isPoolsLoading">
+      <div
         align="center"
         justify="center"
         class="py-15"
       >
-        <v-progress-circular
-          width="2"
-          size="24"
-          color="#8FA2B7"
-          indeterminate
-        />
-      </v-row>
-    </v-row>
+        <Spinner />
+      </div>
+    </div>
 
     <div v-else>
       <div
@@ -66,7 +61,7 @@
       </div>
 
       <div class="pools-container">
-        <!-- <PoolTable
+        <PoolTable
           :pools="filteredPools"
           :is-show-only-zap="isShowOnlyZap"
           :is-show-apr-limit="isShowAprLimit"
@@ -74,7 +69,7 @@
           :set-order-type-func="setOrderType"
           :order-type="orderType"
           :type-of-pool="typeOfPool"
-        /> -->
+        />
       </div>
     </div>
 
@@ -87,7 +82,7 @@
     /> -->
 
     <template v-if="!isPoolsLoading && typeOfPool === 'ALL'">
-      <v-row
+      <div
         class="ma-0 mb-1 mt-5"
         align="center"
       >
@@ -106,19 +101,17 @@
           @click="openPoolList = !openPoolList"
           @keypress="openPoolList = !openPoolList"
         >
-          <v-row
+          <div
             justify="end"
             align="center"
             class="select-bar-container"
           >
             <BaseIcon name="ArrowDown" />
-          </v-row>
+          </div>
         </div>
-      </v-row>
-      <v-divider class="prototypes-list-divider" />
+      </div>
 
       <template v-if="openPoolList">
-
         <PoolTable
           class="mt-2"
           :pools="filteredPoolsForSecondTab"
@@ -147,6 +140,7 @@ import utc from 'dayjs/plugin/utc';
 // import ZapModal from '@/components/zap/modals/ZapModal.vue';
 // import PoolFilter from '@/components/pool/PoolFilter.vue';
 import PoolTable from '@/modules/Main/components/PoolsTable/Table.vue';
+import Spinner from '@/components/Spinner/Index.vue';
 import dayjs from 'dayjs';
 
 dayjs.extend(utc);
@@ -162,6 +156,7 @@ export default {
   components: {
     BaseIcon,
     PoolTable,
+    Spinner,
   },
 
   data: () => ({
@@ -361,11 +356,11 @@ export default {
     },
   },
   async mounted() {
-    if (this.type === 'OVN') {
-      this.typeOfPool = 'OVN';
-    } else {
-      this.typeOfPool = 'ALL';
-    }
+    // if (this.type === 'OVN') {
+    //   this.typeOfPool = 'OVN';
+    // } else {
+    //   this.typeOfPool = 'ALL';
+    // }
 
     this.clearAllFilters();
     await this.loadPools();

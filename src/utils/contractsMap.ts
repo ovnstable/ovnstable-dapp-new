@@ -1,6 +1,5 @@
 import { ethers } from 'ethers';
 
-/* eslint-disable import/prefer-default-export */
 export const chainContractsMap = {
   optimism: {
     usdPlus: {

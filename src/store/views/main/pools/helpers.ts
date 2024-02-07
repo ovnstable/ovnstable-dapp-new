@@ -264,7 +264,7 @@ export const buildLink = (pool: any) => {
   return url;
 };
 
-export const getSortedPools = (pools: any[], isOnvPools: boolean) => {
+export const getSortedPools = (pools: any[], isOvnPools: boolean) => {
   let topPools;
 
   const revertAgg = [
@@ -284,13 +284,12 @@ export const getSortedPools = (pools: any[], isOnvPools: boolean) => {
   // execute revert aggregator
   const filteredPools = pools.filter((pool) => {
     if (!revertAgg.includes(pool.address)) false;
-    if (pool.address?.toLowerCase() === convexDuplicatePromote) {
-      return false;
-    }
+    if (pool.address?.toLowerCase() === convexDuplicatePromote) return false;
     return true;
   });
 
-  if (!isOnvPools) {
+  console.log(filteredPools, pools, '---filteredPools');
+  if (!isOvnPools) {
     topPools = filteredPools
       .filter((pool) => (promotePools.includes(pool.address) ? pool : pool.tvl >= 300000));
   } else {
