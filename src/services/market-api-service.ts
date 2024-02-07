@@ -1,5 +1,5 @@
 /* eslint-disable class-methods-use-this */
-import { type Strategy, type Payout, type Collateral } from '@/store/views/market/types/index.ts';
+import { type Strategy, type Payout, type Collateral } from '@/modules/Market/types/index.ts';
 import { getErrorObject } from '@/utils/errors.ts';
 import apiService from './api-service.ts';
 

@@ -1,4 +1,4 @@
-import { TOKENS, type Strategy, type Payout } from '@/store/views/market/types/index.ts';
+import { TOKENS, type Strategy, type Payout } from '@/modules/Market/types';
 import MarketApiService from '@/services/market-api-service.ts';
 
 const state = {
