@@ -5,7 +5,7 @@
 import BigNumber from 'bignumber.js';
 import tokenLogo from '@/utils/tokenLogo.ts';
 import odosApiService from '@/services/odos-api-service.ts';
-import type { stateData } from '@/store/odos/index';
+import type { stateData } from '@/store/views/main/odos/index';
 
 const SECONDTOKEN_SECOND_DEFAULT_SYMBOL = 'DAI+';
 const SECONDTOKEN_DEFAULT_SYMBOL = 'USD+';
