@@ -1,5 +1,6 @@
 import MarketApiService from '@/services/market-api-service.ts';
-import { TOKENS, type Payout } from '@/modules/Market/types';
+import { TOKENS } from '@/store/views/market/mock.ts';
+import { type Payout } from '@/modules/Market/types';
 
 const state = {
   payoutData: {},
