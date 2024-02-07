@@ -501,7 +501,6 @@ export default {
   text-align: left;
 }
 
-
 .performance__portfolio-total-circl-number {
   text-align: right;
   margin-right: 10px;
@@ -521,6 +520,7 @@ export default {
 .performance__portfolio-asset-icon {
   width: 22px;
   height: 22px;
+  border-radius: 50%;
 }
 
 .performance__portfolio-total,
