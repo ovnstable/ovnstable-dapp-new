@@ -33,7 +33,7 @@
       <div class="performance__portfolio-assets">
 
         <div
-          v-for="asset in assets as any[]"
+          v-for="asset in (assets as any[])"
           :key="asset.tokenName"
         >
           <div
@@ -192,14 +192,14 @@ export default {
     };
   },
   methods: {
-    handleContainerClick(asset:any) {
+    handleContainerClick(asset: any) {
       if (this.type === 'strategies') {
         this.dropdownVisible = this.dropdownVisible === asset.fullName ? null : asset.fullName;
       } else if (this.type === 'portfolio') {
         window.open(`${this.$store.state.network.explorerUrl}address/${asset.tokenAddress}`, '_blank');
       }
     },
-    formatCurrency(value: any, collateralToken:string) {
+    formatCurrency(value: any, collateralToken: string) {
       if (collateralToken !== 'WETH') {
         return new Intl.NumberFormat('en-US', {
           style: 'currency',
@@ -219,16 +219,16 @@ export default {
       return this.formatValue(totalValue, collateralToken);
     },
 
-    formatValue(value:number, collateralToken:string) {
+    formatValue(value: number, collateralToken: string) {
       if (collateralToken === '$') {
         return value.toFixed(2);
       }
       return value.toFixed(4);
     },
-    isLastAsset(asset:any) {
+    isLastAsset(asset: any) {
       return this.assets.indexOf(asset) === this.assets.length - 1;
     },
-    getIconColor(index:number) {
+    getIconColor(index: number) {
       const colors = [
         getComputedStyle(document.documentElement).getPropertyValue('--color-3').trim(),
         getComputedStyle(document.documentElement).getPropertyValue('--color-11').trim(),
@@ -284,7 +284,7 @@ export default {
   background: var(--color-8);
   border-radius: 10px;
   [data-theme="dark"] & {
-      background: var(--color-7);
+    background: var(--color-7);
   }
 }
 .performance__portfolio-strategies-token-title {
@@ -297,7 +297,7 @@ export default {
   flex-direction: row;
   justify-content: space-between;
   [data-theme="dark"] & {
-      color: var(--color-4);
+    color: var(--color-4);
   }
 }
 
@@ -320,7 +320,7 @@ export default {
   font-weight: 400;
   margin-bottom: 6px;
   [data-theme="dark"] & {
-      color: var(--color-3);
+    color: var(--color-3);
   }
 }
 
@@ -332,8 +332,8 @@ export default {
 }
 .performance__portfolio-strategy p {
   [data-theme="dark"] & {
-      color: var(--color-4);
-    }
+    color: var(--color-4);
+  }
 }
 
 .performance__portfolio-strategy-token-data {
@@ -373,14 +373,13 @@ export default {
 }
 .asset {
   margin-left: 6px;
-
 }
 .performance__portfolio-total-info {
   padding: 0px 20px;
   display: flex;
   flex-direction: column;
   [data-theme="dark"] & {
-      color: var(--color-3);
+    color: var(--color-3);
   }
 }
 .performance__portfolio-strategy-token-portfolio-num {
@@ -394,7 +393,6 @@ export default {
   display: flex;
   justify-content: space-between;
 }
-
 
 .performance__portfolio-divider {
   margin-bottom: 10px;
@@ -412,19 +410,19 @@ export default {
   font-size: 15px;
   font-weight: 500;
   [data-theme="dark"] & {
-      color: var(--color-4);
+    color: var(--color-4);
   }
 }
 .strategies {
   color: var(--color-3);
   [data-theme="dark"] & {
-      color: var(--color-4);
+    color: var(--color-4);
   }
 }
 .strategies:hover {
   color: var(--color-1);
   [data-theme="dark"] & {
-      color: var(--color-3);
+    color: var(--color-3);
   }
 }
 .performance__portfolio-assets {
@@ -467,7 +465,7 @@ export default {
   font-size: 15px;
   font-weight: 400;
   [data-theme="dark"] & {
-      color: var(--color-3);
+    color: var(--color-3);
   }
 }
 
@@ -526,8 +524,8 @@ export default {
   cursor: pointer;
   transition: background-color 0.3s ease;
   [data-theme="dark"] & {
-       background-color: var(--color-2);
-    }
+    background-color: var(--color-2);
+  }
 }
 
 .performance__portfolio-strategies-stables-specs p:first-child,
@@ -634,7 +632,5 @@ export default {
   .performance__portfolio-total-circl-number {
     margin-left: 5px;
   }
-
 }
-
 </style>

@@ -40,19 +40,19 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .performance__portfolio {
-    display: flex;
-    flex-direction: column;
-    background: var(--color-4);
+  display: flex;
+  flex-direction: column;
+  background: var(--color-4);
 }
 
 .performance__portfolio-tab-content {
-    background: var(--color-4);
-    transition: opacity 0.3s ease-in-out;
-    [data-theme="dark"] & {
-      background: var(--color-6);
-    }
+  background: var(--color-4);
+  transition: opacity 0.3s ease-in-out;
+  [data-theme="dark"] & {
+    background: var(--color-6);
+  }
 }
 
 .performance__portfolio-token-payout {

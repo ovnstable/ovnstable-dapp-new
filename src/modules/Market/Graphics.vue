@@ -36,7 +36,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .performance__graphics {
   display: flex;
   flex-direction: row;

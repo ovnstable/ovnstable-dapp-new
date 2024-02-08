@@ -28,7 +28,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .interval-option {
   display: inline-block;
   padding: 2px 5px;

@@ -43,22 +43,28 @@ export default {
         this.handleMarketIdChange(newId);
       },
     },
-    '$store.state.network.networkName': function (newVal, oldVal) {
-      if (newVal !== oldVal) {
-        this.handleNetworkChange();
-      }
+    '$store.state.network.networkName': {
+      immediate: true,
+      handler: function handleNetworkNameChange(newVal, oldVal) {
+        if (newVal !== oldVal) {
+          this.handleNetworkChange();
+        }
+      },
     },
   },
   methods: {
-    handleMarketIdChange(newId:any) {
+    handleMarketIdChange(newId: any) {
       const marketId = Array.isArray(newId) ? newId[0] : newId;
       if (!marketId || marketId === this.previousId) return;
 
       const tokenKey = `${marketId.toLowerCase()}Plus`;
       const currentNetworkName = this.$store.state.network.networkName.toLowerCase();
-      const availableNetworks = Object.entries(chainContractsMap)
-        .reduce((acc, [network, tokens]) => {
-          if (tokens[tokenKey] && tokens[tokenKey].tokenPlus) {
+
+      const chainContractsAny: any = chainContractsMap;
+
+      const availableNetworks = Object.entries(chainContractsAny)
+        .reduce((acc: string[], [network, tokens]: [string, any]) => {
+          if (tokenKey in tokens && tokens[tokenKey].tokenPlus) {
             acc.push(network);
           }
           return acc;

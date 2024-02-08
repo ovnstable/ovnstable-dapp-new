@@ -57,7 +57,7 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss" scoped>
 .market {
   display: flex;
   flex-direction: column;
@@ -78,10 +78,10 @@ export default {
 .market__graphics,
 .market__portfolio,
 .market__payout-inner {
-    width: 100%;
+  width: 100%;
 }
 .market__graphics{
-    margin-top: 20px;
+  margin-top: 20px;
 }
 
 .market-wrapper {
@@ -101,6 +101,6 @@ export default {
 }
 
 .market__payout-inner {
- border-radius: 0px 0px 30px 30px;
+  border-radius: 0px 0px 30px 30px;
 }
 </style>

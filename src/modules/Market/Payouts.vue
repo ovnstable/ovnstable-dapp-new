@@ -95,7 +95,7 @@ export default {
     formatTransactionID(id: string): string {
       return `${id.substring(0, 5)}...${id.substring(id.length - 4)}`;
     },
-    formatProfit(profit:any, token:string) {
+    formatProfit(profit: any, token: string) {
       if (token !== 'WETH') {
         return new Intl.NumberFormat('en-US', {
           style: 'currency',
@@ -106,7 +106,7 @@ export default {
       }
       return `${parseFloat(profit).toFixed(6)} WETH`;
     },
-    formatDateTime(dateTimeStr:string) {
+    formatDateTime(dateTimeStr: string) {
       const optionsDate = { year: 'numeric', month: '2-digit', day: '2-digit' } as any;
       const optionsTime = { hour: '2-digit', minute: '2-digit' } as any;
 
@@ -127,7 +127,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .performance__payouts-horizontal-divider {
   height: 1px;
   width: 100%;
@@ -140,8 +140,8 @@ export default {
   background: var(--color-8);
   padding: 20px;
   [data-theme="dark"] & {
-      background: var(--color-6);
-    }
+    background: var(--color-6);
+  }
 }
 .performance__payouts-text {
   text-align: left;
@@ -159,7 +159,7 @@ export default {
   font-weight: 400;
   margin-bottom: 22px;
   [data-theme="dark"] & {
-      color: var(--color-3);
+    color: var(--color-3);
   }
 }
 .performance__payouts-divider {
@@ -167,7 +167,7 @@ export default {
   margin-top: 17px;
   margin-bottom: 13px;
   [data-theme="dark"] & {
-      border-color: var(--color-3);
+    border-color: var(--color-3);
   }
 }
 
@@ -193,7 +193,7 @@ export default {
 .performance__payouts-transactions p:not(:last-child) {
   color: var(--color-1);
   [data-theme="dark"] & {
-      color: var(--color-4);
+    color: var(--color-4);
   }
 }
 
@@ -225,13 +225,13 @@ export default {
   font-size: 15px;
   font-weight: 400;
   [data-theme="dark"] & {
-      color: var(--color-3);
+    color: var(--color-3);
   }
 }
 .performance__payouts-id-link:hover p {
   cursor: pointer;
   [data-theme="dark"] & {
-      color: var(--color-2);
+    color: var(--color-2);
   }
 }
 .performance__payouts-date-transaction {
@@ -262,7 +262,7 @@ export default {
   background: none;
   margin-top: 9px;
   [data-theme="dark"] & {
-      border-color: var(--color-4);
+    border-color: var(--color-4);
   }
 }
 
@@ -278,7 +278,7 @@ export default {
   font-size: 15px;
   font-weight: 600;
   [data-theme="dark"] & {
-      color: var(--color-3);
+    color: var(--color-3);
   }
 }
 
@@ -290,7 +290,6 @@ export default {
   transform: translateY(20px);
 }
 
-/* Leave transition */
 .list-leave-active {
   transition: opacity 0.5s ease, transform 0.5s ease;
 }
