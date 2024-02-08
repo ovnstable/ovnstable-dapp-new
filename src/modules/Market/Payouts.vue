@@ -139,6 +139,9 @@ export default {
   flex-direction: column;
   background: var(--color-8);
   padding: 20px;
+  [data-theme="dark"] & {
+      background: var(--color-6);
+    }
 }
 .performance__payouts-text {
   text-align: left;
@@ -155,11 +158,17 @@ export default {
   font-size: 15px;
   font-weight: 400;
   margin-bottom: 22px;
+  [data-theme="dark"] & {
+      color: var(--color-3);
+  }
 }
 .performance__payouts-divider {
   border: 1px solid var(--color-17);
   margin-top: 17px;
   margin-bottom: 13px;
+  [data-theme="dark"] & {
+      border-color: var(--color-3);
+  }
 }
 
 .performance__payouts-transaction {
@@ -183,6 +192,9 @@ export default {
 }
 .performance__payouts-transactions p:not(:last-child) {
   color: var(--color-1);
+  [data-theme="dark"] & {
+      color: var(--color-4);
+  }
 }
 
 .performance__payouts-titles p:first-child,
@@ -212,9 +224,15 @@ export default {
   max-width: fit-content;
   font-size: 15px;
   font-weight: 400;
+  [data-theme="dark"] & {
+      color: var(--color-3);
+  }
 }
-.performance__payouts-id-link:hover {
+.performance__payouts-id-link:hover p {
   cursor: pointer;
+  [data-theme="dark"] & {
+      color: var(--color-2);
+  }
 }
 .performance__payouts-date-transaction {
   display: flex;
@@ -243,6 +261,9 @@ export default {
   align-items: center;
   background: none;
   margin-top: 9px;
+  [data-theme="dark"] & {
+      border-color: var(--color-4);
+  }
 }
 
 .performance__payouts-button-show:hover {
@@ -256,9 +277,11 @@ export default {
   color: var(--color-7);
   font-size: 15px;
   font-weight: 600;
+  [data-theme="dark"] & {
+      color: var(--color-3);
+  }
 }
 
-/* Enter transition */
 .list-enter-active {
   transition: opacity 0.5s ease, transform 0.5s ease;
 }

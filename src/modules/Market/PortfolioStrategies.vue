@@ -35,7 +35,6 @@
         <div
           v-for="asset in assets as any[]"
           :key="asset.tokenName"
-          class="performance__portfolio-strategy-container"
         >
           <div
             class="performance__portfolio-strategies-stables"
@@ -284,6 +283,9 @@ export default {
 .performance__portfolio-assets {
   background: var(--color-8);
   border-radius: 10px;
+  [data-theme="dark"] & {
+      background: var(--color-7);
+  }
 }
 .performance__portfolio-strategies-token-title {
   margin-bottom: 20px;
@@ -294,6 +296,9 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  [data-theme="dark"] & {
+      color: var(--color-4);
+  }
 }
 
 .performance__portfolio-strategies {
@@ -314,6 +319,9 @@ export default {
   font-size: 15px;
   font-weight: 400;
   margin-bottom: 6px;
+  [data-theme="dark"] & {
+      color: var(--color-3);
+  }
 }
 
 .performance__portfolio-strategy {
@@ -321,6 +329,11 @@ export default {
   padding: 0px 20px;
   padding-bottom: 10px;
   padding-top: 5px;
+}
+.performance__portfolio-strategy p {
+  [data-theme="dark"] & {
+      color: var(--color-4);
+    }
 }
 
 .performance__portfolio-strategy-token-data {
@@ -366,6 +379,9 @@ export default {
   padding: 0px 20px;
   display: flex;
   flex-direction: column;
+  [data-theme="dark"] & {
+      color: var(--color-3);
+  }
 }
 .performance__portfolio-strategy-token-portfolio-num {
   flex: none;
@@ -395,12 +411,21 @@ export default {
   color: var(--color-2);
   font-size: 15px;
   font-weight: 500;
+  [data-theme="dark"] & {
+      color: var(--color-4);
+  }
 }
 .strategies {
   color: var(--color-3);
+  [data-theme="dark"] & {
+      color: var(--color-4);
+  }
 }
 .strategies:hover {
   color: var(--color-1);
+  [data-theme="dark"] & {
+      color: var(--color-3);
+  }
 }
 .performance__portfolio-assets {
   padding-bottom: 20px;
@@ -441,6 +466,9 @@ export default {
 .performance__portfolio-dropdown p {
   font-size: 15px;
   font-weight: 400;
+  [data-theme="dark"] & {
+      color: var(--color-3);
+  }
 }
 
 .performance__portfolio-dropdown--lp-pair p:nth-child(1),
@@ -497,6 +525,9 @@ export default {
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  [data-theme="dark"] & {
+       background-color: var(--color-2);
+    }
 }
 
 .performance__portfolio-strategies-stables-specs p:first-child,
