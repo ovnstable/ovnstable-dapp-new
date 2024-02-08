@@ -154,5 +154,8 @@ export default {
   border-top: 0;
   padding: 24px 20px;
   border-radius: 0 0 30px 30px;
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
+  }
 }
 </style>

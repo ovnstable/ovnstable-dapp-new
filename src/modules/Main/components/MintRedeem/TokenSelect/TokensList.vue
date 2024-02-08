@@ -98,6 +98,10 @@ export default defineComponent({
   border: 2px solid var(--color-5);
   background-color: var(--color-4);
   padding: 10px;
+  [data-theme="dark"] & {
+    border-color: var(--color-3);
+    background-color: var(--color-6);
+  }
 }
 
 .select-tokens__clear {
@@ -123,8 +127,19 @@ export default defineComponent({
   cursor: pointer;
   transition: background-color .1s ease;
 
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
+    color: var(--color-4)
+  }
+
   &:hover {
     background-color: var(--color-6);
+    [data-theme="dark"] & {
+      background-color: var(--color-4);
+      .select-tokens__list-item__left-text {
+        color: var(--color-17);
+      }
+    }
   }
 }
 
@@ -148,5 +163,8 @@ export default defineComponent({
   font-size: 16px;
   font-weight: 500;
   color: var(--color-1);
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
 }
 </style>

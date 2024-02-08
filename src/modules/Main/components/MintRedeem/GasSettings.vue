@@ -99,6 +99,9 @@ export default defineComponent({
     font-size: 14px;
     font-weight: 500;
     color: var(--color-1);
+    [data-theme="dark"] & {
+      color: var(--color-3);
+    }
   }
 }
 
@@ -122,15 +125,29 @@ export default defineComponent({
   opacity .2s ease,
   transform .3s ease;
 
+  [data-theme="dark"] & {
+    color: var(--color-4);
+    background-color: var(--color-6);
+  }
+
   &:hover {
     background-color: var(--color-6);
     color: var(--color-1);
+    [data-theme="dark"] & {
+      color: var(--color-17);
+      background-color: var(--color-4);
+    }
+    svg {
+      [data-theme="dark"] & {
+        fill: var(--color-17);
+      }
+    }
   }
 
   svg {
     width: 16px;
     height: 16px;
-    fill: var(--color-2);
+    fill: var(--color-4);
     margin-left: 10px;
   }
 }

@@ -116,6 +116,10 @@ export default defineComponent({
   padding: 15px;
   border: 2px solid var(--color-5);
   border-bottom: 0;
+  [data-theme="dark"] & {
+    border-color: var(--color-3);
+    background-color: var(--color-6);
+  }
 
   h1 {
       font-size: 14px;
@@ -123,12 +127,18 @@ export default defineComponent({
       font-weight: 600;
       color: var(--color-2);
       margin-bottom: 10px;
+      [data-theme="dark"] & {
+        color: var(--color-3);
+      }
   }
   cursor: pointer;
   transition: background-color .15s ease;
 
   &:hover {
     background-color: var(--color-5);
+    [data-theme="dark"] & {
+      background-color: var(--color-7);
+    }
   }
 }
 
