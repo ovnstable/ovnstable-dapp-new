@@ -409,7 +409,7 @@ export default {
 
 <style lang="scss" scoped>
 .pools-wrap {
-  margin-top: 30px;
+  margin: 30px 0;
 }
 
 .pools-wrap__loader {
