@@ -36,13 +36,16 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .performance__graphics {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
   background: var(--color-4);
+  [data-theme="dark"] & {
+      background: var(--color-6);
+  }
 }
 
 @media (max-width: 1024px) {

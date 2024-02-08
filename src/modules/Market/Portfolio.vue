@@ -1,7 +1,6 @@
 <template>
   <div class="performance__portfolio">
     <div class="performance__portfolio-tab-content">
-      <!-- <p>{{ collateralData }}</p> -->
       <PortfolioStrategies
         :tokenName="portfolioData.tokenName"
         :assets="portfolioData.strategies"
@@ -41,16 +40,19 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .performance__portfolio {
-    display: flex;
-    flex-direction: column;
-    background: var(--color-4);
+  display: flex;
+  flex-direction: column;
+  background: var(--color-4);
 }
 
 .performance__portfolio-tab-content {
-    background: var(--color-4);
-    transition: opacity 0.3s ease-in-out;
+  background: var(--color-4);
+  transition: opacity 0.3s ease-in-out;
+  [data-theme="dark"] & {
+    background: var(--color-6);
+  }
 }
 
 .performance__portfolio-token-payout {
@@ -58,6 +60,9 @@ export default {
   font-size: 17px;
   font-weight: 600;
   margin-top: 24px;
+  [data-theme="dark"] & {
+      color: var(--color-3);
+  }
 }
 
 @media (max-width: 1024px) {

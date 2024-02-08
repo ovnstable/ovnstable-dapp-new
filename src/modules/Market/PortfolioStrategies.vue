@@ -33,9 +33,8 @@
       <div class="performance__portfolio-assets">
 
         <div
-          v-for="asset in assets as any[]"
+          v-for="asset in (assets as any[])"
           :key="asset.tokenName"
-          class="performance__portfolio-strategy-container"
         >
           <div
             class="performance__portfolio-strategies-stables"
@@ -58,7 +57,7 @@
                 />
                 <BaseIcon
                   v-if="type === 'portfolio'"
-                  name="ARB"
+                  :name="getIconName(asset.id.tokenName)"
                   class="performance__portfolio-asset-icon"
                 />
                 <p
@@ -67,7 +66,9 @@
                   {{ type === 'portfolio' ? asset.id.tokenName : asset.fullName }}
                 </p>
               </div>
-              <p>{{ type === 'portfolio' ? 'VERY HIGH' : formatCurrency(asset.netAssetValue, collateralToken) }}</p>
+              <p :class="{ 'performance__portfolio-strategies-stables-score': type === 'portfolio' }">
+                {{ type === 'portfolio' ? 'VERY HIGH' : formatCurrency(asset.netAssetValue, collateralToken) }}
+              </p>
               <p>
                 {{ type === 'portfolio' ? formatCurrency(asset.netAssetValue, collateralToken) : formatCurrency(asset.liquidationValue, collateralToken) }}
               </p>
@@ -191,14 +192,14 @@ export default {
     };
   },
   methods: {
-    handleContainerClick(asset:any) {
+    handleContainerClick(asset: any) {
       if (this.type === 'strategies') {
         this.dropdownVisible = this.dropdownVisible === asset.fullName ? null : asset.fullName;
       } else if (this.type === 'portfolio') {
-        window.open(asset.tokenAddress, '_blank');
+        window.open(`${this.$store.state.network.explorerUrl}address/${asset.tokenAddress}`, '_blank');
       }
     },
-    formatCurrency(value:any, collateralToken:string) {
+    formatCurrency(value: any, collateralToken: string) {
       if (collateralToken !== 'WETH') {
         return new Intl.NumberFormat('en-US', {
           style: 'currency',
@@ -206,7 +207,7 @@ export default {
           maximumFractionDigits: 2,
         }).format(value).replace(/,/g, ' ');
       }
-      return `${value} ${collateralToken}`;
+      return `${Number(value).toFixed(6)} ${collateralToken}`;
     },
     totalNAV(assets: any[], collateralToken: string) {
       const totalValue = assets.reduce((total, asset) => total + asset.netAssetValue, 0);
@@ -218,16 +219,16 @@ export default {
       return this.formatValue(totalValue, collateralToken);
     },
 
-    formatValue(value:number, collateralToken:string) {
+    formatValue(value: number, collateralToken: string) {
       if (collateralToken === '$') {
         return value.toFixed(2);
       }
       return value.toFixed(4);
     },
-    isLastAsset(asset:any) {
+    isLastAsset(asset: any) {
       return this.assets.indexOf(asset) === this.assets.length - 1;
     },
-    getIconColor(index:number) {
+    getIconColor(index: number) {
       const colors = [
         getComputedStyle(document.documentElement).getPropertyValue('--color-3').trim(),
         getComputedStyle(document.documentElement).getPropertyValue('--color-11').trim(),
@@ -235,6 +236,30 @@ export default {
         getComputedStyle(document.documentElement).getPropertyValue('--color-10').trim()];
       return colors[index % colors.length];
     },
+    getIconName(tokenName: string) {
+      const tokenNameMapping: { [key: string]: string } = {
+        'USDbC (delta-neutral)': 'USDC',
+        'USDT (delta-neutral)': 'USDT',
+      };
+
+      const normalizedTokenName = tokenName.toLowerCase();
+
+      const matchedKey = Object.keys(tokenNameMapping)
+        .find((key) => normalizedTokenName === key.toLowerCase());
+
+      if (matchedKey) {
+        return tokenNameMapping[matchedKey];
+      }
+
+      if (normalizedTokenName.includes('usdc')) {
+        return 'USDC';
+      } if (normalizedTokenName.includes('usdt')) {
+        return 'USDT';
+      }
+
+      return tokenName;
+    },
+
     totalPortfolioValue(assets: any[]) {
       return assets
         .reduce((total: any, asset: { netAssetValue: any; }) => total + asset.netAssetValue, 0);
@@ -258,6 +283,9 @@ export default {
 .performance__portfolio-assets {
   background: var(--color-8);
   border-radius: 10px;
+  [data-theme="dark"] & {
+    background: var(--color-7);
+  }
 }
 .performance__portfolio-strategies-token-title {
   margin-bottom: 20px;
@@ -268,6 +296,9 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
 }
 
 .performance__portfolio-strategies {
@@ -288,6 +319,9 @@ export default {
   font-size: 15px;
   font-weight: 400;
   margin-bottom: 6px;
+  [data-theme="dark"] & {
+    color: var(--color-3);
+  }
 }
 
 .performance__portfolio-strategy {
@@ -296,17 +330,10 @@ export default {
   padding-bottom: 10px;
   padding-top: 5px;
 }
-
-.performance__portfolio-strategy:hover {
-  cursor: pointer;
-}
-
-.performance__portfolio-strategy > * {
-  flex: 1;
-  text-align: center;
-  color: var(--color-1);
-  font-size: 15px;
-  font-weight: 500;
+.performance__portfolio-strategy p {
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
 }
 
 .performance__portfolio-strategy-token-data {
@@ -337,19 +364,23 @@ export default {
   color: var(--color-1);
   font-size: 15px;
   font-weight: 500;
+  text-align: right;
 }
 .performance__portfolio-strategy-token-name {
   margin-left: 17px;
   display: flex;
-  min-width: 153px;
+  width: 300px;
 }
 .asset {
-    margin-left: 6px;
+  margin-left: 6px;
 }
 .performance__portfolio-total-info {
   padding: 0px 20px;
   display: flex;
   flex-direction: column;
+  [data-theme="dark"] & {
+    color: var(--color-3);
+  }
 }
 .performance__portfolio-strategy-token-portfolio-num {
   flex: none;
@@ -361,46 +392,6 @@ export default {
 .performance__portfolio-total-circl {
   display: flex;
   justify-content: space-between;
-}
-
-.performance__portfolio-total-nav-val,
-.performance__portfolio-total-liquidation-val,
-.performance__portfolio-total-circl-number {
-  text-align: right;
-  flex: none;
-}
-
-.performance__portfolio-total-liquidation-val {
-  margin-right: 15px;
-}
-.performance__portfolio-total > *,
-.performance__portfolio-total-circl > * {
-  text-align: center;
-}
-
-.performance__portfolio-total{
-  width: 70%;
-}
-
-.performance__portfolio-total-circl  {
-   width: 39.8%;
-}
-.performance__portfolio-total-label,
-.performance__portfolio-total-circl .performance__portfolio-total-label {
-  text-align: left;
-}
-
-.performance__portfolio-total-label,
-.performance__portfolio-total-circl .performance__portfolio-total-label {
-  text-align: left;
-}
-.performance__portfolio-total-label,
-.performance__portfolio-total-nav-val,
-.performance__portfolio-total-liquidation-val {
-  flex: 1;
-}
-.performance__portfolio-total-liquidation-val {
-  text-align: right;
 }
 
 .performance__portfolio-divider {
@@ -418,9 +409,21 @@ export default {
   color: var(--color-2);
   font-size: 15px;
   font-weight: 500;
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
 }
 .strategies {
   color: var(--color-3);
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
+}
+.strategies:hover {
+  color: var(--color-1);
+  [data-theme="dark"] & {
+    color: var(--color-3);
+  }
 }
 .performance__portfolio-assets {
   padding-bottom: 20px;
@@ -433,20 +436,11 @@ export default {
   font-weight: 500;
 }
 
-.assets {
-  padding-bottom: 0px;
-}
-
-.performance__portfolio-strategy-token-img {
-  margin-right: 17px;
-}
-
 .performance__portfolio-strategy-progress-bar {
   border-radius: 3px;
   background: var(--color-6);
-  width: 160px;
+  width: 200px;
   height: 12px;
-  margin-right: 3px;
 }
 
 .performance__portfolio-strategy-progress {
@@ -470,6 +464,9 @@ export default {
 .performance__portfolio-dropdown p {
   font-size: 15px;
   font-weight: 400;
+  [data-theme="dark"] & {
+    color: var(--color-3);
+  }
 }
 
 .performance__portfolio-dropdown--lp-pair p:nth-child(1),
@@ -506,36 +503,34 @@ export default {
   text-align: left;
   padding-right: 45px;
 }
-
-.performance__portfolio-strategies-stables-specs p,
-.performance__portfolio-strategy p {
+.performance__portfolio-strategies-stables-specs,
+.performance__portfolio-strategy {
+  display: grid;
+  grid-template-columns: 1.8fr 1fr 1fr 1.5fr;
   text-align: center;
-  flex: 1;
+}
+
+.performance__portfolio-strategy {
+  transition: background-color 0.3s ease;
+}
+.performance__portfolio-strategy > * {
+  color: var(--color-1);
+  font-size: 15px;
+  font-weight: 500;
+}
+.performance__portfolio-strategy:hover {
+  background-color: var(--color-6);
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  [data-theme="dark"] & {
+    background-color: var(--color-2);
+  }
 }
 
 .performance__portfolio-strategies-stables-specs p:first-child,
-.performance__portfolio-strategy p:first-child {
+.performance__portfolio-strategies-stables-specs p:last-child {
   text-align: left;
-  flex: 2.7;
-}
-
-.performance__portfolio-strategies-stables-specs p:nth-child(2),
-.performance__portfolio-strategies-stables-specs p:nth-child(3),
-.performance__portfolio-strategy p:nth-child(2),
-.performance__portfolio-strategy p:nth-child(3) {
-  flex: 4;
-}
-
-.performance__portfolio-strategies-stables-specs p:nth-child(4),
-.performance__portfolio-strategy p:nth-child(4) {
-  flex: 3.2;
-  display: flex;
-  justify-content: flex-end;
-  text-align: right;
-}
-
-.performance__portfolio-strategies-stables-specs p:nth-child(4) {
-  justify-content: flex-start;
 }
 
 .performance__portfolio-total-circl-number {
@@ -557,13 +552,50 @@ export default {
 .performance__portfolio-asset-icon {
   width: 22px;
   height: 22px;
+  border-radius: 50%;
 }
 
+.performance__portfolio-total,
+.performance__portfolio-total-circl {
+  display: grid;
+  grid-template-columns: 1.8fr 1fr 1fr 1.5fr;
+  text-align: center;
+}
+.performance__portfolio-total p:first-child {
+  text-align: left;
+}
+
+.performance__portfolio-total-circl p:nth-child(2) {
+  text-align: center;
+  margin: 0;
+}
+
+.performance__portfolio-strategies-stables-score {
+  margin-right: 20px;
+}
 
 @media (max-width: 1024px) {
-  .performance__portfolio-strategy-progress-bar {
-    width: 50px;
+  .performance__portfolio-strategy-token-name {
+    text-align: left;
+    margin-left: 10px;
+    display: flex;
+    width: 150px;
   }
+
+  .performance__portfolio-strategy-progress-bar {
+    width: 100px;
+  }
+
+  .performance__portfolio-strategies-stables-specs,
+  .performance__portfolio-strategy,
+  .performance__portfolio-total,
+  .performance__portfolio-total-circl {
+    grid-template-columns: 1.8fr 1fr 1.3fr 1.5fr;
+  }
+  .performance__portfolio-strategies-stables-score {
+    margin: 0;
+  }
+
   .performance__portfolio-dropdown--dep-to p {
     text-align: center;
     flex: 1;
@@ -600,7 +632,5 @@ export default {
   .performance__portfolio-total-circl-number {
     margin-left: 5px;
   }
-
 }
-
 </style>

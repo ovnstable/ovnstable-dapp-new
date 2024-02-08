@@ -24,7 +24,7 @@
           <p>{{ trx.annualizedYield }}%</p>
           <div class="performance__payouts-id-link">
             <a
-              :href="trx.tokenLink"
+              :href="`${networkScan}tx/${trx.transactionHash}`"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Link for token"
@@ -81,6 +81,9 @@ export default {
     };
   },
   computed: {
+    networkScan() {
+      return this.$store.state.network.explorerUrl;
+    },
     visibleTransactions() {
       return this.payoutData.payouts.slice(0, this.visibleTransactionCount);
     },
@@ -92,7 +95,7 @@ export default {
     formatTransactionID(id: string): string {
       return `${id.substring(0, 5)}...${id.substring(id.length - 4)}`;
     },
-    formatProfit(profit:any, token:string) {
+    formatProfit(profit: any, token: string) {
       if (token !== 'WETH') {
         return new Intl.NumberFormat('en-US', {
           style: 'currency',
@@ -103,7 +106,7 @@ export default {
       }
       return `${parseFloat(profit).toFixed(6)} WETH`;
     },
-    formatDateTime(dateTimeStr:string) {
+    formatDateTime(dateTimeStr: string) {
       const optionsDate = { year: 'numeric', month: '2-digit', day: '2-digit' } as any;
       const optionsTime = { hour: '2-digit', minute: '2-digit' } as any;
 
@@ -124,7 +127,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .performance__payouts-horizontal-divider {
   height: 1px;
   width: 100%;
@@ -136,6 +139,9 @@ export default {
   flex-direction: column;
   background: var(--color-8);
   padding: 20px;
+  [data-theme="dark"] & {
+    background: var(--color-6);
+  }
 }
 .performance__payouts-text {
   text-align: left;
@@ -152,11 +158,17 @@ export default {
   font-size: 15px;
   font-weight: 400;
   margin-bottom: 22px;
+  [data-theme="dark"] & {
+    color: var(--color-3);
+  }
 }
 .performance__payouts-divider {
   border: 1px solid var(--color-17);
   margin-top: 17px;
   margin-bottom: 13px;
+  [data-theme="dark"] & {
+    border-color: var(--color-3);
+  }
 }
 
 .performance__payouts-transaction {
@@ -180,6 +192,9 @@ export default {
 }
 .performance__payouts-transactions p:not(:last-child) {
   color: var(--color-1);
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
 }
 
 .performance__payouts-titles p:first-child,
@@ -209,8 +224,16 @@ export default {
   max-width: fit-content;
   font-size: 15px;
   font-weight: 400;
+  [data-theme="dark"] & {
+    color: var(--color-3);
+  }
 }
-
+.performance__payouts-id-link:hover p {
+  cursor: pointer;
+  [data-theme="dark"] & {
+    color: var(--color-2);
+  }
+}
 .performance__payouts-date-transaction {
   display: flex;
   flex-direction: row;
@@ -238,6 +261,9 @@ export default {
   align-items: center;
   background: none;
   margin-top: 9px;
+  [data-theme="dark"] & {
+    border-color: var(--color-4);
+  }
 }
 
 .performance__payouts-button-show:hover {
@@ -251,9 +277,11 @@ export default {
   color: var(--color-7);
   font-size: 15px;
   font-weight: 600;
+  [data-theme="dark"] & {
+    color: var(--color-3);
+  }
 }
 
-/* Enter transition */
 .list-enter-active {
   transition: opacity 0.5s ease, transform 0.5s ease;
 }
@@ -262,7 +290,6 @@ export default {
   transform: translateY(20px);
 }
 
-/* Leave transition */
 .list-leave-active {
   transition: opacity 0.5s ease, transform 0.5s ease;
 }

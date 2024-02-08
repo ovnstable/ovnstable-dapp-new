@@ -57,11 +57,10 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss" scoped>
 .market {
   display: flex;
   flex-direction: column;
-  width: 100%;
   border-radius: 20px;
   border: 1px solid var(--color-1);
   background: var(--color-4);
@@ -71,21 +70,25 @@ export default {
   padding-right: 25px;
   padding-bottom: 20px;
   width: calc(100% - 40px);
+  [data-theme="dark"] & {
+      background: var(--color-6);
+  }
 }
 .market__token-data,
 .market__graphics,
 .market__portfolio,
 .market__payout-inner {
-    width: 100%;
+  width: 100%;
 }
 .market__graphics{
-    margin-top: 20px;
+  margin-top: 20px;
 }
 
 .market-wrapper {
   display: flex;
   flex-direction: column;
   width: calc(100% - 40px);
+  min-height: 1500px;
   z-index: 1;
 }
 
@@ -98,6 +101,6 @@ export default {
 }
 
 .market__payout-inner {
- border-radius: 0px 0px 30px 30px;
+  border-radius: 0px 0px 30px 30px;
 }
 </style>
