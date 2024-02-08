@@ -243,6 +243,15 @@ export default defineComponent({
     font-weight: 500;
     color: var(--color-1);
     margin-bottom: 6px;
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
+  }
+
+  p {
+    [data-theme="dark"] & {
+      color: var(--color-3);
+    }
   }
 
   span {
@@ -259,6 +268,12 @@ export default defineComponent({
 
   & span:first-child {
     margin-bottom: 6px;
+  }
+
+  span {
+    [data-theme="dark"] & {
+      color: var(--color-3);
+    }
   }
 }
 

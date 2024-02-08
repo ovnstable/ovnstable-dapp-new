@@ -1650,6 +1650,13 @@ export default defineComponent({
   overflow-y: hidden;
 }
 
+.swap-form__body-block h3,
+.swap-form__body-block__title h3 {
+  [data-theme="dark"] & {
+    color: var(--color-3);
+  }
+}
+
 .swap-form__body-block__title {
   display: flex;
   justify-content: space-between;
@@ -1658,6 +1665,7 @@ export default defineComponent({
   left: 0;
   top: 0;
 }
+
 .swap-form__body-block__inputs {
   position: relative;
   display: flex;
@@ -1683,8 +1691,15 @@ export default defineComponent({
   cursor: pointer;
   transition: color .1s ease;
 
+  [data-theme="dark"] & {
+    color: var(--color-3);
+  }
+
   &:hover {
     color: var(--color-3);
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
   }
 }
 
@@ -1700,8 +1715,16 @@ export default defineComponent({
   cursor: pointer;
   transition: background-color .2s ease;
 
+  [data-theme="dark"] & {
+    background-color: var(--color-6);
+  }
+
   &:hover {
     background-color: var(--color-6);
+    [data-theme="dark"] & {
+      background-color: var(--color-4);
+      color: var(--color-17);
+    }
   }
 }
 .swap-form, .swap-container {
@@ -1724,6 +1747,9 @@ export default defineComponent({
   background-color: var(--color-4);
   border: 2px solid var(--color-1);
   border-top: 0;
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
+  }
 }
 .swap-form__body-block {
   h3 {
@@ -1742,6 +1768,9 @@ export default defineComponent({
   font-size: 12px;
   font-weight: 500;
   color: var(--color-7);
+  [data-theme="dark"] & {
+    color: var(--color-3);
+  }
 }
 
 .swap-form__powered__icon {
@@ -1767,5 +1796,11 @@ export default defineComponent({
 
 .swap-form__btns {
   margin-top: 20px;
+  button {
+    [data-theme="dark"] & {
+      background-color: var(--color-6);
+      color: var(--color-3);
+    }
+  }
 }
 </style>

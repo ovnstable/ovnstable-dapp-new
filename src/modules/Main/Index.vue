@@ -134,7 +134,7 @@ export default {
   background-color: var(--color-8);
   border-radius: 30px;
   [data-theme="dark"] & {
-      color: var(--color-2);
+    background-color: var(--color-6);
   }
 }
 .swap-module__form {
