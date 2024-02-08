@@ -109,6 +109,10 @@ export default {
     &:hover {
       color: var(--color-3);
       background-color: var(--color-4);
+      [data-theme="dark"] & {
+        color: var(--color-17);
+        background-color: var(--color-4);
+      }
     }
   }
 

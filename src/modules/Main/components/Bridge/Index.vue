@@ -229,5 +229,8 @@ export default defineComponent({
   justify-content: center;
   width: 100%;
   height: 100%;
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
+  }
 }
 </style>

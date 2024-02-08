@@ -187,27 +187,27 @@ export default {
 <style scoped>
 
 * {
-    color: var(--color-2);
-    font-weight: 500;
-    font-size: 14px;
-    [data-theme="dark"] & {
-      color: var(--color-4)
-    }
+  color: var(--color-2);
+  font-weight: 500;
+  font-size: 14px;
+  [data-theme="dark"] & {
+    color: var(--color-4)
+  }
 }
 
 .swap-slider {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    margin: 50px 40px 50px auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 50px 40px 50px auto;
 }
 
 .slider__info {
-    max-width:283px;
-    margin-left: 25px;
-    margin-right: 25px;
-    display: flex;
-    flex-direction: column;
+  max-width:283px;
+  margin-left: 25px;
+  margin-right: 25px;
+  display: flex;
+  flex-direction: column;
 }
 
 .swiper-container {
@@ -216,26 +216,26 @@ export default {
 
 .slider__token-overview,
 .slider__second-token-title {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
 .slider__token-title,
 .slider__second-token-title-text {
-    margin-left: 10px;
-    font-size: 20px;
+  margin-left: 10px;
+  font-size: 20px;
 }
 
 .slider__token-title,
 .slider__overview-title {
-    color: var(--color-1);
-    font-weight: 600;
+  color: var(--color-1);
+  font-weight: 600;
 }
 
 .slider__overview-title {
-    margin-left: auto;
-    font-size: 16px;
+  margin-left: auto;
+  font-size: 16px;
 }
 
 .slider__divider {
@@ -243,7 +243,7 @@ export default {
   margin-bottom: 16px;
   border: 1px solid var(--color-2);
   [data-theme="dark"] & {
-      border-color: var(--color-3)
+    border-color: var(--color-3)
   }
 }
 
@@ -251,63 +251,63 @@ export default {
 .slider__data-apy-percent,
 .slider__data-tvl-millions {
   [data-theme="dark"] & {
-      color: var(--color-3)
+    color: var(--color-3)
   }
 }
 
 .slider__apy-info,
 .slider__tvl-info,
 .slider__payout-info {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .slider__tvl-info {
-    margin-top: 10px;
-    margin-bottom: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .slider__apy-numbers,
 .slider__tvl-numbers,
 .slider__payout-numbers {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .slider__data-total-number {
-    font-size: 20px;
-    text-align: right;
+  font-size: 20px;
+  text-align: right;
 }
 
 .slider__data-apy-percent {
-    font-weight: 700;
+  font-weight: 700;
 }
 
 .slider__data-growth-number {
-    margin-left: auto;
+  margin-left: auto;
 }
 
 .slider__second-token-overview {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .slider__second-token-title-text {
-    margin-left:10px;
-    color: var(--color-1);
-    font-size: 20px;
-    font-weight: 600;
+  margin-left:10px;
+  color: var(--color-1);
+  font-size: 20px;
+  font-weight: 600;
 }
 
 .slider__second-token-description {
-    margin-top: 10px;
-    text-align: justify;
-    font-weight: 400;
-    line-height: 18px;
-    [data-theme="dark"] & {
-      color: var(--color-3)
-    }
+  margin-top: 10px;
+  text-align: justify;
+  font-weight: 400;
+  line-height: 18px;
+  [data-theme="dark"] & {
+    color: var(--color-3)
+  }
 }
 
 .slider__arrow-wrapper {
@@ -330,29 +330,29 @@ export default {
 }
 
 @media (max-width: 1024px) {
-    .slider__info {
-       max-width:200px;
-       margin-right: 20px;
-       margin-left: 20px;
-    }
-    .swiper-container {
-  max-width: 200px;
-}
-    .slider__icon-plus,
-    .slider__arrow-icon {
-        transform: scale(0.8);
-    }
+  .slider__info {
+      max-width:200px;
+      margin-right: 20px;
+      margin-left: 20px;
+  }
+  .swiper-container {
+    max-width: 200px;
+  }
+  .slider__icon-plus,
+  .slider__arrow-icon {
+    transform: scale(0.8);
+  }
 
-    .slider__token-title,
-    .slider__second-token-title-text {
-        margin-left: 5px;
-        font-size: 16px;
-    }
+  .slider__token-title,
+  .slider__second-token-title-text {
+    margin-left: 5px;
+    font-size: 16px;
+  }
 
-    .slider__arrow-wrapper {
-      width: 26px;
-      height: 26px;
-    }
+  .slider__arrow-wrapper {
+    width: 26px;
+    height: 26px;
+  }
 }
 
 @media (max-width: 768px) {

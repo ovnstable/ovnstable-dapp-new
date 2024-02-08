@@ -134,16 +134,22 @@ export default defineComponent({
 .tokens-modal {
   min-width: 500px;
   max-width: 500px;
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
+  }
 }
 
 .tokens-modal__header {
   padding: 15px 30px;
 
   h1 {
-      font-size: 24px;
-      font-style: normal;
-      font-weight: 400;
-      color: var(--color-1);
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 400;
+    color: var(--color-1);
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
   }
 }
 .token-select__spinner {
@@ -153,5 +159,9 @@ export default defineComponent({
   padding: 15px 0;
   border: 2px solid var(--color-5);
   background-color: var(--color-4);
+  [data-theme="dark"] & {
+    border-color: var(--color-4);
+    background-color: var(--color-17);
+  }
 }
 </style>

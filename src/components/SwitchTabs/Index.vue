@@ -91,6 +91,9 @@ export default {
   border: 1px solid var(--color-6);
   background: var(--color-5);
   border-radius: 30px;
+  [data-theme="dark"] & {
+     color: var(--color-3);
+  }
 }
 
 .switchtabs__inner-text {

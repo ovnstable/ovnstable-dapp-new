@@ -172,13 +172,22 @@ export default {
     outline: none;
     border-radius: 8px;
     transition: box-shadow .2s ease;
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
 
     &:hover {
       box-shadow: 0 0 1px var(--color-1);
+      [data-theme="dark"] & {
+        box-shadow: 0 0 1px var(--color-4);
+      }
     }
 
     &::placeholder {
       color: #9F9F9F;
+      [data-theme="dark"] & {
+        color: var(--color-3);
+      }
     }
 
     &[disabled] {

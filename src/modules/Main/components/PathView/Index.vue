@@ -446,6 +446,11 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   height: 100%;
+  h1 {
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
+  }
 }
 
 .path-wrap__row {
@@ -457,6 +462,9 @@ export default defineComponent({
   span {
     color: var(--color-2);
     font-size: 14px;
+    [data-theme="dark"] & {
+      color: var(--color-3);
+    }
   }
 }
 
@@ -475,6 +483,12 @@ export default defineComponent({
   display: flex;
   align-items: center;
   flex-wrap: wrap;
+
+  span {
+    [data-theme="dark"] & {
+      color: var(--color-3);
+    }
+  }
 }
 
 .path-wrap__branch-row-tokens {
@@ -502,6 +516,11 @@ export default defineComponent({
   color: var(--color-1);
   font-weight: 600;
   margin-left: auto;
+  span {
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
+  }
 }
 
 .path-wrap__branch-row__empty {
@@ -521,6 +540,12 @@ export default defineComponent({
   justify-content: space-between;
   align-items: center;
   margin-top: auto;
+
+  h2 {
+    [data-theme="dark"] & {
+      color: var(--color-3);
+    }
+  }
 }
 
 .path-wrap__branch-footer__info {
@@ -535,6 +560,10 @@ export default defineComponent({
   border: 1px solid var(--color-2);
   border-radius: 50%;
   margin-left: 15px;
+  [data-theme="dark"] & {
+    color: var(--color-4);
+    border-color: var(--color-4);
+  }
 }
 
 .path-wrap__loader {

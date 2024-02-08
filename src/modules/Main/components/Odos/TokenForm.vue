@@ -203,6 +203,9 @@ export default defineComponent({
   background-color: var(--color-5);
   border-radius: 10px;
   padding: 20px 15px 15px 15px;
+  [data-theme="dark"] & {
+    background-color: var(--color-6);
+  }
 }
 
 .input-tokens__field {
@@ -210,9 +213,18 @@ export default defineComponent({
   color: var(--color-1);
   font-weight: 600;
   transition: box-shadow .2s ease;
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
 
   &:hover, &:focus-within {
     box-shadow: inset 0px -2px 0px 0px var(--color-6);
+  }
+}
+
+.input-tokens__balance {
+  [data-theme="dark"] & {
+    color: var(--color-3);
   }
 }
 
@@ -236,10 +248,14 @@ export default defineComponent({
   white-space: nowrap;
   cursor: pointer;
   transition: background-color .2s ease, color .2s ease;
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
+    color: var(--color-3);
+  }
 
   &:hover {
-    background-color: var(--color-6);
-    color: var(--color-1);
+    background-color: var(--color-4);
+    color: var(--color-17);
   }
 }
 
@@ -253,6 +269,10 @@ export default defineComponent({
   padding: 5px 4px;
   transition: background-color .2s ease, color .2s ease;
   cursor: pointer;
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
+    color: var(--color-3);
+  }
 
   img {
     width: 22px;
@@ -268,6 +288,10 @@ export default defineComponent({
   &:hover {
     background-color: var(--color-6);
     color: var(--color-1);
+    [data-theme="dark"] & {
+      background-color: var(--color-4);
+      color: var(--color-17);
+    }
   }
 }
 
