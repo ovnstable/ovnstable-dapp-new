@@ -161,5 +161,9 @@ export default defineComponent({
   padding: 15px 0;
   border: 2px solid var(--color-5);
   background-color: var(--color-4);
+  [data-theme="dark"] & {
+    border-color: var(--color-4);
+    background-color: var(--color-17);
+  }
 }
 </style>
