@@ -128,6 +128,7 @@
               alt="token"
               :src="pool.token2Icon"
             />
+            {{ getTokenNames(pool)[2] }}
           </div>
           <div
             v-if="pool.token3Icon"
@@ -201,7 +202,13 @@
           </div>
         </div>
         <div>
-          button
+          <ButtonComponent
+            v-if="pool.zappable"
+            btnStyles="faded"
+            @click="console.log('ZAPIN')"
+          >
+            ZAPIN
+          </ButtonComponent>
         </div>
       <!--          Hide on mobile          -->
       <!-- <PoolTableDetails
@@ -236,6 +243,7 @@
 import { defineComponent } from 'vue';
 import { mapGetters } from 'vuex';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import ButtonComponent from '@/components/Button/Index.vue';
 import { formatMoneyComma, formatNumberToMln, formatNumberToThousands } from '@/utils/numbers.ts';
 // import PoolTableDetails from '@/components/pool/PoolTableDetails.vue';
 
@@ -243,6 +251,7 @@ export default defineComponent({
   name: 'PoolTable',
   components: {
     BaseIcon,
+    ButtonComponent,
   },
   props: {
     pools: {
@@ -375,7 +384,7 @@ export default defineComponent({
 }
 .pools-table__row {
   display: grid;
-  grid-template-columns: 1fr 2fr 2fr 1fr 1fr 1fr;
+  grid-template-columns: 0.5fr 2fr 2fr 1fr 1fr 1fr;
   justify-content: space-between;
   width: 100%;
   padding: 15px 0;
@@ -384,7 +393,7 @@ export default defineComponent({
 
 .pools-header {
   display: grid;
-  grid-template-columns: 1fr 2fr 2fr 1fr 1fr 1fr;
+  grid-template-columns: 0.5fr 2fr 2fr 1fr 1fr 1fr;
   width: 100%;
   margin: 20px 0;
   padding: 0 20px;
@@ -428,6 +437,7 @@ export default defineComponent({
   display: flex;
   width: fit-content;
   border-radius: 30px;
+  overflow: hidden;
 }
 
 .pools-table__tokens-item {
@@ -442,6 +452,10 @@ export default defineComponent({
 
   &:first-child {
     right: 0;
+  }
+
+  &:nth-child(3) {
+    right: 52px;
   }
 
   &:last-child {
