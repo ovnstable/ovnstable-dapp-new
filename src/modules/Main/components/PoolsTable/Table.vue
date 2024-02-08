@@ -85,6 +85,7 @@
       <div class="pools-header__item">Staking platform</div>
       <div class="pools-header__item">APR</div>
       <div class="pools-header__item">TVL</div>
+      <div class="pools-header__item" />
     </div>
 
     <div class="pools-table">
@@ -107,6 +108,7 @@
               alt="token"
               :src="pool.token0Icon"
             />
+            {{ getTokenNames(pool)[0] }}
           </div>
           <div
             v-if="pool.token1Icon"
@@ -116,6 +118,7 @@
               alt="token"
               :src="pool.token1Icon"
             />
+            {{ getTokenNames(pool)[1] }}
           </div>
           <div
             v-if="pool.token2Icon"
@@ -137,26 +140,27 @@
           </div>
         </div>
         <div class="pools-table__platform">
-
-          <div class="platform-label-container d-inline-block">
-            <div v-if="pool.platform === 'Swapbased'">
-              <!-- <Tooltip
+          <BaseIcon
+            class="pools-table__platform-icon"
+            :name="pool.platform"
+          />
+          <!-- <div v-if="pool.platform === 'Swapbased'">
+            <Tooltip
                           text="This pool have 1% deposit fee"
                           bottom
-                        /> -->
-            </div>
+                        />
+          </div> -->
 
-            <span v-if="pool.poolNameForAgregator">
-              {{ pool.poolNameForAgregator.toUpperCase() }}
-            </span>
-            <span v-else>
-              {{
-                pool.platform === "Shekel"
-                  ? "Shekelswap"
-                  : pool.platform.toUpperCase()
-              }}
-            </span>
-          </div>
+          <span v-if="pool.poolNameForAgregator">
+            {{ pool.poolNameForAgregator.toUpperCase() }}
+          </span>
+          <span v-else>
+            {{
+              pool.platform === "Shekel"
+                ? "Shekelswap"
+                : pool.platform.toUpperCase()
+            }}
+          </span>
         </div>
 
         <div class="pools-table__apy">
@@ -166,7 +170,7 @@
           >
             {{ formatMoneyComma(pool.apr, 2) }}%<sup
               v-if="pool.platform === 'Beefy'"
-            >apy</sup>
+            >(apy)</sup>
           </div>
           <div
             v-else
@@ -199,8 +203,8 @@
         <div>
           button
         </div>
-        <!--          Hide on mobile          -->
-        <!-- <PoolTableDetails
+      <!--          Hide on mobile          -->
+      <!-- <PoolTableDetails
                 :pool="pool"
                 :open-zap-in-func="openZapInFunc"
                 :is-show-only-zap="isShowOnlyZap"
@@ -208,7 +212,7 @@
                 :toggle-details-func="toggleDetails"
               /> -->
 
-        <!-- <div
+      <!-- <div
             v-if="!isShowOnlyZap && pools && pools.length"
             @click="toggleDetails(pool)"
             @keypress="toggleDetails(pool)"
@@ -221,7 +225,9 @@
             />
           </div> -->
       </div>
+      <slot name="footer" />
     </div>
+
   </div>
 </template>
 
@@ -274,6 +280,10 @@ export default defineComponent({
   computed: {
     ...mapGetters('theme', ['light']),
     ...mapGetters('network', ['getParams']),
+
+    getTokenNames() {
+      return (pool) => pool.name.split('/');
+    },
 
     // getPoolType() {
     //   return (pool) => {
@@ -365,7 +375,7 @@ export default defineComponent({
 }
 .pools-table__row {
   display: grid;
-  grid-template-columns: 1fr 2fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 2fr 2fr 1fr 1fr 1fr;
   justify-content: space-between;
   width: 100%;
   padding: 15px 0;
@@ -374,13 +384,18 @@ export default defineComponent({
 
 .pools-header {
   display: grid;
-  grid-template-columns: 1fr 2fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 2fr 2fr 1fr 1fr 1fr;
   width: 100%;
   margin: 20px 0;
+  padding: 0 20px;
 }
 
 .pools-header__item {
   font-size: 15px;
+
+  &:nth-child(2) {
+    padding-left: 10px;
+  }
 }
 
 .pools-filters {
@@ -391,27 +406,71 @@ export default defineComponent({
 }
 
 .pools-table__chain {
-  min-width: 34px;
-  min-height: 34px;
-  max-width: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  min-height: 30px;
+  height: 30px;
+  width: 30px;
   border-radius: 50%;
   padding: 4px;
   background-color: var(--color-4);
   border: 1px solid var(--color-17);
+
+  svg {
+    width: 80%;
+    height: 80%;
+  }
 }
 
 .pools-table__tokens {
   display: flex;
+  width: fit-content;
+  border-radius: 30px;
 }
 
 .pools-table__tokens-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 2px 30px 2px 9px;
+  border: 1px solid var(--color-17);
+  background-color: var(--color-4);
+  border-radius: 30px;
+  right: 26px;
+
+  &:first-child {
+    right: 0;
+  }
+
+  &:last-child {
+    padding: 2px 9px;
+  }
+
   img {
-    width: 30px;
-    height: 30px;
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
   }
 }
 
 .pools-table__platform {
   display: flex;
+  align-items: center;
+}
+
+.pools-table__platform-icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 8px;
+}
+
+.pools-table__apy {
+  sup {
+    position: relative;
+    font-size: 10px;
+    top: -10px;
+  }
 }
 </style>

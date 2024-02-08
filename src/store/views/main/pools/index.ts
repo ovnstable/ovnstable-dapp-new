@@ -76,7 +76,6 @@ const actions = {
         .getAllPools(networkConfig.appApiUrl)
         .then((data: any) => {
           if (data) {
-            console.log(data, '---data');
             const buildPools = data.map((pool: any) => {
               const tokenNames = pool.id.name.split('/');
               const token0Icon = loadTokenImage(tokenNames[0]);
