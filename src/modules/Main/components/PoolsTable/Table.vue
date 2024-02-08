@@ -85,6 +85,7 @@
       <div class="pools-header__item">Staking platform</div>
       <div class="pools-header__item">APR</div>
       <div class="pools-header__item">TVL</div>
+      <div class="pools-header__item" />
     </div>
 
     <div class="pools-table">
@@ -169,7 +170,7 @@
           >
             {{ formatMoneyComma(pool.apr, 2) }}%<sup
               v-if="pool.platform === 'Beefy'"
-            >apy</sup>
+            >(apy)</sup>
           </div>
           <div
             v-else
@@ -224,7 +225,9 @@
             />
           </div> -->
       </div>
+      <slot name="footer" />
     </div>
+
   </div>
 </template>
 
@@ -372,7 +375,7 @@ export default defineComponent({
 }
 .pools-table__row {
   display: grid;
-  grid-template-columns: 1fr 2fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 2fr 2fr 1fr 1fr 1fr;
   justify-content: space-between;
   width: 100%;
   padding: 15px 0;
@@ -381,13 +384,18 @@ export default defineComponent({
 
 .pools-header {
   display: grid;
-  grid-template-columns: 1fr 2fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 2fr 2fr 1fr 1fr 1fr;
   width: 100%;
   margin: 20px 0;
+  padding: 0 20px;
 }
 
 .pools-header__item {
   font-size: 15px;
+
+  &:nth-child(2) {
+    padding-left: 10px;
+  }
 }
 
 .pools-filters {
@@ -398,6 +406,9 @@ export default defineComponent({
 }
 
 .pools-table__chain {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   min-width: 30px;
   min-height: 30px;
   height: 30px;
@@ -406,6 +417,11 @@ export default defineComponent({
   padding: 4px;
   background-color: var(--color-4);
   border: 1px solid var(--color-17);
+
+  svg {
+    width: 80%;
+    height: 80%;
+  }
 }
 
 .pools-table__tokens {
@@ -448,5 +464,13 @@ export default defineComponent({
   width: 24px;
   height: 24px;
   margin-right: 8px;
+}
+
+.pools-table__apy {
+  sup {
+    position: relative;
+    font-size: 10px;
+    top: -10px;
+  }
 }
 </style>

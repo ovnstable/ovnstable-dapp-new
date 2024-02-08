@@ -7,7 +7,7 @@
       class="pools-wrap__loader"
       v-if="isPoolsLoading"
     >
-      <Spinner />
+      <TableSkeleton />
     </div>
 
     <div v-else>
@@ -32,16 +32,52 @@
 
       <div class="pools-container">
         <PoolTable
-          :pools="filteredPools"
+          :pools="mergedPools"
           :is-show-only-zap="isShowOnlyZap"
           :is-show-apr-limit="isShowAprLimit"
           :open-zap-in-func="openZapIn"
           :set-order-type-func="setOrderType"
           :order-type="orderType"
           :type-of-pool="typeOfPool"
-        />
+        >
+          <template
+            #footer
+            v-if="!isPoolsLoading && typeOfPool === 'ALL'"
+          >
+            <div
+              class="table-extend"
+              @click="openPoolList = !openPoolList"
+              @keypress="openPoolList = !openPoolList"
+            >
+              <div
+                class="table-extend__arrow"
+              >
+                <BaseIcon name="ArrowDown" />
+              </div>
+              <h1>
+                {{openPoolList ? "CLOSE" : "OPEN"}} Pools with TVL less than $300K
+              </h1>
+              <div
+                class="table-extend__arrow"
+              >
+                <BaseIcon name="ArrowDown" />
+              </div>
+            </div>
+          </template>
+        </PoolTable>
       </div>
     </div>
+
+    <!-- <template v-if="openPoolList">
+      <PoolTable
+        :pools="filteredPoolsForSecondTab"
+        :is-show-only-zap="isShowOnlyZap"
+        :is-show-apr-limit="isShowAprLimit"
+        :open-zap-in-func="openZapIn"
+        :set-order-type-func="setOrderType"
+        :order-type="orderType"
+      />
+    </template> -->
 
     <!-- <ZapModal
       :set-show-func='setIsZapModalShow'
@@ -50,41 +86,6 @@
       :type-of-pool="typeOfPool"
       :pool-tokens-for-zap-map="poolTokensForZapMap"
     /> -->
-
-    <template v-if="!isPoolsLoading && typeOfPool === 'ALL'">
-      <div>
-        <div
-          class="show-more ml-2"
-          @click="openPoolList = !openPoolList"
-          @keypress="openPoolList = !openPoolList"
-        >Pools with TVL less than $300K</div>
-        <div
-          class="select-bar-main-container ml-7"
-          @click="openPoolList = !openPoolList"
-          @keypress="openPoolList = !openPoolList"
-        >
-          <div
-            justify="end"
-            align="center"
-            class="select-bar-container"
-          >
-            <BaseIcon name="ArrowDown" />
-          </div>
-        </div>
-      </div>
-
-      <template v-if="openPoolList">
-        <PoolTable
-          :pools="filteredPoolsForSecondTab"
-          :is-show-only-zap="isShowOnlyZap"
-          :is-show-apr-limit="isShowAprLimit"
-          :open-zap-in-func="openZapIn"
-          :set-order-type-func="setOrderType"
-          :order-type="orderType"
-        />
-      </template>
-
-    </template>
   </div>
 </template>
 
@@ -103,7 +104,7 @@ import utc from 'dayjs/plugin/utc';
 // import ZapModal from '@/components/zap/modals/ZapModal.vue';
 // import PoolFilter from '@/components/pool/PoolFilter.vue';
 import PoolTable from '@/modules/Main/components/PoolsTable/Table.vue';
-import Spinner from '@/components/Spinner/Index.vue';
+import TableSkeleton from '@/components/TableSkeleton/Index.vue';
 import dayjs from 'dayjs';
 
 dayjs.extend(utc);
@@ -118,8 +119,8 @@ export default {
   },
   components: {
     BaseIcon,
+    TableSkeleton,
     PoolTable,
-    Spinner,
   },
 
   data: () => ({
@@ -145,6 +146,10 @@ export default {
       'typeOfPool',
       'isPoolsLoading',
     ]),
+    mergedPools() {
+      return this.openPoolList
+        ? [...this.filteredPools, ...this.filteredPoolsForSecondTab] : this.filteredPools;
+    },
     filteredPools() {
       if (this.orderType === 'APR') {
         // last step filter
@@ -402,7 +407,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .pools-wrap {
   margin-top: 30px;
 }
@@ -413,5 +418,29 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.table-extend {
+  display: flex;
+  justify-content: center;
+  padding: 10px 20px;
+  width: 100%;
+  border-radius: 30px;
+  border: 1px solid var(--color-7);
+  color: var(--color-7);
+  cursor: pointer;
+  transition: background-color .2s ease;
+
+  h1 {
+    font-weight: 500;
+    text-transform: uppercase;
+    margin: 0 10px;
+    transition: color .2s ease;
+  }
+
+  &:hover {
+    color: var(--color-1);
+    background-color: var(--color-4);
+  }
 }
 </style>
