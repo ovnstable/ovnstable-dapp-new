@@ -1,7 +1,7 @@
 <template>
   <GraphicInterval
     :selectedInterval="currentInterval"
-    :intervals="['1D', '1W', '1M', '3M', '6M', '1Y', 'ALL TIME']"
+    :intervals="['1W', '1M', '3M', '6M', '1Y', 'ALL TIME']"
     @update:interval="updateInterval"
   />
   <div class="performance__graphic">
@@ -36,8 +36,8 @@ const originPointPlugin = {
     const xAxis = chart.scales.x;
     const yAxis = chart.scales.y;
 
-    const originX = xAxis.getPixelForValue(0);
-    const originY = yAxis.getPixelForValue(0);
+    const originX = xAxis.left;
+    const originY = yAxis.bottom;
 
     ctx.save();
     ctx.beginPath();
@@ -132,7 +132,7 @@ export default {
       return {
         scales: {
           y: {
-            beginAtZero: true,
+            beginAtZero: false,
             title: {
               display: true,
             },
@@ -171,7 +171,36 @@ export default {
             enabled: true,
             mode: 'index',
             intersect: false,
+            backgroundColor: '#ffffff',
+            titleFont: {
+              size: 12,
+            },
+            titleColor: '#687386',
+            bodyFont: {
+              size: 12,
+              weight: 'bold',
+            },
+            bodyColor: '#000',
+            displayColors: false,
+            padding: 10,
+            callbacks: {
+              label(context: any) {
+                let label = context.dataset.label || '';
+
+                if (label) {
+                  label += ': ';
+                }
+                const value = context.parsed.y;
+                if (isApyType) {
+                  label += `APY: ${value.toFixed(2)}%`;
+                } else {
+                  label += `TVL $${value.toLocaleString()}`;
+                }
+                return label;
+              },
+            },
           },
+
         },
         interaction: {
           mode: 'nearest',
@@ -205,9 +234,6 @@ export default {
     getInterval() {
       let sliceEnd;
       switch (this.currentInterval) {
-        case '1D':
-          sliceEnd = 1;
-          break;
         case '1W':
           sliceEnd = 7;
           break;
