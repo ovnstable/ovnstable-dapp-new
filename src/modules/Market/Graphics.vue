@@ -35,33 +35,12 @@ export default {
       default: () => ({}),
     },
   },
-  data() {
-    return {
-      apyData: {
-        type: 'APY',
-        token: 'ETH+',
-        value: '13.5%',
-        date: 'from XX.XX.23',
-        labels: ['01.02', '02.02', '03.02', '04.02', '05.02', '06.02', '07.02', '08.02', '09.02'],
-        data: [10, 11, 12, 13, 16, 18, 22, 20, 30],
-        label: 'APY',
-      },
-      tvlData: {
-        type: 'APY', // or 'TVL'
-        token: 'ETH+', // The token name
-        value: '13.5%', // The current value
-        date: 'from XX.XX.23', // The current date
-        labels: ['January', 'February', 'March'], // Labels for the x-axis
-        data: [10, 20, 30], // Data points for the y-axis
-        label: 'TVL',
-      },
-    };
-  },
 };
 </script>
 
 <style lang="scss" scoped>
 .performance__graphics {
+
   display: flex;
   flex-direction: row;
   justify-content: space-between;

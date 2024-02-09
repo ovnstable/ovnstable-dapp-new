@@ -9,7 +9,12 @@
       <p class="performance__graphic-title">
         {{ type === 'APY' ? `Average ${tokenData.tokenName} APY` : `${tokenData.tokenName} TVL` }}
       </p>
+      <div class="performance__graphic-values">
+        <p>{{ displayValue }}</p>
+        <p>{{ startDateLabel }}</p>
+      </div>
     </div>
+
     <div class="performance__graphic-display">
       <canvas
         ref="myChart"
@@ -61,10 +66,16 @@ export default {
         return `${avgYield.toFixed(2)}%`;
       } if (this.type === 'TVL') {
         const latestPayout = this.graphicData.payouts[0];
-        return latestPayout ? `${latestPayout.totalUsdPlus.toFixed(2)} USD` : 'N/A';
+        if (latestPayout) {
+          if (this.tokenData.tokenName === 'ETH+') {
+            return `${latestPayout.totalUsdPlus.toFixed(6)} WETH`;
+          }
+          return `$${latestPayout.totalUsdPlus.toFixed(2)}`;
+        }
       }
-      return '';
+      return 'N/A';
     },
+
     startDateLabel() {
       if (this.type === 'TVL') {
         return 'Past 2 hours';
@@ -78,6 +89,7 @@ export default {
     },
     chartData() {
       const payoutData = this.graphicData.payouts.slice(0, this.getInterval());
+      payoutData.sort((a: { payableDate: string | number | Date; }, b: { payableDate: string | number | Date; }) => new Date(a.payableDate) - new Date(b.payableDate));
 
       return {
         labels: payoutData
@@ -91,17 +103,30 @@ export default {
           backgroundColor: 'rgb(255, 99, 132)',
           borderWidth: 2,
           pointRadius: 0,
-          tension: 0.5,
+          tension: 0,
         }],
       };
     },
     chartOptions() {
+      const isApyType = this.type === 'APY';
       return {
         scales: {
           y: {
-            beginAtZero: true,
+            beginAtZero: false,
             title: {
               display: true,
+            },
+            ticks: {
+              callback: (value: number) => {
+                if (isApyType) {
+                  return `${value.toFixed(1)}%`;
+                } if (this.tokenData.tokenName === 'ETH+') {
+                  return `${value.toLocaleString()} WETH`;
+                } return `${value.toLocaleString()}\nUSD`;
+              },
+            },
+            grid: {
+              display: false,
             },
           },
           x: {
@@ -111,19 +136,16 @@ export default {
             title: {
               display: false,
             },
+            grid: {
+              display: false,
+            },
           },
         },
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
           legend: {
-            display: true,
-          },
-          title: {
-            display: true,
-            text: `${this.displayValue}%\n${this.startDateLabel}`,
-            position: 'top',
-            align: 'end',
+            display: false,
           },
           tooltip: {
             enabled: true,
@@ -223,6 +245,7 @@ export default {
   height: 300px;
 }
 .performance__graphic{
+  background-color: var(--color-5);
   height: 300px;
   display: flex;
   flex-direction: column;
@@ -236,6 +259,7 @@ export default {
 }
 
 .performance__graphic-data {
+  margin-top: 10px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -276,6 +300,23 @@ export default {
   }
 }
 
+.performance__graphic-values {
+  p {
+    text-align: right;
+  }
+}
+
+.performance__graphic-values :nth-child(1) {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-1);
+}
+
+.performance__graphic-values :nth-child(2) {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--color-2);
+}
 @media (max-width: 1250px) {
   .performance__graphic-data-text {
     margin-left: 50px;
