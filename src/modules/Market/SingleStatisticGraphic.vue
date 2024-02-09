@@ -7,12 +7,8 @@
   <div class="performance__graphic">
     <div class="performance__graphic-data">
       <p class="performance__graphic-title">
-        {{ graphicData.type === 'APY' ? `Average ${graphicData.token} APY` : `${graphicData.token} TVL` }}
+        {{ type === 'APY' ? `Average ${tokenData.tokenName} APY` : `${tokenData.tokenName} TVL` }}
       </p>
-      <div class="performance__graphic-data-text">
-        <p class="performance__graphic-value">{{ graphicData.value }}</p>
-        <p class="performance__graphic-date">{{ graphicData.date }}</p> <!-- I assume this should be graphicData.date -->
-      </div>
     </div>
     <div class="performance__graphic-display">
       <canvas ref="myChart" />
@@ -22,7 +18,9 @@
 
 <script lang="ts">
 import GraphicInterval from '@/modules/Market/GraphicInterval.vue';
+import { type Payout } from '@/modules/Market/types/index.ts';
 import { Chart, registerables } from 'chart.js';
+
 Chart.register(...registerables);
 
 export default {
@@ -35,41 +33,117 @@ export default {
       type: Object,
       required: true,
     },
+    tokenData: {
+      type: Object,
+      required: true,
+    },
+    type: {
+      type: String,
+      required: true,
+    },
   },
   data() {
     return {
-      currentInterval: '1D',
-      myChart: null, // Store the chart instance
+      currentInterval: '1W',
+      myChart: null,
     };
   },
+  computed: {
+    averageYield() {
+      const payoutData = this.graphicData.payouts.slice(0, 7);
+      const sumYield = payoutData.reduce((acc:any, payout:Payout) => acc + payout.annualizedYield, 0);
+      const avgYield = (sumYield / payoutData.length) || 0;
+      return avgYield.toFixed(2);
+    },
+    startDateLabel() {
+      const payoutData = this.graphicData.payouts.slice(0, 7);
+      if (payoutData.length > 0) {
+        const lastDate = new Date(payoutData[payoutData.length - 1].payableDate);
+        return `from ${lastDate.toLocaleDateString()}`;
+      }
+      return '';
+    },
+    chartData() {
+      const payoutData = this.graphicData.payouts.slice(0, 7);
+
+      return {
+        labels: payoutData.map((payout:Payout) => new Date(payout.payableDate).toLocaleDateString()),
+        datasets: [{
+          label: false,
+          data: payoutData.map((payout:Payout) => payout.annualizedYield),
+          fill: false,
+          borderColor: 'rgb(255, 99, 132)',
+          backgroundColor: 'rgb(255, 99, 132)',
+          borderWidth: 2,
+          pointRadius: 0,
+          tension: 0.5,
+        }],
+      };
+    },
+    chartOptions() {
+      return {
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+            },
+          },
+          x: {
+            ticks: {
+              display: false,
+            },
+            title: {
+              display: false,
+            },
+          },
+        },
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: true,
+          },
+          title: {
+            display: true,
+            text: `${this.averageYield}%\n${this.startDateLabel}`,
+            position: 'top',
+            align: 'end',
+          },
+          tooltip: {
+            enabled: true,
+            mode: 'index',
+            intersect: false,
+          },
+        },
+        interaction: {
+          mode: 'nearest',
+          axis: 'x',
+          intersect: false,
+        },
+        elements: {
+          line: {
+            tension: 0.4,
+          },
+          point: {
+            radius: 0,
+          },
+        },
+      };
+    },
+  },
+
   methods: {
     updateInterval(newInterval) {
       this.currentInterval = newInterval;
-      // Update the chart data here when the interval changes
-      // You will need to fetch new data and update the chart accordingly
     },
+    
     initChart() {
       const ctx = this.$refs.myChart.getContext('2d');
       this.myChart = new Chart(ctx, {
         type: 'line',
-        data: {
-          // You should update these values with your actual data
-          labels: this.graphicData.labels,
-          datasets: [{
-            label: this.graphicData.label,
-            data: this.graphicData.data,
-            backgroundColor: 'rgba(255, 99, 132, 0.2)',
-            borderColor: 'rgba(255, 99, 132, 1)',
-            borderWidth: 1,
-          }]
-        },
-        options: {
-          scales: {
-            y: {
-              beginAtZero: true,
-            },
-          },
-        },
+        data: this.chartData,
+        options: this.chartOptions,
       });
     },
   },
@@ -77,34 +151,24 @@ export default {
     this.initChart();
   },
   watch: {
-    graphicData: {
-      handler(newData, oldData) {
-        if (newData !== oldData) {
-          this.myChart.data.labels = newData.labels;
-          this.myChart.data.datasets.forEach((dataset) => {
-            dataset.data = newData.data;
-          });
-          this.myChart.update();
-        }
-      },
-      deep: true,
-    },
     currentInterval(newInterval, oldInterval) {
       if (newInterval !== oldInterval) {
-        // Logic to update chart based on new interval
-        // e.g., fetch new data and update the chart
+
       }
     },
   },
 };
 </script>
 
-
 <style lang="scss" scoped>
+.performance__graphic-display {
+  height: 300px;
+}
 .performance__graphic{
+  height: 300px;
   display: flex;
   flex-direction: column;
-  padding: 22px 39px;
+  padding: 5px 10px;
   justify-content: space-between;
   align-items: flex-start;
   flex-shrink: 0;

@@ -5,7 +5,11 @@
         :token-data="tokenData"
         class="market__token-data"
       />
-      <GraphicsPerformance class="market__graphics" />
+      <GraphicsPerformance
+        :payout-data="payoutData"
+        :token-data="tokenData"
+        class="market__graphics"
+      />
       <PortfolioPerformance
         :portfolio-data="portfolioData"
         :collateral-data="collateralData"

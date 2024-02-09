@@ -1,10 +1,18 @@
 <template>
   <div class="performance__graphics">
     <div class="performance__graphics-APY-graphic">
-      <GraphicComponent :graphic-data=apyData />
+      <GraphicComponent
+        :graphicData=payoutData
+        :tokenData="tokenData"
+        type='APY'
+      />
     </div>
     <div class="performance__graphics-TVL-graphic">
-      <GraphicComponent :graphic-data=tvlData />
+      <GraphicComponent
+        :graphicData=payoutData
+        :tokenData="tokenData"
+        type='TVL'
+      />
     </div>
   </div>
 </template>
@@ -16,6 +24,16 @@ export default {
   name: 'GraphicsPerformance',
   components: {
     GraphicComponent,
+  },
+  props: {
+    payoutData: {
+      type: Object,
+      default: () => ({}),
+    },
+    tokenData: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   data() {
     return {
