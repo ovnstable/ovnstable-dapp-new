@@ -129,6 +129,7 @@ export default {
     },
     chartOptions() {
       const isApyType = this.type === 'APY';
+      const isEth = this.tokenData.tokenName === 'ETH+';
       return {
         scales: {
           y: {
@@ -193,6 +194,8 @@ export default {
                 const value = context.parsed.y;
                 if (isApyType) {
                   label += `APY: ${value.toFixed(2)}%`;
+                } else if (isEth) {
+                  label += `TVL WETH ${value.toLocaleString()}`;
                 } else {
                   label += `TVL $${value.toLocaleString()}`;
                 }
