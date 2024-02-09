@@ -1,5 +1,12 @@
 <template>
+  <div
+    v-if="!loaded"
+    class="market__loader"
+  >
+    <Spinner />
+  </div>
   <MarketPage
+    v-else
     :token-data="tokenData"
     :portfolio-data="portfolioData"
     :collateral-data="collateralData"
@@ -9,17 +16,20 @@
 
 <script lang="ts">
 import MarketPage from '@/modules/Market/Index.vue';
+import Spinner from '@/components/Spinner/Index.vue';
 import { chainContractsMap } from '@/utils/contractsMap.ts';
 
 export default {
   name: 'MarketView',
   components: {
     MarketPage,
+    Spinner,
   },
   data() {
     return {
       previousId: '',
       previousNetworkName: '',
+      loaded: true,
     };
   },
   computed: {
@@ -90,7 +100,8 @@ export default {
         this.fetchDataForMarketId(marketId, this.$store.state.network.networkName);
       }
     },
-    async fetchDataForMarketId(marketId:any, networkName:string) {
+    async fetchDataForMarketId(marketId: any, networkName: string) {
+      this.loaded = false;
       try {
         await Promise.all([
           this.$store.dispatch('tokenData/fetchTokenData', { marketId, networkName }),
@@ -98,8 +109,10 @@ export default {
           this.$store.dispatch('collateralData/fetchCollateralData', { marketId, networkName }),
           this.$store.dispatch('payoutData/fetchPayoutData', { marketId, networkName }),
         ]);
+        this.loaded = true;
       } catch (error) {
         console.error('Error fetching data:', error);
+        this.loaded = false;
       }
     },
     saveNetworkToLocalStore(chain:string) {
@@ -113,3 +126,15 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.market__loader {
+  margin: auto;
+  height: 100%;
+  min-height: 474px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+</style>
