@@ -11,7 +11,7 @@
       </p>
     </div>
     <div class="performance__graphic-display">
-      <canvas ref="myChart" />
+      <canvas ref="myChart" :key="'canvas-' + currentInterval" />
     </div>
   </div>
 </template>
@@ -50,13 +50,14 @@ export default {
   },
   computed: {
     averageYield() {
-      const payoutData = this.graphicData.payouts.slice(0, 7);
-      const sumYield = payoutData.reduce((acc:any, payout:Payout) => acc + payout.annualizedYield, 0);
+      const payoutData = this.graphicData.payouts.slice(0, this.getInterval());
+      const sumYield = payoutData
+        .reduce((acc: any, payout: Payout) => acc + payout.annualizedYield, 0);
       const avgYield = (sumYield / payoutData.length) || 0;
       return avgYield.toFixed(2);
     },
     startDateLabel() {
-      const payoutData = this.graphicData.payouts.slice(0, 7);
+      const payoutData = this.graphicData.payouts.slice(0, this.getInterval());
       if (payoutData.length > 0) {
         const lastDate = new Date(payoutData[payoutData.length - 1].payableDate);
         return `from ${lastDate.toLocaleDateString()}`;
@@ -64,10 +65,11 @@ export default {
       return '';
     },
     chartData() {
-      const payoutData = this.graphicData.payouts.slice(0, 7);
+      const payoutData = this.graphicData.payouts.slice(0, this.getInterval());
 
       return {
-        labels: payoutData.map((payout:Payout) => new Date(payout.payableDate).toLocaleDateString()),
+        labels: payoutData
+          .map((payout: Payout) => new Date(payout.payableDate).toLocaleDateString()),
         datasets: [{
           label: false,
           data: payoutData.map((payout:Payout) => payout.annualizedYield),
@@ -134,28 +136,71 @@ export default {
   },
 
   methods: {
-    updateInterval(newInterval) {
+    updateInterval(newInterval: string) {
       this.currentInterval = newInterval;
-    },
-    
-    initChart() {
-      const ctx = this.$refs.myChart.getContext('2d');
-      this.myChart = new Chart(ctx, {
-        type: 'line',
-        data: this.chartData,
-        options: this.chartOptions,
+      this.$nextTick(() => {
+        if (this.$refs.myChart) {
+          this.initChart();
+        } else {
+          console.error('Canvas element is not available.');
+        }
       });
     },
-  },
-  mounted() {
-    this.initChart();
-  },
-  watch: {
-    currentInterval(newInterval, oldInterval) {
-      if (newInterval !== oldInterval) {
 
+    getInterval() {
+      let sliceEnd;
+      switch (this.currentInterval) {
+        case '1D':
+          sliceEnd = 1;
+          break;
+        case '1W':
+          sliceEnd = 7;
+          break;
+        case '1M':
+          sliceEnd = 30;
+          break;
+        case '3M':
+          sliceEnd = 90;
+          break;
+        case '6M':
+          sliceEnd = 180;
+          break;
+        case '1Y':
+          sliceEnd = 365;
+          break;
+        case 'ALL TIME':
+          sliceEnd = this.graphicData.payouts.length;
+          break;
+        default:
+          sliceEnd = 7;
+          break;
+      }
+      return sliceEnd;
+    },
+
+    initChart() {
+      if (this.$refs.myChart) {
+        const ctx = this.$refs.myChart.getContext('2d');
+        if (ctx) {
+          const chartData = this.chartData;
+          const chartOptions = this.chartOptions;
+
+          this.myChart = new Chart(ctx, {
+            type: 'line',
+            data: chartData,
+            options: chartOptions,
+          });
+        } else {
+          console.error('Failed to get canvas context.');
+        }
+      } else {
+        console.error('Canvas element is not available for chart initialization.');
       }
     },
+  },
+
+  mounted() {
+    this.initChart();
   },
 };
 </script>
