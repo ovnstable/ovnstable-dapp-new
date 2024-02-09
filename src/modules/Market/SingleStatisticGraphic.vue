@@ -29,7 +29,26 @@ import GraphicInterval from '@/modules/Market/GraphicInterval.vue';
 import { type Payout } from '@/modules/Market/types/index.ts';
 import { Chart, registerables } from 'chart.js';
 
-Chart.register(...registerables);
+const originPointPlugin = {
+  id: 'originPointPlugin',
+  afterDraw(chart: any) {
+    const { ctx } = chart;
+    const xAxis = chart.scales.x;
+    const yAxis = chart.scales.y;
+
+    const originX = xAxis.getPixelForValue(0);
+    const originY = yAxis.getPixelForValue(0);
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(originX, originY, 2, 0, 2 * Math.PI);
+    ctx.fillStyle = '#000';
+    ctx.fill();
+    ctx.restore();
+  },
+};
+
+Chart.register(...registerables, originPointPlugin);
 
 export default {
   name: 'GraphicComponent',
@@ -89,7 +108,8 @@ export default {
     },
     chartData() {
       const payoutData = this.graphicData.payouts.slice(0, this.getInterval());
-      payoutData.sort((a: { payableDate: string | number | Date; }, b: { payableDate: string | number | Date; }) => new Date(a.payableDate) - new Date(b.payableDate));
+      payoutData.sort((a: { payableDate: any; }, b: { payableDate: any; }) =>
+        new Date(a.payableDate) - new Date(b.payableDate));
 
       return {
         labels: payoutData
@@ -99,9 +119,9 @@ export default {
           data: this.type === 'APY' ? payoutData.map((payout: Payout) => payout.annualizedYield) : payoutData
             .map((payout: Payout) => payout.totalUsdPlus),
           fill: false,
-          borderColor: 'rgb(255, 99, 132)',
+          borderColor: '#ff1100',
           backgroundColor: 'rgb(255, 99, 132)',
-          borderWidth: 2,
+          borderWidth: 2.5,
           pointRadius: 0,
           tension: 0,
         }],
@@ -112,7 +132,7 @@ export default {
       return {
         scales: {
           y: {
-            beginAtZero: false,
+            beginAtZero: true,
             title: {
               display: true,
             },
@@ -224,6 +244,7 @@ export default {
             type: 'line',
             data: chartData,
             options: chartOptions,
+            plugins: [originPointPlugin],
           });
         } else {
           console.error('Failed to get canvas context.');
@@ -242,11 +263,12 @@ export default {
 
 <style lang="scss" scoped>
 .performance__graphic-display {
-  height: 300px;
+  width: 100%;
+  min-height: 250px;
 }
 .performance__graphic{
-  background-color: var(--color-5);
-  height: 300px;
+  min-height: 250px;
+  background-color: var(--color-8);
   display: flex;
   flex-direction: column;
   padding: 5px 10px;
@@ -254,7 +276,7 @@ export default {
   align-items: flex-start;
   flex-shrink: 0;
   border-radius: 5px;
-  border: 1px solid var(--color-1);
+  border: 1px solid var(--color-8);
   margin-top: 5px;
 }
 
@@ -317,7 +339,25 @@ export default {
   font-weight: 500;
   color: var(--color-2);
 }
-@media (max-width: 1250px) {
+@media (max-width: 1024px) {
+  .performance__graphic-display {
+    width: 100%;
+    min-height: 150px;
+  }
+.performance__graphic{
+  min-height: 150px;
+  background-color: var(--color-8);
+  display: flex;
+  flex-direction: column;
+  padding: 5px 10px;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-shrink: 0;
+  border-radius: 5px;
+  border: 1px solid var(--color-8);
+  margin-top: 5px;
+}
+
   .performance__graphic-data-text {
     margin-left: 50px;
   }

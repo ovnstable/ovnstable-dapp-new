@@ -40,14 +40,18 @@ export default {
 
 <style lang="scss" scoped>
 .performance__graphics {
-
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  gap: 30px;
   align-items: center;
   background: var(--color-4);
   [data-theme="dark"] & {
       background: var(--color-6);
+  }
+
+  > .performance__graphics-APY-graphic,
+  > .performance__graphics-TVL-graphic {
+    flex: 1;
   }
 }
 
@@ -56,7 +60,7 @@ export default {
     flex-direction: column;
   }
   .performance__graphics-TVL-graphic {
-    margin-top: 50px;
+    margin: 0;
     width: 100%;
   }
   .performance__graphics-APY-graphic {
