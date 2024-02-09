@@ -11,7 +11,10 @@
       </p>
     </div>
     <div class="performance__graphic-display">
-      <canvas ref="myChart" :key="'canvas-' + currentInterval" />
+      <canvas
+        ref="myChart"
+        :key="'canvas-' + currentInterval"
+      />
     </div>
   </div>
 </template>
@@ -49,14 +52,23 @@ export default {
     };
   },
   computed: {
-    averageYield() {
-      const payoutData = this.graphicData.payouts.slice(0, this.getInterval());
-      const sumYield = payoutData
-        .reduce((acc: any, payout: Payout) => acc + payout.annualizedYield, 0);
-      const avgYield = (sumYield / payoutData.length) || 0;
-      return avgYield.toFixed(2);
+    displayValue() {
+      if (this.type === 'APY') {
+        const payoutData = this.graphicData.payouts.slice(0, this.getInterval());
+        const sumYield = payoutData
+          .reduce((acc: any, payout: Payout) => acc + payout.annualizedYield, 0);
+        const avgYield = (sumYield / payoutData.length) || 0;
+        return `${avgYield.toFixed(2)}%`;
+      } if (this.type === 'TVL') {
+        const latestPayout = this.graphicData.payouts[0];
+        return latestPayout ? `${latestPayout.totalUsdPlus.toFixed(2)} USD` : 'N/A';
+      }
+      return '';
     },
     startDateLabel() {
+      if (this.type === 'TVL') {
+        return 'Past 2 hours';
+      }
       const payoutData = this.graphicData.payouts.slice(0, this.getInterval());
       if (payoutData.length > 0) {
         const lastDate = new Date(payoutData[payoutData.length - 1].payableDate);
@@ -72,7 +84,8 @@ export default {
           .map((payout: Payout) => new Date(payout.payableDate).toLocaleDateString()),
         datasets: [{
           label: false,
-          data: payoutData.map((payout:Payout) => payout.annualizedYield),
+          data: this.type === 'APY' ? payoutData.map((payout: Payout) => payout.annualizedYield) : payoutData
+            .map((payout: Payout) => payout.totalUsdPlus),
           fill: false,
           borderColor: 'rgb(255, 99, 132)',
           backgroundColor: 'rgb(255, 99, 132)',
@@ -108,7 +121,7 @@ export default {
           },
           title: {
             display: true,
-            text: `${this.averageYield}%\n${this.startDateLabel}`,
+            text: `${this.displayValue}%\n${this.startDateLabel}`,
             position: 'top',
             align: 'end',
           },
