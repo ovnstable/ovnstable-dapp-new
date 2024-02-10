@@ -78,140 +78,143 @@
         </div>
       </div>
     </div> -->
-
-    <div class="pools-header">
-      <div class="pools-header__item">Chain</div>
-      <div class="pools-header__item">Pool tokens</div>
-      <div class="pools-header__item">Staking platform</div>
-      <div class="pools-header__item">APR</div>
-      <div class="pools-header__item">TVL</div>
-      <div class="pools-header__item" />
-    </div>
-
     <div class="pools-table">
-      <div
-        v-for="pool in pools"
-        :key="pool.id"
-        class="pools-table__row"
-        @click="toggleDetails(pool)"
-        @keypress="toggleDetails(pool)"
-      >
-        <div class="pools-table__chain">
-          <BaseIcon :name="pool.chainName" />
-        </div>
-        <div class="pools-table__tokens">
+      <slot name="filters" />
+
+      <div class="pools-header">
+        <div class="pools-header__item">Chain</div>
+        <div class="pools-header__item">Pool tokens</div>
+        <div class="pools-header__item">Staking platform</div>
+        <div class="pools-header__item">APR</div>
+        <div class="pools-header__item">TVL</div>
+        <div class="pools-header__item" />
+      </div>
+
+      <div class="pools-table__content">
+        <template v-if="pools.length > 0">
           <div
-            v-if="pool.token0Icon"
-            class="pools-table__tokens-item"
+            v-for="pool in pools"
+            :key="pool.id"
+            class="pools-table__row"
+            @click="toggleDetails(pool)"
+            @keypress="toggleDetails(pool)"
           >
-            <img
-              alt="token"
-              :src="pool.token0Icon"
-            />
-            {{ getTokenNames(pool)[0] }}
-          </div>
-          <div
-            v-if="pool.token1Icon"
-            class="pools-table__tokens-item"
-          >
-            <img
-              alt="token"
-              :src="pool.token1Icon"
-            />
-            {{ getTokenNames(pool)[1] }}
-          </div>
-          <div
-            v-if="pool.token2Icon"
-            class="pools-table__tokens-item"
-          >
-            <img
-              alt="token"
-              :src="pool.token2Icon"
-            />
-            {{ getTokenNames(pool)[2] }}
-          </div>
-          <div
-            v-if="pool.token3Icon"
-            class="pools-table__tokens-item"
-          >
-            <img
-              alt="token"
-              :src="pool.token3Icon"
-            />
-          </div>
-        </div>
-        <div class="pools-table__platform">
-          <BaseIcon
-            class="pools-table__platform-icon"
-            :name="pool.platform"
-          />
-          <!-- <div v-if="pool.platform === 'Swapbased'">
+            <div class="pools-table__chain">
+              <BaseIcon :name="pool.chainName" />
+            </div>
+            <div class="pools-table__tokens">
+              <div
+                v-if="pool.token0Icon"
+                class="pools-table__tokens-item"
+              >
+                <img
+                  alt="token"
+                  :src="pool.token0Icon"
+                />
+                {{ getTokenNames(pool)[0] }}
+              </div>
+              <div
+                v-if="pool.token1Icon"
+                class="pools-table__tokens-item"
+              >
+                <img
+                  alt="token"
+                  :src="pool.token1Icon"
+                />
+                {{ getTokenNames(pool)[1] }}
+              </div>
+              <div
+                v-if="pool.token2Icon"
+                class="pools-table__tokens-item"
+              >
+                <img
+                  alt="token"
+                  :src="pool.token2Icon"
+                />
+                {{ getTokenNames(pool)[2] }}
+              </div>
+              <div
+                v-if="pool.token3Icon"
+                class="pools-table__tokens-item"
+              >
+                <img
+                  alt="token"
+                  :src="pool.token3Icon"
+                />
+              </div>
+            </div>
+            <div class="pools-table__platform">
+              <BaseIcon
+                class="pools-table__platform-icon"
+                :name="pool.platform"
+              />
+              <!-- <div v-if="pool.platform === 'Swapbased'">
             <Tooltip
                           text="This pool have 1% deposit fee"
                           bottom
                         />
           </div> -->
 
-          <span v-if="pool.poolNameForAgregator">
-            {{ pool.poolNameForAgregator.toUpperCase() }}
-          </span>
-          <span v-else>
-            {{
-              pool.platform === "Shekel"
-                ? "Shekelswap"
-                : pool.platform.toUpperCase()
-            }}
-          </span>
-        </div>
+              <span v-if="pool.poolNameForAgregator">
+                {{ pool.poolNameForAgregator.toUpperCase() }}
+              </span>
+              <span v-else>
+                {{
+                  pool.platform === "Shekel"
+                    ? "Shekelswap"
+                    : pool.platform.toUpperCase()
+                }}
+              </span>
+            </div>
 
-        <div class="pools-table__apy">
-          <div
-            v-if="pool.apr"
-            class="card-label text-center"
-          >
-            {{ formatMoneyComma(pool.apr, 2) }}%<sup
-              v-if="pool.platform === 'Beefy'"
-            >(apy)</sup>
-          </div>
-          <div
-            v-else
-            class="card-label see-on-dex-label see-on-dex-another"
-          >
-            see on platform
-          </div>
-        </div>
-        <div class="col-2 col-xl-2 col-lg-2 col-md-2 col-sm-2">
-          <div class="pool-table-header-item">
-            <div
-              v-if="pool.tvl"
-              class="card-label"
-            >
-              <template v-if="pool.tvl >= 1000000">
-                ${{ formatNumberToMln(pool.tvl, 2) }}M
-              </template>
-              <template v-if="pool.tvl < 1000000">
-                ${{ formatNumberToThousands(pool.tvl, 0) }}K
-              </template>
+            <div class="pools-table__apy">
+              <div
+                v-if="pool.apr"
+                class="card-label text-center"
+              >
+                {{ formatMoneyComma(pool.apr, 2) }}%<sup
+                  v-if="pool.platform === 'Beefy'"
+                >(apy)</sup>
+              </div>
+              <div
+                v-else
+                class="card-label see-on-dex-label see-on-dex-another"
+              >
+                see on platform
+              </div>
             </div>
-            <div
-              v-else
-              class="card-label see-on-dex-label see-on-dex-another"
-            >
-              see on platform
+            <div class="col-2 col-xl-2 col-lg-2 col-md-2 col-sm-2">
+              <div class="pool-table-header-item">
+                <div
+                  v-if="pool.tvl"
+                  class="card-label"
+                >
+                  <template v-if="pool.tvl >= 1000000">
+                    ${{ formatNumberToMln(pool.tvl, 2) }}M
+                  </template>
+                  <template v-if="pool.tvl < 1000000">
+                    ${{ formatNumberToThousands(pool.tvl, 0) }}K
+                  </template>
+                </div>
+                <div
+                  v-else
+                  class="card-label see-on-dex-label see-on-dex-another"
+                >
+                  see on platform
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-        <div>
-          <ButtonComponent
-            v-if="pool.zappable"
-            btnStyles="faded"
-            @click="console.log('ZAPIN')"
-          >
-            ZAPIN
-          </ButtonComponent>
-        </div>
-      <!--          Hide on mobile          -->
-      <!-- <PoolTableDetails
+            <div>
+              <ButtonComponent
+                v-if="pool.zappable"
+                btnStyles="faded"
+                @click="console.log('ZAPIN')"
+              >
+                ZAPIN
+              </ButtonComponent>
+            </div>
+          <!--          Hide on mobile          -->
+          <!-- <PoolTableDetails
                 :pool="pool"
                 :open-zap-in-func="openZapInFunc"
                 :is-show-only-zap="isShowOnlyZap"
@@ -219,7 +222,7 @@
                 :toggle-details-func="toggleDetails"
               /> -->
 
-      <!-- <div
+          <!-- <div
             v-if="!isShowOnlyZap && pools && pools.length"
             @click="toggleDetails(pool)"
             @keypress="toggleDetails(pool)"
@@ -231,8 +234,22 @@
               alt="toggle-open-pool"
             />
           </div> -->
+          </div>
+        </template>
+        <div
+          v-else
+          class="pools-table__empty"
+        >
+          pools not found
+        </div>
       </div>
-      <slot name="footer" />
+
+      <div
+        v-if="pools.length > 0"
+        class="pools-table__footer"
+      >
+        <slot name="footer" />
+      </div>
     </div>
 
   </div>
@@ -374,13 +391,17 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .pools-table {
+  position: relative;
   width: 100%;
   background-color: var(--color-8);
   color: var(--color-1);
   font-weight: 500;
   font-size: 14px;
-  padding: 20px;
   border-radius: 30px;
+}
+
+.pools-table__content {
+  padding: 20px;
 }
 .pools-table__row {
   display: grid;
@@ -395,7 +416,8 @@ export default defineComponent({
   display: grid;
   grid-template-columns: 0.5fr 2fr 2fr 1fr 1fr 1fr;
   width: 100%;
-  margin: 20px 0;
+  color: var(--color-2);
+  margin-top: 20px;
   padding: 0 20px;
 }
 
@@ -486,5 +508,19 @@ export default defineComponent({
     font-size: 10px;
     top: -10px;
   }
+}
+
+.pools-table__empty {
+  min-height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.pools-table__footer {
+  padding: 0 20px 20px 20px;
 }
 </style>

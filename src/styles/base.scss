@@ -113,8 +113,6 @@ table {
   text-decoration: none;
 }
 
-html 
-
 .link-underline:hover {
   text-decoration: underline;
   color: var(--hover-color);
@@ -139,4 +137,8 @@ body {
   [data-theme="dark"] & {
       background-color: var(--color-7);
   }
+}
+
+svg, svg path {
+  transition: all .1s ease;
 }

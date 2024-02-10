@@ -6,7 +6,10 @@
           to="/"
           class="app-header__content__logo"
         >
-          <BaseIcon :name="iconName" />
+          <BaseIcon
+            class="app-header__content__logo-svg"
+            name="IconLogo"
+          />
 
           <h1>
             OVERNIGHT
@@ -98,9 +101,6 @@ export default {
       const data = appNetworksData.find((_) => _.chain === this.networkId);
       return data || appNetworksData[0];
     },
-    iconName() {
-      return this.$store.state.theme.light ? 'IconLogoDark' : 'IconLogo';
-    },
   },
   methods: {
     ...mapActions('network', ['setWalletNetwork']),
@@ -120,6 +120,15 @@ export default {
   },
 };
 </script>
+<style lang="scss">
+.app-header__content__logo-svg path {
+  fill: var(--color-1);
+
+  [data-theme="dark"] & {
+    fill: var(--color-4);
+  }
+}
+</style>
 
 <style lang="scss" scoped>
 .app-header {

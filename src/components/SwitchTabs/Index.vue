@@ -5,7 +5,7 @@
       <div
         v-for="item in tabs"
         class="switchtabs__inner-text"
-        :class="{ active: item.id === activeItem }"
+        :class="{ active: item.id === activeItem, [type]: !!type }"
         :key="item.id"
         @click.prevent="onTabClick(item.id)"
       >
@@ -26,6 +26,8 @@ interface ITab {
   name: string;
 }
 
+type TSize = 'default' | 'large'
+
 export default {
   name: 'TabsComponent',
 
@@ -33,6 +35,10 @@ export default {
     tabs: {
       default: () => [],
       type: Array as PropType<ITab[]>,
+    },
+    type: {
+      default: 'default',
+      type: String as PropType<TSize>,
     },
   },
 
@@ -98,12 +104,17 @@ export default {
 
 .switchtabs__inner-text {
   position: relative;
+  white-space: nowrap;
   border-radius: 30px;
   padding: 4px 20px;
   cursor: pointer;
   background: var(--color-5);
   z-index: 2;
   transition: opacity .2s ease, color .2s ease;
+
+  &.large {
+    padding: 9px 20px;
+  }
 
   &::before {
     content: "";
