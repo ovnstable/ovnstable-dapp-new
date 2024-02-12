@@ -149,6 +149,7 @@ export default {
       box-shadow: 0px 1px 0px 0px var(--color-3);
       [data-theme="dark"] & {
         color: var(--color-4);
+        background-color: var(--color-7);
         border-color: var(--color-8);
         box-shadow: none;
       }
