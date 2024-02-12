@@ -1,40 +1,38 @@
 <template>
-  <div class="market-wrapper">
-    <div
-      v-if="!loaded"
-      class="market__loader"
-    >
-      <Spinner />
-    </div>
-    <div
-      v-else
-    >
-      <div class="market">
-        <TokenDataPerformance
-          :token-data="tokenData"
-          class="market__token-data"
-        />
-        <GraphicsPerformance
-          :payout-data="payoutData"
-          :token-data="tokenData"
-          class="market__graphics"
-        />
-        <PortfolioPerformance
-          :portfolio-data="portfolioData"
-          :collateral-data="collateralData"
-          class="market__portfolio"
-        />
-      </div>
-      <div class="market__payouts">
-        <PortfolioPayouts
-          :payout-data="payoutData"
-          class="market__payout-inner"
-        />
-      </div>
-    </div>
-
+  <div
+    v-if="!loaded"
+    class="market__loader"
+  >
+    <Spinner />
   </div>
+  <div
+    v-else
+    class="market-wrapper"
+  >
 
+    <div class="market">
+      <TokenDataPerformance
+        :token-data="tokenData"
+        class="market__token-data"
+      />
+      <GraphicsPerformance
+        :payout-data="payoutData"
+        :token-data="tokenData"
+        class="market__graphics"
+      />
+      <PortfolioPerformance
+        :portfolio-data="portfolioData"
+        :collateral-data="collateralData"
+        class="market__portfolio"
+      />
+    </div>
+    <div class="market__payouts">
+      <PortfolioPayouts
+        :payout-data="payoutData"
+        class="market__payout-inner"
+      />
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -124,10 +122,14 @@ export default {
 .market__payout-inner {
   border-radius: 0px 0px 30px 30px;
 }
+
 .market__loader {
   margin: auto;
-  height: 80%;
+  height: 100%;
   min-height: 474px;
   display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
 </style>
