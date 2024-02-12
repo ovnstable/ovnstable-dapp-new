@@ -130,6 +130,9 @@ export default {
     &:hover {
       opacity: .7;
     }
+    [data-theme="dark"] & {
+      border-color: var(--color-2);
+    }
   }
 
   &.faded {
@@ -140,7 +143,7 @@ export default {
     [data-theme="dark"] & {
       background-color: var(--color-7);
       border-color: var(--color-7);
-      color: var(--color-3);
+      color: var(--color-18);
     }
 
     &:hover {

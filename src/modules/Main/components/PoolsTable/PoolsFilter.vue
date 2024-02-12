@@ -130,6 +130,7 @@ export default {
   border: 1px solid var(--color-1);
   [data-theme="dark"] & {
     background-color: var(--color-17);
+    border-color: var(--color-2);
   }
 }
 

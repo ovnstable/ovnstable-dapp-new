@@ -170,7 +170,7 @@ export default {
   font-size: 15px;
   font-weight: 600;
    [data-theme="dark"] & {
-    color: var(--color-3);
+    color: var(--color-18);
   }
 }
 
@@ -206,6 +206,9 @@ export default {
 .sidebar__divider-top {
   margin-top: 20px;
   border: 1px solid var(--color-1);
+  [data-theme="dark"] & {
+    border-color: var(--color-2);
+  }
 }
 
 .sidebar__bottom {
@@ -219,7 +222,7 @@ export default {
   font-weight: 600;
 
   [data-theme="dark"] & {
-    color: var(--color-3);
+    color: var(--color-18);
   }
 }
 
@@ -255,7 +258,7 @@ export default {
   border: 1px solid var(--color-2);
 
   [data-theme="dark"] & {
-    color: var(--color-3);
+    color: var(--color-18);
   }
 }
 

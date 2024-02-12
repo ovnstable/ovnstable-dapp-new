@@ -99,7 +99,7 @@ export default defineComponent({
   background-color: var(--color-4);
   padding: 10px;
   [data-theme="dark"] & {
-    border-color: var(--color-3);
+    border-color: var(--color-2);
     background-color: var(--color-6);
   }
 }

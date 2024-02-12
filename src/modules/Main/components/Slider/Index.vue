@@ -251,7 +251,7 @@ export default {
 .slider__data-apy-percent,
 .slider__data-tvl-millions {
   [data-theme="dark"] & {
-    color: var(--color-3)
+    color: var(--color-18)
   }
 }
 
@@ -306,7 +306,7 @@ export default {
   font-weight: 400;
   line-height: 18px;
   [data-theme="dark"] & {
-    color: var(--color-3)
+    color: var(--color-18)
   }
 }
 

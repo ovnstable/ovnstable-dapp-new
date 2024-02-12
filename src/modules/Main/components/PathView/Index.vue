@@ -463,7 +463,7 @@ export default defineComponent({
     color: var(--color-2);
     font-size: 14px;
     [data-theme="dark"] & {
-      color: var(--color-3);
+      color: var(--color-18);
     }
   }
 }
@@ -486,7 +486,7 @@ export default defineComponent({
 
   span {
     [data-theme="dark"] & {
-      color: var(--color-3);
+      color: var(--color-18);
     }
   }
 }
@@ -543,7 +543,7 @@ export default defineComponent({
 
   h2 {
     [data-theme="dark"] & {
-      color: var(--color-3);
+      color: var(--color-18);
     }
   }
 }
@@ -562,7 +562,7 @@ export default defineComponent({
   margin-left: 15px;
   [data-theme="dark"] & {
     color: var(--color-4);
-    border-color: var(--color-4);
+    border-color: var(--color-2);
   }
 }
 

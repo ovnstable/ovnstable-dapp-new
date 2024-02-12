@@ -433,7 +433,7 @@ export default defineComponent({
   padding: 0 20px;
   [data-theme="dark"] & {
     background-color: var(--color-6);
-    color: var(--color-3);
+    color: var(--color-18);
   }
 }
 
@@ -466,7 +466,7 @@ export default defineComponent({
   border: 1px solid var(--color-17);
   [data-theme="dark"] & {
     background-color: var(--color-17);
-    border-color: var(--color-4);
+    border-color: var(--color-2);
   }
 
   svg {
@@ -492,7 +492,7 @@ export default defineComponent({
   border-radius: 30px;
   right: 26px;
   [data-theme="dark"] & {
-    border-color: var(--color-4);
+    border-color: var(--color-2);
     background-color: var(--color-17);
     color: var(--color-4);
   }
@@ -550,7 +550,7 @@ export default defineComponent({
   font-weight: 500;
   text-transform: uppercase;
   [data-theme="dark"] & {
-    color: var(--color-3);
+    color: var(--color-18);
   }
 }
 

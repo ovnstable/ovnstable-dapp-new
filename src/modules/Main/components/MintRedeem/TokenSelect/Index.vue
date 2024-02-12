@@ -117,7 +117,7 @@ export default defineComponent({
   border: 2px solid var(--color-5);
   border-bottom: 0;
   [data-theme="dark"] & {
-    border-color: var(--color-3);
+    border-color: var(--color-2);
     background-color: var(--color-6);
   }
 
@@ -128,7 +128,7 @@ export default defineComponent({
       color: var(--color-2);
       margin-bottom: 10px;
       [data-theme="dark"] & {
-        color: var(--color-3);
+        color: var(--color-18);
       }
   }
   cursor: pointer;
@@ -162,7 +162,7 @@ export default defineComponent({
   border: 2px solid var(--color-5);
   background-color: var(--color-4);
   [data-theme="dark"] & {
-    border-color: var(--color-4);
+    border-color: var(--color-2);
     background-color: var(--color-17);
   }
 }

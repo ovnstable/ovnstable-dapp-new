@@ -250,7 +250,7 @@ export default defineComponent({
 
   p {
     [data-theme="dark"] & {
-      color: var(--color-3);
+      color: var(--color-18);
     }
   }
 
@@ -272,7 +272,7 @@ export default defineComponent({
 
   span {
     [data-theme="dark"] & {
-      color: var(--color-3);
+      color: var(--color-18);
     }
   }
 }

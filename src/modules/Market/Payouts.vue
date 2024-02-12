@@ -159,7 +159,7 @@ export default {
   font-weight: 400;
   margin-bottom: 22px;
   [data-theme="dark"] & {
-    color: var(--color-3);
+    color: var(--color-18);
   }
 }
 .performance__payouts-divider {
@@ -225,7 +225,7 @@ export default {
   font-size: 15px;
   font-weight: 400;
   [data-theme="dark"] & {
-    color: var(--color-3);
+    color: var(--color-18);
   }
 }
 .performance__payouts-id-link:hover p {
@@ -262,7 +262,7 @@ export default {
   background: none;
   margin-top: 9px;
   [data-theme="dark"] & {
-    border-color: var(--color-4);
+    border-color: var(--color-2);
   }
 }
 
@@ -278,7 +278,7 @@ export default {
   font-size: 15px;
   font-weight: 600;
   [data-theme="dark"] & {
-    color: var(--color-3);
+    color: var(--color-18);
   }
 }
 

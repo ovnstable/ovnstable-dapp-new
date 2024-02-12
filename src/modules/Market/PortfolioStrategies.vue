@@ -318,7 +318,7 @@ export default {
   font-weight: 400;
   margin-bottom: 6px;
   [data-theme="dark"] & {
-    color: var(--color-3);
+    color: var(--color-18);
   }
 }
 
@@ -377,7 +377,7 @@ export default {
   display: flex;
   flex-direction: column;
   [data-theme="dark"] & {
-    color: var(--color-3);
+    color: var(--color-18);
   }
 }
 .performance__portfolio-strategy-token-portfolio-num {
@@ -420,7 +420,7 @@ export default {
 .strategies:hover {
   color: var(--color-1);
   [data-theme="dark"] & {
-    color: var(--color-3);
+    color: var(--color-18);
   }
 }
 .performance__portfolio-assets {
@@ -463,7 +463,7 @@ export default {
   font-size: 15px;
   font-weight: 400;
   [data-theme="dark"] & {
-    color: var(--color-3);
+    color: var(--color-18);
   }
 }
 
