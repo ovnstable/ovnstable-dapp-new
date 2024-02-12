@@ -133,8 +133,8 @@ export default {
     color: var(--color-2);
     box-shadow: 0px 0px 0px 1px var(--color-6);
     [data-theme="dark"] & {
-      background-color: var(--color-6);
-      border: 1px solid var(--color-3);
+      background-color: var(--color-7);
+      border-color: var(--color-7);
       color: var(--color-3);
     }
 
@@ -144,6 +144,8 @@ export default {
       box-shadow: 0px 1px 0px 0px var(--color-3);
       [data-theme="dark"] & {
         color: var(--color-4);
+        border-color: var(--color-8);
+        box-shadow: none;
       }
     }
   }

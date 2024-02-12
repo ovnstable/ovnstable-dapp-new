@@ -420,7 +420,7 @@ export default defineComponent({
   padding: 15px 0;
   border-bottom: 1px solid var(--color-17);
   [data-theme="dark"] & {
-    border-bottom-color: var(--color-4);
+    border-bottom-color: var(--color-7);
   }
 }
 
