@@ -140,6 +140,9 @@ export default {
   &:hover {
     color: var(--color-3);
     opacity: .7;
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
   }
 
   &:last-child {

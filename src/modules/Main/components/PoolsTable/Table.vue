@@ -549,6 +549,9 @@ export default defineComponent({
   font-size: 16px;
   font-weight: 500;
   text-transform: uppercase;
+  [data-theme="dark"] & {
+    color: var(--color-3);
+  }
 }
 
 .pools-table__footer {
