@@ -21,23 +21,25 @@
         />
       </template>
     </InputComponent>
-    <div
-      v-for="networkConfig in allNetworkConfigs"
-      :key="networkConfig.networkId"
-      @click="changeNetwork(networkConfig.networkId)"
-      @keypress="changeNetwork(networkConfig.networkId)"
-      :class="selectedNetwork.includes(networkConfig.networkId) ? 'pools-wrap__filters-item--selected' : ''"
-      class="pools-wrap__filters-item"
-    >
-      <BaseIcon :name="networkConfig.networkName" />
-    </div>
-    <div
-      @click="changeNetwork('all')"
-      @keypress="changeNetwork('all')"
-      :class="selectedNetwork.includes('ALL') ? 'pools-wrap__filters-item--selected' : ''"
-      class="pools-wrap__filters-item"
-    >
-      SELECT ALL
+    <div class="pools-wrap__filters-networks">
+      <div
+        v-for="networkConfig in allNetworkConfigs"
+        :key="networkConfig.networkId"
+        @click="changeNetwork(networkConfig.networkId)"
+        @keypress="changeNetwork(networkConfig.networkId)"
+        :class="selectedNetwork.includes(networkConfig.networkId) ? 'pools-wrap__filters-item--selected' : ''"
+        class="pools-wrap__filters-item"
+      >
+        <BaseIcon :name="networkConfig.networkName" />
+      </div>
+      <div
+        @click="changeNetwork('all')"
+        @keypress="changeNetwork('all')"
+        :class="selectedNetwork.includes('ALL') ? 'pools-wrap__filters-item--selected' : ''"
+        class="pools-wrap__filters-item"
+      >
+        SELECT ALL
+      </div>
     </div>
   </div>
 </template>
@@ -72,11 +74,15 @@ export default {
         },
         {
           id: poolTypes.TOKENPLUS,
-          name: 'TOKEN+ POOLS',
+          name: 'TOKEN+',
         },
         {
           id: poolTypes.OVN,
-          name: 'OVN POOLS',
+          name: 'OVN',
+        },
+        {
+          id: poolTypes.FEATURED,
+          name: 'FEATURED',
         },
       ],
     };
@@ -161,5 +167,10 @@ export default {
 .search-icon {
   min-width: 18px;
   margin-left: 6px;
+}
+.pools-wrap__filters-networks {
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
 }
 </style>
