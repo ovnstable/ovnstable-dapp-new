@@ -132,6 +132,8 @@ export default {
     }
     [data-theme="dark"] & {
       border-color: var(--color-2);
+      background-color: var(--color-17);
+      box-shadow: 0px 1px 0px 0px var(--color-2);
     }
   }
 

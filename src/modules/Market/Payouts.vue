@@ -167,7 +167,7 @@ export default {
   margin-top: 17px;
   margin-bottom: 13px;
   [data-theme="dark"] & {
-    border-color: var(--color-3);
+    border-color: var(--color-2);
   }
 }
 

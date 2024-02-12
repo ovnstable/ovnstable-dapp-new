@@ -1717,6 +1717,7 @@ export default defineComponent({
 
   [data-theme="dark"] & {
     background-color: var(--color-7);
+    color: var(--color-8);
   }
 
   &:hover {

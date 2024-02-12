@@ -292,6 +292,10 @@ export default defineComponent({
   border-radius: 12px;
   background-color: var(--color-5);
 
+  [data-theme="dark"] & {
+    background-color: var(--color-7);
+  }
+
   img {
     width: 24px;
     height: 24px;

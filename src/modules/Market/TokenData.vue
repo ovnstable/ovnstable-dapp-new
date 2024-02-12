@@ -215,7 +215,7 @@ export default {
   margin-right: 30px;
   border: 1px solid var(--color-7);
   [data-theme="dark"] & {
-    border: 1px solid var(--color-4);
+    border-color: var(--color-2);
   }
 }
 

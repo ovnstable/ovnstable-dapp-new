@@ -158,7 +158,7 @@ export default {
     color: var(--color-3);
   }
   [data-theme="dark"] & {
-    color: var(--color-4);
+    color: var(--color-1);
   }
 }
 

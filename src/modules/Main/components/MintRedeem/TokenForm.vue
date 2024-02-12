@@ -307,7 +307,7 @@ export default defineComponent({
 
   [data-theme="dark"] & {
     background-color: var(--color-17);
-    color: var(--color-18);
+    color: var(--color-4);
   }
 
   img {

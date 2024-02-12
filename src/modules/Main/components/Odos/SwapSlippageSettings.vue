@@ -151,7 +151,7 @@ export default defineComponent({
     font-weight: 500;
     color: var(--color-1);
     [data-theme="dark"] & {
-      color: var(--color-18);
+      color: var(--color-4);
     }
   }
 }
@@ -178,7 +178,7 @@ export default defineComponent({
 
   [data-theme="dark"] & {
     color: var(--color-4);
-    background-color: var(--color-6);
+    background-color: var(--color-7);
   }
 
   &:hover {
