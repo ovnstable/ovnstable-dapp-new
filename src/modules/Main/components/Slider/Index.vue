@@ -243,7 +243,7 @@ export default {
   margin-bottom: 16px;
   border: 1px solid var(--color-2);
   [data-theme="dark"] & {
-    border-color: var(--color-3)
+    border-color: var(--color-2)
   }
 }
 

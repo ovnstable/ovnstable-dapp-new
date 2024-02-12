@@ -54,6 +54,10 @@
     color: var(--color-2);
     transition: color 0.15s ease;
   }
+  .link-ovn {
+    text-decoration: underline;
+    text-decoration-color: var(--color-2);
+  }
 }
 
 html, body, div, span, applet, object, iframe,
