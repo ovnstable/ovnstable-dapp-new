@@ -138,19 +138,21 @@ export default {
         .payableDate).getTime() - new Date(b.payableDate).getTime());
 
       return {
-        labels: payoutData
-          .map((payout: Payout) => new Date(payout.payableDate).toLocaleDateString()),
-        datasets: [{
-          label: false,
-          data: this.type === 'APY' ? payoutData.map((payout: Payout) => payout.annualizedYield) : payoutData
-            .map((payout: Payout) => payout.totalUsdPlus),
-          fill: false,
-          borderColor: activeNetworkColor,
-          backgroundColor: activeNetworkColor,
-          borderWidth: 2.5,
-          pointRadius: 0,
-          tension: 0,
-        }],
+        chartData: {
+          labels: payoutData
+            .map((payout: Payout) => new Date(payout.payableDate).toLocaleDateString()),
+          datasets: [{
+            label: false,
+            data: this.type === 'APY' ? payoutData.map((payout: Payout) => payout.annualizedYield) : payoutData
+              .map((payout: Payout) => payout.totalUsdPlus),
+            fill: false,
+            borderColor: activeNetworkColor,
+            backgroundColor: activeNetworkColor,
+            borderWidth: 2.5,
+            pointRadius: 0,
+            tension: 0,
+          }],
+        },
       };
     },
     chartOptions() {
@@ -166,118 +168,123 @@ export default {
       const maxValue = Math.max(...dataValues);
 
       return {
-        scales: {
-          y: {
-            beginAtZero: false,
-            title: {
-              display: true,
-            },
-            min: minValue,
-            max: maxValue,
-            ticks: {
-              min: 4,
-              callback: (value: any) => {
-                if (isApyType) {
-                  return `${value.toFixed(2)}%`;
-                } if (this.tokenData.tokenName === 'ETH+') {
-                  return `${value.toLocaleString()} WETH`;
-                }
-                const formatter = new Intl.NumberFormat('fr-FR', {
-                  minimumFractionDigits: 1,
-                  maximumFractionDigits: 1,
-                });
-                const formattedValue = formatter.format(value);
-                return `$${formattedValue}`;
+        chartOptions: {
+          scales: {
+            y: {
+              beginAtZero: false,
+              title: {
+                display: true,
+              },
+              min: minValue,
+              max: maxValue,
+              ticks: {
+                min: 4,
+                callback: (value: any) => {
+                  if (isApyType) {
+                    return `${value.toFixed(2)}%`;
+                  } if (this.tokenData.tokenName === 'ETH+') {
+                    return `${value.toLocaleString()} WETH`;
+                  }
+                  const formatter = new Intl.NumberFormat('fr-FR', {
+                    minimumFractionDigits: 1,
+                    maximumFractionDigits: 1,
+                  });
+                  const formattedValue = formatter.format(value);
+                  return `$${formattedValue}`;
+                },
+              },
+
+              grid: {
+                display: false,
               },
             },
+            x: {
+              ticks: {
+                display: false,
+              },
+              title: {
+                display: false,
+              },
+              grid: {
+                display: false,
+              },
+            },
+          },
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false,
+            },
+            tooltip: {
+              enabled: true,
+              mode: 'index',
+              intersect: false,
+              backgroundColor: '#ffffff',
+              titleFont: {
+                size: 12,
+              },
+              titleColor: '#687386',
+              bodyFont: {
+                size: 12,
+                weight: 'bold',
+              },
+              bodyColor: '#000',
+              displayColors: false,
+              padding: 10,
+              callbacks: {
+                label(context: any) {
+                  let label = context.dataset.label || '';
 
-            grid: {
-              display: false,
+                  if (label) {
+                    label += ': ';
+                  }
+                  const value = context.parsed.y;
+                  if (isApyType) {
+                    label += `APY: ${value.toFixed(2)}%`;
+                  } else if (isEth) {
+                    label += `TVL WETH ${value.toLocaleString()}`;
+                  } else {
+                    label += `TVL $${value.toLocaleString()}`;
+                  }
+                  return label;
+                },
+                title(context: any) {
+                  if (context.length > 0) {
+                    const reversedData = [...intervalData].reverse();
+                    const pointIndex = context[0].dataIndex;
+                    const date = new Date(reversedData[pointIndex].payableDate);
+                    const day = date.getUTCDate().toString().padStart(2, '0');
+                    const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+                    const year = date.getUTCFullYear();
+                    const hours = date.getUTCHours().toString().padStart(2, '0');
+                    const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+                    const formattedDate = `${day}.${month}.${year}, ${hours}:${minutes} UTS`;
+                    console.log(formattedDate);
+                    return formattedDate;
+                  }
+                  return '';
+                },
+
+              },
             },
+            pointStylePlugin: {
+              activeNetworkColor: '',
+            },
+
           },
-          x: {
-            ticks: {
-              display: false,
-            },
-            title: {
-              display: false,
-            },
-            grid: {
-              display: false,
-            },
-          },
-        },
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            display: false,
-          },
-          tooltip: {
-            enabled: true,
-            mode: 'index',
+          interaction: {
+            mode: 'nearest',
+            axis: 'x',
             intersect: false,
-            backgroundColor: '#ffffff',
-            titleFont: {
-              size: 12,
-            },
-            titleColor: '#687386',
-            bodyFont: {
-              size: 12,
-              weight: 'bold',
-            },
-            bodyColor: '#000',
-            displayColors: false,
-            padding: 10,
-            callbacks: {
-              label(context: any) {
-                let label = context.dataset.label || '';
-
-                if (label) {
-                  label += ': ';
-                }
-                const value = context.parsed.y;
-                if (isApyType) {
-                  label += `APY: ${value.toFixed(2)}%`;
-                } else if (isEth) {
-                  label += `TVL WETH ${value.toLocaleString()}`;
-                } else {
-                  label += `TVL $${value.toLocaleString()}`;
-                }
-                return label;
-              },
-              title(context: any) {
-                if (context.length > 0) {
-                  const reversedData = [...intervalData].reverse();
-                  const pointIndex = context[0].dataIndex;
-                  const date = new Date(reversedData[pointIndex].payableDate);
-                  const day = date.getUTCDate().toString().padStart(2, '0');
-                  const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
-                  const year = date.getUTCFullYear();
-                  const hours = date.getUTCHours().toString().padStart(2, '0');
-                  const minutes = date.getUTCMinutes().toString().padStart(2, '0');
-                  const formattedDate = `${day}.${month}.${year}, ${hours}:${minutes} UTS`;
-                  console.log(formattedDate);
-                  return formattedDate;
-                }
-                return '';
-              },
-
-            },
           },
-
-        },
-        interaction: {
-          mode: 'nearest',
-          axis: 'x',
-          intersect: false,
-        },
-        elements: {
-          line: {
-            tension: 0.4,
-          },
-          point: {
-            radius: 0,
+          elements: {
+            line: {
+              tension: 0.4,
+            },
+            point: {
+              radius: 0,
+            },
           },
         },
       };
@@ -325,7 +332,8 @@ export default {
     },
     initChart() {
       if (this.$refs.myChart) {
-        const ctx = this.$refs.myChart.getContext('2d');
+        const canvas = this.$refs.myChart as HTMLCanvasElement;
+        const ctx = canvas.getContext('2d');
         if (ctx) {
           const { chartData } = this.chartData;
           const { chartOptions } = this.chartOptions;
@@ -334,10 +342,10 @@ export default {
           chartOptions.plugins.pointStylePlugin.activeNetworkColor = this.activeNetworkData.color;
           this.myChart = new Chart(ctx, {
             type: 'line',
-            data: chartData,
-            options: chartOptions,
+            data: chartData as any,
+            options: chartOptions as any,
             plugins: [originPointPlugin, pointStylePlugin],
-          });
+          }) as any;
         } else {
           console.error('Failed to get canvas context.');
         }
