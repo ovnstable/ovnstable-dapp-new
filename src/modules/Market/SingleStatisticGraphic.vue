@@ -130,6 +130,15 @@ export default {
     chartOptions() {
       const isApyType = this.type === 'APY';
       const isEth = this.tokenData.tokenName === 'ETH+';
+
+      const intervalData = this.graphicData.payouts.slice(0, this.getInterval());
+      const dataValues = this.type === 'APY'
+        ? intervalData.map((payout: Payout) => payout.annualizedYield)
+        : intervalData.map((payout: Payout) => payout.totalUsdPlus);
+
+      const minValue = Math.min(...dataValues);
+      const maxValue = Math.max(...dataValues);
+
       return {
         scales: {
           y: {
@@ -137,15 +146,25 @@ export default {
             title: {
               display: true,
             },
+            min: minValue,
+            max: maxValue,
             ticks: {
-              callback: (value: number) => {
+              min: 4,
+              callback: (value: any) => {
                 if (isApyType) {
-                  return `${value.toFixed(1)}%`;
+                  return `${value.toFixed(2)}%`;
                 } if (this.tokenData.tokenName === 'ETH+') {
                   return `${value.toLocaleString()} WETH`;
-                } return `${value.toLocaleString()}\nUSD`;
+                }
+                const formatter = new Intl.NumberFormat('fr-FR', {
+                  minimumFractionDigits: 1,
+                  maximumFractionDigits: 1,
+                });
+                const formattedValue = formatter.format(value);
+                return `$${formattedValue}`;
               },
             },
+
             grid: {
               display: false,
             },
