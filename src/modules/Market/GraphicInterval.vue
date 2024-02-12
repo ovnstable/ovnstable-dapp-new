@@ -18,11 +18,11 @@ export default {
   props: {
     selectedInterval: {
       type: String,
-      default: '1D',
+      default: '1W',
     },
     intervals: {
       type: Array as () => string[],
-      default: () => ['1D', '1W', '1M', '3M', '6M', '1Y', 'ALL TIME'],
+      default: () => ['1W', '1M', '3M', '6M', '1Y', 'ALL TIME'],
     },
   },
 };

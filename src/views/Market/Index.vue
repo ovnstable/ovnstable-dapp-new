@@ -4,6 +4,7 @@
     :portfolio-data="portfolioData"
     :collateral-data="collateralData"
     :payout-data="payoutData"
+    :loaded="loaded"
   />
 </template>
 
@@ -20,6 +21,7 @@ export default {
     return {
       previousId: '',
       previousNetworkName: '',
+      loaded: true,
     };
   },
   computed: {
@@ -90,7 +92,8 @@ export default {
         this.fetchDataForMarketId(marketId, this.$store.state.network.networkName);
       }
     },
-    async fetchDataForMarketId(marketId:any, networkName:string) {
+    async fetchDataForMarketId(marketId: any, networkName: string) {
+      this.loaded = false;
       try {
         await Promise.all([
           this.$store.dispatch('tokenData/fetchTokenData', { marketId, networkName }),
@@ -98,8 +101,10 @@ export default {
           this.$store.dispatch('collateralData/fetchCollateralData', { marketId, networkName }),
           this.$store.dispatch('payoutData/fetchPayoutData', { marketId, networkName }),
         ]);
+        this.loaded = true;
       } catch (error) {
         console.error('Error fetching data:', error);
+        this.loaded = false;
       }
     },
     saveNetworkToLocalStore(chain:string) {

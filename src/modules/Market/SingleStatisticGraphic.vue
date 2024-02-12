@@ -1,28 +1,74 @@
 <template>
   <GraphicInterval
     :selectedInterval="currentInterval"
-    :intervals="['1D', '1W', '1M', '3M', '6M', '1Y', 'ALL TIME']"
+    :intervals="['1W', '1M', '3M', '6M', '1Y', 'ALL TIME']"
     @update:interval="updateInterval"
   />
   <div class="performance__graphic">
     <div class="performance__graphic-data">
       <p class="performance__graphic-title">
-        {{ graphicData.type === 'APY' ? `Average ${graphicData.token} APY` : `${graphicData.token} TVL` }}
+        {{ type === 'APY' ? `Average ${tokenData.tokenName} APY` : `${tokenData.tokenName} TVL` }}
       </p>
-      <div class="performance__graphic-data-text">
-        <p class="performance__graphic-value">{{ graphicData.value }}</p>
-        <p class="performance__graphic-date">{{ graphicData.value }}</p>
+      <div class="performance__graphic-values">
+        <p>{{ displayValue }}</p>
+        <p>{{ startDateLabel }}</p>
       </div>
     </div>
+
     <div class="performance__graphic-display">
-      <p>Graphic {{ currentInterval }}</p>
+      <canvas
+        ref="myChart"
+        :key="'canvas-' + currentInterval"
+      />
     </div>
   </div>
 </template>
 
 <script lang="ts">
-
+import { mapGetters } from 'vuex';
 import GraphicInterval from '@/modules/Market/GraphicInterval.vue';
+import { type Payout } from '@/modules/Market/types/index.ts';
+import { Chart, registerables } from 'chart.js';
+import { appNetworksData } from '@/utils/const.ts';
+
+const originPointPlugin = {
+  id: 'originPointPlugin',
+  afterDraw(chart: any) {
+    const { ctx } = chart;
+    const xAxis = chart.scales.x;
+    const yAxis = chart.scales.y;
+
+    const originX = xAxis.left;
+    const originY = yAxis.bottom;
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(originX, originY, 2, 0, 2 * Math.PI);
+    ctx.fillStyle = '#000';
+    ctx.fill();
+    ctx.restore();
+  },
+};
+
+const pointStylePlugin = {
+  id: 'pointStylePlugin',
+  afterDraw(chart: any) {
+    const { ctx } = chart;
+    const yAxis = chart.scales.y;
+    const middleY = (yAxis.top + yAxis.bottom) / 2;
+    ctx.save();
+    const { activeNetworkColor } = chart.options.plugins.pointStylePlugin;
+    ctx.strokeStyle = activeNetworkColor || '#ff0000';
+    ctx.setLineDash([5, 5]);
+    ctx.beginPath();
+    ctx.moveTo(chart.chartArea.left, middleY);
+    ctx.lineTo(chart.chartArea.right, middleY);
+    ctx.stroke();
+    ctx.restore();
+  },
+};
+
+Chart.register(...registerables, originPointPlugin, pointStylePlugin);
 
 export default {
   name: 'GraphicComponent',
@@ -34,34 +80,312 @@ export default {
       type: Object,
       required: true,
     },
+    tokenData: {
+      type: Object,
+      required: true,
+    },
+    type: {
+      type: String,
+      required: true,
+    },
   },
   data() {
     return {
-      currentInterval: '1D',
+      currentInterval: '1W',
+      myChart: null,
+      networksData: appNetworksData,
     };
   },
+  computed: {
+    ...mapGetters('network', ['networkId']),
+    ...mapGetters('theme', ['light']),
+
+    activeNetworkData() {
+      const data = appNetworksData.find((_) => _.chain === this.networkId);
+      return data || appNetworksData[0];
+    },
+    displayValue() {
+      if (this.type === 'APY') {
+        const payoutData = this.graphicData.payouts.slice(0, this.getInterval());
+        const sumYield = payoutData
+          .reduce((acc: any, payout: Payout) => acc + payout.annualizedYield, 0);
+        const avgYield = (sumYield / payoutData.length) || 0;
+        return `${avgYield.toFixed(2)}%`;
+      } if (this.type === 'TVL') {
+        const latestPayout = this.graphicData.payouts[0];
+        if (latestPayout) {
+          if (this.tokenData.tokenName === 'ETH+') {
+            return `${latestPayout.totalUsdPlus.toFixed(6)} WETH`;
+          }
+          return `$${latestPayout.totalUsdPlus.toFixed(2)}`;
+        }
+      }
+      return 'N/A';
+    },
+    startDateLabel() {
+      if (this.type === 'TVL') {
+        return 'Past 2 hours';
+      }
+      const payoutData = this.graphicData.payouts.slice(0, this.getInterval());
+      if (payoutData.length > 0) {
+        const lastDate = new Date(payoutData[payoutData.length - 1].payableDate);
+        return `from ${lastDate.toLocaleDateString()}`;
+      }
+      return '';
+    },
+    chartData() {
+      const payoutData = this.graphicData.payouts.slice(0, this.getInterval());
+      const activeNetworkColor = this.activeNetworkData.color;
+      payoutData.sort((a: { payableDate: any; }, b: { payableDate: any; }) => new Date(a
+        .payableDate).getTime() - new Date(b.payableDate).getTime());
+
+      return {
+        chartData: {
+          labels: payoutData
+            .map((payout: Payout) => new Date(payout.payableDate).toLocaleDateString()),
+          datasets: [{
+            label: false,
+            data: this.type === 'APY' ? payoutData.map((payout: Payout) => payout.annualizedYield) : payoutData
+              .map((payout: Payout) => payout.totalUsdPlus),
+            fill: false,
+            borderColor: activeNetworkColor,
+            backgroundColor: activeNetworkColor,
+            borderWidth: 2.5,
+            pointRadius: 0,
+            tension: 0,
+          }],
+        },
+      };
+    },
+    chartOptions() {
+      const isApyType = this.type === 'APY';
+      const isEth = this.tokenData.tokenName === 'ETH+';
+
+      const intervalData = this.graphicData.payouts.slice(0, this.getInterval());
+      const dataValues = this.type === 'APY'
+        ? intervalData.map((payout: Payout) => payout.annualizedYield)
+        : intervalData.map((payout: Payout) => payout.totalUsdPlus);
+
+      const minValue = Math.min(...dataValues);
+      const maxValue = Math.max(...dataValues);
+      const isDarkTheme = localStorage.getItem('theme-type') === 'dark';
+      return {
+        chartOptions: {
+          scales: {
+            y: {
+              beginAtZero: false,
+              title: {
+                display: true,
+              },
+              min: minValue,
+              max: maxValue,
+              ticks: {
+                color: isDarkTheme ? '#ffffff' : '#0f172a',
+                min: 4,
+                callback: (value: any) => {
+                  if (isApyType) {
+                    return `${value.toFixed(2)}%`;
+                  } if (this.tokenData.tokenName === 'ETH+') {
+                    return `${value.toLocaleString()} WETH`;
+                  }
+                  const formatter = new Intl.NumberFormat('fr-FR', {
+                    minimumFractionDigits: 1,
+                    maximumFractionDigits: 1,
+                  });
+                  const formattedValue = formatter.format(value);
+                  return `$${formattedValue}`;
+                },
+              },
+
+              grid: {
+                display: false,
+              },
+            },
+            x: {
+              ticks: {
+                display: false,
+              },
+              title: {
+                display: false,
+              },
+              grid: {
+                display: false,
+              },
+            },
+          },
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false,
+            },
+            tooltip: {
+              enabled: true,
+              mode: 'index',
+              intersect: false,
+              backgroundColor: '#ffffff',
+              titleFont: {
+                size: 12,
+              },
+              titleColor: '#687386',
+              bodyFont: {
+                size: 12,
+                weight: 'bold',
+              },
+              bodyColor: '#000',
+              displayColors: false,
+              padding: 10,
+              callbacks: {
+                label(context: any) {
+                  let label = context.dataset.label || '';
+
+                  if (label) {
+                    label += ': ';
+                  }
+                  const value = context.parsed.y;
+                  if (isApyType) {
+                    label += `APY: ${value.toFixed(2)}%`;
+                  } else if (isEth) {
+                    label += `TVL WETH ${value.toLocaleString()}`;
+                  } else {
+                    label += `TVL $${value.toLocaleString()}`;
+                  }
+                  return label;
+                },
+                title(context: any) {
+                  if (context.length > 0) {
+                    const reversedData = [...intervalData].reverse();
+                    const pointIndex = context[0].dataIndex;
+                    const date = new Date(reversedData[pointIndex].payableDate);
+                    const day = date.getUTCDate().toString().padStart(2, '0');
+                    const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+                    const year = date.getUTCFullYear();
+                    const hours = date.getUTCHours().toString().padStart(2, '0');
+                    const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+                    const formattedDate = `${day}.${month}.${year}, ${hours}:${minutes} UTS`;
+                    return formattedDate;
+                  }
+                  return '';
+                },
+
+              },
+            },
+            pointStylePlugin: {
+              activeNetworkColor: '',
+            },
+          },
+          interaction: {
+            mode: 'nearest',
+            axis: 'x',
+            intersect: false,
+          },
+          elements: {
+            line: {
+              tension: 0.4,
+            },
+            point: {
+              radius: 0,
+            },
+          },
+        },
+      };
+    },
+  },
+
   methods: {
     updateInterval(newInterval: string) {
       this.currentInterval = newInterval;
+      this.$nextTick(() => {
+        if (this.$refs.myChart) {
+          this.initChart();
+        } else {
+          console.error('Canvas element is not available.');
+        }
+      });
     },
+
+    getInterval() {
+      let sliceEnd;
+      switch (this.currentInterval) {
+        case '1W':
+          sliceEnd = 7;
+          break;
+        case '1M':
+          sliceEnd = 30;
+          break;
+        case '3M':
+          sliceEnd = 90;
+          break;
+        case '6M':
+          sliceEnd = 180;
+          break;
+        case '1Y':
+          sliceEnd = 365;
+          break;
+        case 'ALL TIME':
+          sliceEnd = this.graphicData.payouts.length;
+          break;
+        default:
+          sliceEnd = 7;
+          break;
+      }
+      return sliceEnd;
+    },
+    initChart() {
+      if (this.$refs.myChart) {
+        const canvas = this.$refs.myChart as HTMLCanvasElement;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          const { chartData } = this.chartData;
+          const { chartOptions } = this.chartOptions;
+          chartOptions.plugins = chartOptions.plugins || {};
+          chartOptions.plugins.pointStylePlugin = chartOptions.plugins.pointStylePlugin || {};
+          chartOptions.plugins.pointStylePlugin.activeNetworkColor = this.activeNetworkData.color;
+          this.myChart = new Chart(ctx, {
+            type: 'line',
+            data: chartData as any,
+            options: chartOptions as any,
+            plugins: [originPointPlugin, pointStylePlugin],
+          }) as any;
+        } else {
+          console.error('Failed to get canvas context.');
+        }
+      } else {
+        console.error('Canvas element is not available for chart initialization.');
+      }
+    },
+
+  },
+  mounted() {
+    this.initChart();
   },
 };
 </script>
 
 <style lang="scss" scoped>
+.performance__graphic-display {
+  width: 100%;
+  min-height: 250px;
+}
 .performance__graphic{
+  min-height: 250px;
+  background-color: var(--color-8);
   display: flex;
   flex-direction: column;
-  padding: 22px 39px;
+  padding: 5px 10px;
   justify-content: space-between;
   align-items: flex-start;
   flex-shrink: 0;
   border-radius: 5px;
-  border: 1px solid var(--color-1);
+  border: 1px solid var(--color-8);
   margin-top: 5px;
+  [data-theme="dark"] & {
+    background-color: var(--color-7);
+  }
 }
 
 .performance__graphic-data {
+  margin-top: 10px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -102,7 +426,48 @@ export default {
   }
 }
 
-@media (max-width: 1250px) {
+.performance__graphic-values {
+  p {
+    text-align: right;
+  }
+}
+
+.performance__graphic-values :nth-child(1) {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-1);
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
+}
+
+.performance__graphic-values :nth-child(2) {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--color-2);
+  [data-theme="dark"] & {
+    color: var(--color-3);
+  }
+}
+@media (max-width: 1024px) {
+  .performance__graphic-display {
+    width: 100%;
+    min-height: 150px;
+  }
+.performance__graphic{
+  min-height: 150px;
+  background-color: var(--color-8);
+  display: flex;
+  flex-direction: column;
+  padding: 5px 10px;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-shrink: 0;
+  border-radius: 5px;
+  border: 1px solid var(--color-8);
+  margin-top: 5px;
+}
+
   .performance__graphic-data-text {
     margin-left: 50px;
   }
