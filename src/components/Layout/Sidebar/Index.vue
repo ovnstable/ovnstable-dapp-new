@@ -65,7 +65,7 @@
         >
           <BaseIcon
             name="IconTwitter"
-            class="sidebar__icon-social"
+            class="sidebar__icon-social icon-twitter"
           />
         </a>
         <a
@@ -76,7 +76,7 @@
         >
           <BaseIcon
             name="IconDiscord"
-            class="sidebar__icon-social"
+            class="sidebar__icon-social icon-discord"
           />
         </a>
       </div>
@@ -131,7 +131,6 @@ export default {
   },
   methods: {
     toggleTheme() {
-      console.log('-toggleTheme');
       this.$store.dispatch('theme/switchTheme');
     },
   },
@@ -171,7 +170,7 @@ export default {
   font-size: 15px;
   font-weight: 600;
    [data-theme="dark"] & {
-      color: var(--color-3);
+    color: var(--color-3);
   }
 }
 
@@ -220,7 +219,7 @@ export default {
   font-weight: 600;
 
   [data-theme="dark"] & {
-      color: var(--color-3);
+    color: var(--color-3);
   }
 }
 
@@ -230,7 +229,24 @@ export default {
 .sidebar__icon-social:hover {
   cursor: pointer;
   transform: scale(1.2);
-  transition: transform 0.15s ease
+  transition: transform 0.15s ease;
+}
+.sidebar__icon-social {
+  fill: var(--color-2);
+  [data-theme="dark"] & {
+    fill: var(--color-4);
+  }
+}
+
+.icon-twitter:hover {
+  fill: var(--color-3);
+  [data-theme="dark"] & {
+    fill: var(--color-8);
+  }
+}
+
+.icon-discord:hover {
+  fill: #5765f1;
 }
 
 .sidebar__divider-bottom {
@@ -239,7 +255,7 @@ export default {
   border: 1px solid var(--color-2);
 
   [data-theme="dark"] & {
-      color: var(--color-3);
+    color: var(--color-3);
   }
 }
 
