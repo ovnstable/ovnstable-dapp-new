@@ -97,7 +97,8 @@ export default {
       return this.$store.state.network.explorerUrl;
     },
     availableChains() {
-      const tokenKey = `${this.tokenData.tokenName.toLowerCase().slice(0, -1)}Plus`;
+      const tokenKey = `${this.tokenData.tokenName?.toLowerCase()?.slice(0, -1)}Plus`;
+      if (!tokenKey) return [];
       const availableNetworks = Object.entries(chainContractsMap)
         .reduce((acc, [network, tokens]: any) => {
           if ((tokenKey in tokens) && tokens[tokenKey].tokenPlus) {
@@ -118,7 +119,8 @@ export default {
         return '';
       }
 
-      const tokenKey = `${tokenName.toLowerCase().slice(0, -1)}Plus`;
+      const tokenKey = `${tokenName.toLowerCase()?.slice(0, -1)}Plus`;
+      if (!tokenKey) return '';
       const networkContracts = (chainContractsMap as any)[networkName.toLowerCase()];
       if (!networkContracts || !(tokenKey in networkContracts)) {
         console.error(`Contracts not found for ${tokenKey} on ${networkName}`);

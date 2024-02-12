@@ -1,5 +1,12 @@
 <template>
   <div
+    v-if="firstLoad"
+    class="market__loader"
+  >
+    <Spinner />
+  </div>
+  <div
+    v-else
     class="market-wrapper"
   >
     <Transition name="slide-fade">
@@ -61,6 +68,10 @@ export default {
     payoutData: {
       type: Object,
       default: () => ({}),
+    },
+    firstLoad: {
+      type: Boolean,
+      required: true,
     },
     loaded: {
       type: Boolean,

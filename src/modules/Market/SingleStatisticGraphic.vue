@@ -106,7 +106,7 @@ export default {
     },
     displayValue() {
       if (this.type === 'APY') {
-        const payoutData = this.graphicData.payouts.slice(0, this.getInterval());
+        const payoutData = this.graphicData.payouts?.slice(0, this.getInterval());
         const sumYield = payoutData
           .reduce((acc: any, payout: Payout) => acc + payout.annualizedYield, 0);
         const avgYield = (sumYield / payoutData.length) || 0;
@@ -126,7 +126,7 @@ export default {
       if (this.type === 'TVL') {
         return 'Past 2 hours';
       }
-      const payoutData = this.graphicData.payouts.slice(0, this.getInterval());
+      const payoutData = this.graphicData.payouts?.slice(0, this.getInterval());
       if (payoutData.length > 0) {
         const lastDate = new Date(payoutData[payoutData.length - 1].payableDate);
         return `from ${lastDate.toLocaleDateString()}`;
@@ -134,7 +134,7 @@ export default {
       return '';
     },
     chartData() {
-      const payoutData = this.graphicData.payouts.slice(0, this.getInterval());
+      const payoutData = this.graphicData.payouts?.slice(0, this.getInterval());
       const activeNetworkColor = this.activeNetworkData.color;
       payoutData.sort((a: { payableDate: any; }, b: { payableDate: any; }) => new Date(a
         .payableDate).getTime() - new Date(b.payableDate).getTime());
@@ -161,7 +161,7 @@ export default {
       const isApyType = this.type === 'APY';
       const isEth = this.tokenData.tokenName === 'ETH+';
 
-      const intervalData = this.graphicData.payouts.slice(0, this.getInterval());
+      const intervalData = this.graphicData.payouts?.slice(0, this.getInterval());
       const dataValues = this.type === 'APY'
         ? intervalData.map((payout: Payout) => payout.annualizedYield)
         : intervalData.map((payout: Payout) => payout.totalUsdPlus);

@@ -4,6 +4,7 @@
     :portfolio-data="portfolioData"
     :collateral-data="collateralData"
     :payout-data="payoutData"
+    :first-load="firstRender"
     :loaded="loaded"
   />
 </template>
@@ -22,6 +23,7 @@ export default {
       previousId: '',
       previousNetworkName: '',
       loaded: true,
+      firstRender: true,
     };
   },
   computed: {
@@ -37,6 +39,8 @@ export default {
     payoutData() {
       return this.$store.state.payoutData.payoutData || {};
     },
+  },
+  mounted() {
   },
   watch: {
     '$route.params.id': {
@@ -102,9 +106,11 @@ export default {
           this.$store.dispatch('payoutData/fetchPayoutData', { marketId, networkName }),
         ]);
         this.loaded = true;
+        this.firstRender = false;
       } catch (error) {
         console.error('Error fetching data:', error);
         this.loaded = false;
+        this.firstRender = false;
       }
     },
     saveNetworkToLocalStore(chain:string) {
