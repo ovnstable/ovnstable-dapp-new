@@ -21,7 +21,7 @@
   --section-gap: 160px;
   a:hover,
   router-link:hover {
-    color: var(--color-3);
+    color: var(--color-2);
     transition: color 0.15s ease;
   }
   .link-ovn {
@@ -47,11 +47,16 @@
   --color-15: #ffde76;
   --color-16: #e3f2fd;
   --color-17: #0f172a;
+  --color-18: #adbacd;
   --section-gap: 160px;
   a:hover,
   router-link:hover {
-      color: var(--color-2);
-      transition: color 0.15s ease;
+    color: var(--color-2);
+    transition: color 0.15s ease;
+  }
+  .link-ovn {
+    text-decoration: underline;
+    text-decoration-color: var(--color-2);
   }
 }
 

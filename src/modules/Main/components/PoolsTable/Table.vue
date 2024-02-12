@@ -398,6 +398,15 @@ export default defineComponent({
   font-weight: 500;
   font-size: 14px;
   border-radius: 30px;
+  [data-theme="dark"] & {
+    background-color: var(--color-6);
+  }
+}
+
+.card-label {
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
 }
 
 .pools-table__content {
@@ -410,6 +419,9 @@ export default defineComponent({
   width: 100%;
   padding: 15px 0;
   border-bottom: 1px solid var(--color-17);
+  [data-theme="dark"] & {
+    border-bottom-color: var(--color-7);
+  }
 }
 
 .pools-header {
@@ -419,6 +431,10 @@ export default defineComponent({
   color: var(--color-2);
   margin-top: 20px;
   padding: 0 20px;
+  [data-theme="dark"] & {
+    background-color: var(--color-6);
+    color: var(--color-18);
+  }
 }
 
 .pools-header__item {
@@ -448,6 +464,10 @@ export default defineComponent({
   padding: 4px;
   background-color: var(--color-4);
   border: 1px solid var(--color-17);
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
+    border-color: var(--color-2);
+  }
 
   svg {
     width: 80%;
@@ -471,6 +491,11 @@ export default defineComponent({
   background-color: var(--color-4);
   border-radius: 30px;
   right: 26px;
+  [data-theme="dark"] & {
+    border-color: var(--color-2);
+    background-color: var(--color-17);
+    color: var(--color-4);
+  }
 
   &:first-child {
     right: 0;
@@ -494,6 +519,12 @@ export default defineComponent({
 .pools-table__platform {
   display: flex;
   align-items: center;
+
+  span {
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
+  }
 }
 
 .pools-table__platform-icon {
@@ -518,6 +549,9 @@ export default defineComponent({
   font-size: 16px;
   font-weight: 500;
   text-transform: uppercase;
+  [data-theme="dark"] & {
+    color: var(--color-18);
+  }
 }
 
 .pools-table__footer {

@@ -176,7 +176,7 @@ export default {
   font-size: 15px;
   font-weight: 500;
   [data-theme="dark"] & {
-    color: var(--color-3);
+    color: var(--color-18);
   }
 }
 .performance__token-data-title--token {
@@ -194,7 +194,7 @@ export default {
   font-size: 12px;
   font-weight: 600;
   [data-theme="dark"] & {
-    color: var(--color-3);
+    color: var(--color-18);
   }
 }
 .performance__token-data__description {
@@ -206,7 +206,7 @@ export default {
   max-width: 186px;
   line-height: 1.1;
   [data-theme="dark"] & {
-    color: var(--color-3);
+    color: var(--color-18);
   }
 }
 
@@ -215,7 +215,7 @@ export default {
   margin-right: 30px;
   border: 1px solid var(--color-7);
   [data-theme="dark"] & {
-    border: 1px solid var(--color-4);
+    border-color: var(--color-2);
   }
 }
 

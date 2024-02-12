@@ -320,7 +320,7 @@ export default {
 
   &:first-child {
     span {
-      color: var(--color-3);
+      color: var(--color-18);
     }
   }
 

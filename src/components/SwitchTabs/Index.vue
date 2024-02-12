@@ -98,7 +98,8 @@ export default {
   background: var(--color-5);
   border-radius: 30px;
   [data-theme="dark"] & {
-     color: var(--color-3);
+    color: var(--color-18);
+    background: var(--color-6);
   }
 }
 
@@ -111,7 +112,9 @@ export default {
   background: var(--color-5);
   z-index: 2;
   transition: opacity .2s ease, color .2s ease;
-
+  [data-theme="dark"] & {
+    background-color: var(--color-6);
+  }
   &.large {
     padding: 9px 20px;
   }
@@ -132,11 +135,17 @@ export default {
     visibility: hidden;
     transform: translateX(-7px);
     transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.87, -0.65, 0.09, 0.91) .1s, visibility 0.2s ease;
+    [data-theme="dark"] & {
+      border-color: var(--color-2);
+    }
   }
 
   &:hover {
     color: var(--color-3);
     opacity: .7;
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
   }
 
   &:last-child {

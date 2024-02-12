@@ -169,6 +169,9 @@ export default {
 
   &.primary {
     background-color: var(--color-5);
+    [data-theme="dark"] & {
+      background-color: var(--color-6);
+    }
   }
 
   input {
@@ -203,7 +206,7 @@ export default {
   &::placeholder {
     color: #9F9F9F;
     [data-theme="dark"] & {
-      color: var(--color-3);
+      color: var(--color-18);
     }
   }
 

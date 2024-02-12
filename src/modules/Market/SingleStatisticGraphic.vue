@@ -446,7 +446,7 @@ export default {
   font-weight: 500;
   color: var(--color-2);
   [data-theme="dark"] & {
-    color: var(--color-3);
+    color: var(--color-18);
   }
 }
 @media (max-width: 1024px) {

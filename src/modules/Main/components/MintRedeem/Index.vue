@@ -607,7 +607,7 @@ export default {
     font-size: 14px;
     color: var(--color-1);
     [data-theme="dark"] & {
-      color: var(--color-3);
+      color: var(--color-18);
     }
   }
 
@@ -616,7 +616,7 @@ export default {
     font-size: 14px;
     color: var(--color-2);
     [data-theme="dark"] & {
-      color: var(--color-3);
+      color: var(--color-18);
     }
   }
 }
@@ -633,8 +633,8 @@ export default {
   margin-top: auto;
   button {
     [data-theme="dark"] & {
-      background-color: var(--color-6);
-      color: var(--color-3);
+      background-color: var(--color-7);
+      color: var(--color-18);
     }
   }
 }

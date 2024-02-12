@@ -1653,7 +1653,7 @@ export default defineComponent({
 .swap-form__body-block h3,
 .swap-form__body-block__title h3 {
   [data-theme="dark"] & {
-    color: var(--color-3);
+    color: var(--color-18);
   }
 }
 
@@ -1692,7 +1692,7 @@ export default defineComponent({
   transition: color .1s ease;
 
   [data-theme="dark"] & {
-    color: var(--color-3);
+    color: var(--color-18);
   }
 
   &:hover {
@@ -1716,7 +1716,8 @@ export default defineComponent({
   transition: background-color .2s ease;
 
   [data-theme="dark"] & {
-    background-color: var(--color-6);
+    background-color: var(--color-7);
+    color: var(--color-8);
   }
 
   &:hover {
@@ -1749,6 +1750,7 @@ export default defineComponent({
   border-top: 0;
   [data-theme="dark"] & {
     background-color: var(--color-17);
+    border: 2px solid var(--color-2);
   }
 }
 .swap-form__body-block {
@@ -1769,7 +1771,7 @@ export default defineComponent({
   font-weight: 500;
   color: var(--color-7);
   [data-theme="dark"] & {
-    color: var(--color-3);
+    color: var(--color-18);
   }
 }
 
@@ -1789,6 +1791,13 @@ export default defineComponent({
   cursor: pointer;
   transition: background-color .2s ease;
 
+  svg {
+    fill: var(--color-2);
+  }
+  [data-theme="dark"] & {
+    background-color: var(--color-7);
+  }
+
   &:hover {
     background-color: var(--color-6);
   }
@@ -1798,8 +1807,8 @@ export default defineComponent({
   margin-top: 20px;
   button {
     [data-theme="dark"] & {
-      background-color: var(--color-6);
-      color: var(--color-3);
+      background-color: var(--color-7);
+      color: var(--color-18);
     }
   }
 }

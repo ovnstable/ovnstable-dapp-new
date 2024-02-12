@@ -100,7 +100,7 @@ export default defineComponent({
     font-weight: 500;
     color: var(--color-1);
     [data-theme="dark"] & {
-      color: var(--color-3);
+      color: var(--color-18);
     }
   }
 }

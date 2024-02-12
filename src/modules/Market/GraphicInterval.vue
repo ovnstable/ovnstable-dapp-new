@@ -39,7 +39,7 @@ export default {
   cursor: pointer;
   color: var(--color-2);
   [data-theme="dark"] & {
-    color: var(--color-3);
+    color: var(--color-18);
   }
 }
 

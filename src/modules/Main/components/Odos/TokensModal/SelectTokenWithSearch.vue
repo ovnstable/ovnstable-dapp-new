@@ -250,7 +250,7 @@ export default defineComponent({
 
   p {
     [data-theme="dark"] & {
-      color: var(--color-3);
+      color: var(--color-18);
     }
   }
 
@@ -272,7 +272,7 @@ export default defineComponent({
 
   span {
     [data-theme="dark"] & {
-      color: var(--color-3);
+      color: var(--color-18);
     }
   }
 }
@@ -291,6 +291,10 @@ export default defineComponent({
   padding: 5px 8px;
   border-radius: 12px;
   background-color: var(--color-5);
+
+  [data-theme="dark"] & {
+    background-color: var(--color-7);
+  }
 
   img {
     width: 24px;

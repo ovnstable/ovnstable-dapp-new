@@ -204,7 +204,7 @@ export default defineComponent({
   border-radius: 10px;
   padding: 20px 15px 15px 15px;
   [data-theme="dark"] & {
-    background-color: var(--color-6);
+    background-color: var(--color-7);
   }
 }
 
@@ -224,7 +224,7 @@ export default defineComponent({
 
 .input-tokens__balance {
   [data-theme="dark"] & {
-    color: var(--color-3);
+    color: var(--color-18);
   }
 }
 
@@ -250,7 +250,7 @@ export default defineComponent({
   transition: background-color .2s ease, color .2s ease;
   [data-theme="dark"] & {
     background-color: var(--color-17);
-    color: var(--color-3);
+    color: var(--color-18);
   }
 
   &:hover {
@@ -271,7 +271,7 @@ export default defineComponent({
   cursor: pointer;
   [data-theme="dark"] & {
     background-color: var(--color-17);
-    color: var(--color-3);
+    color: var(--color-4);
   }
 
   img {

@@ -141,7 +141,7 @@ export default {
   background-color: #fff;
   [data-theme="dark"] & {
     background-color: var(--color-17);
-    border-bottom: 1px solid var(--color-4);
+    border-bottom: 1px solid var(--color-2);
   }
 }
 
@@ -220,7 +220,7 @@ export default {
   cursor: pointer;
   transition: background-color .2s ease, color .2s ease;
   [data-theme="dark"] & {
-    color: var(--color-3);
+    color: var(--color-18);
   }
   svg {
     width: 18px;

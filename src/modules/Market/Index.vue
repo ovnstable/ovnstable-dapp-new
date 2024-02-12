@@ -90,7 +90,9 @@ export default {
   padding-bottom: 20px;
   width: calc(100% - 40px);
   [data-theme="dark"] & {
-      background: var(--color-6);
+    background: var(--color-6);
+    border-color: var(--color-2);
+    box-shadow: 0px 1px 0px 0px var(--color-2);
   }
 }
 .market__token-data,
@@ -117,10 +119,16 @@ export default {
   z-index: -1;
   margin-top: -10px;
   border-radius: 0px 0px 30px 30px;
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
 }
 
 .market__payout-inner {
   border-radius: 0px 0px 30px 30px;
+  [data-theme="dark"] & {
+    border-color: var(--color-2);
+  }
 }
 
 .market__loader {
