@@ -141,7 +141,7 @@ export default {
   background-color: #fff;
   [data-theme="dark"] & {
     background-color: var(--color-17);
-    border-bottom: 1px solid var(--color-4);
+    border-bottom: 1px solid var(--color-2);
   }
 }
 

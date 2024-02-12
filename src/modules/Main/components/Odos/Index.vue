@@ -1749,6 +1749,7 @@ export default defineComponent({
   border-top: 0;
   [data-theme="dark"] & {
     background-color: var(--color-17);
+    border: 2px solid var(--color-2);
   }
 }
 .swap-form__body-block {

@@ -229,7 +229,7 @@ export default {
   border-top-right-radius: 15px;
 
   [data-theme="dark"] & {
-      border: 2px solid var(--color-16);
+      border: 2px solid var(--color-2);
       color: #848D9C;
       background: var(--color-17);
   }
@@ -259,7 +259,7 @@ export default {
   [data-theme="dark"] & {
       background: var(--color-17);
       color: var(--color-4);
-      border: 2px solid var(--color-1);
+      border: 2px solid var(--color-2);
       border-bottom: 0;
   }
 }
@@ -333,7 +333,7 @@ export default {
   border-width: 0 0 2px 2px;
   border-radius: 0 50% 0 50%;
   [data-theme="dark"] & {
-       border-color: var(--color-1);
+       border-color: var(--color-2);
   }
 }
 
@@ -343,7 +343,7 @@ export default {
   border-radius: 0 50% 0 50%;
   transform: rotate(90deg);
   [data-theme="dark"] & {
-       border-color: var(--color-1);
+       border-color: var(--color-2);
   }
 }
 .tabs-header__ul li:first-child span:before,
