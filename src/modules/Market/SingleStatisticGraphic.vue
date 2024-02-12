@@ -25,9 +25,11 @@
 </template>
 
 <script lang="ts">
+import { mapGetters } from 'vuex';
 import GraphicInterval from '@/modules/Market/GraphicInterval.vue';
 import { type Payout } from '@/modules/Market/types/index.ts';
 import { Chart, registerables } from 'chart.js';
+import { appNetworksData } from '@/utils/const.ts';
 
 const originPointPlugin = {
   id: 'originPointPlugin',
@@ -50,12 +52,16 @@ const originPointPlugin = {
 
 const pointStylePlugin = {
   id: 'pointStylePlugin',
-  afterDraw(chart: any) {
+  afterDraw(chart) {
     const { ctx } = chart;
     const yAxis = chart.scales.y;
     const middleY = (yAxis.top + yAxis.bottom) / 2;
     ctx.save();
-    ctx.strokeStyle = '#ff0000';
+
+    // Access the active network color from the chart instance
+    const { activeNetworkColor } = chart.options.plugins.pointStylePlugin;
+
+    ctx.strokeStyle = activeNetworkColor || '#ff0000'; // Fallback color if not set
     ctx.setLineDash([5, 5]);
     ctx.beginPath();
     ctx.moveTo(chart.chartArea.left, middleY);
@@ -90,9 +96,15 @@ export default {
     return {
       currentInterval: '1W',
       myChart: null,
+      networksData: appNetworksData,
     };
   },
   computed: {
+    ...mapGetters('network', ['networkId']),
+    activeNetworkData() {
+      const data = appNetworksData.find((_) => _.chain === this.networkId);
+      return data || appNetworksData[0];
+    },
     displayValue() {
       if (this.type === 'APY') {
         const payoutData = this.graphicData.payouts.slice(0, this.getInterval());
@@ -111,7 +123,6 @@ export default {
       }
       return 'N/A';
     },
-
     startDateLabel() {
       if (this.type === 'TVL') {
         return 'Past 2 hours';
@@ -125,6 +136,7 @@ export default {
     },
     chartData() {
       const payoutData = this.graphicData.payouts.slice(0, this.getInterval());
+      const activeNetworkColor = this.activeNetworkData.color;
       payoutData.sort((a: { payableDate: any; }, b: { payableDate: any; }) =>
         new Date(a.payableDate) - new Date(b.payableDate));
 
@@ -136,8 +148,8 @@ export default {
           data: this.type === 'APY' ? payoutData.map((payout: Payout) => payout.annualizedYield) : payoutData
             .map((payout: Payout) => payout.totalUsdPlus),
           fill: false,
-          borderColor: '#ff1100',
-          backgroundColor: 'rgb(255, 99, 132)',
+          borderColor: activeNetworkColor,
+          backgroundColor: activeNetworkColor,
           borderWidth: 2.5,
           pointRadius: 0,
           tension: 0,
@@ -237,6 +249,22 @@ export default {
                 }
                 return label;
               },
+              title(context: any) {
+                if (context.length > 0) {
+                  const pointIndex = context[0].dataIndex;
+                  const date = new Date(intervalData[pointIndex].payableDate);
+                  const day = date.getUTCDate().toString().padStart(2, '0');
+                  const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+                  const year = date.getUTCFullYear();
+                  const hours = date.getUTCHours().toString().padStart(2, '0');
+                  const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+                  const formattedDate = `${day}.${month}.${year}, ${hours}:${minutes} UTS`;
+                  console.log(formattedDate);
+                  return formattedDate;
+                }
+                return '';
+              },
+
             },
           },
 
@@ -297,14 +325,15 @@ export default {
       }
       return sliceEnd;
     },
-
     initChart() {
       if (this.$refs.myChart) {
         const ctx = this.$refs.myChart.getContext('2d');
         if (ctx) {
           const chartData = this.chartData;
           const chartOptions = this.chartOptions;
-
+          chartOptions.plugins = chartOptions.plugins || {};
+          chartOptions.plugins.pointStylePlugin = chartOptions.plugins.pointStylePlugin || {};
+          chartOptions.plugins.pointStylePlugin.activeNetworkColor = this.activeNetworkData.color;
           this.myChart = new Chart(ctx, {
             type: 'line',
             data: chartData,
@@ -318,6 +347,7 @@ export default {
         console.error('Canvas element is not available for chart initialization.');
       }
     },
+
   },
 
   mounted() {
