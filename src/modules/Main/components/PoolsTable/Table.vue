@@ -208,6 +208,7 @@
               <ButtonComponent
                 v-if="pool.zappable"
                 btnStyles="faded"
+                disabled
                 @click="console.log('ZAPIN')"
               >
                 ZAPIN
