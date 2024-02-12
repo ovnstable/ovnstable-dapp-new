@@ -6,7 +6,11 @@
           to="/"
           class="app-header__content__logo"
         >
-          <BaseIcon name="IconLogo" />
+          <BaseIcon
+            class="app-header__content__logo-svg"
+            name="IconLogo"
+          />
+
           <h1>
             OVERNIGHT
           </h1>
@@ -38,7 +42,10 @@
             interactive
             placement="bottom-end"
           >
-            <ButtonComponent btn-styles="secondary">
+            <ButtonComponent
+              class="app-header__chain_account"
+              btn-styles="secondary"
+            >
               <BaseIcon
                 class="networks-active"
                 :name="activeNetworkData.name.toLowerCase()"
@@ -113,6 +120,15 @@ export default {
   },
 };
 </script>
+<style lang="scss">
+.app-header__content__logo-svg path {
+  fill: var(--color-1);
+
+  [data-theme="dark"] & {
+    fill: var(--color-4);
+  }
+}
+</style>
 
 <style lang="scss" scoped>
 .app-header {
@@ -123,11 +139,15 @@ export default {
   width: 100%;
   padding: 12px 0;
   background-color: #fff;
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
+    border-bottom: 1px solid var(--color-4);
+  }
 }
 
 .app-header__container {
   width: 100%;
-  max-width: 1360px;
+  max-width: 1350px;
   padding: 0 20px;
   margin: 0 auto;
 }
@@ -140,12 +160,14 @@ export default {
 .app-header__content__logo {
   display: flex;
   align-items: center;
-
   h1 {
     color: var(--color-1);
     font-size: 15px;
     font-weight: 700;
     margin-left: 8px;
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
   }
 }
 
@@ -153,13 +175,21 @@ export default {
   display: flex;
   align-items: center;
   padding: 5px 8px 5px 20px;
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
+    color: var(--color-4);
+  }
 
   span {
     position: relative;
     top: 1px;
   }
 }
-
+.app-header__chain_account {
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
+  }
+}
 .app-header__chain {
   position: relative;
   margin-left: 20px;
@@ -179,6 +209,9 @@ export default {
   border: 1px solid var(--color-1);
   background: var(--color-4);
   box-shadow: 0px 1px 0px 0px var(--color-1);
+  [data-theme="dark"] & {
+    background: var(--color-17);
+  }
 }
 
 .networks-list__item {
@@ -186,7 +219,9 @@ export default {
   padding: 8px 14px;
   cursor: pointer;
   transition: background-color .2s ease, color .2s ease;
-
+  [data-theme="dark"] & {
+    color: var(--color-3);
+  }
   svg {
     width: 18px;
     height: 18px;
@@ -203,7 +238,10 @@ export default {
 
   &:hover {
     background-color: var(--color-3);
-    color: var(--color-4)
+    color: var(--color-4);
+    [data-theme="dark"] & {
+      background-color: var(--color-5);
+    }
   }
 }
 

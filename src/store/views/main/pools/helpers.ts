@@ -1,5 +1,9 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-unused-expressions */
+import { poolTypes } from '@/modules/Main/components/PoolsTable/types/index.ts';
+
+const STABLE_TOKENS = ['USD+', 'DAI+', 'WUSD+', 'USDC+', 'USDT+'];
+
 export const buildLink = (pool: any) => {
   let url;
 
@@ -264,8 +268,35 @@ export const buildLink = (pool: any) => {
   return url;
 };
 
-export const getSortedPools = (pools: any[], isOvnPools: boolean) => {
-  let topPools;
+const filterByPoolType = (
+  poolsList: any[],
+  filterType: poolTypes,
+) => {
+  if (filterType === poolTypes.TOKENPLUS) {
+    return poolsList.filter((_) => {
+      const poolTokens = _.name.split('/');
+      if (poolTokens.every((id: string) => STABLE_TOKENS.includes(id))) return true;
+      return false;
+    });
+  }
+
+  if (filterType === poolTypes.OVN) {
+    return poolsList.filter((_) => {
+      const poolTokens = _.name.split('/');
+      if (poolTokens.some((id: string) => ['OVN'].includes(id))) return true;
+      return false;
+    });
+  }
+
+  return poolsList;
+};
+
+export const getSortedPools = (
+  pools: any[],
+  filterByTvl: boolean,
+  filterByType = poolTypes.ALL,
+) => {
+  let poolsList = [];
 
   const revertAgg = [
     '0x844D7d2fCa6786Be7De6721AabdfF6957ACE73a0',
@@ -288,28 +319,31 @@ export const getSortedPools = (pools: any[], isOvnPools: boolean) => {
     return true;
   });
 
-  if (!isOvnPools) {
-    topPools = filteredPools
+  if (!filterByTvl) {
+    poolsList = filteredPools
       .filter((pool) => (promotePools.includes(pool.address) ? pool : pool.tvl >= 300000));
   } else {
-    topPools = filteredPools;
+    poolsList = filteredPools;
   }
 
-  topPools = topPools.sort((a, b) => {
+  poolsList = poolsList.sort((a, b) => {
     if (a.feature && !b.feature) {
-      return -1; // a comes first when a is featured and b is not
+      return -1;
     } if (!a.feature && b.feature) {
-      return 1; // b comes first when b is featured and a is not
+      return 1;
     } if (a.apr !== b.apr) {
-      return b.apr - a.apr; // sort by APR number
+      return b.apr - a.apr;
     }
-    return b.tvl - a.tvl; // sort by TVL number
+    return b.tvl - a.tvl;
   });
 
-  return [...topPools];
+  return filterByPoolType(poolsList, filterByType);
 };
 
-export const getSortedSecondPools = (pools: any[]) => {
+export const getSortedSecondPools = (
+  pools: any[],
+  filterByType = poolTypes.ALL,
+) => {
   let secondPools = pools.filter((pool) => {
     // this is for new pools which TVL do not pass pool.tvl < 300000 && pool.tvl > 100000
     // but its should be displayed
@@ -340,7 +374,7 @@ export const getSortedSecondPools = (pools: any[]) => {
     return b.tvl - a.tvl; // sort by TVL number
   });
 
-  return [...secondPools];
+  return filterByPoolType(secondPools, filterByType);
 };
 
 export const initFeature = (pools: any[]) => {

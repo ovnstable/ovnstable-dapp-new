@@ -606,12 +606,18 @@ export default {
     font-weight: 500;
     font-size: 14px;
     color: var(--color-1);
+    [data-theme="dark"] & {
+      color: var(--color-3);
+    }
   }
 
   h2 {
     font-weight: 500;
     font-size: 14px;
     color: var(--color-2);
+    [data-theme="dark"] & {
+      color: var(--color-3);
+    }
   }
 }
 
@@ -625,6 +631,12 @@ export default {
 
 .mintredeem-form__btns {
   margin-top: auto;
+  button {
+    [data-theme="dark"] & {
+      background-color: var(--color-6);
+      color: var(--color-3);
+    }
+  }
 }
 
 .mintredeem-form__row-item {
@@ -640,6 +652,7 @@ export default {
   &:last-child {
     justify-content: flex-end;
   }
+
 }
 </style>
 @/utils/contractApprove

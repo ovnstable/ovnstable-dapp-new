@@ -7,41 +7,66 @@
       class="pools-wrap__loader"
       v-if="isPoolsLoading"
     >
-      <Spinner />
+      <TableSkeleton />
     </div>
 
     <div v-else>
-      <div
-        v-if="typeOfPool === 'ALL'"
-        class="pools-header-container"
-      >
-        <!-- <div class="row">
-          <div class="col-12 col-lg-12 col-md-12 col-sm-12">
-            <PoolFilter
-              :set-selected-tab-func="setSelectedTab"
-              :selected-tabs="selectedTabs"
-              :zap-filter-func="zapFilter"
-              :is-show-only-zap="isShowOnlyZap"
-              :apr-limit-filter-func="aprLimitFilter"
-              :update-search-func="updateSearch"
-              :is-show-apr-limit="isShowAprLimit"
-            />
-          </div>
-        </div> -->
-      </div>
-
       <div class="pools-container">
         <PoolTable
-          :pools="filteredPools"
+          :pools="mergedPools"
           :is-show-only-zap="isShowOnlyZap"
           :is-show-apr-limit="isShowAprLimit"
           :open-zap-in-func="openZapIn"
           :set-order-type-func="setOrderType"
           :order-type="orderType"
           :type-of-pool="typeOfPool"
-        />
+        >
+          <template #filters>
+            <PoolsFilter
+              :selected-network="selectedTabs"
+              @change-tab="changePoolsTab"
+              @change-network="setSelectedNetwork"
+              @search="updateSearch"
+            />
+          </template>
+          <template
+            #footer
+            v-if="!isPoolsLoading && typeOfPool === 'ALL'"
+          >
+            <div
+              class="table-extend"
+              @click="openPoolList = !openPoolList"
+              @keypress="openPoolList = !openPoolList"
+            >
+              <div
+                class="table-extend__arrow"
+              >
+                <BaseIcon name="ArrowDown" />
+              </div>
+              <h1>
+                {{openPoolList ? "CLOSE" : "OPEN"}} Pools with TVL less than $300K
+              </h1>
+              <div
+                class="table-extend__arrow"
+              >
+                <BaseIcon name="ArrowDown" />
+              </div>
+            </div>
+          </template>
+        </PoolTable>
       </div>
     </div>
+
+    <!-- <template v-if="openPoolList">
+      <PoolTable
+        :pools="filteredPoolsForSecondTab"
+        :is-show-only-zap="isShowOnlyZap"
+        :is-show-apr-limit="isShowAprLimit"
+        :open-zap-in-func="openZapIn"
+        :set-order-type-func="setOrderType"
+        :order-type="orderType"
+      />
+    </template> -->
 
     <!-- <ZapModal
       :set-show-func='setIsZapModalShow'
@@ -50,41 +75,6 @@
       :type-of-pool="typeOfPool"
       :pool-tokens-for-zap-map="poolTokensForZapMap"
     /> -->
-
-    <template v-if="!isPoolsLoading && typeOfPool === 'ALL'">
-      <div>
-        <div
-          class="show-more ml-2"
-          @click="openPoolList = !openPoolList"
-          @keypress="openPoolList = !openPoolList"
-        >Pools with TVL less than $300K</div>
-        <div
-          class="select-bar-main-container ml-7"
-          @click="openPoolList = !openPoolList"
-          @keypress="openPoolList = !openPoolList"
-        >
-          <div
-            justify="end"
-            align="center"
-            class="select-bar-container"
-          >
-            <BaseIcon name="ArrowDown" />
-          </div>
-        </div>
-      </div>
-
-      <template v-if="openPoolList">
-        <PoolTable
-          :pools="filteredPoolsForSecondTab"
-          :is-show-only-zap="isShowOnlyZap"
-          :is-show-apr-limit="isShowAprLimit"
-          :open-zap-in-func="openZapIn"
-          :set-order-type-func="setOrderType"
-          :order-type="orderType"
-        />
-      </template>
-
-    </template>
   </div>
 </template>
 
@@ -94,6 +84,7 @@ import {
   mapActions, mapGetters, mapState, mapMutations,
 } from 'vuex';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import { poolTypes } from '@/modules/Main/components/PoolsTable/types/index.ts';
 import {
   getSortedSecondPools, getSortedPools,
 } from '@/store/views/main/pools/helpers.ts';
@@ -101,9 +92,9 @@ import {
 import utc from 'dayjs/plugin/utc';
 
 // import ZapModal from '@/components/zap/modals/ZapModal.vue';
-// import PoolFilter from '@/components/pool/PoolFilter.vue';
+import PoolsFilter from '@/modules/Main/components/PoolsTable/PoolsFilter.vue';
 import PoolTable from '@/modules/Main/components/PoolsTable/Table.vue';
-import Spinner from '@/components/Spinner/Index.vue';
+import TableSkeleton from '@/components/TableSkeleton/Index.vue';
 import dayjs from 'dayjs';
 
 dayjs.extend(utc);
@@ -111,19 +102,21 @@ dayjs.extend(utc);
 export default {
   name: 'PoolsContainer',
   props: {
-    type: { // OVN, ALL
+    type: {
       type: String,
       required: true,
     },
   },
   components: {
     BaseIcon,
+    PoolsFilter,
+    TableSkeleton,
     PoolTable,
-    Spinner,
   },
 
   data: () => ({
     avgApy: null,
+    poolTabType: poolTypes.ALL,
 
     openPoolList: false,
 
@@ -138,17 +131,21 @@ export default {
 
   computed: {
     ...mapGetters('theme', ['light']),
-    ...mapGetters('network', ['getParams', 'networkId', 'networkName']),
+    ...mapGetters('network', ['getParams', 'networkId']),
     ...mapState('poolsData', [
       'sortedPoolSecondList',
       'sortedPoolList',
       'typeOfPool',
       'isPoolsLoading',
     ]),
+    mergedPools() {
+      return this.openPoolList
+        ? [...this.filteredPools, ...this.filteredPoolsForSecondTab] : this.filteredPools;
+    },
     filteredPools() {
       if (this.orderType === 'APR') {
         // last step filter
-        return getSortedPools(this.filteredBySearchQueryPools, this.typeOfPool === 'OVN');
+        return getSortedPools(this.filteredBySearchQueryPools, this.typeOfPool === 'OVN', this.poolTabType);
       }
 
       if (this.orderType === 'APR_UP') {
@@ -167,7 +164,7 @@ export default {
 
       if (this.orderType === 'TVL') {
         // last step filter. same like type 'APR'
-        return getSortedPools(this.filteredBySearchQueryPools, this.typeOfPool === 'OVN');
+        return getSortedPools(this.filteredBySearchQueryPools, this.typeOfPool === 'OVN', this.poolTabType);
       }
 
       if (this.orderType === 'TVL_UP') {
@@ -191,7 +188,7 @@ export default {
     filteredPoolsForSecondTab() {
       if (this.orderType === 'APR') {
         // last step filter
-        return getSortedSecondPools(this.filteredBySearchQuerySecondPools);
+        return getSortedSecondPools(this.filteredBySearchQuerySecondPools, this.poolTabType);
       }
 
       if (this.orderType === 'APR_UP') {
@@ -210,7 +207,7 @@ export default {
 
       if (this.orderType === 'TVL') {
         // last step filter. same like type 'APR'
-        return getSortedSecondPools(this.filteredBySearchQuerySecondPools);
+        return getSortedSecondPools(this.filteredBySearchQuerySecondPools, this.poolTabType);
       }
 
       if (this.orderType === 'TVL_UP') {
@@ -293,7 +290,7 @@ export default {
       }
 
       return this.sortedPoolList
-        .filter((pool: any) => this.selectedTabs.includes(this.getParams(pool.chain).networkName));
+        .filter((pool: any) => this.selectedTabs.includes(this.getParams(pool.chain).networkId));
     },
     filteredBySecondTabPools() {
       if (this.selectedTabs.length === 1 && this.selectedTabs.includes('ALL')) {
@@ -301,7 +298,7 @@ export default {
       }
 
       return this.sortedPoolSecondList
-        .filter((pool: any) => this.selectedTabs.includes(this.getParams(pool.chain).networkName));
+        .filter((pool: any) => this.selectedTabs.includes(this.getParams(pool.chain).networkId));
     },
 
     lastUpdateAgoMinutes() {
@@ -347,6 +344,9 @@ export default {
     ...mapActions('poolsData', ['loadPools', 'openZapIn']),
     ...mapMutations('poolsData', ['changeState']),
 
+    changePoolsTab(type: poolTypes) {
+      this.poolTabType = type;
+    },
     updateSearch(searchQuery: string) {
       this.searchQuery = searchQuery;
     },
@@ -362,7 +362,7 @@ export default {
       this.aprLimitForFilter = limit;
       console.log('Apr limit ', isShow, limit);
     },
-    setSelectedTab(tab: string) {
+    setSelectedNetwork(tab: string) {
       if (tab === 'ALL' && !this.tabExistInTabs(this.selectedTabs, tab)) {
         this.selectedTabs = [tab];
         return;
@@ -402,9 +402,9 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .pools-wrap {
-  margin-top: 30px;
+  margin: 30px 0;
 }
 
 .pools-wrap__loader {
@@ -413,5 +413,29 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.table-extend {
+  display: flex;
+  justify-content: center;
+  padding: 10px 20px;
+  width: 100%;
+  border-radius: 30px;
+  border: 1px solid var(--color-7);
+  color: var(--color-7);
+  cursor: pointer;
+  transition: background-color .2s ease;
+
+  h1 {
+    font-weight: 500;
+    text-transform: uppercase;
+    margin: 0 10px;
+    transition: color .2s ease;
+  }
+
+  &:hover {
+    color: var(--color-1);
+    background-color: var(--color-4);
+  }
 }
 </style>

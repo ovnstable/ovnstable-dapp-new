@@ -134,7 +134,7 @@ export default {
   background-color: var(--color-8);
   border-radius: 30px;
   [data-theme="dark"] & {
-      color: var(--color-2);
+    background-color: var(--color-6);
   }
 }
 .swap-module__form {
@@ -154,5 +154,8 @@ export default {
   border-top: 0;
   padding: 24px 20px;
   border-radius: 0 0 30px 30px;
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
+  }
 }
 </style>

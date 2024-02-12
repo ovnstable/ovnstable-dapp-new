@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="[componentClasses, customClass, { 'input--custom': isCustom }]"
+    :class="[componentClasses, customClass, { 'input--custom': isCustom, [inputType]: !!inputType }]"
     @click="$emit('click', $event)"
     @mouseover="$emit('mouseover', $event)"
     @mouseenter="$emit('mouseenter', $event)"
@@ -33,6 +33,9 @@
 
 <script lang="ts">
 import uniqueId from 'lodash/uniqueId';
+import type { PropType } from 'vue';
+
+type inputType = 'default' | 'primary';
 
 export default {
   name: 'input-component',
@@ -52,6 +55,10 @@ export default {
         Array,
       ],
       default: null,
+    },
+    inputType: {
+      type: String as PropType<inputType>,
+      default: 'default',
     },
     customClass: {
       type: String,
@@ -81,7 +88,6 @@ export default {
       ],
       default: null,
     },
-
     required: {
       type: Boolean,
       default: false,
@@ -159,6 +165,11 @@ export default {
 .input-component {
   display: flex;
   align-items: center;
+  border-radius: 30px;
+
+  &.primary {
+    background-color: var(--color-5);
+  }
 
   input {
     width: 100%;
@@ -170,15 +181,11 @@ export default {
     font: inherit;
     color: inherit;
     outline: none;
-    border-radius: 8px;
+    border-radius: 30px;
     transition: box-shadow .2s ease;
 
-    &:hover {
-      box-shadow: 0 0 1px var(--color-1);
-    }
-
-    &::placeholder {
-      color: #9F9F9F;
+    [data-theme="dark"] & {
+      color: var(--color-4);
     }
 
     &[disabled] {
@@ -186,10 +193,22 @@ export default {
     }
   }
 
-  &.is-focused {
-    input {
-      box-shadow: 0 0 3px var(--color-1);
+  &:hover {
+      box-shadow: 0 0 1px var(--color-1);
+      [data-theme="dark"] & {
+        box-shadow: 0 0 1px var(--color-4);
+      }
     }
+
+  &::placeholder {
+    color: #9F9F9F;
+    [data-theme="dark"] & {
+      color: var(--color-3);
+    }
+  }
+
+  &.is-focused {
+    box-shadow: 0 0 3px var(--color-1);
   }
 
   &.is-disabled {
