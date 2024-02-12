@@ -21,6 +21,7 @@
         />
       </template>
     </InputComponent>
+
     <div
       v-for="networkConfig in allNetworkConfigs"
       :key="networkConfig.networkId"
@@ -122,6 +123,9 @@ export default {
   border-radius: 30px;
   background-color: var(--color-4);
   border: 1px solid var(--color-1);
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
+  }
 }
 
 .pools-wrap__filters-item {
@@ -147,6 +151,9 @@ export default {
   &:hover {
     color: var(--color-3);
   }
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
 }
 
 .pools-wrap__filters-item--selected {
@@ -161,5 +168,9 @@ export default {
 .search-icon {
   min-width: 18px;
   margin-left: 6px;
+  fill: var(--color-2);
+  [data-theme="dark"] & {
+    fill: var(--color-3);
+  }
 }
 </style>

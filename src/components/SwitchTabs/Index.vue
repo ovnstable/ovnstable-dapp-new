@@ -98,7 +98,8 @@ export default {
   background: var(--color-5);
   border-radius: 30px;
   [data-theme="dark"] & {
-     color: var(--color-3);
+    color: var(--color-3);
+    background: var(--color-6);
   }
 }
 
@@ -111,7 +112,9 @@ export default {
   background: var(--color-5);
   z-index: 2;
   transition: opacity .2s ease, color .2s ease;
-
+  [data-theme="dark"] & {
+    background-color: var(--color-6);
+  }
   &.large {
     padding: 9px 20px;
   }

@@ -132,11 +132,19 @@ export default {
     border: 1px solid var(--color-6);
     color: var(--color-2);
     box-shadow: 0px 0px 0px 1px var(--color-6);
+    [data-theme="dark"] & {
+      background-color: var(--color-6);
+      border: 1px solid var(--color-3);
+      color: var(--color-3);
+    }
 
     &:hover {
       color: var(--color-1);
       background-color: var(--color-6);
       box-shadow: 0px 1px 0px 0px var(--color-3);
+      [data-theme="dark"] & {
+        color: var(--color-4);
+      }
     }
   }
 

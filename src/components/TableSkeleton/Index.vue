@@ -94,6 +94,9 @@ $avatar-offset: 52 + 16;
   border-color:#ccc;
   color:#333;
   background-color: var(--color-8);
+  [data-theme="dark"] & {
+    background-color: var(--color-6);
+  }
 
   div {
     position: relative;
@@ -118,6 +121,9 @@ $avatar-offset: 52 + 16;
     position: relative;
     left: 50%;
     transform: translateX(-50%);
+  }
+  [data-theme="dark"] & {
+    background-color: var(--color-2);
   }
 }
 

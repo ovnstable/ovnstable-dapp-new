@@ -425,6 +425,9 @@ export default {
   color: var(--color-7);
   cursor: pointer;
   transition: background-color .2s ease;
+  [data-theme="dark"] & {
+    color: var(--color-2);
+  }
 
   h1 {
     font-weight: 500;
@@ -436,6 +439,9 @@ export default {
   &:hover {
     color: var(--color-1);
     background-color: var(--color-4);
+    [data-theme="dark"] & {
+      color: var(--color-17);
+    }
   }
 }
 </style>

@@ -169,6 +169,9 @@ export default {
 
   &.primary {
     background-color: var(--color-5);
+    [data-theme="dark"] & {
+      background-color: var(--color-6);
+    }
   }
 
   input {
