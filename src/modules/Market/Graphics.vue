@@ -1,10 +1,18 @@
 <template>
   <div class="performance__graphics">
     <div class="performance__graphics-APY-graphic">
-      <GraphicComponent :graphic-data=apyData />
+      <GraphicComponent
+        :graphicData=payoutData
+        :tokenData="tokenData"
+        type='APY'
+      />
     </div>
     <div class="performance__graphics-TVL-graphic">
-      <GraphicComponent :graphic-data=tvlData />
+      <GraphicComponent
+        :graphicData=payoutData
+        :tokenData="tokenData"
+        type='TVL'
+      />
     </div>
   </div>
 </template>
@@ -17,21 +25,15 @@ export default {
   components: {
     GraphicComponent,
   },
-  data() {
-    return {
-      apyData: {
-        type: 'APY',
-        token: 'ETH+',
-        value: '13.5%',
-        date: 'from XX XX. ‘23',
-      },
-      tvlData: {
-        type: 'TVL',
-        token: 'ETH+',
-        value: '123.631341 WETH',
-        date: 'past 2 hours',
-      },
-    };
+  props: {
+    payoutData: {
+      type: Object,
+      default: () => ({}),
+    },
+    tokenData: {
+      type: Object,
+      default: () => ({}),
+    },
   },
 };
 </script>
@@ -40,11 +42,16 @@ export default {
 .performance__graphics {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  gap: 30px;
   align-items: center;
   background: var(--color-4);
   [data-theme="dark"] & {
       background: var(--color-6);
+  }
+
+  > .performance__graphics-APY-graphic,
+  > .performance__graphics-TVL-graphic {
+    flex: 1;
   }
 }
 
@@ -53,7 +60,7 @@ export default {
     flex-direction: column;
   }
   .performance__graphics-TVL-graphic {
-    margin-top: 50px;
+    margin: 0;
     width: 100%;
   }
   .performance__graphics-APY-graphic {

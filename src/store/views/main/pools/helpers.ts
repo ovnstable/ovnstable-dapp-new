@@ -288,6 +288,10 @@ const filterByPoolType = (
     });
   }
 
+  if (filterType === poolTypes.FEATURED) {
+    return poolsList.filter((_) => (!!_.feature));
+  }
+
   return poolsList;
 };
 
@@ -440,6 +444,8 @@ export const initFeature = (pools: any[]) => {
 
     return entry;
   });
+
+  console.log(newPools.filter((_) => !!_.feature), 'FEATUREPOOLS');
 
   return newPools;
 };

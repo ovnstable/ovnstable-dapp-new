@@ -75,6 +75,7 @@ const actions = {
       await poolApiService
         .getAllPools(networkConfig.appApiUrl)
         .then((data: any) => {
+          console.log(data, networkConfig, '---datanetworkConfig');
           if (data) {
             const buildPools = data.map((pool: any) => {
               const tokenNames = pool.id.name.split('/');

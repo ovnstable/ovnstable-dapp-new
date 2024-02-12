@@ -3,7 +3,7 @@ import { loadJSON } from '@/utils/httpUtils.ts';
 export const loadTokenImage = (itemSymbol: any) => {
   let path = null;
 
-  if (itemSymbol.includes(' (OLD)')) {
+  if (itemSymbol?.includes(' (OLD)')) {
     path = new URL(`../assets/icons/currencies/select/${
       itemSymbol.replace(' (OLD)', '')
     }.webp`, import.meta.url);
@@ -21,7 +21,7 @@ export const loadTokenImage = (itemSymbol: any) => {
 
 export const getOvnCoinBaseImagePath = (tokenSymbol: any) => {
   const svgIcons = ['ETH+', 'USDC+'];
-  if (svgIcons.includes(tokenSymbol)) {
+  if (svgIcons?.includes(tokenSymbol)) {
     return new URL(`../assets/icons/currencies/stablecoins/${
       tokenSymbol
     }.svg`, import.meta.url);
