@@ -356,13 +356,6 @@ export default {
     },
 
   },
-  watch: {
-    isDarkTheme(newTheme, oldTheme) {
-      console.log('theme changed');
-      this.initChart();
-    },
-  },
-
   mounted() {
     this.initChart();
   },
