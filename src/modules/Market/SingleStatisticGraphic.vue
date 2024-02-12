@@ -48,7 +48,24 @@ const originPointPlugin = {
   },
 };
 
-Chart.register(...registerables, originPointPlugin);
+const pointStylePlugin = {
+  id: 'pointStylePlugin',
+  afterDraw(chart: any) {
+    const { ctx } = chart;
+    const yAxis = chart.scales.y;
+    const middleY = (yAxis.top + yAxis.bottom) / 2;
+    ctx.save();
+    ctx.strokeStyle = '#ff0000';
+    ctx.setLineDash([5, 5]);
+    ctx.beginPath();
+    ctx.moveTo(chart.chartArea.left, middleY);
+    ctx.lineTo(chart.chartArea.right, middleY);
+    ctx.stroke();
+    ctx.restore();
+  },
+};
+
+Chart.register(...registerables, originPointPlugin, pointStylePlugin);
 
 export default {
   name: 'GraphicComponent',
@@ -292,7 +309,7 @@ export default {
             type: 'line',
             data: chartData,
             options: chartOptions,
-            plugins: [originPointPlugin],
+            plugins: [originPointPlugin, pointStylePlugin],
           });
         } else {
           console.error('Failed to get canvas context.');
