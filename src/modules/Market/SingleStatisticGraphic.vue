@@ -52,16 +52,13 @@ const originPointPlugin = {
 
 const pointStylePlugin = {
   id: 'pointStylePlugin',
-  afterDraw(chart) {
+  afterDraw(chart: any) {
     const { ctx } = chart;
     const yAxis = chart.scales.y;
     const middleY = (yAxis.top + yAxis.bottom) / 2;
     ctx.save();
-
-    // Access the active network color from the chart instance
     const { activeNetworkColor } = chart.options.plugins.pointStylePlugin;
-
-    ctx.strokeStyle = activeNetworkColor || '#ff0000'; // Fallback color if not set
+    ctx.strokeStyle = activeNetworkColor || '#ff0000';
     ctx.setLineDash([5, 5]);
     ctx.beginPath();
     ctx.moveTo(chart.chartArea.left, middleY);
@@ -137,8 +134,8 @@ export default {
     chartData() {
       const payoutData = this.graphicData.payouts.slice(0, this.getInterval());
       const activeNetworkColor = this.activeNetworkData.color;
-      payoutData.sort((a: { payableDate: any; }, b: { payableDate: any; }) =>
-        new Date(a.payableDate) - new Date(b.payableDate));
+      payoutData.sort((a: { payableDate: any; }, b: { payableDate: any; }) => new Date(a
+        .payableDate).getTime() - new Date(b.payableDate).getTime());
 
       return {
         labels: payoutData
@@ -251,8 +248,9 @@ export default {
               },
               title(context: any) {
                 if (context.length > 0) {
+                  const reversedData = [...intervalData].reverse();
                   const pointIndex = context[0].dataIndex;
-                  const date = new Date(intervalData[pointIndex].payableDate);
+                  const date = new Date(reversedData[pointIndex].payableDate);
                   const day = date.getUTCDate().toString().padStart(2, '0');
                   const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
                   const year = date.getUTCFullYear();
@@ -329,8 +327,8 @@ export default {
       if (this.$refs.myChart) {
         const ctx = this.$refs.myChart.getContext('2d');
         if (ctx) {
-          const chartData = this.chartData;
-          const chartOptions = this.chartOptions;
+          const { chartData } = this.chartData;
+          const { chartOptions } = this.chartOptions;
           chartOptions.plugins = chartOptions.plugins || {};
           chartOptions.plugins.pointStylePlugin = chartOptions.plugins.pointStylePlugin || {};
           chartOptions.plugins.pointStylePlugin.activeNetworkColor = this.activeNetworkData.color;
