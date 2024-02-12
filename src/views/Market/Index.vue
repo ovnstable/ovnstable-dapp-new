@@ -1,29 +1,21 @@
 <template>
-  <div
-    v-if="!loaded"
-    class="market__loader"
-  >
-    <Spinner />
-  </div>
   <MarketPage
-    v-else
     :token-data="tokenData"
     :portfolio-data="portfolioData"
     :collateral-data="collateralData"
     :payout-data="payoutData"
+    :loaded="loaded"
   />
 </template>
 
 <script lang="ts">
 import MarketPage from '@/modules/Market/Index.vue';
-import Spinner from '@/components/Spinner/Index.vue';
 import { chainContractsMap } from '@/utils/contractsMap.ts';
 
 export default {
   name: 'MarketView',
   components: {
     MarketPage,
-    Spinner,
   },
   data() {
     return {
@@ -126,15 +118,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.market__loader {
-  margin: auto;
-  height: 100%;
-  min-height: 474px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-</style>

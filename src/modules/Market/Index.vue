@@ -1,27 +1,38 @@
 <template>
   <div class="market-wrapper">
-    <div class="market">
-      <TokenDataPerformance
-        :token-data="tokenData"
-        class="market__token-data"
-      />
-      <GraphicsPerformance
-        :payout-data="payoutData"
-        :token-data="tokenData"
-        class="market__graphics"
-      />
-      <PortfolioPerformance
-        :portfolio-data="portfolioData"
-        :collateral-data="collateralData"
-        class="market__portfolio"
-      />
+    <div
+      v-if="!loaded"
+      class="market__loader"
+    >
+      <Spinner />
     </div>
-    <div class="market__payouts">
-      <PortfolioPayouts
-        :payout-data="payoutData"
-        class="market__payout-inner"
-      />
+    <div
+      v-else
+    >
+      <div class="market">
+        <TokenDataPerformance
+          :token-data="tokenData"
+          class="market__token-data"
+        />
+        <GraphicsPerformance
+          :payout-data="payoutData"
+          :token-data="tokenData"
+          class="market__graphics"
+        />
+        <PortfolioPerformance
+          :portfolio-data="portfolioData"
+          :collateral-data="collateralData"
+          class="market__portfolio"
+        />
+      </div>
+      <div class="market__payouts">
+        <PortfolioPayouts
+          :payout-data="payoutData"
+          class="market__payout-inner"
+        />
+      </div>
     </div>
+
   </div>
 
 </template>
@@ -31,6 +42,7 @@ import TokenDataPerformance from '@/modules/Market/TokenData.vue';
 import GraphicsPerformance from '@/modules/Market/Graphics.vue';
 import PortfolioPerformance from '@/modules/Market/Portfolio.vue';
 import PortfolioPayouts from '@/modules/Market/Payouts.vue';
+import Spinner from '@/components/Spinner/Index.vue';
 
 export default {
   name: 'MarketPage',
@@ -51,12 +63,17 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    loaded: {
+      type: Boolean,
+      default: false,
+    },
   },
   components: {
     TokenDataPerformance,
     GraphicsPerformance,
     PortfolioPerformance,
     PortfolioPayouts,
+    Spinner,
   },
 };
 </script>
@@ -106,5 +123,11 @@ export default {
 
 .market__payout-inner {
   border-radius: 0px 0px 30px 30px;
+}
+.market__loader {
+  margin: auto;
+  height: 80%;
+  min-height: 474px;
+  display: flex;
 }
 </style>
