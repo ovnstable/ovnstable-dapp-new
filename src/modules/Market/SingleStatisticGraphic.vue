@@ -98,6 +98,8 @@ export default {
   },
   computed: {
     ...mapGetters('network', ['networkId']),
+    ...mapGetters('theme', ['light']),
+
     activeNetworkData() {
       const data = appNetworksData.find((_) => _.chain === this.networkId);
       return data || appNetworksData[0];
@@ -166,7 +168,7 @@ export default {
 
       const minValue = Math.min(...dataValues);
       const maxValue = Math.max(...dataValues);
-
+      const isDarkTheme = localStorage.getItem('theme-type') === 'dark';
       return {
         chartOptions: {
           scales: {
@@ -178,6 +180,7 @@ export default {
               min: minValue,
               max: maxValue,
               ticks: {
+                color: isDarkTheme ? '#ffffff' : '#0f172a',
                 min: 4,
                 callback: (value: any) => {
                   if (isApyType) {
@@ -260,7 +263,6 @@ export default {
                     const hours = date.getUTCHours().toString().padStart(2, '0');
                     const minutes = date.getUTCMinutes().toString().padStart(2, '0');
                     const formattedDate = `${day}.${month}.${year}, ${hours}:${minutes} UTS`;
-                    console.log(formattedDate);
                     return formattedDate;
                   }
                   return '';
@@ -271,7 +273,6 @@ export default {
             pointStylePlugin: {
               activeNetworkColor: '',
             },
-
           },
           interaction: {
             mode: 'nearest',
@@ -355,6 +356,12 @@ export default {
     },
 
   },
+  watch: {
+    isDarkTheme(newTheme, oldTheme) {
+      console.log('theme changed');
+      this.initChart();
+    },
+  },
 
   mounted() {
     this.initChart();
@@ -379,6 +386,9 @@ export default {
   border-radius: 5px;
   border: 1px solid var(--color-8);
   margin-top: 5px;
+  [data-theme="dark"] & {
+    background-color: var(--color-7);
+  }
 }
 
 .performance__graphic-data {
@@ -433,12 +443,18 @@ export default {
   font-size: 20px;
   font-weight: 600;
   color: var(--color-1);
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
 }
 
 .performance__graphic-values :nth-child(2) {
   font-size: 15px;
   font-weight: 500;
   color: var(--color-2);
+  [data-theme="dark"] & {
+    color: var(--color-3);
+  }
 }
 @media (max-width: 1024px) {
   .performance__graphic-display {

@@ -131,7 +131,6 @@ export default {
   },
   methods: {
     toggleTheme() {
-      console.log('-toggleTheme');
       this.$store.dispatch('theme/switchTheme');
     },
   },
