@@ -106,6 +106,11 @@ export default {
     border: 1px solid var(--color-1);
     box-shadow: 0px 1px 0px 0px var(--color-1);
 
+    [data-theme="dark"] & {
+      border-color: var(--color-2);
+      box-shadow: 0px 1px 0px 0px var(--color-2);
+    }
+
     &:hover {
       color: var(--color-3);
       background-color: var(--color-4);

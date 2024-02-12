@@ -238,26 +238,24 @@ export default {
     },
     getIconName(tokenName: string) {
       const tokenNameMapping: { [key: string]: string } = {
-        'USDbC (delta-neutral)': 'USDC',
-        'USDT (delta-neutral)': 'USDT',
+        'USDbC (delta-neutral)': 'USDС_market',
+        'USDT (delta-neutral)': 'USDT_market',
       };
 
       const normalizedTokenName = tokenName.toLowerCase();
-
       const matchedKey = Object.keys(tokenNameMapping)
         .find((key) => normalizedTokenName === key.toLowerCase());
-
       if (matchedKey) {
         return tokenNameMapping[matchedKey];
       }
 
       if (normalizedTokenName.includes('usdc')) {
-        return 'USDC';
+        return 'USDС_market';
       } if (normalizedTokenName.includes('usdt')) {
-        return 'USDT';
+        return 'USDT_market';
       }
 
-      return tokenName;
+      return `${tokenName}_market`;
     },
 
     totalPortfolioValue(assets: any[]) {
