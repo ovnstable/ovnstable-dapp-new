@@ -1,15 +1,16 @@
 <template>
   <div
-    v-if="!loaded"
-    class="market__loader"
-  >
-    <Spinner />
-  </div>
-  <div
-    v-else
     class="market-wrapper"
   >
+    <Transition name="slide-fade">
+      <div
+        v-if="!loaded"
+        class="market__loader"
+      >
+        <Spinner />
+      </div>
 
+    </Transition>
     <div class="market">
       <TokenDataPerformance
         :token-data="tokenData"
@@ -106,6 +107,7 @@ export default {
 }
 
 .market-wrapper {
+  position: relative;
   display: flex;
   flex-direction: column;
   width: calc(100% - 40px);
@@ -132,12 +134,18 @@ export default {
 }
 
 .market__loader {
+  position: absolute;
+  left: 0;
+  top: 0;
   margin: auto;
   height: 100%;
+  width: 100%;
   min-height: 474px;
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: rgba(255, 255, 255, .4);
+  padding-bottom: 50vh;
 }
 
 </style>
