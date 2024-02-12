@@ -642,7 +642,7 @@ const actions = {
     });
 
     console.debug(txLogMessage);
-    rootState.web3.evmSigner
+    await rootState.web3.evmSigner
       .sendTransaction(transactionData)
       .then(async (dataTx: any) => {
         console.log('Call result: ', dataTx);

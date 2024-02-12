@@ -31,7 +31,7 @@
           </template>
           <template
             #footer
-            v-if="!isPoolsLoading && typeOfPool === 'ALL'"
+            v-if="!isPoolsLoading && typeOfPool === 'ALL' && filteredPoolsForSecondTab?.length > 0"
           >
             <div
               class="table-extend"

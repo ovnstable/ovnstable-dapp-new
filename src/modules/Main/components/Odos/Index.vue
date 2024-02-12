@@ -129,9 +129,9 @@
         </div>
 
         <SwapSlippageSettings
-          :currentSlippageChanged="handleCurrentSlippageChanged"
           :selected-input-tokens="selectedInputTokens"
           :selected-output-tokens="selectedOutputTokens"
+          @change-slippage="changeSlippage"
         />
 
         <!-- <div
@@ -183,7 +183,7 @@
             </ButtonComponent>
             <ButtonComponent
               v-else-if="isAnyInputsNeedApprove"
-              @on-click="approve(firstInputInQueueForToApprove)"
+              @on-click="approveTrigger(firstInputInQueueForToApprove)"
               btn-size="large"
               full
               :loading="firstSwipeClickOnApprove"
@@ -507,6 +507,10 @@ export default defineComponent({
       'gasPriceGwei',
     ]),
 
+    getSlippagePercent() {
+      return this.slippagePercent;
+    },
+
     isInputTokensRemovable() {
       return this.inputTokens.length > 1;
     },
@@ -721,12 +725,14 @@ export default defineComponent({
     onLeaveList,
     beforeEnterList,
     onEnterList,
+    changeSlippage(val: number) {
+      this.slippagePercent = val;
+    },
     maxAllMethod() {
       maxAll(this.selectedInputTokens, this.checkApproveForToken, this.updateQuotaInfo);
     },
     updateTokenValueMethod(token:any, val: any) {
       updateTokenValue(token, val, this.checkApproveForToken, this.updateQuotaInfo);
-      this.updateQuotaInfo();
     },
     init() {
       this.loadChains();
@@ -872,10 +878,6 @@ export default defineComponent({
       console.error('Change swap method not found.', this.swapMethod);
     },
 
-    handleCurrentSlippageChanged(newSlippage: any) {
-      this.slippagePercent = newSlippage.value;
-    },
-
     finishTransaction() {
       this.clearForm();
     },
@@ -961,7 +963,6 @@ export default defineComponent({
         });
     },
     async swapTrigger() {
-      console.log(this.isSwapLoading, 'sWAPP');
       if (this.isSwapLoading) {
         console.log({
           message: 'Swap method not available, prev swap in process.',
@@ -992,7 +993,7 @@ export default defineComponent({
         outputTokens: this.getRequestOutputTokens(),
         gasPrice: actualGas,
         userAddr: ethers.getAddress(this.account.toLowerCase()),
-        slippageLimitPercent: this.getSlippagePercent(),
+        slippageLimitPercent: this.getSlippagePercent,
         sourceBlacklist: this.getSourceBlackList(this.networkId),
         sourceWhitelist: [],
         simulate: true,
@@ -1073,6 +1074,12 @@ export default defineComponent({
                   selectedOutputTokens: this.selectedOutputTokens,
                 },
               );
+
+              this.$emit('update-path-view', {
+                path: null,
+                input: this.selectedInputTokens,
+                output: this.selectedOutputTokens,
+              });
               this.isSwapLoading = false;
             })
             .catch((e) => {
@@ -1104,7 +1111,7 @@ export default defineComponent({
       });
     },
     async simulateSwap() {
-      console.log(this.isSumulateSwapLoading, 'simulateSwap');
+      console.log(this.isSumulateSwapLoading, this.getSlippagePercent, 'simulateSwap');
       if (this.isSumulateSwapLoading) {
         return;
       }
@@ -1133,7 +1140,7 @@ export default defineComponent({
         outputTokens: output,
         gasPrice: actualGas,
         userAddr: ethers.getAddress(this.account.toLowerCase()),
-        slippageLimitPercent: this.getSlippagePercent(),
+        slippageLimitPercent: this.getSlippagePercent,
         sourceBlacklist: this.getSourceBlackList(this.networkId),
         sourceWhitelist: [],
         simulate: true,
@@ -1211,10 +1218,6 @@ export default defineComponent({
       }
     },
 
-    getSlippagePercent() {
-      return this.slippagePercent;
-    },
-
     getSourceBlackList(networkId: any) {
       if (networkId === 324) {
         return ['Hashflow', 'Wombat', 'Maverick'];
@@ -1251,8 +1254,6 @@ export default defineComponent({
         });
     },
     async checkApproveForToken(token: any, checkedAllowanceValue?: any) {
-      // checkedAllowanceValue in wei
-      console.log(this.routerContract, '--this.routerContract');
       const { selectedToken } = token;
       if (
         selectedToken.address === '0x0000000000000000000000000000000000000000'
@@ -1268,7 +1269,6 @@ export default defineComponent({
         this.routerContract.target,
       );
 
-      console.log(allowanceValue, '--allowanceValue');
       selectedToken.approveData.allowanceValue = allowanceValue;
       if (!selectedToken.approveData.allowanceValue) {
         selectedToken.approveData.approved = false;
@@ -1280,11 +1280,11 @@ export default defineComponent({
         return;
       }
 
-      selectedToken.approveData.approved = selectedToken
-        .approveData.allowanceValue >= checkedAllowanceValue;
+      selectedToken.approveData.approved = new BigNumber(selectedToken.approveData.allowanceValue)
+        .isGreaterThanOrEqualTo(checkedAllowanceValue);
     },
 
-    async approve(token: any) {
+    async approveTrigger(token: any) {
       this.showWaitingModal('Approving in process');
 
       this.firstSwipeClickOnApprove = true;
@@ -1297,24 +1297,40 @@ export default defineComponent({
       }
 
       const tokenContract = this.tokensContractMap[selectedToken.address];
-      const approveValue = '10000000000000';
+      const approveValue = new BigNumber(10)
+        .pow(selectedToken.decimals)
+        .times(100000)
+        .toFixed(0);
 
-      approveToken(
+      const tx = await approveToken(
         tokenContract,
         this.routerContract.target,
         approveValue,
         this.account,
         this.gasPriceGwei,
       )
-        .then(() => {
-          this.checkApproveForToken(token, token.contractValue);
-          this.closeWaitingModal();
-        })
         .catch((e) => {
           console.error('Error when approve token.', e);
+          this.firstSwipeClickOnApprove = false;
           this.closeWaitingModal();
           this.showErrorModalWithMsg({ errorType: 'approve', errorMsg: e });
         });
+
+      const finishTx = () => {
+        this.checkApproveForToken(token, token.contractValue);
+        this.closeWaitingModal();
+        this.firstSwipeClickOnApprove = false;
+      };
+
+      if (!tx) {
+        finishTx();
+        return;
+      }
+
+      await tx.wait();
+      finishTx();
+
+      console.log(tx, '---tx');
     },
 
     getRequestInputTokens(ignoreNullable?: any) {

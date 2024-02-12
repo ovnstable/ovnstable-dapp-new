@@ -212,6 +212,7 @@ export default defineComponent({
   font-size: 20px;
   color: var(--color-1);
   font-weight: 600;
+  border-radius: 0;
   transition: box-shadow .2s ease;
   [data-theme="dark"] & {
     color: var(--color-4);
@@ -248,14 +249,20 @@ export default defineComponent({
   white-space: nowrap;
   cursor: pointer;
   transition: background-color .2s ease, color .2s ease;
+
   [data-theme="dark"] & {
     background-color: var(--color-17);
     color: var(--color-18);
   }
 
   &:hover {
-    background-color: var(--color-4);
-    color: var(--color-17);
+    background-color: var(--color-6);
+    color: var(--color-1);
+
+    [data-theme="dark"] & {
+      background-color: var(--color-4);
+      color: var(--color-17);
+    }
   }
 }
 

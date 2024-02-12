@@ -287,6 +287,7 @@ export default defineComponent({
   &:hover {
     background-color: var(--color-6);
     color: var(--color-1);
+
     [data-theme="dark"] & {
       background-color: var(--color-4);
       color: var(--color-17);

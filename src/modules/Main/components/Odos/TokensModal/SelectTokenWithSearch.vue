@@ -81,6 +81,7 @@ import { mapGetters } from 'vuex';
 import { formatMoney, fixedByPrice } from '@/utils/numbers.ts';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import InputComponent from '@/components/Input/Index.vue';
+import { OVN_TOKENS } from '@/utils/const.ts';
 
 export default defineComponent({
   name: 'SelectTokenWithSearch',
@@ -119,16 +120,13 @@ export default defineComponent({
         return this.tokens
           .slice()
           .sort((a: any, b: any) => {
-            if (b.price * b.balanceData.balance < a.price * a.balanceData.balance) {
+            if (OVN_TOKENS.includes(a.symbol) && !OVN_TOKENS.includes(b.symbol)) {
               return -1;
-            } if (b.price * b.balanceData.balance > a.price * a.balanceData.balance) {
+            }
+            if (!OVN_TOKENS.includes(a.symbol) && OVN_TOKENS.includes(b.symbol)) {
               return 1;
             }
-            if (b.balanceData.balance < a.balanceData.balance) {
-              return -1;
-            } if (b.balanceData.balance > a.balanceData.balance) {
-              return 1;
-            }
+
             return 0;
           });
       }

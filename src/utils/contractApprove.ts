@@ -1,3 +1,4 @@
+import type BigNumber from 'bignumber.js';
 import type { ethers } from 'ethers';
 
 export const getAllowanceValue = async (
@@ -5,6 +6,7 @@ export const getAllowanceValue = async (
   from: string,
   checkContractAddress: any,
 ): Promise<string> => {
+  if (!contract) return '0';
   const allow = await contract.allowance(from, checkContractAddress);
   return allow ? allow.toString() : '0';
 };
@@ -12,7 +14,7 @@ export const getAllowanceValue = async (
 export const approveToken = async (
   contract: any,
   contractAddressForApprove: string,
-  value: string | number,
+  value: string | number | BigNumber,
   fromAcc: string,
   gasPrice: string,
 ): Promise<ethers.TransactionResponse> => {

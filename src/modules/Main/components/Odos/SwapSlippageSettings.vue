@@ -54,10 +54,6 @@ export default defineComponent({
     BaseIcon,
   },
   props: {
-    currentSlippageChanged: {
-      type: Function,
-      required: true,
-    },
     selectedInputTokens: {
       type: Array,
       required: true,
@@ -113,7 +109,7 @@ export default defineComponent({
       this.currentSlippage = setting;
       this.showList = false;
       // Emit an event when currentSlippage changes
-      this.currentSlippageChanged(this.currentSlippage);
+      this.$emit('change-slippage', setting?.value);
     },
     // method get setting by id
     getSlippageSettingById(id: any) {
