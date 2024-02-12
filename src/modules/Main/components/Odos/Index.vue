@@ -1791,6 +1791,13 @@ export default defineComponent({
   cursor: pointer;
   transition: background-color .2s ease;
 
+  svg {
+    fill: var(--color-2);
+  }
+  [data-theme="dark"] & {
+    background-color: var(--color-7);
+  }
+
   &:hover {
     background-color: var(--color-6);
   }
