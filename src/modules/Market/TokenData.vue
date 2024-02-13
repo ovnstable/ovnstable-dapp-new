@@ -30,7 +30,7 @@
           class="performance__icon-chain"
         >
           <BaseIcon
-            :name=chainIcon
+            :name="formatNetworkIconName(networkName)"
           />
         </div>
 
@@ -146,6 +146,10 @@ export default {
       }
 
       return `Icon${formattedChain}On`;
+    },
+    formatNetworkIconName(networkName: string) {
+      if (!networkName) return '';
+      return `Icon${networkName.charAt(0).toUpperCase()}${networkName.slice(1)}On`;
     },
   },
 };

@@ -124,7 +124,7 @@ export default {
     BaseIcon,
     Swiper,
     SwiperSlide,
-    Spinner
+    Spinner,
   },
   data() {
     return {
@@ -345,9 +345,9 @@ export default {
 
 @media (max-width: 1024px) {
   .slider__info {
-      max-width:200px;
-      margin-right: 20px;
-      margin-left: 20px;
+    max-width:200px;
+    margin-right: 20px;
+    margin-left: 20px;
   }
   .swiper-container {
     max-width: 200px;
@@ -370,115 +370,115 @@ export default {
 }
 
 @media (max-width: 768px) {
-    .slider__info {
-       max-width:150px;
-       margin-right: 15px;
-       margin-left: 15px;
-    }
-    .swiper-container {
-  max-width: 150px;
-}
-    .slider__icon-plus,
-    .slider__arrow-icon {
-        transform: scale(0.6);
-    }
+  .slider__info {
+    max-width:150px;
+    margin-right: 15px;
+    margin-left: 15px;
+  }
+  .swiper-container {
+    max-width: 150px;
+  }
+  .slider__icon-plus,
+  .slider__arrow-icon {
+    transform: scale(0.6);
+  }
 
-    .slider__token-title,
-    .slider__second-token-title-text {
-        margin-left: 0px;
-        font-size: 13px;
-    }
+  .slider__token-title,
+  .slider__second-token-title-text {
+    margin-left: 0px;
+    font-size: 13px;
+  }
 
-    .slider__overview-title,
-    .slider__wusd-plus-description {
-         font-size: 12px;
-    }
+  .slider__overview-title,
+  .slider__wusd-plus-description {
+    font-size: 12px;
+  }
 
-    .slider__divider {
-        margin-top: 10px;
-        margin-bottom: 10px;
-    }
+  .slider__divider {
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
 
-    .slider__apy-title,
-    .slider__tvl-title,
-    .slider__payout-title,
-    .slider__data-growth-number {
-        font-size: 11px;
-    }
+  .slider__apy-title,
+  .slider__tvl-title,
+  .slider__payout-title,
+  .slider__data-growth-number {
+    font-size: 11px;
+  }
 
-    .slider__data-total-number {
-        font-size: 14px;
-    }
+  .slider__data-total-number {
+    font-size: 14px;
+  }
 
-    .slider__data-apy-percent {
-         font-size: 10px;
-    }
+  .slider__data-apy-percent {
+    font-size: 10px;
+  }
 
-    .slider__data-tvl-millions {
-         font-size: 12px;
-    }
-    .slider__arrow-wrapper {
-      width: 26px;
-      height: 26px;
-    }
+  .slider__data-tvl-millions {
+    font-size: 12px;
+  }
+  .slider__arrow-wrapper {
+    width: 26px;
+    height: 26px;
+  }
 }
 
 @media (max-width: 576px) {
-    .slider__info {
-       max-width:100px;
-       margin-right: 10px;
-       margin-left: 10px;
-    }
-    .swiper-container {
-      max-width: 100px;
-    }
-    .slider__token-title{
-        margin-right: 1px;
-    }
-    .slider__icon-plus,
-    .slider__arrow-icon {
-        transform: scale(0.5);
-    }
-    .slider__token-title,
-    .slider__second-token-title-text {
-        margin-left: 0px;
-        font-size: 10px;
-    }
+  .slider__info {
+    max-width:100px;
+    margin-right: 10px;
+    margin-left: 10px;
+  }
+  .swiper-container {
+    max-width: 100px;
+}
+  .slider__token-title{
+    margin-right: 1px;
+  }
+  .slider__icon-plus,
+  .slider__arrow-icon {
+    transform: scale(0.5);
+  }
+  .slider__token-title,
+  .slider__second-token-title-text {
+    margin-left: 0px;
+    font-size: 10px;
+  }
 
-    .slider__wusd-plus-description {
-         font-size: 10px;
-    }
-    .slider__overview-title {
-        font-size: 6px;
-    }
-    .slider__divider {
-        margin-top: 5px;
-        margin-bottom: 5px;
-    }
+  .slider__wusd-plus-description {
+    font-size: 10px;
+  }
+  .slider__overview-title {
+    font-size: 6px;
+  }
+  .slider__divider {
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
 
-    .slider__apy-title,
-    .slider__tvl-title,
-    .slider__payout-title,
-    .slider__data-growth-number {
-        font-size: 8px;
-    }
+  .slider__apy-title,
+  .slider__tvl-title,
+  .slider__payout-title,
+  .slider__data-growth-number {
+    font-size: 8px;
+  }
 
-    .slider__data-total-number {
-        font-size: 12px;
-    }
+  .slider__data-total-number {
+    font-size: 12px;
+  }
 
-    .slider__data-apy-percent {
-         font-size: 8px;
-    }
+  .slider__data-apy-percent {
+    font-size: 8px;
+  }
 
-    .slider__data-tvl-millions {
-         font-size: 10px;
-    }
+  .slider__data-tvl-millions {
+    font-size: 10px;
+  }
 
-    .slider__arrow-wrapper {
-      width: 14px;
-      height: 14px;
-    }
+  .slider__arrow-wrapper {
+    width: 14px;
+    height: 14px;
+  }
 }
 
 </style>
