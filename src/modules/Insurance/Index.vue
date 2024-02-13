@@ -1,10 +1,17 @@
 <template>
   <div
+    v-if="loaded"
+    class="market__loader"
+  >
+    <Spinner />
+  </div>
+  <div
+    v-else
     class="insurance-wrapper"
   >
     <div class="insurance">
       <TokenDataInsurance
-        :token-data="tokenData"
+        :tokenData="tokenData"
         class="market__token-data"
       />
       <p class="insurance__graphics">graphic data</p>
@@ -19,11 +26,23 @@
 
 <script lang="ts">
 import TokenDataInsurance from '@/modules/Insurance/TokenData.vue';
+import Spinner from '@/components/Spinner/Index.vue';
 
 export default {
   name: 'InsurancePage',
   components: {
     TokenDataInsurance,
+    Spinner,
+  },
+  props: {
+    tokenData: {
+      type: Object,
+      default: () => ({}),
+    },
+    loaded: {
+      type: Boolean,
+      default: false,
+    },
   },
 };
 

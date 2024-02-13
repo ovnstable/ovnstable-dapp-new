@@ -1,7 +1,7 @@
 <template>
   <div class="insurance__info">
     <BaseIcon
-      :name="tokenData.insuranceImage"
+      :name="tokenData.insImage"
       class="insurance__token-image"
     />
     <div class="insurance__token-title">
@@ -81,7 +81,7 @@
     <div class="insurance__divider" />
     <div class="insurance__payout-data">
       <p class="insurance__token-data-title">Insurance vault</p>
-      <p class="insurance__token-data-num amount-of-ovn">{{ tokenData.amountOfOVN }} OVN</p>
+      <p class="insurance__token-data-num amount-of-ovn">{{ tokenData.data.supply.toFixed(2) }} OVN</p>
       <BaseIcon
         name='Insurance_OVNVault'
       />
@@ -89,18 +89,18 @@
     <div class="insurance__divider" />
     <div class="insurance__payout-data">
       <p class="insurance__token-data-title">Value of vault</p>
-      <p class="insurance__token-data-num amount-of-ovn">${{ tokenData.valueOfVault }}</p>
+      <p class="insurance__token-data-num amount-of-ovn">${{ tokenData.data.supplyUSD.toFixed(2) }}</p>
     </div>
     <div class="insurance__divider" />
     <div class="insurance__payout-data">
       <p class="insurance__token-data-title">Insurance coverage</p>
-      <p class="insurance__token-data-num amount-of-ovn">{{ tokenData.percentOfCoverage }}%</p>
+      <p class="insurance__token-data-num amount-of-ovn">{{ tokenData.data.coverage.toFixed(2) }}%</p>
     </div>
     <div class="insurance__divider" />
     <div class="performance__apy-data">
       <p class="insurance__token-data-title">30-day APY</p>
       <div class="insurance__apy-data-chain">
-        <p class="insurance__token-data-num insurance__token-data-num--apy-num">{{ tokenData.dailyApy }}%</p>
+        <p class="insurance__token-data-num insurance__token-data-num--apy-num">{{ tokenData.data.apyMonth.toFixed(2) }}%</p>
         <div
           class="performance__icon-chain"
         >
@@ -130,15 +130,7 @@ export default {
   props: {
     tokenData: {
       type: Object,
-      default: () => ({
-        insuranceImage: 'Insurance_Optimism',
-        lastPayoutTime: '05:02',
-        lastPayoutType: 'hours ago',
-        dailyApy: '5',
-        amountOfOVN: 4376,
-        valueOfVault: 76074,
-        percentOfCoverage: 3,
-      }),
+      default: () => ({}),
     },
     chainIcon: {
       type: String,
