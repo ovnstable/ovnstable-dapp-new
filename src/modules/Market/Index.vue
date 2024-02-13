@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="firstLoad"
+    v-if="!loaded"
     class="market__loader"
   >
     <Spinner />
@@ -18,6 +18,7 @@
       </div>
 
     </Transition>
+
     <div class="market">
       <TokenDataPerformance
         :token-data="tokenData"
