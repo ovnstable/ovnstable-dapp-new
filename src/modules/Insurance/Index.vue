@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="loaded"
+    v-if="firstLoad"
     class="market__loader"
   >
     <Spinner />
@@ -9,6 +9,15 @@
     v-else
     class="insurance-wrapper"
   >
+    <Transition name="slide-fade">
+      <div
+        v-if="!loaded"
+        class="market__loader"
+      >
+        <Spinner />
+      </div>
+
+    </Transition>
     <div class="insurance">
       <TokenDataInsurance
         :tokenData="tokenData"
@@ -38,6 +47,10 @@ export default {
     tokenData: {
       type: Object,
       default: () => ({}),
+    },
+    firstLoad: {
+      type: Boolean,
+      required: true,
     },
     loaded: {
       type: Boolean,

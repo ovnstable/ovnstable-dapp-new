@@ -1,6 +1,7 @@
 <template>
   <InsurancePage
     :token-data="insuranceTokenData"
+    :first-load="firstRender"
     :loaded="loaded"
   />
 </template>
@@ -16,6 +17,7 @@ export default {
   data() {
     return {
       loaded: true,
+      firstRender: true,
     };
   },
   computed: {
@@ -28,7 +30,7 @@ export default {
       immediate: true,
       handler: function handleNetworkNameChange(newVal, oldVal) {
         if (newVal !== oldVal) {
-          this.handleNetworkChange();
+          this.fetchDataForMarketId(this.$store.state.network.networkName);
         }
       },
     },
@@ -37,21 +39,17 @@ export default {
     await this.fetchDataForMarketId(this.$store.state.network.networkName.toLowerCase());
   },
   methods: {
-    handleNetworkChange() {
-      const marketId = this.$route.params.id;
-      if (marketId) {
-        this.fetchDataForMarketId(this.$store.state.network.networkName);
-      }
-    },
     async fetchDataForMarketId(networkName: string) {
-      this.loaded = true;
+      this.loaded = false;
       try {
         await Promise.all([
           this.$store.dispatch('insuranceTokenData/fetchInsuranceTokenData', { networkName }),
         ]);
-        this.loaded = false;
-      } catch (error) {
         this.loaded = true;
+        this.firstRender = false;
+      } catch (error) {
+        this.loaded = false;
+        this.firstRender = false;
         console.error('Error fetching data:', error);
       }
     },
