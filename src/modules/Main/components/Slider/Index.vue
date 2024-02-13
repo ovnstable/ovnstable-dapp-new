@@ -30,6 +30,7 @@
           <div class="slider__info">
             <div class="slider__token-overview">
               <BaseIcon
+                class="slider__token-image"
                 name="usdPlus"
               />
               <p class="slider__token-title">{{ slide.tokenName }}</p>
@@ -47,7 +48,13 @@
               <div class="slider__tvl-info">
                 <p class="slider__tvl-title">TVL:</p>
                 <div class="slider__tvl-numbers">
-                  <p class="slider__data-total-number">{{ slide.tvl }} <span class="slider__data-tvl-millions">m</span></p>
+                  <p class="slider__data-total-number">
+                    {{ slide.tokenName === 'ETH+' ? slide.tvl : ((slide.tvl / 1e6).toFixed(2)) }}
+                    <span
+                      v-if="slide.tokenName !== 'ETH+'"
+                      class="slider__data-tvl-millions"
+                    >m</span>
+                  </p>
                   <p class="slider__data-growth-number">+{{ slide.tvlGrowth }}%</p>
                 </div>
               </div>
@@ -63,6 +70,7 @@
             <div class="slider__second-token-overview">
               <div class="slider__second-token-title">
                 <BaseIcon
+                  class="slider__token-image"
                   name="wUsdPlus"
                 />
                 <p class="slider__second-token-title-text">{{ slide.tokenWrappedName }}</p>
@@ -76,9 +84,9 @@
 
     <div
       class="slider__arrow-wrapper"
-      :class="{ 'slider__arrow-disabled': currentIndex === slides.length - 1 }"
-      @click="currentIndex < slides.length - 1 && nextSlide()"
-      @keydown.enter="currentIndex < slides.length - 1 && nextSlide()"
+      :class="{ 'slider__arrow-disabled': currentIndex === sliderData.length - 1 }"
+      @click="currentIndex < sliderData.length - 1 && nextSlide()"
+      @keydown.enter="currentIndex < sliderData.length - 1 && nextSlide()"
       tabindex="0"
     >
       <BaseIcon
@@ -107,53 +115,6 @@ export default {
     return {
       currentIndex: 0,
       slideRef: ref(null) as any,
-      slides: [
-        {
-          iconFirstToken: 'usdPlus',
-          iconPathFirstToken: 'usdPlus',
-          titleFirstToken: 'USD+',
-          apyPercent: '10.4',
-          apyGrowth: '5',
-          tvlM: '5.3',
-          tvlGrowth: '1',
-          lastPayoutTime: '05:02',
-          lastPayoutText: 'hours ago',
-          iconSecondToken: 'wUsdPlus',
-          iconPathSecondToken: 'wUsdPlus',
-          titleSecond: 'WUSD+',
-          descriptionSecondToken: 'An index-adjusted wrapper for USD+. Your wUSD+ balance won\'t increase over time. When wUSD+ will unwrap, you receive USD+ based on the latest index.',
-        },
-        {
-          iconFirstToken: 'usdPlus',
-          iconPathFirstToken: 'usdPlus',
-          titleFirstToken: 'USD+_2',
-          apyPercent: '30',
-          apyGrowth: '57',
-          tvlM: '5.73',
-          tvlGrowth: '71',
-          lastPayoutTime: '057:02',
-          lastPayoutText: 'hours ago',
-          iconSecondToken: 'wUsdPlus',
-          iconPathSecondToken: 'wUsdPlus',
-          titleSecond: 'WUSD+_2',
-          descriptionSecondToken: 'An index-adjusted wrapper for USD+. Your wUSD+ balance won\'t increase over time. When wUSD+ will unwrap, you receive USD+ based on the latest index.',
-        },
-        {
-          iconFirstToken: 'usdPlus',
-          iconPathFirstToken: 'usdPlus',
-          titleFirstToken: 'USD+_3',
-          apyPercent: '10',
-          apyGrowth: '517',
-          tvlM: '15.73',
-          tvlGrowth: '1',
-          lastPayoutTime: '0:02',
-          lastPayoutText: 'hours ago',
-          iconSecondToken: 'wUsdPlus',
-          iconPathSecondToken: 'wUsdPlus',
-          titleSecond: 'WUSD+_3',
-          descriptionSecondToken: 'An index-adjusted wrapper for USD+. Your wUSD+ balance won\'t increase over time. When wUSD+ will unwrap, you receive USD+ based on the latest index.',
-        },
-      ],
       swiperInstance: null as any,
     };
   },
@@ -168,7 +129,7 @@ export default {
       this.swiperInstance = swiper;
     },
     nextSlide() {
-      if (this.currentIndex < this.slides.length - 1 && this.swiperInstance) {
+      if (this.currentIndex < this.sliderData.length - 1 && this.swiperInstance) {
         this.currentIndex += 1;
         this.swiperInstance.slideTo(this.currentIndex);
       }
@@ -190,7 +151,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang='scss' scoped>
 
 * {
   color: var(--color-2);
@@ -334,6 +295,13 @@ export default {
   pointer-events: none;
   cursor: default;
 }
+.slider__token-image {
+  svg {
+    width: 40px;
+    height: 40px;
+  }
+}
+
 
 @media (max-width: 1024px) {
   .slider__info {
