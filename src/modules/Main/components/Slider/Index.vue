@@ -31,7 +31,7 @@
             <div class="slider__token-overview">
               <BaseIcon
                 class="slider__token-image"
-                name="usdPlus"
+                :name="formatFirstTokenIconName(slide.tokenName)"
               />
               <p class="slider__token-title">{{ slide.tokenName }}</p>
               <p class="slider__overview-title">OVERVIEW</p>
@@ -54,6 +54,10 @@
                       v-if="slide.tokenName !== 'ETH+'"
                       class="slider__data-tvl-millions"
                     >m</span>
+                    <span
+                      v-else
+                      class="slider__data-tvl-millions"
+                    >WETH</span>
                   </p>
                   <p class="slider__data-growth-number">+{{ slide.tvlGrowth }}%</p>
                 </div>
@@ -71,7 +75,7 @@
               <div class="slider__second-token-title">
                 <BaseIcon
                   class="slider__token-image"
-                  name="wUsdPlus"
+                  :name="formatSecondTokenIconName(slide.tokenName)"
                 />
                 <p class="slider__second-token-title-text">{{ slide.tokenWrappedName }}</p>
               </div>
@@ -145,6 +149,14 @@ export default {
       if (this.swiperInstance) {
         this.currentIndex = this.swiperInstance.realIndex;
       }
+    },
+
+    formatFirstTokenIconName(tokenName: string) {
+      return `${tokenName.slice(0, -1).toLowerCase()}Plus`;
+    },
+    formatSecondTokenIconName(tokenName: string) {
+      const formattedName = tokenName.slice(0, -1);
+      return `w${formattedName.charAt(0).toUpperCase()}${formattedName.slice(1).toLowerCase()}Plus`;
     },
 
   },
