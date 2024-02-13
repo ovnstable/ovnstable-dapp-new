@@ -27,9 +27,9 @@
         </div>
       </TabsComponent>
     </div>
-
     <SliderComponent
       :slider-data="sliderData"
+      :sliderLoaded="sliderLoaded"
       v-if="isFirstInitializationForPath || !pathViz"
     />
     <PathView
@@ -100,6 +100,10 @@ export default {
     sliderData: {
       type: Object,
       default: () => ({}),
+    },
+    sliderLoaded: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

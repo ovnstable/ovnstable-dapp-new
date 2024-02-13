@@ -1,5 +1,14 @@
 <template>
-  <div class="swap-slider">
+  <div
+    v-if="!sliderLoaded"
+    class="slider__loader"
+  >
+    <Spinner />
+  </div>
+  <div
+    v-else
+    class="swap-slider"
+  >
     <div
       class="slider__arrow-wrapper"
       :class="{ 'slider__arrow-disabled': currentIndex === 0 }"
@@ -106,6 +115,7 @@ import { ref } from 'vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import { Swiper as SwiperClass } from 'swiper/core';
+import Spinner from '@/components/Spinner/Index.vue';
 import 'swiper/swiper.min.css';
 
 export default {
@@ -114,6 +124,7 @@ export default {
     BaseIcon,
     Swiper,
     SwiperSlide,
+    Spinner
   },
   data() {
     return {
@@ -126,6 +137,10 @@ export default {
     sliderData: {
       type: Object,
       default: () => ({}),
+    },
+    sliderLoaded: {
+      type: Boolean,
+      default: false,
     },
   },
   methods: {
@@ -314,6 +329,19 @@ export default {
   }
 }
 
+.slider__loader {
+  position: absolute;
+  left: 450px;
+  top: 60px;
+  margin: auto;
+  height: 100%;
+  width: 100%;
+  min-height: 474px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 50vh;
+}
 
 @media (max-width: 1024px) {
   .slider__info {

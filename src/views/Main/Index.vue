@@ -1,6 +1,9 @@
 <template>
   <div class="main-module">
-    <MainModule :slider-data="sliderData" />
+    <MainModule
+      :slider-data="sliderData"
+      :sliderLoaded="sliderLoaded"
+    />
     <PoolsContainer :type="'ALL'" />
   </div>
 </template>
@@ -15,6 +18,11 @@ export default {
     MainModule,
     PoolsContainer,
   },
+  data() {
+    return {
+      sliderLoaded: true,
+    };
+  },
   computed: {
     sliderData() {
       return this.$store.state.sliderData.sliderData || {};
@@ -22,12 +30,14 @@ export default {
   },
   methods: {
     async fetchDataSlider() {
-      console.log('lets try to fetch');
+      this.sliderLoaded = false;
       try {
         await Promise.all([
           this.$store.dispatch('sliderData/fetchSliderData'),
         ]);
+        this.sliderLoaded = true;
       } catch (error) {
+        this.sliderLoaded = false;
         console.error('Error fetching data:', error);
       }
     },
