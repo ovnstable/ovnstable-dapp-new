@@ -16,7 +16,6 @@ const actions = {
         collateralToken,
         payouts,
       };
-      console.log(combinedData);
       commit('setPayoutData', { marketId, combinedData });
     } catch (error) {
       console.error('Failed to fetch token data:', error);

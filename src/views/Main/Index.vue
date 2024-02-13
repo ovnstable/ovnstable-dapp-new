@@ -1,5 +1,6 @@
 <template>
   <div class="main-module">
+    <p>{{ sliderData }}</p>
     <MainModule />
     <PoolsContainer :type="'ALL'" />
   </div>
@@ -14,6 +15,26 @@ export default {
   components: {
     MainModule,
     PoolsContainer,
+  },
+  computed: {
+    sliderData() {
+      return this.$store.state.sliderData.sliderData || {};
+    },
+  },
+  methods: {
+    async fetchDataSlider() {
+      console.log('lets try to fetch');
+      try {
+        await Promise.all([
+          this.$store.dispatch('sliderData/fetchSliderData'),
+        ]);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    },
+  },
+  mounted() {
+    this.fetchDataSlider(); // Call the method here
   },
 };
 </script>

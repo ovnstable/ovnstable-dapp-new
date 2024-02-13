@@ -26,6 +26,7 @@ import tokenData from '@/store/views/market/tokenData.ts';
 import portfolioData from '@/store/views/market/portfolioData.ts';
 import collateralData from '@/store/views/market/collateralData.ts';
 import payoutData from '@/store/views/market/payoutData.ts';
+import sliderData from '@/store/views/main/mintRedeem/sliderData.ts';
 
 // modals
 import errorModal from '@/store/modals/error-modal.ts';
@@ -70,6 +71,7 @@ export default new Vuex.Store({
     portfolioData,
     collateralData,
     payoutData,
+    sliderData,
   },
 
   plugins: [
