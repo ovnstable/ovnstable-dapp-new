@@ -22,7 +22,7 @@
         ref="mySwiper"
       >
         <swiper-slide
-          v-for="(slide, index) in slides"
+          v-for="(slide, index) in sliderData"
           :ref="slideRef"
           :swiper-ref="swiperInstance"
           :key="index"
@@ -30,9 +30,9 @@
           <div class="slider__info">
             <div class="slider__token-overview">
               <BaseIcon
-                :name="slide.iconPathFirstToken"
+                name="usdPlus"
               />
-              <p class="slider__token-title">{{ slide.titleFirstToken }}</p>
+              <p class="slider__token-title">{{ slide.tokenName }}</p>
               <p class="slider__overview-title">OVERVIEW</p>
             </div>
             <div class="slider__divider" />
@@ -40,22 +40,22 @@
               <div class="slider__apy-info">
                 <p class="slider__apy-title">Average APY:</p>
                 <div class="slider__apy-numbers">
-                  <p class="slider__data-total-number">{{ slide.apyPercent }}<span class="slider__data-apy-percent">%</span></p>
+                  <p class="slider__data-total-number">{{ slide.apy }}<span class="slider__data-apy-percent">%</span></p>
                   <p class="slider__data-growth-number">+{{ slide.apyGrowth }}%</p>
                 </div>
               </div>
               <div class="slider__tvl-info">
                 <p class="slider__tvl-title">TVL:</p>
                 <div class="slider__tvl-numbers">
-                  <p class="slider__data-total-number">{{ slide.tvlM }} <span class="slider__data-tvl-millions">m</span></p>
+                  <p class="slider__data-total-number">{{ slide.tvl }} <span class="slider__data-tvl-millions">m</span></p>
                   <p class="slider__data-growth-number">+{{ slide.tvlGrowth }}%</p>
                 </div>
               </div>
               <div class="slider__payout-info">
                 <p class="slider__payout-title">Last payout:</p>
                 <div class="slider__payout-numbers">
-                  <p class="slider__data-total-number">{{ slide.lastPayoutTime }}</p>
-                  <p class="slider__data-growth-number">{{ slide.lastPayoutText }}</p>
+                  <p class="slider__data-total-number">{{ slide.payoutAgoTime }}</p>
+                  <p class="slider__data-growth-number">{{ slide.payoutAgoText }}</p>
                 </div>
               </div>
             </div>
@@ -63,11 +63,11 @@
             <div class="slider__second-token-overview">
               <div class="slider__second-token-title">
                 <BaseIcon
-                  :name="slide.iconPathSecondToken"
+                  name="wUsdPlus"
                 />
-                <p class="slider__second-token-title-text">{{ slide.titleSecond }}</p>
+                <p class="slider__second-token-title-text">{{ slide.tokenWrappedName }}</p>
               </div>
-              <p class="slider__second-token-description">{{ slide.descriptionSecondToken }}</p>
+              <p class="slider__second-token-description">{{ slide.description }}</p>
             </div>
           </div>
         </swiper-slide>
@@ -156,6 +156,12 @@ export default {
       ],
       swiperInstance: null as any,
     };
+  },
+  props: {
+    sliderData: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   methods: {
     onSwiper(swiper: SwiperClass) {

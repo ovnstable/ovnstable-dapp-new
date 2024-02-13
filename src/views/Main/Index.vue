@@ -1,7 +1,6 @@
 <template>
   <div class="main-module">
-    <p>{{ sliderData }}</p>
-    <MainModule />
+    <MainModule :slider-data="sliderData" />
     <PoolsContainer :type="'ALL'" />
   </div>
 </template>
@@ -34,7 +33,7 @@ export default {
     },
   },
   mounted() {
-    this.fetchDataSlider(); // Call the method here
+    this.fetchDataSlider();
   },
 };
 </script>

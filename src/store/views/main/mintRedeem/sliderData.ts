@@ -1,5 +1,5 @@
 import SliderApiService from '@/services/slider-api-service.ts';
-import {sliderDescriptionForWrapped} from '@/store/views/main/mintRedeem/mocks.ts'
+import { sliderDescriptionForWrapped } from '@/store/views/main/mintRedeem/mocks.ts'
 
 const state = {
   sliderData: {},
