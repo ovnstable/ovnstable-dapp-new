@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="firstLoad"
-    class="market__loader"
+    class="insurance__loader"
   >
     <Spinner />
   </div>
@@ -12,13 +12,15 @@
     <Transition name="slide-fade">
       <div
         v-if="!loaded"
-        class="market__loader"
+        class="insurance__loader"
       >
         <Spinner />
       </div>
 
     </Transition>
-    <div class="insurance">
+    <div
+      class="insurance"
+    >
       <TokenDataInsurance
         :tokenData="tokenData"
         class="market__token-data"

@@ -13,13 +13,37 @@ function generateInsuranceImageName(networkName: string) {
   return `Insurance_${capitalizedNetworkName}`;
 }
 
+function getLastPayout(payouts: any) {
+  if (payouts.length === 0) {
+    return { lastPayoutTime: 'No payouts', lastPayoutType: 'No payouts' };
+  }
+
+  const lastPayout = payouts[0];
+  const payoutDate = new Date(lastPayout.date);
+  const now = new Date();
+
+  const diffMinutes = Math.abs(now.getTime() - payoutDate.getTime()) / (1000 * 60);
+
+  const hours = Math.floor(diffMinutes / 60).toString().padStart(2, '0');
+  const minutes = Math.floor(diffMinutes % 60).toString().padStart(2, '0');
+  const lastPayoutTime = `${hours} : ${minutes}`;
+
+  const lastPayoutType = hours === '00' && minutes <= '02' ? 'hour ago' : 'hours ago';
+
+  return { lastPayoutTime, lastPayoutType };
+}
+
 const actions = {
   async fetchInsuranceTokenData({ commit }: any, { networkName }: any) {
     try {
       const data = await InsuranceApiService.loadInsuranceData(networkName);
+      const payouts = await InsuranceApiService.loadPayouts(networkName);
       const insImage = generateInsuranceImageName(networkName);
+      const { lastPayoutType, lastPayoutTime } = getLastPayout(payouts);
       const combinedData = {
         insImage,
+        lastPayoutType,
+        lastPayoutTime,
         data,
       };
       commit('setInsuranceTokenData', { combinedData });

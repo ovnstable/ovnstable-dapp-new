@@ -81,7 +81,7 @@
     <div class="insurance__divider" />
     <div class="insurance__payout-data">
       <p class="insurance__token-data-title">Insurance vault</p>
-      <p class="insurance__token-data-num amount-of-ovn">{{ tokenData.data.supply.toFixed(2) }} OVN</p>
+      <p class="insurance__token-data-num amount-of-ovn">{{ formatTVL(tokenData.data.supply.toFixed(2)) }} OVN</p>
       <BaseIcon
         name='Insurance_OVNVault'
       />
@@ -89,7 +89,7 @@
     <div class="insurance__divider" />
     <div class="insurance__payout-data">
       <p class="insurance__token-data-title">Value of vault</p>
-      <p class="insurance__token-data-num amount-of-ovn">${{ tokenData.data.supplyUSD.toFixed(2) }}</p>
+      <p class="insurance__token-data-num amount-of-ovn">${{ formatTVL(tokenData.data.supplyUSD.toFixed(2)) }}</p>
     </div>
     <div class="insurance__divider" />
     <div class="insurance__payout-data">
@@ -146,15 +146,20 @@ export default {
     },
   },
   methods: {
-    generateHref(tokenName:string, networkName:string) {
+    generateHref(tokenName: string, networkName: string) {
       const networkContracts = (chainContractsMap as any)[networkName.toLowerCase()];
       const tokenInsurance = networkContracts[tokenName];
       return tokenInsurance;
     },
 
-    getIconName(chain:string) {
+    getIconName(chain: string) {
       const formattedChain = chain.charAt(0).toUpperCase() + chain.slice(1).toLowerCase();
       return `Icon${formattedChain}On`;
+    },
+
+    formatTVL(number: any) {
+      return new Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 0, maximumFractionDigits: 0 })
+        .format(number);
     },
   },
 };
