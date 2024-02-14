@@ -2,7 +2,7 @@
 import { ethers } from 'ethers';
 import { markRaw } from 'vue';
 
-const SUPPORTED_NETWORKS = [137, 31337, 56, 10, 42161, 324, 8453, 59144];
+// const SUPPORTED_NETWORKS = [137, 31337, 56, 10, 42161, 324, 8453, 59144];
 
 const state = {
   contracts: null,
@@ -65,8 +65,9 @@ const actions = {
   }: any, provider: any) {
     const evmProvider = new ethers.BrowserProvider(provider, 'any');
     const signer = await evmProvider.getSigner();
-    const chainId = Number(getters.provider?.chainId).toString();
-    dispatch('network/saveNetworkToLocalStore', chainId, { root: true });
+    const networkData = await evmProvider.getNetwork();
+    console.log(evmProvider, networkData, 'PROVIDER___');
+    dispatch('network/saveNetworkToLocalStore', networkData.chainId.toString(), { root: true });
 
     commit('setIsProviderDefault', false);
     commit('setProvider', provider);

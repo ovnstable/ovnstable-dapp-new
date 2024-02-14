@@ -127,8 +127,9 @@ const actions = {
       });
     }
 
-    console.log('INIWEB3TRIG');
+    console.log(wallet, 'INIWEB3TRIG');
     await dispatch('web3/initWeb3', null, { root: true }).then(async () => {
+      const userAddress = wallet?.accounts[0]?.address;
       commit('setWalletConnected', true);
 
       if (wallet.label !== undefined && wallet.label && wallet.label !== 'undefined') {
@@ -139,9 +140,9 @@ const actions = {
         commit('accountData/setUns', wallet.instance.cacheOptions.getDefaultUsername(), { root: true });
       }
 
-      commit('accountData/setAccount', wallet.address, { root: true });
+      commit('accountData/setAccount', userAddress, { root: true });
 
-      dispatch('checkAccount');
+      dispatch('checkAccount', userAddress);
     });
 
     commit('setOnboard', onboard);
@@ -154,8 +155,6 @@ const actions = {
 
     try {
       const netId = rootState.network.networkId;
-      console.log(netId, 'netid');
-
       if (netId && getters.onboard) await getters.onboard.setChain({ chainId: netId });
     } catch (e) {
       await dispatch('initOnboard');
@@ -420,6 +419,7 @@ const actions = {
         }
       }
 
+      console.log(account, 'ccountData/setAccou');
       commit('accountData/setAccount', account, { root: true });
 
       if (account) {
@@ -428,6 +428,7 @@ const actions = {
         dispatch('dappDataAction/resetUserData', null, { root: true });
       }
     } else {
+      console.log('ELSECHECK');
       dispatch('dappDataAction/resetUserData', null, { root: true });
       commit('accountData/setAccount', null, { root: true });
       dispatch('insuranceData/refreshInsurance', null, { root: true });

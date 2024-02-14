@@ -63,8 +63,7 @@ const actions = {
   async resetBalance({ commit, dispatch, getters }: any) {
     console.log('AccountData: resetBalance');
 
-    commit('setBalance', {});
-    commit('setOriginalBalance', {});
+    commit('setOriginalBalance', []);
     commit('setEtsBalance', {});
     commit('setEtsOriginalBalance', {});
     commit('setInsuranceBalance', {});
@@ -245,6 +244,7 @@ const mutations = {
   },
 
   setAccount(state: any, value: any) {
+    console.log(value, '---setAccount');
     state.account = value;
   },
 

@@ -150,7 +150,7 @@ export default {
     },
     totalUserBalance() {
       console.log(this.originalBalance, '-originalBalance');
-      if (this.allTokensList.length === 0 || !this.originalBalance) return '0';
+      if (this.allTokensList.length === 0 || this.originalBalance.length === 0) return '0';
       const total: BigNumber = this.originalBalance.reduce((acc: BigNumber, curr: any) => {
         const tokenData = this.allTokensList.find((_: any) => _.symbol === curr.symbol);
         if (!tokenData) return acc;
@@ -164,6 +164,7 @@ export default {
     },
     userBalancesList() {
       console.log(this.originalBalance, '-originalBalance');
+      if (this.originalBalance.length === 0) return [];
       return this.originalBalance
         .filter((_: any) => OVN_TOKENS.includes(_.symbol)).map((bal: any) => {
           const tokenData = this.allTokensList.find((_: any) => _.symbol === bal.symbol);
