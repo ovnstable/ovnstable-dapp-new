@@ -7,7 +7,7 @@ import BigNumber from 'bignumber.js';
 
 const state = {
   accountNativeBalance: '0',
-  originalBalance: {},
+  originalBalance: [],
   actionAssetBalance: {},
   etsBalance: {},
   etsOriginalBalance: {},
