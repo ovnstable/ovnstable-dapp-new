@@ -66,3 +66,5 @@ export const appNetworksData = [
 export const awaitDelay = async (time: number) => new Promise((res) => setTimeout(res, time));
 
 export const OVN_TOKENS = ['USD+', 'DAI+', 'USDT+', 'USDC+', 'ETH+', 'OVN'];
+
+export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';

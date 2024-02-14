@@ -18,6 +18,7 @@ import { MulticallWrapper } from 'ethers-multicall-provider';
 import { ethers } from 'ethers';
 import { ERC20_ABI } from '@/assets/abi/index.ts';
 import { fixedByPrice } from '@/utils/numbers.ts';
+import { ZERO_ADDRESS } from '@/utils/const.ts';
 
 // const KEY = 'REFERRAL_CODE';
 
@@ -322,41 +323,6 @@ const actions = {
   //   }, 30000);
   // },
 
-  async updateDirectBalances({
-    commit, state, dispatch, rootState,
-  }: any, addresses: string[]) {
-    state.isBalancesLoading = true;
-    try {
-      let tokens = [...state.secondTokens, ...state.tokens];
-
-      // filter unique tokens by address
-      tokens = tokens.filter(
-        (token: any, index, self) => index === self
-          .findIndex((t: any) => t.address === token.address),
-      );
-
-      for (let i = 0; i < tokens.length; i++) {
-        const token: any = tokens[i];
-
-        // currently LOADING extra tokens balances deprecated
-        // if (addresses.includes(token.address)) {
-        //   // eslint-disable-next-line no-await-in-loop
-        //   token.balanceData = await loadBalance(
-        //     rootState,
-        //     {
-        //       contract: state.tokensContractMap[token.address],
-        //       token
-        //     }
-        //   );
-        // }
-      }
-    } catch (e) {
-      console.error('Error when update direct balance', e);
-    } finally {
-      state.isBalancesLoading = false;
-    }
-  },
-
   async loadBalances({
     commit, state, getters, rootState, dispatch,
   }: any) {
@@ -385,7 +351,9 @@ const actions = {
 
       for (let i = 0; i < tokens.length; i++) {
         const token = tokens[i];
-        const balance = balancesData[i] ? balancesData[i].toString() : '0';
+        let balance = balancesData[i] ? balancesData[i].toString() : '0';
+
+        if (token.address === ZERO_ADDRESS) balance = rootState.accountData.accountNativeBalance;
 
         const balanceFormatted = new BigNumber(balance).div(10 ** token.decimals);
         const fixedBy = balanceFormatted.gt(0) ? fixedByPrice(balanceFormatted.toNumber()) : 2;
@@ -694,7 +662,7 @@ const actions = {
         dispatch('stopSwapConfirmTimer');
 
         setTimeout(() => {
-          dispatch('updateDirectBalances', addressesToUpdate);
+          dispatch('loadBalances', addressesToUpdate);
         }, 2000);
       })
       .catch((e: any) => {
