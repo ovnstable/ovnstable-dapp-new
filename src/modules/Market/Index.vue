@@ -9,15 +9,6 @@
     v-else
     class="market-wrapper"
   >
-    <Transition name="slide-fade">
-      <div
-        v-if="!loaded"
-        class="market__loader"
-      >
-        <Spinner />
-      </div>
-
-    </Transition>
     <div class="market">
       <TokenDataPerformance
         :token-data="tokenData"
@@ -26,6 +17,7 @@
       <GraphicsPerformance
         :payout-data="payoutData"
         :token-data="tokenData"
+        :loaded="loaded"
         class="market__graphics"
       />
       <PortfolioPerformance
