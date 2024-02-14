@@ -1,9 +1,5 @@
 <template>
   <div class="px-5 pt-5">
-    <div class="loading-img">
-      <v-img :src="require('@/assets/icon/error-circle.svg')" />
-    </div>
-
     <div class="error-label pt-5 pb-5">
       Error in estimating gas
     </div>
