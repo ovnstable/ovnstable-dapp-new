@@ -28,8 +28,6 @@
       </TabsComponent>
     </div>
     <SliderComponent
-      :slider-data="sliderData"
-      :sliderLoaded="sliderLoaded"
       v-if="isFirstInitializationForPath || !pathViz"
     />
     <PathView
@@ -95,16 +93,6 @@ export default {
       stablecoinTokens: [],
       isFirstInitializationForPath: true,
     };
-  },
-  props: {
-    sliderData: {
-      type: Object,
-      default: () => ({}),
-    },
-    sliderLoaded: {
-      type: Boolean,
-      default: false,
-    },
   },
   computed: {
     ...mapGetters('waitingModal', { showWaitModal: 'show' }),
