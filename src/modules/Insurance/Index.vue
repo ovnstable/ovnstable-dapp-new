@@ -25,7 +25,10 @@
         :tokenData="tokenData"
         class="market__token-data"
       />
-      <p class="insurance__graphics">graphic data</p>
+      <GraphicsPerformance
+        :payoutData="payoutData"
+        class="insurance__graphics"
+      />
       <p class="insurance__portfolio">portfolio data</p>
     </div>
     <div class="insurance__payouts">
@@ -37,16 +40,22 @@
 
 <script lang="ts">
 import TokenDataInsurance from '@/modules/Insurance/TokenData.vue';
+import GraphicsPerformance from '@/modules/Insurance/Graphic.vue';
 import Spinner from '@/components/Spinner/Index.vue';
 
 export default {
   name: 'InsurancePage',
   components: {
     TokenDataInsurance,
+    GraphicsPerformance,
     Spinner,
   },
   props: {
     tokenData: {
+      type: Object,
+      default: () => ({}),
+    },
+    payoutData: {
       type: Object,
       default: () => ({}),
     },

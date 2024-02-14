@@ -1,6 +1,7 @@
 <template>
   <InsurancePage
     :token-data="insuranceTokenData"
+    :payout-data="insurancePayouts"
     :first-load="firstRender"
     :loaded="loaded"
   />
@@ -24,26 +25,30 @@ export default {
     insuranceTokenData() {
       return this.$store.state.insuranceTokenData.insuranceTokenData || {};
     },
+    insurancePayouts() {
+      return this.$store.state.insurancePayouts.insurancePayouts || {};
+    },
   },
   watch: {
     '$store.state.network.networkName': {
       immediate: true,
       handler: function handleNetworkNameChange(newVal, oldVal) {
         if (newVal !== oldVal) {
-          this.fetchDataForMarketId(this.$store.state.network.networkName);
+          this.fetchDataForInsurance(this.$store.state.network.networkName);
         }
       },
     },
   },
   async mounted() {
-    await this.fetchDataForMarketId(this.$store.state.network.networkName.toLowerCase());
+    await this.fetchDataForInsurance(this.$store.state.network.networkName.toLowerCase());
   },
   methods: {
-    async fetchDataForMarketId(networkName: string) {
+    async fetchDataForInsurance(networkName: string) {
       this.loaded = false;
       try {
         await Promise.all([
           this.$store.dispatch('insuranceTokenData/fetchInsuranceTokenData', { networkName }),
+          this.$store.dispatch('insurancePayouts/fetchInsurancePayouts', { networkName }),
         ]);
         this.loaded = true;
         this.firstRender = false;

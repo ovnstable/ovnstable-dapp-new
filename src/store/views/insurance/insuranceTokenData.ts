@@ -37,9 +37,9 @@ const actions = {
   async fetchInsuranceTokenData({ commit }: any, { networkName }: any) {
     try {
       const data = await InsuranceApiService.loadInsuranceData(networkName);
-      const payouts = await InsuranceApiService.loadPayouts(networkName);
+      const insurancePayouts = await InsuranceApiService.loadPayouts(networkName);
       const insImage = generateInsuranceImageName(networkName);
-      const { lastPayoutType, lastPayoutTime } = getLastPayout(payouts);
+      const { lastPayoutType, lastPayoutTime } = getLastPayout(insurancePayouts);
       const combinedData = {
         insImage,
         lastPayoutType,

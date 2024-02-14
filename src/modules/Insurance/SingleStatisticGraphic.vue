@@ -98,7 +98,6 @@ export default {
   },
   computed: {
     ...mapGetters('network', ['networkId']),
-    ...mapGetters('theme', ['light']),
 
     activeNetworkData() {
       const data = appNetworksData.find((_) => _.chain === this.networkId);

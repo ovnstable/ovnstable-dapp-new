@@ -27,6 +27,7 @@ import portfolioData from '@/store/views/market/portfolioData.ts';
 import collateralData from '@/store/views/market/collateralData.ts';
 import payoutData from '@/store/views/market/payoutData.ts';
 import insuranceTokenData from '@/store/views/insurance/insuranceTokenData.ts';
+import insurancePayouts from '@/store/views/insurance/InsurancePayouts.ts';
 
 // modals
 import errorModal from '@/store/modals/error-modal.ts';
@@ -72,6 +73,7 @@ export default new Vuex.Store({
     collateralData,
     payoutData,
     insuranceTokenData,
+    insurancePayouts,
   },
 
   plugins: [
