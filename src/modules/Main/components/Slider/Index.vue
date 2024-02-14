@@ -82,9 +82,10 @@
             <div class="slider__divider" />
             <div class="slider__second-token-overview">
               <div class="slider__second-token-title">
-                <BaseIcon
+                <img
                   class="slider__token-image"
-                  :name="formatSecondTokenIconName(slide.tokenName)"
+                  :src="getImageUrl(slide.tokenName)"
+                  :alt="formatSecondTokenIconName(slide.tokenName)"
                 />
                 <p class="slider__second-token-title-text">{{ slide.tokenWrappedName }}</p>
               </div>
@@ -173,7 +174,10 @@ export default {
       const formattedName = tokenName.slice(0, -1);
       return `w${formattedName.charAt(0).toUpperCase()}${formattedName.slice(1).toLowerCase()}Plus`;
     },
-
+    getImageUrl(tokenName: string) {
+      const iconName = this.formatSecondTokenIconName(tokenName);
+      return `src/assets/icons/currencies/main/${iconName}.svg`;
+    },
   },
 };
 </script>
