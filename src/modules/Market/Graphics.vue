@@ -1,13 +1,27 @@
 <template>
   <div class="performance__graphics">
-    <div class="performance__graphics-APY-graphic">
+    <div
+      class="performance__graphics-APY-graphic"
+      v-if="!loaded"
+    >
+      <div class="graphic__loader">
+        <Spinner />
+      </div>
+    </div>
+    <div
+      class="performance__graphics-APY-graphic" 
+      v-else
+    >
       <GraphicComponent
         :graphicData=payoutData
         :tokenData="tokenData"
         type='APY'
       />
     </div>
-    <div class="performance__graphics-TVL-graphic">
+    <div
+      class="performance__graphics-TVL-graphic" 
+      v-if="loaded"
+    >
       <GraphicComponent
         :graphicData=payoutData
         :tokenData="tokenData"
@@ -19,13 +33,19 @@
 <script lang="ts">
 
 import GraphicComponent from '@/modules/Market/SingleStatisticGraphic.vue';
+import Spinner from '@/components/Spinner/Index.vue';
 
 export default {
   name: 'GraphicsPerformance',
   components: {
     GraphicComponent,
+    Spinner,
   },
   props: {
+    loaded: {
+      type: Boolean,
+      default: false,
+    },
     payoutData: {
       type: Object,
       default: () => ({}),
@@ -39,7 +59,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+ .graphic__loader {
+    min-height: 350px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 .performance__graphics {
+  min-height: 350px;
   display: flex;
   flex-direction: row;
   gap: 30px;
