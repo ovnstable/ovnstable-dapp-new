@@ -1,17 +1,15 @@
 <template>
   <div class="performance__graphics">
-    <p>{{ payoutData }}</p>
     <div class="performance__graphics-APY-graphic">
-      <!-- <GraphicComponent
+      <GraphicComponent
         :graphicData=payoutData
-        type='APY'
-      /> -->
+      />
     </div>
   </div>
 </template>
 <script lang="ts">
 
-import GraphicComponent from '@/modules/Market/SingleStatisticGraphic.vue';
+import GraphicComponent from '@/modules/Insurance/SingleStatisticGraphic.vue';
 
 export default {
   name: 'GraphicsPerformance',

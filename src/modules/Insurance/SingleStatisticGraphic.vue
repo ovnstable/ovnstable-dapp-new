@@ -6,13 +6,10 @@
   />
   <div class="performance__graphic">
     <div class="performance__graphic-data">
-      <p class="performance__graphic-title">
-        {{ type === 'APY' ? `Average ${tokenData.tokenName} APY` : `${tokenData.tokenName} TVL` }}
-      </p>
-      <div class="performance__graphic-values">
+      <!-- <div class="performance__graphic-values">
         <p>{{ displayValue }}</p>
         <p>{{ startDateLabel }}</p>
-      </div>
+      </div> -->
     </div>
 
     <div class="performance__graphic-display">
@@ -80,14 +77,6 @@ export default {
       type: Object,
       required: true,
     },
-    tokenData: {
-      type: Object,
-      required: true,
-    },
-    type: {
-      type: String,
-      required: true,
-    },
   },
   data() {
     return {
@@ -103,49 +92,48 @@ export default {
       const data = appNetworksData.find((_) => _.chain === this.networkId);
       return data || appNetworksData[0];
     },
-    displayValue() {
-      if (this.type === 'APY') {
-        const payoutData = this.graphicData.payouts?.slice(0, this.getInterval());
-        const sumYield = payoutData
-          .reduce((acc: any, payout: Payout) => acc + payout.annualizedYield, 0);
-        const avgYield = (sumYield / payoutData.length) || 0;
-        return `${avgYield.toFixed(2)}%`;
-      } if (this.type === 'TVL') {
-        const latestPayout = this.graphicData.payouts[0];
-        if (latestPayout) {
-          if (this.tokenData.tokenName === 'ETH+') {
-            return `${latestPayout.totalUsdPlus.toFixed(6)} WETH`;
-          }
-          return `$${latestPayout.totalUsdPlus.toFixed(2)}`;
-        }
-      }
-      return 'N/A';
-    },
-    startDateLabel() {
-      if (this.type === 'TVL') {
-        return 'Past 2 hours';
-      }
-      const payoutData = this.graphicData.payouts?.slice(0, this.getInterval());
-      if (payoutData.length > 0) {
-        const lastDate = new Date(payoutData[payoutData.length - 1].payableDate);
-        return `from ${lastDate.toLocaleDateString()}`;
-      }
-      return '';
-    },
-    chartData() {
+    // displayValue() {
+    //   if (this.type === 'APY') {
+    //     const payoutData = this.graphicData.payouts?.slice(0, this.getInterval());
+    //     const sumYield = payoutData
+    //       .reduce((acc: any, payout: Payout) => acc + payout.annualizedYield, 0);
+    //     const avgYield = (sumYield / payoutData.length) || 0;
+    //     return `${avgYield.toFixed(2)}%`;
+    //   } if (this.type === 'TVL') {
+    //     const latestPayout = this.graphicData.payouts[0];
+    //     if (latestPayout) {
+    //       if (this.tokenData.tokenName === 'ETH+') {
+    //         return `${latestPayout.totalUsdPlus.toFixed(6)} WETH`;
+    //       }
+    //       return `$${latestPayout.totalUsdPlus.toFixed(2)}`;
+    //     }
+    //   }
+    //   return 'N/A';
+    // },
+    // startDateLabel() {
+    //   if (this.type === 'TVL') {
+    //     return 'Past 2 hours';
+    //   }
+    //   const payoutData = this.graphicData.payouts?.slice(0, this.getInterval());
+    //   if (payoutData.length > 0) {
+    //     const lastDate = new Date(payoutData[payoutData.length - 1].payableDate);
+    //     return `from ${lastDate.toLocaleDateString()}`;
+    //   }
+    //   return '';
+    // },
+    chartData(): any {
       const payoutData = this.graphicData.payouts?.slice(0, this.getInterval());
       const activeNetworkColor = this.activeNetworkData.color;
-      payoutData.sort((a: { payableDate: any; }, b: { payableDate: any; }) => new Date(a
-        .payableDate).getTime() - new Date(b.payableDate).getTime());
+      payoutData.sort((a: { date: any; }, b: { date: any; }) => new Date(a
+        .date).getTime() - new Date(b.date).getTime());
 
       return {
         chartData: {
           labels: payoutData
-            .map((payout: Payout) => new Date(payout.payableDate).toLocaleDateString()),
+            .map((payout: any) => new Date(payout.date).toLocaleDateString()),
           datasets: [{
             label: false,
-            data: this.type === 'APY' ? payoutData.map((payout: Payout) => payout.annualizedYield) : payoutData
-              .map((payout: Payout) => payout.totalUsdPlus),
+            data: payoutData.map((payout: any) => payout.comp),
             fill: false,
             borderColor: activeNetworkColor,
             backgroundColor: activeNetworkColor,
@@ -157,13 +145,8 @@ export default {
       };
     },
     chartOptions() {
-      const isApyType = this.type === 'APY';
-      const isEth = this.tokenData.tokenName === 'ETH+';
-
-      const intervalData = this.graphicData.payouts?.slice(0, this.getInterval());
-      const dataValues = this.type === 'APY'
-        ? intervalData.map((payout: Payout) => payout.annualizedYield)
-        : intervalData.map((payout: Payout) => payout.totalUsdPlus);
+      const intervalData = this.graphicData.payouts?.slice(0, 7);
+      const dataValues = intervalData.map((payout: any) => payout.comp);
 
       const minValue = Math.min(...dataValues);
       const maxValue = Math.max(...dataValues);
@@ -181,19 +164,6 @@ export default {
               ticks: {
                 color: isDarkTheme ? '#ffffff' : '#0f172a',
                 min: 4,
-                callback: (value: any) => {
-                  if (isApyType) {
-                    return `${value.toFixed(2)}%`;
-                  } if (this.tokenData.tokenName === 'ETH+') {
-                    return `${value.toLocaleString()} WETH`;
-                  }
-                  const formatter = new Intl.NumberFormat('fr-FR', {
-                    minimumFractionDigits: 1,
-                    maximumFractionDigits: 1,
-                  });
-                  const formattedValue = formatter.format(value);
-                  return `$${formattedValue}`;
-                },
               },
 
               grid: {
