@@ -118,7 +118,6 @@ import { Swiper, SwiperSlide } from 'swiper/vue';
 import { Swiper as SwiperClass } from 'swiper/core';
 import Spinner from '@/components/Spinner/Index.vue';
 import SliderApiService from '@/services/slider-api-service.ts';
-import { sliderDescriptionForWrapped } from '@/store/views/main/mintRedeem/mocks.ts';
 import 'swiper/swiper.min.css';
 
 interface SlideData {
@@ -132,6 +131,9 @@ interface SlideData {
   payoutAgoText: string;
   description: string;
 }
+const sliderDescriptionForWrapped = (tokenName: string) => `An index-adjusted wrapper for ${tokenName}
+. Your w${tokenName} balance won't increase over time
+. When w${tokenName} will unwrap, you receive ${tokenName} based on the latest index.`;
 
 export default {
   name: 'MainSlider',

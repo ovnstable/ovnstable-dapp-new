@@ -146,5 +146,3 @@ export const MINTREDEEM_SCHEME = {
     },
   ],
 };
-
-export const sliderDescriptionForWrapped = (tokenName: string) => `An index-adjusted wrapper for ${tokenName}. Your w${tokenName} balance won't increase over time. When w${tokenName} will unwrap, you receive ${tokenName} based on the latest index.`;

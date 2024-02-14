@@ -9,7 +9,7 @@
       </div>
     </div>
     <div
-      class="performance__graphics-APY-graphic" 
+      class="performance__graphics-APY-graphic"
       v-else
     >
       <GraphicComponent
@@ -19,7 +19,7 @@
       />
     </div>
     <div
-      class="performance__graphics-TVL-graphic" 
+      class="performance__graphics-TVL-graphic"
       v-if="loaded"
     >
       <GraphicComponent
