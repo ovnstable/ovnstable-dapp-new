@@ -206,7 +206,6 @@ export default {
 
       const tokenData = this.inputToken;
       const tokenContract = this.tokensContractMap[tokenData.address];
-      console.log(tokenData, '---tokenData');
       const approveValue = new BigNumber(10)
         .pow(tokenData.decimals)
         .times(100000)

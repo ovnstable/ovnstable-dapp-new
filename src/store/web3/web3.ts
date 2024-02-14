@@ -2,7 +2,7 @@
 import { ethers } from 'ethers';
 import { markRaw } from 'vue';
 
-// const SUPPORTED_NETWORKS = [137, 31337, 56, 10, 42161, 324, 8453, 59144];
+const SUPPORTED_NETWORKS = [137, 31337, 56, 10, 42161, 324, 8453, 59144];
 
 const state = {
   contracts: null,
@@ -49,8 +49,6 @@ const actions = {
   }: any) {
     const { rpcUrl } = rootState.network;
 
-    console.log(rpcUrl, '--rpcUrl');
-    console.log(new ethers.JsonRpcProvider(), '---DEFAULT');
     let evmProvider;
     if (window.ethereum == null) {
       console.log('MetaMask not installed; using read-only defaults');
@@ -67,7 +65,8 @@ const actions = {
   }: any, provider: any) {
     const evmProvider = new ethers.BrowserProvider(provider, 'any');
     const signer = await evmProvider.getSigner();
-    dispatch('network/saveNetworkToLocalStore', rootState.network.networkName, { root: true });
+    const chainId = Number(getters.provider?.chainId).toString();
+    dispatch('network/saveNetworkToLocalStore', chainId, { root: true });
 
     commit('setIsProviderDefault', false);
     commit('setProvider', provider);
@@ -96,6 +95,7 @@ const actions = {
     dispatch('gasPrice/refreshGasPrice', null, { root: true });
     dispatch('insuranceData/refreshInsurance', null, { root: true });
 
+    // const networkId = await getters.web3.eth.net.getId();
     // if (!getters.isProviderDefault) {
     //   let currentWalletNetworkId = await getters.web3.eth.net.getId();
     //   // eslint-disable-next-line radix

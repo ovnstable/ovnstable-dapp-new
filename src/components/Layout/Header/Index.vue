@@ -153,7 +153,6 @@ export default {
       if (this.allTokensList.length === 0 || !this.originalBalance) return '0';
       const total: BigNumber = this.originalBalance.reduce((acc: BigNumber, curr: any) => {
         const tokenData = this.allTokensList.find((_: any) => _.symbol === curr.symbol);
-        console.log(tokenData, '---tokenData');
         if (!tokenData) return acc;
         const fixedBalance = new BigNumber(curr.balance)
           .div(10 ** tokenData.decimals)
@@ -288,6 +287,7 @@ export default {
 
 .app-header__balance-account {
   min-width: 130px;
+  min-height: 31px;
   justify-content: space-between;
 
   svg path {
