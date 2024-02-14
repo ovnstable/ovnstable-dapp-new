@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="!loaded"
+    v-if="firstLoad"
     class="market__loader"
   >
     <Spinner />
