@@ -97,11 +97,11 @@ export default {
     };
   },
   computed: {
-    ...mapGetters('network', ['networkId']),
     ...mapGetters('theme', ['light']),
 
     activeNetworkData() {
-      const data = appNetworksData.find((_) => _.chain === this.networkId);
+      const network = this.$store.state.network.marketNetwork;
+      const data = appNetworksData.find((_) => _.name.toLowerCase() === network.toLowerCase());
       return data || appNetworksData[0];
     },
     displayValue() {

@@ -91,10 +91,10 @@ export default {
   },
   computed: {
     networkName() {
-      return this.$store.state.network.networkName;
+      return this.$store.state.network.marketNetwork;
     },
     networkScan() {
-      return this.$store.state.network.explorerUrl;
+      return this.$store.state.network.marketExplorerURL;
     },
     availableChains() {
       const tokenKey = `${this.tokenData.tokenName?.toLowerCase()?.slice(0, -1)}Plus`;
@@ -112,7 +112,7 @@ export default {
   },
   methods: {
     saveNetworkToLocalStore(chain:string) {
-      this.$store.dispatch('network/changeDappNetwork', chain.toLowerCase());
+      this.$store.dispatch('network/changeMarketNetwork', chain.toLowerCase());
     },
     generateHref(tokenName:string, networkName:string) {
       if (!tokenName) {
@@ -138,7 +138,7 @@ export default {
     },
 
     getIconName(chain:string) {
-      const selectedChain = this.$store.state.network.networkName;
+      const selectedChain = this.$store.state.network.marketNetwork;
       const formattedChain = chain.charAt(0).toUpperCase() + chain.slice(1).toLowerCase();
 
       if (chain.toLowerCase() !== selectedChain.toLowerCase()) {
