@@ -243,6 +243,7 @@ export default defineComponent({
   color: var(--color-1);
   font-weight: 600;
   transition: box-shadow .2s ease;
+  border-radius: 0;
 
   [data-theme="dark"] & {
     color: var(--color-4);
