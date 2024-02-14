@@ -151,7 +151,10 @@ export default defineComponent({
       const list = this.tokensListGetter[this.networkId];
 
       if (list && this.isInputToken) return list.map((_: any[]) => (this.activeMint ? _[0] : _[1]));
-      if (list && !this.isInputToken) return list.map((_: any[]) => (this.activeMint ? _[1] : [0]));
+      if (list && !this.isInputToken) {
+        return list
+          .map((_: any[]) => (this.activeMint ? _[1] : _[0]));
+      }
 
       // when first choosen, searching for pair, and return
       return [];

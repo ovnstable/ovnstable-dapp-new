@@ -75,8 +75,6 @@ const actions = {
         gasPriceWei = (await rootState.web3.evmProvider.getFeeData()).gasPrice?.toString();
         if (!gasPriceWei) return;
 
-        console.log((await rootState.web3.evmProvider.getBalance(rootState.accountData.account)).toString(), 'RECEPT');
-
         if (networkId === 324) {
           console.log('Gas price on ZkSync: ', gasPriceWei);
           gasPriceWei = `${+gasPriceWei * 1.05}`; // added 5% to up

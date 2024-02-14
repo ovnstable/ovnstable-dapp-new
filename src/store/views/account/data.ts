@@ -7,7 +7,7 @@ import BigNumber from 'bignumber.js';
 
 const state = {
   accountNativeBalance: '0',
-  originalBalance: {},
+  originalBalance: [],
   actionAssetBalance: {},
   etsBalance: {},
   etsOriginalBalance: {},
@@ -63,8 +63,7 @@ const actions = {
   async resetBalance({ commit, dispatch, getters }: any) {
     console.log('AccountData: resetBalance');
 
-    commit('setBalance', {});
-    commit('setOriginalBalance', {});
+    commit('setOriginalBalance', []);
     commit('setEtsBalance', {});
     commit('setEtsOriginalBalance', {});
     commit('setInsuranceBalance', {});
@@ -92,7 +91,6 @@ const actions = {
       .getBalance(getters.account))
       .toString();
 
-    console.log(userBalance, '---userBalance');
     const balances = await Promise.all(USER_BALANCES_SCHEME[networkId].map(async (_) => {
       try {
         if (!web3.contracts[_.contractName]) {

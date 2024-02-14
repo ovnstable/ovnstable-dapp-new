@@ -2,13 +2,6 @@
   <div
     class="main-container px-5 pt-5"
   >
-    <div class="loading-img">
-      <img
-        alt="img"
-        :src="require('@/assets/icon/error-circle.svg')"
-      />
-    </div>
-
     <div class="error-label pb-5">
       Error in your wallet
     </div>
