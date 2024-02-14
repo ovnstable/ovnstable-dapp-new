@@ -143,7 +143,8 @@ export default defineComponent({
       if (!balanceData) return '0';
 
       const formattedBalance = new BigNumber(balanceData.balance)
-        .div(10 ** this.tokenInfo.decimals).toNumber();
+        .div(10 ** this.tokenInfo.decimals)
+        .toNumber();
       return formatMoney(formattedBalance, fixedByPrice(formattedBalance));
     },
     tokensList() {

@@ -253,7 +253,11 @@ export default {
     checkApprove: debounce(async (self: any) => {
       const networkId = self.networkId as keyof typeof MINTREDEEM_SCHEME;
       const exchangeContract = MINTREDEEM_SCHEME[networkId]
-        .find((_) => _.token0.toLowerCase() === self.inputToken.address.toLowerCase());
+        .find((_) => {
+          const tokenAddress = self.isMintActive
+            ? _.token0.toLowerCase() : _.token1.toLowerCase();
+          return tokenAddress === self.inputToken.address.toLowerCase();
+        });
       const tokenAddress = Object.values(self.contracts)
         .find((cData: any) => (
           cData ? cData.target.toLowerCase() === self.inputToken.address.toLowerCase() : false
