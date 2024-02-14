@@ -51,7 +51,7 @@
                 <p class="slider__apy-title">Average APY:</p>
                 <div class="slider__apy-numbers">
                   <p class="slider__data-total-number">{{ slide.apy }}<span class="slider__data-apy-percent">%</span></p>
-                  <p class="slider__data-growth-number">+{{ slide.apyGrowth }}%</p>
+                  <!-- <p class="slider__data-growth-number">+{{ slide.apyGrowth }}%</p> -->
                 </div>
               </div>
               <div class="slider__tvl-info">
@@ -68,7 +68,7 @@
                       class="slider__data-tvl-millions"
                     >WETH</span>
                   </p>
-                  <p class="slider__data-growth-number">+{{ slide.tvlGrowth }}%</p>
+                  <!-- <p class="slider__data-growth-number">+{{ slide.tvlGrowth }}%</p> -->
                 </div>
               </div>
               <div class="slider__payout-info">

@@ -332,6 +332,10 @@ export default {
   margin-right: 7px;
 }
 
+.performance__token-data-main-token {
+  min-width: 70px;
+}
+
 @media (max-width: 1024px) {
   .performance__chain-data {
     display: flex;
