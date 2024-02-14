@@ -143,7 +143,8 @@ export default defineComponent({
       if (!balanceData) return '0';
 
       const formattedBalance = new BigNumber(balanceData.balance)
-        .div(10 ** this.tokenInfo.decimals).toNumber();
+        .div(10 ** this.tokenInfo.decimals)
+        .toNumber();
       return formatMoney(formattedBalance, fixedByPrice(formattedBalance));
     },
     tokensList() {
@@ -243,6 +244,7 @@ export default defineComponent({
   color: var(--color-1);
   font-weight: 600;
   transition: box-shadow .2s ease;
+  border-radius: 0;
 
   [data-theme="dark"] & {
     color: var(--color-4);
