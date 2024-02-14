@@ -228,7 +228,6 @@ const actions = {
       });
     }
 
-    console.log(getSortedPools(state.allPools, false), '---getSortedPools');
     commit('changeState', {
       field: 'allPools',
       val: initFeature(state.allPools),

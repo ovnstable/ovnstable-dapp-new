@@ -169,7 +169,6 @@ const actions = {
       .then((data: any) => {
         commit('changeState', { field: 'chains', val: data.chains });
         commit('changeState', { field: 'isChainsLoading', val: false });
-        console.log(state, 'loadChains');
       })
       .catch((e) => {
         console.log('Error load chains', e);
@@ -225,7 +224,6 @@ const actions = {
     }
 
     if (data.tokenSeparationScheme === 'OVERNIGHT_SWAP') {
-      console.log('initOvernightSwap');
       dispatch('initOvernightSwap');
       return;
     }

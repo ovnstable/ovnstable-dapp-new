@@ -66,7 +66,6 @@ const actions = {
     const evmProvider = new ethers.BrowserProvider(provider, 'any');
     const signer = await evmProvider.getSigner();
     const networkData = await evmProvider.getNetwork();
-    console.log(evmProvider, networkData, 'PROVIDER___');
     dispatch('network/saveNetworkToLocalStore', networkData.chainId.toString(), { root: true });
 
     commit('setIsProviderDefault', false);

@@ -807,7 +807,6 @@ export default defineComponent({
     },
 
     changeSwap() {
-      console.log('---changeSwap');
       // Transform Input Tokens into Output format by adding temporary variable "tempOutputArray"
       const tempOutputArray = [];
       for (let i = 0; i < this.inputTokens.length; i++) {
@@ -832,13 +831,11 @@ export default defineComponent({
 
         const transformOutputToInputToken = getNewInputToken();
         transformOutputToInputToken.id = tokenOut.id;
-        console.log(tokenOut, '---tokenOut');
         transformOutputToInputToken.selectedToken = tokenOut.selectedToken;
         tempInputArray.push(transformOutputToInputToken);
       }
 
       this.inputTokens = tempInputArray;
-      console.log(tempOutputArray, '---tempOutputArray');
       this.outputTokens = tempOutputArray;
 
       const symbol = this.$route.query.symbol ? this.$route.query.symbol : null;
@@ -883,7 +880,6 @@ export default defineComponent({
     },
 
     clearForm() {
-      console.log('clearFormclearForm');
       this.clearAllSelectedTokens();
 
       if (this.swapMethod === 'BUY') {

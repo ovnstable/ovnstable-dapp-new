@@ -361,7 +361,6 @@ const actions = {
     commit, dispatch, getters, rootState,
   }: any, newNetworkId: any) {
     {
-      console.log(newNetworkId, '--newNetworkId');
       newNetworkId = parseInt(newNetworkId);
 
       if (SUPPORTED_NETWORKS.includes(newNetworkId)) {
@@ -419,7 +418,6 @@ const actions = {
         }
       }
 
-      console.log(account, 'ccountData/setAccou');
       commit('accountData/setAccount', account, { root: true });
 
       if (account) {
@@ -428,7 +426,6 @@ const actions = {
         dispatch('dappDataAction/resetUserData', null, { root: true });
       }
     } else {
-      console.log('ELSECHECK');
       dispatch('dappDataAction/resetUserData', null, { root: true });
       commit('accountData/setAccount', null, { root: true });
       dispatch('insuranceData/refreshInsurance', null, { root: true });

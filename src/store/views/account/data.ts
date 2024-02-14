@@ -244,7 +244,6 @@ const mutations = {
   },
 
   setAccount(state: any, value: any) {
-    console.log(value, '---setAccount');
     state.account = value;
   },
 
