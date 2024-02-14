@@ -4,6 +4,7 @@
     :intervals="['1W', '1M', '3M', '6M', '1Y', 'ALL TIME']"
     @update:interval="updateInterval"
   />
+  <p>{{ graphicData[0].date }}</p>
   <div class="performance__graphic">
     <div class="performance__graphic-data">
       <!-- <div class="performance__graphic-values">
@@ -122,10 +123,12 @@ export default {
     //   return '';
     // },
     chartData(): any {
-      const payoutData = this.graphicData.payouts?.slice(0, this.getInterval());
+      const payoutData = this.graphicData?.slice(0, this.getInterval());
+      console.log('here is payoutdata');
+      console.log(payoutData);
       const activeNetworkColor = this.activeNetworkData.color;
-      payoutData.sort((a: { date: any; }, b: { date: any; }) => new Date(a
-        .date).getTime() - new Date(b.date).getTime());
+      // payoutData.sort((a: { date: any; }, b: { date: any; }) => new Date(a
+      //   .date).getTime() - new Date(b.date).getTime());
 
       return {
         chartData: {
@@ -145,7 +148,7 @@ export default {
       };
     },
     chartOptions() {
-      const intervalData = this.graphicData.payouts?.slice(0, 7);
+      const intervalData = this.graphicData?.slice(0, 7);
       const dataValues = intervalData.map((payout: any) => payout.comp);
 
       const minValue = Math.min(...dataValues);
@@ -204,40 +207,40 @@ export default {
               bodyColor: '#000',
               displayColors: false,
               padding: 10,
-              callbacks: {
-                label(context: any) {
-                  let label = context.dataset.label || '';
+              // callbacks: {
+              //   label(context: any) {
+              //     let label = context.dataset.label || '';
 
-                  if (label) {
-                    label += ': ';
-                  }
-                  const value = context.parsed.y;
-                  if (isApyType) {
-                    label += `APY: ${value.toFixed(2)}%`;
-                  } else if (isEth) {
-                    label += `TVL WETH ${value.toLocaleString()}`;
-                  } else {
-                    label += `TVL $${value.toLocaleString()}`;
-                  }
-                  return label;
-                },
-                title(context: any) {
-                  if (context.length > 0) {
-                    const reversedData = [...intervalData].reverse();
-                    const pointIndex = context[0].dataIndex;
-                    const date = new Date(reversedData[pointIndex].payableDate);
-                    const day = date.getUTCDate().toString().padStart(2, '0');
-                    const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
-                    const year = date.getUTCFullYear();
-                    const hours = date.getUTCHours().toString().padStart(2, '0');
-                    const minutes = date.getUTCMinutes().toString().padStart(2, '0');
-                    const formattedDate = `${day}.${month}.${year}, ${hours}:${minutes} UTS`;
-                    return formattedDate;
-                  }
-                  return '';
-                },
+              //     if (label) {
+              //       label += ': ';
+              //     }
+              //     const value = context.parsed.y;
+              //     if (isApyType) {
+              //       label += `APY: ${value.toFixed(2)}%`;
+              //     } else if (isEth) {
+              //       label += `TVL WETH ${value.toLocaleString()}`;
+              //     } else {
+              //       label += `TVL $${value.toLocaleString()}`;
+              //     }
+              //     return label;
+              //   },
+              //   title(context: any) {
+              //     if (context.length > 0) {
+              //       const reversedData = [...intervalData].reverse();
+              //       const pointIndex = context[0].dataIndex;
+              //       const date = new Date(reversedData[pointIndex].payableDate);
+              //       const day = date.getUTCDate().toString().padStart(2, '0');
+              //       const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+              //       const year = date.getUTCFullYear();
+              //       const hours = date.getUTCHours().toString().padStart(2, '0');
+              //       const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+              //       const formattedDate = `${day}.${month}.${year}, ${hours}:${minutes} UTS`;
+              //       return formattedDate;
+              //     }
+              //     return '';
+              //   },
 
-              },
+              // },
             },
             pointStylePlugin: {
               activeNetworkColor: '',

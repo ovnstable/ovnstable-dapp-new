@@ -29,7 +29,7 @@ export default {
       default: () => ({}),
     },
   },
-  mounted() {
+  created() {
     this.calculateComp();
   },
   methods: {
