@@ -15,7 +15,7 @@
         @click="saveNetworkToLocalStore(chain)"
         @keydown.enter="saveNetworkToLocalStore(chain)"
         class="performance__chain-data"
-        :class="{ selected: chain.toLowerCase() === networkName }"
+        :class="{ selected: (chain as any).toLowerCase() === networkName }"
       >
         <BaseIcon
           :name="getIconName(chain)"
@@ -139,7 +139,7 @@ export default {
     },
     availableChains() {
       const availableNetworks = Object.entries(chainContractsMap)
-        .reduce((acc, [network, contracts]) => {
+        .reduce((acc: string[], [network, contracts]: [string, any]) => {
           if (contracts.token_insurance) {
             acc.push(network.charAt(0).toUpperCase() + network.slice(1));
           }
@@ -153,7 +153,7 @@ export default {
       return data || appNetworksData[0];
     },
     chartData(): any {
-      let payoutData = [...this.graphicData].slice(0, this.getInterval()).reverse();
+      const payoutData = [...(this.graphicData as any)].slice(0, this.getInterval()).reverse();
       const activeNetworkColor = this.activeNetworkData.color;
 
       return {
@@ -408,7 +408,8 @@ export default {
     background-color: var(--color-7);
   }
 }
-.performance__chain-data-container .selected:hover {
+
+.performance__chain-data-container .selected {
   background: var(--color-4);
   cursor: default;
   [data-theme="dark"] & {

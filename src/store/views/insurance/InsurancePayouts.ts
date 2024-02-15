@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import InsuranceApiService from '@/services/insurance-api-service.ts';
 
 const state = {
@@ -17,7 +18,7 @@ const actions = {
 
       insurancePayouts.reverse().forEach((payout: any) => {
         accumulator *= (1 + payout.dailyProfit);
-        payout.comp = (accumulator * 100 / startValue - 100);
+        payout.comp = ((accumulator * 100) / startValue) - 100;
         payout.comp = parseFloat(payout.comp ? payout.comp : 0.00).toFixed(3);
 
         if (counter <= 7) {
