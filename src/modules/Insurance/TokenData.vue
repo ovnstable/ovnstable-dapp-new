@@ -234,6 +234,7 @@ export default {
 }
 
 .insurance__token-data {
+  max-height: 86px;
   display:flex;
   flex-direction: row;
   justify-content: space-between;

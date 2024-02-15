@@ -1,6 +1,17 @@
 <template>
-  <div class="performance__graphics">
-    <div class="performance__graphics-APY-graphic">
+  <div class="insurance__graphics">
+    <div
+      class="insurance__graphics-APY-graphic"
+      v-if="!loaded"
+    >
+      <div class="graphic__loader">
+        <Spinner />
+      </div>
+    </div>
+    <div
+      class="insurance__graphics-APY-graphic"
+      v-else
+    >
       <GraphicComponent
         :graphicData="reversedPayoutData"
         :accumulatorDay="payoutData.accumulatorDay"
@@ -13,11 +24,13 @@
 <script lang="ts">
 
 import GraphicComponent from '@/modules/Insurance/SingleStatisticGraphic.vue';
+import Spinner from '@/components/Spinner/Index.vue';
 
 export default {
-  name: 'GraphicsPerformance',
+  name: 'GraphicsInsurance',
   components: {
     GraphicComponent,
+    Spinner,
   },
   data() {
     return {
@@ -32,6 +45,10 @@ export default {
     },
   },
   props: {
+    loaded: {
+      type: Boolean,
+      default: false,
+    },
     payoutData: {
       type: Object,
       default: () => ({}),
@@ -41,7 +58,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.performance__graphics {
+.graphic__loader {
+  min-height: 438px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.insurance__graphics {
+  min-height: 438px;
   display: flex;
   flex-direction: row;
   gap: 30px;
@@ -51,30 +75,30 @@ export default {
       background: var(--color-6);
   }
 
-  > .performance__graphics-APY-graphic,
-  > .performance__graphics-TVL-graphic {
+  > .insurance__graphics-APY-graphic,
+  > .insurance__graphics-TVL-graphic {
     flex: 1;
   }
 }
 
 @media (max-width: 1024px) {
-  .performance__graphics {
+  .insurance__graphics {
     flex-direction: column;
   }
-  .performance__graphics-TVL-graphic {
+  .insurance__graphics-TVL-graphic {
     margin: 0;
     width: 100%;
   }
-  .performance__graphics-APY-graphic {
+  .insurance__graphics-APY-graphic {
     width: 100%;
   }
 }
 
 @media (max-width: 768px) {
-  .performance__graphics {
+  .insurance__graphics {
     flex-direction: column;
   }
-  .performance__graphics-TVL-graphic {
+  .insurance__graphics-TVL-graphic {
     margin-top: 50px;
   }
 }

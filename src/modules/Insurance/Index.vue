@@ -9,15 +9,6 @@
     v-else
     class="insurance-wrapper"
   >
-    <Transition name="slide-fade">
-      <div
-        v-if="!loaded"
-        class="insurance__loader"
-      >
-        <Spinner />
-      </div>
-
-    </Transition>
     <div
       class="insurance"
     >
@@ -25,8 +16,9 @@
         :tokenData="tokenData"
         class="market__token-data"
       />
-      <GraphicsPerformance
+      <GraphicsInsurance
         :payoutData="payoutData"
+        :loaded="loaded"
         class="insurance__graphics"
       />
       <p class="insurance__portfolio">portfolio data</p>
@@ -40,14 +32,14 @@
 
 <script lang="ts">
 import TokenDataInsurance from '@/modules/Insurance/TokenData.vue';
-import GraphicsPerformance from '@/modules/Insurance/Graphic.vue';
+import GraphicsInsurance from '@/modules/Insurance/Graphic.vue';
 import Spinner from '@/components/Spinner/Index.vue';
 
 export default {
   name: 'InsurancePage',
   components: {
     TokenDataInsurance,
-    GraphicsPerformance,
+    GraphicsInsurance,
     Spinner,
   },
   props: {
@@ -100,7 +92,9 @@ export default {
 .insurance__graphics{
   margin-top: 20px;
 }
-
+.insurance__portfolio {
+  margin-top: 20px;
+}
 .insurance-wrapper {
   position: relative;
   display: flex;

@@ -8,20 +8,20 @@
       />
     </div>
 
-    <div class="performance__chain-data-container">
+    <div class="insurance__chain-data-container">
       <div
         v-for="chain in availableChains"
         :key="chain"
         @click="saveNetworkToLocalStore(chain)"
         @keydown.enter="saveNetworkToLocalStore(chain)"
-        class="performance__chain-data"
+        class="insurance__chain-data"
         :class="{ selected: (chain as any).toLowerCase() === networkName }"
       >
         <BaseIcon
           :name="getIconName(chain)"
-          class="performance__icon-chain-bottom"
+          class="insurance__icon-chain-bottom"
         />
-        <p class="performance__chain-data-name">{{ chain }}</p>
+        <p class="insurance__chain-data-name">{{ chain }}</p>
       </div>
     </div>
   </div>
@@ -409,24 +409,24 @@ export default {
   }
 }
 
-.performance__chain-data-container .selected {
+.insurance__chain-data-container .selected {
   background: var(--color-4);
   cursor: default;
   [data-theme="dark"] & {
     background: var(--color-2);
   }
 }
-.performance__chain-data-container {
+.insurance__chain-data-container {
   display: flex;
   flex-direction: row;
   vertical-align: center;
 }
 
-.performance__chain-data-container > *:not(:last-child) {
+.insurance__chain-data-container > *:not(:last-child) {
   margin-right: 7px;
 }
 
-.performance__chain-data {
+.insurance__chain-data {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -438,11 +438,11 @@ export default {
   width: fit-content;
   transition: background 0.3s ease, border 0.3s ease;
 }
-.performance__icon-chain-bottom {
+.insurance__icon-chain-bottom {
   flex-shrink: 0
 }
 
-.performance__chain-data-name {
+.insurance__chain-data-name {
   margin-left: 8px;
   font-weight: 500;
   font-size: 13px;
@@ -451,7 +451,7 @@ export default {
     color: var(--color-4);
   }
 }
-.performance__chain-data:hover {
+.insurance__chain-data:hover {
   cursor: pointer;
   border: 1px solid var(--color-7);
   background: var(--color-6);
