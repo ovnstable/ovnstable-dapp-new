@@ -381,10 +381,12 @@ export default {
 
 <style lang="scss" scoped>
 .insurance__chains-interval {
+  min-height: 34px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 10px;
 }
 .insurance__graphic-display {
   width: 100%;
@@ -395,13 +397,15 @@ export default {
   background-color: var(--color-8);
   display: flex;
   flex-direction: column;
-  padding: 5px 10px;
   justify-content: space-between;
   align-items: flex-start;
   flex-shrink: 0;
   border-radius: 5px;
+  padding-top: 20px;
+  padding-bottom: 5px;
+  padding-left: 30px;
+  padding-right: 32px;
   border: 1px solid var(--color-8);
-  margin-top: 5px;
   width: 100%;
   box-sizing: border-box;
   [data-theme="dark"] & {
@@ -434,7 +438,6 @@ export default {
   border: 1px solid var(--color-6);
   background: var(--color-5);
   padding: 5px 10px;
-  margin-top: 24px;
   width: fit-content;
   transition: background 0.3s ease, border 0.3s ease;
 }
@@ -461,7 +464,6 @@ export default {
   }
 }
 .insurance__graphic-data {
-  margin-top: 20px;
   margin-bottom: 10px;
   display: flex;
   flex-direction: row;
@@ -477,6 +479,7 @@ export default {
 }
 
 .insurance__graphic-title {
+  margin-left: 40px;
   color: var(--color-1);
   font-size: 15px;
   font-weight: 600;

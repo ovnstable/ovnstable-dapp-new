@@ -90,7 +90,10 @@ export default {
   width: 100%;
 }
 .insurance__graphics{
-  margin-top: 20px;
+  margin-top: 24px;
+  padding: 18px 24px;
+  border-radius: 5px;
+  border: 1px solid var(--color-1);
 }
 .insurance__portfolio {
   margin-top: 20px;

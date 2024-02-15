@@ -59,13 +59,13 @@ export default {
 
 <style lang="scss" scoped>
 .graphic__loader {
-  min-height: 438px;
+  min-height: 416px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .insurance__graphics {
-  min-height: 438px;
+  min-height: 416px;
   display: flex;
   flex-direction: row;
   gap: 30px;
