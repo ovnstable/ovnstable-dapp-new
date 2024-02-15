@@ -3,7 +3,7 @@
     <div>
       <GraphicInterval
         :selectedInterval="currentInterval"
-        :intervals="['1W', '1M', '3M', '6M', '1Y', 'ALL TIME']"
+        :intervals="['1W', '1M', '1Y', 'ALL TIME']"
         @update:interval="updateInterval"
       />
     </div>

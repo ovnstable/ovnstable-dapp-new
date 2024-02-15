@@ -1,62 +1,66 @@
 <template>
-  <div class="performance__portfolio-strategies-token-title">
+  <div class="insurance__premiums-title">
     <p>INSURANCE PREMIUMS OF USD+</p>
   </div>
-  <div class="performance__portfolio-strategies">
-    <div class="performance__portfolio-strategies-stables">
-      <div class="performance__portfolio-strategies-stables-specs">
+  <div class="insurance__premiums-strategies">
+    <div class="insurance__premiums-strategies-table">
+      <div class="insurance__premiums-specs">
         <p>Strategy</p>
         <p>% in collateral</p>
         <p>Net asset value, USDC</p>
         <p>Share of yield retained as premiums in %</p>
       </div>
-      <div class="performance__portfolio-assets">
+      <div class="insurance__premiums-assets">
 
         <div
           v-for="premium in (premiumsData as any[])"
           :key="premium.id"
         >
           <div
-            class="performance__portfolio-strategies-stables"
+            class="insurance__premiums-strategies-table"
+            @click="openStrategyProfile(premium.address)"
+            @keydown.enter="openStrategyProfile(premium.address)"
           >
             <div
               :class="[
-                'performance__portfolio-strategy',
+                'insurance-premium',
                 { assets: premiumsData.indexOf(premium) === premiumsData.length - 1 },
               ]"
             >
-              <div class="performance__portfolio-strategy-token-data">
+              <div class="insurance-premium-token-data">
                 <div
                   name="strategyImage"
-                  class="performance__portfolio-strategy-icon"
+                  class="insurance-premium-icon"
                   :style="{ 'background-color': getIconColor(premiumsData.indexOf(premium)) }"
                 />
                 <p
-                  :class="['performance__portfolio-strategy-token-name']"
+                  :class="['insurance-premium-name']"
                 >
                   {{ premium.fullName }}
                 </p>
               </div>
-              <p class="performance__portfolio-strategies-stables-score">
-                {{ premium.netAssetValue}}
+              <p class="insurance__premiums-strategies-table-score">
+                {{ calculatePercentPortfolio(premium
+                  .netAssetValue, totalNAV(premiumsData as any))}}%
               </p>
               <p>
-                NAV{{ formatCurrency(premium.netAssetValue)}}
+                {{ formatCurrency(premium.netAssetValue)}}
               </p>
-              <div class="performance__portfolio-strategy-portfolio-percent">
-                <div class="performance__portfolio-strategy-progress-bar">
+              <div class="insurance-premium-portfolio-percent">
+                <div class="insurance-premium-progress-bar">
                   <div
-                    class="performance__portfolio-strategy-progress"
+                    class="insurance-premium-progress"
+                    :style="{ width: premium.riskFactor + '%', 'background-color': getIconColor(premiumsData.indexOf(premium)) }"
                   />
                 </div>
-                <p class="performance__portfolio-strategy-token-portfolio-num">{{ premium.riskFactor }}%</p>
+                <p class="insurance-premium-token-portfolio-num">{{ premium.riskFactor }}%</p>
               </div>
 
             </div>
           </div>
         </div>
         <div
-          class="performance__portfolio-divider"
+          class="insurance__portfolio-divider"
         />
         <div
           class="performance__portfolio-total-info"
@@ -64,10 +68,10 @@
           <div class="performance__portfolio-total">
             <p class="performance__portfolio-total-label">Total</p>
             <p class="performance__portfolio-total-nav-val">
-              the total 213
+              {{ formatCurrency(totalNAV(premiumsData as any)) }}
             </p>
-            <p class="performance__portfolio-total-nav-val">
-              the total 213
+            <p class="performance__portfolio-total-premiums">
+              {{calculateTotalPremiumsPercentage(premiumsData as any)}}%
             </p>
           </div>
         </div>
@@ -79,51 +83,44 @@
 
 <script lang="ts">
 
-import BaseIcon from '@/components/Icon/BaseIcon.vue';
-
 export default {
   name: 'InsurancePremiums',
-  components: {
-    BaseIcon,
-  },
   props: {
     premiumsData: {
       type: Object,
       default: () => ({}),
     },
   },
-  data() {
-    return {
-      dropdownVisible: null as string | null,
-    };
-  },
   methods: {
-    formatCurrency(value: any, collateralToken: string) {
+    formatCurrency(value: any) {
       return new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD',
         maximumFractionDigits: 2,
       }).format(value).replace(/,/g, ' ');
     },
-    totalNAV(assets: any[], collateralToken: string) {
-      const totalValue = assets.reduce((total, asset) => total + asset.netAssetValue, 0);
-      return this.formatValue(totalValue, collateralToken);
+    openStrategyProfile(explorerAddress: string) {
+      const url = `https://debank.com/profile/${explorerAddress}`;
+      window.open(url, '_blank');
+    },
+    totalNAV(premiums: any[]) {
+      const totalValue = premiums.reduce((total, asset) => total + asset.netAssetValue, 0);
+      return totalValue.toFixed(2);
+    },
+    calculateTotalPremiumsPercentage(premiumsData: any) {
+      const totalNav = this.totalNAV(premiumsData);
+      const totalPremiumsPercentage = premiumsData.reduce((total: any, premium: any) => {
+        if (premium.riskFactor) {
+          const navPercentage = (premium.netAssetValue / totalNav) * 100;
+          const riskCovered = (navPercentage * premium.riskFactor) / 100;
+          return total + riskCovered;
+        }
+        return total;
+      }, 0);
+
+      return totalPremiumsPercentage.toFixed(2);
     },
 
-    totalLiquidationValue(assets: any[], collateralToken: string) {
-      const totalValue = assets.reduce((total, asset) => total + asset.liquidationValue, 0);
-      return this.formatValue(totalValue, collateralToken);
-    },
-
-    formatValue(value: number, collateralToken: string) {
-      if (collateralToken === '$') {
-        return value.toFixed(2);
-      }
-      return value.toFixed(4);
-    },
-    // isLastAsset(asset: any) {
-    //   return this.assets.indexOf(asset) === this.assets.length - 1;
-    // },
     getIconColor(index: number) {
       const colors = [
         getComputedStyle(document.documentElement).getPropertyValue('--color-3').trim(),
@@ -131,27 +128,6 @@ export default {
         getComputedStyle(document.documentElement).getPropertyValue('--color-9').trim(),
         getComputedStyle(document.documentElement).getPropertyValue('--color-10').trim()];
       return colors[index % colors.length];
-    },
-    getIconName(tokenName: string) {
-      const tokenNameMapping: { [key: string]: string } = {
-        'USDbC (delta-neutral)': 'USDС_market',
-        'USDT (delta-neutral)': 'USDT_market',
-      };
-
-      const normalizedTokenName = tokenName.toLowerCase();
-      const matchedKey = Object.keys(tokenNameMapping)
-        .find((key) => normalizedTokenName === key.toLowerCase());
-      if (matchedKey) {
-        return tokenNameMapping[matchedKey];
-      }
-
-      if (normalizedTokenName.includes('usdc')) {
-        return 'USDС_market';
-      } if (normalizedTokenName.includes('usdt')) {
-        return 'USDT_market';
-      }
-
-      return `${tokenName}_market`;
     },
 
     totalPortfolioValue(assets: any[]) {
@@ -162,26 +138,19 @@ export default {
     calculatePercentPortfolio(assetValue: number, totalPortfolioValue: number) {
       return ((assetValue / totalPortfolioValue) * 100).toFixed(2);
     },
-
-    formatTransactionID(id: string): string {
-      if (id === undefined) {
-        return '';
-      }
-      return `${id.substring(0, 5)}...${id.substring(id.length - 4)}`;
-    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.performance__portfolio-assets {
+.insurance__premiums-assets {
   background: var(--color-8);
   border-radius: 10px;
   [data-theme="dark"] & {
     background: var(--color-7);
   }
 }
-.performance__portfolio-strategies-token-title {
+.insurance__premiums-title {
   margin-bottom: 20px;
   margin-top: 24px;
   color: var(--color-1);
@@ -195,18 +164,18 @@ export default {
   }
 }
 
-.performance__portfolio-strategies {
+.insurance__premiums-strategies {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
 }
 
-.performance__portfolio-strategies-stables {
+.insurance__premiums-strategies-table {
   display: flex;
   flex-direction: column;
   width: 100%;
 }
-.performance__portfolio-strategies-stables-specs {
+.insurance__premiums-specs {
   display: flex;
   padding: 0 20px;
   color: var(--color-2);
@@ -218,26 +187,26 @@ export default {
   }
 }
 
-.performance__portfolio-strategy {
+.insurance-premium {
   display: flex;
   padding: 0px 20px;
   padding-bottom: 10px;
   padding-top: 5px;
 }
-.performance__portfolio-strategy p {
+.insurance-premium p {
   [data-theme="dark"] & {
     color: var(--color-4);
   }
 }
 
-.performance__portfolio-strategy-token-data {
+.insurance-premium-token-data {
   display: flex;
   align-items: center;
   justify-content: flex-start;
   flex: 2;
 }
 
-.performance__portfolio-strategy-portfolio-percent {
+.insurance-premium-portfolio-percent {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -246,21 +215,21 @@ export default {
   flex: 2;
 }
 
-.performance__portfolio-strategy-icon {
+.insurance-premium-icon {
   width: 14px;
   height: 14px;
   border-radius: 5px;
   margin-right: 3px;
 }
 
-.performance__portfolio-strategy-token-portfolio-num,
-.performance__portfolio-strategy-token-name {
+.insurance-premium-token-portfolio-num,
+.insurance-premium-name {
   color: var(--color-1);
   font-size: 15px;
   font-weight: 500;
   text-align: right;
 }
-.performance__portfolio-strategy-token-name {
+.insurance-premium-name {
   margin-left: 17px;
   display: flex;
   width: 300px;
@@ -276,7 +245,7 @@ export default {
     color: var(--color-18);
   }
 }
-.performance__portfolio-strategy-token-portfolio-num {
+.insurance-premium-token-portfolio-num {
   flex: none;
   width: 60px;
   text-align: right;
@@ -288,12 +257,12 @@ export default {
   justify-content: space-between;
 }
 
-.performance__portfolio-divider {
+.insurance__portfolio-divider {
   margin-bottom: 10px;
   border: 1px solid var(--color-5);
   width: 96%;
 }
-.performance__portfolio-strategies-divider {
+.insurance__premiums-strategies-divider {
   margin-bottom: 4px;
   border: 1px solid var(--color-5);
   width: 100%;
@@ -319,7 +288,7 @@ export default {
     color: var(--color-18);
   }
 }
-.performance__portfolio-assets {
+.insurance__premiums-assets {
   padding-bottom: 20px;
   padding-top: 20px;
 }
@@ -330,14 +299,14 @@ export default {
   font-weight: 500;
 }
 
-.performance__portfolio-strategy-progress-bar {
+.insurance-premium-progress-bar {
   border-radius: 3px;
   background: var(--color-6);
   width: 200px;
   height: 12px;
 }
 
-.performance__portfolio-strategy-progress {
+.insurance-premium-progress {
   height: 100%;
   border-radius: 4px;
   transition: width 0.5s ease-in-out;
@@ -397,22 +366,22 @@ export default {
   text-align: left;
   padding-right: 45px;
 }
-.performance__portfolio-strategies-stables-specs,
-.performance__portfolio-strategy {
+.insurance__premiums-specs,
+.insurance-premium {
   display: grid;
   grid-template-columns: 1.8fr 1fr 1fr 1.5fr;
   text-align: center;
 }
 
-.performance__portfolio-strategy {
+.insurance-premium {
   transition: background-color 0.3s ease;
 }
-.performance__portfolio-strategy > * {
+.insurance-premium > * {
   color: var(--color-1);
   font-size: 15px;
   font-weight: 500;
 }
-.performance__portfolio-strategy:hover {
+.insurance-premium:hover {
   background-color: var(--color-6);
   border-radius: 5px;
   cursor: pointer;
@@ -422,8 +391,8 @@ export default {
   }
 }
 
-.performance__portfolio-strategies-stables-specs p:first-child,
-.performance__portfolio-strategies-stables-specs p:last-child {
+.insurance__premiums-specs p:first-child,
+.insurance__premiums-specs p:last-child {
   text-align: left;
 }
 
@@ -452,8 +421,11 @@ export default {
 .performance__portfolio-total,
 .performance__portfolio-total-circl {
   display: grid;
-  grid-template-columns: 1.8fr 1fr 1fr 1.5fr;
+  grid-template-columns: 4fr 1fr 2.2fr 0fr;
   text-align: center;
+}
+.performance__portfolio-total-premiums {
+  text-align: right;
 }
 .performance__portfolio-total p:first-child {
   text-align: left;
@@ -464,29 +436,29 @@ export default {
   margin: 0;
 }
 
-.performance__portfolio-strategies-stables-score {
+.insurance__premiums-strategies-table-score {
   margin-right: 20px;
 }
 
 @media (max-width: 1024px) {
-  .performance__portfolio-strategy-token-name {
+  .insurance-premium-name {
     text-align: left;
     margin-left: 10px;
     display: flex;
     width: 150px;
   }
 
-  .performance__portfolio-strategy-progress-bar {
+  .insurance-premium-progress-bar {
     width: 100px;
   }
 
-  .performance__portfolio-strategies-stables-specs,
-  .performance__portfolio-strategy,
+  .insurance__premiums-specs,
+  .insurance-premium,
   .performance__portfolio-total,
   .performance__portfolio-total-circl {
     grid-template-columns: 1.8fr 1fr 1.3fr 1.5fr;
   }
-  .performance__portfolio-strategies-stables-score {
+  .insurance__premiums-strategies-table-score {
     margin: 0;
   }
 
