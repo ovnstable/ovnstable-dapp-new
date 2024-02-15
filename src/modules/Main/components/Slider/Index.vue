@@ -84,7 +84,7 @@
               <div class="slider__second-token-title">
                 <img
                   class="slider__token-image"
-                  :src="getImageUrl(slide.tokenName)"
+                  :src="getImageSrc(slide.tokenName)"
                   :alt="formatSecondTokenIconName(slide.tokenName)"
                 />
                 <p class="slider__second-token-title-text">{{ slide.tokenWrappedName }}</p>
@@ -119,6 +119,7 @@ import { Swiper as SwiperClass } from 'swiper/core';
 import Spinner from '@/components/Spinner/Index.vue';
 import SliderApiService from '@/services/slider-api-service.ts';
 import 'swiper/swiper.min.css';
+import { getImageUrl } from '@/utils/const.ts';
 
 interface SlideData {
   tokenName: string;
@@ -244,9 +245,9 @@ export default {
       const formattedName = tokenName.slice(0, -1);
       return `w${formattedName.charAt(0).toUpperCase()}${formattedName.slice(1).toLowerCase()}Plus`;
     },
-    getImageUrl(tokenName: string) {
+    getImageSrc(tokenName: string) {
       const iconName = this.formatSecondTokenIconName(tokenName);
-      return `src/assets/icons/currencies/main/${iconName}.svg`;
+      return getImageUrl(`assets/icons/currencies/main/${iconName}.svg`);
     },
   },
 };
@@ -397,6 +398,9 @@ export default {
   cursor: default;
 }
 .slider__token-image {
+  width: 40px;
+  height: 40px;
+
   svg {
     width: 40px;
     height: 40px;

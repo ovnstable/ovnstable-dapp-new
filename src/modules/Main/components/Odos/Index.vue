@@ -339,7 +339,6 @@ import { formatMoney } from '@/utils/numbers.ts';
 import { getRandomString } from '@/utils/strings.ts';
 import { clearApproveToken, getAllowanceValue, approveToken } from '@/utils/contractApprove.ts';
 import odosApiService from '@/services/odos-api-service.ts';
-import { getImageUrl } from '@/utils/const.ts';
 import { onLeaveList, onEnterList, beforeEnterList } from '@/utils/animations.ts';
 import {
   getNewInputToken, getNewOutputToken, maxAll, updateTokenValue, getDefaultSecondtoken,
@@ -721,7 +720,6 @@ export default defineComponent({
     ...mapActions('walletAction', ['connectWallet']),
 
     formatMoney,
-    getImageUrl,
     onLeaveList,
     beforeEnterList,
     onEnterList,
