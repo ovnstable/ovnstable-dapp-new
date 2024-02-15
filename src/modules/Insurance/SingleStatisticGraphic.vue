@@ -1,9 +1,31 @@
 <template>
-  <GraphicInterval
-    :selectedInterval="currentInterval"
-    :intervals="['1W', '1M', '3M', '6M', '1Y', 'ALL TIME']"
-    @update:interval="updateInterval"
-  />
+  <div class="insurance__chains-interval">
+    <div>
+      <GraphicInterval
+        :selectedInterval="currentInterval"
+        :intervals="['1W', '1M', '3M', '6M', '1Y', 'ALL TIME']"
+        @update:interval="updateInterval"
+      />
+    </div>
+
+    <div class="performance__chain-data-container">
+      <div
+        v-for="chain in availableChains"
+        :key="chain"
+        @click="saveNetworkToLocalStore(chain)"
+        @keydown.enter="saveNetworkToLocalStore(chain)"
+        class="performance__chain-data"
+        :class="{ selected: chain.toLowerCase() === networkName }"
+      >
+        <BaseIcon
+          :name="getIconName(chain)"
+          class="performance__icon-chain-bottom"
+        />
+        <p class="performance__chain-data-name">{{ chain }}</p>
+      </div>
+    </div>
+  </div>
+
   <div class="insurance__graphic">
     <div class="insurance__graphic-data">
       <p class="insurance__graphic-title">Cumulative return</p>
@@ -52,6 +74,8 @@ import { mapGetters } from 'vuex';
 import GraphicInterval from '@/components/Graphic/GraphicInterval.vue';
 import { Chart, registerables } from 'chart.js';
 import { appNetworksData } from '@/utils/const.ts';
+import { chainContractsMap } from '@/utils/contractsMap.ts';
+import BaseIcon from '@/components/Icon/BaseIcon.vue';
 
 const originPointPlugin = {
   id: 'originPointPlugin',
@@ -78,6 +102,7 @@ export default {
   name: 'GraphicComponent',
   components: {
     GraphicInterval,
+    BaseIcon,
   },
   props: {
     graphicData: {
@@ -106,7 +131,23 @@ export default {
   },
   computed: {
     ...mapGetters('network', ['networkId']),
+    networkName() {
+      return this.$store.state.network.networkName;
+    },
+    networkScan() {
+      return this.$store.state.network.explorerUrl;
+    },
+    availableChains() {
+      const availableNetworks = Object.entries(chainContractsMap)
+        .reduce((acc, [network, contracts]) => {
+          if (contracts.token_insurance) {
+            acc.push(network.charAt(0).toUpperCase() + network.slice(1));
+          }
+          return acc;
+        }, []);
 
+      return availableNetworks;
+    },
     activeNetworkData() {
       const data = appNetworksData.find((_) => _.chain === this.networkId);
       return data || appNetworksData[0];
@@ -243,6 +284,19 @@ export default {
   },
 
   methods: {
+    saveNetworkToLocalStore(chain:string) {
+      this.$store.dispatch('network/changeDappNetwork', chain.toLowerCase());
+    },
+    getIconName(chain:string) {
+      const selectedChain = this.$store.state.network.networkName;
+      const formattedChain = chain.charAt(0).toUpperCase() + chain.slice(1).toLowerCase();
+
+      if (chain.toLowerCase() !== selectedChain.toLowerCase()) {
+        return `Icon${formattedChain}Off`;
+      }
+
+      return `Icon${formattedChain}On`;
+    },
     getInitialValue() {
       const intervalData = this.graphicData?.slice(0, this.getInterval());
       const dataValues = intervalData.map((payout: any) => parseFloat(payout.comp));
@@ -250,7 +304,7 @@ export default {
       return minValue.toFixed(2);
     },
     getInitialDate() {
-      const intervalData = this.graphicData?.slice(0, this.getInterval());
+      const intervalData = this.graphicData?.slice(0, this.getInterval()).reverse();
       const date = new Date(intervalData[0].date);
       const day = date.getUTCDate().toString().padStart(2, '0');
       const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
@@ -326,6 +380,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.insurance__chains-interval {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
 .insurance__graphic-display {
   width: 100%;
   min-height: 250px;
@@ -348,7 +408,57 @@ export default {
     background-color: var(--color-7);
   }
 }
+.performance__chain-data-container .selected:hover {
+  background: var(--color-4);
+  cursor: default;
+  [data-theme="dark"] & {
+    background: var(--color-2);
+  }
+}
+.performance__chain-data-container {
+  display: flex;
+  flex-direction: row;
+  vertical-align: center;
+}
 
+.performance__chain-data-container > *:not(:last-child) {
+  margin-right: 7px;
+}
+
+.performance__chain-data {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-radius: 30px;
+  border: 1px solid var(--color-6);
+  background: var(--color-5);
+  padding: 5px 10px;
+  margin-top: 24px;
+  width: fit-content;
+  transition: background 0.3s ease, border 0.3s ease;
+}
+.performance__icon-chain-bottom {
+  flex-shrink: 0
+}
+
+.performance__chain-data-name {
+  margin-left: 8px;
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--color-1);
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
+}
+.performance__chain-data:hover {
+  cursor: pointer;
+  border: 1px solid var(--color-7);
+  background: var(--color-6);
+  transition: background 0.3s ease, border 0.3s ease;
+  [data-theme="dark"] & {
+    background: var(--color-7);
+  }
+}
 .insurance__graphic-data {
   margin-top: 20px;
   margin-bottom: 10px;

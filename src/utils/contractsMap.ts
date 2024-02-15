@@ -23,7 +23,6 @@ export const chainContractsMap = {
     dai: '0xda10009cbd5d07dd0cecc66161fc93d7c9000da1',
     exchange_insurance: '0xB8F254F316FFa6d53969F8D4b01CAC25Ac8A2d08',
     token_insurance: '0x5E3C33e152Be20835B9c33071C411B616688c754',
-
   },
   arbitrum: {
     usdPlus: {
