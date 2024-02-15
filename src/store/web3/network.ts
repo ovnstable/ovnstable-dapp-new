@@ -184,6 +184,9 @@ const state = {
   ],
 
   switchToOtherNetwork: false,
+
+  insuranceNetwork: 'optimism',
+  insuranceExplorerURL: 'https://optimistic.etherscan.io/',
 };
 
 const getters = {
@@ -510,6 +513,11 @@ const actions = {
       await dispatch('walletAction/checkAccount', null, { root: true });
     }
   },
+
+  changeInsuranceNetwork({ commit }: any, network: any) {
+    commit('setInsuranceExplorerURL', getNetworkParams(network).explorerUrl);
+    commit('setInsuranceNetwork', network);
+  },
 };
 
 const mutations = {
@@ -564,6 +572,14 @@ const mutations = {
 
   setChainChanged(state: any, value: any) {
     state.chainChanged = value;
+  },
+
+  setInsuranceNetwork(state: any, value: any) {
+    state.insuranceNetwork = value;
+  },
+
+  setInsuranceExplorerURL(state: any, value: any) {
+    state.insuranceExplorerURL = value;
   },
 };
 

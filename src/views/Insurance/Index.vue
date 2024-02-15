@@ -30,17 +30,17 @@ export default {
     },
   },
   watch: {
-    '$store.state.network.networkName': {
+    '$store.state.network.insuranceNetwork': {
       immediate: true,
       handler: function handleNetworkNameChange(newVal, oldVal) {
         if (newVal !== oldVal) {
-          this.fetchDataForInsurance(this.$store.state.network.networkName);
+          this.fetchDataForInsurance(this.$store.state.network.insuranceNetwork);
         }
       },
     },
   },
   async mounted() {
-    await this.fetchDataForInsurance(this.$store.state.network.networkName.toLowerCase());
+    await this.fetchDataForInsurance(this.$store.state.network.insuranceNetwork.toLowerCase());
   },
   methods: {
     async fetchDataForInsurance(networkName: string) {

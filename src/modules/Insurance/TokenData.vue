@@ -139,10 +139,10 @@ export default {
   },
   computed: {
     networkName() {
-      return this.$store.state.network.networkName;
+      return this.$store.state.network.insuranceNetwork;
     },
     networkScan() {
-      return this.$store.state.network.explorerUrl;
+      return this.$store.state.network.insuranceExplorerURL;
     },
   },
   methods: {
@@ -234,7 +234,7 @@ export default {
 }
 
 .insurance__token-data {
-  max-height: 86px;
+  max-height: 84px;
   display:flex;
   flex-direction: row;
   justify-content: space-between;

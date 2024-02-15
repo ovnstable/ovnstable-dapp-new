@@ -130,12 +130,11 @@ export default {
     };
   },
   computed: {
-    ...mapGetters('network', ['networkId']),
     networkName() {
-      return this.$store.state.network.networkName;
+      return this.$store.state.network.insuranceNetwork;
     },
     networkScan() {
-      return this.$store.state.network.explorerUrl;
+      return this.$store.state.network.insuranceExplorerURL;
     },
     availableChains() {
       const availableNetworks = Object.entries(chainContractsMap)
@@ -149,7 +148,8 @@ export default {
       return availableNetworks;
     },
     activeNetworkData() {
-      const data = appNetworksData.find((_) => _.chain === this.networkId);
+      const network = this.$store.state.network.insuranceNetwork;
+      const data = appNetworksData.find((_) => _.name.toLowerCase() === network.toLowerCase());
       return data || appNetworksData[0];
     },
     chartData(): any {
@@ -285,10 +285,10 @@ export default {
 
   methods: {
     saveNetworkToLocalStore(chain:string) {
-      this.$store.dispatch('network/changeDappNetwork', chain.toLowerCase());
+      this.$store.dispatch('network/changeInsuranceNetwork', chain.toLowerCase());
     },
     getIconName(chain:string) {
-      const selectedChain = this.$store.state.network.networkName;
+      const selectedChain = this.$store.state.network.insuranceNetwork;
       const formattedChain = chain.charAt(0).toUpperCase() + chain.slice(1).toLowerCase();
 
       if (chain.toLowerCase() !== selectedChain.toLowerCase()) {
@@ -458,6 +458,16 @@ export default {
   cursor: pointer;
   border: 1px solid var(--color-7);
   background: var(--color-6);
+  transition: background 0.3s ease, border 0.3s ease;
+  [data-theme="dark"] & {
+    background: var(--color-7);
+  }
+}
+
+.selected:hover {
+  cursor: default;
+  border: 1px solid var(--color-7);
+  background: var(--color-4);
   transition: background 0.3s ease, border 0.3s ease;
   [data-theme="dark"] & {
     background: var(--color-7);
