@@ -13,8 +13,8 @@
       <div class="performance__portfolio-assets">
 
         <div
-          v-for="asset in (assets as any[])"
-          :key="asset.tokenName"
+          v-for="premium in (premiumsData as any[])"
+          :key="premium.id"
         >
           <div
             class="performance__portfolio-strategies-stables"
@@ -22,58 +22,52 @@
             <div
               :class="[
                 'performance__portfolio-strategy',
-                { assets: type === 'portfolio' && assets.indexOf(asset) === assets.length - 1 },
+                { assets: premiumsData.indexOf(premium) === premiumsData.length - 1 },
               ]"
             >
               <div class="performance__portfolio-strategy-token-data">
                 <div
                   name="strategyImage"
                   class="performance__portfolio-strategy-icon"
-                  :style="{ 'background-color': getIconColor(assets.indexOf(asset)) }"
+                  :style="{ 'background-color': getIconColor(premiumsData.indexOf(premium)) }"
                 />
                 <p
-                  :class="['performance__portfolio-strategy-token-name', { asset: type === 'strategies' }]"
+                  :class="['performance__portfolio-strategy-token-name']"
                 >
-                  {{ type === 'portfolio' ? asset.id.tokenName : asset.fullName }}
+                  {{ premium.fullName }}
                 </p>
               </div>
-              <p :class="{ 'performance__portfolio-strategies-stables-score': type === 'portfolio' }">
-                {{ type === 'portfolio' ? 'VERY HIGH' : formatCurrency(asset.netAssetValue, collateralToken) }}
+              <p class="performance__portfolio-strategies-stables-score">
+                {{ premium.netAssetValue}}
               </p>
               <p>
-                {{ type === 'portfolio' ? formatCurrency(asset.netAssetValue, collateralToken) : formatCurrency(asset.liquidationValue, collateralToken) }}
+                NAV{{ formatCurrency(premium.netAssetValue)}}
               </p>
               <div class="performance__portfolio-strategy-portfolio-percent">
                 <div class="performance__portfolio-strategy-progress-bar">
                   <div
                     class="performance__portfolio-strategy-progress"
-                    :style="{ width: calculatePercentPortfolio(asset.netAssetValue, totalPortfolioValue(assets)) + '%', 'background-color': getIconColor(assets.indexOf(asset)) }"
                   />
                 </div>
-                <p class="performance__portfolio-strategy-token-portfolio-num">{{ calculatePercentPortfolio(asset.netAssetValue, totalPortfolioValue(assets)) }}%</p>
+                <p class="performance__portfolio-strategy-token-portfolio-num">{{ premium.riskFactor }}%</p>
               </div>
 
             </div>
           </div>
         </div>
         <div
-          v-if="type === 'strategies'"
           class="performance__portfolio-divider"
         />
         <div
-          v-if="type === 'strategies'"
           class="performance__portfolio-total-info"
         >
           <div class="performance__portfolio-total">
             <p class="performance__portfolio-total-label">Total</p>
             <p class="performance__portfolio-total-nav-val">
-              {{ formatCurrency(totalNAV(assets, collateralToken), collateralToken) }}
+              the total 213
             </p>
-          </div>
-          <div class="performance__portfolio-total-circl">
-            <p class="performance__portfolio-total-label performance__portfolio-total-label--circl">Total {{ tokenName }} in circulation</p>
-            <p class="performance__portfolio-total-circl-number">
-              {{ formatCurrency(tokenAmountInCirculation, collateralToken) }}
+            <p class="performance__portfolio-total-nav-val">
+              the total 213
             </p>
           </div>
         </div>
@@ -93,26 +87,10 @@ export default {
     BaseIcon,
   },
   props: {
-    // tokenName: {
-    //   type: String,
-    //   default: 'ETH+',
-    // },
-    // assets: {
-    //   type: Array,
-    //   required: true,
-    // },
-    // type: {
-    //   type: String,
-    //   default: 'portfolio',
-    // },
-    // tokenAmountInCirculation: {
-    //   type: Number,
-    //   default: 0,
-    // },
-    // collateralToken: {
-    //   type: String,
-    //   default: '$',
-    // },
+    premiumsData: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   data() {
     return {
@@ -121,14 +99,11 @@ export default {
   },
   methods: {
     formatCurrency(value: any, collateralToken: string) {
-      if (collateralToken !== 'WETH') {
-        return new Intl.NumberFormat('en-US', {
-          style: 'currency',
-          currency: 'USD',
-          maximumFractionDigits: 2,
-        }).format(value).replace(/,/g, ' ');
-      }
-      return `${Number(value).toFixed(6)} ${collateralToken}`;
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        maximumFractionDigits: 2,
+      }).format(value).replace(/,/g, ' ');
     },
     totalNAV(assets: any[], collateralToken: string) {
       const totalValue = assets.reduce((total, asset) => total + asset.netAssetValue, 0);
@@ -146,9 +121,9 @@ export default {
       }
       return value.toFixed(4);
     },
-    isLastAsset(asset: any) {
-      return this.assets.indexOf(asset) === this.assets.length - 1;
-    },
+    // isLastAsset(asset: any) {
+    //   return this.assets.indexOf(asset) === this.assets.length - 1;
+    // },
     getIconColor(index: number) {
       const colors = [
         getComputedStyle(document.documentElement).getPropertyValue('--color-3').trim(),

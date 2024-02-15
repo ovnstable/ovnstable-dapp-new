@@ -1,8 +1,8 @@
 <template>
-  <p>{{ insurancePremiums }}</p>
   <InsurancePage
     :token-data="insuranceTokenData"
     :payout-data="insurancePayouts"
+    :premiums-data="insurancePremiums"
     :first-load="firstRender"
     :loaded="loaded"
   />

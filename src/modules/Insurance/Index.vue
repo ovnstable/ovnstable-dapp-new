@@ -22,6 +22,7 @@
         class="insurance__graphics"
       />
       <InsurancePremiums
+        :premiumsData="premiumsData"
         class="insurance__premiums"
       />
     </div>
@@ -36,7 +37,7 @@
 import TokenDataInsurance from '@/modules/Insurance/TokenData.vue';
 import GraphicsInsurance from '@/modules/Insurance/Graphic.vue';
 import Spinner from '@/components/Spinner/Index.vue';
-import InsurancePremiums from '@/modules/Insurance/Premiums.vue'
+import InsurancePremiums from '@/modules/Insurance/Premiums.vue';
 
 export default {
   name: 'InsurancePage',
@@ -52,6 +53,10 @@ export default {
       default: () => ({}),
     },
     payoutData: {
+      type: Object,
+      default: () => ({}),
+    },
+    premiumsData: {
       type: Object,
       default: () => ({}),
     },
