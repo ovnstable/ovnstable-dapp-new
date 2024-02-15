@@ -408,17 +408,10 @@ export default {
 }
 
 .slider__loader {
-  position: absolute;
-  left: 450px;
-  top: 60px;
-  margin: auto;
-  height: 100%;
-  width: 100%;
-  min-height: 474px;
+  width: 40%;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding-bottom: 50vh;
 }
 
 @media (max-width: 1024px) {
