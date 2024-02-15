@@ -2,7 +2,7 @@
   <div class="performance__graphics">
     <div class="performance__graphics-APY-graphic">
       <GraphicComponent
-        :graphicData=payoutData
+        :graphicData="reversedPayoutData"
       />
     </div>
   </div>
@@ -22,6 +22,11 @@ export default {
       accumulatorWeek: 0,
       accumulatorMonth: 0,
     };
+  },
+  computed: {
+    reversedPayoutData() {
+      return [...this.payoutData].reverse();
+    },
   },
   props: {
     payoutData: {

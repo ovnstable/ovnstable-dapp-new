@@ -25,7 +25,6 @@
 <script lang="ts">
 import { mapGetters } from 'vuex';
 import GraphicInterval from '@/components/Graphic/GraphicInterval.vue';
-import { type Payout } from '@/modules/Market/types/index.ts';
 import { Chart, registerables } from 'chart.js';
 import { appNetworksData } from '@/utils/const.ts';
 
@@ -48,25 +47,7 @@ const originPointPlugin = {
   },
 };
 
-const pointStylePlugin = {
-  id: 'pointStylePlugin',
-  afterDraw(chart: any) {
-    const { ctx } = chart;
-    const yAxis = chart.scales.y;
-    const middleY = (yAxis.top + yAxis.bottom) / 2;
-    ctx.save();
-    const { activeNetworkColor } = chart.options.plugins.pointStylePlugin;
-    ctx.strokeStyle = activeNetworkColor || '#ff0000';
-    ctx.setLineDash([5, 5]);
-    ctx.beginPath();
-    ctx.moveTo(chart.chartArea.left, middleY);
-    ctx.lineTo(chart.chartArea.right, middleY);
-    ctx.stroke();
-    ctx.restore();
-  },
-};
-
-Chart.register(...registerables, originPointPlugin, pointStylePlugin);
+Chart.register(...registerables, originPointPlugin);
 
 export default {
   name: 'GraphicComponent',
@@ -123,20 +104,15 @@ export default {
     //   return '';
     // },
     chartData(): any {
-      const payoutData = this.graphicData?.slice(0, this.getInterval());
-      console.log('here is payoutdata');
-      console.log(payoutData);
+      let payoutData = [...this.graphicData].slice(0, this.getInterval()).reverse();
       const activeNetworkColor = this.activeNetworkData.color;
-      // payoutData.sort((a: { date: any; }, b: { date: any; }) => new Date(a
-      //   .date).getTime() - new Date(b.date).getTime());
 
       return {
         chartData: {
-          labels: payoutData
-            .map((payout: any) => new Date(payout.date).toLocaleDateString()),
+          labels: payoutData.map((payout) => new Date(payout.date).toLocaleDateString()),
           datasets: [{
             label: false,
-            data: payoutData.map((payout: any) => payout.comp),
+            data: payoutData.map((payout) => parseFloat(payout.comp)),
             fill: false,
             borderColor: activeNetworkColor,
             backgroundColor: activeNetworkColor,
@@ -148,8 +124,8 @@ export default {
       };
     },
     chartOptions() {
-      const intervalData = this.graphicData?.slice(0, 7);
-      const dataValues = intervalData.map((payout: any) => payout.comp);
+      const intervalData = this.graphicData?.slice(0, this.getInterval());
+      const dataValues = intervalData.map((payout: any) => parseFloat(payout.comp));
 
       const minValue = Math.min(...dataValues);
       const maxValue = Math.max(...dataValues);
@@ -242,9 +218,6 @@ export default {
 
               // },
             },
-            pointStylePlugin: {
-              activeNetworkColor: '',
-            },
           },
           interaction: {
             mode: 'nearest',
@@ -295,7 +268,7 @@ export default {
           sliceEnd = 365;
           break;
         case 'ALL TIME':
-          sliceEnd = this.graphicData.payouts.length;
+          sliceEnd = this.graphicData.length;
           break;
         default:
           sliceEnd = 7;
@@ -311,13 +284,11 @@ export default {
           const { chartData } = this.chartData;
           const { chartOptions } = this.chartOptions;
           chartOptions.plugins = chartOptions.plugins || {};
-          chartOptions.plugins.pointStylePlugin = chartOptions.plugins.pointStylePlugin || {};
-          chartOptions.plugins.pointStylePlugin.activeNetworkColor = this.activeNetworkData.color;
           this.myChart = new Chart(ctx, {
             type: 'line',
             data: chartData as any,
             options: chartOptions as any,
-            plugins: [originPointPlugin, pointStylePlugin],
+            plugins: [originPointPlugin],
           }) as any;
         } else {
           console.error('Failed to get canvas context.');
