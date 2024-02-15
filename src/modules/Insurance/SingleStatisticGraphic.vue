@@ -32,19 +32,19 @@
       <div class="insurance-cumulitives">
         <div class="insurance__accumulator-data">
           <p>1 day</p>
-          <p>{{ accumulatorDay.toFixed(2) }}%</p>
+          <p>{{ accumulatorDay }}%</p>
         </div>
         <div class="insurance__accumulator-data">
           <p>1 week</p>
-          <p>{{ accumulatorWeek.toFixed(2) }}%</p>
+          <p>{{ accumulatorWeek }}%</p>
         </div>
         <div class="insurance__accumulator-data">
           <p>1 month</p>
-          <p>{{ accumulatorMonth.toFixed(2) }}%</p>
+          <p>{{ accumulatorMonth }}%</p>
         </div>
         <div class="insurance__accumulator-data">
           <p>ALL</p>
-          <p>{{ parseFloat(graphicData[0].comp).toFixed(2) }}%</p>
+          <p>{{ parseFloat(graphicData[0].comp) }}%</p>
         </div>
       </div>
     </div>

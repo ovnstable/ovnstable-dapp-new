@@ -3,9 +3,9 @@
     <div class="performance__graphics-APY-graphic">
       <GraphicComponent
         :graphicData="reversedPayoutData"
-        :accumulatorDay="accumulatorDay"
-        :accumulatorWeek="accumulatorWeek"
-        :accumulatorMonth="accumulatorMonth"
+        :accumulatorDay="payoutData.accumulatorDay"
+        :accumulatorWeek="payoutData.accumulatorWeek"
+        :accumulatorMonth="payoutData.accumulatorMonth"
       />
     </div>
   </div>
@@ -28,46 +28,13 @@ export default {
   },
   computed: {
     reversedPayoutData() {
-      return [...this.payoutData].reverse();
+      return [...this.payoutData.payouts].reverse();
     },
   },
   props: {
     payoutData: {
       type: Object,
       default: () => ({}),
-    },
-  },
-  created() {
-    this.calculateComp();
-  },
-  methods: {
-    calculateComp() {
-      const startValue = 1;
-      let accumulator = startValue;
-      this.accumulatorDay = startValue;
-      this.accumulatorWeek = startValue;
-      this.accumulatorMonth = startValue;
-      let counter = this.payoutData.length;
-      this.payoutData.reverse().forEach((payout: any) => {
-        accumulator *= (1 + payout.dailyProfit);
-        payout.comp = (accumulator * 100 / startValue - 100);
-        payout.comp = parseFloat(payout.comp ? payout.comp : 0.00).toFixed(3);
-
-        if (counter <= 7) {
-          this.accumulatorWeek *= (1 + payout.dailyProfit);
-        }
-
-        if (counter <= 30) {
-          this.accumulatorMonth *= (1 + payout.dailyProfit);
-        }
-        if (counter === 1) {
-          this.accumulatorDay *= (1 + payout.dailyProfit);
-        }
-        counter--;
-      });
-      this.accumulatorDay = (this.accumulatorDay - 1) * 100;
-      this.accumulatorWeek = (this.accumulatorWeek - 1) * 100;
-      this.accumulatorMonth = (this.accumulatorMonth - 1) * 100;
     },
   },
 };
