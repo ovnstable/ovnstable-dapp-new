@@ -38,9 +38,10 @@
         >
           <div class="slider__info">
             <div class="slider__token-overview">
-              <BaseIcon
+              <img
                 class="slider__token-image"
-                :name="formatFirstTokenIconName(slide.tokenName)"
+                :src="getUrlFirstToken(slide.tokenName)"
+                :alt="slide.tokenName"
               />
               <p class="slider__token-title">{{ slide.tokenName }}</p>
               <p class="slider__overview-title">OVERVIEW</p>
@@ -237,8 +238,8 @@ export default {
       }
     },
 
-    formatFirstTokenIconName(tokenName: string) {
-      return `${tokenName.slice(0, -1).toLowerCase()}Plus`;
+    getUrlFirstToken(tokenName: string) {
+      return `src/assets/icons/currencies/main/${tokenName.slice(0, -1).toLowerCase()}plus_slider.svg`;
     },
     formatSecondTokenIconName(tokenName: string) {
       const formattedName = tokenName.slice(0, -1);
@@ -246,7 +247,7 @@ export default {
     },
     getImageUrl(tokenName: string) {
       const iconName = this.formatSecondTokenIconName(tokenName);
-      return `src/assets/icons/currencies/main/${iconName}.svg`;
+      return `src/assets/icons/currencies/main/${iconName.toLowerCase()}_slider.svg`;
     },
   },
 };
