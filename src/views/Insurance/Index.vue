@@ -30,7 +30,7 @@ export default {
       return this.$store.state.insurancePayouts.insurancePayouts || {};
     },
     insurancePremiums() {
-      return this.$store.state.insurancePremiums || {};
+      return this.$store.state.insurancePremiums.insurancePremiums || {};
     },
   },
   watch: {

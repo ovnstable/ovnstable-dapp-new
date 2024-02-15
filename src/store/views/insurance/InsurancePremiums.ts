@@ -7,7 +7,7 @@ const state = {
 const actions = {
   async fetchInsurancePremiums({ commit }: any, { networkName }: any) {
     try {
-      const data = await InsuranceApiService.loadInsuranceData(networkName);
+      const data = await InsuranceApiService.loadInsurancePremiusm(networkName);
       commit('setInsurancePremiums', data);
     } catch (error) {
       console.error('Failed to fetch insurance premiums:', error);
