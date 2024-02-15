@@ -21,7 +21,9 @@
         :loaded="loaded"
         class="insurance__graphics"
       />
-      <p class="insurance__portfolio">portfolio data</p>
+      <InsurancePremiums
+        class="insurance__premiums"
+      />
     </div>
     <div class="insurance__payouts">
       <p class="insurance__payout-inner">token datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatatoken data</p>
@@ -34,11 +36,13 @@
 import TokenDataInsurance from '@/modules/Insurance/TokenData.vue';
 import GraphicsInsurance from '@/modules/Insurance/Graphic.vue';
 import Spinner from '@/components/Spinner/Index.vue';
+import InsurancePremiums from '@/modules/Insurance/Premiums.vue'
 
 export default {
   name: 'InsurancePage',
   components: {
     TokenDataInsurance,
+    InsurancePremiums,
     GraphicsInsurance,
     Spinner,
   },
@@ -85,7 +89,7 @@ export default {
 }
 .insurance__token-data,
 .insurance__graphics,
-.insurance__portfolio,
+.insurance__premiums,
 .insurance__payout-inner {
   width: 100%;
 }
@@ -95,7 +99,7 @@ export default {
   border-radius: 5px;
   border: 1px solid var(--color-1);
 }
-.insurance__portfolio {
+.insurance__premiums {
   margin-top: 20px;
 }
 .insurance-wrapper {

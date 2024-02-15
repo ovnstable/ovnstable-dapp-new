@@ -1,4 +1,5 @@
 <template>
+  <p>{{ insurancePremiums }}</p>
   <InsurancePage
     :token-data="insuranceTokenData"
     :payout-data="insurancePayouts"
@@ -28,6 +29,9 @@ export default {
     insurancePayouts() {
       return this.$store.state.insurancePayouts.insurancePayouts || {};
     },
+    insurancePremiums() {
+      return this.$store.state.insurancePremiums || {};
+    },
   },
   watch: {
     '$store.state.network.insuranceNetwork': {
@@ -49,6 +53,7 @@ export default {
         await Promise.all([
           this.$store.dispatch('insuranceTokenData/fetchInsuranceTokenData', { networkName }),
           this.$store.dispatch('insurancePayouts/fetchInsurancePayouts', { networkName }),
+          this.$store.dispatch('insurancePremiums/fetchInsurancePremiums', { networkName }),
         ]);
         this.loaded = true;
         this.firstRender = false;

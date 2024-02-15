@@ -44,7 +44,7 @@ const actions = {
       };
       commit('setInsurancePayouts', payload);
     } catch (error) {
-      console.error('Failed to fetch token data:', error);
+      console.error('Failed to fetch insurance payouts:', error);
     }
   },
 };

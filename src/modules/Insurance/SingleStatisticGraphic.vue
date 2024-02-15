@@ -70,7 +70,6 @@
 </template>
 
 <script lang="ts">
-import { mapGetters } from 'vuex';
 import GraphicInterval from '@/components/Graphic/GraphicInterval.vue';
 import { Chart, registerables } from 'chart.js';
 import { appNetworksData } from '@/utils/const.ts';

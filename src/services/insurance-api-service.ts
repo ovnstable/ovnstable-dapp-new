@@ -30,6 +30,19 @@ class InsuranceApiService {
         });
     });
   }
+
+  loadInsurancePremiusm(chain: string): any {
+    return new Promise((resolve, reject) => {
+      const url = `${API_URL}/${chain}/usd+/dapp/strategies`;
+      apiService.get(url)
+        .then((data) => {
+          resolve(data);
+        })
+        .catch((e) => {
+          reject(getErrorObject(e));
+        });
+    });
+  }
 }
 
 export default new InsuranceApiService();
