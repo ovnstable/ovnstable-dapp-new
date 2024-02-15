@@ -4,7 +4,6 @@
   >
     <div class="insurance">
       <TokenDataInsurance
-        :token-data="tokenData"
         class="market__token-data"
       />
       <p class="insurance__graphics">graphic data</p>
