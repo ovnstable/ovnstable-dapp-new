@@ -3,6 +3,9 @@
     <div class="performance__graphics-APY-graphic">
       <GraphicComponent
         :graphicData="reversedPayoutData"
+        :accumulatorDay="accumulatorDay"
+        :accumulatorWeek="accumulatorWeek"
+        :accumulatorMonth="accumulatorMonth"
       />
     </div>
   </div>

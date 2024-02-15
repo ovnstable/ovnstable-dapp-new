@@ -4,21 +4,46 @@
     :intervals="['1W', '1M', '3M', '6M', '1Y', 'ALL TIME']"
     @update:interval="updateInterval"
   />
-  <p>{{ graphicData[0].date }}</p>
-  <div class="performance__graphic">
-    <div class="performance__graphic-data">
-      <!-- <div class="performance__graphic-values">
-        <p>{{ displayValue }}</p>
-        <p>{{ startDateLabel }}</p>
-      </div> -->
+  <div class="insurance__graphic">
+    <div class="insurance__graphic-data">
+      <p class="insurance__graphic-title">Cumulative return</p>
+      <div class="insurance-cumulitives">
+        <div class="insurance__accumulator-data">
+          <p>1 day</p>
+          <p>{{ accumulatorDay.toFixed(2) }}%</p>
+        </div>
+        <div class="insurance__accumulator-data">
+          <p>1 week</p>
+          <p>{{ accumulatorWeek.toFixed(2) }}%</p>
+        </div>
+        <div class="insurance__accumulator-data">
+          <p>1 month</p>
+          <p>{{ accumulatorMonth.toFixed(2) }}%</p>
+        </div>
+        <div class="insurance__accumulator-data">
+          <p>ALL</p>
+          <p>{{ parseFloat(graphicData[0].comp).toFixed(2) }}%</p>
+        </div>
+      </div>
     </div>
 
-    <div class="performance__graphic-display">
+    <div class="insurance__graphic-display">
       <canvas
         ref="myChart"
         :key="'canvas-' + currentInterval"
       />
     </div>
+    <div class="insurance__data-under-graphic">
+      <div class="insurance__data-initial">
+        <p>{{ getInitialValue() }}%</p>
+        <p>{{ getInitialDate() }}</p>
+      </div>
+      <div class="insurance__data-comp-today">
+        <p>{{ parseFloat(graphicData[0].comp).toFixed(3) }}%</p>
+        <p> for today </p>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -41,7 +66,7 @@ const originPointPlugin = {
     ctx.save();
     ctx.beginPath();
     ctx.arc(originX, originY, 2, 0, 2 * Math.PI);
-    ctx.fillStyle = '#000';
+    ctx.fillStyle = '#687386';
     ctx.fill();
     ctx.restore();
   },
@@ -59,6 +84,18 @@ export default {
       type: Object,
       required: true,
     },
+    accumulatorDay: {
+      type: Number,
+      required: true,
+    },
+    accumulatorWeek: {
+      type: Number,
+      required: true,
+    },
+    accumulatorMonth: {
+      type: Number,
+      required: true,
+    },
   },
   data() {
     return {
@@ -74,35 +111,6 @@ export default {
       const data = appNetworksData.find((_) => _.chain === this.networkId);
       return data || appNetworksData[0];
     },
-    // displayValue() {
-    //   if (this.type === 'APY') {
-    //     const payoutData = this.graphicData.payouts?.slice(0, this.getInterval());
-    //     const sumYield = payoutData
-    //       .reduce((acc: any, payout: Payout) => acc + payout.annualizedYield, 0);
-    //     const avgYield = (sumYield / payoutData.length) || 0;
-    //     return `${avgYield.toFixed(2)}%`;
-    //   } if (this.type === 'TVL') {
-    //     const latestPayout = this.graphicData.payouts[0];
-    //     if (latestPayout) {
-    //       if (this.tokenData.tokenName === 'ETH+') {
-    //         return `${latestPayout.totalUsdPlus.toFixed(6)} WETH`;
-    //       }
-    //       return `$${latestPayout.totalUsdPlus.toFixed(2)}`;
-    //     }
-    //   }
-    //   return 'N/A';
-    // },
-    // startDateLabel() {
-    //   if (this.type === 'TVL') {
-    //     return 'Past 2 hours';
-    //   }
-    //   const payoutData = this.graphicData.payouts?.slice(0, this.getInterval());
-    //   if (payoutData.length > 0) {
-    //     const lastDate = new Date(payoutData[payoutData.length - 1].payableDate);
-    //     return `from ${lastDate.toLocaleDateString()}`;
-    //   }
-    //   return '';
-    // },
     chartData(): any {
       let payoutData = [...this.graphicData].slice(0, this.getInterval()).reverse();
       const activeNetworkColor = this.activeNetworkData.color;
@@ -129,7 +137,6 @@ export default {
 
       const minValue = Math.min(...dataValues);
       const maxValue = Math.max(...dataValues);
-      const isDarkTheme = localStorage.getItem('theme-type') === 'dark';
       return {
         chartOptions: {
           scales: {
@@ -141,15 +148,19 @@ export default {
               min: minValue,
               max: maxValue,
               ticks: {
-                color: isDarkTheme ? '#ffffff' : '#0f172a',
-                min: 4,
+                display: false,
               },
-
+              border: {
+                color: '#687386',
+              },
               grid: {
                 display: false,
               },
             },
             x: {
+              border: {
+                color: '#687386',
+              },
               ticks: {
                 display: false,
               },
@@ -183,40 +194,34 @@ export default {
               bodyColor: '#000',
               displayColors: false,
               padding: 10,
-              // callbacks: {
-              //   label(context: any) {
-              //     let label = context.dataset.label || '';
+              callbacks: {
+                label(context: any) {
+                  let label = context.dataset.label || '';
 
-              //     if (label) {
-              //       label += ': ';
-              //     }
-              //     const value = context.parsed.y;
-              //     if (isApyType) {
-              //       label += `APY: ${value.toFixed(2)}%`;
-              //     } else if (isEth) {
-              //       label += `TVL WETH ${value.toLocaleString()}`;
-              //     } else {
-              //       label += `TVL $${value.toLocaleString()}`;
-              //     }
-              //     return label;
-              //   },
-              //   title(context: any) {
-              //     if (context.length > 0) {
-              //       const reversedData = [...intervalData].reverse();
-              //       const pointIndex = context[0].dataIndex;
-              //       const date = new Date(reversedData[pointIndex].payableDate);
-              //       const day = date.getUTCDate().toString().padStart(2, '0');
-              //       const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
-              //       const year = date.getUTCFullYear();
-              //       const hours = date.getUTCHours().toString().padStart(2, '0');
-              //       const minutes = date.getUTCMinutes().toString().padStart(2, '0');
-              //       const formattedDate = `${day}.${month}.${year}, ${hours}:${minutes} UTS`;
-              //       return formattedDate;
-              //     }
-              //     return '';
-              //   },
+                  if (label) {
+                    label += ': ';
+                  }
+                  const value = context.parsed.y;
+                  label += `Performance: ${value.toLocaleString()}%`;
+                  return label;
+                },
+                title(context: any) {
+                  if (context.length > 0) {
+                    const reversedData = [...intervalData].reverse();
+                    const pointIndex = context[0].dataIndex;
+                    const date = new Date(reversedData[pointIndex].date);
+                    const day = date.getUTCDate().toString().padStart(2, '0');
+                    const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+                    const year = date.getUTCFullYear();
+                    const hours = date.getUTCHours().toString().padStart(2, '0');
+                    const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+                    const formattedDate = `${day}.${month}.${year}, ${hours}:${minutes} UTS`;
+                    return formattedDate;
+                  }
+                  return '';
+                },
 
-              // },
+              },
             },
           },
           interaction: {
@@ -238,6 +243,21 @@ export default {
   },
 
   methods: {
+    getInitialValue() {
+      const intervalData = this.graphicData?.slice(0, this.getInterval());
+      const dataValues = intervalData.map((payout: any) => parseFloat(payout.comp));
+      const minValue = Math.min(...dataValues);
+      return minValue.toFixed(2);
+    },
+    getInitialDate() {
+      const intervalData = this.graphicData?.slice(0, this.getInterval());
+      const date = new Date(intervalData[0].date);
+      const day = date.getUTCDate().toString().padStart(2, '0');
+      const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+      const year = date.getUTCFullYear();
+      const formattedDate = `${day}.${month}.${year}`;
+      return formattedDate;
+    },
     updateInterval(newInterval: string) {
       this.currentInterval = newInterval;
       this.$nextTick(() => {
@@ -306,11 +326,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.performance__graphic-display {
+.insurance__graphic-display {
   width: 100%;
   min-height: 250px;
 }
-.performance__graphic{
+.insurance__graphic{
   min-height: 250px;
   background-color: var(--color-8);
   display: flex;
@@ -322,27 +342,30 @@ export default {
   border-radius: 5px;
   border: 1px solid var(--color-8);
   margin-top: 5px;
+  width: 100%;
+  box-sizing: border-box;
   [data-theme="dark"] & {
     background-color: var(--color-7);
   }
 }
 
-.performance__graphic-data {
-  margin-top: 10px;
+.insurance__graphic-data {
+  margin-top: 20px;
+  margin-bottom: 10px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   width: 100%;
   flex-grow: 1;
 }
-.performance__graphic-data-text {
+.insurance__graphic-data-text {
   margin-left: 167px;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
 }
 
-.performance__graphic-title {
+.insurance__graphic-title {
   color: var(--color-1);
   font-size: 15px;
   font-weight: 600;
@@ -351,7 +374,7 @@ export default {
   }
 }
 
-.performance__graphic-value {
+.insurance__graphic-value {
   color: var(--color-1);
   font-size: 20px;
   font-weight: 600;
@@ -360,7 +383,7 @@ export default {
   }
 }
 
-.performance__graphic-date {
+.insurance__graphic-date {
   color: var(--color-1);
   font-size: 12px;
   font-weight: 500;
@@ -369,35 +392,67 @@ export default {
   }
 }
 
-.performance__graphic-values {
-  p {
-    text-align: right;
-  }
+.insurance-cumulitives {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+}
+.insurance__accumulator-data {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  align-items: center;
 }
 
-.performance__graphic-values :nth-child(1) {
-  font-size: 20px;
-  font-weight: 600;
+.insurance__accumulator-data :nth-child(1) {
+  font-size: 13px;
+  font-weight: 500;
   color: var(--color-1);
-  [data-theme="dark"] & {
-    color: var(--color-4);
-  }
+  margin-bottom: 4px;
 }
 
-.performance__graphic-values :nth-child(2) {
+.insurance__accumulator-data :nth-child(2) {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--color-1);
+}
+
+.insurance__accumulator-data:not(:last-child) {
+  margin-right: 16px;
+}
+
+.insurance__data-under-graphic {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 12px;
+  margin-bottom: 6px;
   font-size: 15px;
   font-weight: 500;
-  color: var(--color-2);
-  [data-theme="dark"] & {
-    color: var(--color-18);
-  }
 }
+
+.insurance__data-initial {
+  margin-left: 26px;
+  text-align: left;
+}
+
+.insurance__data-comp-today {
+  text-align: right;
+}
+
+.insurance__data-initial :nth-child(1),
+.insurance__data-comp-today :nth-child(1){
+  margin-bottom: 4px;
+}
+
 @media (max-width: 1024px) {
-  .performance__graphic-display {
+  .insurance__graphic-display {
     width: 100%;
     min-height: 150px;
   }
-.performance__graphic{
+.insurance__graphic{
   min-height: 150px;
   background-color: var(--color-8);
   display: flex;
@@ -411,42 +466,42 @@ export default {
   margin-top: 5px;
 }
 
-  .performance__graphic-data-text {
+  .insurance__graphic-data-text {
     margin-left: 50px;
   }
 }
 
 @media (max-width: 768px) {
-  .performance__graphic-value {
+  .insurance__graphic-value {
       font-size: 16px;
   }
-  .performance__graphic-title {
+  .insurance__graphic-title {
       font-size: 12px;
   }
-  .performance__graphics-buttons-interval > * {
+  .insurance__graphics-buttons-interval > * {
       font-size: 10px;
   }
-  .performance__graphic-date {
+  .insurance__graphic-date {
         font-size: 10px;
   }
-  .performance__graphic{
+  .insurance__graphic{
       padding: 15px 30px;
   }
 }
 @media (max-width: 576px) {
-  .performance__graphic-value {
+  .insurance__graphic-value {
       font-size: 14px;
   }
-  .performance__graphic-title {
+  .insurance__graphic-title {
       font-size: 10px;
   }
-  .performance__graphics-buttons-interval > * {
+  .insurance__graphics-buttons-interval > * {
       font-size: 8px;
   }
-  .performance__graphic-date {
+  .insurance__graphic-date {
         font-size: 8px;
   }
-  .performance__graphic{
+  .insurance__graphic{
       padding: 10px 20px;
   }
 }
