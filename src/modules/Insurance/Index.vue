@@ -27,7 +27,10 @@
       />
     </div>
     <div class="insurance__payouts">
-      <p class="insurance__payout-inner">token datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatatoken data</p>
+      <InsurancePayouts
+        :payout-data="reversedPayoutData"
+        class="insurance__payout-inner"
+      />
     </div>
   </div>
 
@@ -38,6 +41,7 @@ import TokenDataInsurance from '@/modules/Insurance/TokenData.vue';
 import GraphicsInsurance from '@/modules/Insurance/Graphic.vue';
 import Spinner from '@/components/Spinner/Index.vue';
 import InsurancePremiums from '@/modules/Insurance/Premiums.vue';
+import InsurancePayouts from '@/modules/Insurance/InsurancePayouts.vue';
 
 export default {
   name: 'InsurancePage',
@@ -45,6 +49,7 @@ export default {
     TokenDataInsurance,
     InsurancePremiums,
     GraphicsInsurance,
+    InsurancePayouts,
     Spinner,
   },
   props: {
@@ -67,6 +72,11 @@ export default {
     loaded: {
       type: Boolean,
       default: false,
+    },
+  },
+  computed: {
+    reversedPayoutData() {
+      return [...this.payoutData.payouts].reverse();
     },
   },
 };
