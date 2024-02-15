@@ -184,6 +184,8 @@ const state = {
   ],
 
   switchToOtherNetwork: false,
+  marketNetwork: 'arbitrum',
+  marketExplorerURL: 'https://arbiscan.io/',
 };
 
 const getters = {
@@ -510,6 +512,11 @@ const actions = {
       await dispatch('walletAction/checkAccount', null, { root: true });
     }
   },
+
+  changeMarketNetwork({ commit }: any, network: any) {
+    commit('setMarketExplorerURL', getNetworkParams(network).explorerUrl);
+    commit('setMarketNetwork', network);
+  },
 };
 
 const mutations = {
@@ -564,6 +571,14 @@ const mutations = {
 
   setChainChanged(state: any, value: any) {
     state.chainChanged = value;
+  },
+
+  setMarketNetwork(state: any, value: any) {
+    state.marketNetwork = value;
+  },
+
+  setMarketExplorerURL(state: any, value: any) {
+    state.marketExplorerURL = value;
   },
 };
 

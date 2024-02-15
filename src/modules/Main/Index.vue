@@ -27,8 +27,9 @@
         </div>
       </TabsComponent>
     </div>
-
-    <SliderComponent v-if="isFirstInitializationForPath || !pathViz" />
+    <SliderComponent
+      v-if="isFirstInitializationForPath || !pathViz"
+    />
     <PathView
       v-else
       :path-object="pathViz"

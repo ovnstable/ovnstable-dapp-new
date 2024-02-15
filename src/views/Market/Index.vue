@@ -49,7 +49,7 @@ export default {
         this.handleMarketIdChange(newId);
       },
     },
-    '$store.state.network.networkName': {
+    '$store.state.network.marketNetwork': {
       immediate: true,
       handler: function handleNetworkNameChange(newVal, oldVal) {
         if (newVal !== oldVal) {
@@ -64,7 +64,7 @@ export default {
       if (!marketId || marketId === this.previousId) return;
 
       const tokenKey = `${marketId.toLowerCase()}Plus`;
-      const currentNetworkName = this.$store.state.network.networkName.toLowerCase();
+      const currentNetworkName = this.$store.state.network.marketNetwork.toLowerCase();
 
       const chainContractsAny: any = chainContractsMap;
 
@@ -93,7 +93,7 @@ export default {
     handleNetworkChange() {
       const marketId = this.$route.params.id;
       if (marketId) {
-        this.fetchDataForMarketId(marketId, this.$store.state.network.networkName);
+        this.fetchDataForMarketId(marketId, this.$store.state.network.marketNetwork);
       }
     },
     async fetchDataForMarketId(marketId: any, networkName: string) {
@@ -114,7 +114,7 @@ export default {
       }
     },
     saveNetworkToLocalStore(chain:string) {
-      this.$store.dispatch('network/changeDappNetwork', chain.toLowerCase());
+      this.$store.dispatch('network/changeMarketNetwork', chain.toLowerCase());
     },
   },
   created() {

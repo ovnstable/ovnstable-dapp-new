@@ -82,7 +82,7 @@ export default {
   },
   computed: {
     networkScan() {
-      return this.$store.state.network.explorerUrl;
+      return this.$store.state.network.marketExplorerURL;
     },
     visibleTransactions() {
       return this.payoutData.payouts.slice(0, this.visibleTransactionCount);
