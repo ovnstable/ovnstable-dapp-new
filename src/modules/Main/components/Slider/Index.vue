@@ -38,9 +38,10 @@
         >
           <div class="slider__info">
             <div class="slider__token-overview">
-              <BaseIcon
+              <img
                 class="slider__token-image"
-                :name="formatFirstTokenIconName(slide.tokenName)"
+                :src="getImageSrc(slide.tokenName, 1)"
+                :alt="formatSecondTokenIconName(slide.tokenName)"
               />
               <p class="slider__token-title">{{ slide.tokenName }}</p>
               <p class="slider__overview-title">OVERVIEW</p>
@@ -84,7 +85,7 @@
               <div class="slider__second-token-title">
                 <img
                   class="slider__token-image"
-                  :src="getImageSrc(slide.tokenName)"
+                  :src="getImageSrc(slide.tokenName, 2)"
                   :alt="formatSecondTokenIconName(slide.tokenName)"
                 />
                 <p class="slider__second-token-title-text">{{ slide.tokenWrappedName }}</p>
@@ -245,8 +246,9 @@ export default {
       const formattedName = tokenName.slice(0, -1);
       return `w${formattedName.charAt(0).toUpperCase()}${formattedName.slice(1).toLowerCase()}Plus`;
     },
-    getImageSrc(tokenName: string) {
-      const iconName = this.formatSecondTokenIconName(tokenName);
+    getImageSrc(tokenName: string, numberOfToken: number) {
+      const iconName = numberOfToken === 1 ? this
+        .formatFirstTokenIconName(tokenName) : this.formatSecondTokenIconName(tokenName);
       return getImageUrl(`assets/icons/currencies/main/${iconName}.svg`);
     },
   },
@@ -400,7 +402,6 @@ export default {
 .slider__token-image {
   width: 40px;
   height: 40px;
-
   svg {
     width: 40px;
     height: 40px;
