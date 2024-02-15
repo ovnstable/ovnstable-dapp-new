@@ -63,14 +63,14 @@
           class="insurance__portfolio-divider"
         />
         <div
-          class="performance__portfolio-total-info"
+          class="insurance__total-info"
         >
-          <div class="performance__portfolio-total">
-            <p class="performance__portfolio-total-label">Total</p>
-            <p class="performance__portfolio-total-nav-val">
+          <div class="insurance__premiums-total">
+            <p class="insurance__premiums-total-label">Total</p>
+            <p>
               {{ formatCurrency(totalNAV(premiumsData as any)) }}
             </p>
-            <p class="performance__portfolio-total-premiums">
+            <p class="insurance__premiums-total-premiums">
               {{calculateTotalPremiumsPercentage(premiumsData as any)}}%
             </p>
           </div>
@@ -146,6 +146,8 @@ export default {
 .insurance__premiums-assets {
   background: var(--color-8);
   border-radius: 10px;
+  padding-bottom: 20px;
+  padding-top: 20px;
   [data-theme="dark"] & {
     background: var(--color-7);
   }
@@ -234,25 +236,13 @@ export default {
   display: flex;
   width: 300px;
 }
-.asset {
-  margin-left: 6px;
-}
-.performance__portfolio-total-info {
-  padding: 0px 20px;
-  display: flex;
-  flex-direction: column;
-  [data-theme="dark"] & {
-    color: var(--color-18);
-  }
-}
 .insurance-premium-token-portfolio-num {
   flex: none;
   width: 60px;
   text-align: right;
 }
 
-.performance__portfolio-total,
-.performance__portfolio-total-circl {
+.insurance__premiums-total {
   display: flex;
   justify-content: space-between;
 }
@@ -261,42 +251,6 @@ export default {
   margin-bottom: 10px;
   border: 1px solid var(--color-5);
   width: 96%;
-}
-.insurance__premiums-strategies-divider {
-  margin-bottom: 4px;
-  border: 1px solid var(--color-5);
-  width: 100%;
-}
-
-.performance__portfolio-description {
-  color: var(--color-2);
-  font-size: 15px;
-  font-weight: 500;
-  [data-theme="dark"] & {
-    color: var(--color-4);
-  }
-}
-.strategies {
-  color: var(--color-3);
-  [data-theme="dark"] & {
-    color: var(--color-4);
-  }
-}
-.strategies:hover {
-  color: var(--color-1);
-  [data-theme="dark"] & {
-    color: var(--color-18);
-  }
-}
-.insurance__premiums-assets {
-  padding-bottom: 20px;
-  padding-top: 20px;
-}
-
-.performance__portfolio-total-info {
-  color: var(--color-2);
-  font-size: 15px;
-  font-weight: 500;
 }
 
 .insurance-premium-progress-bar {
@@ -312,60 +266,6 @@ export default {
   transition: width 0.5s ease-in-out;
 }
 
-.performance__portfolio-dropdown-content {
-  display: flex;
-  flex-direction: column;
-  margin-left: 20px;
-  margin-top: 4px;
-  margin-bottom: 7px;
-}
-.performance__portfolio-dropdown {
-  display: flex;
-  flex-direction: row;
-}
-
-.performance__portfolio-dropdown p {
-  font-size: 15px;
-  font-weight: 400;
-  [data-theme="dark"] & {
-    color: var(--color-18);
-  }
-}
-
-.performance__portfolio-dropdown--lp-pair p:nth-child(1),
-.performance__portfolio-dropdown--lp-farming p:nth-child(1),
-.performance__portfolio-dropdown--borrowed p:nth-child(1),
-.performance__portfolio-dropdown--dep-asset p:nth-child(1) {
-  flex:3;
-}
-.performance__portfolio-dropdown--lp-pair p:nth-child(2),
-.performance__portfolio-dropdown--lp-farming p:nth-child(2),
-.performance__portfolio-dropdown--borrowed p:nth-child(2),
-.performance__portfolio-dropdown--dep-asset p:nth-child(2) {
-  flex:7;
-}
-
-.performance__portfolio-dropdown--dep-to p:nth-child(1) {
-  padding-right: 12px;
-}
-
-.performance__portfolio-dropdown--dep-to p:nth-child(2) {
-  flex: 4;
-  text-align: center;
-  padding-right: 35px;
-}
-
-.performance__portfolio-dropdown--dep-to p:nth-child(3) {
-  flex: 3.2;
-  text-align: center;
-  padding-right: 40px;
-}
-
-.performance__portfolio-dropdown--dep-to a:nth-child(4) {
-  flex: 3.2;
-  text-align: left;
-  padding-right: 45px;
-}
 .insurance__premiums-specs,
 .insurance-premium {
   display: grid;
@@ -396,48 +296,32 @@ export default {
   text-align: left;
 }
 
-.performance__portfolio-total-circl-number {
-  text-align: right;
-  margin-right: 10px;
-}
-
-.performance__portfolio-total-circl {
-  margin-top: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.performance__portfolio-total-circl .performance__portfolio-total-label {
-  flex-grow: 1;
-  text-align: left;
-}
-.performance__portfolio-asset-icon {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-}
-
-.performance__portfolio-total,
-.performance__portfolio-total-circl {
+.insurance__premiums-total {
   display: grid;
   grid-template-columns: 4fr 1fr 2.2fr 0fr;
   text-align: center;
 }
-.performance__portfolio-total-premiums {
+.insurance__premiums-total-premiums {
   text-align: right;
 }
-.performance__portfolio-total p:first-child {
+.insurance__premiums-total p:first-child {
   text-align: left;
 }
 
-.performance__portfolio-total-circl p:nth-child(2) {
-  text-align: center;
-  margin: 0;
+.insurance__premiums-total p  {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--color-1);
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
 }
-
 .insurance__premiums-strategies-table-score {
   margin-right: 20px;
+}
+
+.insurance__total-info {
+  padding: 0px 20px;
 }
 
 @media (max-width: 1024px) {
@@ -453,50 +337,22 @@ export default {
   }
 
   .insurance__premiums-specs,
-  .insurance-premium,
-  .performance__portfolio-total,
-  .performance__portfolio-total-circl {
+  .insurance-premium {
     grid-template-columns: 1.8fr 1fr 1.3fr 1.5fr;
+  }
+  .insurance__premiums-total {
+    grid-template-columns: 4fr 1.2fr 2.2fr 0fr;
   }
   .insurance__premiums-strategies-table-score {
     margin: 0;
   }
 
-  .performance__portfolio-dropdown--dep-to p {
-    text-align: center;
-    flex: 1;
-    padding: 0;
-  }
-
-  .performance__portfolio-dropdown--dep-to p:first-child {
-    text-align: left;
-    flex: 2.7;
-    padding: 0;
-  }
-
-  .performance__portfolio-dropdown--dep-to p:nth-child(2),
-  .performance__portfolio-dropdown--dep-to p:nth-child(3) {
-    flex: 4;
-    padding: 0;
-  }
-
-  .performance__portfolio-dropdown--dep-to p:nth-child(2) {
-    margin-left: 60px;
-  }
-
-  .performance__portfolio-dropdown--dep-to p:nth-child(4)  {
-    flex: 3.2;
-    display: flex;
-    justify-content: flex-end;
+  .insurance__premiums-specs p:last-child {
     text-align: right;
-    padding: 0;
   }
 
-  .performance__portfolio-total-label--circl {
+  .insurance__premiums-total-label--circl {
     margin-right: 90px;
-  }
-  .performance__portfolio-total-circl-number {
-    margin-left: 5px;
   }
 }
 </style>

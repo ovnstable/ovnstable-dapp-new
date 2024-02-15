@@ -519,6 +519,11 @@ export default {
   display: flex;
   flex-direction: row;
   gap: 16px;
+  p {
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
+  }
 }
 .insurance__accumulator-data {
   display: flex;
