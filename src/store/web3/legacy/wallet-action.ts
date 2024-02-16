@@ -318,6 +318,7 @@ const actions = {
   }: any) {
     const injected = injectedModule({
       filter: await dispatch('getWalletsFilter'),
+      displayUnavailable: true,
       sort: (wallets) => {
         const metaMask = wallets.find(({ label }) => label === ProviderLabel.MetaMask);
         const coinbase = wallets.find(({ label }) => label === ProviderLabel.Coinbase);
