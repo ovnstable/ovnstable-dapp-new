@@ -38,6 +38,10 @@
               class="insurance__redeem-button"
             />
           </ButtonComponent>
+          <ModalComponent v-if="showModalMintRedeem" @click="toggleModalMintRedeem()"   @keydown.enter="toggleModalMintRedeem()">
+            <!-- Your modal content here -->
+            <p>Modal content goes here...</p>
+          </ModalComponent>
           <ButtonComponent class="insurance__title-button">
             <BaseIcon
               name='InsuranceBridge'
@@ -132,6 +136,7 @@
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import InsuranceAbout from '@/modules/Insurance/InsuranceAbout.vue';
+import ModalComponent from '@/components/Modal/Index.vue';
 import { chainContractsMap } from '@/utils/contractsMap.ts';
 
 export default {
@@ -140,10 +145,12 @@ export default {
     BaseIcon,
     ButtonComponent,
     InsuranceAbout,
+    ModalComponent,
   },
   data() {
     return {
       showInsuranceInfo: false,
+      showModalMintRedeem: false,
     };
   },
   props: {
@@ -165,6 +172,10 @@ export default {
     },
   },
   methods: {
+    toggleModalMintRedeem() {
+      console.log('function to show was called');
+      this.showModalMintRedeem = !this.showModalMintRedeem;
+    },
     toggleInsuranceAbout() {
       this.showInsuranceInfo = !this.showInsuranceInfo;
     },
