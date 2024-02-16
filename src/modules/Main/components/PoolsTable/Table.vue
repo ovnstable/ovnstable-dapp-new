@@ -204,7 +204,16 @@
                 </div>
               </div>
             </div>
-            <ZapInComponent v-if="pool.zappable" />
+            <div>
+              <ButtonComponent
+                v-if="pool.zappable"
+                btnStyles="faded"
+                disabled
+                @click="console.log('ZAPIN')"
+              >
+                ZAPIN
+              </ButtonComponent>
+            </div>
           <!--          Hide on mobile          -->
           <!-- <PoolTableDetails
                 :pool="pool"
@@ -244,18 +253,18 @@
       </div>
     </div>
 
+    <ZapInComponent />
   </div>
 </template>
 
 <!-- eslint-disable no-param-reassign -->
 <script>
-import { defineComponent } from 'vue';
 import { mapGetters } from 'vuex';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { formatMoneyComma, formatNumberToMln, formatNumberToThousands } from '@/utils/numbers.ts';
-import ZapInComponent from '@/modules/Main/components/Zapin/Index.vue';
+import ZapInComponent from '@/modules/Main/components/ZapModal/Index.vue';
 
-export default defineComponent({
+export default {
   name: 'PoolTable',
   components: {
     BaseIcon,
@@ -380,7 +389,7 @@ export default defineComponent({
       console.error('Order type not found when toggle order.', type);
     },
   },
-});
+};
 </script>
 
 <style lang="scss" scoped>
