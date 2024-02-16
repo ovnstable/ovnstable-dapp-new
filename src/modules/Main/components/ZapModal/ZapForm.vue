@@ -32,19 +32,44 @@
             </div>
 
             <div class="input-swap-container">
-              <div
-                v-for="token in (inputTokens as any)"
-                :key="token.id"
-                class="input-component-container"
-              >
-                <TokenForm
-                  :token-info="token"
-                  :remove-item-func="removeOutputToken"
-                  :is-token-removable="isOutputTokensRemovable"
-                  :select-token-func="selectInputToken"
-                  :is-input-token="false"
-                  :disabled="true"
-                />
+              <div class="swap-form__body-block">
+                <h3>
+                  You receive
+                </h3>
+                <TransitionGroup
+                  name="staggered-fade"
+                  tag="div"
+                  :class="{ 'swap-form__body-block__inputs': true, 'block-inputs--scroll': outputTokens?.length > 3 }"
+                  :css="false"
+                  @before-enter="beforeEnterList"
+                  @enter="onEnterList"
+                  @onLeave="onLeaveList"
+                >
+                  <div
+                    v-for="token in inputTokens"
+                    :key="token.id"
+                    :data-index="token.id"
+                    class="swap-form__body-block__inputs-item"
+                  >
+                    <TokenForm
+                      :token-info="token"
+                      :remove-item-func="removeInputToken"
+                      :is-token-removable="isInputTokensRemovable"
+                      :select-token-func="selectFormToken"
+                      :is-input-token="true"
+                      :disabled="false"
+                    />
+                  </div>
+
+                  <div
+                    v-if="isOutputTokensAddAvailable"
+                    class="swap-form__body-block__inputs-add"
+                    @click="addNewOutputToken"
+                    @keypress="addNewOutputToken"
+                  >
+                    +
+                  </div>
+                </TransitionGroup>
               </div>
               <div class="row">
                 <div class="col-6">
@@ -72,12 +97,12 @@
               </div>
             </div>
 
-            <div class="pt-5">
-              <div class="change-swap-container">
-                <div class="change-swap-image">
-                  change-swap-vector
-                </div>
-              </div>
+            <div
+              class="swap-form__body-arrow"
+            >
+              <BaseIcon
+                name="ArrowDown"
+              />
             </div>
 
             <div class="out-swap-container pt-5">
@@ -186,7 +211,7 @@
           </div>
         </div>
 
-        <div
+        <!-- <div
           class="odos-fees-container mt-5"
           v-if="ifMoreThanOneSelectedTokensAdded"
         >
@@ -198,7 +223,7 @@
               Odos collects 0.01% fee for multi-input/multi-output swaps.
             </div>
           </div>
-        </div>
+        </div> -->
 
         <div class="swap-footer pt-5">
           <div
@@ -219,30 +244,29 @@
             v-else
             class="swap-button-container"
           >
-            <div
+            <ButtonComponent
+              btn-size="large"
+              full
               v-if="isDisableButton"
-              class="disable-button"
+              btn-styles="primary"
+              disabled
             >
-              <div class="disable-button-title">
-                <div>
-                  {{ disableButtonMessage }}
-                </div>
-              </div>
-            </div>
-            <div
+              {{ disableButtonMessage }}
+            </ButtonComponent>
+            <ButtonComponent
+              btn-size="large"
+              full
               v-else-if="isAnyInputsNeedApprove"
               class="swap-button"
-              @click="approve(firstInputInQueueForToApprove)"
-              @keypress="approve(firstInputInQueueForToApprove)"
+              @click="approveTrigger(firstInputInQueueForToApprove)"
+              @keypress="approveTrigger(firstInputInQueueForToApprove)"
             >
-              <div class="swap-button-title">
-                <div v-if="firstInputInQueueForToApprove">
-                  APPROVE
-                  {{ firstInputInQueueForToApprove.selectedToken?.symbol }}
-                </div>
-              </div>
-            </div>
-            <div
+              APPROVE
+              {{ firstInputInQueueForToApprove.selectedToken?.symbol }}
+            </ButtonComponent>
+            <ButtonComponent
+              btn-size="large"
+              full
               v-else-if="additionalSwapStepType === 'APPROVE'"
               class="swap-button"
               @click="
@@ -252,11 +276,11 @@
                 toApproveAndDepositSteps(lastZapResponseData, lastPoolInfoData)
               "
             >
-              <div class="swap-button-title">
-                <div>APPROVE GAUGE</div>
-              </div>
-            </div>
-            <div
+              APPROVE GAUGE
+            </ButtonComponent>
+            <ButtonComponent
+              btn-size="large"
+              full
               v-else-if="additionalSwapStepType === 'DEPOSIT'"
               @click="
                 depositGauge(
@@ -276,29 +300,18 @@
               "
               class="swap-button"
             >
-              <div class="swap-button-title">
-                <div>STAKE LP</div>
-              </div>
-            </div>
-            <div
+              STAKE LP
+            </ButtonComponent>
+            <ButtonComponent
+              btn-size="large"
+              full
               v-else
-              @click="stake()"
-              @keypress="stake()"
+              @click="stake"
+              @keypress="stake"
               class="swap-button"
             >
-              <div class="swap-button-title">
-                <div
-                  v-if="
-                    currentZapPlatformContractType
-                      && currentZapPlatformContractType.type
-                        === 'LP_STAKE_DIFF_STEPS'
-                  "
-                >
-                  DEPOSIT
-                </div>
-                <div v-else>STAKE</div>
-              </div>
-            </div>
+              {{ btnName }}
+            </ButtonComponent>
           </div>
 
           <div class="label-container pt-3">
@@ -341,11 +354,14 @@
     />
   </div>
 </template>
-
+<!-- eslint-disable no-restricted-syntax -->
+<!-- eslint-disable no-continue -->
 <!-- eslint-disable no-param-reassign -->
 <script lang="ts">
 import { useEventBus } from '@vueuse/core';
-import { mapActions, mapGetters, mapState, mapMutations } from 'vuex';
+import {
+  mapActions, mapGetters, mapState, mapMutations,
+} from 'vuex';
 import axios from 'axios';
 import {
   updateTokenValue,
@@ -353,27 +369,31 @@ import {
   getDefaultSecondtoken,
   getSecondDefaultSecondtoken,
   getNewOutputToken,
-  getNewInputToken
+  getNewInputToken,
 } from '@/store/helpers/index.ts';
 import {
   getProportion,
   calculateProportionForPool,
   depositAllAtGauge,
-  checkApproveForGauge
+  checkApproveForGauge,
+  approveGaugeForStake,
 } from '@/store/views/main/zapin/helpers.ts';
 import odosApiService from '@/services/odos-api-service.ts';
 
-
+import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { formatMoney } from '@/utils/numbers.ts';
 import TokenForm from '@/modules/Main/components/ZapModal/TokenForm.vue';
 import PoolLabel from '@/modules/Main/components/ZapModal/PoolLabel.vue';
 import SelectTokensModal from '@/modules/Main/components/Common/TokensModal/Index.vue';
 import SwapSlippageSettings from '@/modules/Main/components/Common/SwapSlippageSettings.vue';
-import SuccessZapModal from './SuccessZapModal.vue';
 import { poolsInfoMap } from '@/store/views/main/zapin/mocks.ts';
 import { ethers } from 'ethers';
-import { approveToken, clearApproveToken, getAllowanceValue } from '@/utils/contractApprove';
+import BigNumber from 'bignumber.js';
+import { approveToken, getAllowanceValue } from '@/utils/contractApprove.ts';
+import { poolTokensForZapMap } from '@/store/views/main/pools/mocks.ts';
+import { onLeaveList, onEnterList, beforeEnterList } from '@/utils/animations.ts';
+import SuccessZapModal from './SuccessZapModal.vue';
 // import ZapSteps from '@/components/zap/ZapSteps.vue';
 // import ZapChangeNetwork from '@/components/zap/ZapChangeNetwork.vue';
 
@@ -382,6 +402,7 @@ export default {
   components: {
     PoolLabel,
     BaseIcon,
+    ButtonComponent,
     SuccessZapModal,
     SwapSlippageSettings,
     SelectTokensModal,
@@ -393,12 +414,6 @@ export default {
       required: false,
       default: null,
     },
-
-    poolTokensForZapMap: {
-      type: Object,
-      required: true,
-    },
-
     typeOfPool: {
       // OVN or ALL
       type: String,
@@ -411,14 +426,12 @@ export default {
       outputTokens: [] as any[],
       maxInputTokens: 6,
       maxOutputTokens: 6,
-
       isShowSelectTokensModal: false,
       swapMethod: 'BUY', // BUY (secondTokens) / SELL (secondTokens)
       selectTokenType: 'OVERNIGHT', // OVERNIGHT / ALL
 
       isSwapLoading: false,
       isSumulateSwapLoading: false,
-      pathViz: null,
       slippagePercent: 0.05,
       multiSwapOdosFeePercent: 0.01,
 
@@ -465,21 +478,23 @@ export default {
       'lastNftTokenId',
       'showSuccessZapin',
       'successData',
-      'swapResponseConfirmInfo'
+      'swapResponseConfirmInfo',
+      'routerContract',
     ]),
 
-    ...mapState('zapIn', [
+    ...mapState('zapinData', [
       'currentZapPlatformContractType',
       'zapContract',
       'gaugeContract',
       'poolTokenContract',
-
+      'zapPoolRoot',
     ]),
     ...mapGetters('odosData', [
       'allTokensList',
       'isAllDataLoaded',
       'isAvailableOnNetwork',
-      'odosReferalCode'
+      'routerContract',
+      'odosReferalCode',
     ]),
     ...mapGetters('network', ['getParams', 'networkId']),
     ...mapGetters('theme', ['light']),
@@ -640,6 +655,14 @@ export default {
       );
     },
 
+    btnName() {
+      if (this.currentZapPlatformContractType?.type === 'LP_STAKE_DIFF_STEPS') {
+        return 'DEPOSIT';
+      }
+
+      return 'STAKE';
+    },
+
     disableButtonMessage() {
       if (
         this.inputTokensWithSelectedTokensCount === 0
@@ -709,16 +732,16 @@ export default {
     },
   },
   watch: {
-    sumOfAllSelectedTokensInUsd(val, oldVal) {
+    sumOfAllSelectedTokensInUsd() {
       this.recalculateOutputTokensSum();
     },
 
-    isTokensLoadedAndFiltered(val, oldVal) {
+    isTokensLoadedAndFiltered(val) {
       if (val) {
         this.clearForm();
       }
     },
-    networkId(newVal, oldVal) {
+    networkId(newVal) {
       if (newVal) {
         // hide swap form and clear all(watch function) data,
         // after new token loaded collection
@@ -757,25 +780,31 @@ export default {
   methods: {
     ...mapActions('swapModal', ['showSwapModal', 'showMintView']),
     ...mapActions('odosData', [
-      'triggerSuccessZapin', 
-        'loadChains',
-        'loadTokens',
-        'initContractData',
-        'loadBalances',
-        'triggerSuccessZapin',
-        'startSwapConfirmTimer'
-      ]),
+      'triggerSuccessZapin',
+      'loadChains',
+      'loadTokens',
+      'initContractData',
+      'loadBalances',
+      'triggerSuccessZapin',
+      'startSwapConfirmTimer',
+      'stopSwapConfirmTimer',
+    ]),
     ...mapActions('zapIn', ['loadZapContract']),
     ...mapActions('errorModal', ['showErrorModal', 'showErrorModalWithMsg']),
     ...mapActions('waitingModal', ['showWaitingModal', 'closeWaitingModal']),
     ...mapActions('walletAction', ['connectWallet']),
-    ...mapActions('track', ['trackClick']),
 
     ...mapMutations('odosData', ['changeState']),
+    onLeaveList,
+    beforeEnterList,
+    onEnterList,
     updateTokenValue,
     maxAll,
     formatMoney,
 
+    selectFormToken() {
+      this.showSelectTokensModals(true);
+    },
     maxAllMethod() {
       maxAll(this.selectedInputTokens, this.checkApproveForToken, this.updateQuotaInfo);
     },
@@ -788,27 +817,29 @@ export default {
       this.changeState({
         field: 'zapPoolRoot',
         val: this.zapPool,
-      })
+      });
       this.changeState({
         field: 'allTokensListeparationScheme',
-        val: 'POOL_SWAP'
-      })
+        val: 'POOL_SWAP',
+      });
       this.changeState({
         field: 'typeOfPoolScheme',
-        val: this.typeOfPool
-      })
+        val: this.typeOfPool,
+      });
 
       // todo: move to backend
-      const poolTokens = this.poolTokensForZapMap[this.zapPool.address];
+      const poolTokens = poolTokensForZapMap[this.zapPool.address];
       if (!poolTokens) {
         return;
       }
 
       this.$store.commit('odosData/changeState', {
-          field: 'listOfBuyTokensAddresses',
-          val: [poolTokens[0].address, poolTokens[1].address],
-        });
+        field: 'listOfBuyTokensAddresses',
+        val: [poolTokens[0].address, poolTokens[1].address],
+      });
+
       this.init();
+      this.clearForm();
 
       if (!this.isAvailableOnNetwork) {
         this.mintAction();
@@ -986,20 +1017,7 @@ export default {
       this.selectedOutputTokens[0].value = 100;
     },
     async stake() {
-      try {
-        this.trackClick({
-          action: 'click_form_zap_in_stake',
-          event_category: 'Button click',
-          event_label: 'Button zap in stake click',
-        });
-      } catch (e) {
-        console.error('Track error:', e);
-      }
-
-      if (!this.zapPool) {
-        return;
-      }
-
+      if (!this.zapPool) return;
       this.lastPoolInfoData = poolsInfoMap[this.zapPool.address];
       if (!this.lastPoolInfoData) {
         return;
@@ -1026,6 +1044,7 @@ export default {
       const reserves = await getProportion(
         this.zapPool.address,
         this.zapPool,
+        this.zapContract,
       );
       const sumReserves = reserves.token0Amount * outputToken0Price
         + reserves.token1Amount * outputToken1Price;
@@ -1166,7 +1185,6 @@ export default {
                 proportions,
                 this.lastPoolInfoData,
                 this.zapPool,
-                request.gasPrice,
               );
 
               this.isSwapLoading = false;
@@ -1287,7 +1305,7 @@ export default {
           this.gaugeContract.methods
             .approve(this.poolTokenContract.options.address, tokenId)
             .send(params)
-            .then((data) => {
+            .then(() => {
               this.additionalSwapStepType = 'DEPOSIT';
               this.closeWaitingModal();
               this.depositGauge(
@@ -1297,7 +1315,7 @@ export default {
                 this.lastNftTokenId,
               );
             })
-            .catch((e) => {
+            .catch((e: any) => {
               console.error('Approve nft gauge failed', e);
               this.lastNftTokenId = null;
               this.closeWaitingModal();
@@ -1331,15 +1349,26 @@ export default {
       returnedToUserEvent: any,
       lastPoolInfoData: any,
     ) {
-      const approveAmount = 10 ** 24;
+      const approveAmount = new BigNumber(10).pow(24);
       const isGaugeApproved = await checkApproveForGauge(
         this.poolTokenContract,
-        this.gaugeContract.options.address,
         approveAmount,
+        this.routerContract,
+        this.account,
       );
+
       if (!isGaugeApproved) {
         this.showWaitingModal('Approving gauge in process');
-        approveGaugeForStake()
+        approveGaugeForStake(
+          this.showWaitingModal,
+          this.closeWaitingModal,
+          this.showErrorModalWithMsg,
+          this.gaugeContract,
+          this.poolTokenContract,
+          this.account,
+          this.routerContract,
+          this.gasPriceGwei,
+        )
           .then(() => {
             this.additionalSwapStepType = 'DEPOSIT';
             this.closeWaitingModal();
@@ -1347,6 +1376,7 @@ export default {
               putIntoPoolEvent,
               returnedToUserEvent,
               lastPoolInfoData,
+              this.lastNftTokenId,
             );
           })
           .catch((e: any) => {
@@ -1359,6 +1389,7 @@ export default {
           putIntoPoolEvent,
           returnedToUserEvent,
           lastPoolInfoData,
+          this.lastNftTokenId,
         );
       }
     },
@@ -1370,7 +1401,16 @@ export default {
     ) {
       this.showWaitingModal('Stake LP in process');
 
-      depositAllAtGauge(this.account, lastPoolInfoData, lastNftTokenId)
+      depositAllAtGauge(
+        this.account,
+        lastPoolInfoData,
+        lastNftTokenId,
+        this.currentZapPlatformContractType,
+        this.gaugeContract,
+        this.gasPriceGwei,
+        this.zapPoolRoot,
+        this.poolTokenContract,
+      )
         .then((data: any) => {
           this.closeWaitingModal();
 
@@ -1394,7 +1434,7 @@ export default {
 
           this.loadBalances();
         })
-        .catch((e) => {
+        .catch(() => {
           this.closeWaitingModal();
           this.additionalSwapStepType = 'DEPOSIT';
         });
@@ -1404,7 +1444,7 @@ export default {
       this.lastReturnedToUserEvent = null;
       this.lastZapResponseData = null;
     },
-    finishSingleStepTransaction(data) {
+    finishSingleStepTransaction(data: any) {
       let putIntoPoolEvent;
       let returnedToUserEvent;
       for (const key of Object.keys(data.events)) {
@@ -1447,7 +1487,6 @@ export default {
       proportions: any,
       poolInfo: any,
       zapPool: any,
-      gasPrice: any,
     ) {
       const gaugeAddress = poolInfo.gauge;
       if (!this.zapContract) {
@@ -1528,7 +1567,7 @@ export default {
       this.zapContract.methods
         .zapIn(txData, gaugeData)
         .send(params)
-        .then((data) => {
+        .then((data: any) => {
           this.lastZapResponseData = data;
 
           if (
@@ -1551,7 +1590,7 @@ export default {
             this.currentZapPlatformContractType,
           );
         })
-        .catch((e) => {
+        .catch((e: any) => {
           if (e && e.code === 4001) {
             if (e.message === 'User rejected the request.') {
               this.stopSwapConfirmTimer();
@@ -1565,9 +1604,14 @@ export default {
       this.isSwapLoading = false;
     },
     clearQuotaInfo() {
-      this.pathViz = null;
-      this.quotaResponseInfo = null;
-      this.swapResponseInfo = null;
+      this.$store.commit('odosData/changeState', {
+        field: 'quotaResponseInfo',
+        val: null,
+      });
+      this.$store.commit('odosData/changeState', {
+        field: 'swapResponseInfo',
+        val: null,
+      });
     },
     quoteRequest(requestData: any) {
       return odosApiService
@@ -1588,6 +1632,7 @@ export default {
       const reserves = await getProportion(
         this.zapPool.address,
         this.zapPool,
+        this.zapContract,
       );
 
       const outputToken0Price = this.selectedOutputTokens[0].selectedToken.price;
@@ -1612,10 +1657,9 @@ export default {
         return;
       }
 
-      this.updateIsLoadingDataFunc(true);
       this.isSumulateSwapLoading = true;
 
-      const actualGas = await this.getActualGasPrice(this.networkId);
+      const actualGas = await odosApiService.getActualGasPrice(this.networkId);
 
       const input = this.getRequestInputTokens(false);
       const output = this.getRequestOutputTokens(false);
@@ -1641,20 +1685,12 @@ export default {
       this.clearQuotaInfo();
 
       this.quoteRequest(requestData)
-        .then((data) => {
+        .then(() => {
           this.isSumulateSwapLoading = false;
-          this.updateIsLoadingDataFunc(false);
-          this.updatePathViewFunc(
-            data.pathViz,
-            this.selectedInputTokens,
-            this.selectedOutputTokens,
-          );
-          this.pathViz = data.pathViz;
         })
         .catch((e) => {
           console.error('Odos simulate swap request failed', e);
           this.isSumulateSwapLoading = false;
-          this.updateIsLoadingDataFunc(false);
         });
     },
 
@@ -1693,7 +1729,7 @@ export default {
         .approveData.approved = selectedToken.approveData.allowanceValue >= checkedAllowanceValue;
     },
 
-    async approve(token: any) {
+    async approveTrigger(token: any) {
       this.showWaitingModal('Approving in process');
 
       await this.checkApproveForToken(token, token.contractValue);
@@ -1704,24 +1740,38 @@ export default {
       }
 
       const tokenContract = this.tokensContractMap[selectedToken.address];
-      const approveValue = this.web3.utils.toWei(
-        '10000000',
-        token.selectedToken.weiMarker,
-      );
-      approveToken(
+      const approveValue = new BigNumber(10)
+        .pow(selectedToken.decimals)
+        .times(100000)
+        .toFixed(0);
+
+      const tx = await approveToken(
         tokenContract,
         this.zapContract.options.address,
         approveValue,
+        this.account,
+        this.gasPriceGwei,
       )
-        .then(() => {
-          this.checkApproveForToken(token, token.contractValue);
-          this.closeWaitingModal();
-        })
         .catch((e) => {
           console.error('Error when approve token.', e);
           this.closeWaitingModal();
           this.showErrorModalWithMsg({ errorType: 'approve', errorMsg: e });
         });
+
+      const finishTx = () => {
+        this.checkApproveForToken(token, token.contractValue);
+        this.closeWaitingModal();
+      };
+
+      if (!tx) {
+        finishTx();
+        return;
+      }
+
+      await tx.wait();
+      finishTx();
+
+      console.log(tx, '---tx');
     },
 
     getRequestInputTokens(ignoreNullable: boolean) {
@@ -1767,8 +1817,6 @@ export default {
       token.locked = isLock;
     },
     updateSliderValue(token: any, value: any) {
-      const oldTokenValue = token.value;
-
       token.value = value;
 
       // if(!this.isSlidersOutOfLimit()) {
@@ -1795,7 +1843,7 @@ export default {
         token.sum = this.formatMoney(sum, 4);
       }
     },
-    subTokensProportions(currentToken, difference) {
+    subTokensProportions(currentToken: any, difference: any) {
       const tokens = this.getActiveTokens(currentToken);
       if (tokens.length === 0) {
         return;
@@ -1841,24 +1889,21 @@ export default {
       const lastToken = tokens[0].value;
       const lastTokenValue = lastToken + remains;
       lastToken.value = lastTokenValue;
-      // }
     },
-    subtraction(toke: any, difference: any) {
-      const tokens = this.getActiveTokens(token: any);
+    subtraction(token: any, difference: any) {
+      const tokens = this.getActiveTokens(token);
       if (tokens.length === 0) {
         return;
       }
 
       const proportion = Math.floor(difference / tokens.length);
-      const remains = difference % tokens.length;
-
       this.calculateProportions(tokens, proportion);
     },
     calculateProportions(tokens: any, proportion: any) {
       tokens.value = proportion;
       for (let i = 0; i < proportion; i++) {
-        for (let i = 0; i < tokens.length; i++) {
-          const token: any = tokens[i];
+        for (let j = 0; j < tokens.length; j++) {
+          const token: any = tokens[j];
           // token.value++
           token.value = proportion;
         }
@@ -1911,7 +1956,7 @@ export default {
       }, 30);
     },
 
-    initDefaultTopInputTokensByBalance(tokens) {
+    initDefaultTopInputTokensByBalance(tokens: any[]) {
       if (!tokens || !tokens.length) {
         return;
       }
@@ -1941,7 +1986,7 @@ export default {
         }
 
         tokensByBalanceSum += token.balanceData.balanceInUsd;
-        tokensByBalanceResult.push(token: any);
+        tokensByBalanceResult.push(token);
         if (tokensByBalanceSum >= ovnTokenBalance) {
           break;
         }
@@ -1956,13 +2001,14 @@ export default {
       this.recalcualteOvnInputValue();
     },
 
-    addSelectedTokenToList(selectedToken: any, swapMethod: any, selectTokenType: any) {
-      if (this.isInputToken(swapMethod, selectTokenType)) {
-        this.addSelectedTokenToInputList(selectedToken, true);
+    addSelectedTokenToList(data: any) {
+      if (data.isInput) {
+        this.addSelectedTokenToInputList(data.tokenData, true);
+        // this.addTokensEmptyIsNeeded();
         return;
       }
 
-      this.addSelectedTokenToOutputList(selectedToken, true, 50);
+      this.addSelectedTokenToOutputList(data.tokenData, true, 50);
     },
     addSelectedTokenToInputList(selectedToken: any, isAddAllBalance: any) {
       // todo computed ovn input tokens and logic here
@@ -1976,6 +2022,8 @@ export default {
           this.updateTokenValue(
             newInputToken,
             newInputToken.selectedToken.balanceData.balance,
+            this.checkApproveForToken,
+            this.updateQuotaInfo,
           );
         }, 10);
       }
@@ -2013,10 +2061,7 @@ export default {
     removeAllWithoutSelectedTokens(tokens: any) {
       const tokensToRemove = [];
       for (let i = 0; i < tokens.length; i++) {
-        if (tokens[i].selectedToken) {
-          continue;
-        }
-
+        if (tokens[i].selectedToken) continue;
         tokensToRemove.push(tokens[i]);
       }
 
@@ -2114,23 +2159,7 @@ export default {
     showSelectTokensModals(isShow: boolean) {
       this.isShowSelectTokensModal = isShow;
     },
-    selectInputToken() {
-      if (this.swapMethod === 'BUY') {
-        this.openModalWithSelectTokenAndBySwapMethod('ALL');
-        return;
-      }
-
-      if (this.swapMethod === 'SELL') {
-        this.openModalWithSelectTokenAndBySwapMethod('OVERNIGHT');
-        return;
-      }
-
-      console.error(
-        'Swap method type not found when select input tokens. ',
-        this.swapMethod,
-      );
-    },
-    selectOutputToken(token: any) {
+    selectOutputToken() {
       if (this.swapMethod === 'BUY') {
         this.openModalWithSelectTokenAndBySwapMethod('OVERNIGHT');
         return;
@@ -2167,7 +2196,7 @@ export default {
       }
 
       this.tokensQuotaCheckerSec = 0;
-      let intervalId = setInterval(async () => {
+      const intervalId = setInterval(async () => {
         this.tokensQuotaCheckerSec++;
 
         if (this.tokensQuotaCheckerSec >= 1) {
@@ -2193,7 +2222,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 @media only screen and (max-width: 960px) {
   .add-token-text {
     font-size: 16px;
@@ -2477,5 +2506,28 @@ export default {
   display: flex;
   flex-direction: row;
   align-items: center;
+}
+
+.swap-form__body-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px auto;
+  background-color: var(--color-5);
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+
+  svg {
+    fill: var(--color-2);
+  }
+
+  [data-theme="dark"] & {
+    background-color: var(--color-7);
+  }
+}
+
+.swap-button-container {
+  margin-top: 20px;
 }
 </style>

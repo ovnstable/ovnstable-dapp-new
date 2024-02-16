@@ -448,7 +448,7 @@ export const poolTokensForZapMap = {
       address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
     },
   ],
-};
+} as any;
 
 export const zapPlatformSupportList = [
   // 'Chronos',

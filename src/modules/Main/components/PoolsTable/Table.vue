@@ -204,16 +204,13 @@
                 </div>
               </div>
             </div>
-            <div>
-              <ButtonComponent
-                v-if="pool.zappable"
-                btnStyles="faded"
-                disabled
-                @click="console.log('ZAPIN')"
-              >
-                ZAPIN
-              </ButtonComponent>
-            </div>
+            <ButtonComponent
+              v-if="pool.zappable"
+              btnStyles="faded"
+              @click="openZapIn(pool, 'featured')"
+            >
+              ZAPIN
+            </ButtonComponent>
           <!--          Hide on mobile          -->
           <!-- <PoolTableDetails
                 :pool="pool"
@@ -259,8 +256,9 @@
 
 <!-- eslint-disable no-param-reassign -->
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import ButtonComponent from '@/components/Button/Index.vue';
 import { formatMoneyComma, formatNumberToMln, formatNumberToThousands } from '@/utils/numbers.ts';
 import ZapInComponent from '@/modules/Main/components/ZapModal/Index.vue';
 
@@ -269,6 +267,7 @@ export default {
   components: {
     BaseIcon,
     ZapInComponent,
+    ButtonComponent,
   },
   props: {
     pools: {
@@ -326,6 +325,7 @@ export default {
     // },
   },
   methods: {
+    ...mapActions('poolsData', ['openZapIn']),
     formatMoneyComma,
     formatNumberToMln,
     formatNumberToThousands,
@@ -337,9 +337,6 @@ export default {
 
       // pools without aggregators always is opened
       pool.isOpened = true;
-    },
-    triggerZap() {
-      console.log('ZAP');
     },
     toggleOrderType(type) {
       if (type === 'APR') {

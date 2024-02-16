@@ -31,13 +31,15 @@
               <div class="success-logo-container">
                 <div align="center">
                   <div class="icon">
-                    <v-img
+                    <img
+                      alt="img"
                       v-if="successData.pool.token0Icon"
                       :src="successData.pool.token0Icon"
                     />
                   </div>
                   <div class="icon ml-n2 mr-2">
-                    <v-img
+                    <img
+                      alt="img"
                       v-if="successData.pool.token1Icon"
                       :src="successData.pool.token1Icon"
                     />
@@ -46,13 +48,19 @@
                     v-if="successData.pool.token2Icon"
                     class="icon ml-n2 mr-2"
                   >
-                    <v-img :src="successData.pool.token2Icon" />
+                    <img
+                      alt="img"
+                      :src="successData.pool.token2Icon"
+                    />
                   </div>
                   <div
                     v-if="successData.pool.token3Icon"
                     class="icon ml-n2 mr-2"
                   >
-                    <v-img :src="successData.pool.token3Icon" />
+                    <img
+                      alt="img"
+                      :src="successData.pool.token3Icon"
+                    />
                   </div>
                   <div class="col-4" />
                 </div>
@@ -224,8 +232,6 @@
           </div> -->
         </div>
       </div>
-
-      <resize-observer @notify="$forceUpdate()" />
     </div>
   </div>
 </template>
