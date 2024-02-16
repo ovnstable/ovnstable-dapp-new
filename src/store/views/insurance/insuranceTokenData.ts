@@ -10,7 +10,7 @@ function capitalizeFirstLetter(string: string) {
 
 function generateInsuranceImageName(networkName: string) {
   const capitalizedNetworkName = capitalizeFirstLetter(networkName);
-  return `Insurance_${capitalizedNetworkName}`;
+  return `Insurance${capitalizedNetworkName}`;
 }
 
 function getLastPayout(payouts: any) {

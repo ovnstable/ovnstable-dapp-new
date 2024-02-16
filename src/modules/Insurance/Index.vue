@@ -133,6 +133,7 @@ export default {
   margin-top: -10px;
   border-radius: 0px 0px 30px 30px;
   [data-theme="dark"] & {
+    background-color: var(--color-6);
     color: var(--color-4);
   }
 }

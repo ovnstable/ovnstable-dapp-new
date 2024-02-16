@@ -564,10 +564,16 @@ export default {
 .insurance__data-initial {
   margin-left: 26px;
   text-align: left;
+  [data-theme="dark"] & {
+    color: var(--color-18);
+  }
 }
 
 .insurance__data-comp-today {
   text-align: right;
+  [data-theme="dark"] & {
+    color: var(--color-18);
+  }
 }
 
 .insurance__data-initial :nth-child(1),

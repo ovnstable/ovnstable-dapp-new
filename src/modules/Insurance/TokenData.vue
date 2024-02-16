@@ -29,36 +29,48 @@
         <div class="insurance__interact-buttons">
           <ButtonComponent class="insurance__title-button">
             <BaseIcon
-              name='Insurance_Mint'
+              class="insurance__mint-button"
+              name='InsuranceMint'
             />
-            MINT / redeem
+            MINT / REDEEM
             <BaseIcon
-              name='Insurance_Redeem'
+              name='InsuranceRedeem'
               class="insurance__redeem-button"
             />
           </ButtonComponent>
           <ButtonComponent class="insurance__title-button">
             <BaseIcon
-              name='Insurance_Bridge'
+              name='InsuranceBridge'
             />
-            Bridge
+            BRIDGE
           </ButtonComponent>
           <ButtonComponent class="insurance__title-button">
             <BaseIcon
-              name='Insurance_OVN'
+              name='InsuranceOVN'
             />
-            OVN Dashboard
+            OVN DASHBOARD
           </ButtonComponent>
         </div>
-        <ButtonComponent class="insurance__title-button">
+        <ButtonComponent
+          class="insurance__title-button"
+          :class="{ about_selected: showInsuranceInfo }"
+          @click="toggleInsuranceAbout()"
+          @keydown.enter="toggleInsuranceAbout()"
+        >
           <BaseIcon
-            name='Insurance_About'
+            name='InsuranceAbout'
           />
-          About Insurance
+          ABOUT INSURANCE
         </ButtonComponent>
       </div>
     </div>
 
+  </div>
+  <div
+    class="insurance__about"
+    v-if="showInsuranceInfo"
+  >
+    <InsuranceAbout />
   </div>
   <div class="insurance__token-data">
 
@@ -68,7 +80,7 @@
       <div class="insurance_risk-factor">
         <p class="insurance_risk-factor-text">High</p>
         <BaseIcon
-          name='Insurance_RiskFactor'
+          name='InsuranceRiskFactor'
         />
       </div>
     </div>
@@ -83,7 +95,7 @@
       <p class="insurance__token-data-title">Insurance vault</p>
       <p class="insurance__token-data-num amount-of-ovn">{{ formatTVL(tokenData.data.supply.toFixed(2)) }} OVN</p>
       <BaseIcon
-        name='Insurance_OVNVault'
+        name='InsuranceOVNVault'
       />
     </div>
     <div class="insurance__divider" />
@@ -119,6 +131,7 @@
 <script lang="ts">
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
+import InsuranceAbout from '@/modules/Insurance/InsuranceAbout.vue';
 import { chainContractsMap } from '@/utils/contractsMap.ts';
 
 export default {
@@ -126,6 +139,12 @@ export default {
   components: {
     BaseIcon,
     ButtonComponent,
+    InsuranceAbout,
+  },
+  data() {
+    return {
+      showInsuranceInfo: false,
+    };
   },
   props: {
     tokenData: {
@@ -146,6 +165,9 @@ export default {
     },
   },
   methods: {
+    toggleInsuranceAbout() {
+      this.showInsuranceInfo = !this.showInsuranceInfo;
+    },
     generateHref(tokenName: string, networkName: string) {
       const networkContracts = (chainContractsMap as any)[networkName.toLowerCase()];
       const tokenInsurance = networkContracts[tokenName];
@@ -193,7 +215,16 @@ export default {
   svg {
     margin-right: 8px;
   }
+  svg:not(.insurance__mint-button) {
+    fill: var(--color-1);
+  }
+
+  .insurance__mint-button svg {
+    stroke: var(--color-1);
+  }
+
 }
+
 .amount-of-ovn {
   margin-bottom: 5px;
 }
@@ -220,6 +251,12 @@ export default {
   border: none;
   border-radius: 30px;
   padding: 5px 14px;
+}
+.about_selected {
+  border: 1px solid var(--color-1);
+  [data-theme="dark"] & {
+    border-color: var(--color-4);
+  }
 }
 .insurance_risk-factor-text {
   color: var(--color-1);
