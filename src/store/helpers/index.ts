@@ -202,7 +202,7 @@ export const getSecondDefaultSecondtoken = (state: typeof stateData): any => {
   return null;
 };
 
-export const getDefaultSecondtoken = (state: typeof stateData, symbol: string | null) => {
+export const getDefaultSecondtoken = (state: typeof stateData, symbol?: string | null) => {
   if (state.tokenSeparationScheme === 'OVERNIGHT_SWAP') {
     return innerGetDefaultSecondtokenBySymobl(
       state,

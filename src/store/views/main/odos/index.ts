@@ -81,6 +81,7 @@ export const stateData = {
     inputTokens: [] as any[],
     outputTokens: [] as any[],
   } as any,
+  showSuccessZapin: false,
   zksyncFeeHistory: {} as any,
 
   tokenSeparationScheme: null, // OVERNIGHT_SWAP, POOL_SWAP,
@@ -155,6 +156,34 @@ const getters = {
 };
 
 const actions = {
+  triggerSuccessZapin(
+    {
+      commit, state, dispatch, rootState
+    }: any,
+    {
+      isShow,
+      inputTokens,
+      outputTokens,
+      hash,
+      putIntoPoolEvent,
+      returnedToUserEvent,
+      pool
+    }: any
+  ) {
+    commit('changeState', {
+      field: 'successData',
+      val: {
+        inputTokens,
+        outputTokens,
+        hash,
+        chain: rootState.network.networkId,
+        putIntoPoolEvent,
+        returnedToUserEvent,
+        pool,
+      }
+    });
+    commit('changeState', { field: 'showSuccessZapin', val: isShow });
+  },
   async loadChains({
     commit, state,
   }: any) {

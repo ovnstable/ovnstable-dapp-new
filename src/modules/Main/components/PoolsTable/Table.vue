@@ -204,16 +204,7 @@
                 </div>
               </div>
             </div>
-            <div>
-              <ButtonComponent
-                v-if="pool.zappable"
-                btnStyles="faded"
-                disabled
-                @click="console.log('ZAPIN')"
-              >
-                ZAPIN
-              </ButtonComponent>
-            </div>
+            <ZapInComponent v-if="pool.zappable" />
           <!--          Hide on mobile          -->
           <!-- <PoolTableDetails
                 :pool="pool"
@@ -261,15 +252,14 @@
 import { defineComponent } from 'vue';
 import { mapGetters } from 'vuex';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
-import ButtonComponent from '@/components/Button/Index.vue';
 import { formatMoneyComma, formatNumberToMln, formatNumberToThousands } from '@/utils/numbers.ts';
-// import PoolTableDetails from '@/components/pool/PoolTableDetails.vue';
+import ZapInComponent from '@/modules/Main/components/Zapin/Index.vue';
 
 export default defineComponent({
   name: 'PoolTable',
   components: {
     BaseIcon,
-    ButtonComponent,
+    ZapInComponent,
   },
   props: {
     pools: {
@@ -338,6 +328,9 @@ export default defineComponent({
 
       // pools without aggregators always is opened
       pool.isOpened = true;
+    },
+    triggerZap() {
+      console.log('ZAP');
     },
     toggleOrderType(type) {
       if (type === 'APR') {
