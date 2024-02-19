@@ -1,7 +1,7 @@
 <template>
   <div class="insurance__info">
     <BaseIcon
-      :name="tokenData.insuranceImage"
+      :name="tokenData.insImage"
       class="insurance__token-image"
     />
     <div class="insurance__token-title">
@@ -27,38 +27,58 @@
 
       <div class="insurance__title-buttons">
         <div class="insurance__interact-buttons">
-          <ButtonComponent class="insurance__title-button">
+          <ButtonComponent
+            class="insurance__title-button"
+            @click="toggleModalMintRedeem()"
+            @keydown.enter="toggleModalMintRedeem()"
+          >
             <BaseIcon
-              name='Insurance_Mint'
+              class="insurance__mint-button"
+              name='InsuranceMint'
             />
-            MINT / redeem
+            MINT / REDEEM
             <BaseIcon
-              name='Insurance_Redeem'
+              name='InsuranceRedeem'
               class="insurance__redeem-button"
             />
           </ButtonComponent>
+          <MintRedeemModal
+            v-model="showModalMintRedeem"
+          />
+
           <ButtonComponent class="insurance__title-button">
             <BaseIcon
-              name='Insurance_Bridge'
+              name='InsuranceBridge'
             />
-            Bridge
+            BRIDGE
           </ButtonComponent>
           <ButtonComponent class="insurance__title-button">
             <BaseIcon
-              name='Insurance_OVN'
+              name='InsuranceOVN'
             />
-            OVN Dashboard
+            OVN DASHBOARD
           </ButtonComponent>
         </div>
-        <ButtonComponent class="insurance__title-button">
+        <ButtonComponent
+          class="insurance__title-button"
+          :class="{ about_selected: showInsuranceInfo }"
+          @click="toggleInsuranceAbout()"
+          @keydown.enter="toggleInsuranceAbout()"
+        >
           <BaseIcon
-            name='Insurance_About'
+            name='InsuranceAbout'
           />
-          About Insurance
+          ABOUT INSURANCE
         </ButtonComponent>
       </div>
     </div>
 
+  </div>
+  <div
+    class="insurance__about"
+    v-if="showInsuranceInfo"
+  >
+    <InsuranceAbout />
   </div>
   <div class="insurance__token-data">
 
@@ -68,7 +88,7 @@
       <div class="insurance_risk-factor">
         <p class="insurance_risk-factor-text">High</p>
         <BaseIcon
-          name='Insurance_RiskFactor'
+          name='InsuranceRiskFactor'
         />
       </div>
     </div>
@@ -81,26 +101,26 @@
     <div class="insurance__divider" />
     <div class="insurance__payout-data">
       <p class="insurance__token-data-title">Insurance vault</p>
-      <p class="insurance__token-data-num amount-of-ovn">{{ tokenData.amountOfOVN }} OVN</p>
+      <p class="insurance__token-data-num amount-of-ovn">{{ formatTVL(tokenData.data.supply.toFixed(2)) }} OVN</p>
       <BaseIcon
-        name='Insurance_OVNVault'
+        name='InsuranceOVNVault'
       />
     </div>
     <div class="insurance__divider" />
     <div class="insurance__payout-data">
       <p class="insurance__token-data-title">Value of vault</p>
-      <p class="insurance__token-data-num amount-of-ovn">${{ tokenData.valueOfVault }}</p>
+      <p class="insurance__token-data-num amount-of-ovn">${{ formatTVL(tokenData.data.supplyUSD.toFixed(2)) }}</p>
     </div>
     <div class="insurance__divider" />
     <div class="insurance__payout-data">
       <p class="insurance__token-data-title">Insurance coverage</p>
-      <p class="insurance__token-data-num amount-of-ovn">{{ tokenData.percentOfCoverage }}%</p>
+      <p class="insurance__token-data-num amount-of-ovn">{{ tokenData.data.coverage.toFixed(2) }}%</p>
     </div>
     <div class="insurance__divider" />
     <div class="performance__apy-data">
       <p class="insurance__token-data-title">30-day APY</p>
       <div class="insurance__apy-data-chain">
-        <p class="insurance__token-data-num insurance__token-data-num--apy-num">{{ tokenData.dailyApy }}%</p>
+        <p class="insurance__token-data-num insurance__token-data-num--apy-num">{{ tokenData.data.apyMonth.toFixed(2) }}%</p>
         <div
           class="performance__icon-chain"
         >
@@ -119,6 +139,8 @@
 <script lang="ts">
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
+import InsuranceAbout from '@/modules/Insurance/InsuranceAbout.vue';
+import MintRedeemModal from '@/modules/Insurance/MintRedeemModal.vue';
 import { chainContractsMap } from '@/utils/contractsMap.ts';
 
 export default {
@@ -126,19 +148,19 @@ export default {
   components: {
     BaseIcon,
     ButtonComponent,
+    InsuranceAbout,
+    MintRedeemModal,
+  },
+  data() {
+    return {
+      showInsuranceInfo: false,
+      showModalMintRedeem: false,
+    };
   },
   props: {
     tokenData: {
       type: Object,
-      default: () => ({
-        insuranceImage: 'Insurance_Optimism',
-        lastPayoutTime: '05:02',
-        lastPayoutType: 'hours ago',
-        dailyApy: '5',
-        amountOfOVN: 4376,
-        valueOfVault: 76074,
-        percentOfCoverage: 3,
-      }),
+      default: () => ({}),
     },
     chainIcon: {
       type: String,
@@ -147,22 +169,33 @@ export default {
   },
   computed: {
     networkName() {
-      return this.$store.state.network.networkName;
+      return this.$store.state.network.insuranceNetwork;
     },
     networkScan() {
-      return this.$store.state.network.explorerUrl;
+      return this.$store.state.network.insuranceExplorerURL;
     },
   },
   methods: {
-    generateHref(tokenName:string, networkName:string) {
+    toggleModalMintRedeem() {
+      this.showModalMintRedeem = !this.showModalMintRedeem;
+    },
+    toggleInsuranceAbout() {
+      this.showInsuranceInfo = !this.showInsuranceInfo;
+    },
+    generateHref(tokenName: string, networkName: string) {
       const networkContracts = (chainContractsMap as any)[networkName.toLowerCase()];
       const tokenInsurance = networkContracts[tokenName];
       return tokenInsurance;
     },
 
-    getIconName(chain:string) {
+    getIconName(chain: string) {
       const formattedChain = chain.charAt(0).toUpperCase() + chain.slice(1).toLowerCase();
       return `Icon${formattedChain}On`;
+    },
+
+    formatTVL(number: any) {
+      return new Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 0, maximumFractionDigits: 0 })
+        .format(number);
     },
   },
 };
@@ -196,7 +229,16 @@ export default {
   svg {
     margin-right: 8px;
   }
+  svg:not(.insurance__mint-button) {
+    fill: var(--color-1);
+  }
+
+  .insurance__mint-button svg {
+    stroke: var(--color-1);
+  }
+
 }
+
 .amount-of-ovn {
   margin-bottom: 5px;
 }
@@ -224,6 +266,12 @@ export default {
   border-radius: 30px;
   padding: 5px 14px;
 }
+.about_selected {
+  border: 1px solid var(--color-1);
+  [data-theme="dark"] & {
+    border-color: var(--color-4);
+  }
+}
 .insurance_risk-factor-text {
   color: var(--color-1);
   font-size: 20px;
@@ -237,6 +285,7 @@ export default {
 }
 
 .insurance__token-data {
+  max-height: 84px;
   display:flex;
   flex-direction: row;
   justify-content: space-between;

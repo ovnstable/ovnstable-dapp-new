@@ -26,7 +26,7 @@
 
 <script lang="ts">
 import { mapGetters } from 'vuex';
-import GraphicInterval from '@/modules/Market/GraphicInterval.vue';
+import GraphicInterval from '@/components/Graphic/GraphicInterval.vue';
 import { type Payout } from '@/modules/Market/types/index.ts';
 import { Chart, registerables } from 'chart.js';
 import { appNetworksData } from '@/utils/const.ts';
