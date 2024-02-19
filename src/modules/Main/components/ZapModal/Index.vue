@@ -1,26 +1,40 @@
 <template>
-  <ModalComponent
-    type-modal="custom"
-    v-model="showModal"
-    @close="closeModal"
-  >
-    <div class="modal-content">
-      <ZapForm
-        :zap-pool="zapPool"
-        :type-of-pool="typeOfPool"
-      />
-    </div>
-  </ModalComponent>
+  <div>
+    <ModalComponent
+      type-modal="custom"
+      v-model="showModal"
+      @close="closeModal"
+    >
+      <div class="modal-content">
+        <ZapForm
+          :zap-pool="zapPool"
+          @close-form="closeModal"
+        />
+      </div>
+    </ModalComponent>
+
+    <SuccessZapModal
+      :is-show="showSuccessZapin"
+      :success-data="successData"
+      :set-show-func="triggerSuccessZapin"
+    />
+  </div>
 </template>
 
 <script lang="ts">
+import {
+  mapActions,
+  mapState,
+} from 'vuex';
 import ModalComponent from '@/components/Modal/Index.vue';
 import ZapForm from '@/modules/Main/components/ZapModal/ZapForm/Index.vue';
+import SuccessZapModal from '@/modules/ModalTemplates/SuccessModal/SuccessZapModal.vue';
 
 export default {
   name: 'ZapModal',
   components: {
     ZapForm,
+    SuccessZapModal,
     ModalComponent,
   },
   props: {
@@ -33,10 +47,6 @@ export default {
       required: false,
       default: null,
     },
-    typeOfPool: { // OVN or ALL
-      type: String,
-      required: true,
-    },
   },
   data() {
     return {
@@ -48,7 +58,16 @@ export default {
       this.showModal = currVal;
     },
   },
+  computed: {
+    ...mapState('odosData', [
+      'successData',
+      'showSuccessZapin',
+    ]),
+  },
   methods: {
+    ...mapActions('odosData', [
+      'triggerSuccessZapin',
+    ]),
     closeModal() {
       this.$emit('toggle-modal');
     },

@@ -37,23 +37,17 @@
       :output-tokens="outputTokens"
       :is-loading-data="isLoadingData"
     />
-    <WaitingModal :show-modal="showWaitModal" />
-    <ErrorModal :show-modal="showErrorModal" />
-    <SuccessModal :show-modal="showSuccessModal" />
   </div>
 </template>
 
 <script lang="ts">
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions } from 'vuex';
 import MintRedeemForm from '@/modules/Main/components/MintRedeem/Index.vue';
 import SliderComponent from '@/modules/Main/components/Slider/Index.vue';
 import TabsComponent from '@/components/Tabs/Index.vue';
 import SwapForm from '@/modules/Main/components/Odos/Index.vue';
 import BridgeComponent from '@/modules/Main/components/Bridge/Index.vue';
 import PathView from '@/modules/Main/components/PathView/Index.vue';
-import WaitingModal from '@/modules/ModalTemplates/WaitingModal/Index.vue';
-import ErrorModal from '@/modules/ModalTemplates/ErrorModal/Index.vue';
-import SuccessModal from '@/modules/ModalTemplates/SuccessModal/Index.vue';
 
 export default {
   name: 'MainModule',
@@ -64,9 +58,6 @@ export default {
     BridgeComponent,
     SwapForm,
     PathView,
-    ErrorModal,
-    WaitingModal,
-    SuccessModal,
   },
   data() {
     return {
@@ -93,11 +84,6 @@ export default {
       stablecoinTokens: [],
       isFirstInitializationForPath: true,
     };
-  },
-  computed: {
-    ...mapGetters('waitingModal', { showWaitModal: 'show' }),
-    ...mapGetters('errorModal', { showErrorModal: 'show' }),
-    ...mapGetters('successModal', { showSuccessModal: 'show' }),
   },
   methods: {
     ...mapActions('swapModal', ['showSwapModal', 'showMintView']),

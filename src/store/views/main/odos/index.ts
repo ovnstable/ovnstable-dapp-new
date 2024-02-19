@@ -296,7 +296,7 @@ const actions = {
         state,
       )
     });
-    state.isTokensLoadedAndFiltered = true;
+    commit('changeState', { field: 'isTokensLoadedAndFiltered', val: true });
 
     dispatch('loadPricesInfo', networkId);
     dispatch('initAccountData');
@@ -307,7 +307,7 @@ const actions = {
     const { networkId } = getNetworkParams(rootState.network.networkName);
     await commit('changeState', { field: 'tokens', val: await getFilteredOvernightTokens(state, networkId, false) });
     await commit('changeState', { field: 'secondTokens', val: await getFilteredOvernightTokens(state, networkId, true) });
-    state.isTokensLoadedAndFiltered = true;
+    commit('changeState', { field: 'isTokensLoadedAndFiltered', val: true });
 
     dispatch('loadPricesInfo', networkId);
     dispatch('initAccountData');

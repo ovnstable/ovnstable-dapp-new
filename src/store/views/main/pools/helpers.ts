@@ -275,7 +275,7 @@ const filterByPoolType = (
   if (filterType === poolTypes.TOKENPLUS) {
     return poolsList.filter((_) => {
       const poolTokens = _.name.split('/');
-      if (poolTokens.every((id: string) => STABLE_TOKENS.includes(id))) return true;
+      if (poolTokens.some((id: string) => STABLE_TOKENS.includes(id))) return true;
       return false;
     });
   }

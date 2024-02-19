@@ -181,8 +181,8 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .search-tokens__list {
-  max-height: 60vh;
-  min-height: 60vh;
+  max-height: 50vh;
+  min-height: 50vh;
   overflow: auto;
 }
 

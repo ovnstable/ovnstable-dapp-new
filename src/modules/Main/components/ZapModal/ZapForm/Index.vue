@@ -5,12 +5,8 @@
       class="swap-container"
     >
       <div class="swap-body">
-        <div>
-          <div class="mb-4 mt-1">
-            <PoolLabel :pool="zapPool" />
-          </div>
-        </div>
-        <!-- <ZapChangeNetwork :zap-pool="zapPool" /> -->
+        <PoolLabel :pool="zapPool" />
+        <ChangeNetwork :zap-pool="zapPool" />
       </div>
     </div>
     <div
@@ -19,12 +15,12 @@
     >
       <div
         v-if="!isTokensLoadedAndFiltered"
-        class="loader-container pb-15"
+        class="loader-container"
       >
-        SPINNER
+        <Spinner />
       </div>
 
-      <div v-else>
+      <template v-else>
         <div class="swap-body">
           <div>
             <div class="mb-4 mt-1">
@@ -309,7 +305,7 @@
             </div>
           </div> -->
         </div>
-      </div>
+      </template>
     </div>
 
     <SelectTokensModal
@@ -323,12 +319,6 @@
       @add-token-to-list="addSelectedTokenToList"
       @remove-token-from-list="removeSelectedTokenFromList"
     />
-
-    <SuccessZapModal
-      :is-show="showSuccessZapin"
-      :success-data="successData"
-      :set-show-func="triggerSuccessZapin"
-    />
   </div>
 </template>
 <!-- eslint-disable no-restricted-syntax -->
@@ -336,6 +326,8 @@
 <!-- eslint-disable no-param-reassign -->
 <script lang="ts">
 import { useEventBus } from '@vueuse/core';
+import { markRaw } from 'vue';
+import { ethers } from 'ethers';
 import {
   mapActions, mapGetters, mapState, mapMutations,
 } from 'vuex';
@@ -356,6 +348,8 @@ import {
 } from '@/store/views/main/zapin/helpers.ts';
 import odosApiService from '@/services/odos-api-service.ts';
 
+import Spinner from '@/components/Spinner/Index.vue';
+import ChangeNetwork from '@/modules/Main/components/ZapModal/ZapForm/ChangeNetwork.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { formatMoney } from '@/utils/numbers.ts';
@@ -364,12 +358,10 @@ import PoolLabel from '@/modules/Main/components/ZapModal/PoolLabel.vue';
 import SelectTokensModal from '@/modules/Main/components/Common/TokensModal/Index.vue';
 import SwapSlippageSettings from '@/modules/Main/components/Common/SwapSlippageSettings.vue';
 import { poolsInfoMap } from '@/store/views/main/zapin/mocks.ts';
-import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
 import { approveToken, getAllowanceValue } from '@/utils/contractApprove.ts';
 import { poolTokensForZapMap } from '@/store/views/main/pools/mocks.ts';
 import { onLeaveList, onEnterList, beforeEnterList } from '@/utils/animations.ts';
-import SuccessZapModal from '../SuccessZapModal.vue';
 // import ZapSteps from '@/components/zap/ZapSteps.vue';
 // import ZapChangeNetwork from '@/components/zap/ZapChangeNetwork.vue';
 
@@ -379,10 +371,11 @@ export default {
     PoolLabel,
     BaseIcon,
     ButtonComponent,
-    SuccessZapModal,
     SwapSlippageSettings,
     SelectTokensModal,
     TokenForm,
+    ChangeNetwork,
+    Spinner,
   },
   props: {
     zapPool: {
@@ -393,7 +386,8 @@ export default {
     typeOfPool: {
       // OVN or ALL
       type: String,
-      required: true,
+      required: false,
+      default: 'ALL',
     },
   },
   data() {
@@ -454,8 +448,6 @@ export default {
       'lastPutIntoPoolEvent',
       'lastReturnedToUserEvent',
       'lastNftTokenId',
-      'showSuccessZapin',
-      'successData',
       'swapResponseConfirmInfo',
       'routerContract',
       'odosReferalCode',
@@ -472,7 +464,6 @@ export default {
       'allTokensList',
       'isAllDataLoaded',
       'isAvailableOnNetwork',
-      'routerContract',
     ]),
     ...mapGetters('network', ['getParams', 'networkId']),
     ...mapGetters('theme', ['light']),
@@ -716,14 +707,12 @@ export default {
 
     isTokensLoadedAndFiltered(val) {
       if (val) {
-        this.clearForm();
+        this.clearAndInitForm();
       }
     },
     networkId(newVal) {
       if (newVal) {
-        // hide swap form and clear all(watch function) data,
-        // after new token loaded collection
-        this.isTokensLoadedAndFiltered = false;
+        this.$store.commit('odosData/changeState', { field: 'isTokensLoadedAndFiltered', val: false });
 
         if (!this.isAvailableOnNetwork) {
           this.mintAction();
@@ -767,7 +756,6 @@ export default {
   methods: {
     ...mapActions('swapModal', ['showSwapModal', 'showMintView']),
     ...mapActions('odosData', [
-      'triggerSuccessZapin',
       'loadChains',
       'loadTokens',
       'initContractData',
@@ -826,7 +814,7 @@ export default {
       });
 
       this.init();
-      this.clearForm();
+      this.clearAndInitForm();
 
       if (!this.isAvailableOnNetwork) this.mintAction();
     },
@@ -852,9 +840,9 @@ export default {
       const poolSelectedToken = getTokenBySymbol(poolTokens[0].name, this.allTokensList);
       const ovnSelectSelectedToken = getTokenBySymbol(poolTokens[1].name, this.allTokensList);
 
-      console.log(this.$store.state, '--this.$store.state');
+      console.log(poolTokens, '--poolTokens');
+      console.log(this.allTokensList, '--this.allTokensList');
       console.log(poolSelectedToken, '--poolSelectedToken');
-      console.log(ovnSelectSelectedToken, '--ovnSelectSelectedToken');
       if (!poolSelectedToken || !ovnSelectSelectedToken) {
         this.addNewInputToken();
         this.addNewOutputToken();
@@ -945,13 +933,13 @@ export default {
     changeSwap() {
       if (this.swapMethod === 'BUY') {
         this.setSwapMethod('SELL');
-        this.clearForm();
+        this.clearAndInitForm();
         return;
       }
 
       if (this.swapMethod === 'SELL') {
         this.setSwapMethod('BUY');
-        this.clearForm();
+        this.clearAndInitForm();
         return;
       }
 
@@ -963,11 +951,11 @@ export default {
     },
 
     finishTransaction() {
-      this.clearForm();
+      this.clearAndInitForm();
       this.closeWaitingModal();
     },
 
-    clearForm() {
+    clearAndInitForm() {
       this.clearAllSelectedTokens();
 
       if (this.swapMethod === 'BUY') {
@@ -1275,19 +1263,20 @@ export default {
     async toApproveAndDepositSteps(data: any, lastPoolInfoData: any) {
       let putIntoPoolEvent;
       let returnedToUserEvent;
-      for (const key of Object.keys(data.events)) {
-        const value = data.events[key];
+      console.log(data.logs, 'LOGS');
+      for (const item of data.logs) {
+        const eventName = item?.eventName;
 
-        if (key === 'PutIntoPool') {
-          putIntoPoolEvent = value;
+        if (eventName === 'PutIntoPool') {
+          putIntoPoolEvent = eventName;
           this.$store.commit('odosData/changeState', {
             field: 'lastPutIntoPoolEvent',
             val: putIntoPoolEvent,
           });
         }
 
-        if (key === 'ReturnedToUser') {
-          returnedToUserEvent = value;
+        if (eventName === 'ReturnedToUser') {
+          returnedToUserEvent = eventName;
           this.$store.commit('odosData/changeState', {
             field: 'lastReturnedToUserEvent',
             val: returnedToUserEvent,
@@ -1327,12 +1316,18 @@ export default {
       if (!this.lastNftTokenId) {
         try {
           const tokenId = await this.getLastNftId();
-          this.lastNftTokenId = tokenId;
+          this.$store.commit('odosData/changeState', {
+            field: 'lastNftTokenId',
+            val: tokenId,
+          });
           const params = { from: this.account, gasPrice: this.gasPriceGwei };
           this.gaugeContract
             .approve(this.poolTokenContract.target, tokenId, params)
             .then(() => {
-              this.additionalSwapStepType = 'DEPOSIT';
+              this.$store.commit('odosData/changeState', {
+                field: 'additionalSwapStepType',
+                val: 'DEPOSIT',
+              });
               this.closeWaitingModal();
               this.depositGauge(
                 putIntoPoolEvent,
@@ -1343,16 +1338,25 @@ export default {
             })
             .catch((e: any) => {
               console.error('Approve nft gauge failed', e);
-              this.lastNftTokenId = null;
+              this.$store.commit('odosData/changeState', {
+                field: 'lastNftTokenId',
+                val: null,
+              });
               this.closeWaitingModal();
             });
         } catch (e) {
           console.error('Approve nft gauge failed', e);
-          this.lastNftTokenId = null;
+          this.$store.commit('odosData/changeState', {
+            field: 'lastNftTokenId',
+            val: null,
+          });
           this.closeWaitingModal();
         }
       } else {
-        this.additionalSwapStepType = 'DEPOSIT';
+        this.$store.commit('odosData/changeState', {
+          field: 'additionalSwapStepType',
+          val: 'DEPOSIT',
+        });
         this.depositGauge(
           putIntoPoolEvent,
           returnedToUserEvent,
@@ -1365,7 +1369,7 @@ export default {
       return this.gaugeContract
         .balanceOf(this.account)
         .then((count: any) => this.gaugeContract
-          .tokenOfOwnerByIndex(this.account, count - 1)
+          .tokenOfOwnerByIndex(this.account, Number(count) - 1)
           .then((tokenId: any) => tokenId));
     },
     async approveGauge(
@@ -1373,13 +1377,22 @@ export default {
       returnedToUserEvent: any,
       lastPoolInfoData: any,
     ) {
-      const approveAmount = new BigNumber(10).pow(24);
+      const approveAmount = new BigNumber(10).pow(24).toFixed();
+      console.log(
+        this.poolTokenContract,
+        +approveAmount,
+        this.routerContract,
+        this.account,
+        '---approveAmount',
+      );
       const isGaugeApproved = await checkApproveForGauge(
         this.poolTokenContract,
         approveAmount,
         this.routerContract,
         this.account,
       );
+
+      console.log(isGaugeApproved, '---isGaugeApproved');
 
       if (!isGaugeApproved) {
         this.showWaitingModal('Approving gauge in process');
@@ -1430,6 +1443,7 @@ export default {
       lastPoolInfoData: any,
       lastNftTokenId: any,
     ) {
+      console.log(this.currentZapPlatformContractType, 'DEP');
       this.showWaitingModal('Stake LP in process');
 
       depositAllAtGauge(
@@ -1443,20 +1457,22 @@ export default {
         this.poolTokenContract,
       )
         .then((data: any) => {
+          console.log('DEPOSIT');
           this.closeWaitingModal();
 
           const inputTokens = [...this.selectedInputTokens];
           const outputTokens = [...this.selectedOutputTokens];
           this.triggerSuccessZapin(
-            true,
-            inputTokens,
-            outputTokens,
-            data.transactionHash,
-            putIntoPoolEvent,
-            returnedToUserEvent,
-            this.zapPool,
+            {
+              isShow: true,
+              inputTokens,
+              outputTokens,
+              hash: data.hash,
+              putIntoPoolEvent,
+              returnedToUserEvent,
+              pool: this.zapPool,
+            },
           );
-
           // event
           const bus = useEventBus('zap-transaction-finished');
           bus.emit(true);
@@ -1465,10 +1481,11 @@ export default {
             val: null,
           });
           this.clearZapData();
-
+          this.$emit('close-modal');
           this.loadBalances();
         })
-        .catch(() => {
+        .catch((e) => {
+          console.log(e, '---e');
           this.closeWaitingModal();
           this.$store.commit('odosData/changeState', {
             field: 'additionalSwapStepType',
@@ -1477,26 +1494,36 @@ export default {
         });
     },
     clearZapData() {
-      this.lastPutIntoPoolEvent = null;
-      this.lastReturnedToUserEvent = null;
-      this.lastZapResponseData = null;
+      this.$store.commit('odosData/changeState', {
+        field: 'lastPutIntoPoolEvent',
+        val: null,
+      });
+      this.$store.commit('odosData/changeState', {
+        field: 'lastReturnedToUserEvent',
+        val: null,
+      });
+      this.$store.commit('odosData/changeState', {
+        field: 'lastZapResponseData',
+        val: null,
+      });
     },
     finishSingleStepTransaction(data: any) {
       let putIntoPoolEvent;
       let returnedToUserEvent;
-      for (const key of Object.keys(data.events)) {
-        const value = data.events[key];
 
-        if (key === 'PutIntoPool') {
-          putIntoPoolEvent = value;
+      for (const item of data.logs) {
+        const eventName = item?.eventName;
+
+        if (eventName === 'PutIntoPool') {
+          putIntoPoolEvent = eventName;
           this.$store.commit('odosData/changeState', {
             field: 'lastPutIntoPoolEvent',
             val: putIntoPoolEvent,
           });
         }
 
-        if (key === 'ReturnedToUser') {
-          returnedToUserEvent = value;
+        if (eventName === 'ReturnedToUser') {
+          returnedToUserEvent = eventName;
           this.$store.commit('odosData/changeState', {
             field: 'lastReturnedToUserEvent',
             val: returnedToUserEvent,
@@ -1507,13 +1534,15 @@ export default {
       const inputTokens = [...this.selectedInputTokens];
       const outputTokens = [...this.selectedOutputTokens];
       this.triggerSuccessZapin(
-        true,
-        inputTokens,
-        outputTokens,
-        data.transactionHash,
-        putIntoPoolEvent,
-        returnedToUserEvent,
-        this.zapPool,
+        {
+          isShow: true,
+          inputTokens,
+          outputTokens,
+          hash: data.hash,
+          putIntoPoolEvent,
+          returnedToUserEvent,
+          pool: this.zapPool,
+        },
       );
 
       // event
@@ -1610,46 +1639,52 @@ export default {
       console.log(txData, 'ZAPIN');
       console.log(gaugeData, 'gaugeData');
       console.log(params, 'params');
-      this.zapContract
-        .zapIn(txData, gaugeData, params)
-        .then((data: any) => {
-          this.$store.commit('odosData/changeState', {
-            field: 'lastZapResponseData',
-            val: data,
-          });
-          if (
-            this.currentZapPlatformContractType.type
-            === 'LP_WITH_STAKE_IN_ONE_STEP'
-          ) {
-            this.finishSingleStepTransaction(this.lastZapResponseData);
-            return;
-          }
 
-          if (
-            this.currentZapPlatformContractType.type === 'LP_STAKE_DIFF_STEPS'
-          ) {
-            console.log(this.lastZapResponseData, '-this.lastZapResponseData');
-            this.toApproveAndDepositSteps(this.lastZapResponseData, poolInfo);
-            return;
-          }
+      try {
+        const tx = await this.zapContract.zapIn(txData, gaugeData, params);
+        const receipt = await tx.wait();
 
-          console.error(
-            'Error when end of transaction, method type not found. ',
-            this.currentZapPlatformContractType,
-          );
-        })
-        .catch((e: any) => {
-          if (e && e.code === 4001) {
-            if (e.message === 'User rejected the request.') {
-              this.stopSwapConfirmTimer();
-              this.clickOnStake = false;
-            }
-          }
-          this.closeWaitingModal();
-          this.showErrorModalWithMsg({ errorType: 'zap', errorMsg: e });
+        console.log(this.currentZapPlatformContractType, '---receipt');
+        this.$store.commit('odosData/changeState', {
+          field: 'lastZapResponseData',
+          val: markRaw(receipt),
         });
 
-      this.isSwapLoading = false;
+        console.log(this.lastZapResponseData, '-this.lastZapResponseData');
+        if (
+          this.currentZapPlatformContractType.type
+            === 'LP_WITH_STAKE_IN_ONE_STEP'
+        ) {
+          this.finishSingleStepTransaction(this.lastZapResponseData);
+          return;
+        }
+
+        if (
+          this.currentZapPlatformContractType.type === 'LP_STAKE_DIFF_STEPS'
+        ) {
+          this.toApproveAndDepositSteps(this.lastZapResponseData, poolInfo);
+          return;
+        }
+
+        console.error(
+          'Error when end of transaction, method type not found. ',
+          this.currentZapPlatformContractType,
+        );
+
+        this.isSwapLoading = false;
+      } catch (e: any) {
+        if (e && e.code === 4001) {
+          if (e.message === 'User rejected the request.') {
+            this.stopSwapConfirmTimer();
+            this.clickOnStake = false;
+          }
+        }
+
+        this.isSwapLoading = false;
+        this.closeWaitingModal();
+        this.$emit('close-form');
+        this.showErrorModalWithMsg({ errorType: 'zap', errorMsg: e });
+      }
     },
     clearQuotaInfo() {
       this.$store.commit('odosData/changeState', {
@@ -2058,6 +2093,7 @@ export default {
     },
 
     addSelectedTokenToList(data: any) {
+      console.log(data, ' ---dat');
       if (data.isInput) {
         this.addSelectedTokenToInputList(data.tokenData, true);
         // this.addTokensEmptyIsNeeded();
@@ -2100,19 +2136,9 @@ export default {
       this.recalculateOutputTokensSum();
       this.resetOutputs();
     },
-    removeSelectedTokenFromList(selectedToken: any, swapMethod: any, selectTokenType: any) {
-      if (this.isInputToken(swapMethod, selectTokenType)) {
-        this.removeInputToken(selectedToken.id);
-        if (this.inputTokens.length === 0) {
-          this.addNewInputToken();
-        }
-        return;
-      }
-
-      this.removeOutputToken(selectedToken.id);
-      if (this.outputTokens.length === 0) {
-        this.addNewOutputToken();
-      }
+    removeSelectedTokenFromList(selectedToken: any) {
+      this.removeInputToken(selectedToken.id);
+      if (this.inputTokens.length === 0) this.addNewInputToken();
     },
     removeAllWithoutSelectedTokens(tokens: any) {
       const tokensToRemove = [];

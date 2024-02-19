@@ -151,6 +151,9 @@ export default {
         pointer-events: auto;
         padding: 30px 40px;
         border: 2px solid var(--color-1);
+        [data-theme="dark"] & {
+          border-color: var(--color-17);
+        }
     }
     .modal--custom {
       padding: 0;
@@ -177,6 +180,12 @@ export default {
       flex-direction: column;
       align-items: center;
     }
+}
+
+.modal__body {
+  @media (min-width: 1024px) {
+    max-height: 60vh;
+  }
 }
 
 @media (max-width: 1024px) {

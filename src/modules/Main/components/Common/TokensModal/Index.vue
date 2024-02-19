@@ -161,6 +161,8 @@ export default {
   padding: 15px 0;
   border: 2px solid var(--color-5);
   background-color: var(--color-4);
+  min-height: 50vh;
+
   [data-theme="dark"] & {
     border-color: var(--color-2);
     background-color: var(--color-17);

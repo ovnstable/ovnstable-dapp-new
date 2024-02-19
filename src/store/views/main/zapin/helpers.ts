@@ -190,15 +190,14 @@ export const calculateProportionForPool = ({
 
 export const checkApproveForGauge = async (
   poolTokenContract: any,
-  checkedAllowanceValue: BigNumber,
+  checkedAllowanceValue: string,
   routerContract: any,
   account: any,
 ) => {
-  // checkedAllowanceValue in wei
   const allowanceValue = await getAllowanceValue(
     poolTokenContract,
     account,
-    routerContract.options.address,
+    routerContract.target,
   );
   return new BigNumber(allowanceValue).isGreaterThanOrEqualTo(checkedAllowanceValue);
 };
@@ -213,7 +212,7 @@ export const approveGaugeForStake = async (
   routerContract: any,
   gasPriceGwei: any,
 ) => {
-  const approveValue = new BigNumber(10).pow(24);
+  const approveValue = new BigNumber(10).pow(24).toFixed();
   showWaitingModal('Approving gauge in process');
 
   console.log(approveValue, 'approveValue');
@@ -228,22 +227,21 @@ export const approveGaugeForStake = async (
     return;
   }
 
-  // approveToken(tokenContract, routerContract.options.address, approveValue)
-  return approveToken(
-    poolTokenContract,
-    gaugeContract.options.address,
-    approveValue,
-    account,
-    gasPriceGwei,
-  )
-    .then((data) => {
-      closeWaitingModal();
-    })
-    .catch((e) => {
-      console.error('Error when approve token.', e);
-      closeWaitingModal();
-      showErrorModalWithMsg({ errorType: 'approve', errorMsg: e });
-    });
+  try {
+    const tx = await approveToken(
+      poolTokenContract,
+      gaugeContract.target,
+      approveValue,
+      account,
+      gasPriceGwei,
+    );
+    await tx.wait();
+    closeWaitingModal();
+  } catch (e) {
+    console.error('Error when approve token.', e);
+    closeWaitingModal();
+    showErrorModalWithMsg({ errorType: 'approve', errorMsg: e });
+  }
 };
 
 export const depositAllAtGauge = async (
@@ -257,33 +255,42 @@ export const depositAllAtGauge = async (
   poolTokenContract: any,
 ) => {
   const params = { from: account, gasPrice: gasPriceGwei };
+  console.log(
+    account,
+    lastPoolInfoData,
+    lastNftTokenId,
+    currentZapPlatformContractType,
+    gaugeContract,
+    gasPriceGwei,
+    zapPoolRoot,
+    poolTokenContract,
+    'DEparamsP',
+  );
   if (
     currentZapPlatformContractType.typeOfDepositConstructor
     === 'CONSTRUCTOR_WITH_TOKEN_ID'
   ) {
+    console.log('1');
     const poolAddress = zapPoolRoot.address;
     const poolInfo = poolsInfoMap[poolAddress];
-    return gaugeContract
-      .depositAll(poolInfo.poolId)
-      .send(params);
+    return gaugeContract.depositAll(poolInfo.poolId, params);
   }
 
   if (
     currentZapPlatformContractType.typeOfDepositConstructor
     === 'BASE_CONSTRUCTOR'
   ) {
-    return gaugeContract.depositAll().send(params);
+    console.log('2');
+    return gaugeContract.depositAll(params);
   }
 
   if (
     currentZapPlatformContractType.typeOfDepositConstructor
     === 'CONSTRUCTOR_WITH_POOL_ID_AND_TOKEN_AMOUNT'
   ) {
-    const balance = await poolTokenContract
-      .balanceOf(account);
-    return gaugeContract
-      .deposit(lastPoolInfoData.poolId, balance)
-      .send(params);
+    const balance = await poolTokenContract.balanceOf(account);
+    console.log(balance, '3');
+    return gaugeContract.deposit(lastPoolInfoData.poolId, balance, params);
   }
 
   if (
@@ -292,23 +299,22 @@ export const depositAllAtGauge = async (
   ) {
     const data = {
       from: account,
-      to: poolTokenContract.options.address,
+      to: poolTokenContract.target,
       tokenId: lastNftTokenId,
       _data:
         '0x0000000000000000000000000000000000000000000000000000000000000000',
     };
-    return gaugeContract
-      .safeTransferFrom(data.from, data.to, data.tokenId, data._data)
-      .send(params);
+    console.log(data, 'transfer');
+    return gaugeContract.safeTransferFrom(data.from, data.to, data.tokenId, data._data, params);
   }
 
   if (
     currentZapPlatformContractType.typeOfDepositConstructor
     === 'CONSTRUCTOR_STAKE_METHOD_AND_TOKEN_AMOUNT'
   ) {
-    const balance = await poolTokenContract
-      .balanceOf(account);
-    return gaugeContract.stake(balance).send(params);
+    const balance = await poolTokenContract.balanceOf(account);
+    console.log(balance, '4');
+    return gaugeContract.stake(balance, params);
   }
 
   console.error(
