@@ -48,20 +48,16 @@
         </div>
         <p>1 OVN = 1 OVN INS</p>
       </div>
-      <GasSettings />
+      <InsuranceGasSettings />
       <ButtonComponent class="insurance__modal-mint-button">
         ENTER AMOUNT TO MINT
       </ButtonComponent>
       <div class="insurance__modal-stages">
-        <p>Start</p>
-        <BaseIcon
-          name="InsuranceModalArrowRight"
-        />
-        <p>Approve</p>
-        <BaseIcon
-          name="InsuranceModalArrowRight"
-        />
-        <p>Confirmation</p>
+        <p :class="{ 'active-stage': currentStage === 'Start' }">Start</p>
+        <BaseIcon name="InsuranceModalArrowRight" />
+        <p :class="{ 'active-stage': currentStage === 'Approve' }">Approve</p>
+        <BaseIcon name="InsuranceModalArrowRight" />
+        <p :class="{ 'active-stage': currentStage === 'Confirmation' }">Confirmation</p>
       </div>
     </div>
   </ModalComponent>
@@ -72,14 +68,14 @@ import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { defineComponent } from 'vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import ModalComponent from '@/components/Modal/Index.vue';
-import GasSettings from '@/modules/Main/components/MintRedeem/GasSettings.vue';
+import InsuranceGasSettings from '@/modules/Insurance/InsuranceGasSettings.vue';
 import InputTokenInsurance from '@/modules/Insurance/InsuranceTokenForm.vue';
 
 export default defineComponent({
   name: 'MintRedeemModal',
   components: {
     ModalComponent,
-    GasSettings,
+    InsuranceGasSettings,
     ButtonComponent,
     BaseIcon,
     InputTokenInsurance,
@@ -89,6 +85,7 @@ export default defineComponent({
       showModal: false,
       ovnAmount: 0,
       selectedAction: 'mint',
+      currentStage: 'Start',
     };
   },
   methods: {
@@ -183,6 +180,7 @@ export default defineComponent({
   flex-direction: row;
   justify-content: space-between;
   color: var(--color-1);
+  font-weight: 600;
   margin-top: 20px;
 }
 
@@ -208,10 +206,22 @@ export default defineComponent({
   margin-top: 20px;
   margin-bottom: 16px;
 }
+.insurance__modal-mint-button:hover {
+  opacity: 1;
+  background-color: var(--color-5);
+  color: var(--color-2);
+  cursor: default;
+}
 
 .insurance__modal-stages {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  color: var(--color-7);
+}
+
+.active-stage {
+  text-decoration: underline;
+  color: var(--color-2);
 }
 </style>
