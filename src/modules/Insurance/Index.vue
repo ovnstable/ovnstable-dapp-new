@@ -1,16 +1,36 @@
 <template>
   <div
+    v-if="firstLoad"
+    class="insurance__loader"
+  >
+    <Spinner />
+  </div>
+  <div
+    v-else
     class="insurance-wrapper"
   >
-    <div class="insurance">
+    <div
+      class="insurance"
+    >
       <TokenDataInsurance
+        :tokenData="tokenData"
         class="market__token-data"
       />
-      <p class="insurance__graphics">graphic data</p>
-      <p class="insurance__portfolio">portfolio data</p>
+      <GraphicsInsurance
+        :payoutData="payoutData"
+        :loaded="loaded"
+        class="insurance__graphics"
+      />
+      <InsurancePremiums
+        :premiumsData="premiumsData"
+        class="insurance__premiums"
+      />
     </div>
     <div class="insurance__payouts">
-      <p class="insurance__payout-inner">token datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatoken datatatoken data</p>
+      <InsurancePayouts
+        :payout-data="reversedPayoutData"
+        class="insurance__payout-inner"
+      />
     </div>
   </div>
 
@@ -18,11 +38,46 @@
 
 <script lang="ts">
 import TokenDataInsurance from '@/modules/Insurance/TokenData.vue';
+import GraphicsInsurance from '@/modules/Insurance/Graphic.vue';
+import Spinner from '@/components/Spinner/Index.vue';
+import InsurancePremiums from '@/modules/Insurance/Premiums.vue';
+import InsurancePayouts from '@/modules/Insurance/InsurancePayouts.vue';
 
 export default {
   name: 'InsurancePage',
   components: {
     TokenDataInsurance,
+    InsurancePremiums,
+    GraphicsInsurance,
+    InsurancePayouts,
+    Spinner,
+  },
+  props: {
+    tokenData: {
+      type: Object,
+      default: () => ({}),
+    },
+    payoutData: {
+      type: Object,
+      default: () => ({}),
+    },
+    premiumsData: {
+      type: Object,
+      default: () => ({}),
+    },
+    firstLoad: {
+      type: Boolean,
+      required: true,
+    },
+    loaded: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  computed: {
+    reversedPayoutData() {
+      return [...this.payoutData.payouts].reverse();
+    },
   },
 };
 
@@ -49,14 +104,19 @@ export default {
 }
 .insurance__token-data,
 .insurance__graphics,
-.insurance__portfolio,
+.insurance__premiums,
 .insurance__payout-inner {
   width: 100%;
 }
 .insurance__graphics{
+  margin-top: 24px;
+  padding: 18px 24px;
+  border-radius: 5px;
+  border: 1px solid var(--color-1);
+}
+.insurance__premiums {
   margin-top: 20px;
 }
-
 .insurance-wrapper {
   position: relative;
   display: flex;
@@ -73,6 +133,7 @@ export default {
   margin-top: -10px;
   border-radius: 0px 0px 30px 30px;
   [data-theme="dark"] & {
+    background-color: var(--color-6);
     color: var(--color-4);
   }
 }
