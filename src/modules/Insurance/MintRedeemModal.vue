@@ -65,13 +65,12 @@
 
 <script lang="ts">
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
-import { defineComponent } from 'vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import ModalComponent from '@/components/Modal/Index.vue';
 import InsuranceGasSettings from '@/modules/Insurance/InsuranceGasSettings.vue';
 import InputTokenInsurance from '@/modules/Insurance/InsuranceTokenForm.vue';
 
-export default defineComponent({
+export default {
   name: 'MintRedeemModal',
   components: {
     ModalComponent,
@@ -93,7 +92,7 @@ export default defineComponent({
       this.showModal = false;
     },
   },
-});
+};
 </script>
 
 <style lang="scss" scoped>

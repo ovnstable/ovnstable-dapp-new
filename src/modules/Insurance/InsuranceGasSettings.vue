@@ -52,11 +52,10 @@
 </template>
 <!-- eslint-disable no-param-reassign -->
 <script lang="ts">
-import { defineComponent } from 'vue';
 import { onLeaveList, onEnterList, beforeEnterList } from '@/utils/animations.ts';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 
-export default defineComponent({
+export default {
   name: 'InsuranceGasSettings',
   components: {
     BaseIcon,
@@ -94,7 +93,7 @@ export default defineComponent({
     beforeEnterList,
     onEnterList,
   },
-});
+};
 </script>
 
 <style lang="scss" scoped>

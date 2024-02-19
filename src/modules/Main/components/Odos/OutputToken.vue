@@ -161,12 +161,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
 import { formatMoney, fixedByPrice } from '@/utils/numbers.ts';
 import Slider from '@/modules/Main/components/Odos/SliderSwapsForm.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 
-export default defineComponent({
+export default {
   name: 'OutputToken',
   components: { Slider, BaseIcon },
   props: [
@@ -200,7 +199,7 @@ export default defineComponent({
       this.updateSliderValueFunc(tokenInfo, value);
     },
   },
-});
+};
 </script>
 
 <style scoped>

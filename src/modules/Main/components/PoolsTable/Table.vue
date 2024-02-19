@@ -258,14 +258,13 @@
 
 <!-- eslint-disable no-param-reassign -->
 <script>
-import { defineComponent } from 'vue';
 import { mapGetters } from 'vuex';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import { formatMoneyComma, formatNumberToMln, formatNumberToThousands } from '@/utils/numbers.ts';
 // import PoolTableDetails from '@/components/pool/PoolTableDetails.vue';
 
-export default defineComponent({
+export default {
   name: 'PoolTable',
   components: {
     BaseIcon,
@@ -387,7 +386,7 @@ export default defineComponent({
       console.error('Order type not found when toggle order.', type);
     },
   },
-});
+};
 </script>
 
 <style lang="scss" scoped>
