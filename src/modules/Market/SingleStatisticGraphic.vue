@@ -176,6 +176,23 @@ export default {
         chartOptions: {
           scales: {
             y: {
+              afterFit: (scaleInstance: any) => {
+                const widths = {
+                  apyType: 53,
+                  eth: 76,
+                  default: 60,
+                };
+                let newWidth;
+                if (isApyType) {
+                  newWidth = widths.apyType;
+                } else if (isEth) {
+                  newWidth = widths.eth;
+                } else {
+                  newWidth = widths.default;
+                }
+                Object.assign(scaleInstance, { width: newWidth });
+              },
+
               beginAtZero: false,
               title: {
                 display: true,
