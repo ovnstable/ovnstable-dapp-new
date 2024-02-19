@@ -179,6 +179,12 @@ export default {
     }
 }
 
+.modal__body {
+  @media (min-width: 1024px) {
+    max-height: 60vh;
+  }
+}
+
 @media (max-width: 1024px) {
   .modal__wrap {
     width: 110vw;

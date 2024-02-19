@@ -168,9 +168,9 @@ export default {
           const tokenData = this.allTokensList.find((_: any) => _.symbol === bal.symbol);
 
           return {
-            balance: new BigNumber(bal.balance).div(10 ** tokenData.decimals).toFixed(2),
-            srcPath: loadTokenImage(tokenData.symbol),
-            symbol: tokenData.symbol,
+            balance: tokenData ? new BigNumber(bal.balance).div(10 ** tokenData.decimals).toFixed(2) : '0',
+            srcPath: loadTokenImage(tokenData?.symbol),
+            symbol: tokenData?.symbol,
           };
         });
     },

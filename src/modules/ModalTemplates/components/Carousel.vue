@@ -14,8 +14,6 @@
 </template>
 
 <script lang="ts">
-import { mapActions } from 'vuex';
-
 export default {
   name: 'CarouselComponent',
   data: () => ({
@@ -78,8 +76,6 @@ export default {
   },
 
   methods: {
-    ...mapActions('track', ['trackClick']),
-
     shuffleArray(array: any) {
       for (let i = array.length - 1; i > 0; i--) {
         const shuffledArray = Math.floor(Math.random() * (i + 1));
@@ -106,14 +102,6 @@ export default {
     trackLinkClick(item: any) {
       const action = `carousel_link_clicked_${item.postfix}`;
       console.log('Action:', action);
-
-      const trackParams = {
-        action,
-        event_category: 'Click button',
-        event_label: `Click ${item.linkWord} button`,
-      };
-
-      this.trackClick(trackParams);
     },
   },
 };

@@ -87,9 +87,9 @@
             </div>
           </div>
         </div> -->
-      <div v-if="false">
-        <!-- <BestAprPromotion :pool="topPool" /> -->
-      </div>
+      <!-- <div v-if="false">
+        <BestAprPromotion :pool="topPool" />
+      </div> -->
     </div>
   </ModalComponent>
 </template>
@@ -213,7 +213,6 @@ export default {
     ...mapActions('successModal', ['closeSuccessModal']),
     ...mapActions('swapModal', ['showSwapModal', 'showMintView']),
     ...mapActions('tokenAction', ['addUsdPlusToken', 'addDaiPlusToken', 'addUsdtPlusToken', 'addwUsdPlusToken', 'addEthPlusToken', 'addwEthPlusToken', 'addEtsToken', 'addInsuranceToken']),
-    ...mapActions('track', ['trackClick']),
     ...mapActions('accountUI', ['showTxHistory']),
 
     addTokenAction() {

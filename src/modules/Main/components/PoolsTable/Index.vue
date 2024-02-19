@@ -21,7 +21,6 @@
         :open-zap-in-func="openZapIn"
         :set-order-type-func="setOrderType"
         :order-type="orderType"
-        :type-of-pool="typeOfPool"
       >
         <template #filters>
           <PoolsFilter
@@ -61,7 +60,6 @@
     <ZapModal
       :zap-pool="currentZapPool"
       :is-show="isZapModalShow"
-      :type-of-pool="typeOfPool"
       @toggle-modal="setIsZapModalShow"
     />
   </div>
