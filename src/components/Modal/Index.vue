@@ -151,6 +151,9 @@ export default {
         pointer-events: auto;
         padding: 30px 40px;
         border: 2px solid var(--color-1);
+        [data-theme="dark"] & {
+          border-color: var(--color-17);
+        }
     }
     .modal--custom {
       padding: 0;

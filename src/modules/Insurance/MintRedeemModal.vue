@@ -50,7 +50,7 @@
       </div>
       <InsuranceGasSettings />
       <ButtonComponent class="insurance__modal-mint-button">
-        ENTER AMOUNT TO MINT
+        {{ selectedAction === 'mint' ? 'ENTER AMOUNT TO MINT' : 'ENTER AMOUNT TO REDEEM' }}
       </ButtonComponent>
       <div class="insurance__modal-stages">
         <p :class="{ 'active-stage': currentStage === 'Start' }">Start</p>
@@ -101,6 +101,9 @@ export default {
   padding: 20px;
   display: flex;
   flex-direction: column;
+  [data-theme="dark"] & {
+    background-color: var(--color-6);
+  }
 }
 
 .insurance__modal-mint-redeem-buttons {
@@ -149,6 +152,9 @@ export default {
   text-align: center;
   margin-top: 24px;
   margin-bottom: 28px;
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
 }
 .insurance__modal-input-group * {
   width: 100%;
@@ -181,6 +187,11 @@ export default {
   color: var(--color-1);
   font-weight: 600;
   margin-top: 20px;
+  p {
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
+  }
 }
 
 .insurance__modal-info-fee,
@@ -204,12 +215,19 @@ export default {
   box-shadow: none;
   margin-top: 20px;
   margin-bottom: 16px;
+  [data-theme="dark"] & {
+    box-shadow: none;
+  }
 }
 .insurance__modal-mint-button:hover {
   opacity: 1;
   background-color: var(--color-5);
   color: var(--color-2);
   cursor: default;
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
+    color: var(--color-2);
+  }
 }
 
 .insurance__modal-stages {
@@ -217,10 +235,16 @@ export default {
   flex-direction: row;
   justify-content: space-between;
   color: var(--color-7);
+  [data-theme="dark"] & {
+    color: var(--color-2);
+  }
 }
 
 .active-stage {
   text-decoration: underline;
   color: var(--color-2);
+  [data-theme="dark"] & {
+    color: var(--color-18);
+  }
 }
 </style>

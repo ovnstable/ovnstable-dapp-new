@@ -134,16 +134,22 @@ export default {
     margin-right: 10px;
   }
   p {
-    margin: 0; // Remove margin to ensure alignment
+    margin: 0;
     font-size: 14px;
     font-weight: 500;
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
+  }
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
   }
 }
 
 .input-tokens__balance-info {
   display: flex;
   justify-content: space-between;
-  margin-top: 8px; // Add some space between the input and balance info
+  margin-top: 8px;
   color: var(--color-2);
   font-size: 14px;
   [data-theme="dark"] & {
@@ -151,4 +157,3 @@ export default {
   }
 }
 </style>
-

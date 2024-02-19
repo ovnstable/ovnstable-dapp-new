@@ -135,13 +135,16 @@ export default {
 
   [data-theme="dark"] & {
     color: var(--color-4);
-    background-color: var(--color-6);
+    background-color: var(--color-5);
   }
 
   &:hover {
     background-color: var(--color-6);
     color: var(--color-1);
     [data-theme="dark"] & {
+      .gas-text {
+        color: var(--color-17);
+      }
       color: var(--color-17);
       background-color: var(--color-4);
     }
@@ -157,6 +160,9 @@ export default {
     height: 16px;
     fill: var(--color-2);
     margin-left: 10px;
+    [data-theme="dark"] & {
+      fill: var(--color-4);
+    }
   }
 }
 
@@ -167,6 +173,11 @@ export default {
 .gas-block-title {
   display: flex;
   flex-direction: row;
+  h3 {
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
+  }
 }
 .gas-text {
   font-weight: 600;
