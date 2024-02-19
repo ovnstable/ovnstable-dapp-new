@@ -177,8 +177,8 @@ export default {
               title: {
                 display: true,
               },
-              min: minValue,
-              max: maxValue,
+              min: minValue * 0.9,
+              max: maxValue * 1.1,
               ticks: {
                 color: isDarkTheme ? '#ffffff' : '#0f172a',
                 min: 4,
@@ -186,14 +186,11 @@ export default {
                   if (isApyType) {
                     return `${value.toFixed(2)}%`;
                   } if (this.tokenData.tokenName === 'ETH+') {
-                    return `${value.toLocaleString()} WETH`;
+                    const valueInETHs = `${value.toFixed(0)} WETH `;
+                    return valueInETHs;
                   }
-                  const formatter = new Intl.NumberFormat('fr-FR', {
-                    minimumFractionDigits: 1,
-                    maximumFractionDigits: 1,
-                  });
-                  const formattedValue = formatter.format(value);
-                  return `$${formattedValue}`;
+                  const valueInMillions = `$${(value / 1e6).toFixed(2)}M`;
+                  return valueInMillions;
                 },
               },
 
@@ -246,9 +243,12 @@ export default {
                   if (isApyType) {
                     label += `APY: ${value.toFixed(2)}%`;
                   } else if (isEth) {
-                    label += `TVL WETH ${value.toLocaleString()}`;
+                    const valueInETHs = `TVL WETH ${value.toFixed(0)}`;
+                    label += valueInETHs;
                   } else {
-                    label += `TVL $${value.toLocaleString()}`;
+                    const valueInMillions = `TVL $${(value / 1e6).toFixed(2)}M`;
+                    label += valueInMillions;
+                    return label;
                   }
                   return label;
                 },
