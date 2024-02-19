@@ -57,8 +57,7 @@ const pointStylePlugin = {
     const yAxis = chart.scales.y;
     const middleY = (yAxis.top + yAxis.bottom) / 2;
     ctx.save();
-    const { activeNetworkColor } = chart.options.plugins.pointStylePlugin;
-    ctx.strokeStyle = activeNetworkColor || '#ff0000';
+    ctx.strokeStyle = '#A8D8FA';
     ctx.setLineDash([5, 5]);
     ctx.beginPath();
     ctx.moveTo(chart.chartArea.left, middleY);
@@ -117,7 +116,11 @@ export default {
           if (this.tokenData.tokenName === 'ETH+') {
             return `${latestPayout.totalUsdPlus.toFixed(6)} WETH`;
           }
-          return `$${latestPayout.totalUsdPlus.toFixed(2)}`;
+          return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            minimumFractionDigits: 2,
+          }).format(latestPayout.totalUsdPlus);
         }
       }
       return 'N/A';
@@ -166,8 +169,8 @@ export default {
         ? intervalData.map((payout: Payout) => payout.annualizedYield)
         : intervalData.map((payout: Payout) => payout.totalUsdPlus);
 
-      const minValue = Math.min(...dataValues);
-      const maxValue = Math.max(...dataValues);
+      const minValue = Math.min(...dataValues) * 0.8;
+      const maxValue = Math.max(...dataValues) * 1.2;
       const isDarkTheme = localStorage.getItem('theme-type') === 'dark';
       return {
         chartOptions: {
@@ -177,9 +180,10 @@ export default {
               title: {
                 display: true,
               },
-              min: minValue * 0.9,
-              max: maxValue * 1.1,
+              min: minValue,
+              max: maxValue,
               ticks: {
+                stepSize: (maxValue - minValue) / 6,
                 color: isDarkTheme ? '#ffffff' : '#0f172a',
                 min: 4,
                 callback: (value: any) => {
@@ -243,12 +247,14 @@ export default {
                   if (isApyType) {
                     label += `APY: ${value.toFixed(2)}%`;
                   } else if (isEth) {
-                    const valueInETHs = `TVL WETH ${value.toFixed(0)}`;
+                    const valueInETHs = `TVL WETH ${value.toFixed(6)}`;
                     label += valueInETHs;
                   } else {
-                    const valueInMillions = `TVL $${(value / 1e6).toFixed(2)}M`;
-                    label += valueInMillions;
-                    return label;
+                    return `TVL ${new Intl.NumberFormat('en-US', {
+                      style: 'currency',
+                      currency: 'USD',
+                      minimumFractionDigits: 2,
+                    }).format(value)}`;
                   }
                   return label;
                 },
