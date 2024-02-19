@@ -24,9 +24,8 @@ export const getProportion = (poolAddress: string, zapPool: any, zapContract: an
     || zapPool.data.platform === 'Baseswap'
     || zapPool.data.platform === 'Alienbase'
   ) {
-    return zapContract.methods
+    return zapContract
       .getProportion(gauge, poolInfo.poolId.toString())
-      .call()
       .then((data: any) => data)
       .catch((e: any) => {
         console.error(
@@ -39,9 +38,8 @@ export const getProportion = (poolAddress: string, zapPool: any, zapContract: an
       });
   }
 
-  return zapContract.methods
+  return zapContract
     .getProportion(gauge)
-    .call()
     .then((data: any) => {
       console.log('Get proportion: ', poolAddress, gauge, data, poolInfo);
       return data;
@@ -265,7 +263,7 @@ export const depositAllAtGauge = async (
   ) {
     const poolAddress = zapPoolRoot.address;
     const poolInfo = poolsInfoMap[poolAddress];
-    return gaugeContract.methods
+    return gaugeContract
       .depositAll(poolInfo.poolId)
       .send(params);
   }
@@ -274,17 +272,16 @@ export const depositAllAtGauge = async (
     currentZapPlatformContractType.typeOfDepositConstructor
     === 'BASE_CONSTRUCTOR'
   ) {
-    return gaugeContract.methods.depositAll().send(params);
+    return gaugeContract.depositAll().send(params);
   }
 
   if (
     currentZapPlatformContractType.typeOfDepositConstructor
     === 'CONSTRUCTOR_WITH_POOL_ID_AND_TOKEN_AMOUNT'
   ) {
-    const balance = await poolTokenContract.methods
-      .balanceOf(account)
-      .call();
-    return gaugeContract.methods
+    const balance = await poolTokenContract
+      .balanceOf(account);
+    return gaugeContract
       .deposit(lastPoolInfoData.poolId, balance)
       .send(params);
   }
@@ -300,7 +297,7 @@ export const depositAllAtGauge = async (
       _data:
         '0x0000000000000000000000000000000000000000000000000000000000000000',
     };
-    return gaugeContract.methods
+    return gaugeContract
       .safeTransferFrom(data.from, data.to, data.tokenId, data._data)
       .send(params);
   }
@@ -309,10 +306,9 @@ export const depositAllAtGauge = async (
     currentZapPlatformContractType.typeOfDepositConstructor
     === 'CONSTRUCTOR_STAKE_METHOD_AND_TOKEN_AMOUNT'
   ) {
-    const balance = await poolTokenContract.methods
-      .balanceOf(account)
-      .call();
-    return gaugeContract.methods.stake(balance).send(params);
+    const balance = await poolTokenContract
+      .balanceOf(account);
+    return gaugeContract.stake(balance).send(params);
   }
 
   console.error(

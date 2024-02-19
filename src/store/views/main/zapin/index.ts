@@ -54,7 +54,7 @@ const actions = {
     commit('changeState', {
       field: 'zapContract',
       val: buildEvmContract(
-        abiFile,
+        abiFile.abi,
         rootState.web3.evmSigner,
         abiFile.address,
       ),
@@ -88,7 +88,7 @@ const actions = {
     commit('changeState', {
       field: 'gaugeContract',
       val: buildEvmContract(
-        abiGaugeContractFile,
+        abiGaugeContractFile.abi,
         rootState.web3.evmSigner,
         gaugeAddress,
       ),
@@ -108,11 +108,11 @@ const actions = {
     );
     const tokenContract = poolInfo.poolTokenType
       ? buildEvmContract(
-        abiPoolTokenContractFile,
+        abiPoolTokenContractFile.abi,
         rootState.web3.evmSigner,
         abiPoolTokenContractFile.address,
       )
-      : buildEvmContract(abiPoolTokenContractFile, rootState.web3.evmSigner, poolAddress);
+      : buildEvmContract(abiPoolTokenContractFile.abi, rootState.web3.evmSigner, poolAddress);
 
     commit('changeState', {
       field: 'poolTokenContract',

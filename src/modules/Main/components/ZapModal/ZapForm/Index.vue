@@ -33,9 +33,19 @@
 
             <div class="input-swap-container">
               <div class="swap-form__body-block">
-                <h3>
-                  You receive
-                </h3>
+                <div class="swap-form__body-block__title">
+                  <h3>
+                    You send
+                  </h3>
+                  <div
+                    v-if="inputTokensWithSelectedTokensCount"
+                    class="swap-form__body-block__inputs-max"
+                    @click="maxAllMethod"
+                    @keypress="maxAllMethod"
+                  >
+                    Max all
+                  </div>
+                </div>
                 <TransitionGroup
                   name="staggered-fade"
                   tag="div"
@@ -58,42 +68,18 @@
                       :select-token-func="selectFormToken"
                       :is-input-token="true"
                       :disabled="false"
+                      :update-token-value-func="updateTokenValueMethod"
                     />
                   </div>
-
                   <div
-                    v-if="isOutputTokensAddAvailable"
+                    v-if="isInputTokensAddAvailable"
                     class="swap-form__body-block__inputs-add"
-                    @click="addNewOutputToken"
-                    @keypress="addNewOutputToken"
+                    @click="addNewInputToken"
+                    @keypress="addNewInputToken"
                   >
                     +
                   </div>
                 </TransitionGroup>
-              </div>
-              <div class="row">
-                <div class="col-6">
-                  <div
-                    v-if="isInputTokensAddAvailable"
-                    class="add-token-text"
-                    @click="addNewInputToken"
-                    @keypress="addNewInputToken"
-                  >
-                    + Select token
-                  </div>
-                </div>
-                <div
-                  v-if="inputTokensWithSelectedTokensCount"
-                  class="col-6"
-                >
-                  <div
-                    @click="maxAllMethod"
-                    @keypress="maxAllMethod"
-                    class="add-token-text max-all"
-                  >
-                    Max all
-                  </div>
-                </div>
               </div>
             </div>
 
@@ -127,72 +113,60 @@
         <div v-if="sumOfAllSelectedTokensInUsd">
           <div class="transaction-info-container">
             <div class="transaction-info-body">
-              <div class="row">
-                <div class="col-6 py-0">
-                  <div class="transaction-info-title">Slippage</div>
-                </div>
-                <div class="col-6 py-0">
-                  <div class="transaction-info">
-                    {{ slippagePercent * 1 }}%
-                    <span class="transaction-info-additional">
-                      ({{
-                        formatMoney(
-                          (sumOfAllSelectedTokensInUsd * slippagePercent) / 100,
-                          3,
-                        )
-                      }})$
-                    </span>
-                  </div>
+              <div class="zap-row">
+                <div class="transaction-info-title">Slippage</div>
+                <div class="transaction-info">
+                  {{ slippagePercent * 1 }}%
+                  <span class="transaction-info-additional">
+                    ({{
+                      formatMoney(
+                        (sumOfAllSelectedTokensInUsd * slippagePercent) / 100,
+                        3,
+                      )
+                    }})$
+                  </span>
                 </div>
               </div>
 
               <div
-                class="row py-2"
+                class="zap-row"
                 v-if="ifMoreThanOneSelectedTokensAdded"
               >
-                <div class="col-6 py-0 with-tooltip">
-                  <div class="transaction-info-title">Multi-swap Odos fee</div>
-                  <div>
-                    <!-- <Tooltip
+                <div class="transaction-info-title">Multi-swap Odos fee</div>
+                <div>
+                  <!-- <Tooltip
                       text="This fee is charged by Odos for using multi-input/multi-output"
                     /> -->
-                  </div>
                 </div>
-                <div class="col-6 py-0">
-                  <div class="transaction-info">
-                    {{ multiSwapOdosFeePercent * 1 }}%
-                    <span class="transaction-info-additional">
-                      ({{
-                        formatMoney(
-                          (sumOfAllSelectedTokensInUsd
-                            * multiSwapOdosFeePercent)
-                            / 100,
-                          3,
-                        )
-                      }})$
-                    </span>
-                  </div>
+                <div class="transaction-info">
+                  {{ multiSwapOdosFeePercent * 1 }}%
+                  <span class="transaction-info-additional">
+                    ({{
+                      formatMoney(
+                        (sumOfAllSelectedTokensInUsd
+                          * multiSwapOdosFeePercent)
+                          / 100,
+                        3,
+                      )
+                    }})$
+                  </span>
                 </div>
               </div>
 
-              <div class="row">
-                <div class="col-6 py-0 with-tooltip">
-                  <div class="transaction-info-title">Single-swap Odos fee</div>
-                  <div>
-                    <!-- <Tooltip text="Single-input/output swaps are free" /> -->
-                  </div>
+              <div class="zap-row">
+                <div class="transaction-info-title">Single-swap Odos fee</div>
+                <div>
+                  <!-- <Tooltip text="Single-input/output swaps are free" /> -->
                 </div>
-                <div class="col-6 py-0">
-                  <div class="transaction-info">
-                    0.00% <span class="transaction-info-additional">(0)$</span>
-                  </div>
+                <div class="transaction-info">
+                  0.00% <span class="transaction-info-additional">(0)$</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div style="padding-top: 10px">
+        <div>
           <SwapSlippageSettings
             :currentSlippageChanged="handleCurrentSlippageChanged"
             :selected-input-tokens="selectedInputTokens"
@@ -258,6 +232,7 @@
               full
               v-else-if="isAnyInputsNeedApprove"
               class="swap-button"
+              :loading="approvingPending"
               @click="approveTrigger(firstInputInQueueForToApprove)"
               @keypress="approveTrigger(firstInputInQueueForToApprove)"
             >
@@ -269,6 +244,7 @@
               full
               v-else-if="additionalSwapStepType === 'APPROVE'"
               class="swap-button"
+              :loading="approvingPending"
               @click="
                 toApproveAndDepositSteps(lastZapResponseData, lastPoolInfoData)
               "
@@ -282,6 +258,7 @@
               btn-size="large"
               full
               v-else-if="additionalSwapStepType === 'DEPOSIT'"
+              :loading="isSwapLoading"
               @click="
                 depositGauge(
                   lastPutIntoPoolEvent,
@@ -306,31 +283,31 @@
               btn-size="large"
               full
               v-else
-              @click="stake"
-              @keypress="stake"
+              @click="stakeTrigger"
+              @keypress="stakeTrigger"
               class="swap-button"
             >
               {{ btnName }}
             </ButtonComponent>
           </div>
 
-          <div class="label-container pt-3">
+          <!-- <div class="label-container pt-3">
             <div
               v-if="selectedInputTokens.length > 0"
               class="row"
             >
               <div class="col-12">
-                <!-- <ZapSteps
+                <ZapSteps
                   :selected-input-tokens="selectedInputTokens"
                   :click-on-stake="clickOnStake"
                   :additional-swap-step-type="additionalSwapStepType"
                   :current-zap-platform-contract-type="
                     currentZapPlatformContractType
                   "
-                /> -->
+                />
               </div>
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
@@ -366,10 +343,9 @@ import axios from 'axios';
 import {
   updateTokenValue,
   maxAll,
-  getDefaultSecondtoken,
-  getSecondDefaultSecondtoken,
   getNewOutputToken,
   getNewInputToken,
+  getTokenBySymbol,
 } from '@/store/helpers/index.ts';
 import {
   getProportion,
@@ -393,7 +369,7 @@ import BigNumber from 'bignumber.js';
 import { approveToken, getAllowanceValue } from '@/utils/contractApprove.ts';
 import { poolTokensForZapMap } from '@/store/views/main/pools/mocks.ts';
 import { onLeaveList, onEnterList, beforeEnterList } from '@/utils/animations.ts';
-import SuccessZapModal from './SuccessZapModal.vue';
+import SuccessZapModal from '../SuccessZapModal.vue';
 // import ZapSteps from '@/components/zap/ZapSteps.vue';
 // import ZapChangeNetwork from '@/components/zap/ZapChangeNetwork.vue';
 
@@ -422,6 +398,7 @@ export default {
   },
   data() {
     return {
+      approvingPending: false,
       inputTokens: [] as any[],
       outputTokens: [] as any[],
       maxInputTokens: 6,
@@ -468,6 +445,7 @@ export default {
   computed: {
     ...mapState('odosData', [
       'isTokensLoadedAndFiltered',
+      'tokenSeparationScheme',
       'tokensContractMap',
       'isShowDecreaseAllowance',
       'additionalSwapStepType',
@@ -480,6 +458,7 @@ export default {
       'successData',
       'swapResponseConfirmInfo',
       'routerContract',
+      'odosReferalCode',
     ]),
 
     ...mapState('zapinData', [
@@ -494,7 +473,6 @@ export default {
       'isAllDataLoaded',
       'isAvailableOnNetwork',
       'routerContract',
-      'odosReferalCode',
     ]),
     ...mapGetters('network', ['getParams', 'networkId']),
     ...mapGetters('theme', ['light']),
@@ -777,6 +755,15 @@ export default {
       }
     },
   },
+  created() {
+    if (this.zapPool.chain !== this.networkId) return;
+
+    this.firstInit();
+
+    setTimeout(() => {
+      this.loadZapContract();
+    }, 300);
+  },
   methods: {
     ...mapActions('swapModal', ['showSwapModal', 'showMintView']),
     ...mapActions('odosData', [
@@ -789,19 +776,21 @@ export default {
       'startSwapConfirmTimer',
       'stopSwapConfirmTimer',
     ]),
-    ...mapActions('zapIn', ['loadZapContract']),
+    ...mapActions('zapinData', ['loadZapContract']),
     ...mapActions('errorModal', ['showErrorModal', 'showErrorModalWithMsg']),
     ...mapActions('waitingModal', ['showWaitingModal', 'closeWaitingModal']),
     ...mapActions('walletAction', ['connectWallet']),
 
-    ...mapMutations('odosData', ['changeState']),
+    ...mapMutations('zapinData', ['changeState']),
     onLeaveList,
     beforeEnterList,
     onEnterList,
-    updateTokenValue,
     maxAll,
     formatMoney,
 
+    updateTokenValueMethod(token:any, val: any) {
+      updateTokenValue(token, val, this.checkApproveForToken, this.updateQuotaInfo);
+    },
     selectFormToken() {
       this.showSelectTokensModals(true);
     },
@@ -819,7 +808,7 @@ export default {
         val: this.zapPool,
       });
       this.changeState({
-        field: 'allTokensListeparationScheme',
+        field: 'tokenSeparationScheme',
         val: 'POOL_SWAP',
       });
       this.changeState({
@@ -829,9 +818,7 @@ export default {
 
       // todo: move to backend
       const poolTokens = poolTokensForZapMap[this.zapPool.address];
-      if (!poolTokens) {
-        return;
-      }
+      if (!poolTokens) return;
 
       this.$store.commit('odosData/changeState', {
         field: 'listOfBuyTokensAddresses',
@@ -841,9 +828,7 @@ export default {
       this.init();
       this.clearForm();
 
-      if (!this.isAvailableOnNetwork) {
-        this.mintAction();
-      }
+      if (!this.isAvailableOnNetwork) this.mintAction();
     },
 
     init() {
@@ -857,17 +842,19 @@ export default {
       });
     },
     addOvnTokenToInput() {
-      if (!this.ovnTokens || !this.ovnTokens.length) {
-        return;
-      }
-
+      if (!this.ovnTokens || !this.ovnTokens.length) return;
       const ovnToken = this.ovnTokens[0];
       ovnToken.selected = true;
       this.addSelectedTokenToInputList(ovnToken, true);
     },
     addDefaultPoolToken() {
-      const poolSelectedToken = getDefaultSecondtoken(this.$store.state.odosData);
-      const ovnSelectSelectedToken = getSecondDefaultSecondtoken(this.$store.state.odosData);
+      const poolTokens = poolTokensForZapMap[this.zapPool.address];
+      const poolSelectedToken = getTokenBySymbol(poolTokens[0].name, this.allTokensList);
+      const ovnSelectSelectedToken = getTokenBySymbol(poolTokens[1].name, this.allTokensList);
+
+      console.log(this.$store.state, '--this.$store.state');
+      console.log(poolSelectedToken, '--poolSelectedToken');
+      console.log(ovnSelectSelectedToken, '--ovnSelectSelectedToken');
       if (!poolSelectedToken || !ovnSelectSelectedToken) {
         this.addNewInputToken();
         this.addNewOutputToken();
@@ -1016,16 +1003,20 @@ export default {
       // init first token value
       this.selectedOutputTokens[0].value = 100;
     },
-    async stake() {
+    async stakeTrigger() {
+      console.log(this.zapPool, '--012');
       if (!this.zapPool) return;
-      this.lastPoolInfoData = poolsInfoMap[this.zapPool.address];
-      if (!this.lastPoolInfoData) {
-        return;
-      }
 
-      if (this.isSwapLoading) {
-        return;
-      }
+      this.$store.commit('odosData/changeState', {
+        field: 'lastPoolInfoData',
+        val: poolsInfoMap[this.zapPool.address],
+      });
+
+      console.log(this.lastPoolInfoData, '--011');
+
+      console.log(this.isSwapLoading, '--isSwapLoading');
+      if (!this.lastPoolInfoData) return;
+      if (this.isSwapLoading) return;
 
       if (
         this.inputTokensWithSelectedTokensCount < 1
@@ -1041,18 +1032,27 @@ export default {
       const outputToken0Price = this.selectedOutputTokens[0].selectedToken.price;
       const outputToken1Price = this.selectedOutputTokens[1].selectedToken.price;
 
+      console.log('--0');
       const reserves = await getProportion(
         this.zapPool.address,
         this.zapPool,
         this.zapContract,
       );
-      const sumReserves = reserves.token0Amount * outputToken0Price
-        + reserves.token1Amount * outputToken1Price;
+      console.log(reserves, '--0');
+      const sumReserves = (
+        new BigNumber(reserves.token0Amount).times(outputToken0Price)
+      )
+        .plus(
+          new BigNumber(reserves.token1Amount).times(outputToken1Price),
+        ).toNumber();
 
+      console.log(sumReserves, '--sumReserves');
       const userInputTokens = this.selectedInputTokens;
       const poolOutputTokens = this.selectedOutputTokens;
       const formulaInputTokens = [];
       let formulaOutputTokens = [];
+
+      console.log('--000');
       for (let i = 0; i < userInputTokens.length; i++) {
         const inputToken = userInputTokens[i];
         const userInputToken = inputToken.selectedToken;
@@ -1085,6 +1085,7 @@ export default {
         });
       }
 
+      console.log('--1');
       // sort output formula and fill amount by 0;
       const formulaResultOutputWithZero = [];
       for (let i = 0; i < poolOutputTokens.length; i++) {
@@ -1124,6 +1125,18 @@ export default {
       );
       const outputPrices = formulaOutputTokens.map((token: any) => token.price);
 
+      console.log({
+        inputTokensDecimals: [...inputDecimals],
+        inputTokensAddresses: [...inputAddresses],
+        inputTokensAmounts: [...inputAmounts],
+        inputTokensPrices: [...inputPrices],
+        outputTokensDecimals: [...outputDecimals],
+        outputTokensAddresses: [...outputAddresses],
+        outputTokensAmounts: [...outputAmounts],
+        outputTokensPrices: [...outputPrices],
+        proportion0: new BigNumber(reserves[0]).times(outputPrices[0]).div(sumReserves).toNumber(),
+      }, '--proportions1');
+
       const proportions = calculateProportionForPool({
         inputTokensDecimals: [...inputDecimals],
         inputTokensAddresses: [...inputAddresses],
@@ -1133,19 +1146,21 @@ export default {
         outputTokensAddresses: [...outputAddresses],
         outputTokensAmounts: [...outputAmounts],
         outputTokensPrices: [...outputPrices],
-        proportion0: (reserves[0] * outputPrices[0]) / sumReserves,
+        proportion0: new BigNumber(reserves[0]).times(outputPrices[0]).div(sumReserves).toNumber(),
       });
 
       proportions.outputTokens = proportions.outputTokens.filter(
         (item: any) => item.proportion > 0,
       );
 
+      console.log(proportions, '----proportions');
+
       const request = {
         chainId: this.networkId,
         inputTokens: proportions.inputTokens,
         outputTokens: proportions.outputTokens,
-        gasPrice: actualGas,
-        userAddr: this.zapContract.options.address,
+        gasPrice: actualGas as any,
+        userAddr: this.zapContract.target,
         slippageLimitPercent: this.getSlippagePercent(),
       };
 
@@ -1153,7 +1168,7 @@ export default {
         chainId: request.chainId,
         inputTokens: request.inputTokens,
         outputTokens: request.outputTokens,
-        gasPrice: request.gasPrice,
+        gasPrice: request.gasPrice?.baseFee,
         userAddr: ethers.getAddress(
           request.userAddr.toLowerCase(),
         ),
@@ -1165,6 +1180,8 @@ export default {
         disableRFQs: false,
         referralCode: this.odosReferalCode,
       };
+
+      console.log(requestData, '--requestData');
 
       this.odosSwapRequest(requestData)
         .then(async (data: any) => {
@@ -1263,17 +1280,27 @@ export default {
 
         if (key === 'PutIntoPool') {
           putIntoPoolEvent = value;
-          this.lastPutIntoPoolEvent = putIntoPoolEvent;
+          this.$store.commit('odosData/changeState', {
+            field: 'lastPutIntoPoolEvent',
+            val: putIntoPoolEvent,
+          });
         }
 
         if (key === 'ReturnedToUser') {
           returnedToUserEvent = value;
-          this.lastReturnedToUserEvent = returnedToUserEvent;
+          this.$store.commit('odosData/changeState', {
+            field: 'lastReturnedToUserEvent',
+            val: returnedToUserEvent,
+          });
         }
       }
 
       this.stopSwapConfirmTimer();
-      this.additionalSwapStepType = 'APPROVE';
+
+      this.$store.commit('odosData/changeState', {
+        field: 'additionalSwapStepType',
+        val: 'APPROVE',
+      });
 
       if (lastPoolInfoData.approveType === 'NFT') {
         this.approveNftGauge(
@@ -1302,9 +1329,8 @@ export default {
           const tokenId = await this.getLastNftId();
           this.lastNftTokenId = tokenId;
           const params = { from: this.account, gasPrice: this.gasPriceGwei };
-          this.gaugeContract.methods
-            .approve(this.poolTokenContract.options.address, tokenId)
-            .send(params)
+          this.gaugeContract
+            .approve(this.poolTokenContract.target, tokenId, params)
             .then(() => {
               this.additionalSwapStepType = 'DEPOSIT';
               this.closeWaitingModal();
@@ -1336,12 +1362,10 @@ export default {
       }
     },
     getLastNftId() {
-      return this.gaugeContract.methods
+      return this.gaugeContract
         .balanceOf(this.account)
-        .call()
-        .then((count: any) => this.gaugeContract.methods
+        .then((count: any) => this.gaugeContract
           .tokenOfOwnerByIndex(this.account, count - 1)
-          .call()
           .then((tokenId: any) => tokenId));
     },
     async approveGauge(
@@ -1370,7 +1394,11 @@ export default {
           this.gasPriceGwei,
         )
           .then(() => {
-            this.additionalSwapStepType = 'DEPOSIT';
+            this.$store.commit('odosData/changeState', {
+              field: 'additionalSwapStepType',
+              val: 'DEPOSIT',
+            });
+
             this.closeWaitingModal();
             this.depositGauge(
               putIntoPoolEvent,
@@ -1384,7 +1412,10 @@ export default {
             this.closeWaitingModal();
           });
       } else {
-        this.additionalSwapStepType = 'DEPOSIT';
+        this.$store.commit('odosData/changeState', {
+          field: 'additionalSwapStepType',
+          val: 'DEPOSIT',
+        });
         this.depositGauge(
           putIntoPoolEvent,
           returnedToUserEvent,
@@ -1429,14 +1460,20 @@ export default {
           // event
           const bus = useEventBus('zap-transaction-finished');
           bus.emit(true);
-          this.additionalSwapStepType = null;
+          this.$store.commit('odosData/changeState', {
+            field: 'additionalSwapStepType',
+            val: null,
+          });
           this.clearZapData();
 
           this.loadBalances();
         })
         .catch(() => {
           this.closeWaitingModal();
-          this.additionalSwapStepType = 'DEPOSIT';
+          this.$store.commit('odosData/changeState', {
+            field: 'additionalSwapStepType',
+            val: 'DEPOSIT',
+          });
         });
     },
     clearZapData() {
@@ -1452,12 +1489,18 @@ export default {
 
         if (key === 'PutIntoPool') {
           putIntoPoolEvent = value;
-          this.lastPutIntoPoolEvent = putIntoPoolEvent;
+          this.$store.commit('odosData/changeState', {
+            field: 'lastPutIntoPoolEvent',
+            val: putIntoPoolEvent,
+          });
         }
 
         if (key === 'ReturnedToUser') {
           returnedToUserEvent = value;
-          this.lastReturnedToUserEvent = returnedToUserEvent;
+          this.$store.commit('odosData/changeState', {
+            field: 'lastReturnedToUserEvent',
+            val: returnedToUserEvent,
+          });
         }
       }
 
@@ -1511,7 +1554,7 @@ export default {
       for (let i = 0; i < requestOutputTokens.length; i++) {
         requestOutput.push({
           tokenAddress: requestOutputTokens[i].tokenAddress,
-          receiver: this.zapContract.options.address,
+          receiver: this.zapContract.target,
         });
       }
 
@@ -1564,12 +1607,16 @@ export default {
         gasPrice: this.gasPriceGwei,
       };
 
-      this.zapContract.methods
-        .zapIn(txData, gaugeData)
-        .send(params)
+      console.log(txData, 'ZAPIN');
+      console.log(gaugeData, 'gaugeData');
+      console.log(params, 'params');
+      this.zapContract
+        .zapIn(txData, gaugeData, params)
         .then((data: any) => {
-          this.lastZapResponseData = data;
-
+          this.$store.commit('odosData/changeState', {
+            field: 'lastZapResponseData',
+            val: data,
+          });
           if (
             this.currentZapPlatformContractType.type
             === 'LP_WITH_STAKE_IN_ONE_STEP'
@@ -1581,6 +1628,7 @@ export default {
           if (
             this.currentZapPlatformContractType.type === 'LP_STAKE_DIFF_STEPS'
           ) {
+            console.log(this.lastZapResponseData, '-this.lastZapResponseData');
             this.toApproveAndDepositSteps(this.lastZapResponseData, poolInfo);
             return;
           }
@@ -1638,10 +1686,17 @@ export default {
       const outputToken0Price = this.selectedOutputTokens[0].selectedToken.price;
       const outputToken1Price = this.selectedOutputTokens[1].selectedToken.price;
 
-      const sumReserves = reserves.token0Amount * outputToken0Price
-        + reserves.token1Amount * outputToken1Price;
-      this.selectedOutputTokens[0].value = ((reserves[0] * outputToken0Price) / sumReserves) * 100;
-      this.selectedOutputTokens[1].value = ((reserves[1] * outputToken1Price) / sumReserves) * 100;
+      const sumReserves = (
+        new BigNumber(reserves.token0Amount).times(outputToken0Price)
+      )
+        .plus(
+          new BigNumber(reserves.token1Amount).times(outputToken1Price),
+        ).toNumber();
+
+      this.selectedOutputTokens[0]
+        .value = ((Number(reserves[0]) * Number(outputToken0Price)) / sumReserves) * 100;
+      this.selectedOutputTokens[1]
+        .value = ((Number(reserves[1]) * Number(outputToken1Price)) / sumReserves) * 100;
 
       this.recalculateOutputTokensSum();
     },
@@ -1711,7 +1766,7 @@ export default {
       const allowanceValue = await getAllowanceValue(
         tokenContract,
         this.account,
-        this.zapContract.options.address,
+        this.zapContract.target,
       );
 
       selectedToken.approveData.allowanceValue = allowanceValue;
@@ -1725,13 +1780,14 @@ export default {
         return;
       }
 
-      selectedToken
-        .approveData.approved = selectedToken.approveData.allowanceValue >= checkedAllowanceValue;
+      selectedToken.approveData.approved = new BigNumber(selectedToken.approveData.allowanceValue)
+        .isGreaterThanOrEqualTo(checkedAllowanceValue);
     },
 
     async approveTrigger(token: any) {
       this.showWaitingModal('Approving in process');
 
+      this.approvingPending = true;
       await this.checkApproveForToken(token, token.contractValue);
       const { selectedToken } = token;
       if (selectedToken.approveData.approved) {
@@ -1747,7 +1803,7 @@ export default {
 
       const tx = await approveToken(
         tokenContract,
-        this.zapContract.options.address,
+        this.zapContract.target,
         approveValue,
         this.account,
         this.gasPriceGwei,
@@ -1761,6 +1817,7 @@ export default {
       const finishTx = () => {
         this.checkApproveForToken(token, token.contractValue);
         this.closeWaitingModal();
+        this.approvingPending = false;
       };
 
       if (!tx) {
@@ -1770,8 +1827,6 @@ export default {
 
       await tx.wait();
       finishTx();
-
-      console.log(tx, '---tx');
     },
 
     getRequestInputTokens(ignoreNullable: boolean) {
@@ -1841,6 +1896,7 @@ export default {
           ? tokenSum / token.selectedToken.price
           : tokenSum * token.selectedToken.price;
         token.sum = this.formatMoney(sum, 4);
+        this.outputTokens[i] = token;
       }
     },
     subTokensProportions(currentToken: any, difference: any) {
@@ -1948,11 +2004,11 @@ export default {
         const newValue = ovnToken.value - diff;
 
         if (newValue <= 0) {
-          this.updateTokenValue(ovnToken, 0, this.checkApproveForToken, this.updateQuotaInfo);
+          updateTokenValue(ovnToken, 0, this.checkApproveForToken, this.updateQuotaInfo);
           return;
         }
 
-        this.updateTokenValue(ovnToken, newValue, this.checkApproveForToken, this.updateQuotaInfo);
+        updateTokenValue(ovnToken, newValue, this.checkApproveForToken, this.updateQuotaInfo);
       }, 30);
     },
 
@@ -2019,7 +2075,7 @@ export default {
 
       if (isAddAllBalance) {
         setTimeout(() => {
-          this.updateTokenValue(
+          updateTokenValue(
             newInputToken,
             newInputToken.selectedToken.balanceData.balance,
             this.checkApproveForToken,
@@ -2223,311 +2279,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@media only screen and (max-width: 960px) {
-  .add-token-text {
-    font-size: 16px;
-    line-height: 24px;
-  }
-
-  .swap-button-title {
-    font-size: 16px;
-    line-height: 22px;
-  }
-}
-
-/* tablet */
-@media only screen and (min-width: 960px) and (max-width: 1400px) {
-  .add-token-text {
-    font-size: 16px;
-    line-height: 24px;
-  }
-
-  .swap-button-title {
-    font-size: 18px;
-    line-height: 22px;
-  }
-}
-
-/* full */
-@media only screen and (min-width: 1400px) {
-  .add-token-text {
-    font-size: 16px;
-    line-height: 24px;
-  }
-
-  .swap-button-title {
-    font-size: 18px;
-    line-height: 22px;
-  }
-}
-
-@media only screen and (min-width: 1300px) {
-  .add-token-text {
-    font-size: 16px;
-    line-height: 24px;
-  }
-
-  .swap-button-title {
-    font-size: 18px;
-    line-height: 22px;
-  }
-}
-
-.swap-container {
-  z-index: 48 !important;
-}
-
-.swap-settings {
-  text-align: end;
-  cursor: pointer;
-}
-.add-token-text {
-  font-style: normal;
-  font-weight: 400;
-
-  color: #1c95e7;
-  cursor: pointer;
-}
-
-.add-token-text-disabled {
-  cursor: default !important;
-  color: #707a8b;
-}
-
-.swap-title {
-  font-style: normal;
-  font-weight: 400;
-  font-size: 18px;
-  line-height: 28px;
-
-  color: var(--main-gray-text);
-}
-
-.input-component-container {
-  margin-bottom: 4px;
-}
-
-.max-all {
-  text-align: end;
-}
-.change-swap-container {
-  width: 44px;
-  height: 44px;
-
-  box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.2);
-  border-radius: 12px;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  display: table;
-  margin: 0 auto;
-}
-
-.change-swap-image {
-  text-align: center; /* center the child element's content horizontally */
-  padding-top: 8px;
-}
-
-.swap-button {
-  text-align: center;
-  align-items: center;
-  gap: 8px;
-
-  width: 100%;
-  height: 48px;
-
-  padding-top: 15px;
-
-  /* Blue gradient */
-
-  background: linear-gradient(
-    91.26deg,
-    #28a0f0 0%,
-    rgba(6, 120, 196, 0.9917) 100%
-  );
-  border-radius: 2px;
-
-  cursor: pointer;
-}
-
-.swap-button-title {
-  font-style: normal;
-  font-weight: 400;
-
-  color: #ffffff;
-}
-
-.disable-button {
-  justify-content: center;
-  align-items: center;
-  padding: 8px 12px;
-
-  height: 48px;
-
-  background: var(--action-btn-bg);
-  border-radius: 2px;
-}
-
-.disable-button-title {
-  text-align: center;
-  align-items: center;
-  gap: 8px;
-
-  width: 100%;
-
-  padding-top: 7px;
-
-  font-style: normal;
-  font-weight: 400;
-  font-size: 18px;
-  line-height: 22px;
-
-  color: var(--progress-text);
-}
-
-.decrease-allowance {
-  font-size: 14px;
-  font-weight: 400;
-  height: auto;
-  color: var(--main-gray-text);
-  letter-spacing: 0.1px;
-  line-height: 22px;
-  cursor: pointer;
-}
-
-.transaction-info-container {
-  padding: 20px;
-  max-width: 600px;
-}
-
-.transaction-info-title {
-  font-style: normal;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 24px;
-
-  color: #707a8b;
-}
-
-.transaction-info {
-  font-style: normal;
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 24px;
-  text-align: end;
-
-  color: var(--main-gray-text);
-}
-
-.transaction-info-additional {
-  font-style: normal;
-  font-weight: 200;
-  font-size: 16px;
-  line-height: 24px;
-
-  color: var(--main-gray-text);
-}
-
-.transaction-info-address {
-  text-decoration: underline;
-  font-weight: bold;
-  text-align: end;
-  color: var(--main-gray-text);
-}
-
-.transaction-info-footer {
-  border-top: 1px solid #dee1e5;
-  padding-top: 22px;
-}
-
-.transaction-info-body {
-  padding-bottom: 20px;
-}
-
-.loader-container {
-  padding-top: 50px;
-  min-height: 80px;
-}
-
-.rotate {
-  transform-origin: center;
-  transition: transform 0.7s ease;
-}
-
-.rotate:hover {
-  transform: rotate(180deg);
-}
-
-.dont-work-on-network {
-  font-style: normal;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 24px;
-
-  color: #cf3f92;
-}
-
-.dont-work-on-network-container {
-  text-align: center;
-}
-
-.slippage-info-container {
-  background: rgba(254, 127, 45, 0.1);
-  padding: 8px;
-  width: 100%;
-  margin-top: 10px;
-  text-align: center;
-}
-
-.slippage-info-title {
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0em;
-  text-align: left;
-  color: rgba(254, 127, 45, 1);
-}
-
-.odos-fees-container {
-  display: flex;
-  flex-direction: row;
-}
-
-.odos-fees-title {
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 24px;
-  text-align: end;
-  color: var(--secondary-gray-text);
-}
-
-.with-tooltip {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-
-.swap-form__body-arrow {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 20px auto;
-  background-color: var(--color-5);
-  border-radius: 50%;
-  width: 34px;
-  height: 34px;
-
-  svg {
-    fill: var(--color-2);
-  }
-
-  [data-theme="dark"] & {
-    background-color: var(--color-7);
-  }
-}
-
-.swap-button-container {
-  margin-top: 20px;
-}
+@import "./styles.scss"
 </style>

@@ -199,4 +199,9 @@ export default {
 .modal__activator {
   position: absolute;
 }
+
+.modal__body {
+  max-height: 80vh;
+  overflow-y: auto;
+}
 </style>

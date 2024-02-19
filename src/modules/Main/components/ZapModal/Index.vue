@@ -15,7 +15,7 @@
 
 <script lang="ts">
 import ModalComponent from '@/components/Modal/Index.vue';
-import ZapForm from '@/modules/Main/components/ZapModal/ZapForm.vue';
+import ZapForm from '@/modules/Main/components/ZapModal/ZapForm/Index.vue';
 
 export default {
   name: 'ZapModal',
@@ -60,5 +60,6 @@ export default {
 .modal-content {
   padding: 24px;
   min-width: 600px;
+  max-width: 600px;
 }
 </style>

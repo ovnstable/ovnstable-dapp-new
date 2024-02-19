@@ -745,7 +745,8 @@ export default defineComponent({
     addDefaultOvnToken() {
       const symbol = this.$route.query.symbol ? this.$route.query.symbol : null;
       const ovnSelectedToken: any = getDefaultSecondtoken(
-        this.$store.state.odosData as any,
+        this.tokenSeparationScheme,
+        this.allTokensList,
         symbol as string | null,
       );
       if (!ovnSelectedToken) {
@@ -1712,7 +1713,6 @@ export default defineComponent({
     }
   }
 }
-
 .swap-form__body-block__inputs-add {
   display: flex;
   align-items: center;
