@@ -7,13 +7,21 @@
     <div class="insurance__modal-mint-redeem">
       <div class="insurance__modal-mint-redeem-buttons">
         <ButtonComponent
-          :class="{ 'insurance__modal-mint-redeem-button-selected': selectedAction === 'mint' }"
+          :class="{
+            'insurance__modal-mint-redeem-button-selected': selectedAction === 'mint',
+            'insurance__modal-mint-redeem-button-first': true,
+            'insurance__modal-mint-redeem-button-overlap-first': selectedAction !== 'mint',
+          }"
           @click="selectedAction = 'mint'"
         >
           <p>MINT</p>
         </ButtonComponent>
         <ButtonComponent
-          :class="{ 'insurance__modal-mint-redeem-button-selected': selectedAction === 'redeem' }"
+          :class="{
+            'insurance__modal-mint-redeem-button-selected': selectedAction === 'redeem',
+            'insurance__modal-mint-redeem-button-last': true,
+            'insurance__modal-mint-redeem-button-overlap-last': selectedAction === 'redeem',
+          }"
           @click="selectedAction = 'redeem'"
         >
           <p>REDEEM</p>
@@ -104,20 +112,44 @@ export default defineComponent({
   display: flex;
   flex-direction: row;
   align-self: center;
+  position: relative;
+
   button {
+    font-size: 14px;
     background-color: var(--color-5);
     color: var(--color-2);
-    border-radius: 30px;
-    padding: 2px 12px;
-    border: 1px solid var(--color-1);
+    border: 1px solid var(--color-6);
     box-shadow: none;
+    margin-right: -10px;
+    position: relative;
+    z-index: 0;
+
+    &:first-child {
+      border-radius: 30px;
+    }
+
+    &:last-child {
+      border-radius: 0px 30px 30px 0px;
+      margin-right: 0
+    }
   }
-  button.insurance__modal-mint-redeem-button-selected {
+  .insurance__modal-mint-redeem-button-overlap-first {
+    border-radius: 30px 0px 0px 30px !important;
+    margin-left: 0
+  }
+  .insurance__modal-mint-redeem-button-overlap-last {
+    border-radius: 30px 30px 30px 30px !important;
+  }
+
+  .insurance__modal-mint-redeem-button-selected {
     background-color: var(--color-6);
-    padding: 2px 26px;
     color: var(--color-1);
+    border-color: var(--color-1);
+    z-index: 1;
+    padding: 2px 26px;
   }
 }
+
 .insurance__modal-mint-redeem-mint-text {
   text-align: center;
   margin-top: 24px;
