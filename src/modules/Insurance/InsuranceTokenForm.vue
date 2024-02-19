@@ -8,7 +8,6 @@
         is-custom
         placeholder="0"
         full-width
-        :disabled="disabled"
         @input="inputUpdate"
       />
       <div class="input-tokens__selected">
@@ -28,7 +27,6 @@
     </div>
   </div>
 </template>
-
 
 <!-- eslint-disable no-param-reassign -->
 <script lang="ts">
@@ -91,7 +89,8 @@ export default {
       return true;
     },
     inputUpdate(value: any) {
-      this.updateTokenValueFunc(this.tokenInfo, value);
+      console.log(value);
+      // this.updateTokenValueFunc(this.tokenInfo, value);
     },
     clickOnBalance() {
       if (this.token.selectedToken && this.token.selectedToken.balanceData.balance) {
