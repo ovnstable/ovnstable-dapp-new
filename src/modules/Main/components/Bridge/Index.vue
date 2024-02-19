@@ -22,11 +22,12 @@
 
 <!-- eslint-disable no-promise-executor-return -->
 <script lang="ts">
+import { defineComponent } from 'vue';
 import { mapGetters } from 'vuex';
 import { chainContractsMap } from '@/utils/contractsMap.ts';
 import Spinner from '@/components/Spinner/Index.vue';
 
-export default {
+export default defineComponent({
   name: 'BridgeComponent',
   components: {
     Spinner,
@@ -198,7 +199,7 @@ export default {
       console.log(`Iframe loaded with link: ${link}`);
     },
   },
-};
+});
 </script>
 
 <style scoped>

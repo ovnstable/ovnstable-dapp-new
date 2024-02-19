@@ -69,6 +69,7 @@
         @on-click="approveTrigger"
         btn-size="large"
         full
+        :loading="approveLoading"
       >
         Approve Required
       </ButtonComponent>
@@ -87,6 +88,7 @@
 <!-- eslint-disable camelcase -->
 <!-- eslint-disable consistent-return -->
 <!-- eslint-disable no-underscore-dangle -->
+<!-- eslint-disable no-param-reassign -->
 <script lang="ts">
 import { mapActions, mapGetters, mapState } from 'vuex';
 import SwitchTabs from '@/components/SwitchTabs/Index.vue';
@@ -118,12 +120,13 @@ export default {
   },
   data() {
     return {
-      inputToken: getNewInputToken() as any,
+      inputToken: getNewInputToken(),
       outputToken: getNewInputToken(),
       activeMintTab: 0,
       activeWrapTab: 0,
       allTokensList: [],
       isAllDataLoaded: false,
+      approveLoading: false,
       isApprovedToken: false,
 
       mintTabs: [
@@ -162,11 +165,11 @@ export default {
       }
     },
     networkId() {
-      this.initTokens();
+      this.initMintRedeem();
     },
   },
   mounted() {
-    this.initTokens();
+    this.initMintRedeem();
   },
   computed: {
     ...mapGetters('network', ['networkId', 'networkName']),
@@ -198,15 +201,20 @@ export default {
     gasChange() {
       console.log('gasChange');
     },
-    // checkForApprove(token: any, val: string) {
-
-    // },
+    initMintRedeem() {
+      this.initTokens();
+      this.inputToken = getNewInputToken();
+      this.outputToken = getNewInputToken();
+    },
     async approveTrigger() {
       this.showWaitingModal('Approving in process');
 
       const tokenData = this.inputToken;
       const tokenContract = this.tokensContractMap[tokenData.address];
-      const approveValue = '10000000000000';
+      const approveValue = new BigNumber(10)
+        .pow(tokenData.decimals)
+        .times(100000)
+        .toFixed(0);
 
       const networkId = this.networkId as keyof typeof MINTREDEEM_SCHEME;
       const pairData = MINTREDEEM_SCHEME[networkId]
@@ -220,7 +228,7 @@ export default {
       if (pairData) exchangeAddress = pairData.exchange;
       if (!exchangeAddress) return;
 
-      const transaction = await approveToken(
+      const tx = await approveToken(
         tokenContract,
         exchangeAddress,
         approveValue,
@@ -233,16 +241,30 @@ export default {
           this.showErrorModalWithMsg({ errorType: 'approve', errorMsg: e });
         });
 
-      if (transaction) {
-        transaction.wait();
-        this.closeWaitingModal();
+      const finishTx = () => {
         this.checkApprove(this);
+        this.closeWaitingModal();
+      };
+
+      if (!tx) {
+        finishTx();
+        return;
       }
+
+      await tx.wait();
+      finishTx();
     },
     checkApprove: debounce(async (self: any) => {
+      if (!self.inputToken.address) return;
+      self.approveLoading = true;
+
       const networkId = self.networkId as keyof typeof MINTREDEEM_SCHEME;
       const exchangeContract = MINTREDEEM_SCHEME[networkId]
-        .find((_) => _.token0.toLowerCase() === self.inputToken.address.toLowerCase());
+        .find((_) => {
+          const tokenAddress = self.isMintActive
+            ? _.token0.toLowerCase() : _.token1.toLowerCase();
+          return tokenAddress === self.inputToken.address.toLowerCase();
+        });
       const tokenAddress = Object.values(self.contracts)
         .find((cData: any) => (
           cData ? cData.target.toLowerCase() === self.inputToken.address.toLowerCase() : false
@@ -263,7 +285,7 @@ export default {
 
       const isAllowedToSwap = inputValue.isLessThanOrEqualTo(allowanceValue);
 
-      // eslint-disable-next-line no-param-reassign
+      self.approveLoading = false;
       self.isApprovedToken = isAllowedToSwap;
     }, 250),
     selectFormToken(data: any, isInputToken: boolean) {
@@ -500,6 +522,7 @@ export default {
           });
 
         const action = 'non-market-redeem';
+        console.log(pairData, '---pairData');
         // if mint active, using 1st method, else 2nd
         const exchangeMethodName = this.activeMintTab === 0
           ? pairData?.methodName[0] : pairData?.methodName[1];

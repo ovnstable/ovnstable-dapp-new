@@ -43,11 +43,12 @@
 </template>
 <!-- eslint-disable no-param-reassign -->
 <script lang="ts">
+import { defineComponent } from 'vue';
 import { mapGetters } from 'vuex';
 import { onLeaveList, onEnterList, beforeEnterList } from '@/utils/animations.ts';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 
-export default {
+export default defineComponent({
   name: 'SwapSlippageSettings',
   components: {
     BaseIcon,
@@ -131,7 +132,7 @@ export default {
     beforeEnterList,
     onEnterList,
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

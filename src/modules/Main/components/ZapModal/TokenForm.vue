@@ -17,6 +17,7 @@
         @click="selectTokenFunc(isInputToken)"
         @keypress="selectTokenFunc(isInputToken)"
         class="input-tokens__selected"
+        :class="{ 'input-tokens__select--disabled': disabled }"
       >
         <img
           :src="token.selectedToken.logoUrl"
@@ -86,12 +87,11 @@
 
 <!-- eslint-disable no-param-reassign -->
 <script lang="ts">
-import { defineComponent } from 'vue';
 import InputComponent from '@/components/Input/Index.vue';
 import { formatMoney, fixedByPrice } from '@/utils/numbers.ts';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 
-export default defineComponent({
+export default {
   name: 'InputToken',
   components: {
     BaseIcon,
@@ -187,7 +187,7 @@ export default defineComponent({
       }
     },
   },
-});
+};
 </script>
 
 <style>
@@ -264,6 +264,10 @@ export default defineComponent({
       color: var(--color-17);
     }
   }
+}
+
+.input-tokens__select--disabled {
+  pointer-events: none;
 }
 
 .input-tokens__selected {

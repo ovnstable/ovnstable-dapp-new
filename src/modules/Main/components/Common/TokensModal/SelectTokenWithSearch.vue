@@ -76,13 +76,14 @@
   </div>
 </template>
 <script lang="ts">
+import { defineComponent } from 'vue';
 import { mapGetters } from 'vuex';
 import { formatMoney, fixedByPrice } from '@/utils/numbers.ts';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import InputComponent from '@/components/Input/Index.vue';
 import { OVN_TOKENS } from '@/utils/const.ts';
 
-export default {
+export default defineComponent({
   name: 'SelectTokenWithSearch',
   components: {
     BaseIcon,
@@ -175,7 +176,7 @@ export default {
       this.searchQuery = '';
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

@@ -10,71 +10,60 @@
       <TableSkeleton />
     </div>
 
-    <div v-else>
-      <div class="pools-container">
-        <PoolTable
-          :pools="mergedPools"
-          :is-show-only-zap="isShowOnlyZap"
-          :is-show-apr-limit="isShowAprLimit"
-          :open-zap-in-func="openZapIn"
-          :set-order-type-func="setOrderType"
-          :order-type="orderType"
-          :type-of-pool="typeOfPool"
-        >
-          <template #filters>
-            <PoolsFilter
-              :selected-network="selectedTabs"
-              @change-tab="changePoolsTab"
-              @change-network="setSelectedNetwork"
-              @search="updateSearch"
-            />
-          </template>
-          <template
-            #footer
-            v-if="!isPoolsLoading && typeOfPool === 'ALL' && filteredPoolsForSecondTab?.length > 0"
-          >
-            <div
-              class="table-extend"
-              @click="openPoolList = !openPoolList"
-              @keypress="openPoolList = !openPoolList"
-            >
-              <div
-                class="table-extend__arrow"
-              >
-                <BaseIcon name="ArrowDown" />
-              </div>
-              <h1>
-                {{openPoolList ? "CLOSE" : "OPEN"}} Pools with TVL less than $300K
-              </h1>
-              <div
-                class="table-extend__arrow"
-              >
-                <BaseIcon name="ArrowDown" />
-              </div>
-            </div>
-          </template>
-        </PoolTable>
-      </div>
-    </div>
-
-    <!-- <template v-if="openPoolList">
+    <div
+      v-else
+      class="pools-container"
+    >
       <PoolTable
-        :pools="filteredPoolsForSecondTab"
+        :pools="mergedPools"
         :is-show-only-zap="isShowOnlyZap"
         :is-show-apr-limit="isShowAprLimit"
         :open-zap-in-func="openZapIn"
         :set-order-type-func="setOrderType"
         :order-type="orderType"
-      />
-    </template> -->
+        :type-of-pool="typeOfPool"
+      >
+        <template #filters>
+          <PoolsFilter
+            :selected-network="selectedTabs"
+            @change-tab="changePoolsTab"
+            @change-network="setSelectedNetwork"
+            @search="updateSearch"
+          />
+        </template>
+        <template
+          #footer
+          v-if="!isPoolsLoading && typeOfPool === 'ALL' && filteredPoolsForSecondTab?.length > 0"
+        >
+          <div
+            class="table-extend"
+            @click="openPoolList = !openPoolList"
+            @keypress="openPoolList = !openPoolList"
+          >
+            <div
+              class="table-extend__arrow"
+            >
+              <BaseIcon name="ArrowDown" />
+            </div>
+            <h1>
+              {{openPoolList ? "CLOSE" : "OPEN"}} Pools with TVL less than $300K
+            </h1>
+            <div
+              class="table-extend__arrow"
+            >
+              <BaseIcon name="ArrowDown" />
+            </div>
+          </div>
+        </template>
+      </PoolTable>
+    </div>
 
-    <!-- <ZapModal
-      :set-show-func='setIsZapModalShow'
+    <ZapModal
       :zap-pool="currentZapPool"
       :is-show="isZapModalShow"
       :type-of-pool="typeOfPool"
-      :pool-tokens-for-zap-map="poolTokensForZapMap"
-    /> -->
+      @toggle-modal="setIsZapModalShow"
+    />
   </div>
 </template>
 
@@ -91,7 +80,7 @@ import {
 
 import utc from 'dayjs/plugin/utc';
 
-// import ZapModal from '@/components/zap/modals/ZapModal.vue';
+import ZapModal from '@/modules/Main/components/ZapModal/Index.vue';
 import PoolsFilter from '@/modules/Main/components/PoolsTable/PoolsFilter.vue';
 import PoolTable from '@/modules/Main/components/PoolsTable/Table.vue';
 import TableSkeleton from '@/components/TableSkeleton/Index.vue';
@@ -112,6 +101,7 @@ export default {
     PoolsFilter,
     TableSkeleton,
     PoolTable,
+    ZapModal,
   },
 
   data: () => ({
@@ -137,6 +127,8 @@ export default {
       'sortedPoolList',
       'typeOfPool',
       'isPoolsLoading',
+      'currentZapPool',
+      'isZapModalShow',
     ]),
     mergedPools() {
       return this.openPoolList
@@ -341,7 +333,7 @@ export default {
   },
 
   methods: {
-    ...mapActions('poolsData', ['loadPools', 'openZapIn']),
+    ...mapActions('poolsData', ['loadPools', 'openZapIn', 'setIsZapModalShow']),
     ...mapMutations('poolsData', ['changeState']),
 
     changePoolsTab(type: poolTypes) {

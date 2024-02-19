@@ -1,5 +1,14 @@
 <template>
-  <div class="swap-slider">
+  <div
+    v-if="!sliderLoaded"
+    class="slider__loader"
+  >
+    <Spinner />
+  </div>
+  <div
+    v-else
+    class="swap-slider"
+  >
     <div
       class="slider__arrow-wrapper"
       :class="{ 'slider__arrow-disabled': currentIndex === 0 }"
@@ -22,17 +31,19 @@
         ref="mySwiper"
       >
         <swiper-slide
-          v-for="(slide, index) in slides"
+          v-for="(slide, index) in sliderData"
           :ref="slideRef"
           :swiper-ref="swiperInstance"
           :key="index"
         >
           <div class="slider__info">
             <div class="slider__token-overview">
-              <BaseIcon
-                :name="slide.iconPathFirstToken"
+              <img
+                class="slider__token-image"
+                :src="getImageSrc(slide.tokenName, 1)"
+                :alt="formatSecondTokenIconName(slide.tokenName)"
               />
-              <p class="slider__token-title">{{ slide.titleFirstToken }}</p>
+              <p class="slider__token-title">{{ slide.tokenName }}</p>
               <p class="slider__overview-title">OVERVIEW</p>
             </div>
             <div class="slider__divider" />
@@ -40,34 +51,46 @@
               <div class="slider__apy-info">
                 <p class="slider__apy-title">Average APY:</p>
                 <div class="slider__apy-numbers">
-                  <p class="slider__data-total-number">{{ slide.apyPercent }}<span class="slider__data-apy-percent">%</span></p>
-                  <p class="slider__data-growth-number">+{{ slide.apyGrowth }}%</p>
+                  <p class="slider__data-total-number">{{ slide.apy }}<span class="slider__data-apy-percent">%</span></p>
+                  <!-- <p class="slider__data-growth-number">+{{ slide.apyGrowth }}%</p> -->
                 </div>
               </div>
               <div class="slider__tvl-info">
                 <p class="slider__tvl-title">TVL:</p>
                 <div class="slider__tvl-numbers">
-                  <p class="slider__data-total-number">{{ slide.tvlM }} <span class="slider__data-tvl-millions">m</span></p>
-                  <p class="slider__data-growth-number">+{{ slide.tvlGrowth }}%</p>
+                  <p class="slider__data-total-number">
+                    {{ slide.tokenName === 'ETH+' ? slide.tvl : ((Number(slide.tvl) / 1e6).toFixed(2)) }}
+                    <span
+                      v-if="slide.tokenName !== 'ETH+'"
+                      class="slider__data-tvl-millions"
+                    >m</span>
+                    <span
+                      v-else
+                      class="slider__data-tvl-millions"
+                    >WETH</span>
+                  </p>
+                  <!-- <p class="slider__data-growth-number">+{{ slide.tvlGrowth }}%</p> -->
                 </div>
               </div>
               <div class="slider__payout-info">
                 <p class="slider__payout-title">Last payout:</p>
                 <div class="slider__payout-numbers">
-                  <p class="slider__data-total-number">{{ slide.lastPayoutTime }}</p>
-                  <p class="slider__data-growth-number">{{ slide.lastPayoutText }}</p>
+                  <p class="slider__data-total-number">{{ slide.payoutAgoTime }}</p>
+                  <p class="slider__data-growth-number">{{ slide.payoutAgoText }}</p>
                 </div>
               </div>
             </div>
             <div class="slider__divider" />
             <div class="slider__second-token-overview">
               <div class="slider__second-token-title">
-                <BaseIcon
-                  :name="slide.iconPathSecondToken"
+                <img
+                  class="slider__token-image"
+                  :src="getImageSrc(slide.tokenName, 2)"
+                  :alt="formatSecondTokenIconName(slide.tokenName)"
                 />
-                <p class="slider__second-token-title-text">{{ slide.titleSecond }}</p>
+                <p class="slider__second-token-title-text">{{ slide.tokenWrappedName }}</p>
               </div>
-              <p class="slider__second-token-description">{{ slide.descriptionSecondToken }}</p>
+              <p class="slider__second-token-description">{{ slide.description }}</p>
             </div>
           </div>
         </swiper-slide>
@@ -76,9 +99,9 @@
 
     <div
       class="slider__arrow-wrapper"
-      :class="{ 'slider__arrow-disabled': currentIndex === slides.length - 1 }"
-      @click="currentIndex < slides.length - 1 && nextSlide()"
-      @keydown.enter="currentIndex < slides.length - 1 && nextSlide()"
+      :class="{ 'slider__arrow-disabled': currentIndex === sliderData.length - 1 }"
+      @click="currentIndex < sliderData.length - 1 && nextSlide()"
+      @keydown.enter="currentIndex < sliderData.length - 1 && nextSlide()"
       tabindex="0"
     >
       <BaseIcon
@@ -94,7 +117,25 @@ import { ref } from 'vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import { Swiper as SwiperClass } from 'swiper/core';
+import Spinner from '@/components/Spinner/Index.vue';
+import SliderApiService from '@/services/slider-api-service.ts';
 import 'swiper/swiper.min.css';
+import { getImageUrl } from '@/utils/const.ts';
+
+interface SlideData {
+  tokenName: string;
+  tokenWrappedName: string;
+  apy: string;
+  apyGrowth?: string;
+  tvl: string;
+  tvlGrowth?: string;
+  payoutAgoTime: string;
+  payoutAgoText: string;
+  description: string;
+}
+const sliderDescriptionForWrapped = (tokenName: string) => `An index-adjusted wrapper for ${tokenName}
+. Your w${tokenName} balance won't increase over time
+. When w${tokenName} will unwrap, you receive ${tokenName} based on the latest index.`;
 
 export default {
   name: 'MainSlider',
@@ -102,67 +143,85 @@ export default {
     BaseIcon,
     Swiper,
     SwiperSlide,
+    Spinner,
   },
   data() {
     return {
       currentIndex: 0,
       slideRef: ref(null) as any,
-      slides: [
-        {
-          iconFirstToken: 'usdPlus',
-          iconPathFirstToken: 'usdPlus',
-          titleFirstToken: 'USD+',
-          apyPercent: '10.4',
-          apyGrowth: '5',
-          tvlM: '5.3',
-          tvlGrowth: '1',
-          lastPayoutTime: '05:02',
-          lastPayoutText: 'hours ago',
-          iconSecondToken: 'wUsdPlus',
-          iconPathSecondToken: 'wUsdPlus',
-          titleSecond: 'WUSD+',
-          descriptionSecondToken: 'An index-adjusted wrapper for USD+. Your wUSD+ balance won\'t increase over time. When wUSD+ will unwrap, you receive USD+ based on the latest index.',
-        },
-        {
-          iconFirstToken: 'usdPlus',
-          iconPathFirstToken: 'usdPlus',
-          titleFirstToken: 'USD+_2',
-          apyPercent: '30',
-          apyGrowth: '57',
-          tvlM: '5.73',
-          tvlGrowth: '71',
-          lastPayoutTime: '057:02',
-          lastPayoutText: 'hours ago',
-          iconSecondToken: 'wUsdPlus',
-          iconPathSecondToken: 'wUsdPlus',
-          titleSecond: 'WUSD+_2',
-          descriptionSecondToken: 'An index-adjusted wrapper for USD+. Your wUSD+ balance won\'t increase over time. When wUSD+ will unwrap, you receive USD+ based on the latest index.',
-        },
-        {
-          iconFirstToken: 'usdPlus',
-          iconPathFirstToken: 'usdPlus',
-          titleFirstToken: 'USD+_3',
-          apyPercent: '10',
-          apyGrowth: '517',
-          tvlM: '15.73',
-          tvlGrowth: '1',
-          lastPayoutTime: '0:02',
-          lastPayoutText: 'hours ago',
-          iconSecondToken: 'wUsdPlus',
-          iconPathSecondToken: 'wUsdPlus',
-          titleSecond: 'WUSD+_3',
-          descriptionSecondToken: 'An index-adjusted wrapper for USD+. Your wUSD+ balance won\'t increase over time. When wUSD+ will unwrap, you receive USD+ based on the latest index.',
-        },
-      ],
       swiperInstance: null as any,
+      sliderData: [] as SlideData[],
+      sliderLoaded: false,
     };
   },
+  async mounted() {
+    this.sliderLoaded = false;
+    await this.loadDataSlider();
+    this.sliderLoaded = true;
+  },
   methods: {
+    async loadDataSlider() {
+      try {
+        const nameApyData = await SliderApiService.loadApyName();
+        const tvlData = await SliderApiService.loadTVL();
+
+        const products = Object.keys(nameApyData).filter((key) => key.endsWith('PlusProduct'));
+        const sliderDataFromLoad = products.map((productKey): SlideData | null => {
+          if (nameApyData[productKey]) {
+            const productType = nameApyData[productKey].productType.replace('_PLUS', '+');
+            const apy = nameApyData[productKey].value;
+            const lastPayout = nameApyData.lastPayoutDate;
+
+            const lastPayoutDatetime = new Date(lastPayout);
+            const now = new Date();
+            const diff = now.getTime() - lastPayoutDatetime.getTime();
+            const hoursAgo = diff / 3600000;
+            const minutesAgo = (diff % 3600000) / 60000;
+
+            let payoutAgoText = '';
+            let payoutAgoTime = '';
+
+            if (hoursAgo < 1) {
+              payoutAgoTime = `${Math.floor(minutesAgo)}:00`;
+              payoutAgoText = 'minute(s) ago';
+            } else if (hoursAgo === 1) {
+              payoutAgoTime = '1:00';
+              payoutAgoText = 'hour ago';
+            } else {
+              payoutAgoTime = `${Math.floor(hoursAgo)}:${Math.floor(minutesAgo).toString().padStart(2, '0')}`;
+              payoutAgoText = 'hours ago';
+            }
+
+            let totalTvl = 0;
+            tvlData.forEach((chain: any) => {
+              const valueObj = chain.values.find((v: any) => v.name === productType);
+              if (valueObj) {
+                totalTvl += valueObj.value;
+              }
+            });
+            const description = sliderDescriptionForWrapped(productType);
+            return {
+              tokenName: productType,
+              tokenWrappedName: `W${productType}`,
+              apy: apy.toFixed(1),
+              tvl: totalTvl.toFixed(2),
+              payoutAgoTime,
+              payoutAgoText,
+              description,
+            };
+          }
+          return null;
+        }).filter(Boolean) as SlideData[];
+        this.sliderData = sliderDataFromLoad;
+      } catch (error) {
+        console.error('Failed to fetch slider data:', error);
+      }
+    },
     onSwiper(swiper: SwiperClass) {
       this.swiperInstance = swiper;
     },
     nextSlide() {
-      if (this.currentIndex < this.slides.length - 1 && this.swiperInstance) {
+      if (this.currentIndex < Object.keys(this.sliderData).length - 1 && this.swiperInstance) {
         this.currentIndex += 1;
         this.swiperInstance.slideTo(this.currentIndex);
       }
@@ -180,11 +239,23 @@ export default {
       }
     },
 
+    formatFirstTokenIconName(tokenName: string) {
+      return `${tokenName.slice(0, -1).toLowerCase()}Plus`;
+    },
+    formatSecondTokenIconName(tokenName: string) {
+      const formattedName = tokenName.slice(0, -1);
+      return `w${formattedName.charAt(0).toUpperCase()}${formattedName.slice(1).toLowerCase()}Plus`;
+    },
+    getImageSrc(tokenName: string, numberOfToken: number) {
+      const iconName = numberOfToken === 1 ? this
+        .formatFirstTokenIconName(tokenName) : this.formatSecondTokenIconName(tokenName);
+      return getImageUrl(`assets/icons/currencies/main/${iconName}.svg`);
+    },
   },
 };
 </script>
 
-<style scoped>
+<style lang='scss' scoped>
 
 * {
   color: var(--color-2);
@@ -328,12 +399,27 @@ export default {
   pointer-events: none;
   cursor: default;
 }
+.slider__token-image {
+  width: 40px;
+  height: 40px;
+  svg {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+.slider__loader {
+  width: 40%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
 @media (max-width: 1024px) {
   .slider__info {
-      max-width:200px;
-      margin-right: 20px;
-      margin-left: 20px;
+    max-width:200px;
+    margin-right: 20px;
+    margin-left: 20px;
   }
   .swiper-container {
     max-width: 200px;
@@ -356,115 +442,115 @@ export default {
 }
 
 @media (max-width: 768px) {
-    .slider__info {
-       max-width:150px;
-       margin-right: 15px;
-       margin-left: 15px;
-    }
-    .swiper-container {
-  max-width: 150px;
-}
-    .slider__icon-plus,
-    .slider__arrow-icon {
-        transform: scale(0.6);
-    }
+  .slider__info {
+    max-width:150px;
+    margin-right: 15px;
+    margin-left: 15px;
+  }
+  .swiper-container {
+    max-width: 150px;
+  }
+  .slider__icon-plus,
+  .slider__arrow-icon {
+    transform: scale(0.6);
+  }
 
-    .slider__token-title,
-    .slider__second-token-title-text {
-        margin-left: 0px;
-        font-size: 13px;
-    }
+  .slider__token-title,
+  .slider__second-token-title-text {
+    margin-left: 0px;
+    font-size: 13px;
+  }
 
-    .slider__overview-title,
-    .slider__wusd-plus-description {
-         font-size: 12px;
-    }
+  .slider__overview-title,
+  .slider__wusd-plus-description {
+    font-size: 12px;
+  }
 
-    .slider__divider {
-        margin-top: 10px;
-        margin-bottom: 10px;
-    }
+  .slider__divider {
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
 
-    .slider__apy-title,
-    .slider__tvl-title,
-    .slider__payout-title,
-    .slider__data-growth-number {
-        font-size: 11px;
-    }
+  .slider__apy-title,
+  .slider__tvl-title,
+  .slider__payout-title,
+  .slider__data-growth-number {
+    font-size: 11px;
+  }
 
-    .slider__data-total-number {
-        font-size: 14px;
-    }
+  .slider__data-total-number {
+    font-size: 14px;
+  }
 
-    .slider__data-apy-percent {
-         font-size: 10px;
-    }
+  .slider__data-apy-percent {
+    font-size: 10px;
+  }
 
-    .slider__data-tvl-millions {
-         font-size: 12px;
-    }
-    .slider__arrow-wrapper {
-      width: 26px;
-      height: 26px;
-    }
+  .slider__data-tvl-millions {
+    font-size: 12px;
+  }
+  .slider__arrow-wrapper {
+    width: 26px;
+    height: 26px;
+  }
 }
 
 @media (max-width: 576px) {
-    .slider__info {
-       max-width:100px;
-       margin-right: 10px;
-       margin-left: 10px;
-    }
-    .swiper-container {
-      max-width: 100px;
-    }
-    .slider__token-title{
-        margin-right: 1px;
-    }
-    .slider__icon-plus,
-    .slider__arrow-icon {
-        transform: scale(0.5);
-    }
-    .slider__token-title,
-    .slider__second-token-title-text {
-        margin-left: 0px;
-        font-size: 10px;
-    }
+  .slider__info {
+    max-width:100px;
+    margin-right: 10px;
+    margin-left: 10px;
+  }
+  .swiper-container {
+    max-width: 100px;
+}
+  .slider__token-title{
+    margin-right: 1px;
+  }
+  .slider__icon-plus,
+  .slider__arrow-icon {
+    transform: scale(0.5);
+  }
+  .slider__token-title,
+  .slider__second-token-title-text {
+    margin-left: 0px;
+    font-size: 10px;
+  }
 
-    .slider__wusd-plus-description {
-         font-size: 10px;
-    }
-    .slider__overview-title {
-        font-size: 6px;
-    }
-    .slider__divider {
-        margin-top: 5px;
-        margin-bottom: 5px;
-    }
+  .slider__wusd-plus-description {
+    font-size: 10px;
+  }
+  .slider__overview-title {
+    font-size: 6px;
+  }
+  .slider__divider {
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
 
-    .slider__apy-title,
-    .slider__tvl-title,
-    .slider__payout-title,
-    .slider__data-growth-number {
-        font-size: 8px;
-    }
+  .slider__apy-title,
+  .slider__tvl-title,
+  .slider__payout-title,
+  .slider__data-growth-number {
+    font-size: 8px;
+  }
 
-    .slider__data-total-number {
-        font-size: 12px;
-    }
+  .slider__data-total-number {
+    font-size: 12px;
+  }
 
-    .slider__data-apy-percent {
-         font-size: 8px;
-    }
+  .slider__data-apy-percent {
+    font-size: 8px;
+  }
 
-    .slider__data-tvl-millions {
-         font-size: 10px;
-    }
+  .slider__data-tvl-millions {
+    font-size: 10px;
+  }
 
-    .slider__arrow-wrapper {
-      width: 14px;
-      height: 14px;
-    }
+  .slider__arrow-wrapper {
+    width: 14px;
+    height: 14px;
+  }
 }
 
 </style>

@@ -43,10 +43,11 @@
 </template>
 <!-- eslint-disable no-param-reassign -->
 <script lang="ts">
+import { defineComponent } from 'vue';
 import { onLeaveList, onEnterList, beforeEnterList } from '@/utils/animations.ts';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 
-export default {
+export default defineComponent({
   name: 'GasSettings',
   components: {
     BaseIcon,
@@ -84,7 +85,7 @@ export default {
     beforeEnterList,
     onEnterList,
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>
@@ -146,7 +147,7 @@ export default {
   svg {
     width: 16px;
     height: 16px;
-    fill: var(--color-4);
+    fill: var(--color-1);
     margin-left: 10px;
   }
 }

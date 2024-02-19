@@ -29,10 +29,11 @@
 <!-- eslint-disable vue/no-side-effects-in-computed-properties -->
 <!-- eslint-disable vue/no-mutating-props -->
 <script lang="ts">
+import { defineComponent } from 'vue';
 import { mapGetters } from 'vuex';
 import { onClickOutside, templateRef } from '@vueuse/core';
 
-export default {
+export default defineComponent({
   name: 'SelectTokens',
 
   props: {
@@ -79,7 +80,7 @@ export default {
       this.searchQuery = '';
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

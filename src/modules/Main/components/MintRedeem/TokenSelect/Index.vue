@@ -42,11 +42,12 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue';
 import Spinner from '@/components/Spinner/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import TokensList from '@/modules/Main/components/MintRedeem/TokenSelect/TokensList.vue';
 
-export default {
+export default defineComponent({
   name: 'TokenSelect',
   components: {
     TokensList,
@@ -96,7 +97,7 @@ export default {
       }, this.isInputToken);
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

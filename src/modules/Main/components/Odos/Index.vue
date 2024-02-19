@@ -325,6 +325,7 @@
 <!-- eslint-disable no-param-reassign -->
 <!-- eslint-disable no-continue -->
 <script lang="ts">
+import { defineComponent } from 'vue';
 import { mapActions, mapGetters, mapState } from 'vuex';
 import { useEventBus } from '@vueuse/core';
 import TokenForm from '@/modules/Main/components/Odos/TokenForm.vue';
@@ -332,13 +333,12 @@ import Spinner from '@/components/Spinner/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import NetworkNotAvailable from '@/modules/Main/components/Odos/network-not-available.vue';
-import SelectTokensModal from '@/modules/Main/components/Odos/TokensModal/Index.vue';
-import SwapSlippageSettings from '@/modules/Main/components/Odos/SwapSlippageSettings.vue';
+import SelectTokensModal from '@/modules/Main/components/Common/TokensModal/Index.vue';
+import SwapSlippageSettings from '@/modules/Main/components/Common/SwapSlippageSettings.vue';
 import { formatMoney } from '@/utils/numbers.ts';
 import { getRandomString } from '@/utils/strings.ts';
 import { clearApproveToken, getAllowanceValue, approveToken } from '@/utils/contractApprove.ts';
 import odosApiService from '@/services/odos-api-service.ts';
-import { getImageUrl } from '@/utils/const.ts';
 import { onLeaveList, onEnterList, beforeEnterList } from '@/utils/animations.ts';
 import {
   getNewInputToken, getNewOutputToken, maxAll, updateTokenValue, getDefaultSecondtoken,
@@ -346,7 +346,7 @@ import {
 import BigNumber from 'bignumber.js';
 import { ethers } from 'ethers';
 
-export default {
+export default defineComponent({
   name: 'SwapForm',
   components: {
     ButtonComponent,
@@ -720,7 +720,6 @@ export default {
     ...mapActions('walletAction', ['connectWallet']),
 
     formatMoney,
-    getImageUrl,
     onLeaveList,
     beforeEnterList,
     onEnterList,
@@ -746,7 +745,8 @@ export default {
     addDefaultOvnToken() {
       const symbol = this.$route.query.symbol ? this.$route.query.symbol : null;
       const ovnSelectedToken: any = getDefaultSecondtoken(
-        this.$store.state.odosData as any,
+        this.tokenSeparationScheme,
+        this.allTokensList,
         symbol as string | null,
       );
       if (!ovnSelectedToken) {
@@ -806,7 +806,6 @@ export default {
     },
 
     changeSwap() {
-      console.log('---changeSwap');
       // Transform Input Tokens into Output format by adding temporary variable "tempOutputArray"
       const tempOutputArray = [];
       for (let i = 0; i < this.inputTokens.length; i++) {
@@ -831,13 +830,11 @@ export default {
 
         const transformOutputToInputToken = getNewInputToken();
         transformOutputToInputToken.id = tokenOut.id;
-        console.log(tokenOut, '---tokenOut');
         transformOutputToInputToken.selectedToken = tokenOut.selectedToken;
         tempInputArray.push(transformOutputToInputToken);
       }
 
       this.inputTokens = tempInputArray;
-      console.log(tempOutputArray, '---tempOutputArray');
       this.outputTokens = tempOutputArray;
 
       const symbol = this.$route.query.symbol ? this.$route.query.symbol : null;
@@ -882,7 +879,6 @@ export default {
     },
 
     clearForm() {
-      console.log('clearFormclearForm');
       this.clearAllSelectedTokens();
 
       if (this.swapMethod === 'BUY') {
@@ -1656,7 +1652,7 @@ export default {
       });
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>
@@ -1717,7 +1713,6 @@ export default {
     }
   }
 }
-
 .swap-form__body-block__inputs-add {
   display: flex;
   align-items: center;

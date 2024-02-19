@@ -89,13 +89,14 @@
 
 <!-- eslint-disable no-param-reassign -->
 <script lang="ts">
+import { defineComponent } from 'vue';
 import { mapGetters } from 'vuex';
 import InputComponent from '@/components/Input/Index.vue';
 import { formatMoney, fixedByPrice } from '@/utils/numbers.ts';
 import TokensChooseForm from '@/modules/Main/components/MintRedeem/TokenSelect/Index.vue';
 import BigNumber from 'bignumber.js';
 
-export default {
+export default defineComponent({
   name: 'TokenForm',
   components: {
     InputComponent,
@@ -142,14 +143,18 @@ export default {
       if (!balanceData) return '0';
 
       const formattedBalance = new BigNumber(balanceData.balance)
-        .div(10 ** this.tokenInfo.decimals).toNumber();
+        .div(10 ** this.tokenInfo.decimals)
+        .toNumber();
       return formatMoney(formattedBalance, fixedByPrice(formattedBalance));
     },
     tokensList() {
       const list = this.tokensListGetter[this.networkId];
 
       if (list && this.isInputToken) return list.map((_: any[]) => (this.activeMint ? _[0] : _[1]));
-      if (list && !this.isInputToken) return list.map((_: any[]) => (this.activeMint ? _[1] : [0]));
+      if (list && !this.isInputToken) {
+        return list
+          .map((_: any[]) => (this.activeMint ? _[1] : _[0]));
+      }
 
       // when first choosen, searching for pair, and return
       return [];
@@ -216,7 +221,7 @@ export default {
       }, this.isInputToken);
     },
   },
-};
+});
 </script>
 
 <style>
@@ -242,6 +247,7 @@ export default {
   color: var(--color-1);
   font-weight: 600;
   transition: box-shadow .2s ease;
+  border-radius: 0;
 
   [data-theme="dark"] & {
     color: var(--color-4);
