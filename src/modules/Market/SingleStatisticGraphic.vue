@@ -57,8 +57,7 @@ const pointStylePlugin = {
     const yAxis = chart.scales.y;
     const middleY = (yAxis.top + yAxis.bottom) / 2;
     ctx.save();
-    const { activeNetworkColor } = chart.options.plugins.pointStylePlugin;
-    ctx.strokeStyle = activeNetworkColor || '#ff0000';
+    ctx.strokeStyle = '#A8D8FA';
     ctx.setLineDash([5, 5]);
     ctx.beginPath();
     ctx.moveTo(chart.chartArea.left, middleY);
@@ -117,7 +116,11 @@ export default {
           if (this.tokenData.tokenName === 'ETH+') {
             return `${latestPayout.totalUsdPlus.toFixed(6)} WETH`;
           }
-          return `$${latestPayout.totalUsdPlus.toFixed(2)}`;
+          return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            minimumFractionDigits: 2,
+          }).format(latestPayout.totalUsdPlus);
         }
       }
       return 'N/A';
@@ -166,13 +169,30 @@ export default {
         ? intervalData.map((payout: Payout) => payout.annualizedYield)
         : intervalData.map((payout: Payout) => payout.totalUsdPlus);
 
-      const minValue = Math.min(...dataValues);
-      const maxValue = Math.max(...dataValues);
+      const minValue = Math.min(...dataValues) * 0.8;
+      const maxValue = Math.max(...dataValues) * 1.2;
       const isDarkTheme = localStorage.getItem('theme-type') === 'dark';
       return {
         chartOptions: {
           scales: {
             y: {
+              afterFit: (scaleInstance: any) => {
+                const widths = {
+                  apyType: 53,
+                  eth: 76,
+                  default: 60,
+                };
+                let newWidth;
+                if (isApyType) {
+                  newWidth = widths.apyType;
+                } else if (isEth) {
+                  newWidth = widths.eth;
+                } else {
+                  newWidth = widths.default;
+                }
+                Object.assign(scaleInstance, { width: newWidth });
+              },
+
               beginAtZero: false,
               title: {
                 display: true,
@@ -180,20 +200,18 @@ export default {
               min: minValue,
               max: maxValue,
               ticks: {
+                stepSize: (maxValue - minValue) / 6,
                 color: isDarkTheme ? '#ffffff' : '#0f172a',
                 min: 4,
                 callback: (value: any) => {
                   if (isApyType) {
                     return `${value.toFixed(2)}%`;
                   } if (this.tokenData.tokenName === 'ETH+') {
-                    return `${value.toLocaleString()} WETH`;
+                    const valueInETHs = `${value.toFixed(0)} WETH `;
+                    return valueInETHs;
                   }
-                  const formatter = new Intl.NumberFormat('fr-FR', {
-                    minimumFractionDigits: 1,
-                    maximumFractionDigits: 1,
-                  });
-                  const formattedValue = formatter.format(value);
-                  return `$${formattedValue}`;
+                  const valueInMillions = `$${(value / 1e6).toFixed(2)}M`;
+                  return valueInMillions;
                 },
               },
 
@@ -246,9 +264,14 @@ export default {
                   if (isApyType) {
                     label += `APY: ${value.toFixed(2)}%`;
                   } else if (isEth) {
-                    label += `TVL WETH ${value.toLocaleString()}`;
+                    const valueInETHs = `TVL WETH ${value.toFixed(6)}`;
+                    label += valueInETHs;
                   } else {
-                    label += `TVL $${value.toLocaleString()}`;
+                    return `TVL ${new Intl.NumberFormat('en-US', {
+                      style: 'currency',
+                      currency: 'USD',
+                      minimumFractionDigits: 2,
+                    }).format(value)}`;
                   }
                   return label;
                 },
