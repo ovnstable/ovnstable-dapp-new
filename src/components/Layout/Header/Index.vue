@@ -17,6 +17,49 @@
         </router-link>
 
         <div class="app-header__content-data">
+          <PopperComponent
+            v-if="walletConnected && account"
+            interactive
+            placement="bottom-end"
+          >
+            <ButtonComponent
+              class="app-header__balance-account"
+              btn-styles="secondary"
+            >
+              {{ totalUserBalance }} $
+              <BaseIcon
+                name="ArrowDown"
+              />
+            </ButtonComponent>
+            <template #content="{ close }">
+              <div
+                class="popper-list"
+              >
+                <div
+                  class="networks-list__item app-header__balance-item"
+                  v-for="(item, key) in (userBalancesList as any)"
+                  :key="key"
+                  @click="close"
+                  @keypress="close"
+                >
+                  {{ item.balance }}
+                  <div class="app-header__balance-row">
+                    {{ item.symbol }}
+                  </div>
+                </div>
+                <div class="popper-list__divider" />
+                <div class="app-header__balance-main">
+                  <span>
+                    {{ totalUserBalance }}
+                  </span>
+                  <span>
+                    USD
+                  </span>
+                </div>
+              </div>
+            </template>
+          </PopperComponent>
+
           <ButtonComponent
             v-if="walletConnected && account"
             class="app-header__content-account"
@@ -30,6 +73,7 @@
               :style="{ backgroundColor: activeNetworkData.color }"
             />
           </ButtonComponent>
+
           <ButtonComponent
             v-else
             @on-click="connectWallet"
@@ -53,7 +97,7 @@
             </ButtonComponent>
             <template #content="{ close }">
               <div
-                class="networks-list"
+                class="popper-list"
               >
                 <div
                   class="networks-list__item"
@@ -79,7 +123,9 @@ import { mapGetters, mapActions } from 'vuex';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { cutString } from '@/utils/strings.ts';
-import { appNetworksData } from '@/utils/const.ts';
+import { OVN_TOKENS, appNetworksData } from '@/utils/const.ts';
+import BigNumber from 'bignumber.js';
+import { loadTokenImage } from '@/utils/tokenLogo.ts';
 
 export default {
   name: 'HeaderBar',
@@ -94,22 +140,47 @@ export default {
   },
   computed: {
     ...mapGetters('walletAction', ['walletConnected']),
-    ...mapGetters('accountData', ['balance', 'account']),
+    ...mapGetters('accountData', ['originalBalance', 'account']),
     ...mapGetters('network', ['networkId']),
+    ...mapGetters('odosData', ['allTokensList']),
 
     activeNetworkData() {
       const data = appNetworksData.find((_) => _.chain === this.networkId);
       return data || appNetworksData[0];
     },
+    totalUserBalance() {
+      if (this.allTokensList.length === 0 || this.originalBalance.length === 0) return '0';
+      const total: BigNumber = this.originalBalance.reduce((acc: BigNumber, curr: any) => {
+        const tokenData = this.allTokensList.find((_: any) => _.symbol === curr.symbol);
+        if (!tokenData) return acc;
+        const fixedBalance = new BigNumber(curr.balance)
+          .div(10 ** tokenData.decimals)
+          .times(tokenData.price);
+        return acc.plus(fixedBalance);
+      }, BigNumber(0));
+
+      return total.toFixed(2);
+    },
+    userBalancesList() {
+      if (this.originalBalance.length === 0) return [];
+      return this.originalBalance
+        .filter((_: any) => OVN_TOKENS.includes(_.symbol)).map((bal: any) => {
+          const tokenData = this.allTokensList.find((_: any) => _.symbol === bal.symbol);
+
+          return {
+            balance: new BigNumber(bal.balance).div(10 ** tokenData.decimals).toFixed(2),
+            srcPath: loadTokenImage(tokenData.symbol),
+            symbol: tokenData.symbol,
+          };
+        });
+    },
   },
   methods: {
     ...mapActions('network', ['setWalletNetwork']),
     disconnectWallet() {
-      console.log('disconnectWallet');
       this.$store.dispatch('walletAction/disconnectWallet');
     },
     connectWallet() {
-      console.log('connectWallet');
       this.$store.dispatch('walletAction/connectWallet');
     },
     chooseNetwork(network: number, close: () => null) {
@@ -128,6 +199,15 @@ export default {
     fill: var(--color-4);
   }
 }
+.app-header__balance-account {
+  min-width: 130px;
+  justify-content: space-between;
+
+  svg path {
+    fill: var(--color-3);
+  }
+}
+
 </style>
 
 <style lang="scss" scoped>
@@ -204,7 +284,22 @@ export default {
   gap: 16px;
 }
 
-.networks-list {
+.app-header__balance-account {
+  min-width: 130px;
+  min-height: 31px;
+  justify-content: space-between;
+
+  svg path {
+    fill: var(--color-3);
+  }
+}
+
+.app-header__balance-row {
+  display: flex;
+  gap: 8px;
+}
+
+.popper-list {
   border-radius: 0px 0px 5px 5px;
   border: 1px solid var(--color-1);
   background: var(--color-4);
@@ -222,7 +317,7 @@ export default {
   [data-theme="dark"] & {
     color: var(--color-18);
   }
-  svg {
+  svg, img {
     width: 18px;
     height: 18px;
     margin-right: 10px;
@@ -245,8 +340,32 @@ export default {
   }
 }
 
+.app-header__balance-item {
+  min-width: 130px;
+  justify-content: space-between;
+  cursor: default;
+}
+
 .networks-active {
   width: 20px;
   height: 20px;
+}
+
+.popper-list__divider {
+  height: 1px;
+  margin: 10px auto;
+  width: 80%;
+  background-color: var(--color-1);
+}
+
+.app-header__balance-main {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 15px;
+  margin-bottom: 10px;
+
+  span:first-child {
+    text-decoration: underline;
+  }
 }
 </style>

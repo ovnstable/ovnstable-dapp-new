@@ -49,8 +49,6 @@ const actions = {
   }: any) {
     const { rpcUrl } = rootState.network;
 
-    console.log(rpcUrl, '--rpcUrl');
-    console.log(new ethers.JsonRpcProvider(), '---DEFAULT');
     let evmProvider;
     if (window.ethereum == null) {
       console.log('MetaMask not installed; using read-only defaults');
@@ -67,7 +65,8 @@ const actions = {
   }: any, provider: any) {
     const evmProvider = new ethers.BrowserProvider(provider, 'any');
     const signer = await evmProvider.getSigner();
-    dispatch('network/saveNetworkToLocalStore', rootState.network.networkName, { root: true });
+    const networkData = await evmProvider.getNetwork();
+    dispatch('network/saveNetworkToLocalStore', networkData.chainId.toString(), { root: true });
 
     commit('setIsProviderDefault', false);
     commit('setProvider', provider);
@@ -96,6 +95,7 @@ const actions = {
     dispatch('gasPrice/refreshGasPrice', null, { root: true });
     dispatch('insuranceData/refreshInsurance', null, { root: true });
 
+    // const networkId = await getters.web3.eth.net.getId();
     // if (!getters.isProviderDefault) {
     //   let currentWalletNetworkId = await getters.web3.eth.net.getId();
     //   // eslint-disable-next-line radix

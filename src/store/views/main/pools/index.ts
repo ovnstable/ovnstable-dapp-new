@@ -96,15 +96,7 @@ const actions = {
               if (pool && pool?.tvl >= 0) {
                 pool = initAggregators(pool);
 
-                const name = networkConfig.networkName;
-                let newName = pool.id.name.toUpperCase();
-
-                if (name === 'arbitrum') {
-                  newName = newName.replace('USDC', 'USDC.e');
-                } else if (name === 'base') {
-                  newName = newName.replace('USDC', 'USDBC');
-                }
-
+                const newName = pool.id.name.toUpperCase();
                 let { platform } = pool;
 
                 // cases when LP staking platform differ from actual
@@ -228,7 +220,6 @@ const actions = {
       });
     }
 
-    console.log(getSortedPools(state.allPools, false), '---getSortedPools');
     commit('changeState', {
       field: 'allPools',
       val: initFeature(state.allPools),

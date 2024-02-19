@@ -445,8 +445,6 @@ export const initFeature = (pools: any[]) => {
     return entry;
   });
 
-  console.log(newPools.filter((_) => !!_.feature), 'FEATUREPOOLS');
-
   return newPools;
 };
 

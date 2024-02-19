@@ -145,7 +145,6 @@ export default {
       });
 
       this.activeItem = itemId;
-      console.log(itemId, 'this.onTabClick');
       this.$emit('tab-change', itemId);
     },
   },

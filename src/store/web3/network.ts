@@ -184,7 +184,8 @@ const state = {
   ],
 
   switchToOtherNetwork: false,
-
+  marketNetwork: 'arbitrum',
+  marketExplorerURL: 'https://arbiscan.io/',
   insuranceNetwork: 'optimism',
   insuranceExplorerURL: 'https://optimistic.etherscan.io/',
 };
@@ -514,6 +515,9 @@ const actions = {
     }
   },
 
+  changeMarketNetwork({ commit }: any, network: any) {
+    commit('setMarketExplorerURL', getNetworkParams(network).explorerUrl);
+    commit('setMarketNetwork', network);
   changeInsuranceNetwork({ commit }: any, network: any) {
     commit('setInsuranceExplorerURL', getNetworkParams(network).explorerUrl);
     commit('setInsuranceNetwork', network);
@@ -574,6 +578,13 @@ const mutations = {
     state.chainChanged = value;
   },
 
+  setMarketNetwork(state: any, value: any) {
+    state.marketNetwork = value;
+  },
+
+  setMarketExplorerURL(state: any, value: any) {
+    state.marketExplorerURL = value;
+    
   setInsuranceNetwork(state: any, value: any) {
     state.insuranceNetwork = value;
   },

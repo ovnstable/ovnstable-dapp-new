@@ -6,9 +6,8 @@ import { USER_BALANCES_SCHEME } from '@/store/views/account/mocks.ts';
 import BigNumber from 'bignumber.js';
 
 const state = {
-
-  balance: {},
-  originalBalance: {},
+  accountNativeBalance: '0',
+  originalBalance: [],
   actionAssetBalance: {},
   etsBalance: {},
   etsOriginalBalance: {},
@@ -21,8 +20,8 @@ const state = {
 
 const getters = {
 
-  balance(state: any) {
-    return state.balance;
+  accNativeBalance(state: any) {
+    return state.accountNativeBalance;
   },
 
   originalBalance(state: any) {
@@ -64,8 +63,7 @@ const actions = {
   async resetBalance({ commit, dispatch, getters }: any) {
     console.log('AccountData: resetBalance');
 
-    commit('setBalance', {});
-    commit('setOriginalBalance', {});
+    commit('setOriginalBalance', []);
     commit('setEtsBalance', {});
     commit('setEtsOriginalBalance', {});
     commit('setInsuranceBalance', {});
@@ -89,6 +87,10 @@ const actions = {
     const { web3 } = rootState;
 
     const networkId = rootState.network.networkId as keyof typeof USER_BALANCES_SCHEME;
+    const userBalance = (await rootState.web3.evmProvider
+      .getBalance(getters.account))
+      .toString();
+
     const balances = await Promise.all(USER_BALANCES_SCHEME[networkId].map(async (_) => {
       try {
         if (!web3.contracts[_.contractName]) {
@@ -103,6 +105,7 @@ const actions = {
           balance: result.toString(),
         };
       } catch (e) {
+        console.log(e, '---_.symbol');
         return {
           symbol: _.symbol,
           balance: '0',
@@ -110,10 +113,9 @@ const actions = {
       }
     }));
 
-    console.log(balances, '----balances');
-
     // original meaning without decimals
     commit('setOriginalBalance', balances);
+    commit('setAccBalance', userBalance);
 
     const resultEtsBalance: any = {};
     const resultEtsOriginalBalance: any = {};
@@ -217,8 +219,8 @@ const actions = {
 
 const mutations = {
 
-  setBalance(state: any, value: any) {
-    state.balance = value;
+  setAccBalance(state: any, value: any) {
+    state.accountNativeBalance = value;
   },
 
   setOriginalBalance(state: any, value: any) {

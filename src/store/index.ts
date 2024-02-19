@@ -39,9 +39,11 @@ import dappDataAction from '@/store/web3/legacy/dapp-data-action.ts';
 import mintRedeem from '@/store/views/main/mintRedeem/index.ts';
 import odosData from '@/store/views/main/odos/index.ts';
 import poolsData from '@/store/views/main/pools/index.ts';
+import zapinData from '@/store/views/main/zapin/index.ts';
 
 export default new Vuex.Store({
   modules: {
+    zapinData,
     odosData,
     mintRedeem,
     theme,

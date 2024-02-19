@@ -150,73 +150,86 @@ export const getFilteredOvernightTokens = (
   return tokens;
 };
 
-export const innerGetDefaultSecondtokenBySymobl = (state: typeof stateData, symbolName: string) => {
-  if (!state.secondTokens.length) {
+export const innerGetDefaultSecondtokenBySymobl = (tokensList: any[], symbolName: string) => {
+  if (!tokensList.length) {
     console.log(
       'Inner get default token by symbol fail, secondTokens is empty.',
-      state.secondTokens,
+      tokensList,
     );
     return null;
   }
 
-  for (let i = 0; i < state.secondTokens.length; i++) {
-    const token: any = state.secondTokens[i];
+  for (let i = 0; i < tokensList.length; i++) {
+    const token: any = tokensList[i];
     if (token.symbol === symbolName) {
       return token;
     }
   }
 
   // return first if usd+ not found
-  return state.secondTokens[0];
+  return tokensList[0];
 };
 
-export const innerGetDefaultSecondtokenByIndex = (state: typeof stateData, index: number) => {
-  if (!state.secondTokens.length || state.secondTokens.length < index + 1) {
+export const innerGetDefaultSecondtokenByIndex = (secondTokens: any[], index: number) => {
+  if (!secondTokens.length || secondTokens.length < index + 1) {
     console.log(
       'Inner get default token by index fail, secondTokens is empty or index not exist',
-      state.secondTokens,
+      secondTokens,
     );
     return null;
   }
 
-  return state.secondTokens[index];
+  return secondTokens[index];
 };
 
-export const getSecondDefaultSecondtoken = (state: typeof stateData): any => {
-  if (state.tokenSeparationScheme === 'OVERNIGHT_SWAP') {
+export const getSecondDefaultSecondtoken = (
+  tokenSeparationScheme: string,
+  tokensList: any[],
+): any => {
+  if (tokenSeparationScheme === 'OVERNIGHT_SWAP') {
     return innerGetDefaultSecondtokenBySymobl(
-      state,
+      tokensList,
       SECONDTOKEN_SECOND_DEFAULT_SYMBOL,
     );
   }
 
-  if (state.tokenSeparationScheme === 'POOL_SWAP') {
-    return innerGetDefaultSecondtokenByIndex(state, 1);
+  if (tokenSeparationScheme === 'POOL_SWAP') {
+    return innerGetDefaultSecondtokenByIndex(tokensList, 1);
   }
 
   console.error(
     'TOKEN SEPARATION SCHEME NOT FOUND FOR GET SECOND DEFAULT',
-    state.tokenSeparationScheme,
+    tokenSeparationScheme,
   );
 
   return null;
 };
 
-export const getDefaultSecondtoken = (state: typeof stateData, symbol: string | null) => {
-  if (state.tokenSeparationScheme === 'OVERNIGHT_SWAP') {
+export const getTokenBySymbol = (
+  symbol: string,
+  tokensList: any[],
+) => tokensList.find((_) => _.symbol === symbol);
+
+export const getDefaultSecondtoken = (
+  tokenSeparationScheme: string,
+  tokensList: any[],
+  symbol?: string | null,
+) => {
+  console.log(tokenSeparationScheme, '-tokenSeparationScheme');
+  if (tokenSeparationScheme === 'OVERNIGHT_SWAP') {
     return innerGetDefaultSecondtokenBySymobl(
-      state,
+      tokensList,
       symbol || SECONDTOKEN_DEFAULT_SYMBOL,
     );
   }
 
-  if (state.tokenSeparationScheme === 'POOL_SWAP') {
-    return innerGetDefaultSecondtokenByIndex(state, 0);
+  if (tokenSeparationScheme === 'POOL_SWAP') {
+    return innerGetDefaultSecondtokenByIndex(tokensList, 0);
   }
 
   console.error(
     'TOKEN SEPARATION SCHEME NOT FOUND FOR GET DEFAULT',
-    state.tokenSeparationScheme,
+    tokenSeparationScheme,
   );
   return null;
 };
