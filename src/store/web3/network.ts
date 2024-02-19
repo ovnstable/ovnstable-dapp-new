@@ -518,6 +518,8 @@ const actions = {
   changeMarketNetwork({ commit }: any, network: any) {
     commit('setMarketExplorerURL', getNetworkParams(network).explorerUrl);
     commit('setMarketNetwork', network);
+  },
+
   changeInsuranceNetwork({ commit }: any, network: any) {
     commit('setInsuranceExplorerURL', getNetworkParams(network).explorerUrl);
     commit('setInsuranceNetwork', network);
@@ -584,7 +586,8 @@ const mutations = {
 
   setMarketExplorerURL(state: any, value: any) {
     state.marketExplorerURL = value;
-    
+  },
+
   setInsuranceNetwork(state: any, value: any) {
     state.insuranceNetwork = value;
   },
