@@ -6,10 +6,16 @@
   >
     <div class="insurance__modal-mint-redeem">
       <div class="insurance__modal-mint-redeem-buttons">
-        <ButtonComponent>
+        <ButtonComponent
+          :class="{ 'insurance__modal-mint-redeem-button-selected': selectedAction === 'mint' }"
+          @click="selectedAction = 'mint'"
+        >
           <p>MINT</p>
         </ButtonComponent>
-        <ButtonComponent>
+        <ButtonComponent
+          :class="{ 'insurance__modal-mint-redeem-button-selected': selectedAction === 'redeem' }"
+          @click="selectedAction = 'redeem'"
+        >
           <p>REDEEM</p>
         </ButtonComponent>
       </div>
@@ -75,6 +81,7 @@ export default defineComponent({
     return {
       showModal: false,
       ovnAmount: 0,
+      selectedAction: 'mint',
     };
   },
   methods: {
@@ -86,7 +93,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-
 .insurance__modal-mint-redeem {
   width: 560px;
   padding: 20px;
@@ -98,8 +104,20 @@ export default defineComponent({
   display: flex;
   flex-direction: row;
   align-self: center;
+  button {
+    background-color: var(--color-5);
+    color: var(--color-2);
+    border-radius: 30px;
+    padding: 2px 12px;
+    border: 1px solid var(--color-1);
+    box-shadow: none;
+  }
+  button.insurance__modal-mint-redeem-button-selected {
+    background-color: var(--color-6);
+    padding: 2px 26px;
+    color: var(--color-1);
+  }
 }
-
 .insurance__modal-mint-redeem-mint-text {
   text-align: center;
   margin-top: 24px;
