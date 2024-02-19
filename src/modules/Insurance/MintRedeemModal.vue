@@ -27,45 +27,40 @@
           <p>REDEEM</p>
         </ButtonComponent>
       </div>
-      <p class="insurance__modal-mint-redeem-mint-text">You mint</p>
+      <p class="insurance__modal-mint-redeem-mint-text">You {{selectedAction === 'mint' ? "Mint" : "Redeem"}}</p>
       <div class="insurance__modal-input-group">
-        <div class="insurance__modal-input">
-          <div class="insurance__modal-input-ovn">
-            <input
-              type="number"
-              v-model="ovnAmount"
-              placeholder="0"
-            />
-            <p>icon of ovn</p>
-          </div>
-          <div class="insurance__modal-input-ovn-balances">
-            <p>$0</p>
-            <p>Balance: 0</p>
-          </div>
-        </div>
-        <p> slider</p>
-
-        <div>
-          <p>{{ ovnAmount }} OVN = {{ ovnAmount }} OVN INS</p>
-        </div>
-
+        <InputTokenInsurance
+          :is-mint="selectedAction === 'mint'"
+        />
+        <p class="insurance__modal-input-group-slider"> slider</p>
+        <InputTokenInsurance
+          :is-mint="selectedAction !== 'mint'"
+        />
       </div>
-      <div>
-        <div>
+      <div class="insurance__modal-info">
+        <div class="insurance__modal-info-fee">
           <p>Overight fee:</p>
           <p>0.0%</p>
         </div>
-        <div>
+        <div class="insurance__modal-info-mint">
           <p>You mint:</p>
           <p>0$</p>
         </div>
         <p>1 OVN = 1 OVN INS</p>
       </div>
       <GasSettings />
-      <p>Enter amount to mint</p>
-      <div>
+      <ButtonComponent class="insurance__modal-mint-button">
+        ENTER AMOUNT TO MINT
+      </ButtonComponent>
+      <div class="insurance__modal-stages">
         <p>Start</p>
+        <BaseIcon
+          name="InsuranceModalArrowRight"
+        />
         <p>Approve</p>
+        <BaseIcon
+          name="InsuranceModalArrowRight"
+        />
         <p>Confirmation</p>
       </div>
     </div>
@@ -73,10 +68,12 @@
 </template>
 
 <script lang="ts">
+import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { defineComponent } from 'vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import ModalComponent from '@/components/Modal/Index.vue';
 import GasSettings from '@/modules/Main/components/MintRedeem/GasSettings.vue';
+import InputTokenInsurance from '@/modules/Insurance/InsuranceTokenForm.vue';
 
 export default defineComponent({
   name: 'MintRedeemModal',
@@ -84,6 +81,8 @@ export default defineComponent({
     ModalComponent,
     GasSettings,
     ButtonComponent,
+    BaseIcon,
+    InputTokenInsurance,
   },
   data() {
     return {
@@ -158,10 +157,15 @@ export default defineComponent({
 .insurance__modal-input-group * {
   width: 100%;
 }
+
+.insurance__modal-input-group-slider {
+  margin-top: 8px;
+}
 .insurance__modal-input-ovn {
   display: flex;
   flex-direction: row;
-  p {
+  background-color: var(--color-5);
+  svg {
     width: 10%;
   }
 }
@@ -172,5 +176,42 @@ export default defineComponent({
   :nth-child(2) {
     text-align: right;
   }
+}
+
+.insurance__modal-info {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  color: var(--color-1);
+  margin-top: 20px;
+}
+
+.insurance__modal-info-fee,
+.insurance__modal-info-mint {
+  display: flex;
+  flex-direction: row;
+  font-size: 14px;
+}
+
+.insurance__modal-info-fee :nth-child(1),
+ .insurance__modal-info-mint :nth-child(1){
+  margin-right: 70px;
+}
+
+.insurance__modal-mint-button {
+  padding: 14px 0px;
+  font-size: 17px;
+  color: var(--color-2);
+  border: none;
+  background-color: var(--color-5);
+  box-shadow: none;
+  margin-top: 20px;
+  margin-bottom: 16px;
+}
+
+.insurance__modal-stages {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 </style>

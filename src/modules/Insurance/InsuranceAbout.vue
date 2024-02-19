@@ -3,6 +3,7 @@
     <div class="insurance__about-text">
       <div class="insurance__about-text-ovn-stake">
         <BaseIcon
+          class="insurance__about-img-dividends"
           name="InsuranceDividends"
         />
         <p>
@@ -98,7 +99,8 @@ export default {
       color: var(--color-4);
     }
   }
-  .insurance__about-img-yield {
+  .insurance__about-img-yield,
+  .insurance__about-img-dividends {
     stroke: var(--color-1);
   }
 
