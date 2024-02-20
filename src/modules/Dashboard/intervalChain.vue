@@ -33,7 +33,7 @@ import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { chainContractsMap } from '@/utils/contractsMap.ts';
 
 export default {
-  name: 'TokenData',
+  name: 'intervalChain',
   components: {
     DashboardGraphicInterval,
     BaseIcon,
@@ -48,9 +48,6 @@ export default {
   computed: {
     networkName() {
       return this.$store.state.network.dashboardNetwork;
-    },
-    timeInterval() {
-      return this.$store.state.timeIntervalDashboard;
     },
     availableChains() {
       const availableNetworks = Object.entries(chainContractsMap)
@@ -81,6 +78,7 @@ export default {
     },
     updateInterval(newInterval: string) {
       this.currentInterval = newInterval;
+      this.$store.dispatch('intervalDashboard/setInterval', this.currentInterval);
     },
 
   },
