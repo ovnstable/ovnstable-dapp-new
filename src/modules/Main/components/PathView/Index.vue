@@ -109,12 +109,11 @@
 <!-- eslint-disable no-continue -->
 <!-- eslint-disable no-await-in-loop -->
 <script lang="ts">
-import { defineComponent } from 'vue';
 import { loadTokenImage, loadOvernightTokenImage } from '@/utils/tokenLogo.ts';
 import Spinner from '@/components/Spinner/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 
-export default defineComponent({
+export default {
   name: 'PathView',
   components: {
     Spinner,
@@ -420,7 +419,7 @@ export default defineComponent({
       return Array.from(uniqueSet);
     },
   },
-});
+};
 
 </script>
 

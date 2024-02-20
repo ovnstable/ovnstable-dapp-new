@@ -86,12 +86,11 @@
 
 <!-- eslint-disable no-param-reassign -->
 <script lang="ts">
-import { defineComponent } from 'vue';
 import InputComponent from '@/components/Input/Index.vue';
 import { formatMoney, fixedByPrice } from '@/utils/numbers.ts';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 
-export default defineComponent({
+export default {
   name: 'InputToken',
   components: {
     BaseIcon,
@@ -187,7 +186,7 @@ export default defineComponent({
       }
     },
   },
-});
+};
 </script>
 
 <style>

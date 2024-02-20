@@ -325,7 +325,6 @@
 <!-- eslint-disable no-param-reassign -->
 <!-- eslint-disable no-continue -->
 <script lang="ts">
-import { defineComponent } from 'vue';
 import { mapActions, mapGetters, mapState } from 'vuex';
 import { useEventBus } from '@vueuse/core';
 import TokenForm from '@/modules/Main/components/Odos/TokenForm.vue';
@@ -346,7 +345,7 @@ import {
 import BigNumber from 'bignumber.js';
 import { ethers } from 'ethers';
 
-export default defineComponent({
+export default {
   name: 'SwapForm',
   components: {
     ButtonComponent,
@@ -1652,7 +1651,7 @@ export default defineComponent({
       });
     },
   },
-});
+};
 </script>
 
 <style lang="scss" scoped>

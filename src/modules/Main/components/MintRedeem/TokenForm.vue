@@ -89,14 +89,13 @@
 
 <!-- eslint-disable no-param-reassign -->
 <script lang="ts">
-import { defineComponent } from 'vue';
 import { mapGetters } from 'vuex';
 import InputComponent from '@/components/Input/Index.vue';
 import { formatMoney, fixedByPrice } from '@/utils/numbers.ts';
 import TokensChooseForm from '@/modules/Main/components/MintRedeem/TokenSelect/Index.vue';
 import BigNumber from 'bignumber.js';
 
-export default defineComponent({
+export default {
   name: 'TokenForm',
   components: {
     InputComponent,
@@ -221,7 +220,7 @@ export default defineComponent({
       }, this.isInputToken);
     },
   },
-});
+};
 </script>
 
 <style>

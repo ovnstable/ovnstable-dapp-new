@@ -44,10 +44,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
 import { mapActions } from 'vuex';
 
-export default defineComponent({
+export default {
   name: 'network-not-available',
   props: ['networkName'],
   methods: {
@@ -63,7 +62,7 @@ export default defineComponent({
       this.showSwapModal();
     },
   },
-});
+};
 </script>
 
 <style scoped>
