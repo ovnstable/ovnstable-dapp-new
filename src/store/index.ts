@@ -30,6 +30,7 @@ import insuranceTokenData from '@/store/views/insurance/insuranceTokenData.ts';
 import insurancePayouts from '@/store/views/insurance/InsurancePayouts.ts';
 import insurancePremiums from '@/store/views/insurance/InsurancePremiums.ts';
 import intervalDashboard from '@/store/views/dashboard/intervalDashboard.ts';
+import porfolioBalanceData from '@/store/views/dashboard/porfolioBalanceData.ts';
 
 // modals
 import errorModal from '@/store/modals/error-modal.ts';
@@ -80,6 +81,7 @@ export default new Vuex.Store({
     insurancePayouts,
     insurancePremiums,
     intervalDashboard,
+    porfolioBalanceData,
   },
 
   plugins: [

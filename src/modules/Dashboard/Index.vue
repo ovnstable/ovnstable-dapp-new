@@ -1,10 +1,10 @@
 <template>
-  <!-- <div
+  <div
     v-if="firstLoad"
     class="insurance__loader"
   >
     <Spinner />
-  </div> -->
+  </div>
   <div
     class="dashboard-wrapper"
   >
@@ -21,7 +21,9 @@
           class="dashboard-usd-plus-wrap"
         >
           <IntervalChain />
-          <TokenDataDashboard />
+          <TokenDataDashboard
+            :portfolioBalanceData="portfolioBalanceData"
+          />
           <p class="dashboard__graphics"> dashboard graphic</p>
           <p class="dashboard__premiums"> dashboard pools</p>
         </div>
@@ -54,6 +56,20 @@ export default {
     TabsComponent,
     IntervalChain,
     TokenDataDashboard,
+  },
+  props: {
+    portfolioBalanceData: {
+      type: Object,
+      default: () => ({}),
+    },
+    firstLoad: {
+      type: Boolean,
+      required: true,
+    },
+    loaded: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {

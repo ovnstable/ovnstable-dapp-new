@@ -50,17 +50,9 @@ export default {
     BaseIcon,
   },
   props: {
-    tokenData: {
+    portfolioBalanceData: {
       type: Object,
       default: () => ({}),
-    },
-    chainIcon: {
-      type: String,
-      default: 'IconArbitrum',
-    },
-    chainName: {
-      type: String,
-      default: 'Optimism',
     },
   },
   computed: {
