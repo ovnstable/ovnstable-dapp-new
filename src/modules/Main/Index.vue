@@ -15,13 +15,13 @@
         />
         <div
           v-if="activeTab === 1"
-          class="bridge-wrap"
+          class="form-wrap"
         >
           <MintRedeemForm />
         </div>
         <div
           v-if="activeTab === 2"
-          class="bridge-wrap"
+          class="form-wrap"
         >
           <BridgeComponent />
         </div>
@@ -130,7 +130,7 @@ export default {
   align-items: center;
   width: 60%;
 }
-.bridge-wrap {
+.form-wrap {
   height: 100%;
   min-height: 530px;
   display: flex;

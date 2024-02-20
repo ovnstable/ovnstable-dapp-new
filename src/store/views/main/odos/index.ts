@@ -333,14 +333,17 @@ const actions = {
       );
     }
 
-    for (let i = 0; i < state.tokens.length; i++) {
-      const token: any = state.tokens[i];
-      state.tokensContractMap[token.address] = buildEvmContract(
+    const tokensList: any = {};
+    for (let i = 0; i < getters.allTokensList.length; i++) {
+      const token: any = getters.allTokensList[i];
+      tokensList[token.address] = buildEvmContract(
         contractFile.abi,
         rootState.web3.evmSigner,
         token.address,
       );
     }
+
+    commit('changeState', { field: 'tokensContractMap', val: tokensList });
   },
   // initUpdateBalancesInterval() {
   //   setTimeout(() => {

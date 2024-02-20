@@ -82,6 +82,14 @@
         {{isMintActive ? "MINT" : "REDEEM"}}
       </ButtonComponent>
     </div>
+
+    <div class="mintredeem-form__modal-stages">
+      <p :class="{ 'active-stage': currentStage === mintRedeemStep.START }">Start</p>
+      <BaseIcon name="InsuranceModalArrowRight" />
+      <p :class="{ 'active-stage': currentStage === mintRedeemStep.APPROVE }">Approve</p>
+      <BaseIcon name="InsuranceModalArrowRight" />
+      <p :class="{ 'active-stage': currentStage === mintRedeemStep.CONFIRMATION }">Confirmation</p>
+    </div>
   </div>
 
 </template>
@@ -93,6 +101,7 @@
 import { mapActions, mapGetters, mapState } from 'vuex';
 import SwitchTabs from '@/components/SwitchTabs/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
+import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import TokenForm from '@/modules/Main/components/MintRedeem/TokenForm.vue';
 import { buildEvmContract } from '@/utils/contractsMap.ts';
 import { MINTREDEEM_SCHEME } from '@/store/views/main/mintRedeem/mocks.ts';
@@ -100,7 +109,11 @@ import debounce from 'lodash/debounce';
 import { fixedByPrice } from '@/utils/numbers.ts';
 
 import {
-  mintStatus, wrapStatus, mintRedeemTypes, type IMethodData,
+  mintStatus,
+  wrapStatus,
+  mintRedeemTypes,
+  type IMethodData,
+  mintRedeemStep,
 } from '@/modules/Main/components/MintRedeem/types/index.ts';
 import {
   getNewInputToken, getReferralCode,
@@ -114,12 +127,14 @@ export default {
   name: 'MintRedeem',
   components: {
     SwitchTabs,
+    BaseIcon,
     TokenForm,
     GasSettings,
     ButtonComponent,
   },
   data() {
     return {
+      mintRedeemStep,
       inputToken: getNewInputToken(),
       outputToken: getNewInputToken(),
       activeMintTab: 0,
@@ -128,6 +143,7 @@ export default {
       isAllDataLoaded: false,
       approveLoading: false,
       isApprovedToken: false,
+      currentStage: mintRedeemStep.START,
 
       mintTabs: [
         {
@@ -208,6 +224,7 @@ export default {
     },
     async approveTrigger() {
       this.showWaitingModal('Approving in process');
+      this.currentStage = mintRedeemStep.APPROVE;
 
       const tokenData = this.inputToken;
       const tokenContract = this.tokensContractMap[tokenData.address];
@@ -244,6 +261,7 @@ export default {
       const finishTx = () => {
         this.checkApprove(this);
         this.closeWaitingModal();
+        this.currentStage = mintRedeemStep.CONFIRMATION;
       };
 
       if (!tx) {
@@ -287,6 +305,8 @@ export default {
 
       self.approveLoading = false;
       self.isApprovedToken = isAllowedToSwap;
+      if (isAllowedToSwap) self.currentStage = mintRedeemStep.CONFIRMATION;
+      if (!isAllowedToSwap) self.currentStage = mintRedeemStep.APPROVE;
     }, 250),
     selectFormToken(data: any, isInputToken: boolean) {
       if (isInputToken) {
@@ -376,7 +396,6 @@ export default {
         };
       }
 
-      console.log(exchangeMethodName, 'TESSSSTTT____1');
       if (exchangeMethodName === 'redeem') {
         if (action === 'market-redeem') {
           methodParam = {
@@ -389,7 +408,6 @@ export default {
           // || action === 'usdc-swap-redeem'
           // || action === 'eth-swap-redeem'
         ) {
-          console.log('TESSSSTTT____');
           methodParam = {
             asset: actionContract.target,
             sum: contractSum,
@@ -487,7 +505,6 @@ export default {
         return -1;
       }
 
-      console.log(result, 'result');
       return result;
     },
     async swapTokens() {
@@ -549,6 +566,7 @@ export default {
           exchangeMethodName,
           actionContract,
         );
+
         console.log(estimatedGasValue, '-estimatedGasValue');
         if (!estimatedGasValue) return;
 
@@ -572,8 +590,6 @@ export default {
 
         if (!method) return;
 
-        console.log(method, '---method');
-        console.log(this.gasPriceGwei, '---send');
         const txData = method.iterateArgs
           ? await exchangeContract[method.name](
             ...Object.values(method.params),
@@ -677,5 +693,21 @@ export default {
   }
 
 }
+
+.mintredeem-form__modal-stages {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  color: var(--color-7);
+  margin-top: 20px;
+
+  [data-theme="dark"] & {
+    color: var(--color-2);
+  }
+
+  .active-stage {
+    text-decoration: underline;
+    color: var(--color-1);
+  }
+}
 </style>
-@/utils/contractApprove
