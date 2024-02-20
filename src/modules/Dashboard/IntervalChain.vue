@@ -33,7 +33,7 @@ import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { chainContractsMap } from '@/utils/contractsMap.ts';
 
 export default {
-  name: 'intervalChain',
+  name: 'IntervalChain',
   components: {
     DashboardGraphicInterval,
     BaseIcon,

@@ -20,8 +20,8 @@
           v-if="activeTab === 0"
           class="dashboard-usd-plus-wrap"
         >
-          <intervalChain />
-          <p>token data for usd+</p>
+          <IntervalChain />
+          <TokenDataDashboard />
           <p class="dashboard__graphics"> dashboard graphic</p>
           <p class="dashboard__premiums"> dashboard pools</p>
         </div>
@@ -45,13 +45,15 @@
 <script lang="ts">
 
 import TabsComponent from '@/components/Tabs/Index.vue';
-import intervalChain from '@/modules/Dashboard/intervalChain.vue';
+import IntervalChain from '@/modules/Dashboard/IntervalChain.vue';
+import TokenDataDashboard from '@/modules/Dashboard/TokenDataDashboard.vue';
 
 export default {
   name: 'DashboardPage',
   components: {
     TabsComponent,
-    intervalChain,
+    IntervalChain,
+    TokenDataDashboard,
   },
   data() {
     return {
