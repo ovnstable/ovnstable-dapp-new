@@ -3,10 +3,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, h } from 'vue';
+import { h } from 'vue';
 import { svgIconsMap } from '@/utils/const.ts';
 
-export default defineComponent({
+export default {
   props: {
     name: {
       type: String,
@@ -20,5 +20,5 @@ export default defineComponent({
       return svg && h(svg);
     },
   },
-});
+};
 </script>
