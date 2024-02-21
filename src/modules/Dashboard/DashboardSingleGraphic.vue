@@ -10,11 +10,11 @@
     <div class="insurance__data-under-graphic">
       <div class="insurance__data-initial">
         <p>{{getInitialValue()}}$</p>
-        <p>{{getDate()}}</p>
+        <p>{{getDate(true)}}</p>
       </div>
       <div class="insurance__data-comp-today">
         <p>${{ parseFloat(portfolioBalanceData[0].closing_balance).toFixed(4) }}</p>
-        <p> for today </p>
+        <p> {{getDate(false)}} </p>
       </div>
     </div>
   </div>
@@ -217,9 +217,14 @@ export default {
       const minValue = Math.min(...dataValues);
       return minValue.toFixed(4);
     },
-    getDate() {
-      const intervalData = this.portfolioBalanceData?.slice(0, this.getInterval()).reverse();
-      const date = new Date(intervalData[0].date);
+    getDate(initial: boolean) {
+      let date = new Date();
+      if (initial) {
+        const intervalData = this.portfolioBalanceData?.slice(0, this.getInterval()).reverse();
+        date = new Date(intervalData[0].date);
+      } else {
+        date = new Date(this.portfolioBalanceData[0]?.date);
+      }
       const day = date.getUTCDate().toString().padStart(2, '0');
       const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
       const year = date.getUTCFullYear();
