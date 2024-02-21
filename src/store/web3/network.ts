@@ -189,7 +189,7 @@ const state = {
   insuranceNetwork: 'optimism',
   dashboardNetwork: 'optimism',
   insuranceExplorerURL: 'https://optimistic.etherscan.io/',
-  dashboardExplorerURL: 'https://optimistic.etherscan.io/'
+  dashboardExplorerURL: 'https://optimistic.etherscan.io/',
 };
 
 const getters = {

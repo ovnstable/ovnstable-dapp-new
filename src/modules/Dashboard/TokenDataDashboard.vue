@@ -239,7 +239,7 @@ export default {
         case 'week':
           text = 'per week';
           break;
-        case 'per month':
+        case 'month':
           text = 'per month';
           break;
         case 'all time':

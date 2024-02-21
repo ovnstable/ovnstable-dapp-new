@@ -1,7 +1,7 @@
 <template>
   <DashboardPage
     :portfolioBalanceData="portfolioBalanceData"
-    :first-load="firstRender"
+    :firstLoad="firstRender"
     :loaded="loaded"
   />
 </template>
@@ -43,10 +43,7 @@ export default {
   },
   methods: {
     async fetchDataForPortfolioBalance(networkName: string) {
-      console.log('getting data from fetch');
       const { account } = this;
-      console.log(`we are in fetchDataForPortfolioBalance the account is ${account}`);
-      console.log(networkName);
       this.loaded = false;
       try {
         await Promise.all([

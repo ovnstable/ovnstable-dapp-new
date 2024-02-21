@@ -1,10 +1,10 @@
 <template>
-  <div
+  <!-- <div
     v-if="firstLoad"
     class="dashboard__loader"
   >
     <Spinner />
-  </div>
+  </div> -->
   <div
     class="dashboard-wrapper"
   >
@@ -46,7 +46,10 @@
       </TabsComponent>
     </div>
     <div class="dashboard__payouts">
-      <p class="dashboard__payout-inner"> dashboard payouts</p>
+      <DashboardTransactions
+        :portfolioBalanceData="portfolioBalanceData"
+        class="dashboard__payout-inner"
+      />
     </div>
   </div>
 
@@ -59,6 +62,7 @@ import IntervalChain from '@/modules/Dashboard/IntervalChain.vue';
 import Spinner from '@/components/Spinner/Index.vue';
 import TokenDataDashboard from '@/modules/Dashboard/TokenDataDashboard.vue';
 import DashboardGraphic from '@/modules/Dashboard/DashboardGraphic.vue';
+import DashboardTransactions from '@/modules/Dashboard/DashboardTransactions.vue'
 
 export default {
   name: 'DashboardPage',
@@ -68,6 +72,7 @@ export default {
     TokenDataDashboard,
     DashboardGraphic,
     Spinner,
+    DashboardTransactions,
   },
   props: {
     portfolioBalanceData: {
