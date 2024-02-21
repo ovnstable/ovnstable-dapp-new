@@ -1,16 +1,17 @@
 <template>
-  <div class="insurance__graphics">
-    <!-- <div
-      class="insurance__graphics-APY-graphic"
+  <div class="dashboard__graphics">
+    <div
+      class="dashboard__graphics-APY-graphic"
       v-if="!loaded"
     >
       <div class="graphic__loader">
         <Spinner />
       </div>
-    </div> -->
+    </div>
     <div
-      class="insurance__graphics-APY-graphic"
-    > 
+      v-else
+      class="dashboard__graphics-APY-graphic"
+    >
       <DashboardSingleGraphic
         v-if="portfolioBalanceData.length > 0"
         :portfolioBalanceData="portfolioBalanceData"
@@ -51,7 +52,7 @@ export default {
   align-items: center;
   justify-content: center;
 }
-.insurance__graphics {
+.dashboard__graphics {
   min-height: 416px;
   display: flex;
   flex-direction: row;
@@ -62,30 +63,30 @@ export default {
       background: var(--color-6);
   }
 
-  > .insurance__graphics-APY-graphic,
-  > .insurance__graphics-TVL-graphic {
+  > .dashboard__graphics-APY-graphic,
+  > .dashboard__graphics-TVL-graphic {
     flex: 1;
   }
 }
 
 @media (max-width: 1024px) {
-  .insurance__graphics {
+  .dashboard__graphics {
     flex-direction: column;
   }
-  .insurance__graphics-TVL-graphic {
+  .dashboard__graphics-TVL-graphic {
     margin: 0;
     width: 100%;
   }
-  .insurance__graphics-APY-graphic {
+  .dashboard__graphics-APY-graphic {
     width: 100%;
   }
 }
 
 @media (max-width: 768px) {
-  .insurance__graphics {
+  .dashboard__graphics {
     flex-direction: column;
   }
-  .insurance__graphics-TVL-graphic {
+  .dashboard__graphics-TVL-graphic {
     margin-top: 50px;
   }
 }

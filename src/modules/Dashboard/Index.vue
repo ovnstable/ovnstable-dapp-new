@@ -1,10 +1,10 @@
 <template>
-  <!-- <div
+  <div
     v-if="firstLoad"
-    class="insurance__loader"
+    class="dashboard__loader"
   >
-    <Spinner /> -->
-  <!-- </div> -->
+    <Spinner />
+  </div>
   <div
     class="dashboard-wrapper"
   >
@@ -22,10 +22,12 @@
         >
           <IntervalChain />
           <TokenDataDashboard
+            class="dashboard__token-data"
             :portfolioBalanceData="portfolioBalanceData"
           />
           <DashboardGraphic
             :portfolioBalanceData="portfolioBalanceData"
+            :loaded="loaded"
             class="dashboard__graphics"
           />
           <p class="dashboard__premiums"> dashboard pools</p>
@@ -51,6 +53,7 @@
 
 import TabsComponent from '@/components/Tabs/Index.vue';
 import IntervalChain from '@/modules/Dashboard/IntervalChain.vue';
+import Spinner from '@/components/Spinner/Index.vue';
 import TokenDataDashboard from '@/modules/Dashboard/TokenDataDashboard.vue';
 import DashboardGraphic from '@/modules/Dashboard/DashboardGraphic.vue';
 
@@ -61,6 +64,7 @@ export default {
     IntervalChain,
     TokenDataDashboard,
     DashboardGraphic,
+    Spinner,
   },
   props: {
     portfolioBalanceData: {
@@ -123,7 +127,7 @@ export default {
   padding-right: 25px;
   padding-bottom: 20px;
 }
-.insurance__token-data,
+.dashboard__token-data,
 .dashboard__graphics,
 .dashboard__premiums,
 .dashboard__payout-inner {
@@ -166,7 +170,7 @@ export default {
   }
 }
 
-.insurance__loader {
+.dashboard__loader {
   position: absolute;
   left: 0;
   top: 0;

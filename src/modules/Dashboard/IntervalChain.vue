@@ -14,7 +14,7 @@
         :key="chain"
         @click="saveNetworkToLocalStore(chain)"
         @keydown.enter="saveNetworkToLocalStore(chain)"
-        class="insurance__chain-data"
+        class="dashboard__chain-data"
         :class="{ selected: (chain as any).toLowerCase() === networkName }"
       >
         <BaseIcon

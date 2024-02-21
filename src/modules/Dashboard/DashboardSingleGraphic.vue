@@ -1,18 +1,18 @@
 <template>
   <p>USD+ Balance <span>| {{ formattedPeriod() }}</span></p>
-  <div class="insurance__graphic">
-    <div class="insurance__graphic-display">
+  <div class="dashboard__graphic">
+    <div class="dashboard__graphic-display">
       <canvas
         ref="myChart"
         :key="'canvas-' + getDashboardInterval"
       />
     </div>
-    <div class="insurance__data-under-graphic">
-      <div class="insurance__data-initial">
+    <div class="dashboard__data-under-graphic">
+      <div class="dashboard__data-initial">
         <p>{{getInitialValue()}}$</p>
         <p>{{getDate(true)}}</p>
       </div>
-      <div class="insurance__data-comp-today">
+      <div class="dashboard__data-comp-today">
         <p>${{ parseFloat(portfolioBalanceData[0].closing_balance).toFixed(4) }}</p>
         <p> {{getDate(false)}} </p>
       </div>
@@ -23,7 +23,6 @@
 <script lang="ts">
 import { Chart, registerables } from 'chart.js';
 import { appNetworksData } from '@/utils/const.ts';
-import { chainContractsMap } from '@/utils/contractsMap.ts';
 
 const originPointPlugin = {
   id: 'originPointPlugin',
@@ -183,7 +182,7 @@ export default {
                     const year = date.getUTCFullYear();
                     const hours = date.getUTCHours().toString().padStart(2, '0');
                     const minutes = date.getUTCMinutes().toString().padStart(2, '0');
-                    const formattedDate = `${day}.${month}.${year}, ${hours}:${minutes} UTS`;
+                    const formattedDate = `${day}.${month}.${year}, ${hours}:${minutes} UTC`;
                     return formattedDate;
                   }
                   return '';
@@ -230,7 +229,7 @@ export default {
       const year = date.getUTCFullYear();
       const hours = date.getUTCHours().toString().padStart(2, '0');
       const minutes = date.getUTCMinutes().toString().padStart(2, '0');
-      const formattedDate = `${day}.${month}.${year}, ${hours}:${minutes} UTS`;
+      const formattedDate = `${day}.${month}.${year}, ${hours}:${minutes} UTC`;
       return formattedDate;
     },
     formattedPeriod() {
@@ -332,19 +331,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.insurance__chains-interval {
-  min-height: 34px;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-.insurance__graphic-display {
+.dashboard__graphic-display {
   width: 100%;
   min-height: 250px;
 }
-.insurance__graphic{
+.dashboard__graphic{
   min-height: 250px;
   background-color: var(--color-8);
   display: flex;
@@ -365,55 +356,8 @@ export default {
   }
 }
 
-.insurance__chain-data-container .selected {
-  background: var(--color-4);
-  cursor: default;
-  [data-theme="dark"] & {
-    background: var(--color-2);
-  }
-}
-.insurance__chain-data-container {
-  display: flex;
-  flex-direction: row;
-  vertical-align: center;
-}
-
-.insurance__chain-data-container > *:not(:last-child) {
-  margin-right: 7px;
-}
-
-.insurance__chain-data {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  border-radius: 30px;
-  border: 1px solid var(--color-6);
-  background: var(--color-5);
-  padding: 5px 10px;
-  width: fit-content;
-  transition: background 0.3s ease, border 0.3s ease;
-}
-.insurance__icon-chain-bottom {
-  flex-shrink: 0
-}
-
-.insurance__chain-data-name {
-  margin-left: 8px;
-  font-weight: 500;
-  font-size: 13px;
-  color: var(--color-1);
-  [data-theme="dark"] & {
-    color: var(--color-4);
-  }
-}
-.insurance__chain-data:hover {
-  cursor: pointer;
-  border: 1px solid var(--color-7);
-  background: var(--color-6);
-  transition: background 0.3s ease, border 0.3s ease;
-  [data-theme="dark"] & {
-    background: var(--color-7);
-  }
+.dashboard__data-comp-today :nth-child(1) {
+  margin-bottom: 4px;
 }
 
 .selected:hover {
@@ -425,7 +369,7 @@ export default {
     background: var(--color-7);
   }
 }
-.insurance__graphic-data {
+.dashboard__graphic-data {
   margin-bottom: 10px;
   display: flex;
   flex-direction: row;
@@ -433,14 +377,14 @@ export default {
   width: 100%;
   flex-grow: 1;
 }
-.insurance__graphic-data-text {
+.dashboard__graphic-data-text {
   margin-left: 167px;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
 }
 
-.insurance__graphic-title {
+.dashboard__graphic-title {
   margin-left: 40px;
   color: var(--color-1);
   font-size: 15px;
@@ -450,7 +394,7 @@ export default {
   }
 }
 
-.insurance__graphic-value {
+.dashboard__graphic-value {
   color: var(--color-1);
   font-size: 20px;
   font-weight: 600;
@@ -459,7 +403,7 @@ export default {
   }
 }
 
-.insurance__graphic-date {
+.dashboard__graphic-date {
   color: var(--color-1);
   font-size: 12px;
   font-weight: 500;
@@ -468,41 +412,7 @@ export default {
   }
 }
 
-.insurance-cumulitives {
-  display: flex;
-  flex-direction: row;
-  gap: 16px;
-  p {
-    [data-theme="dark"] & {
-      color: var(--color-4);
-    }
-  }
-}
-.insurance__accumulator-data {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  align-items: center;
-}
-
-.insurance__accumulator-data :nth-child(1) {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--color-1);
-  margin-bottom: 4px;
-}
-
-.insurance__accumulator-data :nth-child(2) {
-  font-size: 16px;
-  font-weight: 500;
-  color: var(--color-1);
-}
-
-.insurance__accumulator-data:not(:last-child) {
-  margin-right: 16px;
-}
-
-.insurance__data-under-graphic {
+.dashboard__data-under-graphic {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -514,7 +424,7 @@ export default {
   font-weight: 500;
 }
 
-.insurance__data-initial {
+.dashboard__data-initial {
   margin-left: 26px;
   text-align: left;
   [data-theme="dark"] & {
@@ -522,24 +432,16 @@ export default {
   }
 }
 
-.insurance__data-closing_balance-today {
-  text-align: right;
-  [data-theme="dark"] & {
-    color: var(--color-18);
-  }
-}
-
-.insurance__data-initial :nth-child(1),
-.insurance__data-closing_balance-today :nth-child(1){
+.dashboard__data-initial :nth-child(1){
   margin-bottom: 4px;
 }
 
 @media (max-width: 1024px) {
-  .insurance__graphic-display {
+  .dashboard__graphic-display {
     width: 100%;
     min-height: 150px;
   }
-.insurance__graphic{
+.dashboard__graphic{
   min-height: 150px;
   background-color: var(--color-8);
   display: flex;
@@ -553,42 +455,42 @@ export default {
   margin-top: 5px;
 }
 
-  .insurance__graphic-data-text {
+  .dashboard__graphic-data-text {
     margin-left: 50px;
   }
 }
 
 @media (max-width: 768px) {
-  .insurance__graphic-value {
+  .dashboard__graphic-value {
       font-size: 16px;
   }
-  .insurance__graphic-title {
+  .dashboard__graphic-title {
       font-size: 12px;
   }
-  .insurance__graphics-buttons-interval > * {
+  .dashboard__graphics-buttons-interval > * {
       font-size: 10px;
   }
-  .insurance__graphic-date {
+  .dashboard__graphic-date {
         font-size: 10px;
   }
-  .insurance__graphic{
+  .dashboard__graphic{
       padding: 15px 30px;
   }
 }
 @media (max-width: 576px) {
-  .insurance__graphic-value {
+  .dashboard__graphic-value {
       font-size: 14px;
   }
-  .insurance__graphic-title {
+  .dashboard__graphic-title {
       font-size: 10px;
   }
-  .insurance__graphics-buttons-interval > * {
+  .dashboard__graphics-buttons-interval > * {
       font-size: 8px;
   }
-  .insurance__graphic-date {
+  .dashboard__graphic-date {
         font-size: 8px;
   }
-  .insurance__graphic{
+  .dashboard__graphic{
       padding: 10px 20px;
   }
 }
