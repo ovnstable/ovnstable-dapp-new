@@ -7,15 +7,15 @@
         :key="'canvas-' + getDashboardInterval"
       />
     </div>
-<div class="insurance__data-under-graphic">
+    <div class="insurance__data-under-graphic">
       <div class="insurance__data-initial">
         <p>{{getInitialValue()}}$</p>
-        <p>date</p>
+        <p>{{getDate()}}</p>
       </div>
-      <!-- <div class="insurance__data-comp-today">
-        <p>{{ parseFloat(graphicData[0].comp).toFixed(3) }}%</p>
+      <div class="insurance__data-comp-today">
+        <p>${{ parseFloat(portfolioBalanceData[0].closing_balance).toFixed(4) }}</p>
         <p> for today </p>
-      </div> -->
+      </div>
     </div>
   </div>
 </template>
@@ -65,9 +65,6 @@ export default {
     getDashboardInterval(newInterval) {
       this.currentInterval = newInterval;
       this.$nextTick(() => {
-        if (this.myChart) {
-          this.myChart.destroy();
-        }
         this.initChart();
       });
     },
@@ -82,8 +79,8 @@ export default {
       return data || appNetworksData[0];
     },
     chartData(): any {
-      console.log(`this is inteval from store ${this.getInterval()}`)
-      const balancesData = [...(this.portfolioBalanceData as any)].slice(0, this.getInterval()).reverse();
+      const balancesData = [...(this.portfolioBalanceData as any)]
+        .slice(0, this.getInterval()).reverse();
       const activeNetworkColor = this.activeNetworkData.color;
 
       return {
@@ -106,8 +103,8 @@ export default {
       const intervalData = this.portfolioBalanceData?.slice(0, this.getInterval());
       const dataValues = intervalData.map((trx: any) => parseFloat(trx.closing_balance));
 
-      const minValue = Math.min(...dataValues) * 0.99;
-      const maxValue = Math.max(...dataValues) * 1.01;
+      const minValue = Math.min(...dataValues);
+      const maxValue = Math.max(...dataValues);
       return {
         chartOptions: {
           scales: {
@@ -173,7 +170,7 @@ export default {
                     label += ': ';
                   }
                   const value = context.parsed.y;
-                  label += `Portfolio value: $${value.toLocaleString()}`;
+                  label += `Portfolio value: $${value.toFixed(4)}`;
                   return label;
                 },
                 title(context: any) {
@@ -215,18 +212,20 @@ export default {
 
   methods: {
     getInitialValue() {
-      const intervalData = this.graphicData?.slice(0, this.getInterval());
-      const dataValues = intervalData.map((payout: any) => parseFloat(payout.comp));
+      const intervalData = this.portfolioBalanceData?.slice(0, this.getInterval());
+      const dataValues = intervalData.map((trx: any) => parseFloat(trx.closing_balance));
       const minValue = Math.min(...dataValues);
-      return minValue.toFixed(2);
+      return minValue.toFixed(4);
     },
-    getInitialDate() {
-      const intervalData = this.graphicData?.slice(0, this.getInterval()).reverse();
+    getDate() {
+      const intervalData = this.portfolioBalanceData?.slice(0, this.getInterval()).reverse();
       const date = new Date(intervalData[0].date);
       const day = date.getUTCDate().toString().padStart(2, '0');
       const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
       const year = date.getUTCFullYear();
-      const formattedDate = `${day}.${month}.${year}`;
+      const hours = date.getUTCHours().toString().padStart(2, '0');
+      const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+      const formattedDate = `${day}.${month}.${year}, ${hours}:${minutes} UTS`;
       return formattedDate;
     },
     formattedPeriod() {
@@ -289,12 +288,13 @@ export default {
     },
     getInterval() {
       const intervalMapping = {
-      'day': 2,
-      'week': 7,
-      'month': 30,
-      }
+        day: 2,
+        week: 7,
+        month: 30,
+      };
       const interval = this.getDashboardInterval;
-      const sliceAmount = intervalMapping[interval.toLowerCase()] || this.portfolioBalanceData.length;
+      const sliceAmount = intervalMapping[interval.toLowerCase()] || this
+        .portfolioBalanceData.length;
       return sliceAmount;
     },
     initChart() {
