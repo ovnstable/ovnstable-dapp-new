@@ -7,7 +7,7 @@
       />
       <div class="dashboard__token-data-link-title">
         <p class="dashboard__token-data-title--token"> USD+ </p>
-        <p class="dashboard__token-data-title-period">From 01 Jan ‘24</p>
+        <p class="dashboard__token-data-title-period">{{ formattedPeriod() }}</p>
       </div>
     </div>
 
@@ -25,8 +25,8 @@
     <div class="dashboard__apy-data">
       <p class="dashboard__token-data-title">Balance</p>
       <div class="dashboard__apy-data-chain">
-        <p class="dashboard__token-data-num"> $ 4.0685</p>
-        <p class="dashboard__token-data-growth-balance">+14.23%</p>
+        <p class="dashboard__token-data-num"> {{ getBalance() }}</p>
+        <p class="dashboard__token-data-growth-balance">{{growthPercentage() }}</p>
       </div>
     </div>
     <div class="dashboard__divider" />
@@ -37,12 +37,10 @@
     <div class="dashboard__divider dashboard__divider--last-divider" />
   </div>
 
-
 </template>
 
 <script lang="ts">
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
-import { chainContractsMap } from '@/utils/contractsMap.ts';
 
 export default {
   name: 'TokenDataDashboard',
@@ -57,50 +55,125 @@ export default {
   },
   computed: {
     networkName() {
-      return this.$store.state.network.marketNetwork;
+      return this.$store.state.network.dashboardNetwork;
     },
     networkScan() {
       return this.$store.state.network.marketExplorerURL;
     },
-    availableChains() {
-      const tokenKey = `${this.tokenData.tokenName?.toLowerCase()?.slice(0, -1)}Plus`;
-      if (!tokenKey) return [];
-      const availableNetworks = Object.entries(chainContractsMap)
-        .reduce((acc, [network, tokens]: any) => {
-          if ((tokenKey in tokens) && tokens[tokenKey].tokenPlus) {
-            acc.push(network.charAt(0).toUpperCase() + network.slice(1));
-          }
-          return acc;
-        }, [] as string[]);
-
-      return availableNetworks;
+    currentIntervalDashboard() {
+      return this.$store.state.intervalDashboard.intervalDashboard;
     },
+
   },
   methods: {
-    saveNetworkToLocalStore(chain:string) {
-      this.$store.dispatch('network/changeMarketNetwork', chain.toLowerCase());
+    getBalance() {
+      if (this.portfolioBalanceData.length === undefined) {
+        return '$0,00';
+      }
+      const payoutTransactions = this.portfolioBalanceData.filter((transaction: any) => transaction.type === 'PAYOUT');
+      if (payoutTransactions.length > 0) {
+        const balance = payoutTransactions[0].closing_balance;
+        return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(balance);
+      }
+      return '$0,00';
     },
-    generateHref(tokenName:string, networkName:string) {
-      if (!tokenName) {
-        return '';
+    growthPercentage(): any {
+      if (this.portfolioBalanceData.length === undefined) {
+        return '0.00%';
+      }
+      const interval = this.currentIntervalDashboard.toLowerCase();
+      const payoutTransactions = this.portfolioBalanceData
+        .filter((transaction: any) => transaction.type === 'PAYOUT');
+      let numberOfDays;
+      switch (interval) {
+        case 'day':
+          numberOfDays = 1;
+          break;
+        case 'week':
+          numberOfDays = 7;
+          break;
+        case 'month':
+          numberOfDays = 30;
+          break;
+        case 'all time':
+          numberOfDays = payoutTransactions.length;
+          break;
+        default:
+          numberOfDays = 0;
       }
 
-      const tokenKey = `${tokenName.toLowerCase()?.slice(0, -1)}Plus`;
-      if (!tokenKey) return '';
-      const networkContracts = (chainContractsMap as any)[networkName.toLowerCase()];
-      if (!networkContracts || !(tokenKey in networkContracts)) {
-        console.error(`Contracts not found for ${tokenKey} on ${networkName}`);
-        return '';
+      const initialTransaction = payoutTransactions[numberOfDays - 1];
+
+      if (initialTransaction) {
+        const currentBalance = payoutTransactions[0].closing_balance;
+        const initialBalance = initialTransaction.opening_balance;
+        const growth = ((currentBalance - initialBalance) / initialBalance) * 100;
+        if (Number.isNaN(growth)) {
+          return '0.00%';
+        }
+        const formattedGrowth = growth.toFixed(2);
+        return `${growth > 0 ? `+${formattedGrowth}` : formattedGrowth}%`;
+      }
+      return 0;
+    },
+
+    formattedPeriod() {
+      const today = new Date();
+      let formattedDate = 'N/A';
+      switch (this.currentIntervalDashboard.toLowerCase()) {
+        case 'day': {
+          formattedDate = today.toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: 'short',
+            year: '2-digit',
+          }).replace(',', '').replace(/ /g, ' ');
+          break;
+        }
+        case 'week': {
+          const weekAgo = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
+          formattedDate = weekAgo.toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: 'short',
+            year: '2-digit',
+          }).replace(',', '').replace(/ /g, ' ');
+          break;
+        }
+        case 'month': {
+          const monthAgo = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
+          formattedDate = monthAgo.toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: 'short',
+            year: '2-digit',
+          }).replace(',', '').replace(/ /g, ' ');
+          break;
+        }
+        case 'all time':
+          if (this.portfolioBalanceData && this.portfolioBalanceData.length > 0) {
+            const earliestTransaction = this
+              .portfolioBalanceData[this.portfolioBalanceData.length - 1];
+            const earliestDate = new Date(earliestTransaction.date);
+            formattedDate = earliestDate.toLocaleDateString('en-GB', {
+              day: '2-digit',
+              month: 'short',
+              year: '2-digit',
+            }).replace(',', '').replace(/ /g, ' ');
+          }
+          break;
+        default: {
+          formattedDate = today.toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: 'short',
+            year: '2-digit',
+          }).replace(',', '').replace(/ /g, ' ');
+        }
       }
 
-      const { tokenPlus } = networkContracts[tokenKey];
-
-      if (!tokenPlus) {
-        console.error(`Address not found for ${tokenKey} on ${networkName}`);
-        return '';
+      const formattedDateParts = formattedDate.split(' ');
+      if (formattedDateParts.length === 3) {
+        formattedDate = `From ${formattedDateParts[0]} ${formattedDateParts[1]} ‘${formattedDateParts[2]}`;
       }
 
-      return tokenPlus;
+      return formattedDate || 'From N/A';
     },
 
     getIconName(chain:string) {

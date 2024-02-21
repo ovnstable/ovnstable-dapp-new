@@ -1,10 +1,10 @@
 <template>
-  <div
+  <!-- <div
     v-if="firstLoad"
     class="insurance__loader"
   >
-    <Spinner />
-  </div>
+    <Spinner /> -->
+  <!-- </div> -->
   <div
     class="dashboard-wrapper"
   >
