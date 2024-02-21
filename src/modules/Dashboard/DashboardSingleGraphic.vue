@@ -1,4 +1,5 @@
 <template>
+  <p>USD+ Balance <span>| {{ formattedPeriod() }}</span></p>
   <div class="insurance__graphic">
     <div class="insurance__graphic-display">
       <canvas
@@ -6,7 +7,16 @@
         :key="'canvas-' + getDashboardInterval"
       />
     </div>
-
+<div class="insurance__data-under-graphic">
+      <div class="insurance__data-initial">
+        <p>{{getInitialValue()}}$</p>
+        <p>date</p>
+      </div>
+      <!-- <div class="insurance__data-comp-today">
+        <p>{{ parseFloat(graphicData[0].comp).toFixed(3) }}%</p>
+        <p> for today </p>
+      </div> -->
+    </div>
   </div>
 </template>
 
@@ -52,15 +62,13 @@ export default {
     };
   },
   watch: {
-    // Watch for changes in getDashboardInterval computed property
     getDashboardInterval(newInterval) {
       this.currentInterval = newInterval;
-      // Next, re-initialize the chart
       this.$nextTick(() => {
         if (this.myChart) {
-          this.myChart.destroy(); // Destroy the existing chart instance before creating a new one
+          this.myChart.destroy();
         }
-        this.initChart(); // Call initChart to create a new chart with the updated interval
+        this.initChart();
       });
     },
   },
@@ -98,8 +106,8 @@ export default {
       const intervalData = this.portfolioBalanceData?.slice(0, this.getInterval());
       const dataValues = intervalData.map((trx: any) => parseFloat(trx.closing_balance));
 
-      const minValue = Math.min(...dataValues);
-      const maxValue = Math.max(...dataValues);
+      const minValue = Math.min(...dataValues) * 0.99;
+      const maxValue = Math.max(...dataValues) * 1.01;
       return {
         chartOptions: {
           scales: {
@@ -206,6 +214,79 @@ export default {
   },
 
   methods: {
+    getInitialValue() {
+      const intervalData = this.graphicData?.slice(0, this.getInterval());
+      const dataValues = intervalData.map((payout: any) => parseFloat(payout.comp));
+      const minValue = Math.min(...dataValues);
+      return minValue.toFixed(2);
+    },
+    getInitialDate() {
+      const intervalData = this.graphicData?.slice(0, this.getInterval()).reverse();
+      const date = new Date(intervalData[0].date);
+      const day = date.getUTCDate().toString().padStart(2, '0');
+      const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+      const year = date.getUTCFullYear();
+      const formattedDate = `${day}.${month}.${year}`;
+      return formattedDate;
+    },
+    formattedPeriod() {
+      const today = new Date();
+      let formattedDate = 'N/A';
+      switch (this.getDashboardInterval.toLowerCase()) {
+        case 'day': {
+          formattedDate = today.toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: 'short',
+            year: '2-digit',
+          }).replace(',', '').replace(/ /g, ' ');
+          break;
+        }
+        case 'week': {
+          const weekAgo = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
+          formattedDate = weekAgo.toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: 'short',
+            year: '2-digit',
+          }).replace(',', '').replace(/ /g, ' ');
+          break;
+        }
+        case 'month': {
+          const monthAgo = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
+          formattedDate = monthAgo.toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: 'short',
+            year: '2-digit',
+          }).replace(',', '').replace(/ /g, ' ');
+          break;
+        }
+        case 'all time':
+          if (this.portfolioBalanceData && this.portfolioBalanceData.length > 0) {
+            const earliestTransaction = this
+              .portfolioBalanceData[this.portfolioBalanceData.length - 1];
+            const earliestDate = new Date(earliestTransaction.date);
+            formattedDate = earliestDate.toLocaleDateString('en-GB', {
+              day: '2-digit',
+              month: 'short',
+              year: '2-digit',
+            }).replace(',', '').replace(/ /g, ' ');
+          }
+          break;
+        default: {
+          formattedDate = today.toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: 'short',
+            year: '2-digit',
+          }).replace(',', '').replace(/ /g, ' ');
+        }
+      }
+
+      const formattedDateParts = formattedDate.split(' ');
+      if (formattedDateParts.length === 3) {
+        formattedDate = `From ${formattedDateParts[0]} ${formattedDateParts[1]} ‘${formattedDateParts[2]}`;
+      }
+
+      return formattedDate || 'From N/A';
+    },
     getInterval() {
       const intervalMapping = {
       'day': 2,
