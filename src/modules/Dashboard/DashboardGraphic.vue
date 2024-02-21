@@ -16,7 +16,7 @@
         v-if="portfolioBalanceData.length > 0"
         :portfolioBalanceData="portfolioBalanceData"
       />
-      <p v-else> is 0</p>
+      <p v-else> no data</p>
     </div>
   </div>
 </template>
@@ -47,13 +47,13 @@ export default {
 
 <style lang="scss" scoped>
 .graphic__loader {
-  min-height: 416px;
+  min-height: 362px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .dashboard__graphics {
-  min-height: 416px;
+  margin-top: 16px;
   display: flex;
   flex-direction: row;
   gap: 30px;

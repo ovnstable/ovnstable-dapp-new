@@ -21,15 +21,18 @@
           class="dashboard-usd-plus-wrap"
         >
           <IntervalChain />
-          <TokenDataDashboard
-            class="dashboard__token-data"
-            :portfolioBalanceData="portfolioBalanceData"
-          />
-          <DashboardGraphic
-            :portfolioBalanceData="portfolioBalanceData"
-            :loaded="loaded"
-            class="dashboard__graphics"
-          />
+          <div class="dashboard_token_data_graphics">
+            <TokenDataDashboard
+              class="dashboard__token-data"
+              :portfolioBalanceData="portfolioBalanceData"
+            />
+            <DashboardGraphic
+              :portfolioBalanceData="portfolioBalanceData"
+              :loaded="loaded"
+              class="dashboard__graphics"
+            />
+          </div>
+
           <p class="dashboard__premiums"> dashboard pools</p>
         </div>
         <div
@@ -134,8 +137,12 @@ export default {
   width: 100%;
 }
 .dashboard__graphics{
-  margin-top: 24px;
-  padding: 18px 24px;
+  border-radius: 5px;
+}
+.dashboard_token_data_graphics {
+  margin-top: 25px;
+  margin-bottom: 25px;
+  padding: 20px 25px;
   border-radius: 5px;
   border: 1px solid var(--color-1);
 }

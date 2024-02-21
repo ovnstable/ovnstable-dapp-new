@@ -1,5 +1,5 @@
 <template>
-  <p>USD+ Balance <span>| {{ formattedPeriod() }}</span></p>
+  <p class="dashboard__graphic-usd-plus-balance">USD+ Balance <span class="period"> <span class="divider">| </span>{{ formattedPeriod() }}</span></p>
   <div class="dashboard__graphic">
     <div class="dashboard__graphic-display">
       <canvas
@@ -334,6 +334,20 @@ export default {
 .dashboard__graphic-display {
   width: 100%;
   min-height: 250px;
+}
+.dashboard__graphic-usd-plus-balance {
+  margin-bottom: 16px;
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--color-1);
+  span.period {
+    font-size: 15px;
+    color: var(--color-2);
+  }
+  span.divider {
+    margin-left: 20px;
+    margin-right: 20px;
+  }
 }
 .dashboard__graphic{
   min-height: 250px;
