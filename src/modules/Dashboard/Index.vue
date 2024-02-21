@@ -24,7 +24,10 @@
           <TokenDataDashboard
             :portfolioBalanceData="portfolioBalanceData"
           />
-          <p class="dashboard__graphics"> dashboard graphic</p>
+          <DashboardGraphic
+            :portfolioBalanceData="portfolioBalanceData"
+            class="dashboard__graphics"
+          />
           <p class="dashboard__premiums"> dashboard pools</p>
         </div>
         <div
@@ -49,6 +52,7 @@
 import TabsComponent from '@/components/Tabs/Index.vue';
 import IntervalChain from '@/modules/Dashboard/IntervalChain.vue';
 import TokenDataDashboard from '@/modules/Dashboard/TokenDataDashboard.vue';
+import DashboardGraphic from '@/modules/Dashboard/DashboardGraphic.vue';
 
 export default {
   name: 'DashboardPage',
@@ -56,6 +60,7 @@ export default {
     TabsComponent,
     IntervalChain,
     TokenDataDashboard,
+    DashboardGraphic,
   },
   props: {
     portfolioBalanceData: {

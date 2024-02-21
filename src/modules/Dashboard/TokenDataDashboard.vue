@@ -60,14 +60,14 @@ export default {
     networkName() {
       return this.$store.state.network.dashboardNetwork;
     },
-    networkScan() {
-      return this.$store.state.network.marketExplorerURL;
-    },
     currentIntervalDashboard() {
       return this.$store.state.intervalDashboard.intervalDashboard;
     },
     isGrowthNegative() {
       const growth = this.growthPercentage();
+      if (growth === 0) {
+        return false;
+      }
       return growth.startsWith('-');
     },
   },
@@ -76,6 +76,8 @@ export default {
       if (this.portfolioBalanceData.length === undefined) {
         return '$0,00';
       }
+      console.log('here is the networkName');
+      console.log(this.networkName);
       const payoutTransactions = this.portfolioBalanceData.filter((transaction: any) => transaction.type === 'PAYOUT');
       if (payoutTransactions.length > 0) {
         const balance = payoutTransactions[0].closing_balance;
@@ -85,7 +87,7 @@ export default {
     },
     growthPercentage(): any {
       if (this.portfolioBalanceData.length === undefined) {
-        return '0.00%';
+        return '0.0000%';
       }
       const interval = this.currentIntervalDashboard.toLowerCase();
       const payoutTransactions = this.portfolioBalanceData
@@ -120,11 +122,11 @@ export default {
         const formattedGrowth = growth.toFixed(4);
         return `${growth > 0 ? `+${formattedGrowth}` : formattedGrowth}%`;
       }
-      return 0;
+      return '0.0000%';
     },
     calculateProfit(): string {
       if (!Array.isArray(this.portfolioBalanceData) || this.portfolioBalanceData.length === 0) {
-        return '0.00';
+        return '$0,0000';
       }
 
       const interval = this.currentIntervalDashboard.toLowerCase();
@@ -224,21 +226,6 @@ export default {
       }
 
       return formattedDate || 'From N/A';
-    },
-
-    getIconName(chain:string) {
-      const selectedChain = this.$store.state.network.marketNetwork;
-      const formattedChain = chain.charAt(0).toUpperCase() + chain.slice(1).toLowerCase();
-
-      if (chain.toLowerCase() !== selectedChain.toLowerCase()) {
-        return `Icon${formattedChain}Off`;
-      }
-
-      return `Icon${formattedChain}On`;
-    },
-    formatNetworkIconName(networkName: string) {
-      if (!networkName) return '';
-      return `Icon${networkName.charAt(0).toUpperCase()}${networkName.slice(1)}On`;
     },
   },
 };
