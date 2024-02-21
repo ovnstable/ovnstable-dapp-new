@@ -36,6 +36,7 @@
     <div class="dashboard__tvl-data">
       <p class="dashboard__token-data-title"> Profit</p>
       <p class="dashboard__token-data-h">{{calculateProfit()}}</p>
+      <p :class="{ 'negative-growth': isGrowthNegative }">{{ formatInterval() }}</p>
     </div>
     <div class="dashboard__divider dashboard__divider--last-divider" />
   </div>
@@ -85,6 +86,7 @@ export default {
       }
       return '$0,00';
     },
+
     growthPercentage(): any {
       if (this.portfolioBalanceData.length === undefined) {
         return '0.0000%';
@@ -109,13 +111,13 @@ export default {
         default:
           numberOfDays = 1;
       }
-
       const initialTransaction = payoutTransactions[numberOfDays - 1];
-
+      const totalProfit = this.calculateProfit();
+      const normalizedString = totalProfit.replace(' $', '').replace(',', '.');
+      const numberProfit = parseFloat(normalizedString);
       if (initialTransaction) {
-        const currentBalance = payoutTransactions[0].closing_balance;
         const initialBalance = initialTransaction.opening_balance;
-        const growth = ((currentBalance - initialBalance) / initialBalance) * 100;
+        const growth = ((initialBalance + numberProfit) / initialBalance - 1) * 100;
         if (Number.isNaN(growth)) {
           return '0.00%';
         }
@@ -227,6 +229,27 @@ export default {
 
       return formattedDate || 'From N/A';
     },
+
+    formatInterval() {
+      let text;
+      switch (this.currentIntervalDashboard.toLowerCase()) {
+        case 'day':
+          text = 'per day';
+          break;
+        case 'week':
+          text = 'per week';
+          break;
+        case 'per month':
+          text = 'per month';
+          break;
+        case 'all time':
+          text = 'all time';
+          break;
+        default:
+          text = 'Per day';
+      }
+      return text;
+    },
   },
 };
 </script>
@@ -253,7 +276,7 @@ export default {
   color: var(--color-12);
 }
 .negative-growth {
-  color: var(--color-9);
+  color: var(--color-9) !important;
 }
 .dashboard__token-data-risk {
   display: flex;
@@ -331,7 +354,11 @@ export default {
   font-size: 20px;
   font-weight: 500;
 }
-
+.dashboard__tvl-data :nth-child(3) {
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--color-12);
+}
 .dashboard__token-data-num {
   text-align: center;
   [data-theme="dark"] & {
@@ -349,6 +376,7 @@ export default {
 }
 .dashboard__token-data-h {
   margin-top: 20px;
+  margin-bottom: 4px;
   color: var(--color-1);
   font-size: 20px;
   font-weight: 500;
