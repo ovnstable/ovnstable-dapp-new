@@ -3,7 +3,7 @@
     <div class="insurance__graphic-display">
       <canvas
         ref="myChart"
-        :key="'canvas-' + currentInterval"
+        :key="'canvas-' + getDashboardInterval"
       />
     </div>
 
@@ -51,14 +51,31 @@ export default {
       networksData: appNetworksData,
     };
   },
+  watch: {
+    // Watch for changes in getDashboardInterval computed property
+    getDashboardInterval(newInterval) {
+      this.currentInterval = newInterval;
+      // Next, re-initialize the chart
+      this.$nextTick(() => {
+        if (this.myChart) {
+          this.myChart.destroy(); // Destroy the existing chart instance before creating a new one
+        }
+        this.initChart(); // Call initChart to create a new chart with the updated interval
+      });
+    },
+  },
   computed: {
+    getDashboardInterval() {
+      return this.$store.state.intervalDashboard.intervalDashboard;
+    },
     activeNetworkData() {
       const network = this.$store.state.network.dashboardNetwork;
       const data = appNetworksData.find((_) => _.name.toLowerCase() === network.toLowerCase());
       return data || appNetworksData[0];
     },
     chartData(): any {
-      const balancesData = [...(this.portfolioBalanceData as any)].slice(0, 7).reverse();
+      console.log(`this is inteval from store ${this.getInterval()}`)
+      const balancesData = [...(this.portfolioBalanceData as any)].slice(0, this.getInterval()).reverse();
       const activeNetworkColor = this.activeNetworkData.color;
 
       return {
@@ -78,7 +95,7 @@ export default {
       };
     },
     chartOptions() {
-      const intervalData = this.portfolioBalanceData?.slice(0, 7);
+      const intervalData = this.portfolioBalanceData?.slice(0, this.getInterval());
       const dataValues = intervalData.map((trx: any) => parseFloat(trx.closing_balance));
 
       const minValue = Math.min(...dataValues);
@@ -189,6 +206,16 @@ export default {
   },
 
   methods: {
+    getInterval() {
+      const intervalMapping = {
+      'day': 2,
+      'week': 7,
+      'month': 30,
+      }
+      const interval = this.getDashboardInterval;
+      const sliceAmount = intervalMapping[interval.toLowerCase()] || this.portfolioBalanceData.length;
+      return sliceAmount;
+    },
     initChart() {
       if (this.$refs.myChart) {
         const canvas = this.$refs.myChart as HTMLCanvasElement;
