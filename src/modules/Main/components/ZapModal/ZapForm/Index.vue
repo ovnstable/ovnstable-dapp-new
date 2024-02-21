@@ -355,7 +355,7 @@ import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { formatMoney } from '@/utils/numbers.ts';
 import TokenForm from '@/modules/Main/components/ZapModal/TokenForm.vue';
 import PoolLabel from '@/modules/Main/components/ZapModal/PoolLabel.vue';
-import SelectTokensModal from '@/modules/Main/components/Common/TokensModal/Index.vue';
+import SelectTokensModal from '@/components/TokensModal/Index.vue';
 import SwapSlippageSettings from '@/modules/Main/components/Common/SwapSlippageSettings.vue';
 import { poolsInfoMap } from '@/store/views/main/zapin/mocks.ts';
 import BigNumber from 'bignumber.js';
@@ -466,7 +466,6 @@ export default {
       'isAvailableOnNetwork',
     ]),
     ...mapGetters('network', ['getParams', 'networkId']),
-    ...mapGetters('theme', ['light']),
     ...mapGetters('accountData', ['account']),
     ...mapGetters('gasPrice', ['gasPriceGwei']),
 

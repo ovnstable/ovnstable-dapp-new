@@ -61,7 +61,8 @@ export const chainContractsMap = {
     usdt: '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9',
     marketWeth: '0x1C47D35DF5A18f592A8ee128A372780C746003D1',
     wETH: '0x82af49447d8a07e3bd95bd0d56f35241523fbab1',
-    token_insurance: '0x5566266841694f640c1575c819a4837779b12535',
+    exchange_insurance: '0x726207F272B22899762bC35Faef01A8672257b68',
+    token_insurance: '0x5566266841694F640c1575c819A4837779b12535',
   },
   zksync: {
     usdPlus: {

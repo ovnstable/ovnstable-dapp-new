@@ -332,7 +332,7 @@ import Spinner from '@/components/Spinner/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import NetworkNotAvailable from '@/modules/Main/components/Odos/network-not-available.vue';
-import SelectTokensModal from '@/modules/Main/components/Common/TokensModal/Index.vue';
+import SelectTokensModal from '@/components/TokensModal/Index.vue';
 import SwapSlippageSettings from '@/modules/Main/components/Common/SwapSlippageSettings.vue';
 import { formatMoney } from '@/utils/numbers.ts';
 import { getRandomString } from '@/utils/strings.ts';
@@ -399,9 +399,6 @@ export default {
           val: true,
         });
       }
-    },
-    account(newVal) {
-      if (newVal) this.initAccountData();
     },
     async networkId(newVal) {
       if (newVal) {
@@ -496,14 +493,8 @@ export default {
       'isAllDataLoaded',
     ]),
     ...mapGetters('accountData', ['account']),
-    ...mapGetters('web3', ['web3']),
     ...mapGetters('network', ['getParams', 'networkId', 'networkName']),
-    ...mapGetters('theme', ['light']),
-    ...mapGetters('gasPrice', [
-      'show',
-      'gasPrice',
-      'gasPriceGwei',
-    ]),
+    ...mapGetters('gasPrice', ['gasPrice', 'gasPriceGwei']),
 
     getSlippagePercent() {
       return this.slippagePercent;
@@ -710,7 +701,6 @@ export default {
         'getActualGasPrice',
         'initWalletTransaction',
         'initData',
-        'initAccountData',
         'loadPricesInfo',
       ],
     ),
@@ -732,14 +722,8 @@ export default {
       updateTokenValue(token, val, this.checkApproveForToken, this.updateQuotaInfo);
     },
     init() {
-      this.loadChains();
-      this.loadTokens();
-      this.initContractData();
-
       const bus = useEventBus('odos-transaction-finished');
-      bus.on(() => {
-        this.finishTransaction();
-      });
+      bus.on(() => this.finishTransaction);
     },
     addDefaultOvnToken() {
       const symbol = this.$route.query.symbol ? this.$route.query.symbol : null;

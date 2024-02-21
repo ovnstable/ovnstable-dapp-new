@@ -109,15 +109,15 @@ export default {
       required: true,
     },
     accumulatorDay: {
-      type: Number,
+      type: String,
       required: true,
     },
     accumulatorWeek: {
-      type: Number,
+      type: String,
       required: true,
     },
     accumulatorMonth: {
-      type: Number,
+      type: String,
       required: true,
     },
   },

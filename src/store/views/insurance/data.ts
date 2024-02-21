@@ -73,8 +73,8 @@ const actions = {
     // dispatch('refreshUsdPlusPayoutsData', "arbitrum");
     // dispatch('refreshUsdPlusPayoutsData', "zksync");
 
-    // dispatch('accountData/refreshBalance', null, { root: true });
-    // dispatch('supplyData/refreshInsuranceSupply', null, {root:true});
+    dispatch('accountData/refreshBalance', null, { root: true });
+    // dispatch('supplyData/refreshInsuranceSupply', null, { root: true });
   },
 
   async refreshStrategyData({

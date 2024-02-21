@@ -59,6 +59,10 @@ export const USER_BALANCES_SCHEME = {
       contractName: 'usdcBridged',
     },
     {
+      symbol: 'USDC.e',
+      contractName: 'usdcBridged',
+    },
+    {
       symbol: 'ETH+',
       contractName: 'ethPlus',
     },

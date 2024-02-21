@@ -123,7 +123,7 @@ export const getFilteredOvernightTokens = (
   isOnlyOvnToken: any,
 ) => {
   const tokens: any = [];
-  const { tokenMap } = state.tokensMap.chainTokenMap[`${chainId}`];
+  const { tokenMap } = state.tokensMap.chainTokenMap[chainId];
   const keys = Object.keys(tokenMap);
   for (let i = 0; i < keys.length; i++) {
     const key = keys[i];

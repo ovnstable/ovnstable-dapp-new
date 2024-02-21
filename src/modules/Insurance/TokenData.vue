@@ -42,9 +42,6 @@
               class="insurance__redeem-button"
             />
           </ButtonComponent>
-          <MintRedeemModal
-            v-model="showModalMintRedeem"
-          />
 
           <ButtonComponent class="insurance__title-button">
             <BaseIcon
@@ -81,7 +78,6 @@
     <InsuranceAbout />
   </div>
   <div class="insurance__token-data">
-
     <div class="insurance__divider insurance__divider--first-divider" />
     <div class="insurance__payout-data">
       <p class="insurance__token-data-title">Risk factor</p>
@@ -132,8 +128,11 @@
       </div>
     </div>
     <div class="insurance__divider insurance__divider--last-divider" />
-  </div>
 
+    <MintRedeemModal
+      v-model="showModalMintRedeem"
+    />
+  </div>
 </template>
 
 <script lang="ts">
