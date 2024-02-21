@@ -26,13 +26,16 @@
       <p class="dashboard__token-data-title">Balance</p>
       <div class="dashboard__apy-data-chain">
         <p class="dashboard__token-data-num"> {{ getBalance() }}</p>
-        <p class="dashboard__token-data-growth-balance">{{growthPercentage() }}</p>
+        <p :class="['dashboard__token-data-growth-balance', { 'negative-growth': isGrowthNegative }]">
+          {{ growthPercentage() }}
+        </p>
+
       </div>
     </div>
     <div class="dashboard__divider" />
     <div class="dashboard__tvl-data">
       <p class="dashboard__token-data-title"> Profit</p>
-      <p class="dashboard__token-data-h">2.986</p>
+      <p class="dashboard__token-data-h">{{calculateProfit()}}</p>
     </div>
     <div class="dashboard__divider dashboard__divider--last-divider" />
   </div>
@@ -63,7 +66,10 @@ export default {
     currentIntervalDashboard() {
       return this.$store.state.intervalDashboard.intervalDashboard;
     },
-
+    isGrowthNegative() {
+      const growth = this.growthPercentage();
+      return growth.startsWith('-');
+    },
   },
   methods: {
     getBalance() {
@@ -99,7 +105,7 @@ export default {
           numberOfDays = payoutTransactions.length;
           break;
         default:
-          numberOfDays = 0;
+          numberOfDays = 1;
       }
 
       const initialTransaction = payoutTransactions[numberOfDays - 1];
@@ -111,10 +117,54 @@ export default {
         if (Number.isNaN(growth)) {
           return '0.00%';
         }
-        const formattedGrowth = growth.toFixed(2);
+        const formattedGrowth = growth.toFixed(4);
         return `${growth > 0 ? `+${formattedGrowth}` : formattedGrowth}%`;
       }
       return 0;
+    },
+    calculateProfit(): string {
+      if (!Array.isArray(this.portfolioBalanceData) || this.portfolioBalanceData.length === 0) {
+        return '0.00';
+      }
+
+      const interval = this.currentIntervalDashboard.toLowerCase();
+      const payoutTransactions = this.portfolioBalanceData
+        .filter((transaction: any) => transaction.type === 'PAYOUT');
+      let numberOfDays;
+
+      switch (interval) {
+        case 'day':
+          numberOfDays = 1;
+          break;
+        case 'week':
+          numberOfDays = 7;
+          break;
+        case 'month':
+          numberOfDays = 30;
+          break;
+        case 'all time':
+          numberOfDays = payoutTransactions.length;
+          break;
+        default:
+          numberOfDays = 1;
+      }
+
+      const today = new Date();
+      const endDate = new Date(today.getFullYear(), today.getMonth(), today
+        .getDate() - numberOfDays);
+
+      const totalProfit = payoutTransactions
+        .filter((transaction: any) => {
+          const transactionDate = new Date(transaction.date);
+          return transactionDate > endDate;
+        })
+        .reduce((acc: number, curr: any) => acc + curr.change_balance, 0);
+
+      return new Intl.NumberFormat('de-DE', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 4,
+      }).format(totalProfit);
     },
 
     formattedPeriod() {
@@ -212,6 +262,11 @@ export default {
 .dashboard__token-data-growth-balance {
   margin-top: 4px;
   font-size: 20px;
+  font-weight: 500;
+  color: var(--color-12);
+}
+.negative-growth {
+  color: var(--color-9);
 }
 .dashboard__token-data-risk {
   display: flex;
