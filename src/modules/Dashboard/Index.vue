@@ -61,7 +61,7 @@
     </div>
     <div class="dashboard__payouts">
       <DashboardTransactions
-        :portfolioBalanceData="portfolioBalanceData.dataUSDPlus"
+        :portfolioBalanceData="portfolioDataForDashboardTransactions"
         class="dashboard__payout-inner"
       />
     </div>
@@ -124,6 +124,11 @@ export default {
     };
   },
   computed: {
+    portfolioDataForDashboardTransactions() {
+      if (this.activeTab === 1) {
+        return this.combinedPortfolioData;
+      } return this.portfolioBalanceData.dataUSDPlus;
+    },
     ...mapGetters('accountData', ['originalBalance']),
     combinedPortfolioData() {
       const convertedEthTransactions = this.portfolioBalanceData.dataETHPlus.map((trx: any) => ({

@@ -8,7 +8,7 @@
 
 <script lang="ts">
 import DashboardPage from '@/modules/Dashboard/Index.vue';
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
   name: 'DashboardView',
@@ -32,6 +32,7 @@ export default {
       immediate: true,
       handler: function handleNetworkNameChange(newVal, oldVal) {
         if (newVal !== oldVal) {
+          this.refreshBalance();
           this.fetchDataForPortfolioBalance(this.$store.state.network.dashboardNetwork);
         }
       },
@@ -42,6 +43,7 @@ export default {
       .$store.state.network.dashboardNetwork.toLowerCase());
   },
   methods: {
+    ...mapActions('accountData', ['refreshBalance']),
     async fetchDataForPortfolioBalance(networkName: string) {
       const { account } = this;
       this.loaded = false;

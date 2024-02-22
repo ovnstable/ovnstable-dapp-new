@@ -6,7 +6,6 @@
       >
         SELECT ALL
       </ButtonComponent>
-
       <div
         v-for="(token, index) in availableTokens"
         :key="index"
@@ -117,7 +116,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters('accountData', ['originalBalance']),
+    ...mapGetters('accountData', ['originalBalance', 'balancesDashboard']),
     networkName() {
       return this.$store.state.network.dashboardNetwork;
     },

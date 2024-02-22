@@ -59,7 +59,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters('accountData', ['originalBalance']),
+    ...mapGetters('accountData', ['originalBalance', 'balancesDashboard']),
     networkName() {
       return this.$store.state.network.dashboardNetwork;
     },
