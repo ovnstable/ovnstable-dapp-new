@@ -5,6 +5,10 @@
       <div
         v-for="(token, index) in availableTokens"
         :key="index"
+        class="dashboard__tokens-data-icon-wrapper"
+        @click="toggleTokenSelection(token.name)"
+        @keypress="toggleTokenSelection(token.name)"
+        :class="{ 'dashboard__tokens-data-token-selected': selectedTokens.includes(token.name) }"
       >
         <BaseIcon :name="token.iconName" />
       </div>
@@ -15,8 +19,8 @@
         <div class="dasboard__tokens-data-tokens">
           <p class="dasboard__tokens-data-tokens-title">Token</p>
           <div
-            v-for="(token, index)
-              in availableTokens"
+            v-for="(token, index) in availableTokens
+              .filter((token: any) => selectedTokens.includes(token.name))"
             :key="index"
             class="dasboard__tokens-data-tokens-icon"
           >
@@ -30,7 +34,7 @@
       <div class="dasboard__tokens-data-balances">
         <p>Token balance</p>
         <p
-          v-for="token in availableTokensBalancesProfit"
+          v-for="token in availableTokensBalancesProfit.filter((token: any) => selectedTokens.includes(token.name + '+'))"
           :key="`balance-${token.name}`"
         >
           {{ getBalance(portfolioBalanceData[`data${token.name}Plus`], token.isETH) }}
@@ -39,7 +43,7 @@
       <div class="dasboard__tokens-data-balances-dollars">
         <p>USD balance</p>
         <p
-          v-for="token in availableTokensBalancesProfit"
+          v-for="token in availableTokensBalancesProfit.filter((token: any) => selectedTokens.includes(token.name + '+'))"
           :key="`usd-balance-${token.name}`"
         >
           {{ getBalanceUSD(getBalance(portfolioBalanceData[`data${token.name}Plus`], token.isETH), token.name.toLowerCase() + 'Plus') }}
@@ -50,7 +54,7 @@
       <div class="dasboard__tokens-data-profit">
         <p>Profit</p>
         <p
-          v-for="token in availableTokensBalancesProfit"
+          v-for="token in availableTokensBalancesProfit.filter((token: any) => selectedTokens.includes(token.name + '+'))"
           :key="`profit-${token.name}`"
         >
           {{ calculateProfit(portfolioBalanceData[`data${token.name}Plus`]) }}
@@ -73,6 +77,7 @@ export default {
   },
   data() {
     return {
+      selectedTokens: [],
       tokenDisplayInfo: {
         usdPlus: { name: 'USD+', iconName: 'DashboardUSD+Tokens' },
         daiPlus: { name: 'DAI+', iconName: 'DashboardDAI+Tokens' },
@@ -85,6 +90,19 @@ export default {
     portfolioBalanceData: {
       type: Object,
       default: () => ({}),
+    },
+  },
+  mounted() {
+    this.selectedTokens = this.availableTokens.map((token: any) => token.name);
+  },
+  watch: {
+    '$store.state.network.dashboardNetwork': {
+      immediate: true,
+      handler: function handleNetworkNameChange(newVal, oldVal) {
+        if (newVal !== oldVal) {
+          this.selectedTokens = this.availableTokens.map((token: any) => token.name);
+        }
+      },
     },
   },
   computed: {
@@ -120,6 +138,15 @@ export default {
     },
   },
   methods: {
+    toggleTokenSelection(tokenName: any) {
+      console.log('token selection was clicked');
+      const index = this.selectedTokens.indexOf(tokenName);
+      if (index === -1) {
+        this.selectedTokens.push(tokenName);
+      } else {
+        this.selectedTokens.splice(index, 1);
+      }
+    },
     getBalance(balance: any, isETH: boolean) {
       if (!Array.isArray(balance) || balance.length === 0) {
         return isETH ? '0.000000' : '0.00';
@@ -303,6 +330,13 @@ export default {
 }
 .dasboard__tokens-data-balances-dollars p {
   text-align: right;
+}
+.dashboard__tokens-data-icon-wrapper {
+  cursor: pointer;
+}
+
+.dashboard__tokens-data-token-selected {
+  border: 2px solid #4CAF50;
 }
 .dasboard__tokens-data-profit p {
   text-align: center;
