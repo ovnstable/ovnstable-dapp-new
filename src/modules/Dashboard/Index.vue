@@ -5,6 +5,7 @@
   >
     <Spinner />
   </div> -->
+  <!-- <p>{{ combinedPortfolioData }}</p> -->
   <div
     class="dashboard-wrapper"
   >
@@ -46,7 +47,11 @@
           <TokensPlusDashboard
             :portfolioBalanceData="portfolioBalanceData"
           />
-          <p class="dashboard__graphics"> dashboard graphic</p>
+          <DashboardGraphic
+            :portfolioBalanceData="combinedPortfolioData"
+            :loaded="loaded"
+            class="dashboard__graphics"
+          />
           <DashboardPools
             :allTokens=true
             class="dashboard__premiums"
@@ -74,6 +79,7 @@ import DashboardGraphic from '@/modules/Dashboard/DashboardGraphic.vue';
 import DashboardTransactions from '@/modules/Dashboard/DashboardTransactions.vue';
 import DashboardPools from '@/modules/Dashboard/DashboardPools.vue';
 import TokensPlusDashboard from '@/modules/Dashboard/TokensPlusDashboard.vue';
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'DashboardPage',
@@ -114,8 +120,27 @@ export default {
         },
       ],
       activeTab: 0,
+      ethToUsdRate: 3000,
     };
   },
+  computed: {
+    ...mapGetters('accountData', ['originalBalance']),
+    combinedPortfolioData() {
+      const convertedEthTransactions = this.portfolioBalanceData.dataETHPlus.map((trx: any) => ({
+        ...trx,
+        opening_balance: trx.opening_balance * this.portfolioBalanceData.prices.ethPlus,
+        change_balance: trx.change_balance * this.portfolioBalanceData.prices.ethPlus,
+        closing_balance: trx.closing_balance * this.portfolioBalanceData.prices.ethPlus,
+      }));
+      return [
+        ...this.portfolioBalanceData.dataUSDPlus,
+        ...convertedEthTransactions,
+        ...this.portfolioBalanceData.dataUSDTPlus,
+        ...this.portfolioBalanceData.dataDAIPlus,
+      ];
+    },
+  },
+
   methods: {
     changeTab(id: number) {
       this.activeTab = id;

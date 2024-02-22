@@ -39,7 +39,8 @@
       <div class="dasboard__tokens-data-balances">
         <p>Token balance</p>
         <p
-          v-for="token in availableTokensBalancesProfit.filter((token: any) => selectedTokens.includes(token.name + '+'))"
+          v-for="token in availableTokensBalancesProfit
+            .filter((token: any) => selectedTokens.includes(token.name + '+'))"
           :key="`balance-${token.name}`"
         >
           {{ getBalance(token.name + '+', token.isETH) }}
@@ -48,7 +49,8 @@
       <div class="dasboard__tokens-data-balances-dollars">
         <p>USD balance</p>
         <p
-          v-for="token in availableTokensBalancesProfit.filter((token: any) => selectedTokens.includes(token.name + '+'))"
+          v-for="token in availableTokensBalancesProfit
+            .filter((token: any) => selectedTokens.includes(token.name + '+'))"
           :key="`usd-balance-${token.name}`"
         >
           {{ getBalanceUSD(getBalance(token.name + '+', token.isETH), token.name.toLowerCase() + 'Plus') }}
@@ -59,10 +61,11 @@
       <div class="dasboard__tokens-data-profit">
         <p>Profit</p>
         <p
-          v-for="token in availableTokensBalancesProfit.filter((token: any) => selectedTokens.includes(token.name + '+'))"
+          v-for="token in availableTokensBalancesProfit
+            .filter((token: any) => selectedTokens.includes(token.name + '+'))"
           :key="`profit-${token.name}`"
         >
-          {{ calculateProfit(token.name + '+') }}
+          {{ calculateProfit(portfolioBalanceData[`data${token.name}Plus`]) }}
         </p>
         <p class="dasboard__tokens-data-total">{{totalProfit()}}</p>
       </div>
@@ -151,7 +154,6 @@ export default {
       this.selectedTokens = this.availableTokens.map((token: any) => token.name);
     },
     toggleTokenSelection(tokenName: any) {
-      console.log('token selection was clicked');
       const index = this.selectedTokens.indexOf(tokenName);
       if (index === -1) {
         this.selectedTokens.push(tokenName);
@@ -172,10 +174,7 @@ export default {
     },
 
     getBalanceUSD(balance: any, tokenName: string) {
-      console.log('here is get balance usd');
-      console.log(tokenName);
       const price = this.portfolioBalanceData.prices[tokenName];
-      console.log(this.portfolioBalanceData.prices);
       if (!price) {
         console.error('Price for the given token name is not found.');
         return '$0,0000';
@@ -238,15 +237,18 @@ export default {
     totalProfit() {
       let totalProfitUSD = 0;
 
-      totalProfitUSD += parseFloat(this.calculateProfit(this.portfolioBalanceData.dataETHPlus)
-        .replace(',', '.').replace(' $', ''));
-      totalProfitUSD += parseFloat(this.calculateProfit(this.portfolioBalanceData.dataUSDPlus)
-        .replace(',', '.').replace(' $', ''));
-      totalProfitUSD += parseFloat(this.calculateProfit(this.portfolioBalanceData.dataUSDTPlus)
-        .replace(',', '.').replace(' $', ''));
-      totalProfitUSD += parseFloat(this.calculateProfit(this.portfolioBalanceData.dataDAIPlus)
-        .replace(',', '.').replace(' $', ''));
-
+      const profitCalculations = {
+        'ETH+': () => parseFloat(this.calculateProfit(this.portfolioBalanceData.dataETHPlus).replace(',', '.').replace(' $', '')),
+        'USD+': () => parseFloat(this.calculateProfit(this.portfolioBalanceData.dataUSDPlus).replace(',', '.').replace(' $', '')),
+        'USDT+': () => parseFloat(this.calculateProfit(this.portfolioBalanceData.dataUSDTPlus).replace(',', '.').replace(' $', '')),
+        'DAI+': () => parseFloat(this.calculateProfit(this.portfolioBalanceData.dataDAIPlus).replace(',', '.').replace(' $', '')),
+      };
+      console.log(this.selectedTokens);
+      this.selectedTokens.forEach((token) => {
+        if (profitCalculations[token]) {
+          totalProfitUSD += profitCalculations[token]();
+        }
+      });
       const formattedTotalProfitUSD = new Intl.NumberFormat('de-DE', {
         style: 'currency',
         currency: 'USD',
@@ -258,15 +260,18 @@ export default {
 
     getTotalBalance() {
       let totalBalanceUSD = 0;
+      const tokenOperations = {
+        'ETH+': () => parseFloat(this.getBalanceUSD(this.getBalance('ETH+', true), 'ethPlus').replace('$', '').replace(',', '.')),
+        'USD+': () => parseFloat(this.getBalanceUSD(this.getBalance('USD+', false), 'usdPlus').replace('$', '').replace(',', '.')),
+        'USDT+': () => parseFloat(this.getBalanceUSD(this.getBalance('USDT+', false), 'usdtPlus').replace('$', '').replace(',', '.')),
+        'DAI+': () => parseFloat(this.getBalanceUSD(this.getBalance('DAI+', false), 'daiPlus').replace('$', '').replace(',', '.')),
+      };
 
-      totalBalanceUSD += parseFloat(this.getBalanceUSD(this
-        .getBalance(this.portfolioBalanceData.dataETHPlus, true), 'ethPlus').replace('$', '').replace(',', '.'));
-      totalBalanceUSD += parseFloat(this.getBalanceUSD(this
-        .getBalance(this.portfolioBalanceData.dataUSDPlus, false), 'usdPlus').replace('$', '').replace(',', '.'));
-      totalBalanceUSD += parseFloat(this.getBalanceUSD(this
-        .getBalance(this.portfolioBalanceData.dataUSDTPlus, false), 'usdtPlus').replace('$', '').replace(',', '.'));
-      totalBalanceUSD += parseFloat(this.getBalanceUSD(this
-        .getBalance(this.portfolioBalanceData.dataDAIPlus, false), 'daiPlus').replace('$', '').replace(',', '.'));
+      this.selectedTokens.forEach((token) => {
+        if (tokenOperations[token]) {
+          totalBalanceUSD += tokenOperations[token]();
+        }
+      });
 
       const formattedTotalBalanceUSD = new Intl.NumberFormat('de-DE', {
         style: 'currency',
