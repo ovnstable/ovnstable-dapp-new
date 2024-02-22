@@ -2,18 +2,12 @@
   <div class="dashboard__all-tokens-data">
     <div class="dashboard__tokens-data-select">
       <p>SELECT ALL</p>
-      <BaseIcon
-        name="DashboardETH+Tokens"
-      />
-      <BaseIcon
-        name="DashboardUSD+Tokens"
-      />
-      <BaseIcon
-        name="DashboardUSDT+Tokens"
-      />
-      <BaseIcon
-        name="DashboardDAI+Tokens"
-      />
+      <div
+        v-for="(token, index) in availableTokens"
+        :key="index"
+      >
+        <BaseIcon :name="token.iconName" />
+      </div>
     </div>
     <div class="dasboard__tokens-data-balances-profit">
       <div class="dasboard__tokens-data-tokens-wrapper">
@@ -22,7 +16,7 @@
           <p class="dasboard__tokens-data-tokens-title">Token</p>
           <div
             v-for="(token, index)
-              in tokens"
+              in availableTokens"
             :key="index"
             class="dasboard__tokens-data-tokens-icon"
           >
@@ -35,36 +29,42 @@
       </div>
       <div class="dasboard__tokens-data-balances">
         <p>Token balance</p>
-        <p>{{getBalance(portfolioBalanceData.dataETHPlus, true)}}</p>
-        <p>{{getBalance(portfolioBalanceData.dataUSDPlus, false)}}</p>
-        <p>{{getBalance(portfolioBalanceData.dataUSDTPlus, false)}}</p>
-        <p>{{getBalance(portfolioBalanceData.dataDAIPlus, false)}}</p>
+        <p
+          v-for="token in availableTokensBalancesProfit"
+          :key="`balance-${token.name}`"
+        >
+          {{ getBalance(portfolioBalanceData[`data${token.name}Plus`], token.isETH) }}
+        </p>
       </div>
       <div class="dasboard__tokens-data-balances-dollars">
         <p>USD balance</p>
-        <p>{{getBalanceUSD(getBalance(portfolioBalanceData.dataETHPlus, true), 'ethPlus')}}</p>
-        <p>{{getBalanceUSD(getBalance(portfolioBalanceData.dataUSDPlus, true), 'usdPlus')}}</p>
-        <p>{{getBalanceUSD(getBalance(portfolioBalanceData.dataUSDTPlus, true), 'usdtPlus')}}</p>
-        <p>{{getBalanceUSD(getBalance(portfolioBalanceData.dataDAIPlus, true), 'daiPlus')}}</p>
+        <p
+          v-for="token in availableTokensBalancesProfit"
+          :key="`usd-balance-${token.name}`"
+        >
+          {{ getBalanceUSD(getBalance(portfolioBalanceData[`data${token.name}Plus`], token.isETH), token.name.toLowerCase() + 'Plus') }}
+        </p>
         <p class="dasboard__tokens-data-total">{{getTotalBalance()}}</p>
       </div>
       <div class="dashboard__divider" />
       <div class="dasboard__tokens-data-profit">
         <p>Profit</p>
-        <p>{{calculateProfit(portfolioBalanceData.dataETHPlus)}}</p>
-        <p>{{calculateProfit(portfolioBalanceData.dataUSDPlus)}}</p>
-        <p>{{calculateProfit(portfolioBalanceData.dataUSDTPlus)}}</p>
-        <p>{{calculateProfit(portfolioBalanceData.dataDAIPlus)}}</p>
+        <p
+          v-for="token in availableTokensBalancesProfit"
+          :key="`profit-${token.name}`"
+        >
+          {{ calculateProfit(portfolioBalanceData[`data${token.name}Plus`]) }}
+        </p>
         <p class="dasboard__tokens-data-total">{{totalProfit()}}</p>
       </div>
       <div class="dashboard__divider-last" />
     </div>
-
   </div>
 </template>
 
 <script lang="ts">
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import { chainContractsMap } from '@/utils/contractsMap.ts';
 
 export default {
   name: 'TokensPlusDashboard',
@@ -73,12 +73,12 @@ export default {
   },
   data() {
     return {
-      tokens: [
-        { name: 'ETH+', iconName: 'DashboardETH+Tokens' },
-        { name: 'USD+', iconName: 'DashboardUSD+Tokens' },
-        { name: 'USDT+', iconName: 'DashboardUSDT+Tokens' },
-        { name: 'DAI+', iconName: 'DashboardDAI+Tokens' },
-      ],
+      tokenDisplayInfo: {
+        usdPlus: { name: 'USD+', iconName: 'DashboardUSD+Tokens' },
+        daiPlus: { name: 'DAI+', iconName: 'DashboardDAI+Tokens' },
+        usdtPlus: { name: 'USDT+', iconName: 'DashboardUSDT+Tokens' },
+        ethPlus: { name: 'ETH+', iconName: 'DashboardETH+Tokens' },
+      },
     };
   },
   props: {
@@ -94,6 +94,30 @@ export default {
     currentIntervalDashboard() {
       return this.$store.state.intervalDashboard.intervalDashboard;
     },
+    availableTokens(): any {
+      const currentChainTokens = chainContractsMap[this.networkName.toLowerCase()];
+      if (!currentChainTokens) {
+        return [];
+      }
+      return Object.keys(currentChainTokens)
+        .filter((token) => token.endsWith('Plus') && currentChainTokens[token].tokenPlus)
+        .map((token) => ({
+          ...this.tokenDisplayInfo[token],
+          contractAddress: currentChainTokens[token].tokenPlus,
+        }))
+        .filter((token) => token.name);
+    },
+    availableTokensBalancesProfit() {
+      const currentChain = this.networkName;
+      const tokensOnCurrentChain = chainContractsMap[currentChain];
+      return Object.entries(tokensOnCurrentChain)
+        .filter(([key, value]) => key.endsWith('Plus') && value.tokenPlus)
+        .map(([key]) => ({
+          name: key.toUpperCase().slice(0, -4),
+          iconName: `Dashboard${key.charAt(0).toUpperCase() + key.slice(1)}Tokens`,
+          isETH: key === 'ethPlus',
+        }));
+    },
   },
   methods: {
     getBalance(balance: any, isETH: boolean) {
@@ -101,13 +125,16 @@ export default {
         return isETH ? '0.000000' : '0.00';
       }
       const balanceNumber = balance[0].closing_balance;
+      console.log(`this is balanceNumber ${balanceNumber}`);
       if (isETH) {
         return parseFloat(balanceNumber).toFixed(6);
       } return parseFloat(balanceNumber).toFixed(2);
     },
     getBalanceUSD(balance: any, tokenName: string) {
+      console.log('here is get balance usd');
+      console.log(tokenName);
       const price = this.portfolioBalanceData.prices[tokenName];
-
+      console.log(this.portfolioBalanceData.prices);
       if (!price) {
         console.error('Price for the given token name is not found.');
         return '$0,0000';
@@ -118,7 +145,7 @@ export default {
       const formattedValueInUSD = new Intl.NumberFormat('de-DE', {
         style: 'currency',
         currency: 'USD',
-        minimumFractionDigits: 4,
+        minimumFractionDigits: 2,
       }).format(valueInUSD);
 
       return formattedValueInUSD;
@@ -203,7 +230,7 @@ export default {
       const formattedTotalBalanceUSD = new Intl.NumberFormat('de-DE', {
         style: 'currency',
         currency: 'USD',
-        minimumFractionDigits: 4,
+        minimumFractionDigits: 2,
       }).format(totalBalanceUSD);
 
       return formattedTotalBalanceUSD;
