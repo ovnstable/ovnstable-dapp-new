@@ -1,7 +1,12 @@
 <template>
   <div class="dashboard__all-tokens-data">
     <div class="dashboard__tokens-data-select">
-      <p>SELECT ALL</p>
+      <ButtonComponent
+        @click="selectAllTokens"
+      >
+        SELECT ALL
+      </ButtonComponent>
+
       <div
         v-for="(token, index) in availableTokens"
         :key="index"
@@ -37,7 +42,7 @@
           v-for="token in availableTokensBalancesProfit.filter((token: any) => selectedTokens.includes(token.name + '+'))"
           :key="`balance-${token.name}`"
         >
-          {{ getBalance(portfolioBalanceData[`data${token.name}Plus`], token.isETH) }}
+          {{ getBalance(token.name + '+', token.isETH) }}
         </p>
       </div>
       <div class="dasboard__tokens-data-balances-dollars">
@@ -46,7 +51,7 @@
           v-for="token in availableTokensBalancesProfit.filter((token: any) => selectedTokens.includes(token.name + '+'))"
           :key="`usd-balance-${token.name}`"
         >
-          {{ getBalanceUSD(getBalance(portfolioBalanceData[`data${token.name}Plus`], token.isETH), token.name.toLowerCase() + 'Plus') }}
+          {{ getBalanceUSD(getBalance(token.name + '+', token.isETH), token.name.toLowerCase() + 'Plus') }}
         </p>
         <p class="dasboard__tokens-data-total">{{getTotalBalance()}}</p>
       </div>
@@ -57,7 +62,7 @@
           v-for="token in availableTokensBalancesProfit.filter((token: any) => selectedTokens.includes(token.name + '+'))"
           :key="`profit-${token.name}`"
         >
-          {{ calculateProfit(portfolioBalanceData[`data${token.name}Plus`]) }}
+          {{ calculateProfit(token.name + '+') }}
         </p>
         <p class="dasboard__tokens-data-total">{{totalProfit()}}</p>
       </div>
@@ -69,11 +74,14 @@
 <script lang="ts">
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { chainContractsMap } from '@/utils/contractsMap.ts';
+import { mapGetters } from 'vuex';
+import ButtonComponent from '@/components/Button/Index.vue';
 
 export default {
   name: 'TokensPlusDashboard',
   components: {
     BaseIcon,
+    ButtonComponent,
   },
   data() {
     return {
@@ -106,6 +114,7 @@ export default {
     },
   },
   computed: {
+    ...mapGetters('accountData', ['originalBalance']),
     networkName() {
       return this.$store.state.network.dashboardNetwork;
     },
@@ -138,6 +147,9 @@ export default {
     },
   },
   methods: {
+    selectAllTokens() {
+      this.selectedTokens = this.availableTokens.map((token: any) => token.name);
+    },
     toggleTokenSelection(tokenName: any) {
       console.log('token selection was clicked');
       const index = this.selectedTokens.indexOf(tokenName);
@@ -147,16 +159,18 @@ export default {
         this.selectedTokens.splice(index, 1);
       }
     },
-    getBalance(balance: any, isETH: boolean) {
-      if (!Array.isArray(balance) || balance.length === 0) {
+    getBalance(symbol: string, isETH: boolean) {
+      const balanceObj = this.originalBalance.find((obj: any) => obj.symbol === symbol);
+      if (!balanceObj) {
         return isETH ? '0.000000' : '0.00';
       }
-      const balanceNumber = balance[0].closing_balance;
-      console.log(`this is balanceNumber ${balanceNumber}`);
+      const balanceNumber = balanceObj.balance;
       if (isETH) {
-        return parseFloat(balanceNumber).toFixed(6);
-      } return parseFloat(balanceNumber).toFixed(2);
+        const ethBalance = Number(balanceNumber) / 1e18;
+        return ethBalance.toFixed(6);
+      } return (Number(balanceNumber) / 1e6).toFixed(2);
     },
+
     getBalanceUSD(balance: any, tokenName: string) {
       console.log('here is get balance usd');
       console.log(tokenName);
@@ -333,10 +347,11 @@ export default {
 }
 .dashboard__tokens-data-icon-wrapper {
   cursor: pointer;
+  opacity: 0.7;
 }
 
 .dashboard__tokens-data-token-selected {
-  border: 2px solid #4CAF50;
+  opacity: 1;
 }
 .dasboard__tokens-data-profit p {
   text-align: center;
@@ -345,7 +360,10 @@ export default {
   display: flex;
   flex-direction: row;
   margin-bottom: 26px;
-  p {
+  button {
+    background: none;
+    border: none;
+    box-shadow: none;
     font-size: 9px;
     display: flex;
     max-width: 30px;

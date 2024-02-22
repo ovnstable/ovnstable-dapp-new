@@ -25,7 +25,7 @@
     <div class="dashboard__apy-data">
       <p class="dashboard__token-data-title">Balance</p>
       <div class="dashboard__apy-data-chain">
-        <p class="dashboard__token-data-num"> {{ getBalance() }}</p>
+        <p class="dashboard__token-data-num"> {{ getBalance('USD+') }}</p>
         <p :class="['dashboard__token-data-growth-balance', { 'negative-growth': isGrowthNegative }]">
           {{ growthPercentage() }}
         </p>
@@ -45,6 +45,7 @@
 
 <script lang="ts">
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'TokenDataDashboard',
@@ -58,6 +59,7 @@ export default {
     },
   },
   computed: {
+    ...mapGetters('accountData', ['originalBalance']),
     networkName() {
       return this.$store.state.network.dashboardNetwork;
     },
@@ -73,16 +75,13 @@ export default {
     },
   },
   methods: {
-    getBalance() {
-      if (this.portfolioBalanceData.length === undefined) {
-        return '$0,00';
+    getBalance(symbol: string) {
+      const balanceObj = this.originalBalance.find((obj: any) => obj.symbol === symbol);
+      if (!balanceObj) {
+        return '0.00';
       }
-      const payoutTransactions = this.portfolioBalanceData.filter((transaction: any) => transaction.type === 'PAYOUT');
-      if (payoutTransactions.length > 0) {
-        const balance = payoutTransactions[0].closing_balance;
-        return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(balance);
-      }
-      return '$0,00';
+      const balanceNumber = balanceObj.balance;
+      return (Number(balanceNumber) / 1e6).toFixed(2);
     },
 
     growthPercentage(): any {
