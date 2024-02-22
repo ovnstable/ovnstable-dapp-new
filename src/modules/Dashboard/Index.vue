@@ -24,30 +24,39 @@
           <div class="dashboard_token_data_graphics">
             <TokenDataDashboard
               class="dashboard__token-data"
-              :portfolioBalanceData="portfolioBalanceData"
+              :portfolioBalanceData="portfolioBalanceData.dataUSDPlus"
             />
             <DashboardGraphic
-              :portfolioBalanceData="portfolioBalanceData"
+              :portfolioBalanceData="portfolioBalanceData.dataUSDPlus"
               :loaded="loaded"
               class="dashboard__graphics"
             />
           </div>
 
-          <p class="dashboard__premiums"> dashboard pools</p>
+          <DashboardPools
+            :allTokens=false
+            class="dashboard__premiums"
+          />
         </div>
         <div
           v-if="activeTab === 1"
           class="dashboard-tokens-plus-wrap"
         >
-          <p>token data for tokens_plus</p>
+          <IntervalChain />
+          <TokensPlusDashboard
+            :portfolioBalanceData="portfolioBalanceData"
+          />
           <p class="dashboard__graphics"> dashboard graphic</p>
-          <p class="dashboard__premiums"> dashboard pools</p>
+          <DashboardPools
+            :allTokens=true
+            class="dashboard__premiums"
+          />
         </div>
       </TabsComponent>
     </div>
     <div class="dashboard__payouts">
       <DashboardTransactions
-        :portfolioBalanceData="portfolioBalanceData"
+        :portfolioBalanceData="portfolioBalanceData.dataUSDPlus"
         class="dashboard__payout-inner"
       />
     </div>
@@ -62,7 +71,9 @@ import IntervalChain from '@/modules/Dashboard/IntervalChain.vue';
 import Spinner from '@/components/Spinner/Index.vue';
 import TokenDataDashboard from '@/modules/Dashboard/TokenDataDashboard.vue';
 import DashboardGraphic from '@/modules/Dashboard/DashboardGraphic.vue';
-import DashboardTransactions from '@/modules/Dashboard/DashboardTransactions.vue'
+import DashboardTransactions from '@/modules/Dashboard/DashboardTransactions.vue';
+import DashboardPools from '@/modules/Dashboard/DashboardPools.vue';
+import TokensPlusDashboard from '@/modules/Dashboard/TokensPlusDashboard.vue';
 
 export default {
   name: 'DashboardPage',
@@ -71,6 +82,8 @@ export default {
     IntervalChain,
     TokenDataDashboard,
     DashboardGraphic,
+    DashboardPools,
+    TokensPlusDashboard,
     Spinner,
     DashboardTransactions,
   },
@@ -200,23 +213,23 @@ export default {
 .dashboard-tabs {
   display: flex;
   justify-content: center;
-  margin-bottom: 20px; // Adjust as needed
+  margin-bottom: 20px;
 }
 
 button {
   background-color: transparent;
   border: none;
-  font-size: 17px; // Adjust as needed
+  font-size: 17px;
   font-weight: 600;
-  margin-right: 10px; // Adjust as needed
+  margin-right: 10px;
   cursor: pointer;
   transition: color 0.3s;
   &.active {
-    color: var(--color-1); // Active tab color
+    color: var(--color-1);
     text-decoration: underline;
   }
   &:hover {
-    color: var(--color-1); // Hover color
+    color: var(--color-1);
   }
 }
 

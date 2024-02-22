@@ -187,9 +187,9 @@ const state = {
   marketNetwork: 'arbitrum',
   marketExplorerURL: 'https://arbiscan.io/',
   insuranceNetwork: 'optimism',
-  dashboardNetwork: 'optimism',
+  dashboardNetwork: 'arbitrum',
   insuranceExplorerURL: 'https://optimistic.etherscan.io/',
-  dashboardExplorerURL: 'https://optimistic.etherscan.io/',
+  dashboardExplorerURL: 'https://arbiscan.io/',
 };
 
 const getters = {

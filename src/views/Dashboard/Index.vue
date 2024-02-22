@@ -32,6 +32,7 @@ export default {
       immediate: true,
       handler: function handleNetworkNameChange(newVal, oldVal) {
         if (newVal !== oldVal) {
+          console.log('fetching for the new network', this.$store.state.network.dashboardNetwork);
           this.fetchDataForPortfolioBalance(this.$store.state.network.dashboardNetwork);
         }
       },

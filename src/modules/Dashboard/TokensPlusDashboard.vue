@@ -1,53 +1,88 @@
 <template>
-  <div class="dashboard__token-data">
-    <div class="dashboard__token-data-from">
+  <div class="dashboard__all-tokens-data">
+    <div class="dashboard__tokens-data-select">
+      <p>SELECT ALL</p>
       <BaseIcon
-        name="DashboardUsdPlus"
-        class="dashboard__token-data-main-token"
+        name="DashboardETH+Tokens"
       />
-      <div class="dashboard__token-data-link-title">
-        <p class="dashboard__token-data-title--token"> USD+ </p>
-        <p class="dashboard__token-data-title-period">{{ formattedPeriod() }}</p>
+      <BaseIcon
+        name="DashboardUSD+Tokens"
+      />
+      <BaseIcon
+        name="DashboardUSDT+Tokens"
+      />
+      <BaseIcon
+        name="DashboardDAI+Tokens"
+      />
+    </div>
+    <div class="dasboard__tokens-data-balances-profit">
+      <div class="dasboard__tokens-data-tokens-wrapper">
+        <div class="dashboard__divider-first" />
+        <div class="dasboard__tokens-data-tokens">
+          <p class="dasboard__tokens-data-tokens-title">Token</p>
+          <div class="dasboard__tokens-data-tokens-icon">
+            <BaseIcon
+              name="DashboardETH+Tokens"
+            />
+            <p>ETH+</p>
+          </div>
+          <div class="dasboard__tokens-data-tokens-icon">
+            <BaseIcon
+              name="DashboardUSD+Tokens"
+            />
+            <p>USD+</p>
+          </div>
+          <div class="dasboard__tokens-data-tokens-icon">
+            <BaseIcon
+              name="DashboardUSDT+Tokens"
+            />
+            <p>USDT+</p>
+          </div>
+          <div class="dasboard__tokens-data-tokens-icon">
+            <BaseIcon
+              name="DashboardDAI+Tokens"
+            />
+            <p>DAI+</p>
+          </div>
+          <p class="dasboard__tokens-data-total-in-tokens">Total</p>
+        </div>
+
       </div>
+      <div class="dasboard__tokens-data-balances">
+        <p>Token balance</p>
+        <p>balance eth</p>
+        <p>balance usd</p>
+        <p>balance usdt</p>
+        <p>balance dai</p>
+      </div>
+      <div class="dasboard__tokens-data-balances-dollars">
+        <p>USD balance</p>
+        <p>balance eth usd</p>
+        <p>balance usd usd</p>
+        <p>balance usdt usd</p>
+        <p>balance dai usd</p>
+        <p class="dasboard__tokens-data-total">Total balance</p>
+      </div>
+      <div class="dashboard__divider" />
+      <div class="dasboard__tokens-data-profit">
+        <p>Profit</p>
+        <p>profit eth</p>
+        <p>profit usd</p>
+        <p>profit usdt</p>
+        <p>profit </p>
+        <p class="dasboard__tokens-data-total">Total profit</p>
+      </div>
+      <div class="dashboard__divider-last" />
     </div>
 
-    <div class="dashboard__divider" />
-    <div class="dashboard__payout-data">
-      <p class="dashboard__token-data-title">Risk factor</p>
-      <div class="dashboard__token-data-risk">
-        <p>Low</p>
-        <BaseIcon
-          name="DashboardRiskFactorLow"
-        />
-      </div>
-    </div>
-    <div class="dashboard__divider" />
-    <div class="dashboard__apy-data">
-      <p class="dashboard__token-data-title">Balance</p>
-      <div class="dashboard__apy-data-chain">
-        <p class="dashboard__token-data-num"> {{ getBalance() }}</p>
-        <p :class="['dashboard__token-data-growth-balance', { 'negative-growth': isGrowthNegative }]">
-          {{ growthPercentage() }}
-        </p>
-
-      </div>
-    </div>
-    <div class="dashboard__divider" />
-    <div class="dashboard__tvl-data">
-      <p class="dashboard__token-data-title"> Profit</p>
-      <p class="dashboard__token-data-h">{{calculateProfit()}}</p>
-      <p :class="{ 'negative-growth': isGrowthNegative }">{{ formatInterval() }}</p>
-    </div>
-    <div class="dashboard__divider dashboard__divider--last-divider" />
   </div>
-
 </template>
 
 <script lang="ts">
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 
 export default {
-  name: 'TokenDataDashboard',
+  name: 'TokensPlusDashboard',
   components: {
     BaseIcon,
   },
@@ -169,65 +204,6 @@ export default {
       }).format(totalProfit);
     },
 
-    formattedPeriod() {
-      const today = new Date();
-      let formattedDate = 'N/A';
-      switch (this.currentIntervalDashboard.toLowerCase()) {
-        case 'day': {
-          formattedDate = today.toLocaleDateString('en-GB', {
-            day: '2-digit',
-            month: 'short',
-            year: '2-digit',
-          }).replace(',', '').replace(/ /g, ' ');
-          break;
-        }
-        case 'week': {
-          const weekAgo = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
-          formattedDate = weekAgo.toLocaleDateString('en-GB', {
-            day: '2-digit',
-            month: 'short',
-            year: '2-digit',
-          }).replace(',', '').replace(/ /g, ' ');
-          break;
-        }
-        case 'month': {
-          const monthAgo = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
-          formattedDate = monthAgo.toLocaleDateString('en-GB', {
-            day: '2-digit',
-            month: 'short',
-            year: '2-digit',
-          }).replace(',', '').replace(/ /g, ' ');
-          break;
-        }
-        case 'all time':
-          if (this.portfolioBalanceData && this.portfolioBalanceData.length > 0) {
-            const earliestTransaction = this
-              .portfolioBalanceData[this.portfolioBalanceData.length - 1];
-            const earliestDate = new Date(earliestTransaction.date);
-            formattedDate = earliestDate.toLocaleDateString('en-GB', {
-              day: '2-digit',
-              month: 'short',
-              year: '2-digit',
-            }).replace(',', '').replace(/ /g, ' ');
-          }
-          break;
-        default: {
-          formattedDate = today.toLocaleDateString('en-GB', {
-            day: '2-digit',
-            month: 'short',
-            year: '2-digit',
-          }).replace(',', '').replace(/ /g, ' ');
-        }
-      }
-
-      const formattedDateParts = formattedDate.split(' ');
-      if (formattedDateParts.length === 3) {
-        formattedDate = `From ${formattedDateParts[0]} ${formattedDateParts[1]} ‘${formattedDateParts[2]}`;
-      }
-
-      return formattedDate || 'From N/A';
-    },
-
     formatInterval() {
       let text;
       switch (this.currentIntervalDashboard.toLowerCase()) {
@@ -253,147 +229,114 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.dashboard__token-data {
-  display:flex;
+.dashboard__all-tokens-data {
+  display: flex;
+  flex-direction: column;
+}
+
+.dasboard__tokens-data-balances-profit {
+  display: flex;
   flex-direction: row;
   justify-content: space-between;
-  background: var(--color-4);
-  width: 100%;
-  [data-theme="dark"] & {
-    background: var(--color-6);
-  }
-}
-.dashboard__token-data-title-period {
-  margin-top: 10px;
 }
 
-.dashboard__token-data-growth-balance {
-  margin-top: 4px;
-  font-size: 20px;
-  font-weight: 500;
-  color: var(--color-12);
-}
-.negative-growth {
-  color: var(--color-9) !important;
-}
-.dashboard__token-data-risk {
+.dasboard__tokens-data-tokens,
+.dasboard__tokens-data-balances,
+.dasboard__tokens-data-balances-dollars,
+.dasboard__tokens-data-profit {
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  margin-top: 20px;
-  p {
-    color: var(--color-1);
-    font-size: 20px;
-    font-weight: 500;
-    margin-right: 10px;
-  }
-}
-
-.dashboard__token-data-from {
-  display: flex;
-  flex-direction: row;
-}
-.dashboard__token-data-link-title {
-  display:flex;
   flex-direction: column;
-  margin-left: 20px;
 }
-.dashboard__token-data-title {
-  text-align: left;
-  color: var(--color-2);
-  font-size: 15px;
-  font-weight: 500;
-  [data-theme="dark"] & {
-    color: var(--color-18);
+
+.dasboard__tokens-data-balances :nth-child(1),
+.dasboard__tokens-data-balances-dollars :nth-child(1),
+.dasboard__tokens-data-profit :nth-child(1) {
+  margin-bottom: 24px;
+}
+.dasboard__tokens-data-tokens-wrapper {
+  display: flex;
+  flex-direction: row;
+}
+
+.dasboard__tokens-data-tokens-title {
+  margin-bottom: 18px;
+  text-align: center;
+}
+.dasboard__tokens-data-tokens .dasboard__tokens-data-tokens-icon:not(:first-of-type) {
+  margin-top: 8px;
+}
+
+.dasboard__tokens-data-balances p:nth-of-type(n+3),
+.dasboard__tokens-data-balances-dollars p:nth-of-type(n+3),
+.dasboard__tokens-data-profit p:nth-of-type(n+3) {
+  margin-top: 16px;
+}
+
+.dasboard__tokens-data-tokens-icon {
+  display: flex;
+  flex-direction: row;
+   align-items: center;
+  p {
+    margin-left: 10px;
+    display: flex;
+    align-items: center;
   }
 }
-.dashboard__token-data-title--token {
-  color: var(--color-1);
-  font-size: 22px;
-  font-weight: 600;
-  [data-theme="dark"] & {
-    color: var(--color-4);
-  }
+.dasboard__tokens-data-balances-dollars p {
+  text-align: right;
 }
-.dashboard__token-data-link-addr {
-  margin-top: 10px;
-  min-width: 79px;
-  color: var(--color-2);
-  font-size: 12px;
-  font-weight: 600;
-  [data-theme="dark"] & {
-    color: var(--color-18);
+.dasboard__tokens-data-profit p {
+  text-align: center;
+}
+.dashboard__tokens-data-select {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 26px;
+  p {
+    font-size: 9px;
+    display: flex;
+    max-width: 30px;
+    text-align: center;
+    margin-right: 6px;
+    color: var(--color-3);
+  }
+   svg:not(:last-child) {
+    margin-right: 8px;
   }
 }
 
+.dashboard__divider-first {
+  margin-right: 20px;
+  border: 1px solid var(--color-7);
+  [data-theme="dark"] & {
+    border-color: var(--color-2);
+  }
+}
 .dashboard__divider {
-  margin-left: 30px;
-  margin-right: 30px;
   border: 1px solid var(--color-7);
   [data-theme="dark"] & {
     border-color: var(--color-2);
   }
 }
 
-.dashboard__divider--last-divider {
-  margin-right: 0;
+.dashboard__divider-last {
+  margin-left: 30px;
+  border: 1px solid var(--color-7);
+  [data-theme="dark"] & {
+    border-color: var(--color-2);
+  }
 }
 
-.dashboard__payout-data,
-.dashboard__apy-data,
-.dashboard__tvl-data {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.dashboard__token-data-num,
-.dashboard__token-data-col-token {
-  color: var(--color-1);
-  font-size: 20px;
-  font-weight: 500;
-}
-.dashboard__tvl-data :nth-child(3) {
-  font-size: 20px;
-  font-weight: 500;
-  color: var(--color-12);
-}
-.dashboard__token-data-num {
+.dasboard__tokens-data-total-in-tokens {
+  padding-left: 12px;
   text-align: center;
-  [data-theme="dark"] & {
-    color: var(--color-4);
-  }
-}
-.dashboard__token-data-num--apy-num {
-  margin-top: 0px;
-}
-.dashboard__apy-data-chain {
-  margin-top: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.dashboard__token-data-h {
-  margin-top: 20px;
-  margin-bottom: 4px;
   color: var(--color-1);
-  font-size: 20px;
   font-weight: 500;
-  [data-theme="dark"] & {
-    color: var(--color-4);
-  }
+  margin-top: 20px;
 }
-
-.selected {
-  background: var(--color-4);
-  [data-theme="dark"] & {
-    background: var(--color-2);
-  }
+.dasboard__tokens-data-total {
+  margin-top: 22px !important;
 }
-
-.dashboard__token-data-main-token {
-  min-width: 70px;
-}
-
 @media (max-width: 1024px) {
   .dashboard__token-data-main-token {
     scale: 65%;
