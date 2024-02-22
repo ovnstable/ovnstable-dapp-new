@@ -722,8 +722,14 @@ export default {
       updateTokenValue(token, val, this.checkApproveForToken, this.updateQuotaInfo);
     },
     init() {
+      this.loadChains();
+      this.loadTokens();
+      this.initContractData();
+
       const bus = useEventBus('odos-transaction-finished');
-      bus.on(() => this.finishTransaction);
+      bus.on(() => {
+        this.finishTransaction();
+      });
     },
     addDefaultOvnToken() {
       const symbol = this.$route.query.symbol ? this.$route.query.symbol : null;
