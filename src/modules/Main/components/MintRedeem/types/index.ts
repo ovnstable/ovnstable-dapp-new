@@ -10,12 +10,6 @@ export enum wrapStatus {
   UNWRAP
 }
 
-export enum mintRedeemStep {
-  START = 'Start',
-  APPROVE = 'Approve',
-  CONFIRMATION = 'Confirmation',
-}
-
 export enum mintRedeemTypes {
   WRAP = 'wrap',
   UNWRAP = 'unwrap',

@@ -59,7 +59,7 @@ export default {
   },
   computed: {
     tokenBalance() {
-      const symbol = this.isMint ? 'OVN' : 'OVN INS';
+      const symbol = this.isMint ? 'OVN' : 'OVNINS';
       const token: any = this.originalBalance
         .find((_: any) => _?.symbol === symbol);
       return token ? new BigNumber(token.balance).div(10 ** 18).toFixed(2) : '0';

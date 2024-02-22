@@ -74,6 +74,10 @@ export const USER_BALANCES_SCHEME = {
       symbol: 'WETH',
       contractName: 'weth',
     },
+    {
+      symbol: 'OVNINS',
+      contractName: '',
+    },
   ],
   8453: [
     ...allChainsTokens,
@@ -92,6 +96,10 @@ export const USER_BALANCES_SCHEME = {
     {
       symbol: 'USDC',
       contractName: 'usdcNative',
+    },
+    {
+      symbol: 'OVNINS',
+      contractName: '',
     },
   ],
   56: [

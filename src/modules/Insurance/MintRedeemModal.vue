@@ -63,7 +63,24 @@
       >
         {{ selectedAction === 'mint' ? 'ENTER AMOUNT TO MINT' : 'ENTER AMOUNT TO REDEEM' }}
       </ButtonComponent>
-
+      <ButtonComponent
+        v-else-if="requestRequired"
+        btn-size="medium"
+        class="insurance__modal-mint-button"
+        @on-click="sendRedemptionRequest"
+      >
+        Send redeem request (72 hours)
+      </ButtonComponent>
+      <ButtonComponent
+        v-else-if="pendingRedemption"
+        btn-size="medium"
+        :btn-styles="redemptionDisabled ? 'faded' : 'primary'"
+        :disabled="redemptionDisabled"
+        class="insurance__modal-mint-button"
+        @on-click="sendRedemptionRequest"
+      >
+        Wait for redeem ({{ insuranceRedemptionData?.hours?.toFixed(2) }} hours)
+      </ButtonComponent>
       <ButtonComponent
         btn-styles="primary"
         btn-size="medium"
@@ -82,21 +99,14 @@
       >
         {{ selectedAction === 'mint' ? 'MINT' : 'REDEEM' }}
       </ButtonComponent>
-      <div class="insurance__modal-stages">
-        <p :class="{ 'active-stage': currentStage === 'Start' }">Start</p>
-        <BaseIcon name="InsuranceModalArrowRight" />
-        <p :class="{ 'active-stage': currentStage === 'Approve' }">Approve</p>
-        <BaseIcon name="InsuranceModalArrowRight" />
-        <p :class="{ 'active-stage': currentStage === 'Confirmation' }">Confirmation</p>
-      </div>
     </div>
+    <StepsRow :current-stage="currentStage" />
   </ModalComponent>
 </template>
 
 <!-- eslint-disable no-param-reassign -->
 <script lang="ts">
 import { mapActions, mapGetters } from 'vuex';
-import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import ModalComponent from '@/components/Modal/Index.vue';
 import InsuranceGasSettings from '@/modules/Insurance/InsuranceGasSettings.vue';
@@ -104,6 +114,7 @@ import InputTokenInsurance from '@/modules/Insurance/InsuranceTokenForm.vue';
 import BigNumber from 'bignumber.js';
 import { approveToken, getAllowanceValue } from '@/utils/contractApprove.ts';
 import { debounce } from 'lodash';
+import StepsRow, { mintRedeemStep } from '@/components/StepsRow/Index.vue';
 
 export default {
   name: 'MintRedeemModal',
@@ -111,7 +122,7 @@ export default {
     ModalComponent,
     InsuranceGasSettings,
     ButtonComponent,
-    BaseIcon,
+    StepsRow,
     InputTokenInsurance,
   },
   data() {
@@ -120,7 +131,7 @@ export default {
       ovnAmount: 0,
       ovnDecimals: 18,
       selectedAction: 'mint',
-      currentStage: 'Start',
+      currentStage: mintRedeemStep.START,
       isShowSelectTokensModal: false,
       tokenApproved: false,
       fromValue: '',
@@ -129,27 +140,56 @@ export default {
       gasAmountInMatic: '',
       gasAmountInUsd: '',
       estimatedGas: '',
+      redemptionRequestSent: false,
     };
   },
   watch: {
     fromValue() {
+      if (!this.fromValue) this.currentStage = mintRedeemStep.START;
       this.checkApprove(this);
+    },
+    account(val) {
+      if (val) {
+        this.refreshClientData();
+      }
     },
   },
   mounted() {
     console.log(this.originalBalance, '---originalBalance');
   },
   computed: {
-    ...mapGetters('network', ['networkName']),
+    ...mapGetters('network', ['networkName', 'networkId']),
     ...mapGetters('gasPrice', ['gasPriceGwei']),
+    ...mapGetters('insuranceData', ['insuranceRedemptionData']),
     ...mapGetters('accountData', ['account', 'originalBalance']),
     ...mapGetters('web3', ['contracts', 'evmProvider', 'evmSigner']),
     ...mapGetters('gasPrice', ['gasPriceGwei', 'gasPrice', 'gasPriceStation']),
+
+    redemptionDisabled() {
+      if (this.selectedAction === 'redeem' && this.insuranceRedemptionData.hours > 0) {
+        return true;
+      }
+      return false;
+    },
+    pendingRedemption() {
+      if (this.selectedAction === 'redeem'
+      && this.insuranceRedemptionData.hours > 0 && this.insuranceRedemptionData.hours < 72) {
+        return true;
+      }
+      return false;
+    },
+    requestRequired() {
+      if (this.insuranceRedemptionData.hours > 0 && this.insuranceRedemptionData.hours < 72) {
+        return false;
+      }
+      if (this.selectedAction === 'redeem' && !this.redemptionRequestSent) return true;
+      return false;
+    },
   },
   methods: {
     ...mapActions('gasPrice', ['refreshGasPrice']),
     ...mapActions('errorModal', ['showErrorModal', 'showErrorModalWithMsg']),
-    ...mapActions('insuranceData', ['refreshInsurance']),
+    ...mapActions('insuranceData', ['refreshInsurance', 'refreshClientData']),
     ...mapActions('successModal', ['showSuccessModal', 'closeSuccessModal']),
     ...mapActions('waitingModal', ['showWaitingModal', 'closeWaitingModal']),
     closeModal() {
@@ -161,6 +201,9 @@ export default {
     showSelectTokensModals(isShow: any) {
       this.isShowSelectTokensModal = isShow;
     },
+    redemptionRequestAction() {
+      console.log('SEND REQUEST');
+    },
     async estimateGas(sum: string) {
       const from = this.account;
 
@@ -169,51 +212,27 @@ export default {
       console.log(this.contracts, '---contracts');
 
       try {
+        if (this.networkId === 10) return -1;
         const estimateOptions = { from, gasPrice: this.gasPriceGwei };
-        const mintParams = {
+        const params = {
           amount: sum,
         };
-        const self = this;
+        const methodEstimate = this.selectedAction === 'mint'
+          ? this.contracts.insurance[`${this.networkName}_exchanger`].mint
+          : this.contracts.insurance[`${this.networkName}_exchanger`].redeem;
 
-        await this.contracts.insurance[`${this.networkName}_exchanger`].methods
-          .mint(mintParams)
-          .estimateGas(estimateOptions)
-          .then((gasAmount: any) => {
-            result = gasAmount;
-          })
+        console.log(methodEstimate, '--val1');
+        const gasVal = await methodEstimate
+          .estimateGas(params, estimateOptions)
           .catch((error: any) => {
-            if (error && error.message) {
-              const msg = error.message.replace(/(?:\r\n|\r|\n)/g, '');
-
-              const errorMsg = {
-                product: 'OVN INS',
-                data: {
-                  from,
-                  to:
-                    this.contracts.insurance[`${self.networkName}_exchanger`].target,
-                  gas: null,
-                  gasPrice: parseInt(estimateOptions.gasPrice, 16),
-                  method: this.contracts.insurance[
-                    `${self.networkName}_exchanger`
-                  ].methods
-                    .mint(mintParams)
-                    .encodeABI(),
-                  message: msg,
-                },
-              };
-
-              console.log(errorMsg);
-            } else {
-              console.error(
-                `Mint Insurance blockcnain estimateGas error: ${error}. Sum: ${self.fromValue}. Account: ${self.account}. `,
-              );
-            }
-
-            return -1;
+            console.log(error, '--estimateGas');
           });
+
+        console.log(gasVal, '---gasVal');
+        result = gasVal;
       } catch (e) {
         console.error(
-          `Mint Insurance estimateGas error: ${e}. Sum: ${this.fromValue}. Account: ${this.account}. `,
+          `Insurance estimateGas error: ${e}. Sum: ${this.fromValue}. Account: ${this.account}. `,
         );
         this.showErrorModalWithMsg({ errorType: 'estimateGas', errorMsg: e });
         return -1;
@@ -247,16 +266,16 @@ export default {
           this.gasPriceGwei,
         );
 
-        console.log('2');
         await tx.wait();
 
         this.tokenApproved = true;
+        this.currentStage = mintRedeemStep.CONFIRMATION;
         console.log(tx, 'TX___');
 
         this.closeWaitingModal();
       } catch (e) {
         console.error(
-          `Mint Insurance approve action error: ${e}. Sum: ${this.fromValue}. Account: ${this.account}. `,
+          `Insurance approve action error: ${e}. Sum: ${this.fromValue}. Account: ${this.account}. `,
         );
         this.closeWaitingModal();
         this.showErrorModalWithMsg({ errorType: 'approve', errorMsg: e });
@@ -288,9 +307,11 @@ export default {
         console.log(sum, allowanceValue.toString(), '---sum');
         if (!allowanceValue || new BigNumber(allowanceValue).lt(sum)) {
           self.tokenApproved = false;
+          self.currentStage = mintRedeemStep.APPROVE;
           return;
         }
 
+        self.currentStage = mintRedeemStep.CONFIRMATION;
         self.tokenApproved = true;
       } catch (e) {
         console.error(
@@ -306,7 +327,7 @@ export default {
         const sum = new BigNumber(this.fromValue).times(10 ** decimals).toFixed(0);
         await this.checkApprove(this);
 
-        console.log(sum, decimals, this.fromValue, '---sum');
+        console.log(this.estimatedGas, '---estimatedGas');
         const { contracts } = this;
         const from = this.account;
         const self = this;
@@ -314,38 +335,54 @@ export default {
         try {
           await this.refreshGasPrice();
 
-          let buyParams;
+          let gasParams;
 
-          if (this.gas == null) {
-            buyParams = { from, gasPrice: this.gasPriceGwei };
+          if (!this.gas) {
+            gasParams = { from, gasPrice: this.gasPriceGwei };
           } else {
-            buyParams = {
+            gasParams = {
               from,
               gasPrice: this.gasPriceGwei,
               gas: this.gas,
             };
           }
 
-          const mintParams = {
+          const params = {
             amount: sum,
           };
 
           console.debug(
-            `Insurance blockchain. Mit action Sum: ${sum} usdSum: ${sum}. Account: ${this.account}`,
+            `Insurance blockchain. Sum: ${sum} usdSum: ${sum}. Account: ${this.account}`,
           );
-          const buyResult = await contracts.insurance[
-            `${this.networkName}_exchanger`
-          ].mint(mintParams, buyParams);
 
-          await buyResult.wait();
+          if (this.selectedAction === 'mint') {
+            console.log(contracts.insurance[`${this.networkName}_exchanger`], gasParams, 'MINT');
+            const tx = await contracts.insurance[`${this.networkName}_exchanger`].mint(params, gasParams);
 
-          self.showSuccessModal({
-            successTxHash: buyResult.hash,
-            successAction: 'mintInsurance',
-          });
+            await tx.wait();
+
+            self.showSuccessModal({
+              successTxHash: tx.hash,
+              successAction: 'mintInsurance',
+            });
+          } else {
+            console.log('REDEEM');
+            const tx = await contracts.insurance[
+              `${this.networkName}_exchanger`
+            ].redeem(params, gasParams);
+
+            await tx.wait();
+
+            self.showSuccessModal({
+              successTxHash: tx.hash,
+              successAction: 'mintInsurance',
+            });
+          }
+
+          this.currentStage = mintRedeemStep.START;
         } catch (e) {
           console.error(
-            `Mint Insurance error: ${e}. Sum: ${this.fromValue}. Account: ${this.account}. `,
+            `Insurance error: ${e}. Sum: ${this.fromValue}. Account: ${this.account}. `,
           );
           this.showErrorModalWithMsg({ errorType: 'buy', errorMsg: e });
           return;
@@ -355,7 +392,7 @@ export default {
         self.fromValue = '0';
       } catch (e) {
         console.error(
-          `Mint Insurance by action error: ${e}. Sum: ${this.fromValue}. Account: ${this.account}. `,
+          `Insurance by action error: ${e}. Sum: ${this.fromValue}. Account: ${this.account}. `,
         );
         this.showErrorModalWithMsg({ errorType: 'mint', errorMsg: e });
       }
@@ -394,10 +431,86 @@ export default {
         }
       } catch (e) {
         console.error(
-          `Mint Insurance Confirm swap error: ${e}. Sum: ${this.fromValue}. Account: ${this.account}. `,
+          `Insurance Confirm swap error: ${e}. Sum: ${this.fromValue}. Account: ${this.account}. `,
         );
         this.showErrorModalWithMsg({ errorType: 'swap', errorMsg: e });
       }
+    },
+
+    async sendRedemptionRequest() {
+      const insurance = {
+        chainName: ['optimism', 'arbitrum'],
+      };
+
+      const estimateResult = await this.estimateRedemptionRequest();
+
+      if (!insurance.chainName.includes(this.networkName)) return;
+
+      console.log(this.networkName, estimateResult, 'sendRedemptionRequest---');
+      if (estimateResult?.haveError) {
+        this.showErrorModalWithMsg({
+          errorType: 'redemptionRequest',
+          errorMsg: estimateResult,
+        });
+      } else {
+        this.redemptionRequestSent = true;
+
+        const requestParams = { from: this.account, gasPrice: this.gasPriceGwei };
+
+        console.log(requestParams, '---requestParams');
+        console.log(
+          `${this.networkName}_exchanger`,
+          'this.networkName + "_exchanger"',
+        );
+        console.log(this.contracts.insurance, '--this.contracts.insurance');
+        try {
+          const tx = await this.contracts.insurance[
+            `${this.networkName}_exchanger`
+          ].requestWithdraw(requestParams);
+
+          tx.wait();
+          this.redemptionRequestSent = true;
+          alert('success');
+        } catch (e) {
+          this.redemptionRequestSent = false;
+        }
+      }
+    },
+
+    async estimateRedemptionRequest() {
+      let result;
+
+      try {
+        const contract = this.contracts.insurance[
+          `${this.networkName}_exchanger`
+        ];
+        const estimateOptions = {
+          from: this.account,
+          gasPrice: this.gasPriceGwei,
+        };
+
+        const tx = await contract
+          .requestWithdraw
+          .estimateGas(estimateOptions)
+          .catch((e: any) => {
+            console.log(e, 'e---');
+          });
+
+        result = tx;
+      } catch (e) {
+        result = {
+          haveError: true,
+          message: 'Unexpected error',
+        };
+      }
+
+      return result;
+    },
+
+    async redemptionRequest() {
+      await this.contracts.insurance[`${this.networkName}_exchanger`].methods
+        .requestWithdraw()
+        .call();
     },
 
   },
@@ -510,14 +623,14 @@ export default {
 }
 
 .insurance__modal-info-fee,
-.insurance__modal-info-mint {
+.insurance__modal-info-{
   display: flex;
   flex-direction: row;
   font-size: 14px;
 }
 
 .insurance__modal-info-fee :nth-child(1),
- .insurance__modal-info-mint :nth-child(1){
+ .insurance__modal-info-:nth-child(1){
   margin-right: 70px;
 }
 

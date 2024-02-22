@@ -83,13 +83,7 @@
       </ButtonComponent>
     </div>
 
-    <div class="mintredeem-form__modal-stages">
-      <p :class="{ 'active-stage': currentStage === mintRedeemStep.START }">Start</p>
-      <BaseIcon name="InsuranceModalArrowRight" />
-      <p :class="{ 'active-stage': currentStage === mintRedeemStep.APPROVE }">Approve</p>
-      <BaseIcon name="InsuranceModalArrowRight" />
-      <p :class="{ 'active-stage': currentStage === mintRedeemStep.CONFIRMATION }">Confirmation</p>
-    </div>
+    <StepsRow :current-stage="currentStage" />
   </div>
 
 </template>
@@ -101,19 +95,18 @@
 import { mapActions, mapGetters, mapState } from 'vuex';
 import SwitchTabs from '@/components/SwitchTabs/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
-import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import TokenForm from '@/modules/Main/components/MintRedeem/TokenForm.vue';
 import { buildEvmContract } from '@/utils/contractsMap.ts';
 import { MINTREDEEM_SCHEME } from '@/store/views/main/mintRedeem/mocks.ts';
 import debounce from 'lodash/debounce';
 import { fixedByPrice } from '@/utils/numbers.ts';
+import StepsRow, { mintRedeemStep } from '@/components/StepsRow/Index.vue';
 
 import {
   mintStatus,
   wrapStatus,
   mintRedeemTypes,
   type IMethodData,
-  mintRedeemStep,
 } from '@/modules/Main/components/MintRedeem/types/index.ts';
 import {
   getNewInputToken, getReferralCode,
@@ -127,7 +120,7 @@ export default {
   name: 'MintRedeem',
   components: {
     SwitchTabs,
-    BaseIcon,
+    StepsRow,
     TokenForm,
     GasSettings,
     ButtonComponent,
@@ -228,10 +221,7 @@ export default {
 
       const tokenData = this.inputToken;
       const tokenContract = this.tokensContractMap[tokenData.address];
-      const approveValue = new BigNumber(10)
-        .pow(tokenData.decimals)
-        .times(100000)
-        .toFixed(0);
+      const approveValue = new BigNumber(10 ** 25).toFixed(0);
 
       const networkId = this.networkId as keyof typeof MINTREDEEM_SCHEME;
       const pairData = MINTREDEEM_SCHEME[networkId]
