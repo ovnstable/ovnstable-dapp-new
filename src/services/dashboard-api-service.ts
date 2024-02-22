@@ -5,9 +5,13 @@ import apiService from './api-service.ts';
 const API_URL = 'https://api.overnight.fi';
 
 class DashboardApiService {
-  loadBalanceChange(chain: string, token: string, address: string): any {
+  loadBalanceChange(chain: string, token: string, address: string, dop?: string): any {
     return new Promise((resolve, reject) => {
-      const url = `${API_URL}/${chain}/${token}/dapp/clientBalanceChanges?address=${address}`;
+      let url = `${API_URL}/${chain}/${token}/dapp/clientBalanceChanges?address=${address}`;
+      if (dop) {
+        url += `&product=${encodeURIComponent(`${dop}+`)}`;
+      }
+      console.log(url);
       apiService.get(url)
         .then((data) => {
           resolve(data);

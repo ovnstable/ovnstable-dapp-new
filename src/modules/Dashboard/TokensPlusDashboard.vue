@@ -50,10 +50,10 @@
       </div>
       <div class="dasboard__tokens-data-balances">
         <p>Token balance</p>
-        <p>balance eth</p>
-        <p>balance usd</p>
-        <p>balance usdt</p>
-        <p>balance dai</p>
+        <p>{{getBalance(portfolioBalanceData.dataETHPlus, true)}}</p>
+        <p>{{getBalance(portfolioBalanceData.dataUSDPlus, false)}}</p>
+        <p>{{getBalance(portfolioBalanceData.dataUSDTPlus, false)}}</p>
+        <p>{{getBalance(portfolioBalanceData.dataDAIPlus, false)}}</p>
       </div>
       <div class="dasboard__tokens-data-balances-dollars">
         <p>USD balance</p>
@@ -108,16 +108,14 @@ export default {
     },
   },
   methods: {
-    getBalance() {
-      if (this.portfolioBalanceData.length === undefined) {
-        return '$0,00';
+    getBalance(balance: any, isETH: boolean) {
+      if (!Array.isArray(balance) || balance.length === 0) {
+        return isETH ? '0.000000' : '0.00';
       }
-      const payoutTransactions = this.portfolioBalanceData.filter((transaction: any) => transaction.type === 'PAYOUT');
-      if (payoutTransactions.length > 0) {
-        const balance = payoutTransactions[0].closing_balance;
-        return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(balance);
-      }
-      return '$0,00';
+      const balanceNumber = balance[0].closing_balance;
+      if (isETH) {
+        return parseFloat(balanceNumber).toFixed(6);
+      } return parseFloat(balanceNumber).toFixed(2);
     },
 
     growthPercentage(): any {
