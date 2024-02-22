@@ -11,7 +11,6 @@ class DashboardApiService {
       if (dop) {
         url += `&product=${encodeURIComponent(`${dop}+`)}`;
       }
-      console.log(url);
       apiService.get(url)
         .then((data) => {
           resolve(data);

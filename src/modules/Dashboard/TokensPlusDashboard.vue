@@ -20,29 +20,14 @@
         <div class="dashboard__divider-first" />
         <div class="dasboard__tokens-data-tokens">
           <p class="dasboard__tokens-data-tokens-title">Token</p>
-          <div class="dasboard__tokens-data-tokens-icon">
-            <BaseIcon
-              name="DashboardETH+Tokens"
-            />
-            <p>ETH+</p>
-          </div>
-          <div class="dasboard__tokens-data-tokens-icon">
-            <BaseIcon
-              name="DashboardUSD+Tokens"
-            />
-            <p>USD+</p>
-          </div>
-          <div class="dasboard__tokens-data-tokens-icon">
-            <BaseIcon
-              name="DashboardUSDT+Tokens"
-            />
-            <p>USDT+</p>
-          </div>
-          <div class="dasboard__tokens-data-tokens-icon">
-            <BaseIcon
-              name="DashboardDAI+Tokens"
-            />
-            <p>DAI+</p>
+          <div
+            v-for="(token, index)
+              in tokens"
+            :key="index"
+            class="dasboard__tokens-data-tokens-icon"
+          >
+            <BaseIcon :name="token.iconName" />
+            <p>{{ token.name }}</p>
           </div>
           <p class="dasboard__tokens-data-total-in-tokens">Total</p>
         </div>
@@ -57,20 +42,20 @@
       </div>
       <div class="dasboard__tokens-data-balances-dollars">
         <p>USD balance</p>
-        <p>balance eth usd</p>
-        <p>balance usd usd</p>
-        <p>balance usdt usd</p>
-        <p>balance dai usd</p>
-        <p class="dasboard__tokens-data-total">Total balance</p>
+        <p>{{getBalanceUSD(getBalance(portfolioBalanceData.dataETHPlus, true), 'ethPlus')}}</p>
+        <p>{{getBalanceUSD(getBalance(portfolioBalanceData.dataUSDPlus, true), 'usdPlus')}}</p>
+        <p>{{getBalanceUSD(getBalance(portfolioBalanceData.dataUSDTPlus, true), 'usdtPlus')}}</p>
+        <p>{{getBalanceUSD(getBalance(portfolioBalanceData.dataDAIPlus, true), 'daiPlus')}}</p>
+        <p class="dasboard__tokens-data-total">{{getTotalBalance()}}</p>
       </div>
       <div class="dashboard__divider" />
       <div class="dasboard__tokens-data-profit">
         <p>Profit</p>
-        <p>profit eth</p>
-        <p>profit usd</p>
-        <p>profit usdt</p>
-        <p>profit </p>
-        <p class="dasboard__tokens-data-total">Total profit</p>
+        <p>{{calculateProfit(portfolioBalanceData.dataETHPlus)}}</p>
+        <p>{{calculateProfit(portfolioBalanceData.dataUSDPlus)}}</p>
+        <p>{{calculateProfit(portfolioBalanceData.dataUSDTPlus)}}</p>
+        <p>{{calculateProfit(portfolioBalanceData.dataDAIPlus)}}</p>
+        <p class="dasboard__tokens-data-total">{{totalProfit()}}</p>
       </div>
       <div class="dashboard__divider-last" />
     </div>
@@ -86,6 +71,16 @@ export default {
   components: {
     BaseIcon,
   },
+  data() {
+    return {
+      tokens: [
+        { name: 'ETH+', iconName: 'DashboardETH+Tokens' },
+        { name: 'USD+', iconName: 'DashboardUSD+Tokens' },
+        { name: 'USDT+', iconName: 'DashboardUSDT+Tokens' },
+        { name: 'DAI+', iconName: 'DashboardDAI+Tokens' },
+      ],
+    };
+  },
   props: {
     portfolioBalanceData: {
       type: Object,
@@ -99,13 +94,6 @@ export default {
     currentIntervalDashboard() {
       return this.$store.state.intervalDashboard.intervalDashboard;
     },
-    isGrowthNegative() {
-      const growth = this.growthPercentage();
-      if (growth === 0) {
-        return false;
-      }
-      return growth.startsWith('-');
-    },
   },
   methods: {
     getBalance(balance: any, isETH: boolean) {
@@ -117,53 +105,31 @@ export default {
         return parseFloat(balanceNumber).toFixed(6);
       } return parseFloat(balanceNumber).toFixed(2);
     },
+    getBalanceUSD(balance: any, tokenName: string) {
+      const price = this.portfolioBalanceData.prices[tokenName];
 
-    growthPercentage(): any {
-      if (this.portfolioBalanceData.length === undefined) {
-        return '0.0000%';
-      }
-      const interval = this.currentIntervalDashboard.toLowerCase();
-      const payoutTransactions = this.portfolioBalanceData
-        .filter((transaction: any) => transaction.type === 'PAYOUT');
-      let numberOfDays;
-      switch (interval) {
-        case 'day':
-          numberOfDays = 1;
-          break;
-        case 'week':
-          numberOfDays = 7;
-          break;
-        case 'month':
-          numberOfDays = 30;
-          break;
-        case 'all time':
-          numberOfDays = payoutTransactions.length;
-          break;
-        default:
-          numberOfDays = 1;
-      }
-      const initialTransaction = payoutTransactions[numberOfDays - 1];
-      const totalProfit = this.calculateProfit();
-      const normalizedString = totalProfit.replace(' $', '').replace(',', '.');
-      const numberProfit = parseFloat(normalizedString);
-      if (initialTransaction) {
-        const initialBalance = initialTransaction.opening_balance;
-        const growth = ((initialBalance + numberProfit) / initialBalance - 1) * 100;
-        if (Number.isNaN(growth)) {
-          return '0.00%';
-        }
-        const formattedGrowth = growth.toFixed(4);
-        return `${growth > 0 ? `+${formattedGrowth}` : formattedGrowth}%`;
-      }
-      return '0.0000%';
-    },
-    calculateProfit(): string {
-      if (!Array.isArray(this.portfolioBalanceData) || this.portfolioBalanceData.length === 0) {
+      if (!price) {
+        console.error('Price for the given token name is not found.');
         return '$0,0000';
       }
 
+      const valueInUSD = balance * price;
+
+      const formattedValueInUSD = new Intl.NumberFormat('de-DE', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 4,
+      }).format(valueInUSD);
+
+      return formattedValueInUSD;
+    },
+    calculateProfit(balance: any) {
+      if (!Array.isArray(balance) || balance.length === 0) {
+        return '0,0000 $';
+      }
+
       const interval = this.currentIntervalDashboard.toLowerCase();
-      const payoutTransactions = this.portfolioBalanceData
+      const payoutTransactions = balance
         .filter((transaction: any) => transaction.type === 'PAYOUT');
       let numberOfDays;
 
@@ -201,27 +167,48 @@ export default {
         minimumFractionDigits: 4,
       }).format(totalProfit);
     },
+    totalProfit() {
+      let totalProfitUSD = 0;
 
-    formatInterval() {
-      let text;
-      switch (this.currentIntervalDashboard.toLowerCase()) {
-        case 'day':
-          text = 'per day';
-          break;
-        case 'week':
-          text = 'per week';
-          break;
-        case 'month':
-          text = 'per month';
-          break;
-        case 'all time':
-          text = 'all time';
-          break;
-        default:
-          text = 'Per day';
-      }
-      return text;
+      totalProfitUSD += parseFloat(this.calculateProfit(this.portfolioBalanceData.dataETHPlus)
+        .replace(',', '.').replace(' $', ''));
+      totalProfitUSD += parseFloat(this.calculateProfit(this.portfolioBalanceData.dataUSDPlus)
+        .replace(',', '.').replace(' $', ''));
+      totalProfitUSD += parseFloat(this.calculateProfit(this.portfolioBalanceData.dataUSDTPlus)
+        .replace(',', '.').replace(' $', ''));
+      totalProfitUSD += parseFloat(this.calculateProfit(this.portfolioBalanceData.dataDAIPlus)
+        .replace(',', '.').replace(' $', ''));
+
+      const formattedTotalProfitUSD = new Intl.NumberFormat('de-DE', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 4,
+      }).format(totalProfitUSD);
+
+      return formattedTotalProfitUSD;
     },
+
+    getTotalBalance() {
+      let totalBalanceUSD = 0;
+
+      totalBalanceUSD += parseFloat(this.getBalanceUSD(this
+        .getBalance(this.portfolioBalanceData.dataETHPlus, true), 'ethPlus').replace('$', '').replace(',', '.'));
+      totalBalanceUSD += parseFloat(this.getBalanceUSD(this
+        .getBalance(this.portfolioBalanceData.dataUSDPlus, false), 'usdPlus').replace('$', '').replace(',', '.'));
+      totalBalanceUSD += parseFloat(this.getBalanceUSD(this
+        .getBalance(this.portfolioBalanceData.dataUSDTPlus, false), 'usdtPlus').replace('$', '').replace(',', '.'));
+      totalBalanceUSD += parseFloat(this.getBalanceUSD(this
+        .getBalance(this.portfolioBalanceData.dataDAIPlus, false), 'daiPlus').replace('$', '').replace(',', '.'));
+
+      const formattedTotalBalanceUSD = new Intl.NumberFormat('de-DE', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 4,
+      }).format(totalBalanceUSD);
+
+      return formattedTotalBalanceUSD;
+    },
+
   },
 };
 </script>
@@ -244,6 +231,13 @@ export default {
 .dasboard__tokens-data-profit {
   display: flex;
   flex-direction: column;
+}
+.dasboard__tokens-data-tokens > *:not(:first-child),
+.dasboard__tokens-data-balances > *:not(:first-child),
+.dasboard__tokens-data-balances-dollars > *:not(:first-child),
+.dasboard__tokens-data-profit > *:not(:first-child) {
+  color: var(--color-1);
+  font-weight: 500;
 }
 
 .dasboard__tokens-data-balances :nth-child(1),

@@ -28,9 +28,6 @@ function getTokenPrices(apiResponse: any, contractsMap: any) {
     if (token.endsWith('Plus')) {
       const contractInfo = contracts[token];
       if (apiResponse.tokenPrices[contractInfo.tokenPlus]) {
-        console.log('found');
-        console.log(token);
-        console.log(apiResponse.tokenPrices[contractInfo.tokenPlus]);
         prices[token] = apiResponse.tokenPrices[contractInfo.tokenPlus];
       }
     }
