@@ -33,11 +33,7 @@
               class="dashboard__graphics"
             />
           </div>
-
-          <DashboardPools
-            :allTokens=false
-            class="dashboard__premiums"
-          />
+          <p class="dashboard-tokens-transactions">USD+ TRANSACTIONS</p>
         </div>
         <div
           v-if="activeTab === 1"
@@ -52,10 +48,7 @@
             :loaded="loaded"
             class="dashboard__graphics"
           />
-          <DashboardPools
-            :allTokens=true
-            class="dashboard__premiums"
-          />
+          <p class="dashboard-tokens-transactions">TOKENS+ TRANSACTIONS</p>
         </div>
       </TabsComponent>
     </div>
@@ -77,7 +70,6 @@ import Spinner from '@/components/Spinner/Index.vue';
 import TokenDataDashboard from '@/modules/Dashboard/TokenDataDashboard.vue';
 import DashboardGraphic from '@/modules/Dashboard/DashboardGraphic.vue';
 import DashboardTransactions from '@/modules/Dashboard/DashboardTransactions.vue';
-import DashboardPools from '@/modules/Dashboard/DashboardPools.vue';
 import TokensPlusDashboard from '@/modules/Dashboard/TokensPlusDashboard.vue';
 import { mapGetters } from 'vuex';
 
@@ -88,7 +80,6 @@ export default {
     IntervalChain,
     TokenDataDashboard,
     DashboardGraphic,
-    DashboardPools,
     TokensPlusDashboard,
     Spinner,
     DashboardTransactions,
@@ -183,6 +174,12 @@ export default {
 .dashboard__premiums,
 .dashboard__payout-inner {
   width: 100%;
+}
+
+.dashboard-tokens-transactions {
+  margin-top: 25px;
+  color: var(--color-1);
+  font-size: 17px;
 }
 .dashboard__graphics{
   border-radius: 5px;
