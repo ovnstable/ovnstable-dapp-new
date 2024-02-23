@@ -42,7 +42,8 @@
             .filter((token: any) => selectedTokens.includes(token.name + '+'))"
           :key="`balance-${token.name}`"
         >
-          {{ getBalance(token.name + '+', token.isETH) }}
+          <!-- {{ getBalance(token.name + '+', token.isETH) }} -->
+          {{ getBalance(portfolioBalanceData[`data${token.name}Plus`], token.isETH) }}
         </p>
       </div>
       <div class="dasboard__tokens-data-balances-dollars">
@@ -52,7 +53,8 @@
             .filter((token: any) => selectedTokens.includes(token.name + '+'))"
           :key="`usd-balance-${token.name}`"
         >
-          {{ getBalanceUSD(getBalance(token.name + '+', token.isETH), token.name.toLowerCase() + 'Plus') }}
+          {{ getBalanceUSD(getBalance(portfolioBalanceData[`data${token.name}Plus`], token.isETH), token.name.toLowerCase() + 'Plus') }}
+          <!-- {{ getBalanceUSD(getBalance(token.name + '+', token.isETH), token.name.toLowerCase() + 'Plus') }} -->
         </p>
         <p class="dasboard__tokens-data-total">{{getTotalBalance()}}</p>
       </div>
@@ -160,16 +162,25 @@ export default {
         this.selectedTokens.splice(index, 1);
       }
     },
-    getBalance(symbol: string, isETH: boolean) {
-      const balanceObj = this.originalBalance.find((obj: any) => obj.symbol === symbol);
-      if (!balanceObj) {
+    // getBalance(symbol: string, isETH: boolean) {
+    //   const balanceObj = this.originalBalance.find((obj: any) => obj.symbol === symbol);
+    //   if (!balanceObj) {
+    //     return isETH ? '0.000000' : '0.00';
+    //   }
+    //   const balanceNumber = balanceObj.balance;
+    //   if (isETH) {
+    //     const ethBalance = Number(balanceNumber) / 1e18;
+    //     return ethBalance.toFixed(6);
+    //   } return (Number(balanceNumber) / 1e6).toFixed(2);
+    // },
+    getBalance(balance: any, isETH: boolean) {
+      if (!Array.isArray(balance) || balance.length === 0) {
         return isETH ? '0.000000' : '0.00';
       }
-      const balanceNumber = balanceObj.balance;
+      const balanceNumber = balance[0].closing_balance;
       if (isETH) {
-        const ethBalance = Number(balanceNumber) / 1e18;
-        return ethBalance.toFixed(6);
-      } return (Number(balanceNumber) / 1e6).toFixed(2);
+        return parseFloat(balanceNumber).toFixed(6);
+      } return parseFloat(balanceNumber).toFixed(2);
     },
 
     getBalanceUSD(balance: any, tokenName: string) {
