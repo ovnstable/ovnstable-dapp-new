@@ -60,6 +60,7 @@
         btn-size="medium"
         btn-styles="faded"
         class="insurance__modal-mint-button"
+        disabled
       >
         {{ selectedAction === 'mint' ? 'ENTER AMOUNT TO MINT' : 'ENTER AMOUNT TO REDEEM' }}
       </ButtonComponent>
