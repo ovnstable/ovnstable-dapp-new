@@ -29,7 +29,9 @@
             />
             <DashboardGraphic
               :portfolioBalanceData="portfolioBalanceData.dataUSDPlus"
+              :onlyUSD=true
               :loaded="loaded"
+              :portfolioPrices="portfolioBalanceData.prices"
               class="dashboard__graphics"
             />
           </div>
@@ -40,14 +42,20 @@
           class="dashboard-tokens-plus-wrap"
         >
           <IntervalChain />
-          <TokensPlusDashboard
-            :portfolioBalanceData="portfolioBalanceData"
-          />
-          <DashboardGraphic
-            :portfolioBalanceData="combinedPortfolioData"
-            :loaded="loaded"
-            class="dashboard__graphics"
-          />
+          <div class="dashboard_token_data_graphics">
+            <TokensPlusDashboard
+              class="dashboard__token-data"
+              :portfolioBalanceData="portfolioBalanceData"
+            />
+            <DashboardGraphic
+              :portfolioBalanceData="combinedPortfolioData"
+              :onlyUSD=false
+              :loaded="loaded"
+              :portfolioPrices="portfolioBalanceData.prices"
+              class="dashboard__graphics"
+            />
+          </div>
+
           <p class="dashboard-tokens-transactions">TOKENS+ TRANSACTIONS</p>
         </div>
       </TabsComponent>
@@ -128,11 +136,35 @@ export default {
         change_balance: trx.change_balance * this.portfolioBalanceData.prices.ethPlus,
         closing_balance: trx.closing_balance * this.portfolioBalanceData.prices.ethPlus,
       }));
+      const convertedUsdTransactions = this.portfolioBalanceData.dataUSDPlus.map((trx: any) => ({
+        ...trx,
+        opening_balance: trx.opening_balance * this.portfolioBalanceData.prices.usdPlus,
+        change_balance: trx.change_balance * this.portfolioBalanceData.prices.usdPlus,
+        closing_balance: trx.closing_balance * this.portfolioBalanceData.prices.usdPlus,
+      }));
+
+      // Convert USDTPlus transactions
+      const convertedUsdtTransactions = this.portfolioBalanceData.dataUSDTPlus.map((trx: any) => ({
+        ...trx,
+        opening_balance: trx.opening_balance * this.portfolioBalanceData.prices.usdtPlus,
+        change_balance: trx.change_balance * this.portfolioBalanceData.prices.usdtPlus,
+        closing_balance: trx.closing_balance * this.portfolioBalanceData.prices.usdtPlus,
+      }));
+
+      // Convert DAIPlus transactions
+      const convertedDaiTransactions = this.portfolioBalanceData.dataDAIPlus.map((trx: any) => ({
+        ...trx,
+        opening_balance: trx.opening_balance * this.portfolioBalanceData.prices.daiPlus,
+        change_balance: trx.change_balance * this.portfolioBalanceData.prices.daiPlus,
+        closing_balance: trx.closing_balance * this.portfolioBalanceData.prices.daiPlus,
+      }));
+
+      // Combine all converted transactions
       return [
-        ...this.portfolioBalanceData.dataUSDPlus,
+        ...convertedUsdTransactions,
         ...convertedEthTransactions,
-        ...this.portfolioBalanceData.dataUSDTPlus,
-        ...this.portfolioBalanceData.dataDAIPlus,
+        ...convertedUsdtTransactions,
+        ...convertedDaiTransactions,
       ];
     },
   },
@@ -180,6 +212,7 @@ export default {
   margin-top: 25px;
   color: var(--color-1);
   font-size: 17px;
+  font-weight: 500;
 }
 .dashboard__graphics{
   border-radius: 5px;

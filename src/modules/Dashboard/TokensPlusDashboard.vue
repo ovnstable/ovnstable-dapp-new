@@ -174,10 +174,14 @@ export default {
     //   } return (Number(balanceNumber) / 1e6).toFixed(2);
     // },
     getBalance(balance: any, isETH: boolean) {
-      if (!Array.isArray(balance) || balance.length === 0) {
+      const filteredBalance = [...balance]
+        .filter((transaction) => transaction.type === 'PAYOUT')
+      console.log('here is the balance from tokensplus dashboard');
+      console.log(balance);
+      if (!Array.isArray(filteredBalance) || filteredBalance.length === 0) {
         return isETH ? '0.000000' : '0.00';
       }
-      const balanceNumber = balance[0].closing_balance;
+      const balanceNumber = filteredBalance[0].closing_balance;
       if (isETH) {
         return parseFloat(balanceNumber).toFixed(6);
       } return parseFloat(balanceNumber).toFixed(2);
@@ -268,27 +272,44 @@ export default {
       return formattedTotalProfitUSD;
     },
 
+    // getTotalBalance() {
+    //   let totalBalanceUSD = 0;
+    //   const tokenOperations = {
+    //     'ETH+': () => parseFloat(this.getBalanceUSD(this.getBalance('ETH+', true), 'ethPlus').replace('$', '').replace(',', '.')),
+    //     'USD+': () => parseFloat(this.getBalanceUSD(this.getBalance('USD+', false), 'usdPlus').replace('$', '').replace(',', '.')),
+    //     'USDT+': () => parseFloat(this.getBalanceUSD(this.getBalance('USDT+', false), 'usdtPlus').replace('$', '').replace(',', '.')),
+    //     'DAI+': () => parseFloat(this.getBalanceUSD(this.getBalance('DAI+', false), 'daiPlus').replace('$', '').replace(',', '.')),
+    //   };
+
+    //   this.selectedTokens.forEach((token) => {
+    //     if (tokenOperations[token]) {
+    //       totalBalanceUSD += tokenOperations[token]();
+    //     }
+    //   });
+
+    //   const formattedTotalBalanceUSD = new Intl.NumberFormat('de-DE', {
+    //     style: 'currency',
+    //     currency: 'USD',
+    //     minimumFractionDigits: 2,
+    //   }).format(totalBalanceUSD);
+
+    //   return formattedTotalBalanceUSD;
+    // },
     getTotalBalance() {
       let totalBalanceUSD = 0;
-      const tokenOperations = {
-        'ETH+': () => parseFloat(this.getBalanceUSD(this.getBalance('ETH+', true), 'ethPlus').replace('$', '').replace(',', '.')),
-        'USD+': () => parseFloat(this.getBalanceUSD(this.getBalance('USD+', false), 'usdPlus').replace('$', '').replace(',', '.')),
-        'USDT+': () => parseFloat(this.getBalanceUSD(this.getBalance('USDT+', false), 'usdtPlus').replace('$', '').replace(',', '.')),
-        'DAI+': () => parseFloat(this.getBalanceUSD(this.getBalance('DAI+', false), 'daiPlus').replace('$', '').replace(',', '.')),
-      };
-
-      this.selectedTokens.forEach((token) => {
-        if (tokenOperations[token]) {
-          totalBalanceUSD += tokenOperations[token]();
-        }
-      });
-
+      totalBalanceUSD += parseFloat(this.getBalanceUSD(this
+        .getBalance(this.portfolioBalanceData.dataETHPlus, true), 'ethPlus').replace('$', '').replace(',', '.'));
+      totalBalanceUSD += parseFloat(this.getBalanceUSD(this
+        .getBalance(this.portfolioBalanceData.dataUSDPlus, false), 'usdPlus').replace('$', '').replace(',', '.'));
+      totalBalanceUSD += parseFloat(this.getBalanceUSD(this
+        .getBalance(this.portfolioBalanceData.dataUSDTPlus, false), 'usdtPlus').replace('$', '').replace(',', '.'));
+      totalBalanceUSD += parseFloat(this.getBalanceUSD(this
+        .getBalance(this.portfolioBalanceData.dataDAIPlus, false), 'daiPlus').replace('$', '').replace(',', '.'));
       const formattedTotalBalanceUSD = new Intl.NumberFormat('de-DE', {
         style: 'currency',
         currency: 'USD',
         minimumFractionDigits: 2,
       }).format(totalBalanceUSD);
-
       return formattedTotalBalanceUSD;
     },
 

@@ -15,6 +15,8 @@
       <DashboardSingleGraphic
         v-if="portfolioBalanceData.length > 0"
         :portfolioBalanceData="portfolioBalanceData"
+        :onlyUSD="onlyUSD"
+        :portfolioPrices="portfolioPrices"
       />
       <p v-else> no data</p>
     </div>
@@ -37,7 +39,15 @@ export default {
       type: Boolean,
       default: false,
     },
+    onlyUSD: {
+      type: Boolean,
+      default: false,
+    },
     portfolioBalanceData: {
+      type: Object,
+      default: () => ({}),
+    },
+    portfolioPrices: {
       type: Object,
       default: () => ({}),
     },
