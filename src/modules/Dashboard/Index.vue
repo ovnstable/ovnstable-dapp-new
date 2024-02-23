@@ -1,11 +1,4 @@
 <template>
-  <!-- <div
-    v-if="firstLoad"
-    class="dashboard__loader"
-  >
-    <Spinner />
-  </div> -->
-  <!-- <p>{{ combinedPortfolioData }}</p> -->
   <div
     class="dashboard-wrapper"
   >
@@ -74,7 +67,6 @@
 
 import TabsComponent from '@/components/Tabs/Index.vue';
 import IntervalChain from '@/modules/Dashboard/IntervalChain.vue';
-import Spinner from '@/components/Spinner/Index.vue';
 import TokenDataDashboard from '@/modules/Dashboard/TokenDataDashboard.vue';
 import DashboardGraphic from '@/modules/Dashboard/DashboardGraphic.vue';
 import DashboardTransactions from '@/modules/Dashboard/DashboardTransactions.vue';
@@ -88,17 +80,12 @@ export default {
     TokenDataDashboard,
     DashboardGraphic,
     TokensPlusDashboard,
-    Spinner,
     DashboardTransactions,
   },
   props: {
     portfolioBalanceData: {
       type: Object,
       default: () => ({}),
-    },
-    firstLoad: {
-      type: Boolean,
-      required: true,
     },
     loaded: {
       type: Boolean,
@@ -140,16 +127,12 @@ export default {
         change_balance: trx.change_balance * this.portfolioBalanceData.prices.usdPlus,
         closing_balance: trx.closing_balance * this.portfolioBalanceData.prices.usdPlus,
       }));
-
-      // Convert USDTPlus transactions
       const convertedUsdtTransactions = this.portfolioBalanceData.dataUSDTPlus.map((trx: any) => ({
         ...trx,
         opening_balance: trx.opening_balance * this.portfolioBalanceData.prices.usdtPlus,
         change_balance: trx.change_balance * this.portfolioBalanceData.prices.usdtPlus,
         closing_balance: trx.closing_balance * this.portfolioBalanceData.prices.usdtPlus,
       }));
-
-      // Convert DAIPlus transactions
       const convertedDaiTransactions = this.portfolioBalanceData.dataDAIPlus.map((trx: any) => ({
         ...trx,
         opening_balance: trx.opening_balance * this.portfolioBalanceData.prices.daiPlus,

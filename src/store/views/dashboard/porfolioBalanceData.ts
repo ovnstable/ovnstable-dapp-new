@@ -28,13 +28,14 @@ function getTokenPrices(apiResponse: any, contractsMap: any) {
     if (token.endsWith('Plus')) {
       const contractInfo = contracts[token];
       if (apiResponse.tokenPrices[contractInfo.tokenPlus]) {
-        prices[token] = apiResponse.tokenPrices[contractInfo.tokenPlus];
+        (prices as any)[token] = apiResponse.tokenPrices[contractInfo.tokenPlus];
       }
     }
   });
 
   return prices;
 }
+
 const actions = {
   async fetchBalanceData({ commit }: any, { account, networkName }: any) {
     try {
@@ -42,7 +43,6 @@ const actions = {
       let dataETHPlus = [];
       let dataDAIPlus = [];
       let dataUSDTPlus = [];
-
       const pricesResponse = await OdosApiService.loadPrices(42161);
       const prices = getTokenPrices(pricesResponse, chainContractsMap);
       if (availableChains('usd+').includes(networkName)) {
