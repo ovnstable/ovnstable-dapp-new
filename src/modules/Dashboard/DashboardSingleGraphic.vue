@@ -95,33 +95,7 @@ export default {
     },
 
     chartData(): any {
-      const sortedTransactions = [...this.portfolioBalanceData]
-        .filter(transaction => transaction.type === 'PAYOUT')
-        .sort((a, b) => new Date(b.date) - new Date(a.date))
-      let balancesData;
-      if (this.onlyUSD) {
-        balancesData = [...(this.portfolioBalanceData as any)]
-          .slice(0, this.getInterval()).reverse();
-      } else {
-        const groupedByDate = sortedTransactions.reduce((acc, trx) => {
-          const dateOnly = trx.date.split('T')[0];
-          if (!acc[dateOnly]) {
-            acc[dateOnly] = {
-              date: dateOnly,
-              closing_balance: 0,
-            };
-          }
-
-          // Sum the closing balances
-          acc[dateOnly].closing_balance += Number(trx.closing_balance);
-
-          return acc;
-        }, {});
-        const updatedGroup = Object.values(groupedByDate);
-
-        balancesData = [...(updatedGroup as any)]
-          .slice(0, this.getInterval()).reverse();
-      }
+      const balancesData = this.processTransactions();
 
       const activeNetworkColor = this.activeNetworkData.color;
 
@@ -142,30 +116,7 @@ export default {
       };
     },
     chartOptions() {
-      const sortedTransactions = [...this.portfolioBalanceData]
-        .filter(transaction => transaction.type === 'PAYOUT')
-        .sort((a, b) => new Date(b.date) - new Date(a.date))
-      let intervalData;
-      if (this.onlyUSD) {
-        intervalData = this.portfolioBalanceData?.slice(0, this.getInterval());
-      } else {
-        const groupedByDate = sortedTransactions.reduce((acc, trx) => {
-          const dateOnly = trx.date.split('T')[0];
-          if (!acc[dateOnly]) {
-            acc[dateOnly] = {
-              date: dateOnly,
-              closing_balance: 0,
-            };
-          }
-
-          acc[dateOnly].closing_balance += Number(trx.closing_balance);
-
-          return acc;
-        }, {});
-        const updatedGroup = Object.values(groupedByDate);
-
-        intervalData = updatedGroup?.slice(0, this.getInterval());
-      }
+      const intervalData = this.processTransactions();
       const dataValues = intervalData.map((trx: any) => parseFloat(trx.closing_balance));
 
       const minValue = Math.min(...dataValues);
@@ -276,13 +227,15 @@ export default {
   },
 
   methods: {
-    getInitialValue() {
-      const sortedTransactions = [...this.portfolioBalanceData]
-        .filter(transaction => transaction.type === 'PAYOUT')
-        .sort((a, b) => new Date(b.date) - new Date(a.date))
-      let intervalData;
+    processTransactions() {
+      const sortedTransactions = [...this.portfolioBalanceData as any]
+        .filter((transaction) => transaction.type === 'PAYOUT')
+        .sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      let balancesData;
       if (this.onlyUSD) {
-        intervalData = this.portfolioBalanceData?.slice(0, this.getInterval());
+        balancesData = [...(this.portfolioBalanceData as any)]
+          .slice(0, this.getInterval()).reverse();
       } else {
         const groupedByDate = sortedTransactions.reduce((acc, trx) => {
           const dateOnly = trx.date.split('T')[0];
@@ -294,20 +247,25 @@ export default {
           }
 
           acc[dateOnly].closing_balance += Number(trx.closing_balance);
-
           return acc;
         }, {});
         const updatedGroup = Object.values(groupedByDate);
 
-        intervalData = updatedGroup?.slice(0, this.getInterval());
+        balancesData = [...(updatedGroup as any)]
+          .slice(0, this.getInterval()).reverse();
       }
+
+      return balancesData;
+    },
+    getInitialValue() {
+      const intervalData = this.processTransactions();
       const dataValues = intervalData.map((trx: any) => parseFloat(trx.closing_balance));
       const minValue = Math.min(...dataValues);
       return minValue.toFixed(4);
     },
     getLastValue() {
-      const sortedTransactions = [...this.portfolioBalanceData]
-        .filter(transaction => transaction.type === 'PAYOUT')
+      const sortedTransactions = [...this.portfolioBalanceData as any]
+        .filter((transaction) => transaction.type === 'PAYOUT')
         .sort((a, b) => new Date(b.date) - new Date(a.date))
       let intervalData;
       if (this.onlyUSD) {

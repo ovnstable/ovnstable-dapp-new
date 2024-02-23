@@ -128,7 +128,6 @@ export default {
         return this.combinedPortfolioData;
       } return this.portfolioBalanceData.dataUSDPlus;
     },
-    ...mapGetters('accountData', ['originalBalance']),
     combinedPortfolioData() {
       const convertedEthTransactions = this.portfolioBalanceData.dataETHPlus.map((trx: any) => ({
         ...trx,

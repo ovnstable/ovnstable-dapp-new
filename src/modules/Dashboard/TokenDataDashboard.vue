@@ -59,7 +59,6 @@ export default {
     },
   },
   computed: {
-    ...mapGetters('accountData', ['originalBalance', 'balancesDashboard']),
     networkName() {
       return this.$store.state.network.dashboardNetwork;
     },
@@ -75,14 +74,6 @@ export default {
     },
   },
   methods: {
-    // getBalance(symbol: string) { here was USD+
-    //   const balanceObj = this.originalBalance.find((obj: any) => obj.symbol === symbol);
-    //   if (!balanceObj) {
-    //     return '0.00';
-    //   }
-    //   const balanceNumber = balanceObj.balance;
-    //   return (Number(balanceNumber) / 1e6).toFixed(2);
-    // },
     getBalance() {
       if (this.portfolioBalanceData.length === undefined) {
         return '$0,00';

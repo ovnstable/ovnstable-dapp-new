@@ -118,7 +118,6 @@ export default {
     },
   },
   computed: {
-    ...mapGetters('accountData', ['originalBalance', 'balancesDashboard']),
     networkName() {
       return this.$store.state.network.dashboardNetwork;
     },
@@ -162,17 +161,6 @@ export default {
         this.selectedTokens.splice(index, 1);
       }
     },
-    // getBalance(symbol: string, isETH: boolean) {
-    //   const balanceObj = this.originalBalance.find((obj: any) => obj.symbol === symbol);
-    //   if (!balanceObj) {
-    //     return isETH ? '0.000000' : '0.00';
-    //   }
-    //   const balanceNumber = balanceObj.balance;
-    //   if (isETH) {
-    //     const ethBalance = Number(balanceNumber) / 1e18;
-    //     return ethBalance.toFixed(6);
-    //   } return (Number(balanceNumber) / 1e6).toFixed(2);
-    // },
     getBalance(balance: any, isETH: boolean) {
       const filteredBalance = [...balance]
         .filter((transaction) => transaction.type === 'PAYOUT')

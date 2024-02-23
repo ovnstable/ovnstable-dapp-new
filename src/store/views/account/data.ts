@@ -29,10 +29,6 @@ const getters = {
     return state.originalBalance;
   },
 
-  balancesDashboard(state: any) {
-    return state.balancesDashboard;
-  },
-
   etsBalance(state: any) {
     return state.etsBalance;
   },
@@ -69,7 +65,6 @@ const actions = {
     console.log('AccountData: resetBalance');
 
     commit('setOriginalBalance', []);
-    commit('setDashboardBalance', []);
     commit('setEtsBalance', {});
     commit('setEtsOriginalBalance', {});
     commit('setInsuranceBalance', {});
@@ -122,34 +117,6 @@ const actions = {
     // original meaning without decimals
     commit('setOriginalBalance', balances);
     commit('setAccBalance', userBalance);
-
-    const { dashboardNetwork } = rootState.network;
-    const networkData = appNetworksData.find((network) => network
-      .name.toLowerCase() === dashboardNetwork.toLowerCase());
-    const chainIdDashboard = networkData?.chain as keyof typeof USER_BALANCES_SCHEME;
-    const balancesDashboard = await Promise
-      .all(USER_BALANCES_SCHEME[chainIdDashboard].map(async (_) => {
-        try {
-          if (!web3.contracts[_.contractName]) {
-            return {
-              symbol: _.symbol,
-              balance: '0',
-            };
-          }
-          const result = await web3.contracts[_.contractName].balanceOf(getters.account);
-          return {
-            symbol: _.symbol,
-            balance: result.toString(),
-          };
-        } catch (e) {
-          console.log(e, '---_.symbol');
-          return {
-            symbol: _.symbol,
-            balance: '0',
-          };
-        }
-      }));
-    commit('setDashboardBalance', balancesDashboard);
 
     const resultEtsBalance: any = {};
     const resultEtsOriginalBalance: any = {};
@@ -259,10 +226,6 @@ const mutations = {
 
   setOriginalBalance(state: any, value: any) {
     state.originalBalance = value;
-  },
-
-  setDashboardBalance(state: any, value: any) {
-    state.balancesDashboard = value;
   },
 
   setEtsBalance(state: any, value: any) {
