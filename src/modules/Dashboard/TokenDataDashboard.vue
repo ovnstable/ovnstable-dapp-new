@@ -45,7 +45,6 @@
 
 <script lang="ts">
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
-import { mapGetters } from 'vuex';
 
 export default {
   name: 'TokenDataDashboard',

@@ -1,4 +1,3 @@
-<!-- eslint-disable no-param-reassign -->
 <template>
   <p class="dashboard__graphic-usd-plus-balance">
     {{ onlyUSD ? 'USD+ Balance' : 'AVERAGE TOKENS+ BALANCE' }}
@@ -20,7 +19,6 @@
         <p>{{getDate(true)}}</p>
       </div>
       <div class="dashboard__data-comp-today">
-        <!-- <p>${{ parseFloat(portfolioBalanceData[0].closing_balance).toFixed(4) }}</p> -->
         <p>${{getLastValue()}}</p>
         <p> {{getDate(false)}} </p>
       </div>
@@ -191,7 +189,7 @@ export default {
                 },
                 title(context: any) {
                   if (context.length > 0) {
-                    const reversedData = [...intervalData].reverse();
+                    const reversedData = [...intervalData];
                     const pointIndex = context[0].dataIndex;
                     const date = new Date(reversedData[pointIndex].date);
                     const day = date.getUTCDate().toString().padStart(2, '0');
@@ -230,8 +228,7 @@ export default {
     processTransactions() {
       const sortedTransactions = [...this.portfolioBalanceData as any]
         .filter((transaction) => transaction.type === 'PAYOUT')
-        .sort((a, b) => new Date(b.date) - new Date(a.date));
-
+        .sort((a, b) => (new Date(b.date) as any) - (new Date(a.date) as any));
       let balancesData;
       if (this.onlyUSD) {
         balancesData = [...(this.portfolioBalanceData as any)]
@@ -239,16 +236,20 @@ export default {
       } else {
         const groupedByDate = sortedTransactions.reduce((acc, trx) => {
           const dateOnly = trx.date.split('T')[0];
-          if (!acc[dateOnly]) {
-            acc[dateOnly] = {
+          const closingBalance = Number(trx.closing_balance);
+          const newAcc = { ...acc };
+          if (!newAcc[dateOnly]) {
+            newAcc[dateOnly] = {
               date: dateOnly,
-              closing_balance: 0,
+              closing_balance: closingBalance,
             };
+          } else {
+            newAcc[dateOnly].closing_balance += closingBalance;
           }
 
-          acc[dateOnly].closing_balance += Number(trx.closing_balance);
-          return acc;
+          return newAcc;
         }, {});
+
         const updatedGroup = Object.values(groupedByDate);
 
         balancesData = [...(updatedGroup as any)]
@@ -266,23 +267,25 @@ export default {
     getLastValue() {
       const sortedTransactions = [...this.portfolioBalanceData as any]
         .filter((transaction) => transaction.type === 'PAYOUT')
-        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .sort((a, b) => (new Date(b.date) as any) - (new Date(a.date) as any));
       let intervalData;
       if (this.onlyUSD) {
         intervalData = this.portfolioBalanceData?.slice(0, this.getInterval());
       } else {
         const groupedByDate = sortedTransactions.reduce((acc, trx) => {
           const dateOnly = trx.date.split('T')[0];
-          if (!acc[dateOnly]) {
-            acc[dateOnly] = {
+          const closingBalance = Number(trx.closing_balance);
+          const newAcc = { ...acc };
+          if (!newAcc[dateOnly]) {
+            newAcc[dateOnly] = {
               date: dateOnly,
-              closing_balance: 0,
+              closing_balance: closingBalance,
             };
+          } else {
+            newAcc[dateOnly].closing_balance += closingBalance;
           }
 
-          acc[dateOnly].closing_balance += Number(trx.closing_balance);
-
-          return acc;
+          return newAcc;
         }, {});
         const updatedGroup = Object.values(groupedByDate);
 
@@ -371,8 +374,10 @@ export default {
         month: 30,
       };
       const interval = this.getDashboardInterval;
-      const sliceAmount = intervalMapping[interval.toLowerCase()] || this
-        .portfolioBalanceData.length;
+      const key = interval.toLowerCase();
+      const sliceAmount = key in intervalMapping ? intervalMapping[key as keyof typeof
+        intervalMapping] : this.portfolioBalanceData.length;
+
       return sliceAmount;
     },
     initChart() {

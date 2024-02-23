@@ -95,9 +95,10 @@ export default {
       return this.$store.state.network.dashboardExplorerURL;
     },
     visibleTransactions() {
-      const sortedTransactions = [...this.portfolioBalanceData]
-        .filter((trx) => !(trx.opening_balance === 0 && trx.change_balance === 0 && trx.closing_balance === 0))
-        .sort((a, b) => new Date(b.date) - new Date(a.date))
+      const sortedTransactions = [...this.portfolioBalanceData as any]
+        .filter((trx) => !(trx.opening_balance === 0 && trx.change_balance === 0 && trx
+          .closing_balance === 0))
+        .sort((a, b) => (new Date(b.date) as any) - (new Date(a.date) as any))
         .slice(0, this.visibleTransactionCount);
       return sortedTransactions;
     },

@@ -54,7 +54,6 @@
           :key="`usd-balance-${token.name}`"
         >
           {{ getBalanceUSD(getBalance(portfolioBalanceData[`data${token.name}Plus`], token.isETH), token.name.toLowerCase() + 'Plus') }}
-          <!-- {{ getBalanceUSD(getBalance(token.name + '+', token.isETH), token.name.toLowerCase() + 'Plus') }} -->
         </p>
         <p class="dasboard__tokens-data-total">{{getTotalBalance()}}</p>
       </div>
@@ -78,7 +77,6 @@
 <script lang="ts">
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { chainContractsMap } from '@/utils/contractsMap.ts';
-import { mapGetters } from 'vuex';
 import ButtonComponent from '@/components/Button/Index.vue';
 
 export default {
@@ -89,7 +87,7 @@ export default {
   },
   data() {
     return {
-      selectedTokens: [],
+      selectedTokens: [] as string[],
       tokenDisplayInfo: {
         usdPlus: { name: 'USD+', iconName: 'DashboardUSD+Tokens' },
         daiPlus: { name: 'DAI+', iconName: 'DashboardDAI+Tokens' },
@@ -125,23 +123,26 @@ export default {
       return this.$store.state.intervalDashboard.intervalDashboard;
     },
     availableTokens(): any {
-      const currentChainTokens = chainContractsMap[this.networkName.toLowerCase()];
+      const currentChainTokens = chainContractsMap[this.networkName
+        .toLowerCase() as keyof typeof chainContractsMap];
       if (!currentChainTokens) {
         return [];
       }
       return Object.keys(currentChainTokens)
-        .filter((token) => token.endsWith('Plus') && currentChainTokens[token].tokenPlus)
+        .filter((token) => token.endsWith('Plus') && (currentChainTokens as any)[token].tokenPlus)
         .map((token) => ({
-          ...this.tokenDisplayInfo[token],
-          contractAddress: currentChainTokens[token].tokenPlus,
+          ...(this.tokenDisplayInfo[token as keyof typeof this.tokenDisplayInfo]),
+          contractAddress: (currentChainTokens as any)[token].tokenPlus,
         }))
+
         .filter((token) => token.name);
     },
     availableTokensBalancesProfit() {
       const currentChain = this.networkName;
-      const tokensOnCurrentChain = chainContractsMap[currentChain];
+      const tokensOnCurrentChain = chainContractsMap[currentChain as
+        keyof typeof chainContractsMap];
       return Object.entries(tokensOnCurrentChain)
-        .filter(([key, value]) => key.endsWith('Plus') && value.tokenPlus)
+        .filter(([key, value]) => key.endsWith('Plus') && (value as any).tokenPlus)
         .map(([key]) => ({
           name: key.toUpperCase().slice(0, -4),
           iconName: `Dashboard${key.charAt(0).toUpperCase() + key.slice(1)}Tokens`,
@@ -163,7 +164,7 @@ export default {
     },
     getBalance(balance: any, isETH: boolean) {
       const filteredBalance = [...balance]
-        .filter((transaction) => transaction.type === 'PAYOUT')
+        .filter((transaction) => transaction.type === 'PAYOUT');
       console.log('here is the balance from tokensplus dashboard');
       console.log(balance);
       if (!Array.isArray(filteredBalance) || filteredBalance.length === 0) {
@@ -247,8 +248,8 @@ export default {
       };
       console.log(this.selectedTokens);
       this.selectedTokens.forEach((token) => {
-        if (profitCalculations[token]) {
-          totalProfitUSD += profitCalculations[token]();
+        if ((profitCalculations as any)[token]) {
+          totalProfitUSD += (profitCalculations as any)[token]();
         }
       });
       const formattedTotalProfitUSD = new Intl.NumberFormat('de-DE', {
@@ -260,29 +261,6 @@ export default {
       return formattedTotalProfitUSD;
     },
 
-    // getTotalBalance() {
-    //   let totalBalanceUSD = 0;
-    //   const tokenOperations = {
-    //     'ETH+': () => parseFloat(this.getBalanceUSD(this.getBalance('ETH+', true), 'ethPlus').replace('$', '').replace(',', '.')),
-    //     'USD+': () => parseFloat(this.getBalanceUSD(this.getBalance('USD+', false), 'usdPlus').replace('$', '').replace(',', '.')),
-    //     'USDT+': () => parseFloat(this.getBalanceUSD(this.getBalance('USDT+', false), 'usdtPlus').replace('$', '').replace(',', '.')),
-    //     'DAI+': () => parseFloat(this.getBalanceUSD(this.getBalance('DAI+', false), 'daiPlus').replace('$', '').replace(',', '.')),
-    //   };
-
-    //   this.selectedTokens.forEach((token) => {
-    //     if (tokenOperations[token]) {
-    //       totalBalanceUSD += tokenOperations[token]();
-    //     }
-    //   });
-
-    //   const formattedTotalBalanceUSD = new Intl.NumberFormat('de-DE', {
-    //     style: 'currency',
-    //     currency: 'USD',
-    //     minimumFractionDigits: 2,
-    //   }).format(totalBalanceUSD);
-
-    //   return formattedTotalBalanceUSD;
-    // },
     getTotalBalance() {
       let totalBalanceUSD = 0;
       totalBalanceUSD += parseFloat(this.getBalanceUSD(this

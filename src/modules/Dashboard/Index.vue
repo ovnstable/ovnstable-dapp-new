@@ -79,7 +79,6 @@ import TokenDataDashboard from '@/modules/Dashboard/TokenDataDashboard.vue';
 import DashboardGraphic from '@/modules/Dashboard/DashboardGraphic.vue';
 import DashboardTransactions from '@/modules/Dashboard/DashboardTransactions.vue';
 import TokensPlusDashboard from '@/modules/Dashboard/TokensPlusDashboard.vue';
-import { mapGetters } from 'vuex';
 
 export default {
   name: 'DashboardPage',
