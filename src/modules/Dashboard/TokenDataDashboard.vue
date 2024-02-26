@@ -110,11 +110,16 @@ export default {
           numberOfDays = 1;
       }
       const initialTransaction = payoutTransactions[numberOfDays - 1];
+      console.log('initialTransaction');
+      console.log(initialTransaction);
       const totalProfit = this.calculateProfit();
       const normalizedString = totalProfit.replace(' $', '').replace(',', '.');
       const numberProfit = parseFloat(normalizedString);
       if (initialTransaction) {
         const initialBalance = initialTransaction.opening_balance;
+        if (initialBalance === 0) {
+          return '0.0000%';
+        }
         const growth = ((initialBalance + numberProfit) / initialBalance - 1) * 100;
         if (Number.isNaN(growth)) {
           return '0.00%';

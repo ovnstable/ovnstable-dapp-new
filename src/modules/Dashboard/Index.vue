@@ -1,5 +1,12 @@
 <template>
   <div
+    v-if="firstLoad"
+    class="dashboard__loader"
+  >
+    <Spinner />
+  </div>
+  <div
+    v-else
     class="dashboard-wrapper"
   >
     <div
@@ -68,6 +75,7 @@
 import TabsComponent from '@/components/Tabs/Index.vue';
 import IntervalChain from '@/modules/Dashboard/IntervalChain.vue';
 import TokenDataDashboard from '@/modules/Dashboard/TokenDataDashboard.vue';
+import Spinner from '@/components/Spinner/Index.vue';
 import DashboardGraphic from '@/modules/Dashboard/DashboardGraphic.vue';
 import DashboardTransactions from '@/modules/Dashboard/DashboardTransactions.vue';
 import TokensPlusDashboard from '@/modules/Dashboard/TokensPlusDashboard.vue';
@@ -81,6 +89,7 @@ export default {
     DashboardGraphic,
     TokensPlusDashboard,
     DashboardTransactions,
+    Spinner,
   },
   props: {
     portfolioBalanceData: {
@@ -90,6 +99,10 @@ export default {
     loaded: {
       type: Boolean,
       default: false,
+    },
+    firstLoad: {
+      type: Boolean,
+      required: true,
     },
   },
   data() {
