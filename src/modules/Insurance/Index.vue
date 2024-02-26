@@ -1,36 +1,38 @@
 <template>
-  <div
-    v-if="firstLoad"
-    class="insurance__loader"
-  >
-    <Spinner />
-  </div>
-  <div
-    v-else
-    class="insurance-wrapper"
-  >
+  <div>
     <div
-      class="insurance"
+      v-if="firstLoad"
+      class="insurance__loader"
     >
-      <TokenDataInsurance
-        :tokenData="tokenData"
-        class="market__token-data"
-      />
-      <GraphicsInsurance
-        :payoutData="payoutData"
-        :loaded="loaded"
-        class="insurance__graphics"
-      />
-      <InsurancePremiums
-        :premiumsData="premiumsData"
-        class="insurance__premiums"
-      />
+      <Spinner />
     </div>
-    <div class="insurance__payouts">
-      <InsurancePayouts
-        :payout-data="reversedPayoutData"
-        class="insurance__payout-inner"
-      />
+    <div
+      v-else
+      class="insurance-wrapper"
+    >
+      <div
+        class="insurance"
+      >
+        <TokenDataInsurance
+          :tokenData="tokenData"
+          class="market__token-data"
+        />
+        <GraphicsInsurance
+          :payoutData="payoutData"
+          :loaded="loaded"
+          class="insurance__graphics"
+        />
+        <InsurancePremiums
+          :premiums-data="premiumsData"
+          class="insurance__premiums"
+        />
+      </div>
+      <div class="insurance__payouts">
+        <InsurancePayouts
+          :payout-data="reversedPayoutData"
+          class="insurance__payout-inner"
+        />
+      </div>
     </div>
   </div>
 

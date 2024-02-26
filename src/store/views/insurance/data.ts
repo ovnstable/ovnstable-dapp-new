@@ -17,7 +17,6 @@ const state = {
 };
 
 const getters = {
-
   insuranceStrategyData(state: any) {
     return state.insuranceStrategyData;
   },
@@ -73,8 +72,8 @@ const actions = {
     // dispatch('refreshUsdPlusPayoutsData', "arbitrum");
     // dispatch('refreshUsdPlusPayoutsData', "zksync");
 
-    // dispatch('accountData/refreshBalance', null, { root: true });
-    // dispatch('supplyData/refreshInsuranceSupply', null, {root:true});
+    dispatch('accountData/refreshBalance', null, { root: true });
+    // dispatch('supplyData/refreshInsuranceSupply', null, { root: true });
   },
 
   async refreshStrategyData({
@@ -154,12 +153,12 @@ const actions = {
         break;
     }
 
+    console.log('---refreshClientData');
     if (!rootState.accountData.account) {
       return;
     }
 
     const profitDay = null;
-
     dispatch('addInsuranceClientData', { name: refreshParams.chain.chainName, data: profitDay });
     dispatch('refreshIsNeedRedemption');
   },
@@ -220,17 +219,20 @@ const actions = {
     const { web3 } = rootState;
     const { account } = rootState.accountData;
 
+    console.log('refreshIsNeedRedemption');
+
     if (account) {
       const insurance = {
         // chainName: 'polygon'
-        chainName: 'optimism',
+        chainName: ['optimism', 'arbitrum'],
       };
 
-      if (insurance.chainName !== rootState.network.networkName) {
+      if (!insurance.chainName.includes(rootState.network.networkName)) {
         return;
       }
 
-      const contract = web3.contracts.insurance[`${insurance.chainName}_exchanger`];
+      console.log(web3.contracts.insurance[`${rootState.network.networkName}_exchanger`], '--web3');
+      const contract = web3.contracts.insurance[`${rootState.network.networkName}_exchanger`];
       if (!contract) {
         console.log('Insurance/redemptionCheck: contract not found');
         return;
@@ -259,11 +261,15 @@ const actions = {
           const currentDate = new Date();
 
           if (currentDate.getTime() > date.getTime()) {
-            const withdrawPeriod = await web3.contracts.insurance[`${insurance.chainName}_exchanger`].withdrawPeriod();
-            const withdrawDate = new Date(date.getTime() + (withdrawPeriod * 1000));
+            const withdrawPeriod = await web3.contracts.insurance[
+              `${rootState.network.networkName}_exchanger`
+            ].withdrawPeriod();
+            const withdrawDate = new Date(date.getTime() + withdrawPeriod * 1000);
 
             if (withdrawDate.getTime() > currentDate.getTime()) {
-              const hours = dayjs.duration(dayjs(withdrawDate).diff(dayjs(currentDate))).asHours();
+              const hours = dayjs
+                .duration(dayjs(withdrawDate).diff(dayjs(currentDate)))
+                .asHours();
               redemptionData.request = 'CAN_WITHDRAW';
               redemptionData.date = date;
               redemptionData.hours = hours;
@@ -273,7 +279,9 @@ const actions = {
               redemptionData.hours = 0;
             }
           } else {
-            const hours = dayjs.duration(dayjs(date).diff(dayjs(currentDate))).asHours();
+            const hours = dayjs
+              .duration(dayjs(date).diff(dayjs(currentDate)))
+              .asHours();
             redemptionData.request = 'NEED_WAIT';
             redemptionData.date = date;
             redemptionData.hours = hours;

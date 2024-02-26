@@ -142,6 +142,10 @@ const actions = {
 
       commit('accountData/setAccount', userAddress, { root: true });
 
+      await dispatch('odosData/loadChains', null, { root: true });
+      await dispatch('odosData/loadTokens', null, { root: true });
+      await dispatch('odosData/initContractData', null, { root: true });
+      dispatch('odosData/initData', null, { root: true });
       dispatch('checkAccount', userAddress);
     });
 
@@ -318,7 +322,6 @@ const actions = {
   }: any) {
     const injected = injectedModule({
       filter: await dispatch('getWalletsFilter'),
-      displayUnavailable: true,
       sort: (wallets) => {
         const metaMask = wallets.find(({ label }) => label === ProviderLabel.MetaMask);
         const coinbase = wallets.find(({ label }) => label === ProviderLabel.Coinbase);

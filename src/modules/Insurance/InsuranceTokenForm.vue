@@ -4,10 +4,10 @@
     <div class="input-tokens__row">
       <InputComponent
         customClass="input-tokens__field"
-        :value="token.value"
         is-custom
         placeholder="0"
         full-width
+        :value="tokenVal"
         @input="inputUpdate"
       />
       <div class="input-tokens__selected">
@@ -22,7 +22,7 @@
         ~ ${{ formatMoney(0, 2) }}
       </div>
       <div>
-        Balance: 0
+        Balance: {{ tokenBalance }}
       </div>
     </div>
   </div>
@@ -33,6 +33,7 @@
 import InputComponent from '@/components/Input/Index.vue';
 import { formatMoney, fixedByPrice } from '@/utils/numbers.ts';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import BigNumber from 'bignumber.js';
 
 export default {
   name: 'InputTokenInsurance',
@@ -45,58 +46,30 @@ export default {
       type: Boolean,
       required: true,
     },
-  },
-  data() {
-    return {
-      token: {
-        value: null,
-        usdValue: null,
-        selectedToken: null,
-      } as any,
-    };
-  },
-  watch: {
-    'tokenInfo.value': function (val) {
-      if (val) {
-        this.token.value = val;
-      }
+    tokenVal: {
+      type: String,
+      required: false,
+      default: '',
     },
-    'tokenInfo.sum': function (val) {
-      if (val) {
-        this.token.sum = val;
-      }
+    originalBalance: {
+      type: Array,
+      default: (() => []),
+      required: true,
     },
-    'tokenInfo.usdValue': function (val) {
-      if (val) {
-        this.token.usdValue = val;
-      }
+  },
+  computed: {
+    tokenBalance() {
+      const symbol = this.isMint ? 'OVN' : 'OVNINS';
+      const token: any = this.originalBalance
+        .find((_: any) => _?.symbol === symbol);
+      return token ? new BigNumber(token.balance).div(10 ** 18).toFixed(2) : '0';
     },
   },
   methods: {
     formatMoney,
     fixedByPrice,
-    isNumber(evt: any) {
-      evt = (evt) || window.event;
-      const charCode = (evt.which) ? evt.which : evt.keyCode;
-
-      if ((charCode > 31 && (charCode < 48 || charCode > 57)) && charCode !== 46) {
-        evt.preventDefault();
-      } else if (charCode === 46 && (!this.token.value || this.token.value.includes('.'))) {
-        evt.preventDefault();
-      } else {
-        return true;
-      }
-      return true;
-    },
-    inputUpdate(value: any) {
-      console.log(value);
-      // this.updateTokenValueFunc(this.tokenInfo, value);
-    },
-    clickOnBalance() {
-      if (this.token.selectedToken && this.token.selectedToken.balanceData.balance) {
-        this.token.value = this.token.selectedToken.balanceData.balance;
-        this.inputUpdate(this.token.value);
-      }
+    inputUpdate(value: string) {
+      this.$emit('input-change', value);
     },
   },
 };
@@ -153,6 +126,22 @@ export default {
   font-size: 14px;
   [data-theme="dark"] & {
     color: var(--color-18);
+  }
+}
+
+.input-tokens__field {
+  font-size: 20px;
+  color: var(--color-1);
+  font-weight: 600;
+  transition: box-shadow .2s ease;
+  border-radius: 0;
+
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
+
+  &:hover, &:focus-within {
+    box-shadow: inset 0px -2px 0px 0px var(--color-6);
   }
 }
 </style>

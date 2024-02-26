@@ -2,13 +2,6 @@
   <div>
     <div class="swap-container">
       <div class="not-available-container">
-        <div class="not-available-logo-container text-center">
-          <img
-            :src="require('@/assets/icon/swap/chain-wait.svg')"
-            class="not-available-logo"
-            alt="wait"
-          >
-        </div>
         <div class="not-available-info text-center">
           <div>
             Swap will be available on <span class="network-name">{{networkName}}</span> chain soon.
@@ -44,10 +37,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
 import { mapActions } from 'vuex';
 
-export default defineComponent({
+export default {
   name: 'network-not-available',
   props: ['networkName'],
   methods: {
@@ -63,7 +55,7 @@ export default defineComponent({
       this.showSwapModal();
     },
   },
-});
+};
 </script>
 
 <style scoped>

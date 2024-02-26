@@ -82,6 +82,8 @@
         {{isMintActive ? "MINT" : "REDEEM"}}
       </ButtonComponent>
     </div>
+
+    <StepsRow :current-stage="currentStage" />
   </div>
 
 </template>
@@ -94,32 +96,38 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 import SwitchTabs from '@/components/SwitchTabs/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import TokenForm from '@/modules/Main/components/MintRedeem/TokenForm.vue';
-import { buildEvmContract } from '@/utils/contractsMap.ts';
+import { buildEvmContract, buildEvmContractForChain } from '@/utils/contractsMap.ts';
 import { MINTREDEEM_SCHEME } from '@/store/views/main/mintRedeem/mocks.ts';
 import debounce from 'lodash/debounce';
 import { fixedByPrice } from '@/utils/numbers.ts';
+import StepsRow, { mintRedeemStep } from '@/components/StepsRow/Index.vue';
 
 import {
-  mintStatus, wrapStatus, mintRedeemTypes, type IMethodData,
+  mintStatus,
+  wrapStatus,
+  mintRedeemTypes,
+  type IMethodData,
 } from '@/modules/Main/components/MintRedeem/types/index.ts';
 import {
   getNewInputToken, getReferralCode,
 } from '@/store/helpers/index.ts';
 import GasSettings from '@/modules/Main/components/MintRedeem/GasSettings.vue';
 import BigNumber from 'bignumber.js';
-import { ABI_Exchange, ABI_Market } from '@/assets/abi/index.ts';
+import { ABI_Exchange, ABI_Market, ERC20_ABI } from '@/assets/abi/index.ts';
 import { getAllowanceValue, approveToken } from '@/utils/contractApprove.ts';
 
 export default {
   name: 'MintRedeem',
   components: {
     SwitchTabs,
+    StepsRow,
     TokenForm,
     GasSettings,
     ButtonComponent,
   },
   data() {
     return {
+      mintRedeemStep,
       inputToken: getNewInputToken(),
       outputToken: getNewInputToken(),
       activeMintTab: 0,
@@ -128,6 +136,7 @@ export default {
       isAllDataLoaded: false,
       approveLoading: false,
       isApprovedToken: false,
+      currentStage: mintRedeemStep.START,
 
       mintTabs: [
         {
@@ -208,13 +217,19 @@ export default {
     },
     async approveTrigger() {
       this.showWaitingModal('Approving in process');
+      this.currentStage = mintRedeemStep.APPROVE;
 
       const tokenData = this.inputToken;
-      const tokenContract = this.tokensContractMap[tokenData.address];
-      const approveValue = new BigNumber(10)
-        .pow(tokenData.decimals)
-        .times(100000)
-        .toFixed(0);
+      let tokenContract = this.tokensContractMap[tokenData.address];
+      const approveValue = new BigNumber(10 ** 25).toFixed(0);
+
+      if (!tokenContract) {
+        tokenContract = buildEvmContractForChain(
+          ERC20_ABI,
+          this.evmSigner,
+          tokenData.address,
+        );
+      }
 
       const networkId = this.networkId as keyof typeof MINTREDEEM_SCHEME;
       const pairData = MINTREDEEM_SCHEME[networkId]
@@ -244,6 +259,7 @@ export default {
       const finishTx = () => {
         this.checkApprove(this);
         this.closeWaitingModal();
+        this.currentStage = mintRedeemStep.CONFIRMATION;
       };
 
       if (!tx) {
@@ -287,6 +303,8 @@ export default {
 
       self.approveLoading = false;
       self.isApprovedToken = isAllowedToSwap;
+      if (isAllowedToSwap) self.currentStage = mintRedeemStep.CONFIRMATION;
+      if (!isAllowedToSwap) self.currentStage = mintRedeemStep.APPROVE;
     }, 250),
     selectFormToken(data: any, isInputToken: boolean) {
       if (isInputToken) {
@@ -376,31 +394,12 @@ export default {
         };
       }
 
-      console.log(exchangeMethodName, 'TESSSSTTT____1');
+      console.log(actionContract, 'actionContract');
       if (exchangeMethodName === 'redeem') {
-        if (action === 'market-redeem') {
-          methodParam = {
-            sum: contractSum,
-          };
-        } else if (
-          action === 'non-market-redeem'
-          // || action === 'dai-swap-redeem'
-          // || action === 'usdt-swap-redeem'
-          // || action === 'usdc-swap-redeem'
-          // || action === 'eth-swap-redeem'
-        ) {
-          console.log('TESSSSTTT____');
-          methodParam = {
-            asset: actionContract.target,
-            sum: contractSum,
-          };
-        } else {
-          console.error(
-            `Exchange Method redeem error. Action not found when create method params in estimate gas. action: ${
-              action}`,
-          );
-          return null;
-        }
+        methodParam = {
+          asset: actionContract.target,
+          sum: contractSum,
+        };
 
         return {
           name: exchangeMethodName,
@@ -487,7 +486,6 @@ export default {
         return -1;
       }
 
-      console.log(result, 'result');
       return result;
     },
     async swapTokens() {
@@ -549,6 +547,7 @@ export default {
           exchangeMethodName,
           actionContract,
         );
+
         console.log(estimatedGasValue, '-estimatedGasValue');
         if (!estimatedGasValue) return;
 
@@ -572,8 +571,6 @@ export default {
 
         if (!method) return;
 
-        console.log(method, '---method');
-        console.log(this.gasPriceGwei, '---send');
         const txData = method.iterateArgs
           ? await exchangeContract[method.name](
             ...Object.values(method.params),
@@ -654,6 +651,7 @@ export default {
 
 .mintredeem-form__btns {
   margin-top: auto;
+  margin-bottom: 20px;
   button {
     [data-theme="dark"] & {
       background-color: var(--color-7);
@@ -677,5 +675,21 @@ export default {
   }
 
 }
+
+.mintredeem-form__modal-stages {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  color: var(--color-7);
+  margin-top: 20px;
+
+  [data-theme="dark"] & {
+    color: var(--color-2);
+  }
+
+  .active-stage {
+    text-decoration: underline;
+    color: var(--color-1);
+  }
+}
 </style>
-@/utils/contractApprove

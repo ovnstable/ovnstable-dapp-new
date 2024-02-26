@@ -80,6 +80,7 @@ const actions = {
   async refreshBalance({
     commit, dispatch, getters, rootState,
   }: any) {
+    console.log('---refreshBalance');
     if (getters.account === null || getters.account === undefined) {
       return;
     }
@@ -94,12 +95,23 @@ const actions = {
 
     const balances = await Promise.all(USER_BALANCES_SCHEME[networkId].map(async (_) => {
       try {
+        if (_.symbol === 'OVNINS') {
+          const insContract = await web3.contracts.insurance[`${rootState.network.networkName}_token`];
+          const result = await insContract.balanceOf(getters.account);
+
+          return {
+            symbol: _.symbol,
+            balance: result.toString(),
+          };
+        }
+
         if (!web3.contracts[_.contractName]) {
           return {
             symbol: _.symbol,
             balance: '0',
           };
         }
+
         const result = await web3.contracts[_.contractName].balanceOf(getters.account);
         return {
           symbol: _.symbol,
@@ -113,6 +125,8 @@ const actions = {
         };
       }
     }));
+
+    console.log(balances, '---balances');
 
     // original meaning without decimals
     commit('setOriginalBalance', balances);

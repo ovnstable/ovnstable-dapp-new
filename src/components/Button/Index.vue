@@ -23,7 +23,7 @@ import Spinner from '@/components/Spinner/Index.vue';
 
 type btnTypes = 'button' | 'submit';
 type btnStyles = 'primary' | 'secondary' | 'standard' | 'link' | 'faded';
-type btnSize = 'large' | 'default' | 'small';
+type btnSize = 'large' | 'medium' | 'default' | 'small';
 
 export default {
   name: 'ButtonComponent',
@@ -80,6 +80,11 @@ export default {
 
   &:active {
     transform: scale(0.98);
+  }
+
+  &.medium {
+    padding: 10px 20px;
+    font-size: 18px;
   }
 
   &.large {
@@ -141,8 +146,10 @@ export default {
     background-color: var(--color-5);
     border: 1px solid var(--color-6);
     color: var(--color-2);
-    box-shadow: 0px 0px 0px 1px var(--color-6);
+    box-shadow: unset;
+
     [data-theme="dark"] & {
+      box-shadow: unset;
       background-color: var(--color-7);
       border-color: var(--color-7);
       color: var(--color-18);
@@ -151,7 +158,7 @@ export default {
     &:hover {
       color: var(--color-1);
       background-color: var(--color-6);
-      box-shadow: 0px 1px 0px 0px var(--color-3);
+      box-shadow: unset;
       [data-theme="dark"] & {
         color: var(--color-4);
         background-color: var(--color-7);

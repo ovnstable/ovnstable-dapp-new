@@ -25,7 +25,7 @@ const actions = {
   async initContracts({
     commit, dispatch, getters, rootState,
   }: any) {
-    const { evmProvider } = rootState.web3;
+    const { evmSigner } = rootState.web3;
     const network = rootState.network.networkName;
     const contracts: any = {};
 
@@ -84,157 +84,157 @@ const actions = {
       // Exchange
       buildEvmContractForChain(
         ABI_Exchange,
-        evmProvider,
+        evmSigner,
         contractsByChain[network].usdPlus?.exchange ?? null,
       ),
       buildEvmContractForChain(
         ABI_Exchange,
-        evmProvider,
+        evmSigner,
         contractsByChain[network].usdcPlus?.exchange ?? null,
       ),
       buildEvmContractForChain(
         ABI_Exchange,
-        evmProvider,
+        evmSigner,
         contractsByChain[network].daiPlus?.exchange ?? null,
       ),
       buildEvmContractForChain(
         ABI_Exchange,
-        evmProvider,
+        evmSigner,
         contractsByChain[network].usdtPlus?.exchange ?? null,
       ),
       buildEvmContractForChain(
         ABI_Exchange,
-        evmProvider,
+        evmSigner,
         contractsByChain[network].ethPlus?.exchange ?? null,
       ),
 
       // ovn
-      buildEvmContractForChain(ABI_Ovn, evmProvider, contractsByChain[network]?.ovn ?? null),
+      buildEvmContractForChain(ABI_Ovn, evmSigner, contractsByChain[network]?.ovn ?? null),
       buildEvmContractForChain(
         ABI_OvnGovernor,
-        evmProvider,
+        evmSigner,
         contractsByChain[network]?.ovnGovernor ?? null,
       ),
 
       // PM
       buildEvmContractForChain(
         ABI_PortfolioManager,
-        evmProvider,
+        evmSigner,
         contractsByChain[network].usdPlus?.portfolioManager ?? null,
       ),
       buildEvmContractForChain(
         ABI_PortfolioManager,
-        evmProvider,
+        evmSigner,
         contractsByChain[network].usdcPlus?.portfolioManager ?? null,
       ),
       buildEvmContractForChain(
         ABI_PortfolioManager,
-        evmProvider,
+        evmSigner,
         contractsByChain[network].daiPlus?.portfolioManager ?? null,
       ),
       buildEvmContractForChain(
         ABI_PortfolioManager,
-        evmProvider,
+        evmSigner,
         contractsByChain[network].usdtPlus?.portfolioManager ?? null,
       ),
       buildEvmContractForChain(
         ABI_PortfolioManager,
-        evmProvider,
+        evmSigner,
         contractsByChain[network].ethPlus?.portfolioManager ?? null,
       ),
       buildEvmContractForChain(
         ABI_OvnTimelock,
-        evmProvider,
+        evmSigner,
         contractsByChain[network]?.ovnTimelockController ?? null,
       ),
 
       // plus
       buildEvmContractForChain(
         ABI_PlusToken,
-        evmProvider,
+        evmSigner,
         contractsByChain[network].usdPlus?.tokenPlus ?? null,
       ),
       buildEvmContractForChain(
         ABI_PlusToken,
-        evmProvider,
+        evmSigner,
         contractsByChain[network].usdcPlus?.tokenPlus ?? null,
       ),
       buildEvmContractForChain(
         ABI_PlusToken,
-        evmProvider,
+        evmSigner,
         contractsByChain[network].daiPlus?.tokenPlus ?? null,
       ),
       buildEvmContractForChain(
         ABI_PlusToken,
-        evmProvider,
+        evmSigner,
         contractsByChain[network].usdtPlus?.tokenPlus ?? null,
       ),
       buildEvmContractForChain(
         ABI_PlusToken,
-        evmProvider,
+        evmSigner,
         contractsByChain[network].ethPlus?.tokenPlus ?? null,
       ),
 
       // m2m
       buildEvmContractForChain(
         ABI_Mark2market,
-        evmProvider,
+        evmSigner,
         contractsByChain[network].usdPlus?.mark2market ?? null,
       ),
       buildEvmContractForChain(
         ABI_Mark2market,
-        evmProvider,
+        evmSigner,
         contractsByChain[network].usdcPlus?.mark2market ?? null,
       ),
       buildEvmContractForChain(
         ABI_Mark2market,
-        evmProvider,
+        evmSigner,
         contractsByChain[network].daiPlus?.mark2market ?? null,
       ),
       buildEvmContractForChain(
         ABI_Mark2market,
-        evmProvider,
+        evmSigner,
         contractsByChain[network].usdtPlus?.mark2market ?? null,
       ),
       buildEvmContractForChain(
         ABI_Mark2market,
-        evmProvider,
+        evmSigner,
         contractsByChain[network].ethPlus?.mark2market ?? null,
       ),
 
       // market
-      buildEvmContractForChain(ABI_Market, evmProvider, contractsByChain[network]?.market ?? null),
+      buildEvmContractForChain(ABI_Market, evmSigner, contractsByChain[network]?.market ?? null),
       buildEvmContractForChain(
         ABI_Market,
-        evmProvider,
+        evmSigner,
         contractsByChain[network]?.marketWeth ?? null,
       ),
 
       // wusd
       buildEvmContractForChain(
         ABI_WusdPlus,
-        evmProvider,
+        evmSigner,
         contractsByChain[network].usdPlus?.wUsdPlus ?? null,
       ),
       buildEvmContractForChain(
         ABI_WusdPlus,
-        evmProvider,
+        evmSigner,
         contractsByChain[network].wEthPlus?.tokenPlus ?? null,
       ),
 
       // assets
-      buildEvmContractForChain(ERC20_ABI, evmProvider, contractsByChain[network]?.usdc ?? null),
-      buildEvmContractForChain(ERC20_ABI, evmProvider, contractsByChain[network]?.wrapped ?? null),
-      buildEvmContractForChain(ERC20_ABI, evmProvider, contractsByChain[network]?.dai ?? null),
-      buildEvmContractForChain(ERC20_ABI, evmProvider, contractsByChain[network]?.usdt ?? null),
+      buildEvmContractForChain(ERC20_ABI, evmSigner, contractsByChain[network]?.usdc ?? null),
+      buildEvmContractForChain(ERC20_ABI, evmSigner, contractsByChain[network]?.wrapped ?? null),
+      buildEvmContractForChain(ERC20_ABI, evmSigner, contractsByChain[network]?.dai ?? null),
+      buildEvmContractForChain(ERC20_ABI, evmSigner, contractsByChain[network]?.usdt ?? null),
       buildEvmContractForChain(
         ERC20_ABI,
-        evmProvider,
+        evmSigner,
         contractsByChain[network]?.usdcNative ?? null,
       ),
-      buildEvmContractForChain(ERC20_ABI, evmProvider, contractsByChain[network]?.usdc ?? null),
-      buildEvmContractForChain(ERC20_ABI, evmProvider, contractsByChain[network]?.wETH ?? null),
-      buildEvmContractForChain(ERC20_ABI, evmProvider, contractsByChain[network]?.ovn ?? null),
+      buildEvmContractForChain(ERC20_ABI, evmSigner, contractsByChain[network]?.usdc ?? null),
+      buildEvmContractForChain(ERC20_ABI, evmSigner, contractsByChain[network]?.wETH ?? null),
+      buildEvmContractForChain(ERC20_ABI, evmSigner, contractsByChain[network]?.ovn ?? null),
     ]);
 
     const insurances = [{ network: 'optimism' }, { network: 'arbitrum' }];
@@ -244,12 +244,12 @@ const actions = {
         contracts.insurance = {};
         contracts.insurance[`${insurances[i].network}_exchanger`] = buildEvmContractForChain(
           EXCHANGER_INSURANCE_ABI,
-          evmProvider,
+          evmSigner,
           contractsByChain[network]?.exchange_insurance ?? null,
         );
         contracts.insurance[`${insurances[i].network}_token`] = buildEvmContractForChain(
           INSURANCE_TOKEN_ABI,
-          evmProvider,
+          evmSigner,
           contractsByChain[network]?.token_insurance ?? null,
         );
       }

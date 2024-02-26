@@ -11,7 +11,7 @@
       tag="ul"
     >
       <div
-        v-for="(trx) in visibleTransactions"
+        v-for="trx in visibleTransactions"
         :key="trx.id"
         class="insurance__payouts-transactions"
       >

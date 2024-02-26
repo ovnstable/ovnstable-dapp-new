@@ -59,6 +59,10 @@ export const USER_BALANCES_SCHEME = {
       contractName: 'usdcBridged',
     },
     {
+      symbol: 'USDC.e',
+      contractName: 'usdcBridged',
+    },
+    {
       symbol: 'ETH+',
       contractName: 'ethPlus',
     },
@@ -69,6 +73,10 @@ export const USER_BALANCES_SCHEME = {
     {
       symbol: 'WETH',
       contractName: 'weth',
+    },
+    {
+      symbol: 'OVNINS',
+      contractName: '',
     },
   ],
   8453: [
@@ -89,6 +97,10 @@ export const USER_BALANCES_SCHEME = {
       symbol: 'USDC',
       contractName: 'usdcNative',
     },
+    {
+      symbol: 'OVNINS',
+      contractName: '',
+    },
   ],
   56: [
     ...chains_56_59144_42161,
@@ -106,9 +118,23 @@ export const USER_BALANCES_SCHEME = {
       symbol: 'USDC.e',
       contractName: 'usdcBridged',
     },
+    {
+      symbol: 'OVNINS',
+      contractName: '',
+    },
   ],
   324: [
     ...chains_56_324_137,
   ],
-  59144: [],
+  59144: [
+    ...chains_56_59144_42161,
+    {
+      symbol: 'USDT+',
+      contractName: 'usdtPlus',
+    },
+    {
+      symbol: 'USDC',
+      contractName: 'asset',
+    },
+  ],
 };

@@ -325,7 +325,6 @@
 <!-- eslint-disable no-param-reassign -->
 <!-- eslint-disable no-continue -->
 <script lang="ts">
-import { defineComponent } from 'vue';
 import { mapActions, mapGetters, mapState } from 'vuex';
 import { useEventBus } from '@vueuse/core';
 import TokenForm from '@/modules/Main/components/Odos/TokenForm.vue';
@@ -333,7 +332,7 @@ import Spinner from '@/components/Spinner/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import NetworkNotAvailable from '@/modules/Main/components/Odos/network-not-available.vue';
-import SelectTokensModal from '@/modules/Main/components/Common/TokensModal/Index.vue';
+import SelectTokensModal from '@/components/TokensModal/Index.vue';
 import SwapSlippageSettings from '@/modules/Main/components/Common/SwapSlippageSettings.vue';
 import { formatMoney } from '@/utils/numbers.ts';
 import { getRandomString } from '@/utils/strings.ts';
@@ -346,7 +345,7 @@ import {
 import BigNumber from 'bignumber.js';
 import { ethers } from 'ethers';
 
-export default defineComponent({
+export default {
   name: 'SwapForm',
   components: {
     ButtonComponent,
@@ -400,9 +399,6 @@ export default defineComponent({
           val: true,
         });
       }
-    },
-    account(newVal) {
-      if (newVal) this.initAccountData();
     },
     async networkId(newVal) {
       if (newVal) {
@@ -497,14 +493,8 @@ export default defineComponent({
       'isAllDataLoaded',
     ]),
     ...mapGetters('accountData', ['account']),
-    ...mapGetters('web3', ['web3']),
     ...mapGetters('network', ['getParams', 'networkId', 'networkName']),
-    ...mapGetters('theme', ['light']),
-    ...mapGetters('gasPrice', [
-      'show',
-      'gasPrice',
-      'gasPriceGwei',
-    ]),
+    ...mapGetters('gasPrice', ['gasPrice', 'gasPriceGwei']),
 
     getSlippagePercent() {
       return this.slippagePercent;
@@ -711,7 +701,6 @@ export default defineComponent({
         'getActualGasPrice',
         'initWalletTransaction',
         'initData',
-        'initAccountData',
         'loadPricesInfo',
       ],
     ),
@@ -1652,7 +1641,7 @@ export default defineComponent({
       });
     },
   },
-});
+};
 </script>
 
 <style lang="scss" scoped>

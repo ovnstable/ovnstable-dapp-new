@@ -19,6 +19,7 @@ import { ethers } from 'ethers';
 import { ERC20_ABI } from '@/assets/abi/index.ts';
 import { fixedByPrice } from '@/utils/numbers.ts';
 import { ZERO_ADDRESS } from '@/utils/const.ts';
+import { LINEA_TOKENS } from '@/store/views/main/odos/mocks.ts';
 
 // const KEY = 'REFERRAL_CODE';
 
@@ -39,9 +40,7 @@ export const stateData = {
   chains: null,
   tokensMap: {} as any,
 
-  secondTokens: [] as any[],
   tokens: [] as any[],
-
   contractData: null,
   routerContract: null,
   executorContract: null,
@@ -127,14 +126,8 @@ const getters = {
   isAvailableOnNetwork(state: typeof stateData, getters: any, rootState: any) {
     return state.availableNetworksList.includes(rootState?.network?.networkName);
   },
-  secondTokensSelectedCount(state: typeof stateData) {
-    return state.secondTokens.filter((item: any) => item.selected).length;
-  },
   tokensSelectedCount(state: typeof stateData) {
     return state.tokens.filter((item: any) => item.selected).length;
-  },
-  stablecoinSecondTokens(state: typeof stateData) {
-    return state.secondTokens.filter((item: any) => item.assetType === 'usd');
   },
   stablecoinTokens(state: typeof stateData): any[] {
     return state.tokens.filter((item: any) => item.assetType === 'usd');
@@ -146,12 +139,8 @@ const getters = {
         .includes(item.address),
     );
   },
-  tokensToBalanceUpdate(state: typeof stateData, getters: any) {
-    if (state.baseViewType === 'SWIPE') {
-      return [...getters.stablecoinTokens, ...getters.stablecoinSecondTokens];
-    }
-
-    return [...state.secondTokens, ...state.tokens];
+  tokensToBalanceUpdate(state: typeof stateData) {
+    return state.tokens;
   },
 };
 
@@ -193,7 +182,7 @@ const actions = {
 
     commit('changeState', { field: 'isChainsLoading', val: true });
 
-    odosApiService
+    await odosApiService
       .loadChains()
       .then((data: any) => {
         commit('changeState', { field: 'chains', val: data.chains });
@@ -212,10 +201,22 @@ const actions = {
     }
 
     commit('changeState', { field: 'isTokensLoading', val: true });
-    odosApiService
+    await odosApiService
       .loadTokens()
-      .then((data) => {
-        commit('changeState', { field: 'tokensMap', val: data });
+      .then((data: any) => {
+        console.log({
+          ...data.chainTokenMap,
+          ...LINEA_TOKENS
+        }, '---d-ata');
+        commit('changeState', {
+          field: 'tokensMap',
+          val: {
+            chainTokenMap: {
+              ...data.chainTokenMap,
+              ...LINEA_TOKENS
+            },
+          }
+        });
         commit('changeState', { field: 'isTokensLoading', val: false });
       })
       .catch((e) => {
@@ -238,42 +239,25 @@ const actions = {
   ) {
     dispatch('clearInputData');
 
-    if (!data.tokenSeparationScheme) {
-      console.error('Not found separation scheme, when init data.');
-      commit('changeState', { field: 'isTokensLoadedAndFiltered', val: true });
-      return;
-    }
-
     if (!getters.isAvailableOnNetwork) {
       console.info(
         'Swap init not available on this network.',
       );
+      await dispatch('initAccountData');
       commit('changeState', { field: 'isTokensLoadedAndFiltered', val: true });
       return;
     }
 
-    if (data.tokenSeparationScheme === 'OVERNIGHT_SWAP') {
-      dispatch('initOvernightSwap');
-      return;
-    }
-
-    if (data.tokenSeparationScheme === 'POOL_SWAP') {
+    if (data?.tokenSeparationScheme === 'POOL_SWAP') {
       dispatch('initPoolSwap', data.listOfBuyTokensAddresses);
       return;
     }
 
-    console.error('TOKEN SEPARATION SCHEME NOT FOUND', data.tokenSeparationScheme);
+    await dispatch('initOvernightSwap');
   },
   async initPoolSwap({
     commit, state, dispatch, rootState,
-  }: any, listOfBuyTokensAddresses: any) {
-    if (!listOfBuyTokensAddresses || !listOfBuyTokensAddresses.length) {
-      console.error(
-        'List of buy token addresses must be included in initialisation POOL_SWAP scheme.',
-      );
-      return;
-    }
-
+  }: any) {
     console.log('init pool swap data for network: ');
     const { networkId } = getNetworkParams(rootState.network.networkName);
     await commit('changeState', {
@@ -286,61 +270,48 @@ const actions = {
         state,
       )
     });
-    await commit('changeState', {
-      field: 'secondTokens',
-      val: getFilteredPoolTokens(
-        networkId,
-        true,
-        listOfBuyTokensAddresses,
-        false,
-        state,
-      )
-    });
-    commit('changeState', { field: 'isTokensLoadedAndFiltered', val: true });
 
-    dispatch('loadPricesInfo', networkId);
-    dispatch('initAccountData');
+    commit('changeState', { field: 'isTokensLoadedAndFiltered', val: true });
+    await dispatch('loadPricesInfo', networkId);
+    await dispatch('initAccountData');
   },
   async initOvernightSwap({
     commit, state, dispatch, rootState,
   }: any) {
     const { networkId } = getNetworkParams(rootState.network.networkName);
+    console.log(state, '---state');
     await commit('changeState', { field: 'tokens', val: await getFilteredOvernightTokens(state, networkId, false) });
-    await commit('changeState', { field: 'secondTokens', val: await getFilteredOvernightTokens(state, networkId, true) });
-    commit('changeState', { field: 'isTokensLoadedAndFiltered', val: true });
 
+    commit('changeState', { field: 'isTokensLoadedAndFiltered', val: true });
     dispatch('loadPricesInfo', networkId);
     dispatch('initAccountData');
   },
   async initAccountData({
     commit, state, dispatch, rootState,
   }: any) {
+    console.log('initAccountData');
     if (rootState.accountData.account) {
+      console.log('initAccountData2');
       const ERC20 = await loadJSON('/contracts/ERC20.json');
-      dispatch('loadContractsForTokens', ERC20);
-      dispatch('loadBalances');
+      await dispatch('loadContractsForTokens', ERC20);
+      await dispatch('loadBalances');
     }
   },
   loadContractsForTokens({
     commit, state, getters, rootState,
   }: any, contractFile: any) {
-    for (let i = 0; i < state.secondTokens.length; i++) {
-      const secondtoken: any = state.secondTokens[i];
-      state.tokensContractMap[secondtoken.address] = buildEvmContract(
-        contractFile.abi,
-        rootState.web3.evmSigner,
-        secondtoken.address,
-      );
-    }
-
-    for (let i = 0; i < state.tokens.length; i++) {
-      const token: any = state.tokens[i];
-      state.tokensContractMap[token.address] = buildEvmContract(
+    const tokensList: any = {};
+    console.log(getters.allTokensList, 'TOKENS');
+    for (let i = 0; i < getters.allTokensList.length; i++) {
+      const token: any = getters.allTokensList[i];
+      tokensList[token.address] = buildEvmContract(
         contractFile.abi,
         rootState.web3.evmSigner,
         token.address,
       );
     }
+
+    commit('changeState', { field: 'tokensContractMap', val: tokensList });
   },
   // initUpdateBalancesInterval() {
   //   setTimeout(() => {
@@ -462,7 +433,7 @@ const actions = {
 
     loadPrices(chainId)
       .then((tokenPricesMap) => {
-        const tokens = [...state.secondTokens, ...state.tokens];
+        const { tokens } = state;
         for (let i = 0; i < tokens.length; i++) {
           const token: any = tokens[i];
           token.price = new BigNumber(tokenPricesMap[token.address]).toFixed(20);
@@ -488,7 +459,6 @@ const actions = {
     commit, state, dispatch, rootState,
   }: any) {
     commit('changeState', { field: 'tokens', val: [] });
-    commit('changeState', { field: 'secondTokens', val: [] });
   },
 
   quoteRequest({
