@@ -161,7 +161,6 @@ export default {
         closing_balance: trx.closing_balance * this.portfolioBalanceData.prices.daiPlus,
       }));
 
-      // Combine all converted transactions
       return [
         ...convertedUsdTransactions,
         ...convertedEthTransactions,

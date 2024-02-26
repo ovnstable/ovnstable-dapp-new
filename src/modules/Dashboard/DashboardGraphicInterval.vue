@@ -50,11 +50,17 @@ export default {
   }
 }
 
-.interval-option:first-child {
+.interval-option:nth-child(1) {
   border-radius: 30px 0 0 30px;
 }
+.interval-option:nth-child(2) {
+  border-radius: 30px 0 0 30px;
+}
+.interval-option:nth-child(3) {
+  border-radius: 30px 30px 30px 30px;
+}
 
-.interval-option:last-child {
+.interval-option:nth-child(4) {
   border-radius: 0 30px 30px 0;
   margin-right: 0;
 }
@@ -63,15 +69,53 @@ export default {
   background-color: var(--color-6);
   color: var(--color-1);
   border-color: var(--color-1);
+  border-radius: 30px;
   z-index: 1;
+  &:nth-child(2) {
+    border-radius: 30px 30px 30px 30px;
+    z-index: 3;
+  }
+  &:nth-child(1) {
+    border-radius: 30px;
+    z-index: 4;
+  }
+  &:nth-child(4) {
+    border-radius: 0px 30px 30px 0px;
+  }
   [data-theme="dark"] & {
     background-color: var(--color-17);
   }
 }
 
+.interval-option:nth-child(2).interval-selected + .interval-option:nth-child(3),
+.interval-option:nth-child(2):not(.interval-selected) + .interval-option:nth-child(3) {
+  border-radius: 0 30px 30px 0px;
+  z-index: 2;
+}
+
+.interval-option:nth-child(1).interval-selected + .interval-option:nth-child(2) {
+  border-radius: 0 30px 30px 0px;
+  z-index: 3;
+}
+
+.interval-option:nth-child(3).interval-selected {
+  border-radius: 30px !important;
+}
+
+.interval-option:nth-child(2):not(.interval-selected) {
+  z-index: 3;
+  border-radius: 0px 30px 30px 0px;
+}
+.interval-option:nth-child(1):not(.interval-selected) {
+  z-index: 4;
+  border-radius: 30px;
+}
 .interval-option:hover:not(.interval-selected) {
-  background-color: var(--color-hover);
-  color: var(--color-text-hover);
+  background-color: var(--color-4);
+  [data-theme="dark"] & {
+    background-color: var(--color-4);
+    color: var(--color-17);
+  }
 }
 
 .interval-option:hover {

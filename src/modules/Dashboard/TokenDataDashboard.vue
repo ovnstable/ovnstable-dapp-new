@@ -110,8 +110,6 @@ export default {
           numberOfDays = 1;
       }
       const initialTransaction = payoutTransactions[numberOfDays - 1];
-      console.log('initialTransaction');
-      console.log(initialTransaction);
       const totalProfit = this.calculateProfit();
       const normalizedString = totalProfit.replace(' $', '').replace(',', '.');
       const numberProfit = parseFloat(normalizedString);

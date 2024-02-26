@@ -28,6 +28,11 @@ export default {
     ...mapGetters('accountData', ['account']),
   },
   watch: {
+    account(newAccount) {
+      if (newAccount) {
+        this.fetchDataForPortfolioBalance(this.$store.state.network.dashboardNetwork.toLowerCase());
+      }
+    },
     '$store.state.network.dashboardNetwork': {
       immediate: true,
       handler: function handleNetworkNameChange(newVal, oldVal) {
@@ -36,10 +41,6 @@ export default {
         }
       },
     },
-  },
-  async mounted() {
-    await this.fetchDataForPortfolioBalance(this
-      .$store.state.network.dashboardNetwork.toLowerCase());
   },
   methods: {
     async fetchDataForPortfolioBalance(networkName: string) {
