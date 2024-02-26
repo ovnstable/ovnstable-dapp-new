@@ -118,9 +118,23 @@ export const USER_BALANCES_SCHEME = {
       symbol: 'USDC.e',
       contractName: 'usdcBridged',
     },
+    {
+      symbol: 'OVNINS',
+      contractName: '',
+    },
   ],
   324: [
     ...chains_56_324_137,
   ],
-  59144: [],
+  59144: [
+    ...chains_56_59144_42161,
+    {
+      symbol: 'USDT+',
+      contractName: 'usdtPlus',
+    },
+    {
+      symbol: 'USDC',
+      contractName: 'asset',
+    },
+  ],
 };

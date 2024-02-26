@@ -67,8 +67,7 @@ export default {
   flex-direction: row;
   justify-content: space-between;
   color: var(--color-7);
-  padding: 20px;
-  padding-top: 0;
+  padding: 0 20px;
 
   [data-theme="dark"] & {
     color: var(--color-2);

@@ -125,6 +125,8 @@ const actions = {
       }
     }));
 
+    console.log(balances, '---balances');
+
     // original meaning without decimals
     commit('setOriginalBalance', balances);
     commit('setAccBalance', userBalance);

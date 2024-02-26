@@ -19,6 +19,7 @@ import { ethers } from 'ethers';
 import { ERC20_ABI } from '@/assets/abi/index.ts';
 import { fixedByPrice } from '@/utils/numbers.ts';
 import { ZERO_ADDRESS } from '@/utils/const.ts';
+import { LINEA_TOKENS } from '@/store/views/main/odos/mocks.ts';
 
 // const KEY = 'REFERRAL_CODE';
 
@@ -202,8 +203,20 @@ const actions = {
     commit('changeState', { field: 'isTokensLoading', val: true });
     await odosApiService
       .loadTokens()
-      .then((data) => {
-        commit('changeState', { field: 'tokensMap', val: data });
+      .then((data: any) => {
+        console.log({
+          ...data.chainTokenMap,
+          ...LINEA_TOKENS
+        }, '---d-ata');
+        commit('changeState', {
+          field: 'tokensMap',
+          val: {
+            chainTokenMap: {
+              ...data.chainTokenMap,
+              ...LINEA_TOKENS
+            },
+          }
+        });
         commit('changeState', { field: 'isTokensLoading', val: false });
       })
       .catch((e) => {
@@ -230,6 +243,7 @@ const actions = {
       console.info(
         'Swap init not available on this network.',
       );
+      await dispatch('initAccountData');
       commit('changeState', { field: 'isTokensLoadedAndFiltered', val: true });
       return;
     }
@@ -287,6 +301,7 @@ const actions = {
     commit, state, getters, rootState,
   }: any, contractFile: any) {
     const tokensList: any = {};
+    console.log(getters.allTokensList, 'TOKENS');
     for (let i = 0; i < getters.allTokensList.length; i++) {
       const token: any = getters.allTokensList[i];
       tokensList[token.address] = buildEvmContract(

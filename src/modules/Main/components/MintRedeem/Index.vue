@@ -96,7 +96,7 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 import SwitchTabs from '@/components/SwitchTabs/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import TokenForm from '@/modules/Main/components/MintRedeem/TokenForm.vue';
-import { buildEvmContract } from '@/utils/contractsMap.ts';
+import { buildEvmContract, buildEvmContractForChain } from '@/utils/contractsMap.ts';
 import { MINTREDEEM_SCHEME } from '@/store/views/main/mintRedeem/mocks.ts';
 import debounce from 'lodash/debounce';
 import { fixedByPrice } from '@/utils/numbers.ts';
@@ -113,7 +113,7 @@ import {
 } from '@/store/helpers/index.ts';
 import GasSettings from '@/modules/Main/components/MintRedeem/GasSettings.vue';
 import BigNumber from 'bignumber.js';
-import { ABI_Exchange, ABI_Market } from '@/assets/abi/index.ts';
+import { ABI_Exchange, ABI_Market, ERC20_ABI } from '@/assets/abi/index.ts';
 import { getAllowanceValue, approveToken } from '@/utils/contractApprove.ts';
 
 export default {
@@ -220,8 +220,16 @@ export default {
       this.currentStage = mintRedeemStep.APPROVE;
 
       const tokenData = this.inputToken;
-      const tokenContract = this.tokensContractMap[tokenData.address];
+      let tokenContract = this.tokensContractMap[tokenData.address];
       const approveValue = new BigNumber(10 ** 25).toFixed(0);
+
+      if (!tokenContract) {
+        tokenContract = buildEvmContractForChain(
+          ERC20_ABI,
+          this.evmSigner,
+          tokenData.address,
+        );
+      }
 
       const networkId = this.networkId as keyof typeof MINTREDEEM_SCHEME;
       const pairData = MINTREDEEM_SCHEME[networkId]
@@ -386,29 +394,12 @@ export default {
         };
       }
 
+      console.log(actionContract, 'actionContract');
       if (exchangeMethodName === 'redeem') {
-        if (action === 'market-redeem') {
-          methodParam = {
-            sum: contractSum,
-          };
-        } else if (
-          action === 'non-market-redeem'
-          // || action === 'dai-swap-redeem'
-          // || action === 'usdt-swap-redeem'
-          // || action === 'usdc-swap-redeem'
-          // || action === 'eth-swap-redeem'
-        ) {
-          methodParam = {
-            asset: actionContract.target,
-            sum: contractSum,
-          };
-        } else {
-          console.error(
-            `Exchange Method redeem error. Action not found when create method params in estimate gas. action: ${
-              action}`,
-          );
-          return null;
-        }
+        methodParam = {
+          asset: actionContract.target,
+          sum: contractSum,
+        };
 
         return {
           name: exchangeMethodName,
@@ -660,6 +651,7 @@ export default {
 
 .mintredeem-form__btns {
   margin-top: auto;
+  margin-bottom: 20px;
   button {
     [data-theme="dark"] & {
       background-color: var(--color-7);

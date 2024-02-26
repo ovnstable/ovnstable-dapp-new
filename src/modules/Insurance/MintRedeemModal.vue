@@ -50,7 +50,7 @@
         </div>
         <div class="insurance__modal-info-mint">
           <p>You mint:</p>
-          <p>0$</p>
+          <p>{{ fromValueInUsd }}$</p>
         </div>
         <p>1 OVN = 1 OVN INS</p>
       </div>
@@ -101,7 +101,10 @@
         {{ selectedAction === 'mint' ? 'MINT' : 'REDEEM' }}
       </ButtonComponent>
     </div>
-    <StepsRow :current-stage="currentStage" />
+    <StepsRow
+      class="insurance__modal-steps"
+      :current-stage="currentStage"
+    />
   </ModalComponent>
 </template>
 
@@ -142,23 +145,21 @@ export default {
       gasAmountInUsd: '',
       estimatedGas: '',
       redemptionRequestSent: false,
+      ovnPrice: '',
     };
   },
   watch: {
     fromValue() {
       if (!this.fromValue) this.currentStage = mintRedeemStep.START;
       this.checkApprove(this);
+      this.checkOvnPrice();
     },
     account(val) {
-      if (val) {
-        this.refreshClientData();
-      }
+      if (val) this.refreshClientData();
     },
   },
-  mounted() {
-    console.log(this.originalBalance, '---originalBalance');
-  },
   computed: {
+    ...mapGetters('odosData', ['allTokensList']),
     ...mapGetters('network', ['networkName', 'networkId']),
     ...mapGetters('gasPrice', ['gasPriceGwei']),
     ...mapGetters('insuranceData', ['insuranceRedemptionData']),
@@ -166,6 +167,10 @@ export default {
     ...mapGetters('web3', ['contracts', 'evmProvider', 'evmSigner']),
     ...mapGetters('gasPrice', ['gasPriceGwei', 'gasPrice', 'gasPriceStation']),
 
+    fromValueInUsd() {
+      if (!this.ovnPrice || !this.fromValue) return '0';
+      return new BigNumber(this.fromValue).times(this.ovnPrice).toFixed(2);
+    },
     redemptionDisabled() {
       if (this.selectedAction === 'redeem' && this.insuranceRedemptionData.hours > 0) {
         return true;
@@ -188,6 +193,7 @@ export default {
     },
   },
   methods: {
+    ...mapActions('account', ['refreshBalance']),
     ...mapActions('gasPrice', ['refreshGasPrice']),
     ...mapActions('errorModal', ['showErrorModal', 'showErrorModalWithMsg']),
     ...mapActions('insuranceData', ['refreshInsurance', 'refreshClientData']),
@@ -195,6 +201,11 @@ export default {
     ...mapActions('waitingModal', ['showWaitingModal', 'closeWaitingModal']),
     closeModal() {
       this.showModal = false;
+    },
+    checkOvnPrice() {
+      if (this.allTokensList.length === 0 || this.ovnPrice) return;
+      const item = this.allTokensList.find((_: any) => _.symbol === 'OVN');
+      this.ovnPrice = item ? item.price : '1';
     },
     changeInput(val: string) {
       this.fromValue = val;
@@ -362,6 +373,7 @@ export default {
 
             await tx.wait();
 
+            self.refreshBalance();
             self.showSuccessModal({
               successTxHash: tx.hash,
               successAction: 'mintInsurance',
@@ -522,6 +534,7 @@ export default {
 .insurance__modal-mint-redeem {
   width: 560px;
   padding: 20px;
+  padding-bottom: 0;
   display: flex;
   flex-direction: column;
   [data-theme="dark"] & {
@@ -655,5 +668,9 @@ export default {
   [data-theme="dark"] & {
     color: var(--color-18);
   }
+}
+
+.insurance__modal-steps {
+  margin-bottom: 20px;
 }
 </style>
