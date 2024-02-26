@@ -270,6 +270,9 @@ export default {
 }
 .dashboard__token-data-title-period {
   margin-top: 10px;
+  [data-theme="dark"] & {
+    color: var(--color-18);
+  }
 }
 
 .dashboard__token-data-growth-balance {

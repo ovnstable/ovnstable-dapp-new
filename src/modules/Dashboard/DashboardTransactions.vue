@@ -272,7 +272,7 @@ export default {
 
 .dashboard__transactions-button-show:hover {
   cursor: pointer;
-  border: 2px solid var(--color-1);
+  border: 1px solid var(--color-1);
 }
 
 .dashboard__transactions-button-show-text {

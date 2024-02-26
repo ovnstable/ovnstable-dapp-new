@@ -441,6 +441,9 @@ export default {
   span.period {
     font-size: 15px;
     color: var(--color-2);
+    [data-theme="dark"] & {
+      color: var(--color-18);
+    }
   }
   span.divider {
     margin-left: 20px;
@@ -470,6 +473,11 @@ export default {
 
 .dashboard__data-comp-today :nth-child(1) {
   margin-bottom: 4px;
+}
+.dashboard__data-comp-today p {
+  [data-theme="dark"] & {
+    color: var(--color-18);
+  }
 }
 
 .selected:hover {

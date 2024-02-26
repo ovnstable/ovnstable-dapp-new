@@ -45,6 +45,9 @@ export default {
   transition: background-color 0.15s, color 0.15s;
   position: relative;
   z-index: 0;
+  [data-theme="dark"] & {
+    background-color: var(--color-7);
+  }
 }
 
 .interval-option:first-child {
@@ -61,6 +64,9 @@ export default {
   color: var(--color-1);
   border-color: var(--color-1);
   z-index: 1;
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
+  }
 }
 
 .interval-option:hover:not(.interval-selected) {

@@ -8,7 +8,7 @@
 
 <script lang="ts">
 import DashboardPage from '@/modules/Dashboard/Index.vue';
-import { mapGetters, mapActions } from 'vuex';
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'DashboardView',

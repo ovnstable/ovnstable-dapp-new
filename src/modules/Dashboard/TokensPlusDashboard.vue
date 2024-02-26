@@ -306,12 +306,18 @@ export default {
 .dasboard__tokens-data-profit > *:not(:first-child) {
   color: var(--color-1);
   font-weight: 500;
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
 }
 
 .dasboard__tokens-data-balances :nth-child(1),
 .dasboard__tokens-data-balances-dollars :nth-child(1),
 .dasboard__tokens-data-profit :nth-child(1) {
   margin-bottom: 24px;
+  [data-theme="dark"] & {
+    color: var(--color-18);
+  }
 }
 .dasboard__tokens-data-tokens-wrapper {
   display: flex;
@@ -321,6 +327,9 @@ export default {
 .dasboard__tokens-data-tokens-title {
   margin-bottom: 18px;
   text-align: center;
+  [data-theme="dark"] & {
+    color: var(--color-18);
+  }
 }
 .dasboard__tokens-data-tokens .dasboard__tokens-data-tokens-icon:not(:first-of-type) {
   margin-top: 8px;
@@ -370,6 +379,10 @@ export default {
     text-align: center;
     margin-right: 6px;
     color: var(--color-3);
+    [data-theme="dark"] & {
+      background-color: var(--color-6);
+      box-shadow: none;
+    }
   }
    svg:not(:last-child) {
     margin-right: 8px;
