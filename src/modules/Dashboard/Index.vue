@@ -16,6 +16,7 @@
         :tabs="tabsData"
         :active-tab="activeTab"
         @tab-change="changeTab"
+        class="dashboard-tabs"
       >
         <div
           v-if="activeTab === 0"
@@ -183,7 +184,7 @@ export default {
 .dashboard {
   display: flex;
   flex-direction: column;
-  border-radius: 20px;
+  border-radius: 30px;
   border: 1px solid var(--color-1);
   background: var(--color-4);
   box-shadow: 0px 1px 0px 0px var(--color-1);
@@ -202,6 +203,7 @@ export default {
   padding-right: 25px;
   padding-bottom: 20px;
 }
+
 .dashboard__token-data,
 .dashboard__graphics,
 .dashboard__premiums,
@@ -241,7 +243,7 @@ export default {
   width: calc(100% - 40px);
   background: var(--color-8);
   z-index: -1;
-  margin-top: -10px;
+  margin-top: -20px;
   border-radius: 0px 0px 30px 30px;
   [data-theme="dark"] & {
     background-color: var(--color-6);
@@ -272,9 +274,7 @@ export default {
 }
 
 .dashboard-tabs {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
+  width: calc(100% - 3px);
 }
 
 button {
