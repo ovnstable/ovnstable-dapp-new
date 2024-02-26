@@ -9,6 +9,7 @@
       <p>MY ACCOUNT</p>
       <ProfilePicture class="account__modal-profile" />
       <div class="account__modal-divider" />
+      <AddTokensAccount />
     </div>
   </ModalComponent>
 </template>
@@ -16,12 +17,14 @@
 <script lang="ts">
 import ModalComponent from '@/components/Modal/Index.vue';
 import ProfilePicture from '@/modules/Account/ProfilePicture.vue';
+import AddTokensAccount from '@/modules/Account/AddTokens.vue';
 
 export default {
   name: 'AccountModal',
   components: {
     ModalComponent,
     ProfilePicture,
+    AddTokensAccount,
   },
   data() {
     return {

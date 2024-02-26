@@ -188,6 +188,7 @@ const state = {
   marketExplorerURL: 'https://arbiscan.io/',
   insuranceNetwork: 'optimism',
   dashboardNetwork: 'arbitrum',
+  accountModalNetwork: 'arbitrum',
   insuranceExplorerURL: 'https://optimistic.etherscan.io/',
   dashboardExplorerURL: 'https://arbiscan.io/',
 };
@@ -531,6 +532,9 @@ const actions = {
     commit('setDashboardExplorerURL', getNetworkParams(network).explorerUrl);
     commit('setDashboardNetwork', network);
   },
+  changeAccountModalNetwork({ commit }: any, network: any) {
+    commit('setAccountModalNetwork', network);
+  },
 };
 
 const mutations = {
@@ -605,6 +609,9 @@ const mutations = {
 
   setDashboardNetwork(state: any, value: any) {
     state.dashboardNetwork = value;
+  },
+  setAccountModalNetwork(state: any, value: any) {
+    state.accountModalNetwork = value;
   },
 
   setDashboardExplorerURL(state: any, value: any) {
