@@ -89,9 +89,9 @@ export default {
     return {
       selectedTokens: [] as string[],
       tokenDisplayInfo: {
-        usdPlus: { name: 'USD+', iconName: 'DashboardUSD+Tokens' },
-        daiPlus: { name: 'DAI+', iconName: 'DashboardDAI+Tokens' },
-        usdtPlus: { name: 'USDT+', iconName: 'DashboardUSDT+Tokens' },
+        usdPlus: { name: 'USD+', iconName: 'USD+_market' },
+        daiPlus: { name: 'DAI+', iconName: 'DAI+_market' },
+        usdtPlus: { name: 'USDT+', iconName: 'USDT_market' },
         ethPlus: { name: 'ETH+', iconName: 'DashboardETH+Tokens' },
       },
     };
@@ -165,8 +165,6 @@ export default {
     getBalance(balance: any, isETH: boolean) {
       const filteredBalance = [...balance]
         .filter((transaction) => transaction.type === 'PAYOUT');
-      console.log('here is the balance from tokensplus dashboard');
-      console.log(balance);
       if (!Array.isArray(filteredBalance) || filteredBalance.length === 0) {
         return isETH ? '0.000000' : '0.00';
       }
@@ -344,7 +342,12 @@ export default {
 .dasboard__tokens-data-tokens-icon {
   display: flex;
   flex-direction: row;
-   align-items: center;
+  align-items: center;
+  svg {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+  }
   p {
     margin-left: 10px;
     display: flex;
@@ -384,7 +387,12 @@ export default {
       box-shadow: none;
     }
   }
-   svg:not(:last-child) {
+  svg {
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+  }
+  svg:not(:last-child) {
     margin-right: 8px;
   }
 }

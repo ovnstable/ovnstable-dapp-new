@@ -4,7 +4,7 @@
       <DashboardGraphicInterval
         :selectedInterval="currentInterval"
         :intervals="['ALL TIME', 'MONTH', 'WEEK', 'DAY']"
-        @update:interval="updateInterval"
+        @update-interval="updateInterval"
       />
     </div>
 
