@@ -9,8 +9,8 @@
       'special-style-interval-week': selectedInterval === intervals[3] && interval === intervals[2],
     }"
     class="interval-option"
-    @click="$emit('update:interval', interval)"
-    @keydown.enter="$emit('update:interval', interval)"
+    @click="$emit('update-interval', interval)"
+    @keydown.enter="$emit('update-interval', interval)"
     tabindex="0"
   >
     {{ interval }}

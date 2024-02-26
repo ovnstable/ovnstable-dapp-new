@@ -2,7 +2,7 @@
   <div class="dashboard__token-data">
     <div class="dashboard__token-data-from">
       <BaseIcon
-        name="DashboardUsdPlus"
+        name="USD+_money_markets"
         class="dashboard__token-data-main-token"
       />
       <div class="dashboard__token-data-link-title">
