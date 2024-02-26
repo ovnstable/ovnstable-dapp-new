@@ -2,7 +2,12 @@
   <div
     v-for="interval in intervals"
     :key="interval"
-    :class="{ 'interval-selected': interval === selectedInterval }"
+    :class="{
+      'interval-selected': interval === selectedInterval,
+      'special-style-interval-all-time': selectedInterval === intervals[1] && interval === intervals[0],
+      'special-style-interval-month': selectedInterval === intervals[2] && interval === intervals[1],
+      'special-style-interval-week': selectedInterval === intervals[3] && interval === intervals[2],
+    }"
     class="interval-option"
     @click="$emit('update:interval', interval)"
     @keydown.enter="$emit('update:interval', interval)"
@@ -44,25 +49,9 @@ export default {
   cursor: pointer;
   transition: background-color 0.15s, color 0.15s;
   position: relative;
-  z-index: 0;
   [data-theme="dark"] & {
     background-color: var(--color-7);
   }
-}
-
-.interval-option:nth-child(1) {
-  border-radius: 30px 0 0 30px;
-}
-.interval-option:nth-child(2) {
-  border-radius: 30px 0 0 30px;
-}
-.interval-option:nth-child(3) {
-  border-radius: 30px 30px 30px 30px;
-}
-
-.interval-option:nth-child(4) {
-  border-radius: 0 30px 30px 0;
-  margin-right: 0;
 }
 
 .interval-selected {
@@ -70,45 +59,62 @@ export default {
   color: var(--color-1);
   border-color: var(--color-1);
   border-radius: 30px;
-  z-index: 1;
-  &:nth-child(2) {
-    border-radius: 30px 30px 30px 30px;
-    z-index: 3;
-  }
-  &:nth-child(1) {
-    border-radius: 30px;
-    z-index: 4;
-  }
-  &:nth-child(4) {
-    border-radius: 0px 30px 30px 0px;
-  }
+
   [data-theme="dark"] & {
     background-color: var(--color-17);
   }
 }
 
-.interval-option:nth-child(2).interval-selected + .interval-option:nth-child(3),
-.interval-option:nth-child(2):not(.interval-selected) + .interval-option:nth-child(3) {
-  border-radius: 0 30px 30px 0px;
-  z-index: 2;
-}
-
-.interval-option:nth-child(1).interval-selected + .interval-option:nth-child(2) {
-  border-radius: 0 30px 30px 0px;
-  z-index: 3;
-}
-
-.interval-option:nth-child(3).interval-selected {
-  border-radius: 30px !important;
-}
-
-.interval-option:nth-child(2):not(.interval-selected) {
-  z-index: 3;
-  border-radius: 0px 30px 30px 0px;
-}
 .interval-option:nth-child(1):not(.interval-selected) {
   z-index: 4;
   border-radius: 30px;
+}
+.interval-option:nth-child(2):not(.interval-selected) {
+  z-index: 3;
+  border-radius: 0 30px 30px 0;
+}
+.interval-option:nth-child(3):not(.interval-selected) {
+  z-index: 2;
+  border-radius: 0 30px 30px 0;
+}
+.interval-option:nth-child(4):not(.interval-selected) {
+  border-radius: 0 30px 30px 0;
+  z-index: 1;
+}
+
+.interval-option:nth-child(3).interval-selected {
+  border-radius: 30px;
+  z-index: 4;
+}
+
+.interval-option:nth-child(2).interval-selected {
+  border-radius: 30px;
+  z-index: 5;
+}
+.interval-option:nth-child(1).interval-selected {
+  border-radius: 30px;
+  z-index: 5;
+}
+.interval-option:nth-child(4).interval-selected {
+  border-left: none;
+  border-radius: 0 30px 30px 0;
+  z-index: 1;
+}
+
+.interval-option:nth-child(3).interval-selected + .interval-option:nth-child(4):not(.interval-selected) {
+  border-radius: 0 30px 30px 0;
+}
+
+.special-style-interval-all-time {
+  border-radius: 30px 0 0 30px !important;
+}
+
+.special-style-interval-month {
+  border-radius: 0 !important;
+}
+
+.special-style-interval-week {
+  border-right: 1px solid var(--color-1);
 }
 .interval-option:hover:not(.interval-selected) {
   background-color: var(--color-4);
