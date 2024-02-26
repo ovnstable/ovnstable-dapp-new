@@ -26,7 +26,6 @@ export default {
       return this.$store.state.porfolioBalanceData.porfolioBalanceData || {};
     },
     ...mapGetters('accountData', ['account']),
-    ...mapGetters('web3', ['evmSigner']),
   },
   watch: {
     '$store.state.network.dashboardNetwork': {
@@ -46,7 +45,6 @@ export default {
     async fetchDataForPortfolioBalance(networkName: string) {
       this.loaded = false;
       const { account } = this;
-      console.log(this.evmSigner);
       try {
         await Promise.all([
           this.$store.dispatch('porfolioBalanceData/fetchBalanceData', { account, networkName }),

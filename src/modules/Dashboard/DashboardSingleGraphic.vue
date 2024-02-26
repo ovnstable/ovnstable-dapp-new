@@ -6,7 +6,10 @@
     </span>
   </p>
 
-  <div class="dashboard__graphic">
+  <div
+    v-if="!isInitialValueZero"
+    class="dashboard__graphic"
+  >
     <div class="dashboard__graphic-display">
       <canvas
         ref="myChart"
@@ -24,11 +27,20 @@
       </div>
     </div>
   </div>
+  <div
+    v-else
+    class="no-graphic"
+  >
+    <NoGraphic
+      :portfolioBalanceData="portfolioBalanceData"
+      :graphicInterval="getDashboardInterval"
+    /></div>
 </template>
 
 <script lang="ts">
 import { Chart, registerables } from 'chart.js';
 import { appNetworksData } from '@/utils/const.ts';
+import NoGraphic from '@/modules/Dashboard/NoGraphic.vue';
 
 const originPointPlugin = {
   id: 'originPointPlugin',
@@ -53,6 +65,9 @@ Chart.register(...registerables, originPointPlugin);
 
 export default {
   name: 'DashboardSingleGraphic',
+  components: {
+    NoGraphic,
+  },
   props: {
     portfolioBalanceData: {
       type: Object,
@@ -83,6 +98,9 @@ export default {
     },
   },
   computed: {
+    isInitialValueZero() {
+      return this.getInitialValue() === 0;
+    },
     getDashboardInterval() {
       return this.$store.state.intervalDashboard.intervalDashboard;
     },
@@ -261,8 +279,9 @@ export default {
     getInitialValue() {
       const intervalData = this.processTransactions();
       const dataValues = intervalData.map((trx: any) => parseFloat(trx.closing_balance));
-      const minValue = Math.min(...dataValues);
-      return minValue.toFixed(4);
+      const areAllZeros = dataValues.every((value) => value === 0);
+
+      return areAllZeros ? 0 : dataValues[0].toFixed(4);
     },
     getLastValue() {
       const sortedTransactions = [...this.portfolioBalanceData as any]
@@ -311,7 +330,7 @@ export default {
     },
     formattedPeriod() {
       const today = new Date();
-      let formattedDate = 'N/A';
+      let formattedDate = '';
       switch (this.getDashboardInterval.toLowerCase()) {
         case 'day': {
           formattedDate = today.toLocaleDateString('en-GB', {
@@ -365,7 +384,7 @@ export default {
         formattedDate = `From ${formattedDateParts[0]} ${formattedDateParts[1]} ‘${formattedDateParts[2]}`;
       }
 
-      return formattedDate || 'From N/A';
+      return formattedDate || '';
     },
     getInterval() {
       const intervalMapping = {

@@ -108,6 +108,14 @@ export default {
       ethToUsdRate: 3000,
     };
   },
+  watch: {
+    activeTab: {
+      immediate: true,
+      handler() {
+        this.$store.dispatch('intervalDashboard/setInterval', 'DAY');
+      },
+    },
+  },
   computed: {
     portfolioDataForDashboardTransactions() {
       if (this.activeTab === 1) {

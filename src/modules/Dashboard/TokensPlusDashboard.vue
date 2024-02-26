@@ -240,45 +240,43 @@ export default {
     totalProfit() {
       let totalProfitUSD = 0;
 
-      const profitCalculations = {
-        'ETH+': () => parseFloat(this.calculateProfit(this.portfolioBalanceData.dataETHPlus).replace(',', '.').replace(' $', '')),
-        'USD+': () => parseFloat(this.calculateProfit(this.portfolioBalanceData.dataUSDPlus).replace(',', '.').replace(' $', '')),
-        'USDT+': () => parseFloat(this.calculateProfit(this.portfolioBalanceData.dataUSDTPlus).replace(',', '.').replace(' $', '')),
-        'DAI+': () => parseFloat(this.calculateProfit(this.portfolioBalanceData.dataDAIPlus).replace(',', '.').replace(' $', '')),
-      };
-      console.log(this.selectedTokens);
       this.selectedTokens.forEach((token) => {
-        if ((profitCalculations as any)[token]) {
-          totalProfitUSD += (profitCalculations as any)[token]();
+        const tokenDataKey = `data${token.replace('+', '')}Plus`;
+        const tokenData = this.portfolioBalanceData[tokenDataKey];
+        if (tokenData) {
+          const profit = parseFloat(this.calculateProfit(tokenData).replace(',', '.').replace(' $', ''));
+          totalProfitUSD += !Number.isNaN(profit) ? profit : 0;
         }
       });
-      const formattedTotalProfitUSD = new Intl.NumberFormat('de-DE', {
+
+      return new Intl.NumberFormat('de-DE', {
         style: 'currency',
         currency: 'USD',
         minimumFractionDigits: 4,
       }).format(totalProfitUSD);
-
-      return formattedTotalProfitUSD;
     },
 
     getTotalBalance() {
       let totalBalanceUSD = 0;
-      totalBalanceUSD += parseFloat(this.getBalanceUSD(this
-        .getBalance(this.portfolioBalanceData.dataETHPlus, true), 'ethPlus').replace('$', '').replace(',', '.'));
-      totalBalanceUSD += parseFloat(this.getBalanceUSD(this
-        .getBalance(this.portfolioBalanceData.dataUSDPlus, false), 'usdPlus').replace('$', '').replace(',', '.'));
-      totalBalanceUSD += parseFloat(this.getBalanceUSD(this
-        .getBalance(this.portfolioBalanceData.dataUSDTPlus, false), 'usdtPlus').replace('$', '').replace(',', '.'));
-      totalBalanceUSD += parseFloat(this.getBalanceUSD(this
-        .getBalance(this.portfolioBalanceData.dataDAIPlus, false), 'daiPlus').replace('$', '').replace(',', '.'));
-      const formattedTotalBalanceUSD = new Intl.NumberFormat('de-DE', {
+
+      this.selectedTokens.forEach((token) => {
+        const tokenDataKey = `data${token.replace('+', '')}Plus`;
+        const tokenData = this.portfolioBalanceData[tokenDataKey];
+        if (tokenData) {
+          const balanceUSD = this.getBalanceUSD(
+            this.getBalance(tokenData, token.includes('ETH')),
+            `${token.replace('+', '').toLowerCase()}Plus`,
+          ).replace('$', '').replace(',', '.');
+          totalBalanceUSD += parseFloat(balanceUSD);
+        }
+      });
+
+      return new Intl.NumberFormat('de-DE', {
         style: 'currency',
         currency: 'USD',
         minimumFractionDigits: 2,
       }).format(totalBalanceUSD);
-      return formattedTotalBalanceUSD;
     },
-
   },
 };
 </script>

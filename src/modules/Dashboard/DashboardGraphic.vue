@@ -13,12 +13,10 @@
       class="dashboard__graphics-APY-graphic"
     >
       <DashboardSingleGraphic
-        v-if="portfolioBalanceData.length > 0"
         :portfolioBalanceData="portfolioBalanceData"
         :onlyUSD="onlyUSD"
         :portfolioPrices="portfolioPrices"
       />
-      <p v-else> no data</p>
     </div>
   </div>
 </template>

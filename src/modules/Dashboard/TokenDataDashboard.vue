@@ -171,7 +171,7 @@ export default {
 
     formattedPeriod() {
       const today = new Date();
-      let formattedDate = 'N/A';
+      let formattedDate = '';
       switch (this.currentIntervalDashboard.toLowerCase()) {
         case 'day': {
           formattedDate = today.toLocaleDateString('en-GB', {
@@ -225,7 +225,7 @@ export default {
         formattedDate = `From ${formattedDateParts[0]} ${formattedDateParts[1]} ‘${formattedDateParts[2]}`;
       }
 
-      return formattedDate || 'From N/A';
+      return formattedDate || '';
     },
 
     formatInterval() {
