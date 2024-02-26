@@ -118,7 +118,7 @@
       <div class="insurance__apy-data-chain">
         <p class="insurance__token-data-num insurance__token-data-num--apy-num">{{ tokenData.data.apyMonth.toFixed(2) }}%</p>
         <div
-          class="performance__icon-chain"
+          class="insurance__icon-chain"
         >
           <BaseIcon
             :name="getIconName(networkName)"
@@ -393,7 +393,7 @@ export default {
   flex-direction: column;
   align-items: center;
 }
-.performance__icon-chain {
+.insurance__icon-chain {
   margin-top: 8px
 }
 
@@ -453,7 +453,7 @@ export default {
   }
 }
 
-.performance__icon-chain-bottom {
+.insurance__icon-chain-bottom {
   flex-shrink: 0
 }
 
@@ -537,7 +537,7 @@ export default {
   .insurance__apy-data-chain {
     margin: 0;
   }
-  .performance__icon-chain {
+  .insurance__icon-chain {
     margin-top: 60px;
   }
   .insurance__divider {

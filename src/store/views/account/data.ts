@@ -3,6 +3,7 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable camelcase */
 import { USER_BALANCES_SCHEME } from '@/store/views/account/mocks.ts';
+import { appNetworksData } from '@/utils/const.ts';
 import BigNumber from 'bignumber.js';
 
 const state = {

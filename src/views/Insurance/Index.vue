@@ -12,7 +12,7 @@
 import InsurancePage from '@/modules/Insurance/Index.vue';
 
 export default {
-  name: 'MarketView',
+  name: 'InsuranceView',
   components: {
     InsurancePage,
   },

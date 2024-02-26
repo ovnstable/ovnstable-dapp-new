@@ -2,19 +2,30 @@
   <div class="app-header">
     <div class="app-header__container">
       <div class="app-header__content">
-        <router-link
-          to="/"
-          class="app-header__content__logo"
-        >
-          <BaseIcon
-            class="app-header__content__logo-svg"
-            name="IconLogo"
-          />
+        <div class="app-header-dapp">
+          <router-link
+            to="/"
+            class="app-header__content__logo"
+          >
+            <BaseIcon
+              class="app-header__content__logo-svg"
+              name="IconLogo"
+            />
 
-          <h1>
-            OVERNIGHT
-          </h1>
-        </router-link>
+            <h1>
+              OVERNIGHT
+            </h1>
+          </router-link>
+          <router-link
+            to="/dashboard"
+            class="app-header__dashboard"
+          >
+            <p>
+              My dashboard
+            </p>
+          </router-link>
+
+        </div>
 
         <div class="app-header__content-data">
           <PopperComponent
@@ -223,6 +234,20 @@ export default {
     background-color: var(--color-17);
     border-bottom: 1px solid var(--color-2);
   }
+}
+.app-header-dapp {
+  display: flex;
+  flex-direction: row;
+}
+
+.app-header__dashboard {
+  align-items: center;
+  display: flex;
+  color: var(--color-1);
+  margin-left: 36px;
+  font-size: 17px;
+  font-weight: 600;
+  text-decoration: underline;
 }
 
 .app-header__container {

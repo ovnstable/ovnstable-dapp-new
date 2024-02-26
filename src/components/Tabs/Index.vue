@@ -185,7 +185,11 @@ export default {
   z-index: 10;
   padding: 10px 0;
 }
-
+.tabs-header__ul__li span:before {
+  [data-theme="dark"] & {
+    background-color: var(--color-7);
+  }
+}
 .tab-content.active {
   display: flex;
 }
