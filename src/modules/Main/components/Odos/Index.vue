@@ -340,7 +340,12 @@ import { clearApproveToken, getAllowanceValue, approveToken } from '@/utils/cont
 import odosApiService from '@/services/odos-api-service.ts';
 import { onLeaveList, onEnterList, beforeEnterList } from '@/utils/animations.ts';
 import {
-  getNewInputToken, getNewOutputToken, maxAll, updateTokenValue, getDefaultSecondtoken,
+  getNewInputToken,
+  getNewOutputToken,
+  maxAll,
+  updateTokenValue,
+  getDefaultSecondtoken,
+  WHITE_LIST_ODOS,
 } from '@/store/helpers/index.ts';
 import BigNumber from 'bignumber.js';
 import { ethers } from 'ethers';
@@ -408,7 +413,7 @@ export default {
         });
         this.$store.commit('odosData/changeState', {
           field: 'isBalancesLoading',
-          val: false,
+          val: true,
         });
         this.$store.commit('odosData/changeState', {
           field: 'quotaResponseInfo',
@@ -971,6 +976,8 @@ export default {
       this.isSwapLoading = true;
 
       const actualGas = await this.getActualGasPrice(this.networkId);
+      const whiteList = WHITE_LIST_ODOS[this.networkId as keyof typeof WHITE_LIST_ODOS];
+
       const requestData = {
         chainId: this.networkId,
         inputTokens: this.getRequestInputTokens(),
@@ -979,10 +986,9 @@ export default {
         userAddr: ethers.getAddress(this.account.toLowerCase()),
         slippageLimitPercent: this.getSlippagePercent,
         sourceBlacklist: this.getSourceBlackList(this.networkId),
-        sourceWhitelist: [],
+        sourceWhitelist: whiteList ?? [],
         simulate: true,
         pathViz: true,
-        // disableRFQs: false
         referralCode: this.odosReferalCode,
       };
 
@@ -1118,6 +1124,8 @@ export default {
         return;
       }
 
+      const whiteList = WHITE_LIST_ODOS[this.networkId as keyof typeof WHITE_LIST_ODOS];
+
       const requestData = {
         chainId: this.networkId,
         inputTokens: input,
@@ -1126,7 +1134,7 @@ export default {
         userAddr: ethers.getAddress(this.account.toLowerCase()),
         slippageLimitPercent: this.getSlippagePercent,
         sourceBlacklist: this.getSourceBlackList(this.networkId),
-        sourceWhitelist: [],
+        sourceWhitelist: whiteList ?? [],
         simulate: true,
         pathViz: true,
       };

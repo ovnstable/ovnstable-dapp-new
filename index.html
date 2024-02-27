@@ -33,6 +33,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&family=Red+Hat+Display:wght@400;500;600;700&family=Ubuntu:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <!-- removing google transalate -->
+    <style type="text/css">.skiptranslate{ display: none !important;}</style>
+    <style type="text/css">body {position: static !important; top:0px !important;}</style>
   </head>
   <body>
     <div id="app"></div>
@@ -41,6 +45,16 @@
 
       window.Buffer = Buffer;
     </script>
+    <script>
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement(
+                {pageLanguage: 'en'},
+                'google_translate_element'
+            );
+        }
+    </script>
+    <script src="http://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

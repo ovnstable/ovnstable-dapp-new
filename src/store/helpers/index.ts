@@ -10,6 +10,15 @@ import type { stateData } from '@/store/views/main/odos/index';
 const SECONDTOKEN_SECOND_DEFAULT_SYMBOL = 'DAI+';
 const SECONDTOKEN_DEFAULT_SYMBOL = 'USD+';
 
+export const WHITE_LIST_ODOS = {
+  56: [
+    'Overnight Exchange',
+    'PancakeSwap V3',
+    'Thena Fusion',
+    'Thena Stable',
+  ],
+};
+
 export const addItemToFilteredTokens = (
   tokens: any,
   key: string | number,

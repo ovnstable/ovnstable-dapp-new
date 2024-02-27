@@ -86,10 +86,20 @@
           :isChecked="isDarkTheme"
           @change="toggleTheme"
         />
-        <button
-          type="button"
-          class="sidebar__button-switch-language"
-        >ENG</button>
+        <div style="position: relative;">
+          <div
+            id="google_translate_element"
+            style="position: relative; opacity: 0;"
+          />
+
+          <SelectComponent
+            :value="selectModel"
+            :list="selectListDemo"
+            value-field="title"
+            id-field="id"
+            @change="triggerTranslate"
+          />
+        </div>
       </div>
     </ul>
   </div>
@@ -99,15 +109,22 @@
 
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import SwitchBox from '@/components/Switch/Index.vue';
+import SelectComponent from '@/components/Select/Index.vue';
+import { delay } from 'lodash';
 
 export default {
   components: {
     BaseIcon,
     SwitchBox,
+    SelectComponent,
   },
   name: 'SideBar',
   data() {
     return {
+      selectModel: {
+        id: 1,
+        title: 'EN',
+      },
       isDarkTheme: false,
       linksData: [
         { name: 'USD+', to: '/market/usd' },
@@ -115,6 +132,12 @@ export default {
         { name: 'ETH+', to: '/market/eth' },
         { name: 'USDT+', to: '/market/usdt' },
         { name: 'DAI+', to: '/market/dai' },
+      ],
+      selectListDemo: [
+        { id: 1, title: 'EN', code: 'en' },
+        { id: 2, title: 'RU', code: 'ru' },
+        { id: 3, title: 'AR', code: 'ar' },
+        { id: 4, title: 'ZH-CN', code: 'zh-CN' },
       ],
       bottomLinks: [
         { name: 'Help Center', url: 'https://discord.com/channels/933003627444969552/967813123149033542/967813482684760135/' },
@@ -129,9 +152,22 @@ export default {
       ],
     };
   },
+  mounted() {
+    console.log(localStorage.getItem('ovn-lang'));
+  },
   methods: {
     toggleTheme() {
       this.$store.dispatch('theme/switchTheme');
+    },
+    async triggerTranslate(val: any) {
+      // const el = document.querySelector('.goog-te-combo');
+      // if (el) el.value() = theLang;
+      const index = Number(val) - 1;
+      const langId = this.selectListDemo[index].code;
+      localStorage.setItem('ovn-lang', val);
+      this.$router.push(`/#googtrans(en|${langId})`);
+      console.log('2');
+      delay(() => window.location.reload(), 500);
     },
   },
 };
@@ -146,7 +182,7 @@ export default {
 .sidebar__bottom {
   display: flex;
   flex-direction: column;
-  max-width: 140px;
+  min-width: 140px;
 }
 .sidebar__bottom li {
   margin-top: 10px;
@@ -272,20 +308,4 @@ export default {
   cursor: pointer;
 }
 
-.sidebar__button-switch-language {
-  margin-left: 40px;
-  padding: 0px 14px 0px 6px;
-  border-radius: 12px;
-  border: 1px solid var( --color-2);
-  background: var(--color-4);
-  color: var( --color-2);
-  text-align: center;
-  font-size: 14px;
-
-  [data-theme="dark"] & {
-    border: 1px solid var(--color-3);
-    background: var(--color-17);
-    color: var( --color-4);
-  }
-}
 </style>

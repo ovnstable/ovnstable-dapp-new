@@ -29,7 +29,7 @@ export const stateData = {
   baseViewType: 'SWAP',
   isChainsLoading: false,
   isPricesLoading: false,
-  isBalancesLoading: false,
+  isBalancesLoading: true,
   isFirstBalanceLoaded: false,
   isContractLoading: false,
   isTokenExternalDataLoading: false,
@@ -324,11 +324,10 @@ const actions = {
   async loadBalances({
     commit, state, getters, rootState, dispatch,
   }: any) {
-    if (state.isBalancesLoading) return;
+    commit('changeState', { field: 'isBalancesLoading', val: true });
 
-    state.isBalancesLoading = true;
     if (!rootState.accountData.account) {
-      state.isBalancesLoading = false;
+      commit('changeState', { field: 'isBalancesLoading', val: false });
       return;
     }
 
@@ -364,13 +363,11 @@ const actions = {
           decimal: token.decimals,
         };
       }
+
+      commit('changeState', { field: 'isBalancesLoading', val: false });
     } catch (e) {
       console.error('Error when load balance', e);
-    } finally {
-      state.isBalancesLoading = false;
-      if (!state.isFirstBalanceLoaded) {
-        state.isFirstBalanceLoaded = true;
-      }
+      commit('changeState', { field: 'isBalancesLoading', val: false });
     }
   },
 
