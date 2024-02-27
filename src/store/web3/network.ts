@@ -518,6 +518,33 @@ const actions = {
     }
   },
 
+  async addTokenToWallet({
+    commit, dispatch, getters, rootState,
+  }: any, network: any) {
+    console.log('add token to wallet in network');
+    const option = {
+      address: '0x73cb180bf0521828d8849bc8CF2B920918e23032',
+      symbol: 'USD+',
+      decimals: 18,
+      image: '',
+    };
+
+    await rootState.web3.provider
+      .request({
+        method: 'wallet_watchAsset',
+        params: {
+          type: 'ERC20',
+          options: option,
+        },
+      })
+      .then((success: any) => {
+        if (!success) {
+          throw new Error('Something went wrong.');
+        }
+      })
+      .catch(console.error);
+  },
+
   changeMarketNetwork({ commit }: any, network: any) {
     commit('setMarketExplorerURL', getNetworkParams(network).explorerUrl);
     commit('setMarketNetwork', network);

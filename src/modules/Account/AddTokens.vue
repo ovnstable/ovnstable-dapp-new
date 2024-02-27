@@ -1,7 +1,10 @@
 <template>
-  <div class="account__modal-chains">
-    <p>ADD TOKENS TO WALLET</p>
-    <ChainsSelection />
+  <div class="account__modal-chains-tokens">
+    <div class="account__modal-chains">
+      <p>ADD TOKENS TO WALLET</p>
+      <ChainsSelection />
+    </div>
+
     <AccountModalTokens />
   </div>
 
@@ -21,9 +24,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.account__modal-chains-tokens {
+  display: flex;
+  flex-direction: column;
+}
+
 .account__modal-chains {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  margin-bottom: 20px;
 }
 </style>

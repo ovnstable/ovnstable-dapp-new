@@ -1,22 +1,23 @@
 <template>
-  <div class="dashboard__tokens-data-select">
+  <div class="account__modal-token-add">
     <div
       v-for="(token, index) in availableTokens"
       :key="index"
-      class="dashboard__tokens-data-icon-wrapper"
+      class="account__modal-token-wrapper"
       @click="addTokenToWallet(token.name)"
       @keypress="addTokenToWallet(token.name)"
     >
       <BaseIcon :name="token.iconName" />
       <p>{{token.name}}</p>
-      <p>{{ token.contractAddress }}</p>
     </div>
   </div>
 </template>
 
+
 <script lang="ts">
 import { appNetworksData } from '@/utils/const.ts';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import { mapActions } from 'vuex';
 import { chainContractsMap } from '@/utils/contractsMap.ts';
 
 export default {
@@ -28,12 +29,13 @@ export default {
     return {
       tokenDisplayInfo: {
         usdPlus: { name: 'USD+', iconName: 'USD+_market' },
-        wUsdPlus: { name: 'wUsdPlus+', iconName: 'USD+_market' },
-        ovn: { name: 'ovn+', iconName: 'USD+_market' },
+        usdcPlus: { name: 'USDC+', iconName: 'USD+_market' }, // TODO change icon
+        wUsdPlus: { name: 'WUSD+', iconName: 'USD+_market' }, // TODO change icon
+        ovn: { name: 'OVN', iconName: 'USD+_market' },
         daiPlus: { name: 'DAI+', iconName: 'DAI+_market' },
         usdtPlus: { name: 'USDT+', iconName: 'USDT_market' },
         ethPlus: { name: 'ETH+', iconName: 'DashboardETH+Tokens' },
-        wEthPlus: { name: 'wETH+', iconName: 'DashboardETH+Tokens' }, // TODO change icon
+        wEthPlus: { name: 'WETH+', iconName: 'DashboardETH+Tokens' }, // TODO change icon
       },
       networksData: appNetworksData,
     };
@@ -55,26 +57,25 @@ export default {
         .flatMap((token) => {
           const baseTokenInfo = this.tokenDisplayInfo[token as keyof typeof this.tokenDisplayInfo];
 
-          if (currentChainTokens[token].tokenPlus) {
+          if ((currentChainTokens as any)[token].tokenPlus) {
             const baseTokenObject = {
               ...baseTokenInfo,
-              contractAddress: currentChainTokens[token].tokenPlus,
+              contractAddress: (currentChainTokens as any)[token].tokenPlus,
             };
 
-            const additionalTokens = Object.keys(currentChainTokens[token])
-              .filter((key) => key.startsWith('w') && token.endsWith('Plus'))
+            const additionalTokens = Object.keys((currentChainTokens as any)[token])
+              .filter((key) => key.startsWith('w') && token.endsWith('Plus') && (currentChainTokens as any)[token][key] !== '')
               .map((key) => ({
                 ...this.tokenDisplayInfo[key as keyof typeof this.tokenDisplayInfo],
-                contractAddress: currentChainTokens[token][key],
+                contractAddress: (currentChainTokens as any)[token][key],
               }));
-
             return [baseTokenObject, ...additionalTokens].filter(Boolean);
           }
 
           if (token === 'ovn') {
             return [{
               ...baseTokenInfo,
-              contractAddress: currentChainTokens.ovn,
+              contractAddress: (currentChainTokens as any).ovn,
             }];
           }
           return [];
@@ -95,8 +96,10 @@ export default {
   },
 
   methods: {
-    addTokenToWallet(tokenName: any) {
-      console.log('here is the token name', tokenName);
+    ...mapActions('network', ['addTokenToWallet']),
+    async addTokenToWallet(tokenName: any) {
+      console.log('add token to wallet method called');
+      this.addTokenToWallet(tokenName.toLowerCase());
     },
     saveNetworkToLocalStore(chain:string) {
       this.$store.dispatch('network/changeAccountModalNetwork', chain.toLowerCase());
@@ -118,17 +121,35 @@ export default {
 
 <style lang="scss" scoped>
 
-.account-modal-chains__chain-data-container {
-  max-width: 178px;
-  max-height: 24px;
+.account__modal-token-add {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.account__modal-token-wrapper {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 6px;
+  background-color: var(--color-8);
+  border: 1px solid var(--color-6);
+  border-radius: 30px;
+  padding: 5px;
+  p {
+    margin-left: 6px;
+    color: var(--color-1);
+    font-size: 14px;
+    font-weight: 500;
+  }
+  svg {
+    width: 23px;
+    height: 23px;
+    border-radius: 50%;
+  }
 }
 
-.account-modal-chains__icon:hover {
-  opacity: 0.5;
+.account__modal-token-wrapper:hover {
   cursor: pointer;
+  opacity: 0.7;
 }
 </style>
