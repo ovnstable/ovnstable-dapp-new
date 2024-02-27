@@ -139,6 +139,8 @@ export default {
 
 <style lang="scss" scoped>
 .app-sidebar {
+  position: sticky;
+  top: 60px;
   height: calc(100vh - 100px);
 }
 .app-sidebar,
@@ -148,6 +150,7 @@ export default {
   flex-direction: column;
   max-width: 140px;
 }
+
 .sidebar__bottom li {
   margin-top: 10px;
 }

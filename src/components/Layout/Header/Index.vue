@@ -246,13 +246,15 @@ export default {
 
 <style lang="scss" scoped>
 .app-header {
-  position: absolute;
+  position: fixed;
+  z-index: 999;
   top: 0;
   left: 0;
   right: 0;
   width: 100%;
   padding: 12px 0;
   background-color: #fff;
+  border-bottom: 1px solid var(--color-1);
   [data-theme="dark"] & {
     background-color: var(--color-17);
     border-bottom: 1px solid var(--color-2);

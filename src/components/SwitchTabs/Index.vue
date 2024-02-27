@@ -156,6 +156,7 @@ export default {
 }
 
 .switchtabs__inner-text.active {
+  color: var(--color-1);
   &::before {
     transform: translateX(0);
     visibility: visible;
