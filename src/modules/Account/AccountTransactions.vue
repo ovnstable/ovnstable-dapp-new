@@ -135,9 +135,10 @@ export default {
   background: var(--color-8);
   padding: 20px;
   max-height: 320px;
+  border-radius: 5px;
   overflow-y: scroll;
   [data-theme="dark"] & {
-    background: var(--color-6);
+    background-color: var(--color-17);
   }
 }
 .account__modal-list-trx::-webkit-scrollbar-track {
