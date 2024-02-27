@@ -12,7 +12,7 @@
 
 <script lang="ts">
 import ChainsSelection from '@/modules/Account/ChainsSelection.vue';
-import AccountModalTokens from '@/modules/Account/AccountModalTokens.vue'
+import AccountModalTokens from '@/modules/Account/AccountModalTokens.vue';
 
 export default {
   name: 'AddTokensAccount',

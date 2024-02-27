@@ -31,7 +31,7 @@
           :class="{
             'account__modal-list-trx-transactions': true,
             'first-transaction': index === 0,
-            'last-transaction': index === trxs.length - 1,
+            'last-transaction': index === transactions.length - 1,
           }"
         >
           <div class="account__modal-list-trx-transaction">
