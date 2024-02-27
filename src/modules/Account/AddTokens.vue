@@ -34,5 +34,10 @@ export default {
   flex-direction: row;
   justify-content: space-between;
   margin-bottom: 20px;
+  p {
+    [data-theme="dark"] & {
+      color: var(--color-18);
+    }
+  }
 }
 </style>

@@ -529,7 +529,6 @@ const actions = {
       decimals,
       image,
     };
-
     await rootState.web3.provider
       .request({
         method: 'wallet_watchAsset',

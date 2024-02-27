@@ -48,10 +48,11 @@ const actions = {
     commit, dispatch, getters, rootState,
   }: any) {
     console.log('Transaction: loadTransaction');
-
+    console.log('the length of trsx', getters.transactions.length);
     for (let i = 0; i < getters.transactions.length; i++) {
       const transaction = getters.transactions[i];
-
+      console.log('here is the transaction');
+      console.log(transaction);
       if (transaction == null || transaction.pending !== true) {
         // eslint-disable-next-line no-continue
         continue;
@@ -80,8 +81,12 @@ const actions = {
         });
 
       transactionReceiptRetry().then((receipt: any) => {
+        console.log('here is the recepu');
+        console.log(receipt);
         const filteredTx = getters
-          .transactions.find((tx: any) => tx.hash === receipt.transactionHash);
+          .transactions.find((tx: any) => tx.hash === receipt.hash);
+        console.log('here is filtertred trx');
+        console.log(filteredTx);
         filteredTx.pending = false;
         filteredTx.receipt = receipt;
 
@@ -101,6 +106,8 @@ const actions = {
 
 const mutations = {
   setTransactions(state: any, transactions: any) {
+    console.log('here we are setting trxs to setTransactions');
+    console.log(transactions);
     state.transactions = transactions;
   },
 };

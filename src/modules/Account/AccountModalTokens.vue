@@ -4,8 +4,10 @@
       v-for="(token, index) in availableTokens"
       :key="index"
       class="account__modal-token-wrapper"
-      @click="addTokenToWalletMethod(token.contractAddress, token.name, token.decimals, token.image)"
-      @keypress="addTokenToWalletMethod(token.contractAddress, token.name, token.decimals, token.image)"
+      @click="addTokenToWalletMethod(token.contractAddress,
+                                     token.name, token.decimals, token.image)"
+      @keypress="addTokenToWalletMethod(token.contractAddress,
+                                        token.name, token.decimals, token.image)"
     >
       <BaseIcon :name="token.iconName" />
       <p>{{token.name}}</p>
@@ -133,6 +135,10 @@ export default {
   border: 1px solid var(--color-6);
   border-radius: 30px;
   padding: 5px;
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
+    color: var(--color-4);
+  }
   p {
     margin-left: 6px;
     color: var(--color-1);
