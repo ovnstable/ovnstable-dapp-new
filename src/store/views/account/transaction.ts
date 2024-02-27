@@ -48,10 +48,9 @@ const actions = {
     commit, dispatch, getters, rootState,
   }: any) {
     console.log('Transaction: loadTransaction');
-
+    console.log('the length of trsx', getters.transactions.length);
     for (let i = 0; i < getters.transactions.length; i++) {
       const transaction = getters.transactions[i];
-
       if (transaction == null || transaction.pending !== true) {
         // eslint-disable-next-line no-continue
         continue;
@@ -81,7 +80,7 @@ const actions = {
 
       transactionReceiptRetry().then((receipt: any) => {
         const filteredTx = getters
-          .transactions.find((tx: any) => tx.hash === receipt.transactionHash);
+          .transactions.find((tx: any) => tx.hash === receipt.hash);
         filteredTx.pending = false;
         filteredTx.receipt = receipt;
 

@@ -25,6 +25,15 @@
             </p>
           </router-link>
 
+          <a
+            href="https://docs.overnight.fi/"
+            class="app-header__docs"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Docs
+          </a>
+
         </div>
 
         <div class="app-header__content-data">
@@ -75,6 +84,7 @@
             v-if="walletConnected && account"
             class="app-header__content-account"
             btn-styles="secondary"
+            @click="openAccountModal"
           >
             <span>
               {{ cutString(account, 4, 4)?.toUpperCase() }}
@@ -127,6 +137,10 @@
       </div>
     </div>
   </div>
+  <AccountModal
+    v-model="showModalAccount"
+    @close-modal="closeAccountModal"
+  />
 </template>
 
 <script lang="ts">
@@ -137,16 +151,19 @@ import { cutString } from '@/utils/strings.ts';
 import { OVN_TOKENS, appNetworksData } from '@/utils/const.ts';
 import BigNumber from 'bignumber.js';
 import { loadTokenImage } from '@/utils/tokenLogo.ts';
+import AccountModal from '@/modules/Account/Index.vue';
 
 export default {
   name: 'HeaderBar',
   components: {
     ButtonComponent,
+    AccountModal,
     BaseIcon,
   },
   data() {
     return {
       networksData: appNetworksData,
+      showModalAccount: false,
     };
   },
   computed: {
@@ -188,6 +205,12 @@ export default {
   },
   methods: {
     ...mapActions('network', ['setWalletNetwork']),
+    openAccountModal() {
+      this.showModalAccount = !this.showModalAccount;
+    },
+    closeAccountModal() {
+      this.showModalAccount = false;
+    },
     disconnectWallet() {
       this.$store.dispatch('walletAction/disconnectWallet');
     },
@@ -240,7 +263,8 @@ export default {
   flex-direction: row;
 }
 
-.app-header__dashboard {
+.app-header__dashboard,
+.app-header__docs {
   align-items: center;
   display: flex;
   color: var(--color-1);
@@ -248,6 +272,9 @@ export default {
   font-size: 17px;
   font-weight: 600;
   text-decoration: underline;
+}
+.app-header__docs {
+  text-decoration: none;
 }
 
 .app-header__container {

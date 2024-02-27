@@ -188,6 +188,7 @@ const state = {
   marketExplorerURL: 'https://arbiscan.io/',
   insuranceNetwork: 'optimism',
   dashboardNetwork: 'arbitrum',
+  accountModalNetwork: 'arbitrum',
   insuranceExplorerURL: 'https://optimistic.etherscan.io/',
   dashboardExplorerURL: 'https://arbiscan.io/',
 };
@@ -517,6 +518,33 @@ const actions = {
     }
   },
 
+  async addTokenToWallet({
+    commit, dispatch, getters, rootState,
+  }: any, {
+    address, symbol, decimals, image,
+  }: any) {
+    const option = {
+      address,
+      symbol,
+      decimals,
+      image,
+    };
+    await rootState.web3.provider
+      .request({
+        method: 'wallet_watchAsset',
+        params: {
+          type: 'ERC20',
+          options: option,
+        },
+      })
+      .then((success: any) => {
+        if (!success) {
+          throw new Error('Something went wrong.');
+        }
+      })
+      .catch(console.error);
+  },
+
   changeMarketNetwork({ commit }: any, network: any) {
     commit('setMarketExplorerURL', getNetworkParams(network).explorerUrl);
     commit('setMarketNetwork', network);
@@ -530,6 +558,9 @@ const actions = {
   changeDashboardNetwork({ commit }: any, network: any) {
     commit('setDashboardExplorerURL', getNetworkParams(network).explorerUrl);
     commit('setDashboardNetwork', network);
+  },
+  changeAccountModalNetwork({ commit }: any, network: any) {
+    commit('setAccountModalNetwork', network);
   },
 };
 
@@ -605,6 +636,9 @@ const mutations = {
 
   setDashboardNetwork(state: any, value: any) {
     state.dashboardNetwork = value;
+  },
+  setAccountModalNetwork(state: any, value: any) {
+    state.accountModalNetwork = value;
   },
 
   setDashboardExplorerURL(state: any, value: any) {
