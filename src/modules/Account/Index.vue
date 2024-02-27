@@ -55,12 +55,12 @@ export default {
   },
   methods: {
     logout() {
-      this.closeModal();
-      this.$store.dispatch('walletAction/disconnectWallet');
+      this.$store.dispatch('walletAction/disconnectWallet').then(() => {
+        this.closeModal();
+      });
     },
     closeModal() {
-      this.showModal = false;
-      this.$emit('set-show', false);
+      this.$emit('close-modal');
     },
   },
 };

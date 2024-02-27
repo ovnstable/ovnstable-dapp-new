@@ -139,6 +139,7 @@
   </div>
   <AccountModal
     v-model="showModalAccount"
+    @close-modal="closeAccountModal"
   />
 </template>
 
@@ -205,8 +206,10 @@ export default {
   methods: {
     ...mapActions('network', ['setWalletNetwork']),
     openAccountModal() {
-      console.log('opened called account module');
       this.showModalAccount = !this.showModalAccount;
+    },
+    closeAccountModal() {
+      this.showModalAccount = false;
     },
     disconnectWallet() {
       this.$store.dispatch('walletAction/disconnectWallet');
