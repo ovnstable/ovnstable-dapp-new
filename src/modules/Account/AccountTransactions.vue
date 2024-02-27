@@ -26,7 +26,7 @@
         class="account__modal-list-trx-container"
       >
         <div
-          v-for="(trx, index) in trxs"
+          v-for="(trx, index) in transactions"
           :key="trx.hash"
           :class="{
             'account__modal-list-trx-transactions': true,
@@ -60,64 +60,6 @@ export default {
   data() {
     return {
       showMore: false,
-      trxs: [
-        {
-          hash: '0xb8f21cba06669ca7c101d9cb2e237c9e1012efa42c179895670c0cec15cb209c',
-          amount: '0.1',
-          date: 1709030221,
-          pending: true,
-          isError: false,
-          chain: 42161,
-        },
-        {
-          hash: '0xb8f21cba06669ca7c101d9cb2e237c9e1012efa42c179895670c0cec15cb209c',
-          amount: '0.1',
-          date: 1709030221,
-          pending: true,
-          isError: false,
-          chain: 42161,
-        },
-        {
-          hash: '0xb8f21cba06669ca7c101d9cb2e237c9e1012efa42c179895670c0cec15cb209c',
-          amount: '0.1',
-          date: 1709030221,
-          pending: true,
-          isError: false,
-          chain: 42161,
-        },
-        {
-          hash: '0xb8f21cba06669ca7c101d9cb2e237c9e1012efa42c179895670c0cec15cb209c',
-          amount: '0.1',
-          date: 1709030221,
-          pending: true,
-          isError: false,
-          chain: 42161,
-        },
-        {
-          hash: '0xb8f21cba06669ca7c101d9cb2e237c9e1012efa42c179895670c0cec15cb209c',
-          amount: '0.1',
-          date: 1709030221,
-          pending: true,
-          isError: false,
-          chain: 42161,
-        },
-        {
-          hash: '0xb8f21cba06669ca7c101d9cb2e237c9e1012efa42c179895670c0cec15cb209c',
-          amount: '0.1',
-          date: 1709030221,
-          pending: true,
-          isError: false,
-          chain: 42161,
-        },
-        {
-          hash: '0xb8f21cba06669ca7c101d9cb2e237c9e1012efa42c179895670c0cec15cb209c',
-          amount: '0.1',
-          date: 1709030221,
-          pending: true,
-          isError: false,
-          chain: 42161,
-        },
-      ],
     };
   },
   computed: {

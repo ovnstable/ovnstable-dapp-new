@@ -93,6 +93,10 @@ export default {
     flex-grow: 0;
     gap: 12px;
     align-self: center;
+    [data-theme="dark"] & {
+      color: var(--color-4);
+      border-color: var(--color-4);
+    }
   }
 }
 .account__modal-profile {
