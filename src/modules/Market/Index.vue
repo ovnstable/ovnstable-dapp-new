@@ -138,12 +138,11 @@ export default {
 
 .market__loader {
   position: absolute;
-  left: 0;
+  left: 10px;
   top: 0;
   margin: auto;
   height: 100%;
   width: 100%;
-  min-height: 474px;
   display: flex;
   align-items: center;
   justify-content: center;

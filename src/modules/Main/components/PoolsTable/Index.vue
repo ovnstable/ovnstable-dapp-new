@@ -401,6 +401,7 @@ export default {
   min-height: 300px;
   width: 100%;
   display: flex;
+  padding-bottom: 50vh;
   justify-content: center;
   align-items: center;
 }

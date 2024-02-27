@@ -149,7 +149,7 @@ export default {
 
 .insurance__loader {
   position: absolute;
-  left: 0;
+  left: 10px;
   top: 0;
   margin: auto;
   height: 100%;
