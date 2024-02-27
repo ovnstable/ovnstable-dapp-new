@@ -4,8 +4,8 @@
       v-for="(token, index) in availableTokens"
       :key="index"
       class="account__modal-token-wrapper"
-      @click="addTokenToWallet(token.name)"
-      @keypress="addTokenToWallet(token.name)"
+      @click="addTokenToWalletMethod(token.contractAddress, token.name, token.decimals, token.image)"
+      @keypress="addTokenToWalletMethod(token.contractAddress, token.name, token.decimals, token.image)"
     >
       <BaseIcon :name="token.iconName" />
       <p>{{token.name}}</p>
@@ -19,6 +19,14 @@ import { appNetworksData } from '@/utils/const.ts';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { mapActions } from 'vuex';
 import { chainContractsMap } from '@/utils/contractsMap.ts';
+import UsdPlusImage from "@/assets/icons/account/usdPlus.json";
+import DaiPlusImage from "@/assets/icons/account/daiPlus.json";
+import UsdtPlusImage from "@/assets/icons/account/usdtPlus.json";
+import EthPlusImage from "@/assets/icons/account/ethPlus.json";
+import WrappedUsdPlusImage from "@/assets/icons/account/wUsdPlus.json";
+import OvnImage from "@/assets/icons/account/ovn.json";
+
+
 
 export default {
   name: 'AccountModalTokens',
@@ -28,14 +36,14 @@ export default {
   data() {
     return {
       tokenDisplayInfo: {
-        usdPlus: { name: 'USD+', iconName: 'USD+_market' },
-        usdcPlus: { name: 'USDC+', iconName: 'USD+_market' }, // TODO change icon
-        wUsdPlus: { name: 'WUSD+', iconName: 'USD+_market' }, // TODO change icon
-        ovn: { name: 'OVN', iconName: 'USD+_market' },
-        daiPlus: { name: 'DAI+', iconName: 'DAI+_market' },
-        usdtPlus: { name: 'USDT+', iconName: 'USDT_market' },
-        ethPlus: { name: 'ETH+', iconName: 'DashboardETH+Tokens' },
-        wEthPlus: { name: 'WETH+', iconName: 'DashboardETH+Tokens' }, // TODO change icon
+        usdPlus: { name: 'USD+', iconName: 'USD+_market', image: UsdPlusImage.image,decimals: 6},
+        usdcPlus: { name: 'USDC+', iconName: 'USDC+_Account',image: UsdPlusImage.image,decimals: 6  },
+        wUsdPlus: { name: 'WUSD+', iconName: 'wUsdPlus',image: WrappedUsdPlusImage.image,decimals: 6 },
+        ovn: { name: 'OVN', iconName: 'OVN_Account',image: OvnImage.image,decimals: 18  },
+        daiPlus: { name: 'DAI+', iconName: 'DAI+_market',image: DaiPlusImage.image,decimals: 6 },
+        usdtPlus: { name: 'USDT+', iconName: 'USDT_market',image: UsdtPlusImage.image,decimals: 6 },
+        ethPlus: { name: 'ETH+', iconName: 'DashboardETH+Tokens',image: EthPlusImage.image,decimals: 18 },
+        wEthPlus: { name: 'WETH+', iconName: 'wETH+_Account',image: EthPlusImage.image,decimals: 18 },
       },
       networksData: appNetworksData,
     };
@@ -97,9 +105,8 @@ export default {
 
   methods: {
     ...mapActions('network', ['addTokenToWallet']),
-    async addTokenToWallet(tokenName: any) {
-      console.log('add token to wallet method called');
-      this.addTokenToWallet(tokenName.toLowerCase());
+    async addTokenToWalletMethod(address: String, symbol: String, decimals: Number, image: any) {
+      this.addTokenToWallet(address, symbol, decimals, image);
     },
     saveNetworkToLocalStore(chain:string) {
       this.$store.dispatch('network/changeAccountModalNetwork', chain.toLowerCase());
