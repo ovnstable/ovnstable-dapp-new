@@ -3,12 +3,12 @@
     <div
       v-for="chain in availableChains"
       :key="chain"
-      @click="saveNetworkToLocalStore(chain)"
-      @keydown.enter="saveNetworkToLocalStore(chain)"
+      @click="setWalletNetwork(chain.toLowerCase())"
+      @keydown.enter="setWalletNetwork(chain.toLowerCase())"
       :class="{ selected: (chain as any).toLowerCase() === networkName }"
     >
       <BaseIcon
-        :name="getIconName(chain)"
+        :name="getIconName(chain.toLowerCase())"
         class="account-modal-chains__icon"
       />
     </div>
@@ -18,6 +18,7 @@
 <script lang="ts">
 import { appNetworksData } from '@/utils/const.ts';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import { mapActions, mapGetters } from 'vuex';
 import { chainContractsMap } from '@/utils/contractsMap.ts';
 
 export default {
@@ -31,9 +32,7 @@ export default {
     };
   },
   computed: {
-    networkName() {
-      return this.$store.state.network.accountModalNetwork;
-    },
+    ...mapGetters('network', ['networkName']),
     availableChains() {
       const availableNetworks = Object.entries(chainContractsMap)
         .reduce((acc: string[], [network, contracts]: [string, any]) => {
@@ -48,11 +47,9 @@ export default {
   },
 
   methods: {
-    saveNetworkToLocalStore(chain:string) {
-      this.$store.dispatch('network/changeAccountModalNetwork', chain.toLowerCase());
-    },
+    ...mapActions('network', ['setWalletNetwork']),
     getIconName(chain:string) {
-      const selectedChain = this.$store.state.network.accountModalNetwork;
+      const selectedChain = this.networkName;
       const formattedChain = chain.charAt(0).toUpperCase() + chain.slice(1).toLowerCase();
 
       if (chain.toLowerCase() !== selectedChain.toLowerCase()) {

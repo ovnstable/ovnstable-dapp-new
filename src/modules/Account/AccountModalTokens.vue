@@ -13,20 +13,19 @@
   </div>
 </template>
 
-
 <script lang="ts">
 import { appNetworksData } from '@/utils/const.ts';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import { chainContractsMap } from '@/utils/contractsMap.ts';
-import UsdPlusImage from "@/assets/icons/account/usdPlus.json";
-import DaiPlusImage from "@/assets/icons/account/daiPlus.json";
-import UsdtPlusImage from "@/assets/icons/account/usdtPlus.json";
-import EthPlusImage from "@/assets/icons/account/ethPlus.json";
-import WrappedUsdPlusImage from "@/assets/icons/account/wUsdPlus.json";
-import OvnImage from "@/assets/icons/account/ovn.json";
-
-
+import UsdPlusImage from '@/assets/icons/account/usdPlus.json';
+import DaiPlusImage from '@/assets/icons/account/daiPlus.json';
+import UsdtPlusImage from '@/assets/icons/account/usdtPlus.json';
+import EthPlusImage from '@/assets/icons/account/ethPlus.json';
+import wEthPlus from '@/assets/icons/account/wEthPlus.json';
+import WrappedUsdPlusImage from '@/assets/icons/account/wUsdPlus.json';
+import UsdcPlus from '@/assets/icons/account/UsdcPlus.json';
+import OvnImage from '@/assets/icons/account/ovn.json';
 
 export default {
   name: 'AccountModalTokens',
@@ -36,22 +35,36 @@ export default {
   data() {
     return {
       tokenDisplayInfo: {
-        usdPlus: { name: 'USD+', iconName: 'USD+_market', image: UsdPlusImage.image,decimals: 6},
-        usdcPlus: { name: 'USDC+', iconName: 'USDC+_Account',image: UsdPlusImage.image,decimals: 6  },
-        wUsdPlus: { name: 'WUSD+', iconName: 'wUsdPlus',image: WrappedUsdPlusImage.image,decimals: 6 },
-        ovn: { name: 'OVN', iconName: 'OVN_Account',image: OvnImage.image,decimals: 18  },
-        daiPlus: { name: 'DAI+', iconName: 'DAI+_market',image: DaiPlusImage.image,decimals: 6 },
-        usdtPlus: { name: 'USDT+', iconName: 'USDT_market',image: UsdtPlusImage.image,decimals: 6 },
-        ethPlus: { name: 'ETH+', iconName: 'DashboardETH+Tokens',image: EthPlusImage.image,decimals: 18 },
-        wEthPlus: { name: 'WETH+', iconName: 'wETH+_Account',image: EthPlusImage.image,decimals: 18 },
+        usdPlus: {
+          name: 'USD+', iconName: 'USD+_market', image: UsdPlusImage.image, decimals: 6,
+        },
+        usdcPlus: {
+          name: 'USDC+', iconName: 'USDC+_Account', image: UsdcPlus.image, decimals: 6,
+        },
+        wUsdPlus: {
+          name: 'WUSD+', iconName: 'wUsdPlus', image: WrappedUsdPlusImage.image, decimals: 6,
+        },
+        ovn: {
+          name: 'OVN', iconName: 'OVN_Account', image: OvnImage.image, decimals: 18,
+        },
+        daiPlus: {
+          name: 'DAI+', iconName: 'DAI+_market', image: DaiPlusImage.image, decimals: 6,
+        },
+        usdtPlus: {
+          name: 'USDT+', iconName: 'USDT_market', image: UsdtPlusImage.image, decimals: 6,
+        },
+        ethPlus: {
+          name: 'ETH+', iconName: 'DashboardETH+Tokens', image: EthPlusImage.image, decimals: 18,
+        },
+        wEthPlus: {
+          name: 'WETH+', iconName: 'wETH+_Account', image: wEthPlus.image, decimals: 18,
+        },
       },
       networksData: appNetworksData,
     };
   },
   computed: {
-    networkName() {
-      return this.$store.state.network.accountModalNetwork;
-    },
+    ...mapGetters('network', ['networkName']),
     availableTokens(): any {
       const currentChainTokens = chainContractsMap[this
         .networkName.toLowerCase() as keyof typeof chainContractsMap];
@@ -90,36 +103,14 @@ export default {
         })
         .filter((token) => token && token.name);
     },
-    availableChains() {
-      const availableNetworks = Object.entries(chainContractsMap)
-        .reduce((acc: string[], [network, contracts]: [string, any]) => {
-          if (contracts.usdPlus) {
-            acc.push(network.charAt(0).toUpperCase() + network.slice(1));
-          }
-          return acc;
-        }, []);
-
-      return availableNetworks;
-    },
   },
 
   methods: {
     ...mapActions('network', ['addTokenToWallet']),
-    async addTokenToWalletMethod(address: String, symbol: String, decimals: Number, image: any) {
-      this.addTokenToWallet(address, symbol, decimals, image);
-    },
-    saveNetworkToLocalStore(chain:string) {
-      this.$store.dispatch('network/changeAccountModalNetwork', chain.toLowerCase());
-    },
-    getIconName(chain:string) {
-      const selectedChain = this.$store.state.network.accountModalNetwork;
-      const formattedChain = chain.charAt(0).toUpperCase() + chain.slice(1).toLowerCase();
-
-      if (chain.toLowerCase() !== selectedChain.toLowerCase()) {
-        return `Icon${formattedChain}Off`;
-      }
-
-      return `Icon${formattedChain}On`;
+    addTokenToWalletMethod(address: any, symbol: any, decimals: any, image: any) {
+      this.addTokenToWallet({
+        address, symbol, decimals, image,
+      });
     },
 
   },
@@ -131,7 +122,7 @@ export default {
 .account__modal-token-add {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  gap: 24px;
 }
 
 .account__modal-token-wrapper {

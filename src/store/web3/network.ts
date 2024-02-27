@@ -520,12 +520,14 @@ const actions = {
 
   async addTokenToWallet({
     commit, dispatch, getters, rootState,
-  }: any, address: String, symbol: String, decimals: Number, image: any) {
+  }: any, {
+    address, symbol, decimals, image,
+  }: any) {
     const option = {
-      address: address,
-      symbol: symbol,
-      decimals: decimals,
-      image: image,
+      address,
+      symbol,
+      decimals,
+      image,
     };
 
     await rootState.web3.provider
