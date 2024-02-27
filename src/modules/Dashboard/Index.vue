@@ -189,7 +189,7 @@ export default {
   background: var(--color-4);
   box-shadow: 0px 1px 0px 0px var(--color-1);
   border-top: none;
-  width: calc(100% - 40px);
+  width: 100%;
   [data-theme="dark"] & {
     background: var(--color-6);
     border-color: var(--color-2);
@@ -234,13 +234,13 @@ export default {
   position: relative;
   display: flex;
   flex-direction: column;
-  width: calc(100% - 40px);
+  width: 100%;
   min-height: 1500px;
   z-index: 1;
 }
 
 .dashboard__payouts {
-  width: calc(100% - 40px);
+  width: 100%;
   background: var(--color-8);
   z-index: -1;
   margin-top: -20px;

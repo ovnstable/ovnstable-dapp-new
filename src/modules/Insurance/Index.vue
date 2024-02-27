@@ -97,7 +97,7 @@ export default {
   padding-left: 25px;
   padding-right: 25px;
   padding-bottom: 20px;
-  width: calc(100% - 40px);
+  width: 100%;
   [data-theme="dark"] & {
     background: var(--color-6);
     border-color: var(--color-2);
@@ -123,13 +123,13 @@ export default {
   position: relative;
   display: flex;
   flex-direction: column;
-  width: calc(100% - 40px);
+  width: 100%;
   min-height: 1500px;
   z-index: 1;
 }
 
 .insurance__payouts {
-  width: calc(100% - 40px);
+  width: 100%;
   background: var(--color-8);
   z-index: -1;
   margin-top: -10px;
