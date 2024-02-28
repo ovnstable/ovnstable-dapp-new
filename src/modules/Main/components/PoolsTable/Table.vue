@@ -390,7 +390,7 @@ export default {
   font-size: 14px;
   border-radius: 30px;
   [data-theme="dark"] & {
-    background-color: var(--color-6);
+    background-color: var(--color-19);
   }
 }
 
@@ -426,7 +426,7 @@ export default {
   margin-top: 20px;
   padding: 0 20px;
   [data-theme="dark"] & {
-    background-color: var(--color-6);
+    background-color: none;
     color: var(--color-18);
   }
 }

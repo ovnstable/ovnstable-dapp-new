@@ -1750,6 +1750,7 @@ export default {
   [data-theme="dark"] & {
     background-color: var(--color-17);
     border: 2px solid var(--color-2);
+    border-top: none;
   }
 }
 .swap-form__body-block {
@@ -1805,6 +1806,8 @@ export default {
 .swap-form__btns {
   margin-top: 20px;
   button {
+    box-shadow: none;
+    border: none;
     [data-theme="dark"] & {
       background-color: var(--color-7);
       color: var(--color-18);

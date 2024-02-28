@@ -271,6 +271,9 @@ export default {
   flex-direction: row;
   align-items: center;
   margin: 50px 40px 50px auto;
+  [data-theme="dark"] & {
+    background-color: none;
+  }
 }
 
 .slider__info {

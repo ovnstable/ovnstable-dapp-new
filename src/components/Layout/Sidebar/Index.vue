@@ -242,7 +242,7 @@ export default {
 .sidebar__icon-social {
   fill: var(--color-2);
   [data-theme="dark"] & {
-    fill: var(--color-4);
+    fill: var(--color-18);
   }
 }
 
