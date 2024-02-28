@@ -322,7 +322,7 @@ const actions = {
   // },
 
   async loadBalances({
-    commit, state, getters, rootState, dispatch,
+    commit, state, getters, rootState
   }: any) {
     commit('changeState', { field: 'isBalancesLoading', val: true });
 
@@ -346,11 +346,24 @@ const actions = {
 
       const balancesData = await Promise.all(requests);
 
+      const handleNativeBal = async () => {
+        if (new BigNumber(rootState.accountData.accountNativeBalance).gt(0)) {
+          return rootState.accountData.accountNativeBalance;
+        }
+        if (new BigNumber(rootState.accountData.accountNativeBalance).eq(0)) {
+          return (await rootState.web3.evmProvider
+            .getBalance(rootState.accountData.account))
+            .toString();
+        }
+
+        return '0';
+      };
+
       for (let i = 0; i < tokens.length; i++) {
         const token = tokens[i];
         let balance = balancesData[i] ? balancesData[i].toString() : '0';
 
-        if (token.address === ZERO_ADDRESS) balance = rootState.accountData.accountNativeBalance;
+        if (token.address === ZERO_ADDRESS) balance = await handleNativeBal();
 
         const balanceFormatted = new BigNumber(balance).div(10 ** token.decimals);
         const fixedBy = balanceFormatted.gt(0) ? fixedByPrice(balanceFormatted.toNumber()) : 2;
@@ -453,13 +466,13 @@ const actions = {
       });
   },
   clearInputData({
-    commit, state, dispatch, rootState,
+    commit
   }: any) {
     commit('changeState', { field: 'tokens', val: [] });
   },
 
   quoteRequest({
-    commit, state, dispatch, rootState,
+    commit
   }: any, requestData: any) {
     return odosApiService
       .quoteRequest(requestData)

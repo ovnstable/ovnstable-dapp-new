@@ -11,11 +11,60 @@ const SECONDTOKEN_SECOND_DEFAULT_SYMBOL = 'DAI+';
 const SECONDTOKEN_DEFAULT_SYMBOL = 'USD+';
 
 export const WHITE_LIST_ODOS = {
+  59144: [],
   56: [
     'Overnight Exchange',
     'PancakeSwap V3',
+    'NomiSwap Stable',
     'Thena Fusion',
     'Thena Stable',
+    'Wrapped BNB',
+  ],
+  42161: [
+    'Overnight Exchange',
+    'Ramses V2',
+    'Camelot Stable',
+    'Camelot V3',
+    'Balancer V2 Stable',
+    'PancakeSwap V3',
+    'Uniswap V3',
+    'Trader Joe V2.1',
+    'Swaap V2',
+    'Lighter V2',
+    'Curve Stable NG',
+    'Wrapped Ether',
+  ],
+  8453: [
+    'Overnight Exchange',
+    'Aerodrome Volatile',
+    'Aerodrome Stable',
+    'Uniswap V3',
+    'SynthSwap',
+    'Maverick',
+    'Wrapped Ether',
+  ],
+  10: [
+    'Overnight Exchange',
+    'Velodrome V2 Stable',
+    'Uniswap V3',
+    'Curve Registry',
+    'Velodrome V2 Volatile',
+    'Solidly V3',
+    'Wrapped Ether',
+  ],
+  137: [
+    'Overnight Exchange',
+    'Aave V2',
+    'Curve Registry',
+    'Uniswap V3',
+    'QuickSwap',
+    'Dodo V2',
+    'Wrapped Matic',
+  ],
+  324: [
+    'Overnight Exchange',
+    'SyncSwap Stable',
+    'PancakeSwap V3',
   ],
 };
 
@@ -292,7 +341,7 @@ export const updateTokenValue = (
   const { selectedToken } = token;
   if (selectedToken) {
     token.contractValue = new BigNumber(token.value)
-      .times(10 ** token.selectedToken.decimals).toString();
+      .times(10 ** token.selectedToken.decimals).toFixed();
     token.usdValue = token.value * selectedToken.price;
 
     if (

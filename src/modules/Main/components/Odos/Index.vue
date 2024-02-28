@@ -1149,7 +1149,7 @@ export default {
           this.isSumulateSwapLoading = false;
           this.isSumulateIntervalStarted = false;
 
-          console.log('EMIT');
+          console.log(data, 'EMIT');
           this.$emit('update-path-view', {
             path: data.pathViz,
             input: this.selectedInputTokens,
@@ -1203,7 +1203,7 @@ export default {
         const token: any = selectedOutputTokensMap[tokenAddress.toLowerCase()];
         if (token) {
           const { selectedToken } = token;
-          token.sum = new BigNumber(tokenAmount).div(10 ** selectedToken.decimals).toString();
+          token.sum = new BigNumber(tokenAmount).div(10 ** selectedToken.decimals).toFixed(0);
         }
 
         this.outputTokens[i] = token;
@@ -1214,7 +1214,7 @@ export default {
       if (networkId === 324) {
         return ['Hashflow', 'Wombat', 'Maverick'];
       }
-      return ['Hashflow', 'Wombat'];
+      return ['Hashflow', 'Wombat', 'WOOFi', 'WOOFi V2'];
     },
 
     async disapproveToken(token: any) {

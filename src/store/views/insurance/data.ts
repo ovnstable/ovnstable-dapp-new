@@ -3,6 +3,7 @@
 import dayjs from 'dayjs';
 import { axios } from '@/utils/httpUtils.ts';
 import duration from 'dayjs/plugin/duration';
+import BigNumber from 'bignumber.js';
 
 dayjs.extend(duration);
 
@@ -264,7 +265,13 @@ const actions = {
             const withdrawPeriod = await web3.contracts.insurance[
               `${rootState.network.networkName}_exchanger`
             ].withdrawPeriod();
-            const withdrawDate = new Date(date.getTime() + withdrawPeriod * 1000);
+            const withdrawDate = new Date(
+              new BigNumber(
+                date.getTime(),
+              ).plus(
+                new BigNumber(withdrawPeriod).times(1000),
+              ).toNumber(),
+            );
 
             if (withdrawDate.getTime() > currentDate.getTime()) {
               const hours = dayjs

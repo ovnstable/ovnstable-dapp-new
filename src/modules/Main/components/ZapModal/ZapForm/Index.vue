@@ -338,6 +338,7 @@ import {
   getNewOutputToken,
   getNewInputToken,
   getTokenBySymbol,
+  WHITE_LIST_ODOS,
 } from '@/store/helpers/index.ts';
 import {
   getProportion,
@@ -1151,6 +1152,7 @@ export default {
         slippageLimitPercent: this.getSlippagePercent(),
       };
 
+      const whiteList = WHITE_LIST_ODOS[request.chainId as keyof typeof WHITE_LIST_ODOS];
       const requestData = {
         chainId: request.chainId,
         inputTokens: request.inputTokens,
@@ -1161,7 +1163,7 @@ export default {
         ),
         slippageLimitPercent: request.slippageLimitPercent,
         sourceBlacklist: this.getSourceLiquidityBlackList(),
-        sourceWhitelist: [],
+        sourceWhitelist: whiteList ?? [],
         simulate: false,
         pathViz: false,
         disableRFQs: false,
@@ -1208,6 +1210,7 @@ export default {
     },
 
     async getOdosRequest(request: any) {
+      const whiteList = WHITE_LIST_ODOS[request.chainId as keyof typeof WHITE_LIST_ODOS];
       const swapParams = {
         chainId: request.chainId,
         inputTokens: request.inputTokens,
@@ -1218,7 +1221,7 @@ export default {
         ),
         slippageLimitPercent: request.slippageLimitPercent,
         sourceBlacklist: this.getSourceLiquidityBlackList(),
-        sourceWhitelist: [],
+        sourceWhitelist: whiteList ?? [],
         simulate: false,
         pathViz: false,
         disableRFQs: false,
@@ -1757,6 +1760,7 @@ export default {
         return;
       }
 
+      const whiteList = WHITE_LIST_ODOS[this.networkId as keyof typeof WHITE_LIST_ODOS];
       const requestData = {
         chainId: this.networkId,
         // chainId: 1,
@@ -1766,7 +1770,7 @@ export default {
         userAddr: ethers.getAddress(this.account.toLowerCase()),
         slippageLimitPercent: this.getSlippagePercent(),
         sourceBlacklist: ['Hashflow', 'Wombat'],
-        sourceWhitelist: [],
+        sourceWhitelist: whiteList ?? [],
         simulate: true,
         pathViz: true,
       };

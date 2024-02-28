@@ -97,10 +97,6 @@ export const USER_BALANCES_SCHEME = {
       symbol: 'USDC',
       contractName: 'usdcNative',
     },
-    {
-      symbol: 'OVNINS',
-      contractName: '',
-    },
   ],
   56: [
     ...chains_56_59144_42161,
