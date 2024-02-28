@@ -54,6 +54,10 @@ export default {
 <style lang="scss" scoped>
 .modal-content {
   padding: 50px 70px 30px 70px;
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
+    border-color: var(--color-4);
+  }
 
   h1 {
     font-size: 24px;
@@ -61,6 +65,9 @@ export default {
     color: var(--color-1);
     margin-bottom: 20px;
     text-align: center;
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
   }
 }
 
@@ -77,6 +84,9 @@ export default {
   color: var(--color-2);
   margin-bottom: 40px;
   text-align: center;
+  [data-theme="dark"] & {
+    color: var(--color-18);
+  }
 }
 
 .divider {

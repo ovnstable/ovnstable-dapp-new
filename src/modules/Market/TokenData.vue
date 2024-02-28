@@ -7,7 +7,7 @@
     <div class="performance__token-data-link-title">
       <p class="performance__token-data-title performance__token-data-title--token">{{ tokenData.tokenName }}</p>
       <a
-        :href="`${networkScan}address/` + generateHref(tokenData.tokenName, networkName)"
+        :href="`${networkScan}${networkName === 'zksync' ? 'address' : 'token'}/` + generateHref(tokenData.tokenName, networkName)"
         target="_blank"
         rel="noopener noreferrer"
         aria-label="token-address"

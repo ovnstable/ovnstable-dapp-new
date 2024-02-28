@@ -43,7 +43,7 @@
       <div
         v-if="!zksyncFeeHistory"
         justify="center"
-        class="mb-5"
+        class="modal-content__close"
       >
         <ButtonComponent
           @on-click="goToTransactionHistory"
@@ -285,6 +285,10 @@ export default {
   justify-content: center;
   align-items: center;
   padding: 50px 70px 30px 70px;
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
+    border-color: var(--color-4);
+  }
 
   h1 {
     font-size: 24px;
@@ -315,6 +319,9 @@ export default {
     font-size: 16px;
     font-weight: 600;
     margin-bottom: 10px;
+    [data-theme="dark"] & {
+      color: var(--color-18);
+    }
   }
 
   &:first-child {
@@ -326,6 +333,14 @@ export default {
   &:last-child {
     span {
       color: var(--color-12);
+    }
+  }
+}
+
+.modal-content__close {
+  button {
+    [data-theme="dark"] & {
+      box-shadow: none;
     }
   }
 }

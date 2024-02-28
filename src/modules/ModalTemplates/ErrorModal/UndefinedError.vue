@@ -84,6 +84,11 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  h1 {
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
+  }
 }
 .divider {
   height: 1px;
@@ -116,6 +121,17 @@ h1 {
 .error-content__submit {
   button {
     margin: 0 auto;
+    [data-theme="dark"] & {
+      color: var(--color-4);
+      background-color: var(--color-17);
+    }
+  }
+
+  button:hover {
+    [data-theme="dark"] & {
+      color: var(--color-17);
+      background-color: var(--color-4);
+    }
   }
 
   p {
@@ -123,6 +139,9 @@ h1 {
     font-weight: 600;
     color: var(--color-1);
     margin-bottom: 40px;
+    [data-theme="dark"] & {
+      color: var(--color-18);
+    }
   }
 }
 </style>
