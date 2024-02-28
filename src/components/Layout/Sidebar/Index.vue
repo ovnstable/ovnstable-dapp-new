@@ -5,6 +5,7 @@
       <router-link
         to="/"
         class="sidebar__text-top"
+        active-class="active-link"
       >Homepage</router-link>
 
       <div class="sidebar__divider-top" />
@@ -35,6 +36,7 @@
         :key="index"
         :to="link.to"
         class="sidebar__text-top"
+        active-class="active-link"
       >
         {{ link.name }}
       </router-link>

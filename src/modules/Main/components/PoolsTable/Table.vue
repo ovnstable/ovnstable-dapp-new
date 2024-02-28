@@ -209,7 +209,7 @@
               btnStyles="faded"
               @click="openZapIn(pool, 'featured')"
             >
-              ZAPIN
+              ZAP IN
             </ButtonComponent>
           <!--          Hide on mobile          -->
           <!-- <PoolTableDetails
@@ -405,11 +405,14 @@ export default {
 }
 .pools-table__row {
   display: grid;
-  grid-template-columns: 0.5fr 2fr 2fr 1fr 1fr 1fr;
+  grid-template-columns: 0.5fr 2fr 2fr 1fr 1.35fr 0.65fr;
   justify-content: space-between;
   width: 100%;
   padding: 15px 0;
   border-bottom: 1px solid var(--color-17);
+  button {
+    border-radius: 30px;
+  }
   [data-theme="dark"] & {
     border-bottom-color: var(--color-7);
   }

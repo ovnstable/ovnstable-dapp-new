@@ -19,6 +19,7 @@
           <router-link
             to="/dashboard"
             class="app-header__dashboard"
+            active-class="active-link"
           >
             <p>
               My dashboard
@@ -273,6 +274,8 @@ export default {
   margin-left: 36px;
   font-size: 17px;
   font-weight: 600;
+}
+.active-link {
   text-decoration: underline;
 }
 .app-header__docs {
