@@ -209,7 +209,7 @@
               btnStyles="faded"
               @click="openZapIn(pool, 'featured')"
             >
-              ZAPIN
+              ZAP IN
             </ButtonComponent>
           <!--          Hide on mobile          -->
           <!-- <PoolTableDetails
@@ -390,7 +390,7 @@ export default {
   font-size: 14px;
   border-radius: 30px;
   [data-theme="dark"] & {
-    background-color: var(--color-6);
+    background-color: var(--color-19);
   }
 }
 
@@ -405,11 +405,14 @@ export default {
 }
 .pools-table__row {
   display: grid;
-  grid-template-columns: 0.5fr 2fr 2fr 1fr 1fr 1fr;
+  grid-template-columns: 0.5fr 2fr 2fr 1fr 1.35fr 0.65fr;
   justify-content: space-between;
   width: 100%;
   padding: 15px 0;
   border-bottom: 1px solid var(--color-17);
+  button {
+    border-radius: 30px;
+  }
   [data-theme="dark"] & {
     border-bottom-color: var(--color-7);
   }
@@ -423,7 +426,7 @@ export default {
   margin-top: 20px;
   padding: 0 20px;
   [data-theme="dark"] & {
-    background-color: var(--color-6);
+    background-color: none;
     color: var(--color-18);
   }
 }

@@ -92,7 +92,7 @@ export default {
   padding-left: 25px;
   padding-right: 25px;
   padding-bottom: 20px;
-  width: calc(100% - 40px);
+  width: 100%;
   [data-theme="dark"] & {
     background: var(--color-6);
     border-color: var(--color-2);
@@ -119,7 +119,7 @@ export default {
 }
 
 .market__payouts {
-  width: calc(100% - 40px);
+  width: 100%;
   background: var(--color-8);
   z-index: -1;
   margin-top: -10px;
@@ -138,12 +138,11 @@ export default {
 
 .market__loader {
   position: absolute;
-  left: 0;
+  left: 10px;
   top: 0;
   margin: auto;
   height: 100%;
   width: 100%;
-  min-height: 474px;
   display: flex;
   align-items: center;
   justify-content: center;

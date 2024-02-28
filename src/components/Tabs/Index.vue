@@ -35,6 +35,7 @@
 
 <script lang="ts">
 import uniqueId from 'lodash/uniqueId';
+import { useEventBus } from '@vueuse/core';
 import type { PropType } from 'vue';
 
 interface ITab {
@@ -90,6 +91,10 @@ export default {
   },
 
   mounted() {
+    const onTabChange = useEventBus<number>('change-tab-request');
+    onTabChange.on((tabIndex) => {
+      this.activeItem = tabIndex;
+    });
     if (this.tabs.length && !this.activeTab) {
       this.activeItem = this.tabs[0].id;
       this.onTabClick(this.activeItem);

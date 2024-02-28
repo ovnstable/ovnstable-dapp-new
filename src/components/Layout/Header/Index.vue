@@ -19,6 +19,7 @@
           <router-link
             to="/dashboard"
             class="app-header__dashboard"
+            active-class="active-link"
           >
             <p>
               My dashboard
@@ -258,13 +259,15 @@ export default {
 
 <style lang="scss" scoped>
 .app-header {
-  position: absolute;
+  position: fixed;
+  z-index: 999;
   top: 0;
   left: 0;
   right: 0;
   width: 100%;
   padding: 12px 0;
   background-color: #fff;
+  border-bottom: 1px solid var(--color-1);
   [data-theme="dark"] & {
     background-color: var(--color-17);
     border-bottom: 1px solid var(--color-2);
@@ -283,6 +286,8 @@ export default {
   margin-left: 36px;
   font-size: 17px;
   font-weight: 600;
+}
+.active-link {
   text-decoration: underline;
 }
 .app-header__docs {

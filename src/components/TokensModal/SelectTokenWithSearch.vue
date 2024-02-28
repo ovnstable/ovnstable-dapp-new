@@ -17,6 +17,9 @@
         <span>
           {{token.symbol}}
         </span>
+        <BaseIcon
+          name="SearchClose"
+        />
       </div>
     </div>
 
@@ -28,16 +31,6 @@
           full-width
           @input="searchTokens"
         />
-
-        <div
-          @click="clearSearchQuery"
-          @keydown="clearSearchQuery"
-          class="search-tokens__clear"
-        >
-          <BaseIcon
-            name="SearchClose"
-          />
-        </div>
       </div>
       <div class="search-tokens__list">
         <div
@@ -101,7 +94,7 @@ export default {
   },
   data() {
     return {
-      maxTokenSelectCount: 6,
+      maxTokenSelectCount: 3,
       searchQuery: '',
     };
   },
@@ -170,9 +163,6 @@ export default {
       }
 
       this.$emit('remove-token', token);
-    },
-    clearSearchQuery() {
-      this.searchQuery = '';
     },
   },
 };
@@ -286,8 +276,8 @@ export default {
   display: flex;
   align-items: center;
   padding: 5px 8px;
-  border-radius: 12px;
-  background-color: var(--color-5);
+  border-radius: 30px;
+  border: 2px solid var(--color-6);
 
   [data-theme="dark"] & {
     background-color: var(--color-7);
@@ -303,6 +293,11 @@ export default {
     font-size: 16px;
     font-weight: 500;
     margin-left: 8px;
+    margin-right: 6px;
   }
+}
+
+.selected-tokens__item:hover {
+  cursor: pointer;
 }
 </style>

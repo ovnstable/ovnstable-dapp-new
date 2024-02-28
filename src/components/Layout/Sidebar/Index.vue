@@ -5,6 +5,7 @@
       <router-link
         to="/"
         class="sidebar__text-top"
+        active-class="active-link"
       >Homepage</router-link>
 
       <div class="sidebar__divider-top" />
@@ -35,6 +36,7 @@
         :key="index"
         :to="link.to"
         class="sidebar__text-top"
+        active-class="active-link"
       >
         {{ link.name }}
       </router-link>
@@ -175,6 +177,8 @@ export default {
 
 <style lang="scss" scoped>
 .app-sidebar {
+  position: sticky;
+  top: 60px;
   height: calc(100vh - 100px);
 }
 .app-sidebar,
@@ -184,6 +188,7 @@ export default {
   flex-direction: column;
   min-width: 140px;
 }
+
 .sidebar__bottom li {
   margin-top: 10px;
 }
@@ -273,7 +278,7 @@ export default {
 .sidebar__icon-social {
   fill: var(--color-2);
   [data-theme="dark"] & {
-    fill: var(--color-4);
+    fill: var(--color-18);
   }
 }
 
