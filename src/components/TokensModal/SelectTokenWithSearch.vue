@@ -101,7 +101,7 @@ export default {
   },
   data() {
     return {
-      maxTokenSelectCount: 6,
+      maxTokenSelectCount: 3,
       searchQuery: '',
     };
   },

@@ -366,8 +366,8 @@ export default {
     return {
       inputTokens: [] as any[],
       outputTokens: [] as any[],
-      maxInputTokens: 6,
-      maxOutputTokens: 6,
+      maxInputTokens: 3,
+      maxOutputTokens: 3,
 
       // input or output choosing
       selectModalTypeInput: true,
