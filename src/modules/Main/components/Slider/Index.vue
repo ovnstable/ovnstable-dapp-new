@@ -337,9 +337,17 @@ export default {
   justify-content: space-between;
 }
 
+.slider__apy-info {
+  margin-top: 4px;
+  margin-bottom: 20px;
+}
+.slider__payout-info {
+  margin-bottom: 4px;
+}
+
 .slider__tvl-info {
   margin-top: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 
 .slider__apy-numbers,
