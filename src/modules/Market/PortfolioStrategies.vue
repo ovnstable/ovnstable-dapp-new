@@ -650,10 +650,18 @@ export default {
   .performance__portfolio-strategy-token-name {
     max-width: 110px;
     margin-left: 4px;
+    margin-right: 30px;
+  }
+  .performance__portfolio-strategy p:nth-child(2),
+  .performance__portfolio-strategy p:nth-child(3){
+    text-align: left;
   }
 
+  .performance__portfolio-strategies-stables-specs p:nth-child(2) {
+    margin-left: 30px;
+  }
   .performance__portfolio-strategy-progress-bar {
-    width: 40px;
+    display: none;
   }
   .performance__portfolio-strategy-portfolio-percent {
     justify-content: flex-start;
@@ -668,11 +676,11 @@ export default {
 
   .performance__portfolio-total,
   .performance__portfolio-total-circl {
-    grid-template-columns: 0.9fr 3fr 3fr 1fr;
+    grid-template-columns: 0.9fr 1.8fr 1.6fr 0.1fr;
   }
 
   .performance__portfolio-total-circl {
-    grid-template-columns: 0.9fr 3fr 2.2fr 1fr;
+    grid-template-columns: 0.9fr 2.8fr 0.7fr 0.1fr;
   }
   .performance__portfolio-total p:nth-child(2) {
     text-align: right;
@@ -720,6 +728,9 @@ export default {
     font-size: 13px;
   }
 
+  .performance__portfolio-total p:nth-child(3) {
+    margin-left: 8px;
+  }
   .performance__portfolio-total-liquidation-val {
     text-align: left;
   }
@@ -737,6 +748,9 @@ export default {
   }
   .performance__portfolio-total-label--circl {
     margin-right: 12px;
+  }
+  .performance__portfolio-strategies-stables-score {
+    margin-right: 40px;
   }
 }
 </style>
