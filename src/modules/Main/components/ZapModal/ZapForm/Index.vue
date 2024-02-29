@@ -1553,6 +1553,7 @@ export default {
 
       this.clearZapData();
       this.loadBalances();
+      this.$emit('close-modal');
     },
     async initZapInTransaction(
       responseData: any,
@@ -1763,7 +1764,6 @@ export default {
       const whiteList = WHITE_LIST_ODOS[this.networkId as keyof typeof WHITE_LIST_ODOS];
       const requestData = {
         chainId: this.networkId,
-        // chainId: 1,
         inputTokens: input,
         outputTokens: output,
         gasPrice: actualGas,

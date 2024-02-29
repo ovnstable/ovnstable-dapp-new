@@ -97,6 +97,7 @@
           <SelectComponent
             :value="selectModel"
             :list="selectListDemo"
+            class="notranslate"
             value-field="title"
             id-field="id"
             @change="triggerTranslate"
@@ -155,7 +156,12 @@ export default {
     };
   },
   mounted() {
-    console.log(localStorage.getItem('ovn-lang'));
+    const currLang = localStorage.getItem('ovn-lang');
+    if (!currLang) return;
+
+    const item = this.selectListDemo.map((_) => _.code).indexOf(currLang);
+
+    if (item !== -1) this.selectModel = this.selectListDemo[item];
   },
   methods: {
     toggleTheme() {
@@ -166,9 +172,9 @@ export default {
       // if (el) el.value() = theLang;
       const index = Number(val) - 1;
       const langId = this.selectListDemo[index].code;
-      localStorage.setItem('ovn-lang', val);
-      this.$router.push(`/#googtrans(en|${langId})`);
-      console.log('2');
+      localStorage.setItem('ovn-lang', langId);
+      this.$router.push(`#googtrans(en|${langId})`);
+      this.selectModel = this.selectListDemo[index];
       delay(() => window.location.reload(), 500);
     },
   },
@@ -178,7 +184,7 @@ export default {
 <style lang="scss" scoped>
 .app-sidebar {
   position: sticky;
-  top: 60px;
+  top: 0;
   height: calc(100vh - 100px);
 }
 .app-sidebar,

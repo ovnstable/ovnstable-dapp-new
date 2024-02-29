@@ -82,6 +82,8 @@ const actions = {
   }: any, refreshParams: any) {
     let appApiUrl;
 
+    if (!refreshParams.chain.chainId) return;
+
     switch (refreshParams.chain.chainId) {
       case 137:
         appApiUrl = rootState.network.polygonApi;
@@ -126,6 +128,8 @@ const actions = {
     commit, dispatch, getters, rootState,
   }: any, refreshParams: any) {
     let appApiUrl;
+
+    if (!refreshParams.chain.chainId) return;
 
     switch (refreshParams.chain.chainId) {
       case 137:

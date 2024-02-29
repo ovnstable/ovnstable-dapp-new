@@ -27,8 +27,7 @@ export default {
   },
 };
 </script>
-
-<style scoped>
+<style lang="scss" scoped>
 .app-wrapper {
   height: calc(100vh - 100px);
 }
@@ -36,9 +35,16 @@ export default {
   width: 100%;
   max-width: 1360px;
   padding: 0 20px;
-  gap: 80px;
   margin: 0 auto;
   display: flex;
   justify-content: space-between;
+
+  @media (min-width: 640px) {
+    gap: 40px;
+  }
+
+  @media (min-width: 1024px) {
+    gap: 80px;
+  }
 }
 </style>
