@@ -648,7 +648,7 @@ export default {
   }
 
   .performance__portfolio-strategy-token-name {
-    max-width: 100px;
+    max-width: 110px;
     margin-left: 4px;
   }
 
@@ -668,16 +668,23 @@ export default {
 
   .performance__portfolio-total,
   .performance__portfolio-total-circl {
-    display: grid;
-    grid-template-columns: 0.9fr 1.4fr 1.1fr 1.5fr;
-    text-align: center;
+    grid-template-columns: 0.9fr 3fr 3fr 1fr;
+  }
+
+  .performance__portfolio-total-circl {
+    grid-template-columns: 0.9fr 3fr 2.2fr 1fr;
+  }
+  .performance__portfolio-total p:nth-child(2) {
+    text-align: right;
+    margin-left: 20px;
+  }
+  .performance__portfolio-total p:nth-child(3) {
+    text-align: left;
+    margin-left: 16px;
   }
   .performance__portfolio-strategy-portfolio-percent {
     margin-left: 4px;
   }
-  // .performance__portfolio-strategies-stables-specs p:last-child {
-  //   margin-left: 30px;
-  // }
 
   .performance__portfolio-strategies-stables-specs p:nth-child(2),
   .performance__portfolio-strategies-stables-specs p:nth-child(3)  {
@@ -695,7 +702,7 @@ export default {
 
   .performance__portfolio-strategy p {
     display: flex;
-    flex-direction: row;
+    flex-direction: col;
     align-items: center;
   }
   .performance__portfolio-strategy-token-portfolio-num {
@@ -712,7 +719,6 @@ export default {
   .performance__portfolio-total-circl-number {
     font-size: 13px;
   }
-
 
   .performance__portfolio-total-liquidation-val {
     text-align: left;

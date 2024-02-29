@@ -395,12 +395,10 @@ export default {
     text-align: center;
     max-width: 50px;
   }
-
   .performance__token-data-num,
   .performance__token-data-num--payout-ago {
     font-size: 12px;
   }
-
   .performance__token-data-h {
     display: flex;
     text-align: center;
@@ -423,7 +421,7 @@ export default {
     font-size: 12px;
   }
   .performance__divider--last-divider {
-    margin-right: 0;
+   display: none;
   }
 
 }
