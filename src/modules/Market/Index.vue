@@ -151,4 +151,10 @@ export default {
   padding-bottom: 50vh;
 }
 
+@media (max-width: 576px) {
+  .market {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+}
 </style>

@@ -427,14 +427,38 @@ export default {
 }
 
 @media (max-width: 576px) {
+  .performance__chain-data-name {
+    display: none;
+  }
+  .performance__token-data {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .performance__divider {
+    width: 100%;
+  }
+  .performance__token-data-title--token {
+    margin-left: 20px;
+  }
+  .performance__token-data-title {
+    max-width: none;
+  }
+  .performance__token-data__description {
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+  .performance__token-data-title {
+    margin-top: 10px;
+  }
   .performance__token-data-num {
-    margin-top: 60px;
+    margin-top: 6px;
   }
   .performance__apy-data-chain {
     margin: 0;
   }
   .performance__icon-chain {
-    margin-top: 60px;
+    margin-top: 10px;
   }
   .performance__divider {
     margin-left: 5px;

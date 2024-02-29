@@ -529,5 +529,11 @@ export default {
   .performance__graphic{
       padding: 10px 20px;
   }
+  .performance__graphic-values p:first-child {
+    font-size: 14px;
+  }
+  .performance__graphic-values p:last-child {
+    font-size: 12px;
+  }
 }
 </style>

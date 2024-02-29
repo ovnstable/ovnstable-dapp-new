@@ -327,5 +327,33 @@ export default {
   }
 }
 
+@media (max-width: 576px) {
+  .performance__payouts-date-transaction {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    min-width: 60px;
+    margin-right: 40px;
+  }
+
+  .performance__payouts-transaction p:nth-child(2) {
+    margin-right: 20px;
+  }
+  .performance__payouts-id-link {
+    max-width: 76px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .performance__payouts-titles p:last-child {
+    margin-left: 2px;
+  }
+
+  .performance__payouts-button-show {
+    padding: 2px;
+  }
+
+}
 
 </style>

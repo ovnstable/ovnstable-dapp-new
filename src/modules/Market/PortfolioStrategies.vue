@@ -710,7 +710,6 @@ export default {
 
   .performance__portfolio-strategy p {
     display: flex;
-    flex-direction: col;
     align-items: center;
   }
   .performance__portfolio-strategy-token-portfolio-num {
@@ -753,4 +752,44 @@ export default {
     margin-right: 40px;
   }
 }
+
+@media (max-width: 576px) {
+  .performance__portfolio-strategy-token-name {
+    max-width: 60px;
+    margin-left: 4px;
+    margin-right: 30px;
+    overflow-wrap: break-word;
+    word-break: break-all;
+    display: inline-block;
+  }
+  .performance__portfolio-strategies-stables-score {
+    margin-right: 0;
+  }
+  .performance__portfolio-strategy p:nth-child(3) {
+    margin-left: 4px;
+  }
+
+  .performance__portfolio-strategies-stables-specs p:last-child {
+    text-align: right;
+  }
+
+  .performance__portfolio-strategies-stables-score {
+    margin-right: 10px;
+  }
+  .performance__portfolio-strategy-token-name {
+    margin-right: 20px;
+  }
+
+  .performance__portfolio-total p:nth-child(2),
+  .performance__portfolio-total p:nth-child(3),
+  .performance__portfolio-total-circl p:nth-child(2) {
+    max-width: 66px;
+  }
+
+  .performance__portfolio-total-circl p:nth-child(2) {
+    margin-left: 6px
+  }
+
+}
+
 </style>
