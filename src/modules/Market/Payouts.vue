@@ -302,5 +302,30 @@ export default {
     margin-right: 10px;
   }
 }
+@media (max-width: 768px) {
+  .performance__payouts-titles p {
+    font-size: 14px;
+  }
+  .performance__payouts-transaction p,
+  .performance__payouts-time {
+    font-size: 13px;
+  }
+  .performance__payouts-time {
+    margin-left: 4px;
+  }
+  .performance__payouts-button-show {
+    padding: 5px;
+  }
+  .performance__payouts-titles p:nth-child(2) {
+    margin-left: 50px;
+  }
+  .performance__payouts-transaction p:nth-child(2) {
+    text-align: left;
+  }
+  .performance__payouts-date-transaction {
+    min-width: 136px;
+  }
+}
+
 
 </style>

@@ -77,6 +77,9 @@ export default {
     padding-top: 5px;
     padding-bottom: 7px;
   }
+  .performance__portfolio-token-payout {
+    font-size: 16px;
+  }
 }
 
 </style>

@@ -554,6 +554,7 @@ export default {
   border-radius: 50%;
 }
 
+
 .performance__portfolio-total,
 .performance__portfolio-total-circl {
   display: grid;
@@ -630,6 +631,106 @@ export default {
   }
   .performance__portfolio-total-circl-number {
     margin-left: 5px;
+  }
+}
+
+@media (max-width: 768px) {
+  .performance__portfolio-strategies-stables-specs {
+    padding: 0 10px;
+    p {
+      font-size: 14px;
+    }
+  }
+  .performance__portfolio-strategy {
+    p {
+      font-size: 13px;
+    }
+  }
+
+  .performance__portfolio-strategy-token-name {
+    max-width: 100px;
+    margin-left: 4px;
+  }
+
+  .performance__portfolio-strategy-progress-bar {
+    width: 40px;
+  }
+  .performance__portfolio-strategy-portfolio-percent {
+    justify-content: flex-start;
+  }
+  .performance__portfolio-strategy-token-data {
+    margin-left: 10px;
+  }
+  .performance__portfolio-strategies-stables-specs,
+  .performance__portfolio-strategy {
+    grid-template-columns: 1.2fr 1.3fr 1.5fr 1.3fr;
+  }
+
+  .performance__portfolio-total,
+  .performance__portfolio-total-circl {
+    display: grid;
+    grid-template-columns: 0.9fr 1.4fr 1.1fr 1.5fr;
+    text-align: center;
+  }
+  .performance__portfolio-strategy-portfolio-percent {
+    margin-left: 4px;
+  }
+  // .performance__portfolio-strategies-stables-specs p:last-child {
+  //   margin-left: 30px;
+  // }
+
+  .performance__portfolio-strategies-stables-specs p:nth-child(2),
+  .performance__portfolio-strategies-stables-specs p:nth-child(3)  {
+    max-width: 90px;
+    text-align: right;
+  }
+
+  .performance__portfolio-strategy p:nth-child(3) {
+    margin-left: 10px;
+  }
+  .performance__portfolio-strategy {
+    padding-right: 4px;
+    padding-left: 4px;
+  }
+
+  .performance__portfolio-strategy p {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+  .performance__portfolio-strategy-token-portfolio-num {
+    margin-left: 6px;
+  }
+
+  .performance__portfolio-total-label,
+  .performance__portfolio-total-label--circl {
+    font-size: 14px;
+  }
+
+  .performance__portfolio-total-nav-val,
+  .performance__portfolio-total-liquidation-val,
+  .performance__portfolio-total-circl-number {
+    font-size: 13px;
+  }
+
+
+  .performance__portfolio-total-liquidation-val {
+    text-align: left;
+  }
+
+  .performance__portfolio-total-label--circl {
+    margin: 0;
+  }
+
+  .performance__portfolio-strategies-token-title {
+    font-size: 16px;
+  }
+  .performance__portfolio-description {
+    font-size: 14px;
+    text-align: right;
+  }
+  .performance__portfolio-total-label--circl {
+    margin-right: 12px;
   }
 }
 </style>
