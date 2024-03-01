@@ -28,6 +28,7 @@
               class="dashboard__token-data"
               :portfolioBalanceData="portfolioBalanceData.dataUSDPlus"
             />
+            <p>the length{{ portfolioBalanceData.dataUSDPlus.length }}</p>
             <DashboardGraphic
               :portfolioBalanceData="portfolioBalanceData.dataUSDPlus"
               :onlyUSD=true
@@ -36,7 +37,13 @@
               class="dashboard__graphics"
             />
           </div>
-          <p class="dashboard-tokens-transactions">USD+ TRANSACTIONS</p>
+          <p
+            class="dashboard-tokens-transactions"
+            v-if="portfolioBalanceData.dataUSDPlus.length > 0"
+          >
+            USD+ TRANSACTIONS
+          </p>
+
         </div>
         <div
           v-if="activeTab === 1"
@@ -57,7 +64,10 @@
             />
           </div>
 
-          <p class="dashboard-tokens-transactions">TOKENS+ TRANSACTIONS</p>
+          <p
+            class="dashboard-tokens-transactions"
+            v-if="combinedPortfolioData.length > 0"
+          >TOKENS+ TRANSACTIONS</p>
         </div>
       </TabsComponent>
     </div>
@@ -65,6 +75,7 @@
       <DashboardTransactions
         :portfolioBalanceData="portfolioDataForDashboardTransactions"
         class="dashboard__payout-inner"
+        v-if="portfolioDataForDashboardTransactions.length > 0"
       />
     </div>
   </div>
