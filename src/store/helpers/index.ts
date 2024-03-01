@@ -69,6 +69,8 @@ export const WHITE_LIST_ODOS = {
     'Overnight Exchange',
     'SyncSwap Stable',
     'PancakeSwap V3',
+    'Maverick',
+    'Wrapped Ether',
   ],
 };
 
