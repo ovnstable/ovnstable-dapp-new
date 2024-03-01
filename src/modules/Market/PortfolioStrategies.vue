@@ -790,6 +790,10 @@ export default {
     margin-left: 6px
   }
 
+  .performance__portfolio-description {
+    font-size: 13px;
+  }
+
 }
 
 </style>

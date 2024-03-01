@@ -335,10 +335,6 @@ export default {
     min-width: 60px;
     margin-right: 40px;
   }
-
-  .performance__payouts-transaction p:nth-child(2) {
-    margin-right: 20px;
-  }
   .performance__payouts-id-link {
     max-width: 76px;
     overflow: hidden;
@@ -350,8 +346,16 @@ export default {
     margin-left: 2px;
   }
 
+  .performance__payouts-titles p {
+    display: flex;
+    align-items: center;
+  }
   .performance__payouts-button-show {
     padding: 2px;
+  }
+  
+  .performance__payouts {
+    padding: 20px;
   }
 
 }

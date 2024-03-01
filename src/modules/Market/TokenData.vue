@@ -33,7 +33,6 @@
             :name="formatNetworkIconName(networkName)"
           />
         </div>
-
       </div>
     </div>
     <div class="performance__divider" />
