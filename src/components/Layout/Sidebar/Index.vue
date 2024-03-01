@@ -167,13 +167,19 @@ export default {
     toggleTheme() {
       this.$store.dispatch('theme/switchTheme');
     },
+    setCookie(key: string, value: string) {
+      const expires = new Date();
+      expires.setTime(expires.getTime() + (24 * 60 * 60 * 1000));
+      document.cookie = `${key}=${value};expires=${expires.toUTCString()}`;
+    },
     async triggerTranslate(val: any) {
       // const el = document.querySelector('.goog-te-combo');
       // if (el) el.value() = theLang;
       const index = Number(val) - 1;
       const langId = this.selectListDemo[index].code;
       localStorage.setItem('ovn-lang', langId);
-      this.$router.push(`#googtrans(en|${langId})`);
+      this.$router.push(`#googtrans(${langId})`);
+      this.setCookie('googtrans', `/en/${langId}`);
       this.selectModel = this.selectListDemo[index];
       delay(() => window.location.reload(), 500);
     },
