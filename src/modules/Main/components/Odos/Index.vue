@@ -340,7 +340,12 @@ import { clearApproveToken, getAllowanceValue, approveToken } from '@/utils/cont
 import odosApiService from '@/services/odos-api-service.ts';
 import { onLeaveList, onEnterList, beforeEnterList } from '@/utils/animations.ts';
 import {
-  getNewInputToken, getNewOutputToken, maxAll, updateTokenValue, getDefaultSecondtoken,
+  getNewInputToken,
+  getNewOutputToken,
+  maxAll,
+  updateTokenValue,
+  getDefaultSecondtoken,
+  WHITE_LIST_ODOS,
 } from '@/store/helpers/index.ts';
 import BigNumber from 'bignumber.js';
 import { ethers } from 'ethers';
@@ -366,8 +371,8 @@ export default {
     return {
       inputTokens: [] as any[],
       outputTokens: [] as any[],
-      maxInputTokens: 6,
-      maxOutputTokens: 6,
+      maxInputTokens: 3,
+      maxOutputTokens: 3,
 
       // input or output choosing
       selectModalTypeInput: true,
@@ -408,7 +413,7 @@ export default {
         });
         this.$store.commit('odosData/changeState', {
           field: 'isBalancesLoading',
-          val: false,
+          val: true,
         });
         this.$store.commit('odosData/changeState', {
           field: 'quotaResponseInfo',
@@ -971,6 +976,8 @@ export default {
       this.isSwapLoading = true;
 
       const actualGas = await this.getActualGasPrice(this.networkId);
+      const whiteList = WHITE_LIST_ODOS[this.networkId as keyof typeof WHITE_LIST_ODOS];
+
       const requestData = {
         chainId: this.networkId,
         inputTokens: this.getRequestInputTokens(),
@@ -979,10 +986,9 @@ export default {
         userAddr: ethers.getAddress(this.account.toLowerCase()),
         slippageLimitPercent: this.getSlippagePercent,
         sourceBlacklist: this.getSourceBlackList(this.networkId),
-        sourceWhitelist: [],
+        sourceWhitelist: whiteList ?? [],
         simulate: true,
         pathViz: true,
-        // disableRFQs: false
         referralCode: this.odosReferalCode,
       };
 
@@ -1118,6 +1124,8 @@ export default {
         return;
       }
 
+      const whiteList = WHITE_LIST_ODOS[this.networkId as keyof typeof WHITE_LIST_ODOS];
+
       const requestData = {
         chainId: this.networkId,
         inputTokens: input,
@@ -1126,7 +1134,7 @@ export default {
         userAddr: ethers.getAddress(this.account.toLowerCase()),
         slippageLimitPercent: this.getSlippagePercent,
         sourceBlacklist: this.getSourceBlackList(this.networkId),
-        sourceWhitelist: [],
+        sourceWhitelist: whiteList ?? [],
         simulate: true,
         pathViz: true,
       };
@@ -1141,7 +1149,7 @@ export default {
           this.isSumulateSwapLoading = false;
           this.isSumulateIntervalStarted = false;
 
-          console.log('EMIT');
+          console.log(data, 'EMIT');
           this.$emit('update-path-view', {
             path: data.pathViz,
             input: this.selectedInputTokens,
@@ -1195,7 +1203,7 @@ export default {
         const token: any = selectedOutputTokensMap[tokenAddress.toLowerCase()];
         if (token) {
           const { selectedToken } = token;
-          token.sum = new BigNumber(tokenAmount).div(10 ** selectedToken.decimals).toString();
+          token.sum = new BigNumber(tokenAmount).div(10 ** selectedToken.decimals).toFixed(0);
         }
 
         this.outputTokens[i] = token;
@@ -1206,7 +1214,7 @@ export default {
       if (networkId === 324) {
         return ['Hashflow', 'Wombat', 'Maverick'];
       }
-      return ['Hashflow', 'Wombat'];
+      return ['Hashflow', 'Wombat', 'WOOFi', 'WOOFi V2'];
     },
 
     async disapproveToken(token: any) {
@@ -1750,6 +1758,7 @@ export default {
   [data-theme="dark"] & {
     background-color: var(--color-17);
     border: 2px solid var(--color-2);
+    border-top: none;
   }
 }
 .swap-form__body-block {
@@ -1805,6 +1814,8 @@ export default {
 .swap-form__btns {
   margin-top: 20px;
   button {
+    box-shadow: none;
+    border: none;
     [data-theme="dark"] & {
       background-color: var(--color-7);
       color: var(--color-18);

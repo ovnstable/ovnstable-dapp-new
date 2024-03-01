@@ -18,7 +18,7 @@
         :class="{ selected: (chain as any).toLowerCase() === networkName }"
       >
         <BaseIcon
-          :name="getIconName(chain)"
+          :name="chain.toLocaleLowerCase()"
           class="insurance__icon-chain-bottom"
         />
         <p class="insurance__chain-data-name">{{ chain }}</p>
@@ -286,16 +286,6 @@ export default {
     saveNetworkToLocalStore(chain:string) {
       this.$store.dispatch('network/changeInsuranceNetwork', chain.toLowerCase());
     },
-    getIconName(chain:string) {
-      const selectedChain = this.$store.state.network.insuranceNetwork;
-      const formattedChain = chain.charAt(0).toUpperCase() + chain.slice(1).toLowerCase();
-
-      if (chain.toLowerCase() !== selectedChain.toLowerCase()) {
-        return `Icon${formattedChain}Off`;
-      }
-
-      return `Icon${formattedChain}On`;
-    },
     getInitialValue() {
       const intervalData = this.graphicData?.slice(0, this.getInterval());
       const dataValues = intervalData.map((payout: any) => parseFloat(payout.comp));
@@ -414,15 +404,27 @@ export default {
 
 .insurance__chain-data-container .selected {
   background: var(--color-4);
-  cursor: default;
+  color: var(--color-3);
+
+  svg {
+    opacity: 1;
+    filter: unset;
+  }
   [data-theme="dark"] & {
-    background: var(--color-2);
+    background: var(--color-17);
   }
 }
 .insurance__chain-data-container {
   display: flex;
   flex-direction: row;
   vertical-align: center;
+  transition: background 0.3s ease, border 0.3s ease;
+  svg {
+    width: 24px;
+    height: 24px;
+    filter: grayscale(10);
+    opacity: .5;
+  }
 }
 
 .insurance__chain-data-container > *:not(:last-child) {
@@ -435,10 +437,12 @@ export default {
   align-items: center;
   border-radius: 30px;
   border: 1px solid var(--color-6);
-  background: var(--color-5);
   padding: 5px 10px;
   width: fit-content;
   transition: background 0.3s ease, border 0.3s ease;
+  [data-theme="dark"] & {
+   background: var(--color-7);
+  }
 }
 .insurance__icon-chain-bottom {
   flex-shrink: 0
@@ -459,7 +463,7 @@ export default {
   background: var(--color-6);
   transition: background 0.3s ease, border 0.3s ease;
   [data-theme="dark"] & {
-    background: var(--color-7);
+    background: var(--color-2);
   }
 }
 

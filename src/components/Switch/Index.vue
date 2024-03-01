@@ -25,9 +25,10 @@ export default {
 
 <style>
 .theme-switch-checkbox {
-    height: 0;
-    width: 0;
-    visibility: hidden;
+  position: absolute;
+  height: 0;
+  width: 0;
+  visibility: hidden;
 }
 
 .theme-switch-label {

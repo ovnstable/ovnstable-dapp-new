@@ -3,7 +3,6 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable camelcase */
 import { USER_BALANCES_SCHEME } from '@/store/views/account/mocks.ts';
-import { appNetworksData } from '@/utils/const.ts';
 import BigNumber from 'bignumber.js';
 
 const state = {
@@ -92,6 +91,8 @@ const actions = {
     const userBalance = (await rootState.web3.evmProvider
       .getBalance(getters.account))
       .toString();
+
+    console.log(userBalance, '---userBalance');
 
     const balances = await Promise.all(USER_BALANCES_SCHEME[networkId].map(async (_) => {
       try {

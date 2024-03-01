@@ -458,6 +458,7 @@ export default {
 .performance__portfolio-dropdown {
   display: flex;
   flex-direction: row;
+  margin-top: 8px;
 }
 
 .performance__portfolio-dropdown p {
@@ -481,6 +482,9 @@ export default {
   flex:7;
 }
 
+.performance__portfolio-dropdown--dep-to {
+  margin-top: 0;
+}
 .performance__portfolio-dropdown--dep-to p:nth-child(1) {
   padding-right: 12px;
 }
@@ -518,7 +522,7 @@ export default {
   font-weight: 500;
 }
 .performance__portfolio-strategy:hover {
-  background-color: var(--color-6);
+  background-color: var(--color-5);
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;

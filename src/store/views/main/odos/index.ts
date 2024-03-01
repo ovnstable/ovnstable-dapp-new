@@ -29,7 +29,7 @@ export const stateData = {
   baseViewType: 'SWAP',
   isChainsLoading: false,
   isPricesLoading: false,
-  isBalancesLoading: false,
+  isBalancesLoading: true,
   isFirstBalanceLoaded: false,
   isContractLoading: false,
   isTokenExternalDataLoading: false,
@@ -322,13 +322,12 @@ const actions = {
   // },
 
   async loadBalances({
-    commit, state, getters, rootState, dispatch,
+    commit, state, getters, rootState
   }: any) {
-    if (state.isBalancesLoading) return;
+    commit('changeState', { field: 'isBalancesLoading', val: true });
 
-    state.isBalancesLoading = true;
     if (!rootState.accountData.account) {
-      state.isBalancesLoading = false;
+      commit('changeState', { field: 'isBalancesLoading', val: false });
       return;
     }
 
@@ -347,11 +346,24 @@ const actions = {
 
       const balancesData = await Promise.all(requests);
 
+      const handleNativeBal = async () => {
+        if (new BigNumber(rootState.accountData.accountNativeBalance).gt(0)) {
+          return rootState.accountData.accountNativeBalance;
+        }
+        if (new BigNumber(rootState.accountData.accountNativeBalance).eq(0)) {
+          return (await rootState.web3.evmProvider
+            .getBalance(rootState.accountData.account))
+            .toString();
+        }
+
+        return '0';
+      };
+
       for (let i = 0; i < tokens.length; i++) {
         const token = tokens[i];
         let balance = balancesData[i] ? balancesData[i].toString() : '0';
 
-        if (token.address === ZERO_ADDRESS) balance = rootState.accountData.accountNativeBalance;
+        if (token.address === ZERO_ADDRESS) balance = await handleNativeBal();
 
         const balanceFormatted = new BigNumber(balance).div(10 ** token.decimals);
         const fixedBy = balanceFormatted.gt(0) ? fixedByPrice(balanceFormatted.toNumber()) : 2;
@@ -364,13 +376,11 @@ const actions = {
           decimal: token.decimals,
         };
       }
+
+      commit('changeState', { field: 'isBalancesLoading', val: false });
     } catch (e) {
       console.error('Error when load balance', e);
-    } finally {
-      state.isBalancesLoading = false;
-      if (!state.isFirstBalanceLoaded) {
-        state.isFirstBalanceLoaded = true;
-      }
+      commit('changeState', { field: 'isBalancesLoading', val: false });
     }
   },
 
@@ -456,13 +466,13 @@ const actions = {
       });
   },
   clearInputData({
-    commit, state, dispatch, rootState,
+    commit
   }: any) {
     commit('changeState', { field: 'tokens', val: [] });
   },
 
   quoteRequest({
-    commit, state, dispatch, rootState,
+    commit
   }: any, requestData: any) {
     return odosApiService
       .quoteRequest(requestData)

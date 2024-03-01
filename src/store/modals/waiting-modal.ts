@@ -21,6 +21,7 @@ const actions = {
   },
 
   closeWaitingModal({ commit, dispatch, getters }: any) {
+    console.log('CLOSEWAIT');
     commit('setShow', false);
     commit('setModalText', null);
   },

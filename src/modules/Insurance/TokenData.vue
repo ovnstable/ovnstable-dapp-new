@@ -121,7 +121,7 @@
           class="insurance__icon-chain"
         >
           <BaseIcon
-            :name="getIconName(networkName)"
+            :name="networkName.toLocaleLowerCase()"
           />
         </div>
 
@@ -161,10 +161,6 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    chainIcon: {
-      type: String,
-      default: 'IconArbitrum',
-    },
   },
   computed: {
     networkName() {
@@ -185,11 +181,6 @@ export default {
       const networkContracts = (chainContractsMap as any)[networkName.toLowerCase()];
       const tokenInsurance = networkContracts[tokenName];
       return tokenInsurance;
-    },
-
-    getIconName(chain: string) {
-      const formattedChain = chain.charAt(0).toUpperCase() + chain.slice(1).toLowerCase();
-      return `Icon${formattedChain}On`;
     },
 
     formatTVL(number: any) {
@@ -391,7 +382,11 @@ export default {
   align-items: center;
 }
 .insurance__icon-chain {
-  margin-top: 8px
+  margin-top: 8px;
+  svg {
+    width: 24px;
+    height: 24px;
+  }
 }
 
 .insurance__token-data-h {

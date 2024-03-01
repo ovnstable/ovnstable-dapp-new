@@ -1,103 +1,141 @@
 <template>
   <div>
-    <div class="swap-container">
-      <div class="not-available-container">
-        <div class="not-available-info text-center">
-          <div>
-            Swap will be available on <span class="network-name">{{networkName}}</span> chain soon.
-          </div>
-          <div>
-            Now you can mint or redeem Overnight tokens.
-          </div>
-        </div>
-        <div class="not-available-button-container">
-          <div class="col-lg-6 col-md-6">
-            <div class="text-right">
-              <v-btn
-                @click="mintAction"
-                class="header-btn btn-filled"
-              >
-                MINT
-              </v-btn>
-            </div>
-          </div>
-          <div class="col-lg-6 col-md-6">
-            <v-btn
-              @click="redeemAction"
-              class="header-btn btn-outlined"
-            >
-              REDEEM
-            </v-btn>
-          </div>
-        </div>
-
+    <div class="not-available-container">
+      <BaseIcon
+        name="CommonWarning"
+      />
+      <div class="not-available-container-chain">
+        SWAP WILL BE AVAILABLE ON <span class="network-name">{{networkName.toUpperCase()}}</span> SOON.
       </div>
+      <div class="not-available-container-divider" />
+      <div class="not-available-container-mint-redeem-text">
+
+        Now you can <span
+          class="not-available-container-chain-mint-redeem"
+          @click="changeTab(1)"
+          @keypress="changeTab(1)"
+        >
+          mint
+        </span> and
+        <span
+          class="not-available-container-chain-mint-redeem"
+          @click="changeTab(1)"
+          @keypress="changeTab(1)"
+        >
+          redeem
+        </span> <br>
+        Tokens+ on <span class="network-name">{{networkName}}</span> chain
+      </div>
+      <ButtonComponent
+        @click="changeTab(1)"
+        @keypress="changeTab(1)"
+      >
+        OKAY!
+      </ButtonComponent>
+      <div class="not-available-container-divider last" />
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { mapActions } from 'vuex';
+import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import ButtonComponent from '@/components/Button/Index.vue';
+import { useEventBus } from '@vueuse/core';
+
+const emitTabChange = useEventBus<number>('change-tab-request');
 
 export default {
   name: 'network-not-available',
+  components: {
+    ButtonComponent,
+    BaseIcon,
+  },
   props: ['networkName'],
   methods: {
-    ...mapActions('swapModal', ['showSwapModal', 'showMintView', 'showRedeemView']),
-
-    mintAction() {
-      this.showMintView();
-      this.showSwapModal();
+    ...mapActions('swapModal', ['showSwapModal', 'showMintView']),
+    changeTab(tabIndex: number) {
+      console.log('we are in change tab in network not available');
+      emitTabChange.emit(tabIndex);
     },
-
-    redeemAction() {
-      this.showRedeemView();
+    mintAction() {
+      console.log('mint actions was called from no linead');
+      this.showMintView();
       this.showSwapModal();
     },
   },
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+
+.not-available-container {
+  min-height: 480px;
+  padding-top: 60px;
+  align-items: center;
+  button {
+    border: none;
+    box-shadow: none;
+    padding: 5px 45px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  svg {
+    margin-bottom: 30px;
+  }
+}
+
+.not-available-container-chain {
+  color: var(--color-1);
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.not-available-container-divider {
+  width: 100%;
+  border: 1px solid var(--color-7);
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+.last {
+  margin-bottom: 0px;
+}
+
+.not-available-container-mint-redeem-text {
+  color: var(--color-1);
+  font-size: 16px;
+  font-weight: 500;
+  align-items: center;
+  line-height: 28px;
+  text-align: center;
+  margin-bottom: 40px;
+}
+.not-available-container-chain-mint-redeem {
+  text-decoration: underline;
+}
+.not-available-container-chain-mint-redeem:hover {
+  cursor: pointer;
+  opacity: 0.7;
+}
+.not-available-container-mint-redeem-text:first-child {
+  margin-bottom: 6px;
+}
+.not-available-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.network-name {
+  text-transform: capitalize;
+}
+
 /*Mobile*/
 @media only screen and (max-width: 960px) {
-    .swap-container {
-        padding: 20px 20px 10px;
-    }
 
     .not-available-container {
         min-height: 250px;
         padding-top: 10px;
-    }
-
-    .not-available-logo {
-        width: 103px;
-        height: 70px;
-    }
-
-    .not-available-info {
-        font-size: 16px;
-        line-height: 24px;
-        padding-top: 15px;
-    }
-
-    .header-btn {
-        font-size: 16px !important;
-        line-height: 20px !important;
-    }
-
-    .btn-filled {
-        width: 140px;
-        height: 40px;
-    }
-
-    .btn-outlined {
-        width: 140px;
-        height: 40px;
-    }
-
-    .not-available-button-container {
-        padding-top: 15px;
     }
 }
 
@@ -106,151 +144,6 @@ export default {
     .swap-container {
         padding: 40px 30px;
     }
-
-    .not-available-container {
-        min-height: 500px;
-        padding-top: 100px;
-    }
-
-    .not-available-info {
-        font-size: 20px;
-        line-height: 28px;
-        padding-top: 30px;
-    }
-
-    .header-btn {
-        font-size: 16px !important;
-        line-height: 20px !important;
-    }
-
-    .btn-filled {
-        width: 140px;
-        height: 40px;
-    }
-
-    .btn-outlined {
-        width: 140px;
-        height: 40px;
-    }
-
-    .not-available-button-container {
-        padding-top: 30px;
-    }
-}
-
-/* full */
-@media only screen and (min-width: 1400px) {
-    .swap-container {
-        padding: 40px 30px;
-    }
-
-    .not-available-container {
-        min-height: 500px;
-        padding-top: 100px;
-    }
-
-    .not-available-info {
-        font-size: 20px;
-        line-height: 28px;
-        padding-top: 40px;
-    }
-
-    .header-btn {
-        font-size: 16px !important;
-        line-height: 20px !important;
-    }
-
-    .btn-filled {
-        width: 140px;
-        height: 40px;
-    }
-
-    .btn-outlined {
-        width: 140px;
-        height: 40px;
-    }
-
-    .not-available-button-container {
-        padding-top: 30px;
-    }
-}
-
-@media only screen and (min-width: 1300px) {
-    .swap-container {
-        padding: 40px 30px;
-    }
-
-    .not-available-container {
-        min-height: 500px;
-        padding-top: 100px;
-    }
-
-    .not-available-info {
-        font-size: 20px;
-        line-height: 28px;
-        padding-top: 40px;
-    }
-
-    .header-btn {
-        font-size: 16px !important;
-        line-height: 20px !important;
-    }
-
-    .btn-filled {
-        width: 140px;
-        height: 40px;
-    }
-
-    .btn-outlined {
-        width: 140px;
-        height: 40px;
-    }
-}
-
-.swap-container {
-    gap: 8px;
-    background: var(--swap-main-banner-background);
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.2);
-    border-radius: 28px;
-    max-width: 600px;
-}
-
-.not-available-container {
-    display: flex;
-    flex-direction: column;
-}
-
-.not-available-info {
-    font-style: normal;
-    font-weight: 400;
-    color: var(--main-gray-text);
-}
-
-.not-available-button-container {
-    display: flex;
-    flex-direction: row;
-}
-
-.btn-filled {
-    background: var(--blue-gradient);
-    color: #FFFFFF !important;
-}
-
-.btn-outlined {
-    background-color:var(--swap-main-banner-background) !important;
-    color: var(--links-blue);
-    border: 1px solid #1C95E7;
-}
-
-.header-btn {
-    font-style: normal !important;
-    font-weight: 400 !important;
-    letter-spacing: 0.02em !important;
-    border-radius: 2px;
-}
-
-.network-name {
-    text-transform: capitalize;
 }
 
 </style>

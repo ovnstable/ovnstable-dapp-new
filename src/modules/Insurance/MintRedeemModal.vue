@@ -416,7 +416,7 @@ export default {
 
       if (!this.gasPrice || !this.gasPriceStation) return;
       try {
-        const sum = new BigNumber(this.fromValue).times(10 ** this.ovnDecimals).toString();
+        const sum = new BigNumber(this.fromValue).times(10 ** this.ovnDecimals).toFixed(0);
         const estimatedGasValue = await this.estimateGas(sum);
         if (estimatedGasValue === -1 || estimatedGasValue === undefined) {
           this.gas = '';

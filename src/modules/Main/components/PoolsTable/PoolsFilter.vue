@@ -21,6 +21,7 @@
         />
       </template>
     </InputComponent>
+
     <div class="pools-wrap__filters-networks">
       <div
         v-for="networkConfig in allNetworkConfigs"
@@ -128,24 +129,26 @@ export default {
   border-radius: 30px;
   background-color: var(--color-4);
   border: 1px solid var(--color-1);
+
   [data-theme="dark"] & {
     background-color: var(--color-17);
     border-color: var(--color-2);
   }
 }
-
 .pools-wrap__filters-item {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 24px;
-  height: 24px;
+  width: 36px;
+  height: 36px;
   margin: 0 4px;
   font-size: 10px;
   font-weight: 600;
   text-align: center;
   cursor: pointer;
   transition: .2s ease color;
+  border: 1px solid var(--color-5);
+  border-radius: 50%;
 
   svg {
     width: 24px;
@@ -161,9 +164,12 @@ export default {
     color: var(--color-1);
   }
 }
-
+.pools-wrap__filters-item:last-child {
+  border: none;
+}
 .pools-wrap__filters-item--selected {
   color: var(--color-3);
+  border-color: var(--color-6);
 
   svg {
     opacity: 1;
@@ -173,7 +179,7 @@ export default {
 
 .search-icon {
   min-width: 18px;
-  margin-left: 6px;
+  margin-left: 10px;
   fill: var(--color-2);
   [data-theme="dark"] & {
     fill: var(--color-3);
@@ -181,7 +187,6 @@ export default {
 }
 .pools-wrap__filters-networks {
   display: flex;
-  gap: 4px;
   margin-left: auto;
 }
 </style>
