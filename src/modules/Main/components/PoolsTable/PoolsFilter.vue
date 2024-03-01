@@ -187,7 +187,6 @@ export default {
 }
 .pools-wrap__filters-networks {
   display: flex;
-  gap: 4px;
   margin-left: auto;
 }
 </style>
