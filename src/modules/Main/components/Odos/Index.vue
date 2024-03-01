@@ -734,6 +734,7 @@ export default {
       maxAll(this.selectedInputTokens, this.checkApproveForToken, this.updateQuotaInfo);
     },
     updateTokenValueMethod(token:any, val: any) {
+      console.log(token, '---token');
       updateTokenValue(token, val, this.checkApproveForToken, this.updateQuotaInfo);
     },
     async init() {
@@ -1437,6 +1438,7 @@ export default {
     },
 
     addSelectedTokenToList(data: any) {
+      console.log(data, 'NEW TOKENS');
       if (data.isInput) {
         this.addSelectedTokenToInputList(data.tokenData);
         this.removeOutputToken(data.tokenData.id);

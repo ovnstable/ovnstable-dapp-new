@@ -69,7 +69,6 @@
   </div>
 </template>
 <script lang="ts">
-import { mapGetters } from 'vuex';
 import { formatMoney, fixedByPrice } from '@/utils/numbers.ts';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import InputComponent from '@/components/Input/Index.vue';
@@ -146,9 +145,8 @@ export default {
       return this.selectedCount < this.maxTokenSelectCount;
     },
     selectedCount() {
-      return this.tokens.filter((item: any) => item.selected).length;
+      return this.selectedTokens.length;
     },
-    ...mapGetters('theme', ['light']),
   },
   methods: {
     formatMoney,
