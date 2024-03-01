@@ -7,8 +7,8 @@
         :key="token.id"
         class="selected-tokens__item"
         :class="token.selected ? 'token-container-selected' : ''"
-        @click="toggleToken(token, !token.selected)"
-        @keydown="toggleToken(token, !token.selected)"
+        @click="toggleToken(token)"
+        @keydown="toggleToken(token)"
       >
         <img
           :src="token.logoUrl"
@@ -38,8 +38,8 @@
           class="search-tokens__list-item"
           :class="selectedTokensAddress.includes(token.address) ? 'search-tokens__list-item--selected' : ''"
           :key="token.id"
-          @click="toggleToken(token, !token.selected)"
-          @keydown="toggleToken(token, !token.selected)"
+          @click="toggleToken(token)"
+          @keydown="toggleToken(token)"
         >
           <div class="search-tokens__list-item__left">
             <img
@@ -154,13 +154,17 @@ export default {
     searchTokens(val: string) {
       this.searchQuery = val;
     },
-    toggleToken(token: any, isSelect: any) {
-      if (isSelect && this.isAvailableCountForSelect) {
-        this.$emit('add-token', token);
+    toggleToken(token: any) {
+      const selected = this.selectedTokensAddress.includes(token.address);
+      if (selected) {
+        this.$emit('remove-token', token);
         return;
       }
 
-      this.$emit('remove-token', token);
+      if (this.isAvailableCountForSelect) {
+        console.log('ADDTOKEN');
+        this.$emit('add-token', token);
+      }
     },
   },
 };

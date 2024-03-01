@@ -332,25 +332,21 @@ export const updateTokenValue = (
   token: any,
   value: any,
   checkApprove: (tokenData: any, val: string) => void,
-  updateQuotaInfo: () => void,
   originalBalance?: string,
 ) => {
-  token.value = value;
-  updateQuotaInfo();
-
-  if (!value) {
-    token.usdValue = 0;
-    token.value = 0;
-    return;
-  }
+  if (!value) return token;
 
   const { selectedToken } = token;
+  console.log(selectedToken, token, '----selectedToken');
+  console.log(value, '---value');
   if (selectedToken) {
     token.contractValue = originalBalance
-    || new BigNumber(token.value)
-      .times(10 ** token.selectedToken.decimals)
+    || new BigNumber(value)
+      .times(10 ** selectedToken.decimals)
       .toFixed(0);
-    token.usdValue = token.value * selectedToken.price;
+    token.usdValue = new BigNumber(value)
+      .times(selectedToken.price)
+      .toFixed(6, BigNumber.ROUND_DOWN);
 
     if (
       selectedToken.address === '0x0000000000000000000000000000000000000000'
@@ -364,23 +360,25 @@ export const updateTokenValue = (
 
     checkApprove(token, token.contractValue);
   }
+
+  // eslint-disable-next-line consistent-return
+  return {
+    ...token,
+    value,
+  };
 };
 
 export const maxAll = (
   selectedInputTokens: any[],
   checkApprove: (tokenData: any, val: string) => void,
-  updateQuotaInfo: () => void,
 ) => {
-  for (let i = 0; i < selectedInputTokens.length; i++) {
-    const token = selectedInputTokens[i];
-    updateTokenValue(
-      token,
-      token.selectedToken.balanceData.balance,
-      checkApprove,
-      updateQuotaInfo,
-      token.selectedToken.balanceData.originalBalance,
-    );
-  }
+  console.log(selectedInputTokens, 'SELECTED');
+  return selectedInputTokens.map((item) => updateTokenValue(
+    item,
+    item.selectedToken.balanceData.balance,
+    checkApprove,
+    item.selectedToken.balanceData.originalBalance,
+  ));
 };
 
 export const loadBalance = async (

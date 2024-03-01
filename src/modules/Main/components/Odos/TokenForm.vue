@@ -4,7 +4,7 @@
     <div class="input-tokens__row">
       <InputComponent
         customClass="input-tokens__field"
-        :value="isInputToken ? token.value : token.sum"
+        :value="isInputToken ? tokenInfo.value : tokenInfo.sum"
         is-custom
         placeholder="0"
         full-width
@@ -13,17 +13,17 @@
       />
 
       <div
-        v-if="token.selectedToken"
+        v-if="tokenInfo.selectedToken"
         @click="selectTokenFunc(isInputToken)"
         @keypress="selectTokenFunc(isInputToken)"
         class="input-tokens__selected"
       >
         <img
-          :src="token.selectedToken.logoUrl"
+          :src="tokenInfo.selectedToken.logoUrl"
           alt="select-token"
         >
         <span>
-          {{token.selectedToken.symbol}}
+          {{tokenInfo.selectedToken.symbol}}
         </span>
       </div>
       <div
@@ -49,14 +49,14 @@
     <div class="input-tokens__row">
       <div class="input-tokens__balance">
         <div
-          v-if="isInputToken && token.selectedToken"
+          v-if="isInputToken && tokenInfo.selectedToken"
         >
-          ~ ${{formatMoney(token.usdValue, 2)}}
+          ~ ${{formatMoney(tokenInfo.usdValue, 2)}}
         </div>
         <div
-          v-else-if="!isInputToken && token.sum && token.selectedToken"
+          v-else-if="!isInputToken && tokenInfo.sum && tokenInfo.selectedToken"
         >
-          ~ ${{formatMoney(token.sum * token.selectedToken.price, 2)}}
+          ~ ${{formatMoney(tokenInfo.sum * tokenInfo.selectedToken.price, 2)}}
         </div>
         <div v-else>
           $0
@@ -69,10 +69,10 @@
         class="input-tokens__balance"
       >
         <div class="select-token-balance-text">
-          <div v-if="token.selectedToken && token.selectedToken?.balanceData?.balance">
+          <div v-if="tokenInfo.selectedToken && tokenInfo.selectedToken?.balanceData?.balance">
             <span class="select-token-balance-text-enabled">
-              {{formatMoney(token.selectedToken.balanceData.balance,
-                            fixedByPrice(token.selectedToken.price))}}
+              {{formatMoney(tokenInfo.selectedToken.balanceData.balance,
+                            fixedByPrice(tokenInfo.selectedToken.price))}}
             </span>
           </div>
           <div v-else>
@@ -107,23 +107,9 @@ export default {
       required: true,
       default: () => {},
     },
-    selectTokenFunc: {
-      type: Function,
-      required: true,
-    },
-    removeItemFunc: {
-      type: Function,
-      required: false,
-      default: () => null,
-    },
     isTokenRemovable: {
       type: Boolean,
       required: true,
-    },
-    updateTokenValueFunc: {
-      type: Function,
-      required: false,
-      default: () => null,
     },
     disabled: {
       type: Boolean,
@@ -131,45 +117,22 @@ export default {
       default: false,
     },
   },
-  mounted() {
-    this.token.selectedToken = this.tokenInfo.selectedToken;
-  },
-  data() {
-    return {
-      token: {
-        value: null,
-        usdValue: null,
-        selectedToken: null,
-      } as any,
-    };
-  },
-  watch: {
-    'tokenInfo.value': function (val) {
-      if (val) {
-        this.token.value = val;
-      }
-    },
-    'tokenInfo.sum': function (val) {
-      if (val) {
-        this.token.sum = val;
-      }
-    },
-    'tokenInfo.usdValue': function (val) {
-      if (val) {
-        this.token.usdValue = val;
-      }
-    },
-  },
   methods: {
     formatMoney,
     fixedByPrice,
+    removeItemFunc(id: string) {
+      this.$emit('remove-token', id);
+    },
+    selectTokenFunc(val: boolean) {
+      this.$emit('select-token', val);
+    },
     isNumber(evt: any) {
       evt = (evt) || window.event;
       const charCode = (evt.which) ? evt.which : evt.keyCode;
 
       if ((charCode > 31 && (charCode < 48 || charCode > 57)) && charCode !== 46) {
         evt.preventDefault();
-      } else if (charCode === 46 && (!this.token.value || this.token.value.includes('.'))) {
+      } else if (charCode === 46 && (!this.tokenInfo.value || this.tokenInfo.value.includes('.'))) {
         evt.preventDefault();
       } else {
         return true;
@@ -177,12 +140,15 @@ export default {
       return true;
     },
     inputUpdate(value: any) {
-      this.updateTokenValueFunc(this.tokenInfo, value);
+      console.log(value, 'inputUpdate');
+      this.$emit('update-token', {
+        ...this.tokenInfo,
+        value,
+      });
     },
     clickOnBalance() {
-      if (this.token.selectedToken && this.token.selectedToken.balanceData.balance) {
-        this.token.value = this.token.selectedToken.balanceData.balance;
-        this.inputUpdate(this.token.value);
+      if (this.tokenInfo.selectedToken && this.tokenInfo.selectedToken.balanceData.balance) {
+        this.inputUpdate(this.tokenInfo.value);
       }
     },
   },

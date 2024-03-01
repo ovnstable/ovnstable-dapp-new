@@ -204,10 +204,6 @@ const actions = {
     await odosApiService
       .loadTokens()
       .then((data: any) => {
-        console.log({
-          ...data.chainTokenMap,
-          ...LINEA_TOKENS
-        }, '---d-ata');
         commit('changeState', {
           field: 'tokensMap',
           val: {
@@ -289,9 +285,7 @@ const actions = {
   async initAccountData({
     commit, state, dispatch, rootState,
   }: any) {
-    console.log('initAccountData');
     if (rootState.accountData.account) {
-      console.log('initAccountData2');
       const ERC20 = await loadJSON('/contracts/ERC20.json');
       await dispatch('loadContractsForTokens', ERC20);
       await dispatch('loadBalances');
@@ -301,7 +295,6 @@ const actions = {
     commit, state, getters, rootState,
   }: any, contractFile: any) {
     const tokensList: any = {};
-    console.log(getters.allTokensList, 'TOKENS');
     for (let i = 0; i < getters.allTokensList.length; i++) {
       const token: any = getters.allTokensList[i];
       tokensList[token.address] = buildEvmContract(
