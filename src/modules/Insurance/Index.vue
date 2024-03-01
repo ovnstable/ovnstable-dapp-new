@@ -1,38 +1,36 @@
 <template>
-  <div>
+  <div
+    v-if="firstLoad"
+    class="insurance__loader"
+  >
+    <Spinner />
+  </div>
+  <div
+    v-else
+    class="insurance-wrapper"
+  >
     <div
-      v-if="firstLoad"
-      class="insurance__loader"
+      class="insurance"
     >
-      <Spinner />
+      <TokenDataInsurance
+        :tokenData="tokenData"
+        class="insurance__token-data"
+      />
+      <GraphicsInsurance
+        :payoutData="payoutData"
+        :loaded="loaded"
+        class="insurance__graphics"
+      />
+      <InsurancePremiums
+        :premiums-data="premiumsData"
+        class="insurance__premiums"
+      />
     </div>
-    <div
-      v-else
-      class="insurance-wrapper"
-    >
-      <div
-        class="insurance"
-      >
-        <TokenDataInsurance
-          :tokenData="tokenData"
-          class="market__token-data"
-        />
-        <GraphicsInsurance
-          :payoutData="payoutData"
-          :loaded="loaded"
-          class="insurance__graphics"
-        />
-        <InsurancePremiums
-          :premiums-data="premiumsData"
-          class="insurance__premiums"
-        />
-      </div>
-      <div class="insurance__payouts">
-        <InsurancePayouts
-          :payout-data="reversedPayoutData"
-          class="insurance__payout-inner"
-        />
-      </div>
+    <div class="insurance__payouts">
+      <InsurancePayouts
+        :payout-data="reversedPayoutData"
+        class="insurance__payout-inner"
+      />
     </div>
   </div>
 
@@ -165,10 +163,12 @@ export default {
   .insurance__graphics {
     padding: 8px 12px;
   }
-  .insurance {
-    padding-left: 10px;
-    padding-right: 10px;
+
+  .insurance,
+  .insurance__payouts {
+    width: calc(100% - 40px);
   }
 }
+
 
 </style>

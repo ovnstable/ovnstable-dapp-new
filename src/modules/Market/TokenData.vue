@@ -371,7 +371,7 @@ export default {
     margin-left: 2px;
   }
   .performance__chain-data {
-    padding: 0px;
+    padding: 4px;
   }
   .performance__chain-data svg {
     scale: 80%;

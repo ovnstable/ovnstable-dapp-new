@@ -160,5 +160,8 @@ export default {
   .market {
     width: 100%;
   }
+  .market-wrapper {
+    margin-left: 20px;
+  }
 }
 </style>

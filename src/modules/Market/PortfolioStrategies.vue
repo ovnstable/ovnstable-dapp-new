@@ -678,13 +678,16 @@ export default {
     grid-template-columns: 1.2fr 1.3fr 1.5fr 1.3fr;
   }
 
-  .performance__portfolio-total,
-  .performance__portfolio-total-circl {
-    grid-template-columns: 0.9fr 1.8fr 1.6fr 0.1fr;
+  .performance__portfolio-total {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
   }
-
+  .performance__portfolio-total-liquidation-val {
+    display: flex;
+    align-items: right;
+    text-align: right;
+  }
   .performance__portfolio-total-circl {
-    grid-template-columns: 0.9fr 2.8fr 0.7fr 0.1fr;
+    grid-template-columns: 0.9fr 2.8fr 1.8fr 0.1fr;
   }
   .performance__portfolio-total p:nth-child(2) {
     text-align: right;
@@ -733,9 +736,6 @@ export default {
 
   .performance__portfolio-total p:nth-child(3) {
     margin-left: 8px;
-  }
-  .performance__portfolio-total-liquidation-val {
-    text-align: left;
   }
 
   .performance__portfolio-total-label--circl {
@@ -799,7 +799,13 @@ export default {
   }
 
   .performance__portfolio-total p:nth-child(2) {
-    margin-left: 16px;
+    margin-left: 6px;
+  }
+
+  .performance__portfolio-total-circl p:nth-child(2),
+  .performance__portfolio-total p:nth-child(3){
+    align-items: right;
+    text-align: right;
   }
 
 }

@@ -47,4 +47,15 @@ export default {
     gap: 80px;
   }
 }
+@media (max-width: 768px) {
+  .app-wrapper {
+    width: 100vw;
+  }
+}
+
+@media (max-width: 576px) {
+  .app-wrapper {
+    width: 100vw;
+  }
+}
 </style>
