@@ -201,6 +201,10 @@ export default {
 }
 .insurance__token-image {
   width: 76px;
+  [data-theme="dark"] & {
+     border: 1px solid var(--color-4);
+     border-radius: 50%;
+  }
 }
 
 .insurance__links-info {
@@ -225,6 +229,13 @@ export default {
 
   .insurance__mint-button svg {
     stroke: var(--color-1);
+  }
+
+}
+
+.insurance__mint-button {
+  [data-theme="dark"] & {
+    fill: var(--color-4);
   }
 
 }
@@ -255,6 +266,9 @@ export default {
   border: none;
   border-radius: 30px;
   padding: 5px 14px;
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
 }
 .about_selected {
   border: 1px solid var(--color-1);
