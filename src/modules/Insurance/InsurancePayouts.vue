@@ -330,12 +330,14 @@ export default {
 @media (max-width: 768px) {
   .insurance__payouts-button-show {
     padding: 5px 225px;
-
     p {
       font-size: 14px;
     }
   }
   .insurance__payouts-titles {
+    display: grid;
+    grid-template-columns: 0.8fr 1.3fr 1.3fr 1fr;
+    text-align: center;
     font-size: 14px;
   }
   .insurance__payouts-transaction p {
@@ -344,6 +346,9 @@ export default {
   .insurance__payouts-date-transaction {
     margin: 0;
     padding: 0;
+  }
+  .insurance__payouts {
+    padding-right: 0px;
   }
 }
 

@@ -102,5 +102,10 @@ export default {
     margin-top: 50px;
   }
 }
+@media (max-width: 576px) {
+  .insurance__graphics {
+    min-height: 0;
+  }
+}
 
 </style>

@@ -574,14 +574,12 @@ export default {
 }
 
 @media (max-width: 576px) {
-  .insurance__token-data-num {
-    margin-top: 60px;
+  .insurance__token-data-num,
+  .insurance__icon-chain {
+    margin-top: 10px;
   }
   .insurance__apy-data-chain {
     margin: 0;
-  }
-  .insurance__icon-chain {
-    margin-top: 60px;
   }
   .insurance__divider {
     margin-left: 5px;
