@@ -33,6 +33,7 @@ export const WHITE_LIST_ODOS = {
     'Lighter V2',
     'Curve Stable NG',
     'Wrapped Ether',
+    'Overnight Wrapper',
   ],
   8453: [
     'Overnight Exchange',
@@ -42,6 +43,7 @@ export const WHITE_LIST_ODOS = {
     'SynthSwap',
     'Maverick',
     'Wrapped Ether',
+    'Overnight Wrapper',
   ],
   10: [
     'Overnight Exchange',
@@ -51,6 +53,7 @@ export const WHITE_LIST_ODOS = {
     'Velodrome V2 Volatile',
     'Solidly V3',
     'Wrapped Ether',
+    'Overnight Wrapper',
   ],
   137: [
     'Overnight Exchange',
@@ -60,6 +63,7 @@ export const WHITE_LIST_ODOS = {
     'QuickSwap',
     'Dodo V2',
     'Wrapped Matic',
+    'Overnight Wrapper',
   ],
   324: [
     'Overnight Exchange',
