@@ -327,4 +327,24 @@ export default {
   }
 }
 
+@media (max-width: 768px) {
+  .insurance__payouts-button-show {
+    padding: 5px 225px;
+
+    p {
+      font-size: 14px;
+    }
+  }
+  .insurance__payouts-titles {
+    font-size: 14px;
+  }
+  .insurance__payouts-transaction p {
+    font-size: 13px;
+  }
+  .insurance__payouts-date-transaction {
+    margin: 0;
+    padding: 0;
+  }
+}
+
 </style>

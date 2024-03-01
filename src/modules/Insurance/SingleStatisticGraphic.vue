@@ -607,36 +607,38 @@ export default {
 
 @media (max-width: 768px) {
   .insurance__graphic-value {
-      font-size: 16px;
+    font-size: 16px;
   }
   .insurance__graphic-title {
-      font-size: 12px;
+    font-size: 12px;
+    margin-left: 10px;
+    margin-right: 10px;
   }
   .insurance__graphics-buttons-interval > * {
-      font-size: 10px;
+    font-size: 10px;
   }
   .insurance__graphic-date {
-        font-size: 10px;
+    font-size: 10px;
   }
   .insurance__graphic{
-      padding: 15px 30px;
+    padding: 15px 30px;
   }
 }
 @media (max-width: 576px) {
   .insurance__graphic-value {
-      font-size: 14px;
+    font-size: 14px;
   }
   .insurance__graphic-title {
-      font-size: 10px;
+    font-size: 10px;
   }
   .insurance__graphics-buttons-interval > * {
-      font-size: 8px;
+    font-size: 8px;
   }
   .insurance__graphic-date {
-        font-size: 8px;
+    font-size: 8px;
   }
   .insurance__graphic{
-      padding: 10px 20px;
+    padding: 10px 20px;
   }
 }
 </style>

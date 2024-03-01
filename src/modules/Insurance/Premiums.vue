@@ -355,4 +355,45 @@ export default {
     margin-right: 90px;
   }
 }
+
+@media (max-width: 768px) {
+  .insurance__premiums-title {
+    font-size: 15px;
+  }
+  .insurance__premiums-specs {
+    font-size: 14px;
+  }
+  .insurance-premium-portfolio-percent {
+    justify-content: flex-end;
+  }
+  .insurance__premiums-strategies-table-score {
+    text-align: left;
+  }
+  .insurance__premiums-specs,
+  .insurance-premium {
+    grid-template-columns: 2fr 1fr 1fr 1.3fr;
+  }
+
+  .insurance__premiums-total {
+    grid-template-columns: 5.2fr 1fr 2.2fr 0fr;
+    p {
+      font-size: 13px;
+    }
+  }
+  .insurance-premium p{
+    font-size: 13px;
+  }
+
+  .insurance-premium-name {
+    margin-left: 4px;
+  }
+  .insurance-premium-token-portfolio-num {
+    flex: none;
+    width: auto;
+    margin-left: 5px;
+  }
+  .insurance-premium-progress-bar {
+    width: 40px;
+  }
+}
 </style>

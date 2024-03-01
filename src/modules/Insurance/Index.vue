@@ -161,5 +161,14 @@ export default {
   background-color: rgba(255, 255, 255, .4);
   padding-bottom: 50vh;
 }
+@media (max-width: 768px) {
+  .insurance__graphics {
+    padding: 8px 12px;
+  }
+  .insurance {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+}
 
 </style>

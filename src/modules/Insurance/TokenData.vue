@@ -208,9 +208,6 @@ export default {
   width: 100%;
   margin-bottom: 18px;
 }
-.insurance__token-image {
-  width: 76px;
-}
 
 .insurance__links-info {
   margin-top: 10px;
@@ -477,11 +474,19 @@ export default {
     padding: 2px 5px;
     margin-top: 24px;
   }
-  .insurance__token-data-title {
-    text-align: center;
+  .insurance__title-button {
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+  .insurance__title-token-info p{
+    text-align: left;
   }
   .insurance__token-image {
+    overflow: visible;
     scale: 65%;
+  }
+  .insurance__token-data-title {
+    text-align: center;
   }
   .insurance__token-data-col-token {
     margin-left: 2px;
@@ -499,6 +504,10 @@ export default {
   }
   .insurance__token-data-num {
     font-size: 14px;
+    margin-top: 6px;
+  }
+  .insurance__apy-data-chain {
+    margin-top: 6px;
   }
   .insurance__token-data-h {
     font-size: 12px;
@@ -507,12 +516,46 @@ export default {
     margin-left: 5px;
     margin-right: 5px;
   }
+  .insurance__token-data-ovn-info {
+    margin-right: 6px;
+  }
 }
 
 @media (max-width: 768px) {
   .insurance__divider {
-    margin-left: 20px;
-    margin-right: 20px;
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+  .insurance__divider--first-divider {
+    margin-left: 0;
+  }
+  .insurance__divider--last-divider {
+    margin-right: 0;
+  }
+  .insurance__token-data-title {
+    font-size: 13px;
+  }
+  .insurance__token-data-num,
+  .amount-of-ovn,
+  .insurance__token-data-num--apy-num {
+    font-size: 12px;
+  }
+  .insurance_risk-factor,
+  .insurance__payout-data,
+  .insurance__apy-data-chain {
+    svg {
+      scale: 80%;
+    }
+  }
+  .insurance__title-button {
+    font-size: 10px;
+    svg {
+      overflow: visible;
+      scale: 80%;
+    }
+  }
+  .insurance_risk-factor-text {
+    font-size: 14px;
   }
   .insurance__token-data-col-token {
     margin: 0;
