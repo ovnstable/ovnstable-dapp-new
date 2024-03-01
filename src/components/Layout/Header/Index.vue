@@ -35,10 +35,10 @@
             Docs
           </a>
           <a
-            href="dev.overnight.fi"
+            href="https://dev.overnight.fi"
             target="_blank"
-            class="app-header__dashboard"
-            active-class="active-link"
+            class="app-header__docs"
+            rel="noopener noreferrer"
           >
             Old Dapp
           </a>
