@@ -150,7 +150,7 @@ export default {
         { name: 'ABOUT ETS', url: 'https://docs.overnight.fi/advanced/strategies/ets' },
       ],
       ovnAndInsuranceLinks: [
-        { name: 'OVN overview', to: '/ovn' },
+        // { name: 'OVN overview', to: '/ovn' },
         { name: 'Insurance', to: '/insurance' },
       ],
     };
