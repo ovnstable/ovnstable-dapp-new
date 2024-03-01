@@ -24,6 +24,10 @@ const router = createRouter({
       name: 'dashboard',
       component: () => import('@/views/Dashboard/Index.vue'),
     },
+    {
+      path: '/:pathMatch(.*)*',
+      redirect: '/',
+    },
   ],
 });
 

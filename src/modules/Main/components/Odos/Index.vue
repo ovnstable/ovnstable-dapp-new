@@ -327,6 +327,7 @@
 <script lang="ts">
 import { mapActions, mapGetters, mapState } from 'vuex';
 import { useEventBus } from '@vueuse/core';
+import { ethers } from 'ethers';
 import TokenForm from '@/modules/Main/components/Odos/TokenForm.vue';
 import Spinner from '@/components/Spinner/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
@@ -334,16 +335,20 @@ import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import NetworkNotAvailable from '@/modules/Main/components/Odos/network-not-available.vue';
 import SelectTokensModal from '@/components/TokensModal/Index.vue';
 import SwapSlippageSettings from '@/modules/Main/components/Common/SwapSlippageSettings.vue';
-import { formatMoney } from '@/utils/numbers.ts';
+import { formatMoney, fixedByPrice } from '@/utils/numbers.ts';
 import { getRandomString } from '@/utils/strings.ts';
 import { clearApproveToken, getAllowanceValue, approveToken } from '@/utils/contractApprove.ts';
 import odosApiService from '@/services/odos-api-service.ts';
 import { onLeaveList, onEnterList, beforeEnterList } from '@/utils/animations.ts';
 import {
-  getNewInputToken, getNewOutputToken, maxAll, updateTokenValue, getDefaultSecondtoken,
+  getNewInputToken,
+  getNewOutputToken,
+  maxAll,
+  updateTokenValue,
+  getDefaultSecondtoken,
+  WHITE_LIST_ODOS,
 } from '@/store/helpers/index.ts';
 import BigNumber from 'bignumber.js';
-import { ethers } from 'ethers';
 
 export default {
   name: 'SwapForm',
@@ -408,7 +413,7 @@ export default {
         });
         this.$store.commit('odosData/changeState', {
           field: 'isBalancesLoading',
-          val: false,
+          val: true,
         });
         this.$store.commit('odosData/changeState', {
           field: 'quotaResponseInfo',
@@ -453,7 +458,7 @@ export default {
       }
     },
   },
-  mounted() {
+  async mounted() {
     this.$store.commit('odosData/changeState', {
       field: 'baseViewType',
       val: this.viewType,
@@ -463,13 +468,23 @@ export default {
       val: 'OVERNIGHT_SWAP',
     });
 
-    this.init();
-    // its init input/output default tokens
-    this.clearForm();
+    this.$store.commit('odosData/changeState', {
+      field: 'isTokensLoadedAndFiltered',
+      val: false,
+    });
 
-    if (this.$route.query.action === 'swap-out') {
-      this.changeSwap();
+    await this.init();
+
+    if (this.inputTokens.length === 0 && this.outputTokens.length === 0) {
+      this.clearForm();
     }
+
+    this.$store.commit('odosData/changeState', {
+      field: 'isTokensLoadedAndFiltered',
+      val: true,
+    });
+
+    if (this.$route.query.action === 'swap-out') this.changeSwap();
   },
   computed: {
     ...mapState('odosData', [
@@ -721,10 +736,10 @@ export default {
     updateTokenValueMethod(token:any, val: any) {
       updateTokenValue(token, val, this.checkApproveForToken, this.updateQuotaInfo);
     },
-    init() {
-      this.loadChains();
-      this.loadTokens();
-      this.initContractData();
+    async init() {
+      await this.loadChains();
+      await this.loadTokens();
+      await this.initContractData();
 
       const bus = useEventBus('odos-transaction-finished');
       bus.on(() => {
@@ -738,6 +753,7 @@ export default {
         this.allTokensList,
         symbol as string | null,
       );
+      console.log(ovnSelectedToken, 'SELECREOVN');
       if (!ovnSelectedToken) {
         this.addNewInputToken();
         this.addNewOutputToken();
@@ -755,13 +771,7 @@ export default {
       if (this.swapMethod === 'SELL') {
         this.addSelectedTokenToInputList(ovnSelectedToken);
         this.addNewOutputToken();
-        return;
       }
-
-      console.error(
-        'Error when add default ovn token. Method not found: ',
-        this.swapMethod,
-      );
     },
     addNewOutputToken() {
       const newToken = getNewOutputToken();
@@ -813,9 +823,7 @@ export default {
       const tempInputArray: any[] = [];
       for (let i = 0; i < this.outputTokens.length; i++) {
         const tokenOut: any = this.outputTokens[i];
-        if (!tokenOut.selectedToken) {
-          continue;
-        }
+        if (!tokenOut.selectedToken) continue;
 
         const transformOutputToInputToken = getNewInputToken();
         transformOutputToInputToken.id = tokenOut.id;
@@ -845,6 +853,7 @@ export default {
       }
 
       if (this.swapMethod === 'SELL') {
+        console.log('SELF___');
         this.setSwapMethod('BUY');
         this.addTokensEmptyIsNeeded();
         this.resetOutputs();
@@ -864,6 +873,7 @@ export default {
     },
 
     finishTransaction() {
+      console.log('finishTransaction');
       this.clearForm();
     },
 
@@ -971,6 +981,8 @@ export default {
       this.isSwapLoading = true;
 
       const actualGas = await this.getActualGasPrice(this.networkId);
+      const whiteList = WHITE_LIST_ODOS[this.networkId as keyof typeof WHITE_LIST_ODOS];
+
       const requestData = {
         chainId: this.networkId,
         inputTokens: this.getRequestInputTokens(),
@@ -979,10 +991,9 @@ export default {
         userAddr: ethers.getAddress(this.account.toLowerCase()),
         slippageLimitPercent: this.getSlippagePercent,
         sourceBlacklist: this.getSourceBlackList(this.networkId),
-        sourceWhitelist: [],
+        sourceWhitelist: whiteList ?? [],
         simulate: true,
         pathViz: true,
-        // disableRFQs: false
         referralCode: this.odosReferalCode,
       };
 
@@ -1118,6 +1129,8 @@ export default {
         return;
       }
 
+      const whiteList = WHITE_LIST_ODOS[this.networkId as keyof typeof WHITE_LIST_ODOS];
+
       const requestData = {
         chainId: this.networkId,
         inputTokens: input,
@@ -1126,7 +1139,7 @@ export default {
         userAddr: ethers.getAddress(this.account.toLowerCase()),
         slippageLimitPercent: this.getSlippagePercent,
         sourceBlacklist: this.getSourceBlackList(this.networkId),
-        sourceWhitelist: [],
+        sourceWhitelist: whiteList ?? [],
         simulate: true,
         pathViz: true,
       };
@@ -1141,7 +1154,7 @@ export default {
           this.isSumulateSwapLoading = false;
           this.isSumulateIntervalStarted = false;
 
-          console.log('EMIT');
+          console.log(data, 'EMIT');
           this.$emit('update-path-view', {
             path: data.pathViz,
             input: this.selectedInputTokens,
@@ -1195,7 +1208,9 @@ export default {
         const token: any = selectedOutputTokensMap[tokenAddress.toLowerCase()];
         if (token) {
           const { selectedToken } = token;
-          token.sum = new BigNumber(tokenAmount).div(10 ** selectedToken.decimals).toString();
+          const sum = new BigNumber(tokenAmount)
+            .div(10 ** selectedToken.decimals);
+          token.sum = sum.toFixed(fixedByPrice(sum.toNumber()) + 2);
         }
 
         this.outputTokens[i] = token;
@@ -1206,12 +1221,12 @@ export default {
       if (networkId === 324) {
         return ['Hashflow', 'Wombat', 'Maverick'];
       }
-      return ['Hashflow', 'Wombat'];
+      return ['Hashflow', 'Wombat', 'WOOFi', 'WOOFi V2'];
     },
 
     async disapproveToken(token: any) {
       const { selectedToken } = token;
-      if (!selectedToken || !selectedToken.approveData.approved) {
+      if (!selectedToken || !selectedToken.approveData.approved || !this.routerContract) {
         return;
       }
 

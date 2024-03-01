@@ -5,10 +5,11 @@
       :key="chain"
       @click="setWalletNetwork(chain.toLowerCase())"
       @keydown.enter="setWalletNetwork(chain.toLowerCase())"
+      class="account-modal__chain-data"
       :class="{ selected: (chain as any).toLowerCase() === networkName }"
     >
       <BaseIcon
-        :name="getIconName(chain.toLowerCase())"
+        :name="chain.toLowerCase()"
         class="account-modal-chains__icon"
       />
     </div>
@@ -48,16 +49,6 @@ export default {
 
   methods: {
     ...mapActions('network', ['setWalletNetwork']),
-    getIconName(chain:string) {
-      const selectedChain = this.networkName;
-      const formattedChain = chain.charAt(0).toUpperCase() + chain.slice(1).toLowerCase();
-
-      if (chain.toLowerCase() !== selectedChain.toLowerCase()) {
-        return `Icon${formattedChain}Off`;
-      }
-
-      return `Icon${formattedChain}On`;
-    },
 
   },
 };
@@ -74,8 +65,25 @@ export default {
   gap: 6px;
 }
 
+.account-modal__chain-data {
+  svg {
+    width: 24px;
+    height: 24px;
+    filter: grayscale(10);
+    opacity: .6;
+  }
+}
+.selected {
+  color: var(--color-3);
+  border-color: var(--color-1);
+
+  svg {
+    opacity: 1;
+    filter: unset;
+  }
+}
 .account-modal-chains__icon:hover {
-  opacity: 0.5;
+  opacity: 0.8;
   cursor: pointer;
 }
 </style>

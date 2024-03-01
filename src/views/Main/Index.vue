@@ -37,5 +37,6 @@ export default {
 <style>
 .main-module {
   width: 100%;
+  z-index: 1;
 }
 </style>

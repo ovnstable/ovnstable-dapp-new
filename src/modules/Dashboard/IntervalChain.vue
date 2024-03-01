@@ -18,7 +18,7 @@
         :class="{ selected: (chain as any).toLowerCase() === networkName }"
       >
         <BaseIcon
-          :name="getIconName(chain)"
+          :name="chain.toLocaleLowerCase()"
           class="dashboard__icon-chain-bottom"
         />
       </div>
@@ -66,16 +66,6 @@ export default {
     saveNetworkToLocalStore(chain:string) {
       this.$store.dispatch('network/changeDashboardNetwork', chain.toLowerCase());
     },
-    getIconName(chain:string) {
-      const selectedChain = this.$store.state.network.dashboardNetwork;
-      const formattedChain = chain.charAt(0).toUpperCase() + chain.slice(1).toLowerCase();
-
-      if (chain.toLowerCase() !== selectedChain.toLowerCase()) {
-        return `Icon${formattedChain}Off`;
-      }
-
-      return `Icon${formattedChain}On`;
-    },
     updateInterval(newInterval: string) {
       this.currentInterval = newInterval;
       this.$store.dispatch('intervalDashboard/setInterval', this.currentInterval);
@@ -93,15 +83,57 @@ export default {
 }
 
 .dashboard__chain-data-container {
-  max-width: 178px;
-  max-height: 24px;
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 6px;
+}
+.dashboard__chain-data {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 36px;
+  height: 36px;
+  margin: 0 4px;
+  font-size: 10px;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  transition: .2s ease color;
+  border: 1px solid var(--color-7);
+  border-radius: 50%;
+
+  svg {
+    width: 24px;
+    height: 24px;
+    filter: grayscale(10);
+    opacity: .5;
+  }
+
+  &:hover {
+    color: var(--color-3);
+  }
+  [data-theme="dark"] & {
+    color: var(--color-1);
+  }
 }
 
-.dashboard__icon-chain-bottom:hover {
+.selected {
+  color: var(--color-3);
+  border-color: var(--color-1);
+
+  svg {
+    opacity: 1;
+    filter: unset;
+  }
+}
+
+.dashboard__chain-data:hover {
   cursor: pointer;
+  border-color: var(--color-1);
+  background: var(--color-6);
+  transition: background 0.3s ease, border 0.3s ease;
+  [data-theme="dark"] & {
+    background: var(--color-7);
+  }
 }
 </style>

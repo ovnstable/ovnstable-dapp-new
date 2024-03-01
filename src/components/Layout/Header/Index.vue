@@ -34,12 +34,25 @@
           >
             Docs
           </a>
+          <a
+            href="https://dev.overnight.fi/swap"
+            target="_blank"
+            class="app-header__docs"
+            rel="noopener noreferrer"
+          >
+            Old Dapp
+          </a>
 
         </div>
 
         <div class="app-header__content-data">
+          <div
+            v-if="account && isBalancesLoading"
+            class="lineLoader"
+          />
+
           <PopperComponent
-            v-if="walletConnected && account"
+            v-else-if="walletConnected && account"
             interactive
             placement="bottom-end"
           >
@@ -81,8 +94,12 @@
             </template>
           </PopperComponent>
 
+          <div
+            v-if="account && isBalancesLoading"
+            class="lineLoader"
+          />
           <ButtonComponent
-            v-if="walletConnected && account"
+            v-else-if="walletConnected && account"
             class="app-header__content-account"
             btn-styles="secondary"
             @click="openAccountModal"
@@ -145,7 +162,7 @@
 </template>
 
 <script lang="ts">
-import { mapGetters, mapActions } from 'vuex';
+import { mapGetters, mapActions, mapState } from 'vuex';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { cutString } from '@/utils/strings.ts';
@@ -168,6 +185,9 @@ export default {
     };
   },
   computed: {
+    ...mapState('odosData', [
+      'isBalancesLoading',
+    ]),
     ...mapGetters('walletAction', ['walletConnected']),
     ...mapGetters('accountData', ['originalBalance', 'account']),
     ...mapGetters('network', ['networkId']),
@@ -248,7 +268,7 @@ export default {
 <style lang="scss" scoped>
 .app-header {
   position: fixed;
-  z-index: 999;
+  z-index: 10;
   top: 0;
   left: 0;
   right: 0;
@@ -424,5 +444,32 @@ export default {
   span:first-child {
     text-decoration: underline;
   }
+}
+
+$base-color: var(--color-5);
+$shine-color: var(--color-4);
+$animation-duration: 2.0s;
+$avatar-offset: 52 + 16;
+
+@mixin background-gradient {
+  background-image: linear-gradient(90deg, $base-color 0px, $shine-color 40px, $base-color 80px);
+  background-size: 600px;
+}
+
+.lineLoader {
+    float: left;
+    width: 100px;
+    height: 100%;
+    border-radius: 7px;
+    border: 1px solid var(--color-1);
+    box-shadow: 0px 1px 0px 0px var(--color-1);
+
+    @include background-gradient;
+    animation: shine-lines $animation-duration infinite ease-out;
+}
+
+@keyframes shine-lines{
+    0% { background-position: -100px;}
+    40%, 100% {background-position: 140px;}
 }
 </style>

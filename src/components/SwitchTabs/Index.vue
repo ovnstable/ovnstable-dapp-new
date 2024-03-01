@@ -107,7 +107,7 @@ export default {
   position: relative;
   white-space: nowrap;
   border-radius: 30px;
-  padding: 4px 20px;
+  padding: 4px 10px;
   cursor: pointer;
   background: var(--color-5);
   z-index: 2;
@@ -116,7 +116,7 @@ export default {
     background-color: var(--color-6);
   }
   &.large {
-    padding: 9px 20px;
+    padding: 9px 10px;
   }
 
   &::before {
@@ -151,6 +151,12 @@ export default {
   &:last-child {
     &::before {
       transform: translateX(7px);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    &.large {
+      padding: 9px 20px;
     }
   }
 }

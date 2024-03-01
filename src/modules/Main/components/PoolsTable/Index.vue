@@ -353,13 +353,18 @@ export default {
       console.log('Apr limit ', isShow, limit);
     },
     setSelectedNetwork(tab: string) {
-      if (tab === 'ALL' && !this.tabExistInTabs(this.selectedTabs, tab)) {
-        this.selectedTabs = [tab];
+      if (tab === 'all' && this.selectedTabs.includes('ALL')) {
+        this.selectedTabs = ['ALL'];
+        return;
+      }
+
+      if (tab === 'all') {
+        this.selectedTabs = ['ALL'];
         return;
       }
 
       // remove all if click other
-      if (tab !== 'ALL' && !this.tabExistInTabs(this.selectedTabs, tab)) {
+      if (tab !== 'all' && !this.tabExistInTabs(this.selectedTabs, tab)) {
         this.selectedTabs = this.selectedTabs.filter((selectedTab) => selectedTab !== 'ALL');
       }
 

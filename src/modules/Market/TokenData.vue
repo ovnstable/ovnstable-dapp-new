@@ -30,7 +30,7 @@
           class="performance__icon-chain"
         >
           <BaseIcon
-            :name="formatNetworkIconName(networkName)"
+            :name="networkName.toLocaleLowerCase()"
           />
         </div>
 
@@ -57,7 +57,7 @@
       :class="{ selected: chain.toLowerCase() === networkName }"
     >
       <BaseIcon
-        :name="getIconName(chain)"
+        :name="chain.toLocaleLowerCase()"
         class="performance__icon-chain-bottom"
       />
       <p class="performance__chain-data-name">{{ chain }}</p>
@@ -79,14 +79,6 @@ export default {
     tokenData: {
       type: Object,
       default: () => ({}),
-    },
-    chainIcon: {
-      type: String,
-      default: 'IconArbitrum',
-    },
-    chainName: {
-      type: String,
-      default: 'Optimism',
     },
   },
   computed: {
@@ -136,24 +128,10 @@ export default {
 
       return tokenPlus;
     },
-
-    getIconName(chain:string) {
-      const selectedChain = this.$store.state.network.marketNetwork;
-      const formattedChain = chain.charAt(0).toUpperCase() + chain.slice(1).toLowerCase();
-
-      if (chain.toLowerCase() !== selectedChain.toLowerCase()) {
-        return `Icon${formattedChain}Off`;
-      }
-
-      return `Icon${formattedChain}On`;
-    },
-    formatNetworkIconName(networkName: string) {
-      if (!networkName) return '';
-      return `Icon${networkName.charAt(0).toUpperCase()}${networkName.slice(1)}On`;
-    },
   },
 };
 </script>
+
 
 <style lang="scss" scoped>
 .performance__token-data {
@@ -261,6 +239,10 @@ export default {
 }
 .performance__icon-chain {
   margin-left: 10px;
+  svg {
+    width: 24px;
+    height: 24px;
+  }
 }
 
 .performance__token-data-h {
@@ -278,16 +260,30 @@ export default {
   align-items: center;
   border-radius: 30px;
   border: 1px solid var(--color-6);
-  background: var(--color-5);
   padding: 5px 10px;
   margin-top: 24px;
   width: fit-content;
   transition: background 0.3s ease, border 0.3s ease;
+  svg {
+    width: 24px;
+    height: 24px;
+    filter: grayscale(10);
+    opacity: .5;
+  }
+  [data-theme="dark"] & {
+    background: var(--color-7);
+  }
 }
 .selected {
   background: var(--color-4);
+  color: var(--color-3);
+
+  svg {
+    opacity: 1;
+    filter: unset;
+  }
   [data-theme="dark"] & {
-    background: var(--color-2);
+    background: var(--color-17);
   }
 }
 
@@ -305,7 +301,7 @@ export default {
   background: var(--color-6);
   transition: background 0.3s ease, border 0.3s ease;
   [data-theme="dark"] & {
-    background: var(--color-7);
+    background: var(--color-2);
   }
 }
 

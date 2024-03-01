@@ -32,6 +32,7 @@
 <!-- eslint-disable no-unused-vars -->
 <script lang="ts">
 import { type PropType } from 'vue';
+import BaseIcon from '@/components/Icon/BaseIcon.vue';
 // eslint-disable-next-line no-shadow
 export enum mintRedeemStep {
   START,
@@ -41,6 +42,9 @@ export enum mintRedeemStep {
 
 export default {
   name: 'StepsRow',
+  components: {
+    BaseIcon,
+  },
   props: {
     currentStage: {
       type: Number as PropType<mintRedeemStep>,
