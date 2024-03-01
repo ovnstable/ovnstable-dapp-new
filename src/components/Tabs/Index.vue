@@ -189,6 +189,9 @@ export default {
   position: relative;
   z-index: 10;
   padding: 10px 0;
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
 }
 .tabs-header__ul__li span:before {
   [data-theme="dark"] & {

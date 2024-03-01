@@ -28,7 +28,6 @@
               class="dashboard__token-data"
               :portfolioBalanceData="portfolioBalanceData.dataUSDPlus"
             />
-            <p>the length{{ portfolioBalanceData.dataUSDPlus.length }}</p>
             <DashboardGraphic
               :portfolioBalanceData="portfolioBalanceData.dataUSDPlus"
               :onlyUSD=true
@@ -213,6 +212,11 @@ export default {
   padding-left: 25px;
   padding-right: 25px;
   padding-bottom: 20px;
+  border-bottom-left-radius: 30px;
+  border-bottom-right-radius: 30px;
+  [data-theme="dark"] & {
+    background: var(--color-17);
+  }
 }
 
 .dashboard__token-data,
@@ -222,11 +226,21 @@ export default {
   width: 100%;
 }
 
+.dashboard__token-data,
+.dashboard__graphics {
+  [data-theme="dark"] & {
+    background: var(--color-17);
+  }
+}
+
 .dashboard-tokens-transactions {
   margin-top: 25px;
   color: var(--color-1);
   font-size: 17px;
   font-weight: 500;
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
 }
 .dashboard__graphics{
   border-radius: 5px;

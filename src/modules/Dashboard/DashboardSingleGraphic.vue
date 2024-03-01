@@ -449,6 +449,9 @@ export default {
     margin-left: 20px;
     margin-right: 20px;
   }
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
 }
 .dashboard__graphic{
   min-height: 250px;

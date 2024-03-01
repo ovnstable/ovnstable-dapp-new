@@ -393,7 +393,7 @@ export default {
     margin-right: 6px;
     color: var(--color-3);
     [data-theme="dark"] & {
-      background-color: var(--color-6);
+      background: none;
       box-shadow: none;
     }
   }
