@@ -180,6 +180,8 @@ export const getFilteredOvernightTokens = (
   chainId: number,
   isOnlyOvnToken: any,
 ) => {
+  if (!state.tokensMap || !state.tokensMap.chainTokenMap) return [];
+
   const tokens: any = [];
   const { tokenMap } = state.tokensMap.chainTokenMap[chainId];
   const keys = Object.keys(tokenMap);
@@ -273,7 +275,6 @@ export const getDefaultSecondtoken = (
   tokensList: any[],
   symbol?: string | null,
 ) => {
-  console.log(tokenSeparationScheme, '-tokenSeparationScheme');
   if (tokenSeparationScheme === 'OVERNIGHT_SWAP') {
     return innerGetDefaultSecondtokenBySymobl(
       tokensList,
@@ -328,7 +329,9 @@ export const updateTokenValue = (
   value: any,
   checkApprove: (tokenData: any, val: string) => void,
   updateQuotaInfo: () => void,
+  originalBalance?: string,
 ) => {
+  console.log(token, originalBalance, '---token');
   token.value = value;
   updateQuotaInfo();
 
@@ -340,8 +343,10 @@ export const updateTokenValue = (
 
   const { selectedToken } = token;
   if (selectedToken) {
-    token.contractValue = new BigNumber(token.value)
-      .times(10 ** token.selectedToken.decimals).toFixed();
+    token.contractValue = originalBalance
+    || new BigNumber(token.value)
+      .times(10 ** token.selectedToken.decimals)
+      .toFixed(0);
     token.usdValue = token.value * selectedToken.price;
 
     if (
@@ -365,7 +370,13 @@ export const maxAll = (
 ) => {
   for (let i = 0; i < selectedInputTokens.length; i++) {
     const token = selectedInputTokens[i];
-    updateTokenValue(token, token.selectedToken.balanceData.balance, checkApprove, updateQuotaInfo);
+    updateTokenValue(
+      token,
+      token.selectedToken.balanceData.balance,
+      checkApprove,
+      updateQuotaInfo,
+      token.selectedToken.balanceData.originalBalance,
+    );
   }
 };
 

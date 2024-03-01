@@ -158,7 +158,6 @@ const actions = {
         break;
     }
 
-    console.log('---refreshClientData');
     if (!rootState.accountData.account) {
       return;
     }

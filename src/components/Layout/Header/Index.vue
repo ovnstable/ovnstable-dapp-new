@@ -260,7 +260,7 @@ export default {
 <style lang="scss" scoped>
 .app-header {
   position: fixed;
-  z-index: 999;
+  z-index: 10;
   top: 0;
   left: 0;
   right: 0;

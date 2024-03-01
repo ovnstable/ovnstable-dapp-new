@@ -79,7 +79,6 @@ const actions = {
   async refreshBalance({
     commit, dispatch, getters, rootState,
   }: any) {
-    console.log('---refreshBalance');
     if (getters.account === null || getters.account === undefined) {
       return;
     }
@@ -91,8 +90,6 @@ const actions = {
     const userBalance = (await rootState.web3.evmProvider
       .getBalance(getters.account))
       .toString();
-
-    console.log(userBalance, '---userBalance');
 
     const balances = await Promise.all(USER_BALANCES_SCHEME[networkId].map(async (_) => {
       try {
@@ -147,7 +144,8 @@ const actions = {
           try {
             etsBalance = await web3.contracts[ets.tokenContract].balanceOf(getters.account);
             etsOriginalBalance = etsBalance;
-            etsBalance = new BigNumber(etsBalance).div(10 ** ets.etsTokenDecimals === 18 ? 18 : 6);
+            etsBalance = new BigNumber(etsBalance)
+              .div(10 ** ets.etsTokenDecimals === 18 ? 18 : 6).toString();
           } catch (e) {
             etsBalance = getters.etsBalance[ets.name];
             etsOriginalBalance = getters.etsOriginalBalance[ets.name];
@@ -228,7 +226,6 @@ const actions = {
     }
 
     commit('setActionAssetBalance', resultActionAssetBalance);
-
     commit('accountUI/setLoadingBalance', false, { root: true });
   },
 };
