@@ -15,7 +15,7 @@
       <div class="pools-table__content">
         <template v-if="pools.length > 0">
           <div
-            v-for="pool in pools"
+            v-for="pool in (pools as any)"
             :key="pool.id"
             class="pools-table__row"
             @click="toggleDetails(pool)"
@@ -241,10 +241,10 @@ export default {
   },
   computed: {
     getTokenNames() {
-      return (pool) => pool.name.split('/');
+      return (pool: any) => pool.name.split('/');
     },
     getPlatformLink() {
-      return (pool) => buildLink(pool) ?? '';
+      return (pool: any) => buildLink(pool) ?? '';
     },
 
     // getPoolType() {
@@ -266,7 +266,7 @@ export default {
     formatMoneyComma,
     formatNumberToMln,
     formatNumberToThousands,
-    toggleDetails(pool) {
+    toggleDetails(pool: any) {
       if (this.pools && this.pools.length) {
         pool.isOpened = !pool.isOpened;
         return;
@@ -275,7 +275,7 @@ export default {
       // pools without aggregators always is opened
       pool.isOpened = true;
     },
-    toggleOrderType(type) {
+    toggleOrderType(type: string) {
       if (type === 'APR') {
         if (!this.orderType.startsWith('APR')) {
           this.setOrderTypeFunc('APR');
