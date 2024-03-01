@@ -1,19 +1,20 @@
 <template>
-  <div
-    v-for="interval in intervals"
-    :key="interval"
-    :class="{
-      'interval-selected': interval === selectedInterval,
-      'special-style-interval-all-time': selectedInterval === intervals[1] && interval === intervals[0],
-      'special-style-interval-month': selectedInterval === intervals[2] && interval === intervals[1],
-      'special-style-interval-week': selectedInterval === intervals[3] && interval === intervals[2],
-    }"
-    class="interval-option"
-    @click="$emit('update-interval', interval)"
-    @keydown.enter="$emit('update-interval', interval)"
-    tabindex="0"
-  >
-    {{ interval }}
+  <div class="switchtabs-dashboard">
+    <div class="switchtabs-dashboard__inner">
+      <div
+        v-for="interval in intervals"
+        class="switchtabs-dashboard__inner-text"
+        :class="{ active: interval === selectedInterval }"
+        :key="interval"
+        @click="$emit('update-interval', interval)"
+        @keydown.enter="$emit('update-interval', interval)"
+        tabindex="0"
+      >
+        <span>
+          {{ interval }}
+        </span>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -34,108 +35,87 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.switchtabs-dashboard {
+  display: flex;
+}
 
-.interval-option {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  padding: 8px 26px;
-  font-size: 14px;
-  background-color: var(--color-5);
+.switchtabs-dashboard__inner {
+  display: flex;
   color: var(--color-2);
   border: 1px solid var(--color-6);
-  box-shadow: none;
-  margin-right: -10px;
-  cursor: pointer;
-  transition: background-color 0.15s, color 0.15s;
+  background: var(--color-5);
+  border-radius: 30px;
+  [data-theme="dark"] & {
+    color: var(--color-18);
+    background: var(--color-6);
+  }
+}
+
+.switchtabs-dashboard__inner-text {
   position: relative;
-  [data-theme="dark"] & {
-    background-color: var(--color-7);
-  }
-}
-
-.interval-selected {
-  background-color: var(--color-6);
-  color: var(--color-1);
-  border-color: var(--color-1);
+  white-space: nowrap;
   border-radius: 30px;
-
-  [data-theme="dark"] & {
-    background-color: var(--color-17);
-  }
-}
-
-.interval-option:nth-child(1):not(.interval-selected) {
-  z-index: 4;
-  border-radius: 30px;
-}
-.interval-option:nth-child(2):not(.interval-selected) {
-  z-index: 3;
-  border-radius: 0 30px 30px 0;
-}
-.interval-option:nth-child(3):not(.interval-selected) {
+  padding: 8px 20px;
+  cursor: pointer;
+  background: var(--color-5);
   z-index: 2;
-  border-radius: 0 30px 30px 0;
-}
-.interval-option:nth-child(4):not(.interval-selected) {
-  border-radius: 0 30px 30px 0;
-  z-index: 1;
-}
-
-.interval-option:nth-child(3).interval-selected {
-  border-radius: 30px;
-  z-index: 4;
-}
-
-.interval-option:nth-child(2).interval-selected {
-  border-radius: 30px;
-  z-index: 5;
-}
-.interval-option:nth-child(1).interval-selected {
-  border-radius: 30px;
-  z-index: 5;
-}
-.interval-option:nth-child(4).interval-selected {
-  border-left: none;
-  border-radius: 0 30px 30px 0;
-  z-index: 1;
-}
-
-.interval-option:nth-child(3).interval-selected + .interval-option:nth-child(4):not(.interval-selected) {
-  border-radius: 0 30px 30px 0;
-}
-
-.special-style-interval-all-time {
-  border-radius: 30px 0 0 30px !important;
-}
-
-.special-style-interval-month {
-  border-radius: 0 !important;
-}
-
-.special-style-interval-week {
-  border-right: 1px solid var(--color-1);
-}
-.interval-option:hover:not(.interval-selected) {
-  background-color: var(--color-4);
+  transition: opacity .2s ease, color .2s ease;
   [data-theme="dark"] & {
-    background-color: var(--color-4);
-    color: var(--color-17);
+    background-color: var(--color-6);
   }
-}
+  &.large {
+    padding: 9px 10px;
+  }
 
-.interval-option:hover {
-  color: var(--color-1);
-  [data-theme="dark"] & {
+  &::before {
+    content: "";
+    position: absolute;
+    z-index: -5;
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-6);
+    border: 1px solid var(--color-1);
     color: var(--color-1);
+    border-radius: 30px;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-7px);
+    transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.87, -0.65, 0.09, 0.91) .1s, visibility 0.2s ease;
+    [data-theme="dark"] & {
+      border-color: var(--color-2);
+    }
+  }
+
+  &:hover {
+    color: var(--color-3);
+    opacity: .7;
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
+  }
+
+  &:last-child {
+    &::before {
+      transform: translateX(7px);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    &.large {
+      padding: 9px 20px;
+    }
   }
 }
 
-.interval-selected {
+.switchtabs-dashboard__inner-text.active {
   color: var(--color-1);
-  font-weight: 800;
-  [data-theme="dark"] & {
-    color: var(--color-4);
+  &::before {
+    transform: translateX(0);
+    visibility: visible;
+    opacity: 1;
+    z-index: -2;
   }
 }
 </style>

@@ -360,6 +360,16 @@ export default {
 .dashboard__tokens-data-icon-wrapper {
   cursor: pointer;
   opacity: 0.7;
+  svg {
+    overflow: hidden;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+  }
+}
+
+.dashboard__tokens-data-icon-wrapper:not(:last-child) {
+  margin-right: 8px;
 }
 
 .dashboard__tokens-data-token-selected {

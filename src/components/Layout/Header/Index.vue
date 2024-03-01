@@ -3,8 +3,10 @@
     <div class="app-header__container">
       <div class="app-header__content">
         <div class="app-header-dapp">
-          <router-link
-            to="/"
+          <a
+            href="https://landing.overnight.fi/"
+            rel="noopener noreferrer"
+            aria-label="landing"
             class="app-header__content__logo"
           >
             <BaseIcon
@@ -15,7 +17,7 @@
             <h1>
               OVERNIGHT
             </h1>
-          </router-link>
+          </a>
           <router-link
             to="/dashboard"
             class="app-header__dashboard"
@@ -365,7 +367,9 @@ export default {
   min-width: 130px;
   min-height: 31px;
   justify-content: space-between;
-
+  [data-theme="dark"] & {
+    background-color: var(--color-7);
+  }
   svg path {
     fill: var(--color-3);
   }

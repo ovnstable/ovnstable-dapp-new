@@ -24,7 +24,7 @@
           </div>
           <p>${{ trx.opening_balance.toFixed(2) }}</p>
           <p>{{ trx.type.charAt(0).toUpperCase() + trx.type.slice(1).toLowerCase() }}</p>
-          <p>${{ trx.change_balance.toFixed(2) }}</p>
+          <p>{{ trx.change_balance < 0 ? '- ' : '' }}${{ Math.abs(trx.change_balance).toFixed(2) }}</p>
           <p>{{ trx.fee !== null ? trx.fee : '0' }}</p>
           <p>${{ trx.closing_balance.toFixed(2) }}</p>
           <div class="dashboard__transactions-id-link">
