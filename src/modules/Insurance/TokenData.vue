@@ -268,6 +268,8 @@ export default {
   padding: 5px 14px;
   [data-theme="dark"] & {
     color: var(--color-4);
+    background-color: var(--color-7);
+    box-shadow: none;
   }
 }
 .about_selected {
@@ -296,7 +298,7 @@ export default {
   background: var(--color-4);
   width: 100%;
   [data-theme="dark"] & {
-    background: var(--color-6);
+    background: var(--color-17);
   }
 }
 

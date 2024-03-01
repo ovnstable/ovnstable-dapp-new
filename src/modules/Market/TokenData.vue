@@ -330,6 +330,10 @@ export default {
 
 .performance__token-data-main-token {
   min-width: 70px;
+  [data-theme="dark"] & {
+    border: 1px solid var(--color-4);
+    border-radius: 50%;
+  }
 }
 
 @media (max-width: 1024px) {
