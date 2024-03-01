@@ -35,7 +35,7 @@
             Docs
           </a>
           <a
-            href="https://dev.overnight.fi"
+            href="https://dev.overnight.fi/swap"
             target="_blank"
             class="app-header__docs"
             rel="noopener noreferrer"
