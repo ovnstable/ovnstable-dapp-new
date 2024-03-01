@@ -335,7 +335,6 @@ export const updateTokenValue = (
   updateQuotaInfo: () => void,
   originalBalance?: string,
 ) => {
-  console.log(token, originalBalance, '---token');
   token.value = value;
   updateQuotaInfo();
 
