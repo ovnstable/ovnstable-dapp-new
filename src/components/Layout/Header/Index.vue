@@ -34,6 +34,14 @@
           >
             Docs
           </a>
+          <a
+            href="dev.overnight.fi"
+            target="_blank"
+            class="app-header__dashboard"
+            active-class="active-link"
+          >
+            Old Dapp
+          </a>
 
         </div>
 
