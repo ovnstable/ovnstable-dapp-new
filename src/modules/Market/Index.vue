@@ -156,5 +156,10 @@ export default {
     padding-left: 10px;
     padding-right: 10px;
   }
+  .market__payouts,
+  .market-wrapper,
+  .market {
+    width: 100%;
+  }
 }
 </style>

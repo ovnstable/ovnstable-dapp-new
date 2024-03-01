@@ -794,6 +794,10 @@ export default {
     font-size: 13px;
   }
 
+  .performance__portfolio-total p:nth-child(2) {
+    margin-left: 16px;
+  }
+
 }
 
 </style>
