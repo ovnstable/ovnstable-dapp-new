@@ -22,6 +22,7 @@ export default {
     Sidebar,
   },
   async mounted() {
+    await this.$store.dispatch('theme/initTheme');
     await this.$store.dispatch('walletAction/dappInitWalletConnect');
     await this.$store.dispatch('web3/initWeb3');
   },
