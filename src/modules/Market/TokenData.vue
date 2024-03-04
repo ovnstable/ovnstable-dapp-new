@@ -1,20 +1,23 @@
 <template>
   <div class="performance__token-data">
-    <BaseIcon
-      :name="tokenData.tokenImageName"
-      class="performance__token-data-main-token"
-    />
-    <div class="performance__token-data-link-title">
-      <p class="performance__token-data-title performance__token-data-title--token">{{ tokenData.tokenName }}</p>
-      <a
-        :href="`${networkScan}address/` + generateHref(tokenData.tokenName, networkName)"
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="token-address"
-        class="performance__token-data-link-addr link-ovn"
-      >Token address</a>
+    <div class="performance__token-data-header">
+      <BaseIcon
+        :name="tokenData.tokenImageName"
+        class="performance__token-data-main-token"
+      />
+      <div class="performance__token-data-link-title">
+        <p class="performance__token-data-title performance__token-data-title--token">{{ tokenData.tokenName }}</p>
+        <a
+          :href="`${networkScan}address/` + generateHref(tokenData.tokenName, networkName)"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="token-address"
+          class="performance__token-data-link-addr link-ovn"
+        >Token address</a>
+      </div>
+      <p class="performance__token-data__description">{{ tokenData.description }}</p>
     </div>
-    <p class="performance__token-data__description">{{ tokenData.description }}</p>
+
     <div class="performance__divider" />
     <div class="performance__payout-data">
       <p class="performance__token-data-title">Last payout</p>
@@ -68,6 +71,7 @@
 <script lang="ts">
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { chainContractsMap } from '@/utils/contractsMap.ts';
+import { deviceType } from '@/utils/deviceType.ts';
 
 export default {
   name: 'TokenDataPerformance',
@@ -81,6 +85,9 @@ export default {
     },
   },
   computed: {
+    device() {
+      return deviceType();
+    },
     networkName() {
       return this.$store.state.network.marketNetwork;
     },
@@ -131,8 +138,13 @@ export default {
 };
 </script>
 
-
 <style lang="scss" scoped>
+
+.performance__token-data-header {
+  display: flex;
+  flex-direction: row;
+}
+
 .performance__token-data {
   display:flex;
   flex-direction: row;
@@ -458,6 +470,82 @@ export default {
   .performance__divider {
     margin-left: 5px;
     margin-right: 5px;
+  }
+}
+
+@media (max-width: 400px) {
+  .performance__token-data-header {
+    width: 100%;
+    margin-bottom: 6px;
+  }
+  .performance__token-data-main-token {
+    width: 40px;
+    overflow: visible;
+    min-width: 58px;
+    height: 40px;
+  }
+  .performance__token-data-link-addr {
+    margin-top: 18px;
+  }
+  .performance__token-data-link-title {
+    margin-left: 10px;
+  }
+  .performance__token-data-title--token {
+    font-size: 16px;
+    margin-left: 0;
+  }
+  .performance__token-data__description {
+    margin-top: 0;
+    margin-left: 68px;
+    max-width: 138px;
+  }
+  .performance__divider {
+    margin-top: 12px;
+    margin-bottom: 12px;
+  }
+  .performance__payout-data,
+  .performance__apy-data,
+  .performance__apy-data-chain,
+  .performance__tvl-data {
+    justify-content: space-between;
+    flex-direction: row;
+    width: 100%;
+    p {
+      margin-top: 0;
+    }
+  }
+  .performance__payout-data p:first-child,
+  .performance__tvl-data p:first-child {
+    font-size: 12px;
+    margin-right: auto
+  }
+  .performance__apy-data {
+    .performance__token-data-title {
+      font-size: 12px;
+      width: 100%;
+      margin-right: auto;
+    }
+  }
+  .performance__apy-data-chain {
+    align-items: center;
+    justify-content: right;
+  }
+  .performance__token-data-num--payout-ago,
+  .performance__token-data-num {
+    font-size: 14px;
+    margin-right: 10px;
+  }
+  .performance__token-data-col-token {
+    font-size: 14px;
+  }
+  .performance__apy-data p {
+    text-align: left;
+  }
+  .performance__icon-chain {
+    margin: 0;
+  }
+  .performance__chain-data-container {
+    justify-content: space-between;
   }
 }
 </style>

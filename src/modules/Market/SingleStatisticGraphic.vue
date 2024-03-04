@@ -200,6 +200,9 @@ export default {
               min: minValue,
               max: maxValue,
               ticks: {
+                font: {
+                  size: 10,
+                },
                 stepSize: (maxValue - minValue) / 6,
                 color: isDarkTheme ? '#ffffff' : '#0f172a',
                 min: 4,
@@ -534,6 +537,28 @@ export default {
   }
   .performance__graphic-values p:last-child {
     font-size: 12px;
+  }
+}
+
+@media (max-width: 400px) {
+  .performance__graphic-values {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    text-align: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .performance__graphic {
+    margin-top: 2px;
+    padding: 0;
+    background: none;
+  }
+  .performance__graphic-display {
+    background-color: var(--color-8);
+  }
+  .performance__graphic-title {
+    font-size: 14px;
   }
 }
 </style>

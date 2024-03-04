@@ -3,9 +3,10 @@
     <HeaderBar />
 
     <div class="container">
-      <Sidebar />
+      <Sidebar v-if="!device.isMobile" />
       <RouterView />
     </div>
+    <Sidebar v-if="device.isMobile" />
   </div>
 </template>
 
@@ -13,6 +14,7 @@
 import { RouterView } from 'vue-router';
 import HeaderBar from '@/components/Layout/Header/Index.vue';
 import Sidebar from '@/components/Layout/Sidebar/Index.vue';
+import { deviceType } from '@/utils/deviceType.ts';
 
 export default {
   name: 'AppView',
@@ -20,6 +22,11 @@ export default {
     RouterView,
     HeaderBar,
     Sidebar,
+  },
+  computed: {
+    device() {
+      return deviceType();
+    },
   },
   async mounted() {
     await this.$store.dispatch('walletAction/dappInitWalletConnect');
@@ -56,6 +63,12 @@ export default {
 @media (max-width: 576px) {
   .app-wrapper {
     width: 100vw;
+  }
+}
+@media (max-width: 400px) {
+  .container {
+    padding-left: 0px;
+    padding-right: 0px
   }
 }
 </style>

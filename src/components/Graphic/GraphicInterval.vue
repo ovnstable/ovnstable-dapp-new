@@ -1,15 +1,18 @@
 <template>
-  <div
-    v-for="interval in intervals"
-    :key="interval"
-    :class="{ 'interval-selected': interval === selectedInterval }"
-    class="interval-option"
-    @click="$emit('update:interval', interval)"
-    @keydown.enter="$emit('update:interval', interval)"
-    tabindex="0"
-  >
-    {{ interval }}
+  <div class="intervals_wrapper">
+    <div
+      v-for="interval in intervals"
+      :key="interval"
+      :class="{ 'interval-selected': interval === selectedInterval }"
+      class="interval-option"
+      @click="$emit('update:interval', interval)"
+      @keydown.enter="$emit('update:interval', interval)"
+      tabindex="0"
+    >
+      {{ interval }}
+    </div>
   </div>
+
 </template>
 
 <script lang="ts">
@@ -55,6 +58,17 @@ export default {
   font-weight: 800;
   [data-theme="dark"] & {
     color: var(--color-4);
+  }
+}
+
+@media (max-width: 400px) {
+  .interval-option {
+    margin: 0;
+  }
+  .intervals_wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
   }
 }
 </style>

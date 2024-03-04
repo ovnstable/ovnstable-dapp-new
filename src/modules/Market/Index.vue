@@ -164,4 +164,17 @@ export default {
     margin-left: 20px;
   }
 }
+
+@media (max-width: 400px) {
+  .market {
+    padding-left: 20px;
+    padding-right: 20px
+  }
+  .market-wrapper {
+    margin-left: 0;
+  }
+  .market__graphics{
+    margin-top: 24px;
+  }
+}
 </style>
