@@ -59,12 +59,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
- .graphic__loader {
-    min-height: 350px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+.graphic__loader {
+  min-height: 350px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .performance__graphics {
   min-height: 350px;
   display: flex;
@@ -73,7 +73,7 @@ export default {
   align-items: center;
   background: var(--color-4);
   [data-theme="dark"] & {
-      background: var(--color-6);
+    background: var(--color-17);
   }
 
   > .performance__graphics-APY-graphic,

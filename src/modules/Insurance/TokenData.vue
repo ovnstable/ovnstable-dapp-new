@@ -377,6 +377,23 @@ export default {
   flex-direction: column;
   align-items: center;
 }
+
+.insurance__payout-data {
+  svg {
+    border: 1px solid var(--color-1);
+    border-radius: 50%;
+    box-shadow: 1px 1px 1px 1px var(--color-1);
+  }
+}
+
+.insurance_risk-factor {
+  svg {
+    border: none;
+    border-radius: 0%;
+    box-shadow: none;
+  }
+}
+
 .insurance__token-data-num,
 .insurance__token-data-col-token {
   color: var(--color-1);

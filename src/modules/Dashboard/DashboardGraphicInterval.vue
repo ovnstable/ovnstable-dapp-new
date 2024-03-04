@@ -111,11 +111,17 @@ export default {
 
 .switchtabs-dashboard__inner-text.active {
   color: var(--color-1);
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
   &::before {
     transform: translateX(0);
     visibility: visible;
     opacity: 1;
     z-index: -2;
+    [data-theme="dark"] & {
+      background-color: var(--color-7);
+    }
   }
 }
 </style>

@@ -527,7 +527,7 @@ export default {
   cursor: pointer;
   transition: background-color 0.3s ease;
   [data-theme="dark"] & {
-    background-color: var(--color-2);
+    background-color: var(--color-17);
   }
 }
 

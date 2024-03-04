@@ -302,7 +302,7 @@ export default {
   font-size: 15px;
   font-weight: 500;
   [data-theme="dark"] & {
-    color: var(--color-18);
+    color: var(--color-2);
   }
 }
 

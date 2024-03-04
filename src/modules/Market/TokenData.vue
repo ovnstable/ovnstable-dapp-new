@@ -141,7 +141,7 @@ export default {
   background: var(--color-4);
   width: 100%;
   [data-theme="dark"] & {
-    background: var(--color-6);
+    background: var(--color-17);
   }
 }
 
