@@ -140,7 +140,7 @@
               >
                 <div
                   class="networks-list__item"
-                  v-for="item in networksData"
+                  v-for="item in sortedChains"
                   :key="item.name"
                   @click="chooseNetwork(item.chain, close)"
                   @keypress="chooseNetwork(item.chain, close)"
@@ -169,7 +169,15 @@ import { cutString } from '@/utils/strings.ts';
 import { OVN_TOKENS, appNetworksData } from '@/utils/const.ts';
 import BigNumber from 'bignumber.js';
 import { loadTokenImage } from '@/utils/tokenLogo.ts';
+import { sortedChainsByTVL } from '@/store/helpers/index.ts';
 import AccountModal from '@/modules/Account/Index.vue';
+
+interface Chain {
+  chainName: string;
+  tvl: number;
+  name: string,
+  chain: number,
+}
 
 export default {
   name: 'HeaderBar',
@@ -178,8 +186,12 @@ export default {
     AccountModal,
     BaseIcon,
   },
+  async mounted() {
+    this.sortedChains = await sortedChainsByTVL(this.networksData);
+  },
   data() {
     return {
+      sortedChains: [] as Chain[],
       networksData: appNetworksData,
       showModalAccount: false,
     };

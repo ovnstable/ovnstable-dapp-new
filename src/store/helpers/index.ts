@@ -5,6 +5,7 @@
 import BigNumber from 'bignumber.js';
 import { loadTokenImage, loadOvernightTokenImage } from '@/utils/tokenLogo.ts';
 import odosApiService from '@/services/odos-api-service.ts';
+import SliderApiService from '@/services/slider-api-service.ts';
 import type { stateData } from '@/store/views/main/odos/index';
 
 const SECONDTOKEN_SECOND_DEFAULT_SYMBOL = 'DAI+';
@@ -456,3 +457,31 @@ export const loadPrices = async (chainId: number | string) => odosApiService
   .catch((e: any) => {
     console.error('Error load contract', e);
   });
+
+export const sortedChainsByTVL = async (chains: any) => {
+  const tvl = await SliderApiService.loadTVL();
+  const response = await odosApiService.loadPrices(10);
+  const ethPrice = (response as any).tokenPrices['0x0000000000000000000000000000000000000000'];
+  const chainsWithTVL = tvl.map((chain: { values: any[]; chainName: any; }) => {
+    const totalTVL = chain.values.reduce((total, token) => {
+      const value = token.name === 'ETH+' ? token.value * ethPrice : token.value;
+      return total + value;
+    }, 0);
+    return { chainName: chain.chainName, tvl: totalTVL };
+  });
+
+  const sortedChains = chainsWithTVL.sort((a: { tvl: number; }, b: { tvl: number; }) => b
+    .tvl - a.tvl);
+
+  const networksMap: any = chains.reduce((acc: any, network: any) => ({
+    ...acc,
+    [network.name.toLowerCase()]: network,
+  }), {});
+
+  const orderedNetworks = sortedChains.map((chain: any) => {
+    const chainName = chain.chainName.toLowerCase();
+    return networksMap[chainName] || null;
+  }).filter((network: any) => network !== null);
+
+  return orderedNetworks;
+};
