@@ -33,6 +33,7 @@ export const WHITE_LIST_ODOS = {
     'Lighter V2',
     'Curve Stable NG',
     'Wrapped Ether',
+    'Overnight Wrapper',
   ],
   8453: [
     'Overnight Exchange',
@@ -42,6 +43,7 @@ export const WHITE_LIST_ODOS = {
     'SynthSwap',
     'Maverick',
     'Wrapped Ether',
+    'Overnight Wrapper',
   ],
   10: [
     'Overnight Exchange',
@@ -51,6 +53,7 @@ export const WHITE_LIST_ODOS = {
     'Velodrome V2 Volatile',
     'Solidly V3',
     'Wrapped Ether',
+    'Overnight Wrapper',
   ],
   137: [
     'Overnight Exchange',
@@ -60,11 +63,14 @@ export const WHITE_LIST_ODOS = {
     'QuickSwap',
     'Dodo V2',
     'Wrapped Matic',
+    'Overnight Wrapper',
   ],
   324: [
     'Overnight Exchange',
     'SyncSwap Stable',
     'PancakeSwap V3',
+    'Maverick',
+    'Wrapped Ether',
   ],
 };
 
@@ -328,26 +334,21 @@ export const updateTokenValue = (
   token: any,
   value: any,
   checkApprove: (tokenData: any, val: string) => void,
-  updateQuotaInfo: () => void,
   originalBalance?: string,
 ) => {
-  console.log(token, originalBalance, '---token');
-  token.value = value;
-  updateQuotaInfo();
-
-  if (!value) {
-    token.usdValue = 0;
-    token.value = 0;
-    return;
-  }
+  if (!value) return token;
 
   const { selectedToken } = token;
+  console.log(selectedToken, token, '----selectedToken');
+  console.log(value, '---value');
   if (selectedToken) {
     token.contractValue = originalBalance
-    || new BigNumber(token.value)
-      .times(10 ** token.selectedToken.decimals)
+    || new BigNumber(value)
+      .times(10 ** selectedToken.decimals)
       .toFixed(0);
-    token.usdValue = token.value * selectedToken.price;
+    token.usdValue = new BigNumber(value)
+      .times(selectedToken.price)
+      .toFixed(6, BigNumber.ROUND_DOWN);
 
     if (
       selectedToken.address === '0x0000000000000000000000000000000000000000'
@@ -361,23 +362,25 @@ export const updateTokenValue = (
 
     checkApprove(token, token.contractValue);
   }
+
+  // eslint-disable-next-line consistent-return
+  return {
+    ...token,
+    value,
+  };
 };
 
 export const maxAll = (
   selectedInputTokens: any[],
   checkApprove: (tokenData: any, val: string) => void,
-  updateQuotaInfo: () => void,
 ) => {
-  for (let i = 0; i < selectedInputTokens.length; i++) {
-    const token = selectedInputTokens[i];
-    updateTokenValue(
-      token,
-      token.selectedToken.balanceData.balance,
-      checkApprove,
-      updateQuotaInfo,
-      token.selectedToken.balanceData.originalBalance,
-    );
-  }
+  console.log(selectedInputTokens, 'SELECTED');
+  return selectedInputTokens.map((item) => updateTokenValue(
+    item,
+    item.selectedToken.balanceData.balance,
+    checkApprove,
+    item.selectedToken.balanceData.originalBalance,
+  ));
 };
 
 export const loadBalance = async (

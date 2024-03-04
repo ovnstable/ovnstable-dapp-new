@@ -61,9 +61,10 @@
                   :token-info="token"
                   :remove-item-func="removeInputToken"
                   :is-token-removable="isInputTokensRemovable"
-                  :select-token-func="selectFormToken"
                   :is-input-token="true"
-                  :update-token-value-func="updateTokenValueMethod"
+                  @select-token="selectFormToken"
+                  @remove-token="removeInputToken"
+                  @update-token="updateTokenValueMethod"
                 />
               </div>
               <div
@@ -108,11 +109,12 @@
               >
                 <TokenForm
                   :token-info="token"
-                  :remove-item-func="removeOutputToken"
-                  :is-token-removable="isOutputTokensRemovable"
                   :select-token-func="selectFormToken"
                   :is-input-token="false"
                   :disabled="true"
+                  :is-token-removable="isOutputTokensRemovable"
+                  @select-token="selectFormToken"
+                  @remove-token="removeOutputToken"
                 />
               </div>
 
@@ -674,9 +676,8 @@ export default {
       const tokens = this.selectedInputTokens;
       for (let i = 0; i < tokens.length; i++) {
         const token: any = tokens[i];
-        if (token.value > 0) {
-          return true;
-        }
+        console.log(token, '---token');
+        if (token.value > 0) return true;
       }
 
       return false;
@@ -731,10 +732,19 @@ export default {
       this.slippagePercent = val;
     },
     maxAllMethod() {
-      maxAll(this.selectedInputTokens, this.checkApproveForToken, this.updateQuotaInfo);
+      this.inputTokens = maxAll(this.selectedInputTokens, this.checkApproveForToken);
+      this.updateQuotaInfo();
     },
-    updateTokenValueMethod(token:any, val: any) {
-      updateTokenValue(token, val, this.checkApproveForToken, this.updateQuotaInfo);
+    updateTokenValueMethod(token: any) {
+      const newToken = updateTokenValue(
+        token,
+        token.value,
+        this.checkApproveForToken,
+      );
+
+      const indexOf = this.inputTokens.map((_) => _.id).indexOf(newToken.id);
+      this.inputTokens[indexOf] = newToken;
+      this.updateQuotaInfo();
     },
     async init() {
       await this.loadChains();
@@ -1437,6 +1447,7 @@ export default {
     },
 
     addSelectedTokenToList(data: any) {
+      console.log(data, 'NEW TOKENS');
       if (data.isInput) {
         this.addSelectedTokenToInputList(data.tokenData);
         this.removeOutputToken(data.tokenData.id);
@@ -1644,7 +1655,8 @@ export default {
       }
 
       setTimeout(() => {
-        maxAll(this.selectedInputTokens, this.checkApproveForToken, this.updateQuotaInfo);
+        maxAll(this.selectedInputTokens, this.checkApproveForToken);
+        this.updateQuotaInfo();
         this.$emit('update-stablecoins-list', tokens);
       });
     },
