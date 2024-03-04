@@ -446,6 +446,7 @@ export default {
     width: 24px;
     height: 24px;
     margin-right: 8px;
+    border-radius: 50%;
   }
 
   @media (max-width: 1024px) {
