@@ -3,6 +3,10 @@
 #app {
   padding-top: 100px;
   overflow-x: hidden;
+
+  @media (max-width: 1024px) {
+    padding-top: 0;
+  }
 }
 
 a {

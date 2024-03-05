@@ -6,13 +6,25 @@
       <Sidebar />
       <RouterView />
     </div>
+
+    <FooterMobile v-if="!deviceType().isDesktop" />
+
+    <WaitingModal :show-modal="showWaitModal" />
+    <ErrorModal :show-modal="showErrorModal" />
+    <SuccessModal :show-modal="showSuccessModal" />
   </div>
 </template>
 
 <script lang="ts">
+import { mapGetters } from 'vuex';
 import { RouterView } from 'vue-router';
 import HeaderBar from '@/components/Layout/Header/Index.vue';
 import Sidebar from '@/components/Layout/Sidebar/Index.vue';
+import FooterMobile from '@/components/Layout/FooterMobile/Index.vue';
+import WaitingModal from '@/modules/ModalTemplates/WaitingModal/Index.vue';
+import ErrorModal from '@/modules/ModalTemplates/ErrorModal/Index.vue';
+import SuccessModal from '@/modules/ModalTemplates/SuccessModal/Index.vue';
+import { deviceType } from '@/utils/deviceType.ts';
 
 export default {
   name: 'AppView',
@@ -20,11 +32,23 @@ export default {
     RouterView,
     HeaderBar,
     Sidebar,
+    FooterMobile,
+    ErrorModal,
+    WaitingModal,
+    SuccessModal,
   },
   async mounted() {
     await this.$store.dispatch('theme/initTheme');
     await this.$store.dispatch('walletAction/dappInitWalletConnect');
     await this.$store.dispatch('web3/initWeb3');
+  },
+  methods: {
+    deviceType,
+  },
+  computed: {
+    ...mapGetters('waitingModal', { showWaitModal: 'show' }),
+    ...mapGetters('errorModal', { showErrorModal: 'show' }),
+    ...mapGetters('successModal', { showSuccessModal: 'show' }),
   },
 };
 </script>
