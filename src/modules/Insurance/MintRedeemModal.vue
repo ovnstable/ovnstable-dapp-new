@@ -188,9 +188,7 @@ export default {
       return false;
     },
     requestRequired() {
-      // todo: when period fixed
-      if (this.insuranceRedemptionData.hours < 0 && this.networkId === 10) return false;
-      if (this.insuranceRedemptionData.hours > 0 && this.insuranceRedemptionData.hours < 72) {
+      if (this.insuranceRedemptionData.request === 'CAN_WITHDRAW') {
         return false;
       }
       if (this.selectedAction === 'redeem' && !this.redemptionRequestSent) return true;
@@ -350,8 +348,8 @@ export default {
           } else {
             gasParams = {
               from,
-              gasPrice: '1741078',
-              gas: '137023',
+              gasPrice: this.gasPriceGwei,
+              gas: this.gas,
             };
           }
 
