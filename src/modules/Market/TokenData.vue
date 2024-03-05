@@ -1,4 +1,25 @@
 <template>
+  <div
+    v-if="device.isMobile"
+    class="performance__token-data-markets"
+  >
+    <router-link
+      v-for="link in linksData"
+      :key="link.name"
+      :to="link.to"
+      class="sidebar__text-market"
+      active-class="active-link"
+    >
+      <div class="performance__token-data-markets-links">
+        <BaseIcon
+          :name="link.iconName"
+          :class="{ 'inactive-link': link.name !== tokenData.tokenName }"
+        />
+        <p>{{ link.name }}</p>
+      </div>
+
+    </router-link>
+  </div>
   <div class="performance__token-data">
     <div class="performance__token-data-header">
       <BaseIcon
@@ -83,6 +104,17 @@ export default {
       type: Object,
       default: () => ({}),
     },
+  },
+  data() {
+    return {
+      linksData: [
+        { name: 'USD+', to: '/market/usd', iconName: 'USD+_market' },
+        { name: 'USDC+', to: '/market/usdc', iconName: 'USDC+_Account' },
+        { name: 'ETH+', to: '/market/eth', iconName: 'DashboardETH+Tokens' },
+        { name: 'USDT+', to: '/market/usdt', iconName: 'USDT_market' },
+        { name: 'DAI+', to: '/market/dai', iconName: 'DAI+_market' },
+      ],
+    };
   },
   computed: {
     device() {
@@ -547,5 +579,30 @@ export default {
   .performance__chain-data-container {
     justify-content: space-between;
   }
+  .performance__token-data-markets {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  .performance__token-data-markets-links {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    p {
+      font-size: 12px;
+      color: var(--color-1);
+      margin-left: 4px
+    }
+    svg {
+      border-radius: 50%;
+    }
+    .inactive-link {
+      opacity: 0.5;
+      filter: grayscale(10);
+    }
+  }
+
 }
 </style>

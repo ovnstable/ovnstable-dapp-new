@@ -1,5 +1,10 @@
 <template>
-  <div class="performance__portfolio-strategies-token-title">
+  <div
+    :class="[
+      'performance__portfolio-strategies-token-title',
+      device.isMobile && type === 'portfolio' ? 'performance__portfolio-strategies-token-portfolio-mob' : '',
+    ]"
+  >
     {{ type === 'strategies' ? tokenName + ' portfolio' : tokenName + ' collateral assets' }}
     <a
       v-if="type === 'strategies'"
@@ -192,8 +197,7 @@
                   {{ type === 'portfolio' ? asset.id.tokenName : asset.fullName }}
                 </p>
               </div>
-
-              <p>Strategy</p>
+              <p>{{ type === 'portfolio' ? 'Stablecoin' : 'Strategy' }}</p>
             </div>
             <div class="performance__portfolio-strategy-nav-mobile">
               <p :class="{ 'performance__portfolio-strategies-stables-score': type === 'portfolio' }">
@@ -213,31 +217,30 @@
                   class="performance__portfolio-strategy-progress"
                   :style="{ width: calculatePercentPortfolio(asset.netAssetValue, totalPortfolioValue(assets)) + '%', 'background-color': getIconColor(assets.indexOf(asset)) }"
                 />
+                <p class="performance__portfolio-strategy-token-portfolio-num">{{ calculatePercentPortfolio(asset.netAssetValue, totalPortfolioValue(assets)) }}%</p>
               </div>
-              <p class="performance__portfolio-strategy-token-portfolio-num">{{ calculatePercentPortfolio(asset.netAssetValue, totalPortfolioValue(assets)) }}%</p>
-              <p>% in portfolio</p>
+              <p class="performance__portfolio-strategy-percent">% in portfolio</p>
             </div>
           </div>
 
         </div>
-        <div class="performance__portfolio-strategies-divider" />
+
+        <BaseIcon
+          v-if="type === 'strategies'"
+          class="performance__portfolio-dropdown-arrow"
+          :name="dropdownVisible === asset.fullName ? 'ArrowUp' : 'ArrowDown'"
+        />
+        <div
+          v-if="(type !== 'strategies' || dropdownVisible !== asset.fullName) && (type !== 'portfolio' || assets.indexOf(asset) !== assets.length - 1)"
+          class="performance__portfolio-strategies-divider"
+        />
         <div
           v-show="dropdownVisible === asset.fullName"
           class="performance__portfolio-dropdown-content"
         >
-          <div class="performance__portfolio-strategies-divider" />
           <div class="performance__portfolio-dropdown performance__portfolio-dropdown--dep-to">
             <p>Lending Protocol Deposited To:</p>
             <p>{{ asset.lendingProtocolDepositedTo }}</p>
-            <p>See on Debank:</p>
-            <a
-              :href="'https://debank.com/profile/' + asset.linkDepositedProtocol"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="link-ovn"
-            >
-              <p>{{ formatTransactionID(asset.linkDepositedProtocol) }}</p>
-            </a>
           </div>
           <div class="performance__portfolio-dropdown performance__portfolio-dropdown--dep-asset">
             <p>Deposited asset:</p>
@@ -248,17 +251,52 @@
             <p>{{ asset.borrowedAsset }}</p>
           </div>
           <div class="performance__portfolio-dropdown performance__portfolio-dropdown--lp-farming">
-            <p>LP Farming</p>
+            <p>LP Farming:</p>
             <p>{{ asset.lpFarmingPlatform }}</p>
           </div>
           <div class="performance__portfolio-dropdown performance__portfolio-dropdown--lp-pair">
-            <p>LP Pair</p>
+            <p>LP Pai:</p>
             <p>{{ asset.lpPair }}</p>
+          </div>
+          <div class="performance__portfolio-dropdown performance__portfolio-dropdown--debank">
+            <p>See on DeBank:</p>
+            <a
+              :href="'https://debank.com/profile/' + asset.linkDepositedProtocol"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="link-ovn"
+            >
+              <p>{{ formatTransactionID(asset.linkDepositedProtocol) }}</p>
+            </a>
           </div>
           <div
             v-if="assets.indexOf(asset) != assets.length - 1"
             class="performance__portfolio-strategies-divider"
           />
+        </div>
+      </div>
+      <div
+        v-if="type === 'strategies'"
+        class="performance__portfolio-strategies-total-mobile"
+      >
+        <p>Total</p>
+        <div class="performance__portfolio-total-nv-mobile">
+          <p class="performance__portfolio-total-nav-val">
+            {{ formatCurrency(totalNAV(assets, collateralToken), collateralToken) }}
+          </p>
+          <p>Net asset value</p>
+        </div>
+        <div class="performance__portfolio-total-liq-mobile">
+          <p class="performance__portfolio-total-liquidation-val">
+            {{ formatCurrency(totalLiquidationValue(assets, collateralToken), collateralToken) }}
+          </p>
+          <p>Liquidation value</p>
+        </div>
+        <div class="performance__portfolio-circle-mobile">
+          <p class="performance__portfolio-total-label performance__portfolio-total-label--circl">Total {{ tokenName }} in circulation</p>
+          <p class="performance__portfolio-total-circl-number">
+            {{ formatCurrency(tokenAmountInCirculation, collateralToken) }}
+          </p>
         </div>
       </div>
     </div>
@@ -949,6 +987,11 @@ export default {
     display: flex;
     flex-direction: column;
   }
+  .performance__portfolio-strategies-stables {
+    background-color: var(--color-8);
+    border-radius: 10px;
+    padding: 16px 10px;
+  }
   .performance__portfolio-strategy-token-data-mobile,
   .performance__portfolio-strategy-nav-mobile,
   .performance__portfolio-strategy-liq-val-mobile,
@@ -974,5 +1017,104 @@ export default {
   .performance__portfolio-strategies-divider {
     border-color: var(--color-7);
   }
+   .performance__portfolio-strategy-progress-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    max-width: 150px;
+    max-height: 12px;
+  }
+  .performance__portfolio-strategy-token-portfolio-num {
+    position: absolute;
+    left: 100%;
+    margin-left: 10px;
+  }
+  .performance__portfolio-strategies-divider {
+    margin-top: 10px;
+    margin-bottom: 16px
+  }
+
+  .performance__portfolio-strategy-token-data-mobile p,
+  .performance__portfolio-strategy-nav-mobile p,
+  .performance__portfolio-strategy-liq-val-mobile p,
+  .performance__portfolio-strategy-percent-portfolio-mobile p {
+    font-size: 14px;
+  }
+
+  .performance__portfolio-strategy-token-data-mobile:nth-child(1),
+  .performance__portfolio-strategy-nav-mobile p:last-child,
+  .performance__portfolio-strategy-liq-val-mobile p:last-child,
+  .performance__portfolio-strategy-percent  {
+    color: var(--color-2);
+  }
+  .performance__portfolio-asset-icon {
+    margin-right: 10px;
+  }
+  .performance__portfolio-strategy-token-name.asset {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    min-width: 0;
+  }
+
+  .performance__portfolio-dropdown-content {
+    margin: 0;
+  }
+
+  .performance__portfolio-dropdown-content {
+    display: flex;
+    flex-direction: column;
+  }
+  .performance__portfolio-dropdown {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
+  }
+  .performance__portfolio-dropdown p:last-child {
+    margin: 0;
+    text-align: right;
+  }
+  .performance__portfolio-dropdown p {
+    white-space: nowrap;
+  }
+  .performance__portfolio-dropdown-arrow {
+    margin-top: 10px;
+  }
+  .performance__portfolio-dropdown--dep-to {
+    margin-top: 16px;
+  }
+
+  .performance__portfolio-strategies-total-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 10px ;
+    p {
+      font-size: 14px;
+      font-weight: 500;
+    }
+  }
+
+  .performance__portfolio-total-nv-mobile,
+  .performance__portfolio-total-liq-mobile,
+  .performance__portfolio-circle-mobile {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .performance__portfolio-total-label--circl,
+  .performance__portfolio-total-circl-number {
+    margin: 0;
+  }
+
+  .performance__portfolio-strategies-token-portfolio-mob {
+    display: flex;
+    flex-direction: column;
+    .performance__portfolio-description {
+      margin-top: 10px;
+      text-align: left
+    }
+  }
+
 }
 </style>

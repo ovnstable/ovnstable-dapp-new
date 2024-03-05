@@ -2,7 +2,11 @@
   <div class="performance__payouts">
     <div class="performance__payouts-titles">
       <p>Payable date, UTC</p>
-      <p>Daily profit, {{ payoutData.collateralToken }} per {{ payoutData.tokenName }}</p>
+      <p v-if="!device.isMobile">Daily profit,
+        {{ payoutData.collateralToken }} per {{ payoutData.tokenName }}</p>
+      <p v-else>Daily profit,<br>
+        {{ payoutData.collateralToken }} per {{ payoutData.tokenName }}
+      </p>
       <p>Annualized yield, % per year</p>
       <p>Explorer</p>
     </div>
@@ -30,8 +34,15 @@
               aria-label="Link for token"
               class="link-ovn"
             >
-              <p>{{ formatTransactionID(trx.transactionHash) }}</p>
+              <template v-if="!device.isMobile">
+                <p>{{ formatTransactionID(trx.transactionHash) }}</p>
+              </template>
+              <BaseIcon
+                v-else
+                name="ArrowRight"
+              />
             </a>
+
           </div>
         </div>
         <div
@@ -62,6 +73,7 @@
 <script lang="ts">
 
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import { deviceType } from '@/utils/deviceType.ts';
 
 export default {
   name: 'PortfolioPayouts',
@@ -81,6 +93,9 @@ export default {
     };
   },
   computed: {
+    device() {
+      return deviceType();
+    },
     networkScan() {
       return this.$store.state.network.marketExplorerURL;
     },
@@ -353,11 +368,32 @@ export default {
   .performance__payouts-button-show {
     padding: 2px;
   }
-  
+
   .performance__payouts {
     padding: 20px;
   }
+}
 
+@media (max-width: 400px) {
+  .performance__payouts-titles p {
+    font-size: 12px;
+  }
+
+  .performance__payouts-transaction p,
+  .performance__payouts-time,
+  .performance__payouts-button-show-text {
+    font-size: 14px;
+  }
+
+  .performance__payouts-time,
+  .performance__payouts-titles p:nth-child(2) {
+    margin: 0;
+  }
+
+  .performance__payouts-titles p:nth-child(2) {
+    margin-left: 30px;
+    margin-right: 12px;
+  }
 }
 
 </style>
