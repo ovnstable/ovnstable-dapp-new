@@ -332,7 +332,7 @@ export default {
     padding: 5px;
   }
   .performance__payouts-titles p:nth-child(2) {
-    margin-left: 50px;
+    margin-right: 20px;
   }
   .performance__payouts-transaction p:nth-child(2) {
     text-align: left;

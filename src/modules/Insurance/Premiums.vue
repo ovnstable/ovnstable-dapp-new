@@ -336,6 +336,9 @@ export default {
     width: 100px;
   }
 
+  .insurance-premium-portfolio-percent {
+    justify-content: flex-end;
+  }
   .insurance__premiums-specs,
   .insurance-premium {
     grid-template-columns: 1.8fr 1fr 1.3fr 1.5fr;
@@ -377,6 +380,7 @@ export default {
   .insurance__premiums-total {
     grid-template-columns: 5.2fr 1fr 2.2fr 0fr;
     p {
+      white-space: nowrap;
       font-size: 13px;
     }
   }

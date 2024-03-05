@@ -613,6 +613,9 @@ export default {
   .insurance__graphic-value {
     font-size: 16px;
   }
+  .insurance__chain-data {
+    padding: 2px 6px;
+  }
   .insurance__graphic-title {
     font-size: 12px;
     margin-left: 10px;

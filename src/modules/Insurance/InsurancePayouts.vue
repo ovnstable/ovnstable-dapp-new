@@ -329,14 +329,19 @@ export default {
 
 @media (max-width: 768px) {
   .insurance__payouts-button-show {
-    padding: 5px 225px;
+    padding: 6px 225px;
     p {
       font-size: 14px;
     }
   }
+
+  .insurance__payouts-button-show-text {
+    white-space: nowrap;
+  }
+
   .insurance__payouts-titles {
     display: grid;
-    grid-template-columns: 0.8fr 1.3fr 1.3fr 1fr;
+    grid-template-columns: 1fr 1.3fr 1.3fr 1fr;
     text-align: center;
     font-size: 14px;
   }
