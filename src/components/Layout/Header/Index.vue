@@ -76,6 +76,7 @@
 
           <ButtonComponent
             v-else
+            class="app-header__connect"
             @on-click="connectWallet"
           >
             CONNECT
@@ -105,7 +106,11 @@
               </ButtonComponent>
               <template #content="{ close }">
                 <div
-                  class="popper-list"
+                  class="networks-list__item"
+                  v-for="item in sortedChains"
+                  :key="item.name"
+                  @click="chooseNetwork(item.chain, close)"
+                  @keypress="chooseNetwork(item.chain, close)"
                 >
                   <div
                     class="networks-list__item"
@@ -139,9 +144,17 @@ import { cutString } from '@/utils/strings.ts';
 import { OVN_TOKENS, appNetworksData, getImageUrl } from '@/utils/const.ts';
 import BigNumber from 'bignumber.js';
 import { loadTokenImage } from '@/utils/tokenLogo.ts';
+import { sortedChainsByTVL } from '@/store/helpers/index.ts';
 import AccountModal from '@/modules/Account/Index.vue';
 import { deviceType } from '@/utils/deviceType.ts';
 import UserBalances from './UserBalances.vue';
+
+interface Chain {
+  chainName: string;
+  tvl: number;
+  name: string,
+  chain: number,
+}
 
 export default {
   name: 'HeaderBar',
@@ -151,8 +164,12 @@ export default {
     AccountModal,
     BaseIcon,
   },
+  async mounted() {
+    this.sortedChains = await sortedChainsByTVL(this.networksData);
+  },
   data() {
     return {
+      sortedChains: [] as Chain[],
       networksData: appNetworksData,
       showModalAccount: false,
     };
@@ -436,6 +453,10 @@ export default {
   &:hover {
     opacity: .8;
   }
+}
+
+.app-header__connect {
+  margin-left: auto;
 }
 
 $base-color: var(--color-5);

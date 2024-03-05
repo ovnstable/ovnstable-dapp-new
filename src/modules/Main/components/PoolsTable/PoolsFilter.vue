@@ -24,14 +24,14 @@
 
     <div class="pools-wrap__filters-networks">
       <div
-        v-for="networkConfig in allNetworkConfigs"
-        :key="networkConfig.networkId"
-        @click="changeNetwork(networkConfig.networkId)"
-        @keypress="changeNetwork(networkConfig.networkId)"
-        :class="selectedNetwork.includes(networkConfig.networkId) ? 'pools-wrap__filters-item--selected' : ''"
+        v-for="networkConfig in sortedChains"
+        :key="networkConfig.chain"
+        @click="changeNetwork(networkConfig.chain)"
+        @keypress="changeNetwork(networkConfig.chain)"
+        :class="selectedNetwork.includes(networkConfig.chain) ? 'pools-wrap__filters-item--selected' : ''"
         class="pools-wrap__filters-item"
       >
-        <BaseIcon :name="networkConfig.networkName" />
+        <BaseIcon :name="networkConfig.name.toLowerCase()" />
       </div>
       <div
         @click="changeNetwork('all')"
@@ -49,8 +49,16 @@
 import InputComponent from '@/components/Input/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import SwitchTabs from '@/components/SwitchTabs/Index.vue';
+import { appNetworksData } from '@/utils/const.ts';
 import { poolTypes } from '@/modules/Main/components/PoolsTable/types/index.ts';
-import { mapGetters } from 'vuex';
+import { sortedChainsByTVL } from '@/store/helpers/index.ts';
+
+interface Chain {
+  chainName: string;
+  tvl: number;
+  name: string,
+  chain: number,
+}
 
 export default {
   name: 'PoolsFilter',
@@ -66,8 +74,13 @@ export default {
       default: () => [],
     },
   },
+  async mounted() {
+    this.sortedChains = await sortedChainsByTVL(this.networksData);
+  },
   data() {
     return {
+      sortedChains: [] as Chain[],
+      networksData: appNetworksData,
       filterTabs: [
         {
           id: poolTypes.ALL,
@@ -87,9 +100,6 @@ export default {
         },
       ],
     };
-  },
-  computed: {
-    ...mapGetters('network', ['allNetworkConfigs']),
   },
   methods: {
     changeTab(val: string) {
