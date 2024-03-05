@@ -65,7 +65,7 @@ export default {
   justify-content: space-between;
   width: 100%;
   background-color: var(--color-4);
-  border-top: 1px solid var(--color-3);
+  border-top: 1px solid var(--color-1);
   z-index: 200;
 }
 
