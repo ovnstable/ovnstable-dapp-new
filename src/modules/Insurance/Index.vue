@@ -170,5 +170,26 @@ export default {
   }
 }
 
+@media (max-width: 400px) {
+  .insurance,
+  .insurance__payouts,
+  .insurance__payout-inner {
+    width: 100%;
+  }
+
+  .insurance {
+    padding: 16px 20px;
+  }
+  .insurance__payout-inner {
+    padding-left: 20px;
+    padding-right: 20px;
+    border-radius: 0;
+  }
+  .insurance__graphics {
+    padding: 0;
+    margin-top: 14px;
+    border: none;
+  }
+}
 
 </style>

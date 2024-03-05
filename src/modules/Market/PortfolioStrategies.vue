@@ -985,6 +985,9 @@ export default {
     background-color: var(--color-8);
     border-radius: 10px;
     padding: 16px 10px;
+    [data-theme="dark"] & {
+      background-color: var(--color-7);
+    }
   }
   .performance__portfolio-strategy-token-data-mobile,
   .performance__portfolio-strategy-nav-mobile,

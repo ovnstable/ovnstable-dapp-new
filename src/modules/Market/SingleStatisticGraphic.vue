@@ -549,13 +549,24 @@ export default {
     gap: 10px;
     margin-bottom: 12px;
   }
+  .performance__graphic-data {
+    background: none;
+    [data-theme="dark"] & {
+      background-color: var(--color-6);
+    }
+  }
   .performance__graphic {
     margin-top: 2px;
     padding: 0;
     background: none;
+    border: none;
   }
   .performance__graphic-display {
+    border-radius: 10px;
     background-color: var(--color-8);
+    [data-theme="dark"] & {
+      background-color: var(--color-7);
+    }
   }
   .performance__graphic-title {
     font-size: 14px;
