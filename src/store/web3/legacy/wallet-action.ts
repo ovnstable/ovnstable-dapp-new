@@ -8,8 +8,8 @@ import Onboard from '@web3-onboard/core';
 import walletConnectModule from '@web3-onboard/walletconnect';
 import coinbaseWalletModule from '@web3-onboard/coinbase';
 
-const SUPPORTED_NETWORKS = [137, 56, 10, 42161, 324, 8453, 59144];
-const WALLETCONNECT_SUPPORTED_NETWORKS = [10, 42161, 8453, 56, 59144, 137];
+const SUPPORTED_NETWORKS = [137, 56, 10, 42161, 324, 8453, 59144, 81457];
+const WALLETCONNECT_SUPPORTED_NETWORKS = [10, 42161, 8453, 56, 59144, 137, 81457];
 const WC_PROJECT_ID = '7a088ae8cc40c1eb6925dc98cd5fe5e3';
 
 const state = {

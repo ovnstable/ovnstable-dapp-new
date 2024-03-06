@@ -4,6 +4,14 @@ import { mintRedeemTypes } from '@/modules/Main/components/MintRedeem/types/inde
 
 // configs for all CHAINS
 export const MINTREDEEM_SCHEME = {
+  81457: [
+    {
+      token0: chainContractsMap.blast.usdPlus.tokenPlus,
+      token1: chainContractsMap.blast.usdPlus.tokenPlus,
+      exchange: chainContractsMap.blast.usdPlus.exchange,
+      methodName: [mintRedeemTypes.MINT, mintRedeemTypes.REDEEM],
+    },
+  ],
   // arbitrum
   42161: [
     {

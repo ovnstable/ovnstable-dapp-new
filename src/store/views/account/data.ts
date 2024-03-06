@@ -91,7 +91,7 @@ const actions = {
       .getBalance(getters.account))
       .toString();
 
-    console.log(userBalance, '---userBalance');
+    console.log(userBalance, networkId, '---userBalance');
 
     const balances = await Promise.all(USER_BALANCES_SCHEME[networkId].map(async (_) => {
       try {

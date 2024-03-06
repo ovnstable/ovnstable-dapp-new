@@ -459,16 +459,25 @@ export const loadPrices = async (chainId: number | string) => odosApiService
   });
 
 export const sortedChainsByTVL = async (chains: any) => {
+  console.log(chains, '--chainschains');
   const tvl = await SliderApiService.loadTVL();
   const response = await odosApiService.loadPrices(10);
   const ethPrice = (response as any).tokenPrices['0x0000000000000000000000000000000000000000'];
-  const chainsWithTVL = tvl.map((chain: { values: any[]; chainName: any; }) => {
-    const totalTVL = chain.values.reduce((total, token) => {
+  console.log(tvl, '---tvl');
+
+  const chainsWithTVL = chains.map((chainData: any) => {
+    const chain = tvl.find((_: any) => _.chainName.toLowerCase() === chainData.name.toLowerCase());
+    if (!chain) return { chainName: chainData.name, tvl: 0 };
+
+    const totalTVL = chain.values.reduce((total: any, token: any) => {
       const value = token.name === 'ETH+' ? token.value * ethPrice : token.value;
       return total + value;
     }, 0);
-    return { chainName: chain.chainName, tvl: totalTVL };
+
+    return { chainName: chainData.name, tvl: totalTVL };
   });
+
+  console.log(chainsWithTVL, '---chainsWithTVL');
 
   const sortedChains = chainsWithTVL.sort((a: { tvl: number; }, b: { tvl: number; }) => b
     .tvl - a.tvl);
@@ -478,10 +487,12 @@ export const sortedChainsByTVL = async (chains: any) => {
     [network.name.toLowerCase()]: network,
   }), {});
 
+  console.log(networksMap, '--networksMap');
   const orderedNetworks = sortedChains.map((chain: any) => {
     const chainName = chain.chainName.toLowerCase();
     return networksMap[chainName] || null;
-  }).filter((network: any) => network !== null);
+  });
 
+  console.log(orderedNetworks, '--orderedNetworks');
   return orderedNetworks;
 };

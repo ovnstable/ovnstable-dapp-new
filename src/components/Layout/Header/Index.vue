@@ -112,6 +112,7 @@
                     class="networks-list__item"
                     v-for="item in sortedChains"
                     :key="item.name"
+                    :class="{ blast: item.name === 'Blast' }"
                     @click="chooseNetwork(item.chain, close)"
                     @keypress="chooseNetwork(item.chain, close)"
                   >
@@ -380,11 +381,17 @@ export default {
 .networks-list__item {
   display: flex;
   padding: 8px 14px;
+  align-items: center;
   cursor: pointer;
   transition: background-color .2s ease, color .2s ease;
   [data-theme="dark"] & {
     color: var(--color-18);
   }
+
+  &.blast {
+    background-color: #fff5618f;
+  }
+
   svg, img {
     width: 18px;
     height: 18px;

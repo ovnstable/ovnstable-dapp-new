@@ -1,6 +1,9 @@
 /* eslint-disable import/prefer-default-export */
 import { chainContractsMap } from '@/utils/contractsMap.ts';
 
+export const BLAST_TOKENS = {
+};
+
 export const LINEA_TOKENS = {
   59144: {
     tokenMap: {

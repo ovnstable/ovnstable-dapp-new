@@ -99,10 +99,27 @@ const LINEA_PARAMS = {
   isDeprecated: false,
 };
 
+const BLAST_PARAMS = {
+  appApiUrl: 'https://blast.overnight.fi/api',
+  networkName: 'blast',
+  networkId: 81457,
+  rpcUrl: 'https://blast.gasswap.org',
+  explorerUrl: 'https://blastscan.io/',
+  assetName: 'USDC',
+  assetDecimals: 6,
+  nativeAssetName: 'ETH',
+  bridgeLink: '',
+  networkColor: '#fff561',
+  isDeprecated: false,
+};
+
 const dbNetworkName = localStorage.getItem('selectedNetwork');
 
 export function getNetworkParams(networkName: string | number | null) {
   switch (networkName) {
+    case 'blast':
+    case '81457':
+      return BLAST_PARAMS;
     case 'polygon':
     case 'polygon_dev':
     case '137':
@@ -326,16 +343,19 @@ const actions = {
     dispatch('web3/initWeb3', null, { root: true });
   },
 
+  // TODO refactore it to array
   saveNetworkToLocalStore({
     commit, dispatch, getters, rootState,
   }: any, network: any) {
     const networkId = `${network}`;
     console.log(networkId, 'TO LOCALSTORE NETWORK');
     switch (networkId) {
+      case 'blast':
+      case '81457':
+        localStorage.setItem('selectedNetwork', 'blast');
+        break;
       case 'polygon':
-      case 'polygon_dev':
       case '137':
-      case '31337':
         localStorage.setItem('selectedNetwork', 'polygon');
         break;
       case 'bsc':
@@ -395,7 +415,6 @@ const actions = {
             case 'polygon':
             case 'polygon_dev':
             case '137':
-            case '31337':
               params = {
                 chainId: ethers.toQuantity('137'),
                 rpcUrls: ['https://polygon-rpc.com/'],
@@ -404,6 +423,21 @@ const actions = {
                 nativeCurrency: {
                   symbol: 'MATIC',
                   name: 'MATIC',
+                  decimals: 18,
+                },
+              };
+              break;
+            // blast
+            case 'blast':
+            case '81457':
+              params = {
+                chainId: ethers.toQuantity('81457'),
+                rpcUrls: ['https://blast.gasswap.org'],
+                blockExplorerUrls: ['https://blastscan.io/'],
+                chainName: 'Blast',
+                nativeCurrency: {
+                  symbol: 'ETH',
+                  name: 'ETH',
                   decimals: 18,
                 },
               };

@@ -19,7 +19,7 @@ import { ethers } from 'ethers';
 import { ERC20_ABI } from '@/assets/abi/index.ts';
 import { fixedByPrice } from '@/utils/numbers.ts';
 import { ZERO_ADDRESS } from '@/utils/const.ts';
-import { LINEA_TOKENS } from '@/store/views/main/odos/mocks.ts';
+import { LINEA_TOKENS, BLAST_TOKENS } from '@/store/views/main/odos/mocks.ts';
 
 // const KEY = 'REFERRAL_CODE';
 

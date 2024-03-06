@@ -133,4 +133,14 @@ export const USER_BALANCES_SCHEME = {
       contractName: 'asset',
     },
   ],
+  81457: [
+    {
+      symbol: 'USD+',
+      contractName: 'usdPlus',
+    },
+    {
+      symbol: 'USDC+',
+      contractName: 'usdcPlus',
+    },
+  ],
 };
