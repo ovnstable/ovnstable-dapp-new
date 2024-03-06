@@ -5,6 +5,7 @@
 import BigNumber from 'bignumber.js';
 import { loadTokenImage, loadOvernightTokenImage } from '@/utils/tokenLogo.ts';
 import odosApiService from '@/services/odos-api-service.ts';
+import SliderApiService from '@/services/slider-api-service.ts';
 import type { stateData } from '@/store/views/main/odos/index';
 
 const SECONDTOKEN_SECOND_DEFAULT_SYMBOL = 'DAI+';
@@ -33,6 +34,7 @@ export const WHITE_LIST_ODOS = {
     'Lighter V2',
     'Curve Stable NG',
     'Wrapped Ether',
+    'Overnight Wrapper',
   ],
   8453: [
     'Overnight Exchange',
@@ -42,6 +44,7 @@ export const WHITE_LIST_ODOS = {
     'SynthSwap',
     'Maverick',
     'Wrapped Ether',
+    'Overnight Wrapper',
   ],
   10: [
     'Overnight Exchange',
@@ -51,6 +54,7 @@ export const WHITE_LIST_ODOS = {
     'Velodrome V2 Volatile',
     'Solidly V3',
     'Wrapped Ether',
+    'Overnight Wrapper',
   ],
   137: [
     'Overnight Exchange',
@@ -60,11 +64,14 @@ export const WHITE_LIST_ODOS = {
     'QuickSwap',
     'Dodo V2',
     'Wrapped Matic',
+    'Overnight Wrapper',
   ],
   324: [
     'Overnight Exchange',
     'SyncSwap Stable',
     'PancakeSwap V3',
+    'Maverick',
+    'Wrapped Ether',
   ],
 };
 
@@ -180,6 +187,8 @@ export const getFilteredOvernightTokens = (
   chainId: number,
   isOnlyOvnToken: any,
 ) => {
+  if (!state.tokensMap || !state.tokensMap.chainTokenMap) return [];
+
   const tokens: any = [];
   const { tokenMap } = state.tokensMap.chainTokenMap[chainId];
   const keys = Object.keys(tokenMap);
@@ -273,7 +282,6 @@ export const getDefaultSecondtoken = (
   tokensList: any[],
   symbol?: string | null,
 ) => {
-  console.log(tokenSeparationScheme, '-tokenSeparationScheme');
   if (tokenSeparationScheme === 'OVERNIGHT_SWAP') {
     return innerGetDefaultSecondtokenBySymobl(
       tokensList,
@@ -327,22 +335,21 @@ export const updateTokenValue = (
   token: any,
   value: any,
   checkApprove: (tokenData: any, val: string) => void,
-  updateQuotaInfo: () => void,
+  originalBalance?: string,
 ) => {
-  token.value = value;
-  updateQuotaInfo();
-
-  if (!value) {
-    token.usdValue = 0;
-    token.value = 0;
-    return;
-  }
+  if (!value) return token;
 
   const { selectedToken } = token;
+  console.log(selectedToken, token, '----selectedToken');
+  console.log(value, '---value');
   if (selectedToken) {
-    token.contractValue = new BigNumber(token.value)
-      .times(10 ** token.selectedToken.decimals).toFixed();
-    token.usdValue = token.value * selectedToken.price;
+    token.contractValue = originalBalance
+    || new BigNumber(value)
+      .times(10 ** selectedToken.decimals)
+      .toFixed(0);
+    token.usdValue = new BigNumber(value)
+      .times(selectedToken.price)
+      .toFixed(6, BigNumber.ROUND_DOWN);
 
     if (
       selectedToken.address === '0x0000000000000000000000000000000000000000'
@@ -356,17 +363,25 @@ export const updateTokenValue = (
 
     checkApprove(token, token.contractValue);
   }
+
+  // eslint-disable-next-line consistent-return
+  return {
+    ...token,
+    value,
+  };
 };
 
 export const maxAll = (
   selectedInputTokens: any[],
   checkApprove: (tokenData: any, val: string) => void,
-  updateQuotaInfo: () => void,
 ) => {
-  for (let i = 0; i < selectedInputTokens.length; i++) {
-    const token = selectedInputTokens[i];
-    updateTokenValue(token, token.selectedToken.balanceData.balance, checkApprove, updateQuotaInfo);
-  }
+  console.log(selectedInputTokens, 'SELECTED');
+  return selectedInputTokens.map((item) => updateTokenValue(
+    item,
+    item.selectedToken.balanceData.balance,
+    checkApprove,
+    item.selectedToken.balanceData.originalBalance,
+  ));
 };
 
 export const loadBalance = async (
@@ -442,3 +457,31 @@ export const loadPrices = async (chainId: number | string) => odosApiService
   .catch((e: any) => {
     console.error('Error load contract', e);
   });
+
+export const sortedChainsByTVL = async (chains: any) => {
+  const tvl = await SliderApiService.loadTVL();
+  const response = await odosApiService.loadPrices(10);
+  const ethPrice = (response as any).tokenPrices['0x0000000000000000000000000000000000000000'];
+  const chainsWithTVL = tvl.map((chain: { values: any[]; chainName: any; }) => {
+    const totalTVL = chain.values.reduce((total, token) => {
+      const value = token.name === 'ETH+' ? token.value * ethPrice : token.value;
+      return total + value;
+    }, 0);
+    return { chainName: chain.chainName, tvl: totalTVL };
+  });
+
+  const sortedChains = chainsWithTVL.sort((a: { tvl: number; }, b: { tvl: number; }) => b
+    .tvl - a.tvl);
+
+  const networksMap: any = chains.reduce((acc: any, network: any) => ({
+    ...acc,
+    [network.name.toLowerCase()]: network,
+  }), {});
+
+  const orderedNetworks = sortedChains.map((chain: any) => {
+    const chainName = chain.chainName.toLowerCase();
+    return networksMap[chainName] || null;
+  }).filter((network: any) => network !== null);
+
+  return orderedNetworks;
+};

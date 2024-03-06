@@ -204,10 +204,6 @@ const actions = {
     await odosApiService
       .loadTokens()
       .then((data: any) => {
-        console.log({
-          ...data.chainTokenMap,
-          ...LINEA_TOKENS
-        }, '---d-ata');
         commit('changeState', {
           field: 'tokensMap',
           val: {
@@ -283,15 +279,13 @@ const actions = {
     await commit('changeState', { field: 'tokens', val: await getFilteredOvernightTokens(state, networkId, false) });
 
     commit('changeState', { field: 'isTokensLoadedAndFiltered', val: true });
-    dispatch('loadPricesInfo', networkId);
-    dispatch('initAccountData');
+    await dispatch('loadPricesInfo', networkId);
+    await dispatch('initAccountData');
   },
   async initAccountData({
     commit, state, dispatch, rootState,
   }: any) {
-    console.log('initAccountData');
     if (rootState.accountData.account) {
-      console.log('initAccountData2');
       const ERC20 = await loadJSON('/contracts/ERC20.json');
       await dispatch('loadContractsForTokens', ERC20);
       await dispatch('loadBalances');
@@ -301,7 +295,6 @@ const actions = {
     commit, state, getters, rootState,
   }: any, contractFile: any) {
     const tokensList: any = {};
-    console.log(getters.allTokensList, 'TOKENS');
     for (let i = 0; i < getters.allTokensList.length; i++) {
       const token: any = getters.allTokensList[i];
       tokensList[token.address] = buildEvmContract(
@@ -378,6 +371,8 @@ const actions = {
       }
 
       commit('changeState', { field: 'isBalancesLoading', val: false });
+      // here to update initialized balances of tokens
+      useEventBus('odos-transaction-finished').emit(true);
     } catch (e) {
       console.error('Error when load balance', e);
       commit('changeState', { field: 'isBalancesLoading', val: false });
@@ -617,66 +612,67 @@ const actions = {
     });
 
     console.debug(txLogMessage);
-    await rootState.web3.evmSigner
+    const dataTx = await rootState.web3.evmSigner
       .sendTransaction(transactionData)
-      .then(async (dataTx: any) => {
-        console.log('Call result: ', dataTx);
-
-        console.log({
-          message: 'Odos response from transaction',
-          swapSession: state.swapSessionId,
-          data: dataTx,
-        });
-        dispatch('waitingModal/closeWaitingModal', null, { root: true });
-
-        if (rootState.network.networkName === 'zksync' && state.zksyncFeeHistory) {
-          try {
-            console.log('state.account after tx: ', rootState.accountData.account);
-            const weiBalance = await rootState.web3.evmProvider
-              .getBalance(rootState.accountData.account);
-            const balance = new BigNumber(weiBalance).div(10 ** 18).toString();
-            state.zksyncFeeHistory.finalWeiBalance = balance;
-          } catch (e) {
-            console.log({
-              message: 'Error get balance from eth token  after tx',
-              swapSession: state.swapSessionId,
-              data: e,
-            });
-          }
-        }
-
-        const inputTokens = [...data.selectedInputTokens];
-        const outputTokens = [...data.selectedOutputTokens];
-        const addressesToUpdate = [...inputTokens, ...outputTokens].map(
-          (item) => item.selectedToken.address,
-        );
-
-        // event
-        const bus = useEventBus('odos-transaction-finished');
-        bus.emit(true);
-
-        dispatch('successModal/showSuccessModal', {
-          successTxHash: dataTx.hash,
-          from: inputTokens.map((_) => ({
-            symbol: _.selectedToken.symbol,
-            value: new BigNumber(_.value).toFixed(5)
-          })),
-          to: outputTokens.map((_) => ({
-            symbol: _.selectedToken.symbol,
-            value: new BigNumber(_.sum).toFixed(5)
-          })),
-        }, { root: true });
-        dispatch('stopSwapConfirmTimer');
-
-        setTimeout(() => {
-          dispatch('loadBalances', addressesToUpdate);
-        }, 2000);
-      })
       .catch((e: any) => {
         console.log(e);
         dispatch('errorModal/showErrorModalWithMsg', { errorType: 'estimateGas', errorMsg: e }, { root: true });
         dispatch('stopSwapConfirmTimer');
       });
+
+    await dataTx.wait();
+
+    console.log('Call result: ', dataTx);
+
+    console.log({
+      message: 'Odos response from transaction',
+      swapSession: state.swapSessionId,
+      data: dataTx,
+    });
+    dispatch('waitingModal/closeWaitingModal', null, { root: true });
+
+    if (rootState.network.networkName === 'zksync' && state.zksyncFeeHistory) {
+      try {
+        console.log('state.account after tx: ', rootState.accountData.account);
+        const weiBalance = await rootState.web3.evmProvider
+          .getBalance(rootState.accountData.account);
+        const balance = new BigNumber(weiBalance).div(10 ** 18).toString();
+        state.zksyncFeeHistory.finalWeiBalance = balance;
+      } catch (e) {
+        console.log({
+          message: 'Error get balance from eth token  after tx',
+          swapSession: state.swapSessionId,
+          data: e,
+        });
+      }
+    }
+
+    const inputTokens = [...data.selectedInputTokens];
+    const outputTokens = [...data.selectedOutputTokens];
+    const addressesToUpdate = [...inputTokens, ...outputTokens].map(
+      (item) => item.selectedToken.address,
+    );
+
+    // event
+    const bus = useEventBus('odos-transaction-finished');
+    bus.emit(true);
+
+    dispatch('successModal/showSuccessModal', {
+      successTxHash: dataTx.hash,
+      from: inputTokens.map((_) => ({
+        symbol: _.selectedToken.symbol,
+        value: new BigNumber(_.value).toFixed(5)
+      })),
+      to: outputTokens.map((_) => ({
+        symbol: _.selectedToken.symbol,
+        value: new BigNumber(_.sum).toFixed(5)
+      })),
+    }, { root: true });
+    dispatch('stopSwapConfirmTimer');
+
+    setTimeout(() => {
+      dispatch('loadBalances', addressesToUpdate);
+    }, 2000);
   },
   async getActualGasPrice({
     commit, state, dispatch, rootState,
