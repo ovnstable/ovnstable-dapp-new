@@ -1836,6 +1836,7 @@ export default {
     box-shadow: none;
     border: none;
     [data-theme="dark"] & {
+      box-shadow: none;
       background-color: var(--color-7);
       color: var(--color-18);
     }

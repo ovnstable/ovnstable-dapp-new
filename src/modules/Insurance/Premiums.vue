@@ -534,6 +534,12 @@ export default {
     flex-direction: row;
     justify-content: space-between;
   }
+  .insurance__premiums-total-share p:first-child {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   .insurance__premiums-asset-share p {
     text-align: right;
   }
@@ -592,10 +598,9 @@ export default {
     margin-top: 10px;
     margin-bottom: 16px;
     border: 1px solid var(--color-7);
-  }
-  .insurance-premium-name {
-    white-space: nowrap;
-    text-overflow: ellipsis
+    [data-theme="dark"] & {
+      border-color: var(--color-2);
+    }
   }
   .insurance__premiums-assets-mobile-score,
   .insurance__premiums-asset-liq-val-mobile p:first-child {

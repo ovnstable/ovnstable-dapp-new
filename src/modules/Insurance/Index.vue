@@ -109,12 +109,12 @@ export default {
   width: 100%;
 }
 
-.insurance__token-data,
 .insurance__graphics {
   [data-theme="dark"] & {
     background-color: var(--color-17);
   }
 }
+
 .insurance__graphics{
   margin-top: 24px;
   padding: 18px 24px;
@@ -165,6 +165,9 @@ export default {
   justify-content: center;
   background-color: rgba(255, 255, 255, .4);
   padding-bottom: 50vh;
+  [data-theme="dark"] & {
+    background-color: var(--color-19);
+  }
 }
 @media (max-width: 768px) {
   .insurance__graphics {
@@ -174,6 +177,9 @@ export default {
   .insurance,
   .insurance__payouts {
     width: calc(100% - 40px);
+  }
+  .insurance-wrapper {
+    align-items: center;
   }
 }
 

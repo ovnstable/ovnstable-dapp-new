@@ -321,8 +321,11 @@ export default {
     fill: var(--color-1);
   }
 
-  .insurance__mint-button svg {
+  .insurance__mint-button {
     stroke: var(--color-1);
+    [data-theme="dark"] & {
+      fill: var(--color-4);
+    }
   }
 
 }
@@ -353,6 +356,11 @@ export default {
   border: none;
   border-radius: 30px;
   padding: 5px 14px;
+  [data-theme="dark"] & {
+    background-color: var(--color-7);
+    border: none;
+    box-shadow: none;
+  }
 }
 .about_selected {
   border: 1px solid var(--color-1);
@@ -380,7 +388,7 @@ export default {
   background: var(--color-4);
   width: 100%;
   [data-theme="dark"] & {
-    background: var(--color-6);
+    background: none;
   }
 }
 
@@ -559,6 +567,9 @@ export default {
   margin-right: 7px;
 }
 
+.insurance__token-image {
+  overflow: visible;
+}
 @media (max-width: 1024px) {
   .performance__chain-data {
     display: flex;

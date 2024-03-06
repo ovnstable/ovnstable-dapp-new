@@ -232,7 +232,10 @@ export default {
 .app-header__balance-account {
   min-width: 130px;
   justify-content: space-between;
-
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
+    box-shadow: none !important;
+  }
   svg path {
     fill: var(--color-3);
   }
@@ -318,9 +321,11 @@ export default {
   display: flex;
   align-items: center;
   padding: 5px 8px 5px 20px;
+  border-radius: 12px;
   [data-theme="dark"] & {
     background-color: var(--color-17);
     color: var(--color-4);
+    box-shadow: none;
   }
 
   span {
@@ -329,8 +334,11 @@ export default {
   }
 }
 .app-header__chain_account {
+  padding: 5px 10px;
+  border-radius: 12px;
   [data-theme="dark"] & {
     background-color: var(--color-17);
+    box-shadow: none;
   }
 }
 .app-header__chain {
@@ -463,22 +471,29 @@ $avatar-offset: 52 + 16;
 @mixin background-gradient {
   background-image: linear-gradient(90deg, $base-color 0px, $shine-color 40px, $base-color 80px);
   background-size: 600px;
+  [data-theme="dark"] & {
+    background-image: linear-gradient(90deg, var(--color-17) 0px, $shine-color 40px, var(--color-17) 80px);
+  }
 }
 
 .lineLoader {
-    float: left;
-    width: 100px;
-    height: 100%;
-    border-radius: 7px;
-    border: 1px solid var(--color-1);
-    box-shadow: 0px 1px 0px 0px var(--color-1);
+  float: left;
+  width: 100px;
+  height: 100%;
+  border-radius: 7px;
+  border: 1px solid var(--color-1);
+  box-shadow: 0px 1px 0px 0px var(--color-1);
 
-    @include background-gradient;
-    animation: shine-lines $animation-duration infinite ease-out;
+  @include background-gradient;
+  animation: shine-lines $animation-duration infinite ease-out;
+  [data-theme="dark"] & {
+    box-shadow: none;
+    border-color: var(--color-2);
+  }
 }
 
 @keyframes shine-lines{
-    0% { background-position: -100px;}
-    40%, 100% {background-position: 140px;}
+  0% { background-position: -100px;}
+  40%, 100% {background-position: 140px;}
 }
 </style>

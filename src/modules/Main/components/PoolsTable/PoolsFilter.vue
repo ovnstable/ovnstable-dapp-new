@@ -139,7 +139,6 @@ export default {
   border-radius: 30px;
   background-color: var(--color-4);
   border: 1px solid var(--color-1);
-
   [data-theme="dark"] & {
     background-color: var(--color-17);
     border-color: var(--color-2);
