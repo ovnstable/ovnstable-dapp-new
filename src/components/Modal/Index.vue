@@ -1,53 +1,58 @@
 <!-- eslint-disable vue/no-deprecated-v-on-native-modifier -->
 <template>
-  <div class="modal__activator">
-    <slot
-      name="activator"
-      :on="activator"
-    />
+  <Teleport to="body">
+    <div
+      class="modal__activator"
+    >
+      <slot
+        name="activator"
+        :on="activator"
+      />
 
-    <Transition name="slide-fade">
-      <div
-        v-if="opened"
-        class="modal__wrap"
-        @click="closeModal"
-        @keydown.esc="closeModal"
-      >
+      <Transition name="slide-fade">
         <div
-          class="modal__wrap-stop"
-          :class="{ 'modal--custom': typeModal === 'custom' }"
-          @click.stop
+          v-if="opened"
+          class="modal__wrap"
+          :class="{ 'modal__wrap-overlay-modal': overlayModals }"
+          @click="closeModal"
+          @keydown.esc="closeModal"
         >
           <div
-            v-if="showClose"
-            class="modal__close"
-            @click.native="closeModal"
-            @keypress="closeModal"
+            class="modal__wrap-stop"
+            :class="{ 'modal--custom': typeModal === 'custom' }"
+            @click.stop
           >
-            <BaseIcon name="Close" />
-          </div>
+            <div
+              v-if="showClose"
+              class="modal__close"
+              @click.native="closeModal"
+              @keypress="closeModal"
+            >
+              <BaseIcon name="Close" />
+            </div>
 
-          <div
-            v-show="$slots.header"
-            class="modal__header"
-          >
-            <slot name="header" />
-          </div>
+            <div
+              v-show="$slots.header"
+              class="modal__header"
+            >
+              <slot name="header" />
+            </div>
 
-          <div class="modal__body">
-            <slot />
-          </div>
+            <div class="modal__body">
+              <slot />
+            </div>
 
-          <div
-            v-show="$slots.footer"
-            class="modal__footer"
-          >
-            <slot name="footer" />
+            <div
+              v-show="$slots.footer"
+              class="modal__footer"
+            >
+              <slot name="footer" />
+            </div>
           </div>
         </div>
-      </div>
-    </Transition>
-  </div>
+      </Transition>
+    </div>
+  </Teleport>
 </template>
 
 <script lang="ts">
@@ -64,6 +69,10 @@ export default {
       default: 'default',
     },
     modelValue: {
+      type: Boolean,
+      default: false,
+    },
+    overlayModals: {
       type: Boolean,
       default: false,
     },
@@ -190,23 +199,15 @@ export default {
 
 @media (max-width: 1024px) {
   .modal__wrap {
-    width: 110vw;
+    width: 100vw;
   }
 }
-@media (max-width: 768px) {
-  .modal__wrap {
-    width: 140vw;
-  }
-}
-@media (max-width: 576px) {
-.modal__wrap {
-    width: 155vw;
-    left: -40px;
-  }
-}
-
 .modal__activator {
   position: absolute;
+}
+
+.modal__wrap-overlay-modal {
+  z-index: 300;
 }
 
 .modal__body {

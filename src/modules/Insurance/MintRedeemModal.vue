@@ -148,6 +148,8 @@ export default {
       ovnPrice: '',
     };
   },
+  mounted() {
+  },
   watch: {
     fromValue() {
       if (!this.fromValue) this.currentStage = mintRedeemStep.START;
@@ -156,6 +158,7 @@ export default {
     },
     account(val) {
       if (val) this.refreshClientData();
+      // this.ovnDecimals = this.networkId === 10 ? 6 : 18;
     },
   },
   computed: {
@@ -185,7 +188,7 @@ export default {
       return false;
     },
     requestRequired() {
-      if (this.insuranceRedemptionData.hours > 0 && this.insuranceRedemptionData.hours < 72) {
+      if (this.insuranceRedemptionData.request === 'CAN_WITHDRAW') {
         return false;
       }
       if (this.selectedAction === 'redeem' && !this.redemptionRequestSent) return true;
@@ -213,26 +216,20 @@ export default {
     showSelectTokensModals(isShow: any) {
       this.isShowSelectTokensModal = isShow;
     },
-    redemptionRequestAction() {
-      console.log('SEND REQUEST');
-    },
     async estimateGas(sum: string) {
       const from = this.account;
-
       let result;
 
       console.log(this.contracts, '---contracts');
 
       try {
-        if (this.networkId === 10) return -1;
         const estimateOptions = { from, gasPrice: this.gasPriceGwei };
         const params = {
           amount: sum,
         };
-        const methodEstimate = this.selectedAction === 'mint'
-          ? this.contracts.insurance[`${this.networkName}_exchanger`].mint
-          : this.contracts.insurance[`${this.networkName}_exchanger`].redeem;
+        const methodEstimate = this.contracts.insurance[`${this.networkName}_exchanger`].mint;
 
+        console.log(estimateOptions, '---estimateOptions');
         console.log(methodEstimate, '--val1');
         const gasVal = await methodEstimate
           .estimateGas(params, estimateOptions)
@@ -294,7 +291,6 @@ export default {
       }
     },
     checkApprove: debounce(async (self: any) => {
-      console.log(self.fromValue, '---self.fromValue');
       const sum = new BigNumber(self.fromValue)
         .times(10 ** self.ovnDecimals)
         .toFixed(0);
@@ -309,14 +305,12 @@ export default {
           ? self.contracts.ovn
           : self.contracts.insurance[`${self.networkName}_token`];
 
-        console.log(contractToApprove, ovnContract, '--self.contract');
         const allowanceValue = await getAllowanceValue(
           ovnContract,
           self.account,
           contractToApprove,
         );
 
-        console.log(sum, allowanceValue.toString(), '---sum');
         if (!allowanceValue || new BigNumber(allowanceValue).lt(sum)) {
           self.tokenApproved = false;
           self.currentStage = mintRedeemStep.APPROVE;
@@ -335,8 +329,8 @@ export default {
     }, 250),
     async buyAction() {
       try {
-        const decimals = this.ovnDecimals === 18 ? 18 : 9;
-        const sum = new BigNumber(this.fromValue).times(10 ** decimals).toFixed(0);
+        console.log(this.ovnDecimals, '--this.ovnDecimals');
+        const sum = new BigNumber(this.fromValue).times(10 ** this.ovnDecimals).toFixed(0);
         await this.checkApprove(this);
 
         console.log(this.estimatedGas, '---estimatedGas');
@@ -379,7 +373,8 @@ export default {
               successAction: 'mintInsurance',
             });
           } else {
-            console.log('REDEEM');
+            console.log(contracts, '---contracts');
+            console.log(gasParams, params, 'REDEEM');
             const tx = await contracts.insurance[
               `${this.networkName}_exchanger`
             ].redeem(params, gasParams);
@@ -425,6 +420,7 @@ export default {
 
           await this.buyAction();
         } else {
+          console.log(estimatedGasValue, '==estimatedGasValue');
           this.estimatedGas = estimatedGasValue;
 
           this.gas = new BigNumber(this.estimatedGas)
@@ -481,7 +477,8 @@ export default {
             `${this.networkName}_exchanger`
           ].requestWithdraw(requestParams);
 
-          tx.wait();
+          await tx.wait();
+          this.refreshInsurance();
           this.redemptionRequestSent = true;
           alert('success');
         } catch (e) {
@@ -519,13 +516,6 @@ export default {
 
       return result;
     },
-
-    async redemptionRequest() {
-      await this.contracts.insurance[`${this.networkName}_exchanger`].methods
-        .requestWithdraw()
-        .call();
-    },
-
   },
 };
 </script>

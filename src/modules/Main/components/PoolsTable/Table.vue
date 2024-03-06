@@ -15,7 +15,7 @@
       <div class="pools-table__content">
         <template v-if="pools.length > 0">
           <div
-            v-for="pool in pools"
+            v-for="pool in (pools as any)"
             :key="pool.id"
             class="pools-table__row"
             @click="toggleDetails(pool)"
@@ -74,11 +74,17 @@
                 </span>
               </div>
             </div>
-            <div class="pools-table__platform">
+            <a
+              :href="getPlatformLink(pool)"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="pools-table__platform"
+            >
               <BaseIcon
                 class="pools-table__platform-icon"
                 :name="pool.platform"
               />
+
               <!-- <div v-if="pool.platform === 'Swapbased'">
             <Tooltip
                           text="This pool have 1% deposit fee"
@@ -96,7 +102,12 @@
                     : pool.platform.toUpperCase()
                 }}
               </span>
-            </div>
+              <div class="button-link">
+                <BaseIcon
+                  name="PayoutArrow"
+                />
+              </div>
+            </a>
 
             <div class="pools-table__apy">
               <div
@@ -186,12 +197,13 @@
 </template>
 
 <!-- eslint-disable no-param-reassign -->
-<script>
+<script lang="ts">
 import { mapActions } from 'vuex';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import { formatMoneyComma, formatNumberToMln, formatNumberToThousands } from '@/utils/numbers.ts';
 import ZapInComponent from '@/modules/Main/components/ZapModal/Index.vue';
+import { buildLink } from '@/store/views/main/pools/helpers.ts';
 
 export default {
   name: 'PoolTable',
@@ -229,7 +241,10 @@ export default {
   },
   computed: {
     getTokenNames() {
-      return (pool) => pool.name.split('/');
+      return (pool: any) => pool.name.split('/');
+    },
+    getPlatformLink() {
+      return (pool: any) => buildLink(pool) ?? '';
     },
 
     // getPoolType() {
@@ -251,7 +266,7 @@ export default {
     formatMoneyComma,
     formatNumberToMln,
     formatNumberToThousands,
-    toggleDetails(pool) {
+    toggleDetails(pool: any) {
       if (this.pools && this.pools.length) {
         pool.isOpened = !pool.isOpened;
         return;
@@ -260,7 +275,7 @@ export default {
       // pools without aggregators always is opened
       pool.isOpened = true;
     },
-    toggleOrderType(type) {
+    toggleOrderType(type: string) {
       if (type === 'APR') {
         if (!this.orderType.startsWith('APR')) {
           this.setOrderTypeFunc('APR');
@@ -457,12 +472,25 @@ export default {
 }
 
 .pools-table__platform {
+  width: fit-content;
   display: flex;
   align-items: center;
+  cursor: pointer;
 
   span {
+    transition: .2s ease color;
+
     [data-theme="dark"] & {
       color: var(--color-4);
+    }
+  }
+
+  &:hover {
+    span {
+      color: var(--color-3);
+    }
+    .button-link {
+      transform: translate(3px, -3px);
     }
   }
 }
@@ -500,5 +528,27 @@ export default {
 
 .pools-table__footer {
   padding: 0 20px 20px 20px;
+}
+
+.button-link {
+  position: relative;
+  top: -10px;
+  box-shadow: none;
+  align-items: center;
+  border-radius: 10px;
+  padding: 0 4px;
+  transition: .2s ease transform;
+
+  svg {
+    fill: var(--color-2);
+    width: 8px;
+    height: 8px;
+  }
+
+  [data-theme="dark"] & {
+    svg {
+      fill: var(--color-1)
+    }
+  }
 }
 </style>

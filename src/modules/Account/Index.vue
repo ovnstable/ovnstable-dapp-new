@@ -98,6 +98,11 @@ export default {
       border-color: var(--color-4);
     }
   }
+
+  @media (max-width: 1024px) {
+    width: 100%;
+    min-width: 90vw;
+  }
 }
 .account__modal-profile {
   margin-top: 30px;

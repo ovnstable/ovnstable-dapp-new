@@ -104,6 +104,7 @@ export default {
       this.$emit('set-show', false);
     },
     selectToken(token: any) {
+      console.log(token, 'SELECTED');
       // eslint-disable-next-line no-param-reassign
       token.selected = true;
       this.$emit('add-token-to-list', {
