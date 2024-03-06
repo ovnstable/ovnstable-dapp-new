@@ -36,7 +36,13 @@
               class="dashboard__graphics"
             />
           </div>
-          <p class="dashboard-tokens-transactions">USD+ TRANSACTIONS</p>
+          <p
+            class="dashboard-tokens-transactions"
+            v-if="portfolioBalanceData.dataUSDPlus.length > 0"
+          >
+            USD+ TRANSACTIONS
+          </p>
+
         </div>
         <div
           v-if="activeTab === 1"
@@ -57,7 +63,10 @@
             />
           </div>
 
-          <p class="dashboard-tokens-transactions">TOKENS+ TRANSACTIONS</p>
+          <p
+            class="dashboard-tokens-transactions"
+            v-if="combinedPortfolioData.length > 0"
+          >TOKENS+ TRANSACTIONS</p>
         </div>
       </TabsComponent>
     </div>
@@ -65,6 +74,7 @@
       <DashboardTransactions
         :portfolioBalanceData="portfolioDataForDashboardTransactions"
         class="dashboard__payout-inner"
+        v-if="portfolioDataForDashboardTransactions.length > 0"
       />
     </div>
   </div>
@@ -202,6 +212,11 @@ export default {
   padding-left: 25px;
   padding-right: 25px;
   padding-bottom: 20px;
+  border-bottom-left-radius: 30px;
+  border-bottom-right-radius: 30px;
+  [data-theme="dark"] & {
+    background: var(--color-17);
+  }
 }
 
 .dashboard__token-data,
@@ -211,11 +226,21 @@ export default {
   width: 100%;
 }
 
+.dashboard__token-data,
+.dashboard__graphics {
+  [data-theme="dark"] & {
+    background: var(--color-17);
+  }
+}
+
 .dashboard-tokens-transactions {
   margin-top: 25px;
   color: var(--color-1);
   font-size: 17px;
   font-weight: 500;
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
 }
 .dashboard__graphics{
   border-radius: 5px;

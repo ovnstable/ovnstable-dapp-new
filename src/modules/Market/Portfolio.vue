@@ -51,7 +51,7 @@ export default {
   background: var(--color-4);
   transition: opacity 0.3s ease-in-out;
   [data-theme="dark"] & {
-    background: var(--color-6);
+    background: var(--color-17);
   }
 }
 
