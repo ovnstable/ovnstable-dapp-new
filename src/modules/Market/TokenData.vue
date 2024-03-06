@@ -99,6 +99,17 @@ export default {
   components: {
     BaseIcon,
   },
+  data() {
+    return {
+      linksData: [
+        { name: 'USD+', to: '/market/usd', iconName: 'USD+_market' },
+        { name: 'USDC+', to: '/market/usdc', iconName: 'USDC+_Account' },
+        { name: 'ETH+', to: '/market/eth', iconName: 'DashboardETH+Tokens' },
+        { name: 'USDT+', to: '/market/usdt', iconName: 'USDT_market' },
+        { name: 'DAI+', to: '/market/dai', iconName: 'DAI+_market' },
+      ],
+    };
+  },
   props: {
     tokenData: {
       type: Object,
