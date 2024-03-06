@@ -106,15 +106,11 @@
               </ButtonComponent>
               <template #content="{ close }">
                 <div
-                  class="networks-list__item"
-                  v-for="item in sortedChains"
-                  :key="item.name"
-                  @click="chooseNetwork(item.chain, close)"
-                  @keypress="chooseNetwork(item.chain, close)"
+                  class="popper-list"
                 >
                   <div
                     class="networks-list__item"
-                    v-for="item in networksData"
+                    v-for="item in sortedChains"
                     :key="item.name"
                     @click="chooseNetwork(item.chain, close)"
                     @keypress="chooseNetwork(item.chain, close)"
