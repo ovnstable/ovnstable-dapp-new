@@ -150,4 +150,31 @@ export default {
   padding-bottom: 50vh;
 }
 
+@media (max-width: 576px) {
+  .market {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  .market__payouts,
+  .market-wrapper,
+  .market {
+    width: 100%;
+  }
+  .market-wrapper {
+    margin-left: 20px;
+  }
+}
+
+@media (max-width: 400px) {
+  .market {
+    padding-left: 20px;
+    padding-right: 20px
+  }
+  .market-wrapper {
+    margin-left: 0;
+  }
+  .market__graphics{
+    margin-top: 24px;
+  }
+}
 </style>

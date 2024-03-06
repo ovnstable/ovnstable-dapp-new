@@ -59,12 +59,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
- .graphic__loader {
-    min-height: 350px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+.graphic__loader {
+  min-height: 350px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .performance__graphics {
   min-height: 350px;
   display: flex;
@@ -83,6 +83,9 @@ export default {
 }
 
 @media (max-width: 1024px) {
+  .graphic__loader {
+    min-height: 486px;
+  }
   .performance__graphics {
     flex-direction: column;
   }
@@ -100,7 +103,7 @@ export default {
     flex-direction: column;
   }
   .performance__graphics-TVL-graphic {
-    margin-top: 50px;
+    margin-top: 0px;
   }
 }
 

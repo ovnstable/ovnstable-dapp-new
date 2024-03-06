@@ -91,6 +91,8 @@ const actions = {
       .getBalance(getters.account))
       .toString();
 
+    console.log(userBalance, '---userBalance');
+
     const balances = await Promise.all(USER_BALANCES_SCHEME[networkId].map(async (_) => {
       try {
         if (_.symbol === 'OVNINS') {
