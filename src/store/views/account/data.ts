@@ -101,6 +101,7 @@ const actions = {
 
           return {
             symbol: _.symbol,
+            isOvnToken: true,
             balance: result.toString(),
           };
         }
@@ -108,6 +109,7 @@ const actions = {
         if (!web3.contracts[_.contractName]) {
           return {
             symbol: _.symbol,
+            isOvnToken: false,
             balance: '0',
           };
         }
@@ -115,6 +117,7 @@ const actions = {
         const result = await web3.contracts[_.contractName].balanceOf(getters.account);
         return {
           symbol: _.symbol,
+          isOvnToken: _.isOvnToken,
           balance: result.toString(),
         };
       } catch (e) {

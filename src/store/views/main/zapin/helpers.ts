@@ -270,7 +270,6 @@ export const depositAllAtGauge = async (
     currentZapPlatformContractType.typeOfDepositConstructor
     === 'CONSTRUCTOR_WITH_TOKEN_ID'
   ) {
-    console.log('1');
     const poolAddress = zapPoolRoot.address;
     const poolInfo = poolsInfoMap[poolAddress];
     return gaugeContract.depositAll(poolInfo.poolId, params);

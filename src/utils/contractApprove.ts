@@ -19,7 +19,6 @@ export const approveToken = async (
 ): Promise<ethers.TransactionResponse> => {
   const from = fromAcc;
   const approveParams: any = { gasPrice, from };
-  console.log('1');
   return contract.approve(contractAddressForApprove, value, approveParams);
 };
 
