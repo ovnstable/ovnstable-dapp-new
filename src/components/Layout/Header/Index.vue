@@ -2,10 +2,7 @@
   <div class="app-header">
     <div class="app-header__container">
       <div class="app-header__content">
-        <div
-          v-if="deviceType().isDesktop"
-          class="app-header-dapp"
-        >
+        <div class="app-header-dapp">
           <router-link
             to="/"
             class="app-header__content__logo"
@@ -53,7 +50,49 @@
             v-if="account && isBalancesLoading"
             class="lineLoader"
           />
-          <UserBalances v-else-if="deviceType().isDesktop && walletConnected && account" />
+
+          <PopperComponent
+            v-else-if="walletConnected && account"
+            interactive
+            placement="bottom-end"
+          >
+            <ButtonComponent
+              class="app-header__balance-account"
+              btn-styles="secondary"
+            >
+              {{ totalUserBalance }} $
+              <BaseIcon
+                name="ArrowDown"
+              />
+            </ButtonComponent>
+            <template #content="{ close }">
+              <div
+                class="popper-list"
+              >
+                <div
+                  class="networks-list__item app-header__balance-item"
+                  v-for="(item, key) in (userBalancesList as any)"
+                  :key="key"
+                  @click="close"
+                  @keypress="close"
+                >
+                  {{ item.balance }}
+                  <div class="app-header__balance-row">
+                    {{ item.symbol }}
+                  </div>
+                </div>
+                <div class="popper-list__divider" />
+                <div class="app-header__balance-main">
+                  <span>
+                    {{ totalUserBalance }}
+                  </span>
+                  <span>
+                    USD
+                  </span>
+                </div>
+              </div>
+            </template>
+          </PopperComponent>
 
           <div
             v-if="account && isBalancesLoading"
@@ -76,52 +115,42 @@
 
           <ButtonComponent
             v-else
-            class="app-header__connect"
             @on-click="connectWallet"
           >
             CONNECT
           </ButtonComponent>
-          <div
+
+          <PopperComponent
             v-if="walletConnected && account"
-            class="app-header__network-wrap"
+            interactive
+            placement="bottom-end"
           >
-            <img
-              v-if="!deviceType().isDesktop"
-              class="app-header__gear"
-              alt="navbar"
-              :src="getImageUrl(`assets/icons/common/CommonGear.svg`)"
-            />
-            <PopperComponent
-              interactive
-              placement="bottom-end"
+            <ButtonComponent
+              class="app-header__chain_account"
+              btn-styles="secondary"
             >
-              <ButtonComponent
-                class="app-header__chain_account"
-                btn-styles="secondary"
+              <BaseIcon
+                class="networks-active"
+                :name="activeNetworkData.name.toLowerCase()"
+              />
+            </ButtonComponent>
+            <template #content="{ close }">
+              <div
+                class="popper-list"
               >
-                <BaseIcon
-                  class="networks-active"
-                  :name="activeNetworkData.name.toLowerCase()"
-                />
-              </ButtonComponent>
-              <template #content="{ close }">
                 <div
-                  class="popper-list"
+                  class="networks-list__item"
+                  v-for="item in networksData"
+                  :key="item.name"
+                  @click="chooseNetwork(item.chain, close)"
+                  @keypress="chooseNetwork(item.chain, close)"
                 >
-                  <div
-                    class="networks-list__item"
-                    v-for="item in sortedChains"
-                    :key="item.name"
-                    @click="chooseNetwork(item.chain, close)"
-                    @keypress="chooseNetwork(item.chain, close)"
-                  >
-                    <BaseIcon :name="item.name.toLowerCase()" />
-                    {{ item.name }}
-                  </div>
+                  <BaseIcon :name="item.name.toLowerCase()" />
+                  {{ item.name }}
                 </div>
-              </template>
-            </PopperComponent>
-          </div>
+              </div>
+            </template>
+          </PopperComponent>
         </div>
       </div>
     </div>
@@ -137,35 +166,20 @@ import { mapGetters, mapActions, mapState } from 'vuex';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { cutString } from '@/utils/strings.ts';
-import { OVN_TOKENS, appNetworksData, getImageUrl } from '@/utils/const.ts';
+import { OVN_TOKENS, appNetworksData } from '@/utils/const.ts';
 import BigNumber from 'bignumber.js';
 import { loadTokenImage } from '@/utils/tokenLogo.ts';
-import { sortedChainsByTVL } from '@/store/helpers/index.ts';
 import AccountModal from '@/modules/Account/Index.vue';
-import { deviceType } from '@/utils/deviceType.ts';
-import UserBalances from './UserBalances.vue';
-
-interface Chain {
-  chainName: string;
-  tvl: number;
-  name: string,
-  chain: number,
-}
 
 export default {
   name: 'HeaderBar',
   components: {
     ButtonComponent,
-    UserBalances,
     AccountModal,
     BaseIcon,
   },
-  async mounted() {
-    this.sortedChains = await sortedChainsByTVL(this.networksData);
-  },
   data() {
     return {
-      sortedChains: [] as Chain[],
       networksData: appNetworksData,
       showModalAccount: false,
     };
@@ -183,6 +197,19 @@ export default {
       const data = appNetworksData.find((_) => _.chain === this.networkId);
       return data || appNetworksData[0];
     },
+    totalUserBalance() {
+      if (this.allTokensList.length === 0 || this.originalBalance.length === 0) return '0';
+      const total: BigNumber = this.originalBalance.reduce((acc: BigNumber, curr: any) => {
+        const tokenData = this.allTokensList.find((_: any) => _.symbol === curr.symbol);
+        if (!tokenData) return acc;
+        const fixedBalance = new BigNumber(curr.balance)
+          .div(10 ** tokenData.decimals)
+          .times(tokenData.price);
+        return acc.plus(fixedBalance);
+      }, BigNumber(0));
+
+      return total.toFixed(2);
+    },
     userBalancesList() {
       if (this.originalBalance.length === 0) return [];
       return this.originalBalance
@@ -199,8 +226,6 @@ export default {
   },
   methods: {
     ...mapActions('network', ['setWalletNetwork']),
-    deviceType,
-    getImageUrl,
     openAccountModal() {
       this.showModalAccount = !this.showModalAccount;
     },
@@ -255,13 +280,6 @@ export default {
     background-color: var(--color-17);
     border-bottom: 1px solid var(--color-2);
   }
-
-  @media (max-width: 1024px) {
-    background-color: transparent;
-    border-bottom: unset;
-    position: relative;
-    margin-bottom: 20px;
-  }
 }
 .app-header-dapp {
   display: flex;
@@ -294,10 +312,6 @@ export default {
 .app-header__content {
   display: flex;
   justify-content: space-between;
-
-  @media (max-width: 1024px) {
-    width: 100%;
-  }
 }
 
 .app-header__content__logo {
@@ -345,11 +359,6 @@ export default {
 .app-header__content-data {
   display: flex;
   gap: 16px;
-
-  @media (max-width: 1024px) {
-    width: 100%;
-    justify-content: space-between;
-  }
 }
 
 .app-header__balance-account {
@@ -435,24 +444,6 @@ export default {
   span:first-child {
     text-decoration: underline;
   }
-}
-
-.app-header__network-wrap {
-  display: flex;
-  gap: 20px;
-}
-
-.app-header__gear {
-  cursor: pointer;
-  transition: opacity .2s ease;
-
-  &:hover {
-    opacity: .8;
-  }
-}
-
-.app-header__connect {
-  margin-left: auto;
 }
 
 $base-color: var(--color-5);
