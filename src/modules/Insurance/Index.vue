@@ -97,7 +97,7 @@ export default {
   padding-bottom: 20px;
   width: 100%;
   [data-theme="dark"] & {
-    background: var(--color-6);
+    background: var(--color-17);
     border-color: var(--color-2);
     box-shadow: 0px 1px 0px 0px var(--color-2);
   }
@@ -107,6 +107,13 @@ export default {
 .insurance__premiums,
 .insurance__payout-inner {
   width: 100%;
+}
+
+.insurance__token-data,
+.insurance__graphics {
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
+  }
 }
 .insurance__graphics{
   margin-top: 24px;

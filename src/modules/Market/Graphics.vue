@@ -73,7 +73,7 @@ export default {
   align-items: center;
   background: var(--color-4);
   [data-theme="dark"] & {
-      background: var(--color-6);
+    background: var(--color-17);
   }
 
   > .performance__graphics-APY-graphic,

@@ -471,7 +471,9 @@ export default {
     overflow: hidden;
     border-radius: 12px;
     white-space: nowrap;
-
+    [data-theme="dark"] & {
+      background: var(--color-17);
+    }
     &.active {
       &::after {
         transition: 0.3s;
@@ -592,6 +594,9 @@ export default {
     overflow: hidden;
     color: var(--color-1);
     max-width: 100%;
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
   }
 
   .select-list__search {

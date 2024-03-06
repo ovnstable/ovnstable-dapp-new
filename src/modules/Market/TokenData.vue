@@ -174,7 +174,7 @@ export default {
   background: var(--color-4);
   width: 100%;
   [data-theme="dark"] & {
-    background: var(--color-6);
+    background: var(--color-17);
   }
 }
 
@@ -363,6 +363,10 @@ export default {
 
 .performance__token-data-main-token {
   min-width: 70px;
+  [data-theme="dark"] & {
+    border: 1px solid var(--color-4);
+    border-radius: 50%;
+  }
 }
 
 @media (max-width: 1024px) {

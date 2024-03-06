@@ -453,6 +453,7 @@ export default {
   box-sizing: border-box;
   [data-theme="dark"] & {
     background-color: var(--color-7);
+    border: none;
   }
 }
 
