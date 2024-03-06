@@ -152,7 +152,7 @@ export default {
 .insurance__button-payout {
   box-shadow: none;
   align-items: center;
-  border: 2px solid var(--color-6);
+  border: 1px solid var(--color-6);
   padding: 6px 12px;
   background-color: var(--color-5);
   border-radius: 30px;
@@ -160,7 +160,7 @@ export default {
     fill: var(--color-2)
   }
   [data-theme="dark"] & {
-    border-color: var(--color-3);
+    border-color: var(--color-2);
     svg {
       fill: var(--color-1)
     }
@@ -318,7 +318,7 @@ export default {
   font-size: 15px;
   font-weight: 500;
   [data-theme="dark"] & {
-    color: var(--color-18);
+    color: var(--color-2);
   }
 }
 

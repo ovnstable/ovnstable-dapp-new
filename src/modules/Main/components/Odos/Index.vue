@@ -763,6 +763,7 @@ export default {
         this.allTokensList,
         symbol as string | null,
       );
+      console.log(ovnSelectedToken, 'SELECREOVN');
       if (!ovnSelectedToken) {
         this.addNewInputToken();
         this.addNewOutputToken();

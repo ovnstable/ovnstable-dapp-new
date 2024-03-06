@@ -461,6 +461,14 @@ export default {
     width: 24px;
     height: 24px;
     margin-right: 8px;
+    border-radius: 50%;
+  }
+
+  @media (max-width: 1024px) {
+    right: 0;
+    border: unset;
+    background-color: unset;
+    padding: 2px 9px;
   }
 
   @media (max-width: 1024px) {
