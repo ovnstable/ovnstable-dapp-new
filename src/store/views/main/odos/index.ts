@@ -209,7 +209,8 @@ const actions = {
           val: {
             chainTokenMap: {
               ...data.chainTokenMap,
-              ...LINEA_TOKENS
+              ...LINEA_TOKENS,
+              ...BLAST_TOKENS
             },
           }
         });

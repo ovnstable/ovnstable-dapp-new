@@ -2,6 +2,22 @@
 import { chainContractsMap } from '@/utils/contractsMap.ts';
 
 export const BLAST_TOKENS = {
+  [chainContractsMap.blast.usdPlus.tokenPlus]: {
+    assetId: 'usdPlus',
+    assetType: 'usdPlus',
+    decimals: 6,
+    isRebasing: false,
+    name: 'USD+',
+    symbol: 'USD+',
+  },
+  [chainContractsMap.blast.usdcPlus.tokenPlus]: {
+    assetId: 'usdcPlus',
+    assetType: 'usdcPlus',
+    decimals: 6,
+    isRebasing: false,
+    name: 'USDC+',
+    symbol: 'USDC+',
+  },
 };
 
 export const LINEA_TOKENS = {
