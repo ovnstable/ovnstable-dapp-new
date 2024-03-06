@@ -84,6 +84,7 @@ export default {
 @media (max-width: 1024px) {
   .insurance__graphics {
     flex-direction: column;
+    min-height: 0;
   }
   .insurance__graphics-TVL-graphic {
     margin: 0;
@@ -96,10 +97,16 @@ export default {
 
 @media (max-width: 768px) {
   .insurance__graphics {
+    min-height: 0;
     flex-direction: column;
   }
   .insurance__graphics-TVL-graphic {
     margin-top: 50px;
+  }
+}
+@media (max-width: 576px) {
+  .insurance__graphics {
+    min-height: 0;
   }
 }
 

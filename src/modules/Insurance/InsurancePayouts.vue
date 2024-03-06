@@ -2,7 +2,10 @@
   <div class="insurance__payouts">
     <div class="insurance__payouts-titles">
       <p>Payable date, UTC</p>
-      <p>Daily profit, OVN per 1 INS</p>
+      <p v-if="!device.isMobile">Daily profit, OVN per 1 INS</p>
+      <p v-else>Daily profit,<br>
+        OVN per 1 INS
+      </p>
       <p>Cumulative return</p>
       <p>Explorer</p>
     </div>
@@ -18,10 +21,19 @@
         <div class="insurance__payouts-transaction">
           <div class="insurance__payouts-date-transaction">
             <p>{{ formatDateTime(trx.date).date }}</p>
+            <span
+              v-if="device.isMobile"
+              class="insurance__payouts-time"
+            >
+              {{ formatDateTime(trx.date).time }}
+            </span>
           </div>
+
           <p>OVN {{ trx.dailyProfit }}</p>
           <p>{{ trx.comp }}%</p>
-          <div class="insurance__payouts-id-link">
+          <div
+            class="insurance__payouts-id-link"
+          >
             <a
               :href="`${networkScan}tx/${trx.hash}`"
               target="_blank"
@@ -31,7 +43,7 @@
             >
               <ButtonComponent class="insurance__button-payout">
                 <BaseIcon
-                  name="PayoutArrow"
+                  :name="device.isMobile != true ? 'PayoutArrow' : 'ArrowRight' "
                 />
               </ButtonComponent>
             </a>
@@ -65,6 +77,7 @@
 
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
+import { deviceType } from '@/utils/deviceType.ts';
 
 export default {
   name: 'InsurancePayouts',
@@ -85,6 +98,9 @@ export default {
     };
   },
   computed: {
+    device() {
+      return deviceType();
+    },
     networkScan() {
       return this.$store.state.network.insuranceExplorerURL;
     },
@@ -324,6 +340,73 @@ export default {
 @media (max-width: 1024px) {
   .insurance__payouts-date-transaction {
     margin-right: 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .insurance__payouts-button-show {
+    padding: 6px 225px;
+    p {
+      font-size: 14px;
+    }
+  }
+
+  .insurance__payouts-button-show-text {
+    white-space: nowrap;
+  }
+
+  .insurance__payouts-titles {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr 1.3fr 1fr;
+    text-align: center;
+    font-size: 14px;
+  }
+  .insurance__payouts-transaction p {
+    font-size: 13px;
+  }
+  .insurance__payouts-date-transaction {
+    margin: 0;
+    padding: 0;
+  }
+  .insurance__payouts {
+    padding-right: 0px;
+  }
+}
+
+@media (max-width: 400px) {
+  .insurance__payouts-button-show {
+    padding: 5px 120px;
+    svg {
+      overflow: visible;
+    }
+  }
+  .insurance__button-payout {
+    background: none;
+    border: none;
+  }
+  .insurance__payouts-titles {
+    grid-template-columns: 1fr 2fr 1.2fr 1fr;
+  }
+  .insurance__payouts-titles p:nth-child(3),
+  .insurance__payouts-transaction p:nth-child(3) {
+    text-align: right;
+  }
+
+  .insurance__payouts-transactions p[data-v-f33d99a8]:nth-child(3) {
+    flex: 2.5;
+  }
+  .insurance__payouts-transactions p[data-v-f33d99a8]:nth-child(2) {
+    flex: 3.5
+  }
+  .insurance__payouts-titles p {
+    font-size: 12px;
+  }
+  .insurance__payouts-transactions p,
+  .insurance__payouts-time {
+    font-size: 14px;
+  }
+  .insurance__payouts-date-transaction {
+    display: block;
   }
 }
 

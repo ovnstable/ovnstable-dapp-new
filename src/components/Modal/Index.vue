@@ -1,7 +1,9 @@
 <!-- eslint-disable vue/no-deprecated-v-on-native-modifier -->
 <template>
   <Teleport to="body">
-    <div class="modal__activator">
+    <div
+      class="modal__activator"
+    >
       <slot
         name="activator"
         :on="activator"
@@ -11,6 +13,7 @@
         <div
           v-if="opened"
           class="modal__wrap"
+          :class="{ 'modal__wrap-overlay-modal': overlayModals }"
           @click="closeModal"
           @keydown.esc="closeModal"
         >
@@ -66,6 +69,10 @@ export default {
       default: 'default',
     },
     modelValue: {
+      type: Boolean,
+      default: false,
+    },
+    overlayModals: {
       type: Boolean,
       default: false,
     },
@@ -192,23 +199,15 @@ export default {
 
 @media (max-width: 1024px) {
   .modal__wrap {
-    width: 110vw;
+    width: 100vw;
   }
 }
-@media (max-width: 768px) {
-  .modal__wrap {
-    width: 140vw;
-  }
-}
-@media (max-width: 576px) {
-.modal__wrap {
-    width: 155vw;
-    left: -40px;
-  }
-}
-
 .modal__activator {
   position: absolute;
+}
+
+.modal__wrap-overlay-modal {
+  z-index: 300;
 }
 
 .modal__body {

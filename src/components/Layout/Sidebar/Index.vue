@@ -193,12 +193,17 @@ export default {
   top: 0;
   height: calc(100vh - 100px);
 }
+
 .app-sidebar,
 .sidebar__top,
 .sidebar__bottom {
   display: flex;
   flex-direction: column;
   min-width: 140px;
+
+  @media (max-width: 1024px) {
+    display: none;
+  }
 }
 
 .sidebar__bottom li {

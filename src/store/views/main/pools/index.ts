@@ -77,12 +77,12 @@ const actions = {
         .then((data: any) => {
           if (data) {
             const buildPools = data.map((pool: any) => {
-              let tokenNames;
-              if (pool.id.name === 'Convex USD+FRAXBP') {
-                tokenNames = ['USD+', 'FRAXBP'];
-              } else {
-                tokenNames = pool.id.name.split('/').map((name: any) => (name === 'Fantom Bomb' ? 'FRAX' : name));
+              let tokenNames = pool.id.name.split('/');
+
+              if (pool?.id?.name === 'Convex USD+FRAXBP') {
+                tokenNames = ['USD+', 'FRAX'];
               }
+
               const token0Icon = loadTokenImage(tokenNames[0]);
               const token1Icon = loadTokenImage(tokenNames[1]);
               const token2Icon = tokenNames[2] ? loadTokenImage(tokenNames[2]) : null;
@@ -111,7 +111,6 @@ const actions = {
                 ) {
                   platform = 'Convex';
                 }
-
                 return {
                   id: pool.id.name + pool.tvl + pool.platform,
                   name: newName,

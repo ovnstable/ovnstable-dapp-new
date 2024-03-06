@@ -1,5 +1,8 @@
 <template>
-  <div class="insurance__chains-interval">
+  <div
+    v-if="!device.isMobile"
+    class="insurance__chains-interval"
+  >
     <div>
       <GraphicInterval
         :selectedInterval="currentInterval"
@@ -25,9 +28,56 @@
       </div>
     </div>
   </div>
+  <div v-else>
+    <div class="insurance__chain-data-container">
+      <div
+        v-for="chain in availableChains"
+        :key="chain"
+        @click="saveNetworkToLocalStore(chain)"
+        @keydown.enter="saveNetworkToLocalStore(chain)"
+        class="insurance__chain-data"
+        :class="{ selected: (chain as any).toLowerCase() === networkName }"
+      >
+        <BaseIcon
+          :name="chain.toLocaleLowerCase()"
+          class="insurance__icon-chain-bottom"
+        />
+        <p class="insurance__chain-data-name">{{ chain }}</p>
+      </div>
+    </div>
+    <p class="insurance-cumulitive-text">Cumulitive return</p>
+    <div class="insurance-cumulitives">
+      <div class="insurance__accumulator-data">
+        <p>1 day</p>
+        <p>{{ accumulatorDay }}%</p>
+      </div>
+      <div class="insurance__accumulator-data">
+        <p>1 week</p>
+        <p>{{ accumulatorWeek }}%</p>
+      </div>
+      <div class="insurance__accumulator-data">
+        <p>1 month</p>
+        <p>{{ accumulatorMonth }}%</p>
+      </div>
+      <div class="insurance__accumulator-data">
+        <p>ALL</p>
+        <p>{{ parseFloat(graphicData[0].comp) }}%</p>
+      </div>
+    </div>
+    <div>
+      <GraphicInterval
+        :selectedInterval="currentInterval"
+        :intervals="['1W', '1M', '1Y', 'ALL TIME']"
+        @update:interval="updateInterval"
+      />
+    </div>
+  </div>
 
   <div class="insurance__graphic">
-    <div class="insurance__graphic-data">
+    <div
+      v-if="!device.isMobile"
+      class="insurance__graphic-data"
+    >
       <p class="insurance__graphic-title">Cumulative return</p>
       <div class="insurance-cumulitives">
         <div class="insurance__accumulator-data">
@@ -74,6 +124,7 @@ import GraphicInterval from '@/components/Graphic/GraphicInterval.vue';
 import { Chart, registerables } from 'chart.js';
 import { appNetworksData } from '@/utils/const.ts';
 import { chainContractsMap } from '@/utils/contractsMap.ts';
+import { deviceType } from '@/utils/deviceType.ts';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 
 const originPointPlugin = {
@@ -129,6 +180,9 @@ export default {
     };
   },
   computed: {
+    device() {
+      return deviceType();
+    },
     networkName() {
       return this.$store.state.network.insuranceNetwork;
     },
@@ -612,36 +666,86 @@ export default {
 
 @media (max-width: 768px) {
   .insurance__graphic-value {
-      font-size: 16px;
+    font-size: 16px;
+  }
+  .insurance__chain-data {
+    padding: 2px 6px;
   }
   .insurance__graphic-title {
-      font-size: 12px;
+    font-size: 12px;
+    margin-left: 10px;
+    margin-right: 10px;
   }
   .insurance__graphics-buttons-interval > * {
-      font-size: 10px;
+    font-size: 10px;
   }
   .insurance__graphic-date {
-        font-size: 10px;
+    font-size: 10px;
   }
   .insurance__graphic{
-      padding: 15px 30px;
+    padding: 15px 30px;
   }
 }
 @media (max-width: 576px) {
   .insurance__graphic-value {
-      font-size: 14px;
+    font-size: 14px;
   }
   .insurance__graphic-title {
-      font-size: 10px;
+    font-size: 10px;
   }
   .insurance__graphics-buttons-interval > * {
-      font-size: 8px;
+    font-size: 8px;
   }
   .insurance__graphic-date {
-        font-size: 8px;
+    font-size: 8px;
   }
   .insurance__graphic{
-      padding: 10px 20px;
+    padding: 10px 20px;
   }
 }
+@media (max-width: 400px) {
+  .insurance__chains-interval {
+    flex-direction: column;
+  }
+  .insurance__chain-data-container {
+    margin: 0;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  .insurance__chain-data {
+    padding: 5px 25px;
+    background-color: var(--color-5);
+  }
+  .insurance__chain-data-name {
+    display: none;
+  }
+  .insurance-cumulitive-text {
+    margin-bottom: 10px;
+    color: var(--color-1);
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .insurance-cumulitives {
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .insurance__accumulator-data p:first-child {
+    font-size: 12px;
+  }
+  .insurance__accumulator-data p:last-child,
+  .insurance__data-under-graphic p {
+    font-size: 14px;
+  }
+  .insurance__graphic{
+    padding: 20px 14px;
+  }
+  .insurance__graphic-display {
+    width: 100%;
+  }
+  .insurance__data-under-graphic {
+    margin-bottom: 0;
+    margin-top: 6px;
+  }
+}
+
 </style>
