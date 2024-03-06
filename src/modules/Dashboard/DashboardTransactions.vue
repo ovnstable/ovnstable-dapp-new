@@ -24,7 +24,7 @@
           </div>
           <p>${{ trx.opening_balance.toFixed(2) }}</p>
           <p>{{ trx.type.charAt(0).toUpperCase() + trx.type.slice(1).toLowerCase() }}</p>
-          <p>${{ trx.change_balance.toFixed(2) }}</p>
+          <p>{{ trx.change_balance < 0 ? '- ' : '' }}${{ Math.abs(trx.change_balance).toFixed(2) }}</p>
           <p>{{ trx.fee !== null ? trx.fee : '0' }}</p>
           <p>${{ trx.closing_balance.toFixed(2) }}</p>
           <div class="dashboard__transactions-id-link">
@@ -140,7 +140,7 @@ export default {
 .dashboard__button-trx {
   box-shadow: none;
   align-items: center;
-  border: 2px solid var(--color-6);
+  border: 1px solid var(--color-6);
   padding: 6px 12px;
   background-color: var(--color-5);
   border-radius: 30px;
@@ -148,7 +148,7 @@ export default {
     fill: var(--color-2)
   }
   [data-theme="dark"] & {
-    border-color: var(--color-3);
+    border-color: var(--color-2);
     svg {
       fill: var(--color-1)
     }
@@ -268,6 +268,9 @@ export default {
   [data-theme="dark"] & {
     border-color: var(--color-2);
   }
+  svg {
+    opacity: 0.5;
+  }
 }
 
 .dashboard__transactions-button-show:hover {
@@ -282,7 +285,7 @@ export default {
   font-size: 15px;
   font-weight: 500;
   [data-theme="dark"] & {
-    color: var(--color-18);
+    color: var(--color-2);
   }
 }
 

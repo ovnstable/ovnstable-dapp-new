@@ -1,83 +1,5 @@
 <template>
   <div>
-    <!--          Hide on mobile          -->
-    <!-- <div
-      class="pools-filters"
-    >
-      <div class="col-4 col-xl-4 col-lg-4 col-md-4 col-sm-4">
-        <div class="pools-header__item">Staking platform</div>
-      </div>
-
-      <div
-        @click="toggleOrderType('APR')"
-        @keypress="toggleOrderType('APR')"
-        class="col-2 col-xl-2 col-lg-2 col-md-2 col-sm-4 cursor-pointer"
-      >
-        <div
-          :class="
-            orderType.startsWith('APR') ? 'pools-header__item-selected' : ''
-          "
-          class="pools-header__item"
-        >
-          APR
-          <div
-            class="pool-table-header-logo"
-          >
-            <BaseIcon
-              v-if="orderType === 'APR'"
-              name="mdi-filter"
-            />
-            <BaseIcon
-              v-else-if="orderType === 'APR_UP'"
-              name="mdi-sort-ascending-white"
-            />
-            <BaseIcon
-              v-else-if="orderType === 'APR_DOWN'"
-              name="mdi-sort-descending-white"
-            />
-            <BaseIcon
-              v-else
-              name="mdi-filter"
-            />
-          </div>
-        </div>
-      </div>
-      <div
-        @click="toggleOrderType('TVL')"
-        @keypress="toggleOrderType('TVL')"
-        class="col-2 col-xl-2 col-lg-2 col-md-2 col-sm-4 cursor-pointer"
-      >
-        <div
-          :class="
-            orderType.startsWith('TVL') ? 'pools-header__item-selected' : ''
-          "
-          class="pools-header__item"
-        >
-          TVL
-
-          <div
-            class="pool-table-header-logo"
-          >
-            <BaseIcon
-              v-if="orderType === 'TVL'"
-              name="mdi-filter"
-            />
-            <BaseIcon
-              v-else-if="orderType === 'TVL_UP'"
-              name="mdi-sort-ascending-white"
-            />
-            <BaseIcon
-              v-else-if="orderType === 'TVL_DOWN'"
-              name="mdi-sort-descending-white"
-            />
-            <BaseIcon
-              v-else
-              name="mdi-filter"
-            />
-          </div>
-        </div>
-      </div>
-    </div> -->
     <div class="pools-table">
       <slot name="filters" />
 
@@ -93,7 +15,7 @@
       <div class="pools-table__content">
         <template v-if="pools.length > 0">
           <div
-            v-for="pool in pools"
+            v-for="pool in (pools as any)"
             :key="pool.id"
             class="pools-table__row"
             @click="toggleDetails(pool)"
@@ -111,7 +33,9 @@
                   alt="token"
                   :src="pool.token0Icon"
                 />
-                {{ getTokenNames(pool)[0] }}
+                <span>
+                  {{ getTokenNames(pool)[0] }}
+                </span>
               </div>
               <div
                 v-if="pool.token1Icon"
@@ -121,7 +45,9 @@
                   alt="token"
                   :src="pool.token1Icon"
                 />
-                {{ getTokenNames(pool)[1] }}
+                <span>
+                  {{ getTokenNames(pool)[1] }}
+                </span>
               </div>
               <div
                 v-if="pool.token2Icon"
@@ -131,7 +57,9 @@
                   alt="token"
                   :src="pool.token2Icon"
                 />
-                {{ getTokenNames(pool)[2] }}
+                <span>
+                  {{ getTokenNames(pool)[2] }}
+                </span>
               </div>
               <div
                 v-if="pool.token3Icon"
@@ -141,13 +69,22 @@
                   alt="token"
                   :src="pool.token3Icon"
                 />
+                <span>
+                  {{ getTokenNames(pool)[3] }}
+                </span>
               </div>
             </div>
-            <div class="pools-table__platform">
+            <a
+              :href="getPlatformLink(pool)"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="pools-table__platform"
+            >
               <BaseIcon
                 class="pools-table__platform-icon"
                 :name="pool.platform"
               />
+
               <!-- <div v-if="pool.platform === 'Swapbased'">
             <Tooltip
                           text="This pool have 1% deposit fee"
@@ -165,7 +102,12 @@
                     : pool.platform.toUpperCase()
                 }}
               </span>
-            </div>
+              <div class="button-link">
+                <BaseIcon
+                  name="PayoutArrow"
+                />
+              </div>
+            </a>
 
             <div class="pools-table__apy">
               <div
@@ -209,7 +151,7 @@
               btnStyles="faded"
               @click="openZapIn(pool, 'featured')"
             >
-              ZAPIN
+              ZAP IN
             </ButtonComponent>
           <!--          Hide on mobile          -->
           <!-- <PoolTableDetails
@@ -255,12 +197,13 @@
 </template>
 
 <!-- eslint-disable no-param-reassign -->
-<script>
+<script lang="ts">
 import { mapActions } from 'vuex';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import { formatMoneyComma, formatNumberToMln, formatNumberToThousands } from '@/utils/numbers.ts';
 import ZapInComponent from '@/modules/Main/components/ZapModal/Index.vue';
+import { buildLink } from '@/store/views/main/pools/helpers.ts';
 
 export default {
   name: 'PoolTable',
@@ -298,7 +241,10 @@ export default {
   },
   computed: {
     getTokenNames() {
-      return (pool) => pool.name.split('/');
+      return (pool: any) => pool.name.split('/');
+    },
+    getPlatformLink() {
+      return (pool: any) => buildLink(pool) ?? '';
     },
 
     // getPoolType() {
@@ -320,7 +266,7 @@ export default {
     formatMoneyComma,
     formatNumberToMln,
     formatNumberToThousands,
-    toggleDetails(pool) {
+    toggleDetails(pool: any) {
       if (this.pools && this.pools.length) {
         pool.isOpened = !pool.isOpened;
         return;
@@ -329,7 +275,7 @@ export default {
       // pools without aggregators always is opened
       pool.isOpened = true;
     },
-    toggleOrderType(type) {
+    toggleOrderType(type: string) {
       if (type === 'APR') {
         if (!this.orderType.startsWith('APR')) {
           this.setOrderTypeFunc('APR');
@@ -390,7 +336,7 @@ export default {
   font-size: 14px;
   border-radius: 30px;
   [data-theme="dark"] & {
-    background-color: var(--color-6);
+    background-color: var(--color-19);
   }
 }
 
@@ -405,11 +351,14 @@ export default {
 }
 .pools-table__row {
   display: grid;
-  grid-template-columns: 0.5fr 2fr 2fr 1fr 1fr 1fr;
+  grid-template-columns: 0.5fr 2fr 2fr 1fr 1.35fr 0.65fr;
   justify-content: space-between;
   width: 100%;
   padding: 15px 0;
   border-bottom: 1px solid var(--color-17);
+  button {
+    border-radius: 30px;
+  }
   [data-theme="dark"] & {
     border-bottom-color: var(--color-7);
   }
@@ -423,7 +372,7 @@ export default {
   margin-top: 20px;
   padding: 0 20px;
   [data-theme="dark"] & {
-    background-color: var(--color-6);
+    background-color: none;
     color: var(--color-18);
   }
 }
@@ -471,6 +420,14 @@ export default {
   width: fit-content;
   border-radius: 30px;
   overflow: hidden;
+
+  @media (max-width: 1024px) {
+    flex-direction: column;
+    border: 1px solid var(--color-17);
+    background-color: var(--color-4);
+    padding: 5px;
+    border-radius: 10px;
+  }
 }
 
 .pools-table__tokens-item {
@@ -504,16 +461,44 @@ export default {
     width: 24px;
     height: 24px;
     margin-right: 8px;
+    border-radius: 50%;
+  }
+
+  @media (max-width: 1024px) {
+    right: 0;
+    border: unset;
+    background-color: unset;
+    padding: 2px 9px;
+  }
+
+  @media (max-width: 1024px) {
+    right: 0;
+    border: unset;
+    background-color: unset;
+    padding: 2px 9px;
   }
 }
 
 .pools-table__platform {
+  width: fit-content;
   display: flex;
   align-items: center;
+  cursor: pointer;
 
   span {
+    transition: .2s ease color;
+
     [data-theme="dark"] & {
       color: var(--color-4);
+    }
+  }
+
+  &:hover {
+    span {
+      color: var(--color-3);
+    }
+    .button-link {
+      transform: translate(3px, -3px);
     }
   }
 }
@@ -529,6 +514,10 @@ export default {
     position: relative;
     font-size: 10px;
     top: -10px;
+  }
+
+  .card-label {
+    display: flex;
   }
 }
 
@@ -547,5 +536,27 @@ export default {
 
 .pools-table__footer {
   padding: 0 20px 20px 20px;
+}
+
+.button-link {
+  position: relative;
+  top: -10px;
+  box-shadow: none;
+  align-items: center;
+  border-radius: 10px;
+  padding: 0 4px;
+  transition: .2s ease transform;
+
+  svg {
+    fill: var(--color-2);
+    width: 8px;
+    height: 8px;
+  }
+
+  [data-theme="dark"] & {
+    svg {
+      fill: var(--color-1)
+    }
+  }
 }
 </style>

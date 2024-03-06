@@ -200,6 +200,13 @@ export default {
     &[disabled] {
       pointer-events: none;
     }
+
+    &::placeholder {
+      color: var(--color-2);
+      [data-theme="dark"] & {
+        color: var(--color-18);
+      }
+    }
   }
 
   &:hover {

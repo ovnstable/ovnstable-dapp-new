@@ -21,16 +21,17 @@
         />
       </template>
     </InputComponent>
+
     <div class="pools-wrap__filters-networks">
       <div
-        v-for="networkConfig in allNetworkConfigs"
-        :key="networkConfig.networkId"
-        @click="changeNetwork(networkConfig.networkId)"
-        @keypress="changeNetwork(networkConfig.networkId)"
-        :class="selectedNetwork.includes(networkConfig.networkId) ? 'pools-wrap__filters-item--selected' : ''"
+        v-for="networkConfig in sortedChains"
+        :key="networkConfig.chain"
+        @click="changeNetwork(networkConfig.chain)"
+        @keypress="changeNetwork(networkConfig.chain)"
+        :class="selectedNetwork.includes(networkConfig.chain) ? 'pools-wrap__filters-item--selected' : ''"
         class="pools-wrap__filters-item"
       >
-        <BaseIcon :name="networkConfig.networkName" />
+        <BaseIcon :name="networkConfig.name.toLowerCase()" />
       </div>
       <div
         @click="changeNetwork('all')"
@@ -48,8 +49,16 @@
 import InputComponent from '@/components/Input/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import SwitchTabs from '@/components/SwitchTabs/Index.vue';
+import { appNetworksData } from '@/utils/const.ts';
 import { poolTypes } from '@/modules/Main/components/PoolsTable/types/index.ts';
-import { mapGetters } from 'vuex';
+import { sortedChainsByTVL } from '@/store/helpers/index.ts';
+
+interface Chain {
+  chainName: string;
+  tvl: number;
+  name: string,
+  chain: number,
+}
 
 export default {
   name: 'PoolsFilter',
@@ -65,8 +74,13 @@ export default {
       default: () => [],
     },
   },
+  async mounted() {
+    this.sortedChains = await sortedChainsByTVL(this.networksData);
+  },
   data() {
     return {
+      sortedChains: [] as Chain[],
+      networksData: appNetworksData,
       filterTabs: [
         {
           id: poolTypes.ALL,
@@ -86,9 +100,6 @@ export default {
         },
       ],
     };
-  },
-  computed: {
-    ...mapGetters('network', ['allNetworkConfigs']),
   },
   methods: {
     changeTab(val: string) {
@@ -128,24 +139,26 @@ export default {
   border-radius: 30px;
   background-color: var(--color-4);
   border: 1px solid var(--color-1);
+
   [data-theme="dark"] & {
     background-color: var(--color-17);
     border-color: var(--color-2);
   }
 }
-
 .pools-wrap__filters-item {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 24px;
-  height: 24px;
+  width: 36px;
+  height: 36px;
   margin: 0 4px;
   font-size: 10px;
   font-weight: 600;
   text-align: center;
   cursor: pointer;
   transition: .2s ease color;
+  border: 1px solid var(--color-5);
+  border-radius: 50%;
 
   svg {
     width: 24px;
@@ -161,9 +174,12 @@ export default {
     color: var(--color-1);
   }
 }
-
+.pools-wrap__filters-item:last-child {
+  border: none;
+}
 .pools-wrap__filters-item--selected {
   color: var(--color-3);
+  border-color: var(--color-6);
 
   svg {
     opacity: 1;
@@ -173,7 +189,7 @@ export default {
 
 .search-icon {
   min-width: 18px;
-  margin-left: 6px;
+  margin-left: 10px;
   fill: var(--color-2);
   [data-theme="dark"] & {
     fill: var(--color-3);
@@ -181,7 +197,6 @@ export default {
 }
 .pools-wrap__filters-networks {
   display: flex;
-  gap: 4px;
   margin-left: auto;
 }
 </style>

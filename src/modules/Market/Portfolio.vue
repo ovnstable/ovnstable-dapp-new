@@ -51,7 +51,7 @@ export default {
   background: var(--color-4);
   transition: opacity 0.3s ease-in-out;
   [data-theme="dark"] & {
-    background: var(--color-6);
+    background: var(--color-17);
   }
 }
 
@@ -77,6 +77,8 @@ export default {
     padding-top: 5px;
     padding-bottom: 7px;
   }
+  .performance__portfolio-token-payout {
+    font-size: 16px;
+  }
 }
-
 </style>

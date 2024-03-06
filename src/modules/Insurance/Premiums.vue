@@ -3,7 +3,10 @@
     <p>INSURANCE PREMIUMS OF USD+</p>
   </div>
   <div class="insurance__premiums-strategies">
-    <div class="insurance__premiums-strategies-table">
+    <div
+      v-if="!device.isMobile"
+      class="insurance__premiums-strategies-table"
+    >
       <div class="insurance__premiums-specs">
         <p>Strategy</p>
         <p>% in collateral</p>
@@ -77,11 +80,86 @@
         </div>
       </div>
     </div>
+    <div
+      class="insurance__premiums-assets-mobile"
+      v-else
+    >
+      <div
+        v-for="premium in (premiumsData as any[])"
+        :key="premium.id"
+      >
+        <div
+          @click="openStrategyProfile(premium.address)"
+          @keydown.enter="openStrategyProfile(premium.address)"
+          class="insurance__premiums-asset"
+        >
+          <div class="insurance__premiums-assets-mobile-mobile">
+            <div class="insurance__premiums-asset-token-data-mobile">
+
+              <div class="insurance__premiums-asset-icon-mobile">
+                <div
+                  name="strategyImage"
+                  class="insurance__premiums-asset-icon"
+                  :style="{ 'background-color': getIconColor(premiumsData.indexOf(premium)) }"
+                />
+                <p
+                  :class="['insurance-premium-name']"
+                >
+                  {{ premium.fullName }}
+                </p>
+              </div>
+              <p>Strategy</p>
+            </div>
+            <div class="insurance__premiums-asset-nav-mobile">
+              <p class="insurance__premiums-assets-mobile-score">
+                {{ calculatePercentPortfolio(premium
+                  .netAssetValue, totalNAV(premiumsData as any))}}
+              </p>
+              <p>% in collateral</p>
+            </div>
+            <div class="insurance__premiums-asset-liq-val-mobile">
+              <p>
+                {{ formatCurrency(premium.netAssetValue)}}
+              </p>
+              <p>Net asset value, USDC</p>
+            </div>
+            <div class="insurance__premiums-asset-share">
+              <p>Share of yield retained as premiums in %</p>
+            </div>
+            <div class="insurance__premiums-asset-share-mobile">
+              <div class="insurance-premium-progress-bar">
+                <div
+                  class="insurance-premium-progress"
+                  :style="{ width: premium.riskFactor + '%', 'background-color': getIconColor(premiumsData.indexOf(premium)) }"
+                />
+              </div>
+              <p class="insurance-premium-token-portfolio-num">{{ premium.riskFactor }}%</p>
+            </div>
+          </div>
+          <div class="insurance__premiums-divider" />
+        </div>
+      </div>
+      <div class="insurance__premiums-total">
+        <p>Total</p>
+        <div class="insurance__premiums-total-NAV">
+          <p>
+            {{ formatCurrency(totalNAV(premiumsData as any)) }}
+          </p>
+          <p>Net asset value, USDC</p>
+        </div>
+        <div class="insurance__premiums-total-share">
+          <p>Total share of yield retained as premiums in %</p>
+          <p>{{calculateTotalPremiumsPercentage(premiumsData as any)}}</p>
+        </div>
+      </div>
+    </div>
   </div>
+  <p class="insurance__premiums-payouts-title">INSURANCE PAYOUTS</p>
 
 </template>
 
 <script lang="ts">
+import { deviceType } from '@/utils/deviceType.ts';
 
 export default {
   name: 'InsurancePremiums',
@@ -89,6 +167,11 @@ export default {
     premiumsData: {
       type: Object,
       default: () => ({}),
+    },
+  },
+  computed: {
+    device() {
+      return deviceType();
     },
   },
   methods: {
@@ -323,6 +406,12 @@ export default {
 .insurance__total-info {
   padding: 0px 20px;
 }
+.insurance__premiums-payouts-title {
+  margin-top: 24px;
+  font-size: 17px;
+  color: var(--color-1);
+  font-weight: 500;
+}
 
 @media (max-width: 1024px) {
   .insurance-premium-name {
@@ -336,6 +425,9 @@ export default {
     width: 100px;
   }
 
+  .insurance-premium-portfolio-percent {
+    justify-content: flex-end;
+  }
   .insurance__premiums-specs,
   .insurance-premium {
     grid-template-columns: 1.8fr 1fr 1.3fr 1.5fr;
@@ -355,4 +447,174 @@ export default {
     margin-right: 90px;
   }
 }
+
+@media (max-width: 768px) {
+  .insurance__premiums-title {
+    font-size: 15px;
+  }
+  .insurance__premiums-specs {
+    font-size: 14px;
+  }
+  .insurance-premium-portfolio-percent {
+    justify-content: flex-end;
+  }
+  .insurance__premiums-strategies-table-score {
+    text-align: left;
+  }
+  .insurance__premiums-specs,
+  .insurance-premium {
+    grid-template-columns: 2fr 1fr 1fr 1.3fr;
+  }
+
+  .insurance__premiums-total {
+    grid-template-columns: 5.2fr 1fr 2.2fr 0fr;
+    p {
+      white-space: nowrap;
+      font-size: 13px;
+    }
+  }
+  .insurance-premium p{
+    font-size: 13px;
+  }
+
+  .insurance-premium-name {
+    margin-left: 4px;
+  }
+  .insurance-premium-token-portfolio-num {
+    flex: none;
+    width: auto;
+    margin-left: 5px;
+  }
+  .insurance-premium-progress-bar {
+    width: 40px;
+  }
+}
+
+@media (max-width: 400px) {
+  .insurance__premiums-title {
+    font-size: 17px;
+    margin-bottom: 24px;
+  }
+  .insurance__premiums-strategies {
+    display: flex;
+    flex-direction: column;
+  }
+  .insurance__premiums-asset {
+    padding: 0;
+  }
+  .insurance__premiums-asset-token-data {
+    justify-content: space-between;
+  }
+  .insurance__premiums-asset {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  .insurance__premiums-assets-mobile-mobile {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  .insurance__premiums-assets-mobile {
+    background-color: var(--color-8);
+    border-radius: 10px;
+    padding: 16px 10px;
+    [data-theme="dark"] & {
+      background-color: var(--color-7);
+    }
+  }
+  .insurance__premiums-asset-token-data-mobile,
+  .insurance__premiums-asset-nav-mobile,
+  .insurance__premiums-asset-liq-val-mobile,
+  .insurance__premiums-asset-percent-portfolio-mobile,
+  .insurance__premiums-asset-share-mobile,
+  .insurance__premiums-total-NAV,
+  .insurance__premiums-total-share {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  .insurance__premiums-asset-share p {
+    text-align: right;
+  }
+  .insurance__premiums-asset-icon {
+    width: 14px;
+    height: 14px;
+    border-radius: 5px;
+    margin-right: 6px;
+  }
+  .insurance__premiums-asset-icon-mobile {
+    display: flex;
+    flex-direction: row;
+  }
+  .insurance__premiums-assets-mobile-mobile {
+    gap: 10px;
+  }
+  .insurance__premiums-asset-token-name {
+    max-width: none;
+  }
+  .insurance__premiums-asset-token-data-mobile p:last-child,
+  .insurance__premiums-asset-token-name {
+    margin: 0;
+  }
+  .insurance__premiums-asset-progress-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    max-width: 150px;
+    max-height: 12px;
+  }
+  .insurance__premiums-asset-token-portfolio-num {
+    position: absolute;
+    left: 100%;
+    margin-left: 10px;
+  }
+
+  .insurance__premiums-asset-token-data-mobile p,
+  .insurance__premiums-asset-nav-mobile p,
+  .insurance__premiums-asset-liq-val-mobile p,
+  .insurance__premiums-asset-percent-portfolio-mobile p {
+    font-size: 14px;
+  }
+
+  .insurance__premiums-asset-token-data-mobile:nth-child(1),
+  .insurance__premiums-asset-nav-mobile p:last-child,
+  .insurance__premiums-asset-liq-val-mobile p:last-child,
+  .insurance__premiums-asset-percent {
+    color: var(--color-2);
+  }
+  .insurance__premiums-asset-token-name.asset {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    min-width: 0;
+  }
+  .insurance__premiums-divider {
+    margin-top: 10px;
+    margin-bottom: 16px;
+    border: 1px solid var(--color-7);
+  }
+  .insurance-premium-name {
+    white-space: nowrap;
+    text-overflow: ellipsis
+  }
+  .insurance__premiums-assets-mobile-score,
+  .insurance__premiums-asset-liq-val-mobile p:first-child {
+    color: var(--color-1);
+    font-weight: 500;
+  }
+  .insurance-premium-progress-bar {
+    width: 100%;
+    margin-right: 10px;
+  }
+  .insurance__premiums-total {
+    gap: 10px;
+    display: flex;
+    flex-direction: column;
+    p {
+      font-size: 14px;
+      color: var(--color-2);
+    }
+  }
+}
+
 </style>

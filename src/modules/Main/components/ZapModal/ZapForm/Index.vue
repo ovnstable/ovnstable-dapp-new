@@ -59,12 +59,12 @@
                   >
                     <TokenForm
                       :token-info="token"
-                      :remove-item-func="removeInputToken"
                       :is-token-removable="isInputTokensRemovable"
-                      :select-token-func="selectFormToken"
                       :is-input-token="true"
                       :disabled="false"
-                      :update-token-value-func="updateTokenValueMethod"
+                      @select-token="selectFormToken"
+                      @remove-token="removeInputToken"
+                      @update-token="updateTokenValueMethod"
                     />
                   </div>
                   <div
@@ -95,38 +95,34 @@
               >
                 <TokenForm
                   :token-info="token"
-                  :remove-item-func="removeOutputToken"
                   :is-token-removable="isOutputTokensRemovable"
-                  :select-token-func="selectOutputToken"
                   :is-input-token="false"
                   :disabled="true"
+                  @select-token="selectOutputToken"
+                  @remove-token="removeOutputToken"
                 />
               </div>
             </div>
           </div>
         </div>
 
-        <div v-if="sumOfAllSelectedTokensInUsd">
+        <div v-if="sumOfAllSelectedTokensInUsd && ifMoreThanOneSelectedTokensAdded">
           <div class="transaction-info-container">
             <div class="transaction-info-body">
-              <div class="zap-row">
+              <div
+                class="zap-row"
+              >
                 <div class="transaction-info-title">Slippage</div>
                 <div class="transaction-info">
                   {{ slippagePercent * 1 }}%
                   <span class="transaction-info-additional">
-                    ({{
-                      formatMoney(
-                        (sumOfAllSelectedTokensInUsd * slippagePercent) / 100,
-                        3,
-                      )
-                    }})$
+                    ({{ formatMoney(getSlippageAmount, 3) }})$
                   </span>
                 </div>
               </div>
 
               <div
                 class="zap-row"
-                v-if="ifMoreThanOneSelectedTokensAdded"
               >
                 <div class="transaction-info-title">Multi-swap Odos fee</div>
                 <div>
@@ -137,14 +133,7 @@
                 <div class="transaction-info">
                   {{ multiSwapOdosFeePercent * 1 }}%
                   <span class="transaction-info-additional">
-                    ({{
-                      formatMoney(
-                        (sumOfAllSelectedTokensInUsd
-                          * multiSwapOdosFeePercent)
-                          / 100,
-                        3,
-                      )
-                    }})$
+                    ({{ formatMoney(getOdosFee, 3) }})$
                   </span>
                 </div>
               </div>
@@ -311,7 +300,7 @@
     <SelectTokensModal
       :is-show="isShowSelectTokensModal"
       :select-token-input="true"
-      :tokens="allTokensList"
+      :tokens="zapAllTokens"
       :is-all-data-loaded="isAllDataLoaded"
       :is-ovn-swap="true"
       :selected-tokens="inputTokens"
@@ -338,6 +327,7 @@ import {
   getNewOutputToken,
   getNewInputToken,
   getTokenBySymbol,
+  WHITE_LIST_ODOS,
 } from '@/store/helpers/index.ts';
 import {
   getProportion,
@@ -469,6 +459,27 @@ export default {
     ...mapGetters('accountData', ['account']),
     ...mapGetters('gasPrice', ['gasPriceGwei']),
 
+    getOdosFee() {
+      return new BigNumber(this.sumOfAllSelectedTokensInUsd)
+        .times(this.multiSwapOdosFeePercent)
+        .div(100)
+        .toNumber();
+    },
+    getSlippageAmount() {
+      return new BigNumber(this.sumOfAllSelectedTokensInUsd)
+        .times(this.slippagePercent).div(100).toNumber();
+    },
+    zapAllTokens() {
+      const selectedAdd = this.inputTokens
+        .map((_) => _.selectedToken?.address?.toLowerCase() ?? null)
+        .filter(Boolean);
+
+      return this.allTokensList.map((item: any) => ({
+        ...item,
+        selected: selectedAdd.includes(item.address?.toLowerCase()) ? item?.selected : false,
+      }));
+    },
+
     noneOvnTokens() {
       return this.allTokensList.filter((item: any) => item.symbol !== 'OVN');
     },
@@ -520,7 +531,7 @@ export default {
     },
 
     ifMoreThanOneSelectedTokensAdded() {
-      return this.inputTokens.length > 1 || this.outputTokens.length > 1;
+      return this.selectedInputTokens.length > 0;
     },
 
     selectedInputTokens() {
@@ -677,11 +688,13 @@ export default {
       return false;
     },
     sumOfAllSelectedTokensInUsd() {
-      let sum = 0;
+      let sum = '0';
       for (let i = 0; i < this.selectedInputTokens.length; i++) {
         const token: any = this.selectedInputTokens[i];
         const selectedTokenUsdValue = token.usdValue;
-        sum += selectedTokenUsdValue;
+        sum = new BigNumber(
+          selectedTokenUsdValue,
+        ).plus(sum).toFixed(6, BigNumber.ROUND_DOWN);
       }
 
       return sum;
@@ -732,16 +745,6 @@ export default {
       }
       // this.updateButtonDisabledFunc(val);
     },
-
-    isFirstBalanceLoaded(val) {
-      if (val) {
-        // if router with path /claim
-        if (this.$route.path === '/presale/claim') {
-          this.addOvnTokenToInput();
-          this.initDefaultTopInputTokensByBalance(this.noneOvnTokens);
-        }
-      }
-    },
   },
   created() {
     if (this.zapPool.chain !== this.networkId) return;
@@ -772,17 +775,32 @@ export default {
     onLeaveList,
     beforeEnterList,
     onEnterList,
-    maxAll,
     formatMoney,
 
-    updateTokenValueMethod(token:any, val: any) {
-      updateTokenValue(token, val, this.checkApproveForToken, this.updateQuotaInfo);
+    updateTokenState(newToken: any) {
+      const indexOf = this.inputTokens.map((_) => _.id).indexOf(newToken.id);
+      this.inputTokens[indexOf] = newToken;
+      this.updateQuotaInfo();
+    },
+
+    updateTokenValueMethod(token: any) {
+      const newToken = updateTokenValue(
+        token,
+        token.value,
+        this.checkApproveForToken,
+      );
+
+      this.updateTokenState(newToken);
     },
     selectFormToken() {
       this.showSelectTokensModals(true);
     },
     maxAllMethod() {
-      maxAll(this.selectedInputTokens, this.checkApproveForToken, this.updateQuotaInfo);
+      const arr = maxAll(
+        this.inputTokens,
+        this.checkApproveForToken,
+      );
+      arr.forEach((_) => this.updateTokenState(_));
     },
     mintAction() {
       this.showMintView();
@@ -818,10 +836,10 @@ export default {
       if (!this.isAvailableOnNetwork) this.mintAction();
     },
 
-    init() {
-      this.loadChains();
-      this.loadTokens();
-      this.initContractData();
+    async init() {
+      await this.loadChains();
+      await this.loadTokens();
+      await this.initContractData();
 
       const bus = useEventBus('odos-transaction-finished');
       bus.on(() => {
@@ -839,9 +857,6 @@ export default {
       const poolSelectedToken = getTokenBySymbol(poolTokens[0].name, this.allTokensList);
       const ovnSelectSelectedToken = getTokenBySymbol(poolTokens[1].name, this.allTokensList);
 
-      console.log(poolTokens, '--poolTokens');
-      console.log(this.allTokensList, '--this.allTokensList');
-      console.log(poolSelectedToken, '--poolSelectedToken');
       if (!poolSelectedToken || !ovnSelectSelectedToken) {
         this.addNewInputToken();
         this.addNewOutputToken();
@@ -873,19 +888,19 @@ export default {
     addNewOutputToken() {
       this.outputTokens.push(getNewOutputToken());
     },
-    removeOutputToken(id: string | number) {
+    removeOutputToken(id: string) {
       this.removeToken(this.outputTokens, id);
       this.resetOutputs();
     },
     addNewInputToken() {
       this.inputTokens.push(getNewInputToken());
     },
-    removeInputToken(id: string | number) {
+    removeInputToken(id: string) {
       this.removeToken(this.inputTokens, id);
       this.recalculateOvnTokenByAnotherTotalBalances();
     },
 
-    removeToken(tokens: any[], id: string | number) {
+    removeToken(tokens: any[], id: string) {
       // removing by token.id or token.selectedToken.id
       const index = tokens.findIndex(
         (item: any) => item.id === id
@@ -911,7 +926,6 @@ export default {
       return odosApiService
         .quoteRequest(requestData)
         .then((data) => {
-          console.log('Response data for odos swap request: ', data);
           this.$store.commit('odosData/changeState', {
             field: 'swapResponseInfo',
             val: data,
@@ -991,7 +1005,6 @@ export default {
       this.selectedOutputTokens[0].value = 100;
     },
     async stakeTrigger() {
-      console.log(this.zapPool, '--012');
       if (!this.zapPool) return;
 
       this.$store.commit('odosData/changeState', {
@@ -999,9 +1012,6 @@ export default {
         val: poolsInfoMap[this.zapPool.address],
       });
 
-      console.log(this.lastPoolInfoData, '--011');
-
-      console.log(this.isSwapLoading, '--isSwapLoading');
       if (!this.lastPoolInfoData) return;
       if (this.isSwapLoading) return;
 
@@ -1019,13 +1029,11 @@ export default {
       const outputToken0Price = this.selectedOutputTokens[0].selectedToken.price;
       const outputToken1Price = this.selectedOutputTokens[1].selectedToken.price;
 
-      console.log('--0');
       const reserves = await getProportion(
         this.zapPool.address,
         this.zapPool,
         this.zapContract,
       );
-      console.log(reserves, '--0');
       const sumReserves = (
         new BigNumber(reserves.token0Amount).times(outputToken0Price)
       )
@@ -1033,13 +1041,11 @@ export default {
           new BigNumber(reserves.token1Amount).times(outputToken1Price),
         ).toNumber();
 
-      console.log(sumReserves, '--sumReserves');
       const userInputTokens = this.selectedInputTokens;
       const poolOutputTokens = this.selectedOutputTokens;
       const formulaInputTokens = [];
       let formulaOutputTokens = [];
 
-      console.log('--000');
       for (let i = 0; i < userInputTokens.length; i++) {
         const inputToken = userInputTokens[i];
         const userInputToken = inputToken.selectedToken;
@@ -1048,10 +1054,6 @@ export default {
           (poolToken) => poolToken.selectedToken.address === userInputToken.address,
         );
 
-        console.log(
-          isFindUserInputTokenInPoolTokens,
-          'isFindUserInputTokenInPoolTokens',
-        );
         if (isFindUserInputTokenInPoolTokens) {
           // if user token exist in pool pair, move to output for proportion formula
           formulaOutputTokens.push({
@@ -1072,7 +1074,6 @@ export default {
         });
       }
 
-      console.log('--1');
       // sort output formula and fill amount by 0;
       const formulaResultOutputWithZero = [];
       for (let i = 0; i < poolOutputTokens.length; i++) {
@@ -1112,18 +1113,6 @@ export default {
       );
       const outputPrices = formulaOutputTokens.map((token: any) => token.price);
 
-      console.log({
-        inputTokensDecimals: [...inputDecimals],
-        inputTokensAddresses: [...inputAddresses],
-        inputTokensAmounts: [...inputAmounts],
-        inputTokensPrices: [...inputPrices],
-        outputTokensDecimals: [...outputDecimals],
-        outputTokensAddresses: [...outputAddresses],
-        outputTokensAmounts: [...outputAmounts],
-        outputTokensPrices: [...outputPrices],
-        proportion0: new BigNumber(reserves[0]).times(outputPrices[0]).div(sumReserves).toNumber(),
-      }, '--proportions1');
-
       const proportions = calculateProportionForPool({
         inputTokensDecimals: [...inputDecimals],
         inputTokensAddresses: [...inputAddresses],
@@ -1140,8 +1129,6 @@ export default {
         (item: any) => item.proportion > 0,
       );
 
-      console.log(proportions, '----proportions');
-
       const request = {
         chainId: this.networkId,
         inputTokens: proportions.inputTokens,
@@ -1151,6 +1138,7 @@ export default {
         slippageLimitPercent: this.getSlippagePercent(),
       };
 
+      const whiteList = WHITE_LIST_ODOS[request.chainId as keyof typeof WHITE_LIST_ODOS];
       const requestData = {
         chainId: request.chainId,
         inputTokens: request.inputTokens,
@@ -1161,14 +1149,12 @@ export default {
         ),
         slippageLimitPercent: request.slippageLimitPercent,
         sourceBlacklist: this.getSourceLiquidityBlackList(),
-        sourceWhitelist: [],
+        sourceWhitelist: whiteList ?? [],
         simulate: false,
         pathViz: false,
         disableRFQs: false,
         referralCode: this.odosReferalCode,
       };
-
-      console.log(requestData, '--requestData');
 
       this.odosSwapRequest(requestData)
         .then(async (data: any) => {
@@ -1208,6 +1194,7 @@ export default {
     },
 
     async getOdosRequest(request: any) {
+      const whiteList = WHITE_LIST_ODOS[request.chainId as keyof typeof WHITE_LIST_ODOS];
       const swapParams = {
         chainId: request.chainId,
         inputTokens: request.inputTokens,
@@ -1218,7 +1205,7 @@ export default {
         ),
         slippageLimitPercent: request.slippageLimitPercent,
         sourceBlacklist: this.getSourceLiquidityBlackList(),
-        sourceWhitelist: [],
+        sourceWhitelist: whiteList ?? [],
         simulate: false,
         pathViz: false,
         disableRFQs: false,
@@ -1262,7 +1249,6 @@ export default {
     async toApproveAndDepositSteps(data: any, lastPoolInfoData: any) {
       let putIntoPoolEvent;
       let returnedToUserEvent;
-      console.log(data.logs, 'LOGS');
       for (const item of data.logs) {
         const eventName = item?.eventName;
 
@@ -1377,21 +1363,12 @@ export default {
       lastPoolInfoData: any,
     ) {
       const approveAmount = new BigNumber(10).pow(24).toFixed();
-      console.log(
-        this.poolTokenContract,
-        +approveAmount,
-        this.routerContract,
-        this.account,
-        '---approveAmount',
-      );
       const isGaugeApproved = await checkApproveForGauge(
         this.poolTokenContract,
         approveAmount,
         this.routerContract,
         this.account,
       );
-
-      console.log(isGaugeApproved, '---isGaugeApproved');
 
       if (!isGaugeApproved) {
         this.showWaitingModal('Approving gauge in process');
@@ -1442,7 +1419,6 @@ export default {
       lastPoolInfoData: any,
       lastNftTokenId: any,
     ) {
-      console.log(this.currentZapPlatformContractType, 'DEP');
       this.showWaitingModal('Stake LP in process');
 
       depositAllAtGauge(
@@ -1456,7 +1432,6 @@ export default {
         this.poolTokenContract,
       )
         .then((data: any) => {
-          console.log('DEPOSIT');
           this.closeWaitingModal();
 
           const inputTokens = [...this.selectedInputTokens];
@@ -1550,6 +1525,7 @@ export default {
 
       this.clearZapData();
       this.loadBalances();
+      this.$emit('close-modal');
     },
     async initZapInTransaction(
       responseData: any,
@@ -1643,13 +1619,11 @@ export default {
         const tx = await this.zapContract.zapIn(txData, gaugeData, params);
         const receipt = await tx.wait();
 
-        console.log(this.currentZapPlatformContractType, '---receipt');
         this.$store.commit('odosData/changeState', {
           field: 'lastZapResponseData',
           val: markRaw(receipt),
         });
 
-        console.log(this.lastZapResponseData, '-this.lastZapResponseData');
         if (
           this.currentZapPlatformContractType.type
             === 'LP_WITH_STAKE_IN_ONE_STEP'
@@ -1699,7 +1673,6 @@ export default {
       return odosApiService
         .quoteRequest(requestData)
         .then((data) => {
-          console.log('Response data for odos quota request: ', data);
           this.$store.commit('odosData/changeState', {
             field: 'quotaResponseInfo',
             val: data,
@@ -1757,16 +1730,16 @@ export default {
         return;
       }
 
+      const whiteList = WHITE_LIST_ODOS[this.networkId as keyof typeof WHITE_LIST_ODOS];
       const requestData = {
         chainId: this.networkId,
-        // chainId: 1,
         inputTokens: input,
         outputTokens: output,
         gasPrice: actualGas,
         userAddr: ethers.getAddress(this.account.toLowerCase()),
         slippageLimitPercent: this.getSlippagePercent(),
         sourceBlacklist: ['Hashflow', 'Wombat'],
-        sourceWhitelist: [],
+        sourceWhitelist: whiteList ?? [],
         simulate: true,
         pathViz: true,
       };
@@ -1925,12 +1898,16 @@ export default {
     recalculateOutputTokensSum() {
       for (let i = 0; i < this.selectedOutputTokens.length; i++) {
         const token: any = this.selectedOutputTokens[i];
-        const tokenSum = (this.sumOfAllSelectedTokensInUsd * token.value) / 100;
+        const tokenSum = new BigNumber(
+          this.sumOfAllSelectedTokensInUsd,
+        ).times(token.value).div(100);
         const sum = this.swapMethod === 'BUY'
-          ? tokenSum / token.selectedToken.price
-          : tokenSum * token.selectedToken.price;
-        token.sum = this.formatMoney(sum, 4);
-        this.outputTokens[i] = token;
+          ? new BigNumber(tokenSum).div(token.selectedToken.price)
+          : new BigNumber(tokenSum).times(token.selectedToken.price);
+        this.outputTokens[i] = {
+          ...token,
+          sum: this.formatMoney(sum.toNumber(), 4),
+        };
       }
     },
     subTokensProportions(currentToken: any, difference: any) {
@@ -2038,11 +2015,23 @@ export default {
         const newValue = ovnToken.value - diff;
 
         if (newValue <= 0) {
-          updateTokenValue(ovnToken, 0, this.checkApproveForToken, this.updateQuotaInfo);
+          const newToken = updateTokenValue(
+            ovnToken,
+            0,
+            this.checkApproveForToken,
+          );
+
+          this.updateTokenState(newToken);
           return;
         }
 
-        updateTokenValue(ovnToken, newValue, this.checkApproveForToken, this.updateQuotaInfo);
+        const newToken = updateTokenValue(
+          ovnToken,
+          newValue,
+          this.checkApproveForToken,
+        );
+
+        this.updateTokenState(newToken);
       }, 30);
     },
 
@@ -2092,9 +2081,8 @@ export default {
     },
 
     addSelectedTokenToList(data: any) {
-      console.log(data, ' ---dat');
       if (data.isInput) {
-        this.addSelectedTokenToInputList(data.tokenData, true);
+        this.addSelectedTokenToInputList(data.tokenData, false);
         // this.addTokensEmptyIsNeeded();
         return;
       }
@@ -2110,12 +2098,13 @@ export default {
 
       if (isAddAllBalance) {
         setTimeout(() => {
-          updateTokenValue(
+          const newToken = updateTokenValue(
             newInputToken,
             newInputToken.selectedToken.balanceData.balance,
             this.checkApproveForToken,
-            this.updateQuotaInfo,
           );
+
+          this.updateTokenState(newToken);
         }, 10);
       }
 
@@ -2123,7 +2112,10 @@ export default {
         this.initDefaultTopInputTokensByBalance(this.noneOvnTokens);
       }
 
-      this.checkApproveForToken(newInputToken, 10000000);
+      this.checkApproveForToken(
+        newInputToken,
+        new BigNumber(10 ** selectedToken.decimals).times(100000).toFixed(0),
+      );
     },
     addSelectedTokenToOutputList(selectedToken: any, isLocked: any, startPercent: any) {
       const newOutputToken = getNewOutputToken();
@@ -2136,7 +2128,7 @@ export default {
       this.resetOutputs();
     },
     removeSelectedTokenFromList(selectedToken: any) {
-      this.removeInputToken(selectedToken.id);
+      this.removeInputToken(selectedToken.tokenData.id);
       if (this.inputTokens.length === 0) this.addNewInputToken();
     },
     removeAllWithoutSelectedTokens(tokens: any) {

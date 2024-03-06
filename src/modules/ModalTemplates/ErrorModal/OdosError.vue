@@ -104,11 +104,18 @@ export default {
 
 <style scoped>
 
+.info-container {
+  width: 100%;
+}
+
+.error-message-container {
+  width: 100%;
+}
+
 /* mobile */
 @media only screen and (max-width: 960px) {
 
     .info-container {
-        min-width: 300px;
         min-height: 140px;
     }
 
@@ -141,11 +148,8 @@ export default {
 
     .error-message-container {
         min-width: 300px;
-        max-height: 100px;
-
         padding-left: 5px;
         margin-bottom: 10px;
-        border: 1px dashed #c9c9c9;
     }
 
     .info-item {
@@ -165,7 +169,6 @@ export default {
     }
 
     .info-container {
-        min-width: 550px;
         min-height: 164px;
     }
 
@@ -190,9 +193,6 @@ export default {
     }
 
     .error-message-container {
-        max-width: 534px;
-        max-height: 160px;
-
         padding: 5px;
         margin-bottom: 10px;
         border: 1px dashed #c9c9c9;
@@ -215,7 +215,6 @@ export default {
     }
 
     .info-container {
-        min-width: 550px;
         min-height: 164px;
     }
 
@@ -240,9 +239,6 @@ export default {
     }
 
     .error-message-container {
-        max-width: 534px;
-        max-height: 160px;
-
         padding: 5px;
         margin-bottom: 10px;
         border: 1px dashed #c9c9c9;

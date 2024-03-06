@@ -1,5 +1,10 @@
 <template>
-  <div class="performance__portfolio-strategies-token-title">
+  <div
+    :class="[
+      'performance__portfolio-strategies-token-title',
+      device.isMobile && type === 'portfolio' ? 'performance__portfolio-strategies-token-portfolio-mob' : '',
+    ]"
+  >
     {{ type === 'strategies' ? tokenName + ' portfolio' : tokenName + ' collateral assets' }}
     <a
       v-if="type === 'strategies'"
@@ -23,7 +28,10 @@
 
   </div>
   <div class="performance__portfolio-strategies">
-    <div class="performance__portfolio-strategies-stables">
+    <div
+      v-if="!device.isMobile"
+      class="performance__portfolio-strategies-stables"
+    >
       <div class="performance__portfolio-strategies-stables-specs">
         <p>{{ type === 'portfolio' ? 'Stablecoin' : 'Strategy' }}</p>
         <p>{{ type === 'portfolio' ? 'Safety score' : 'Net asset value' }}</p>
@@ -151,6 +159,147 @@
         </div>
       </div>
     </div>
+    <div
+      class="performance__portfolio-strategies-stables"
+      v-else
+    >
+      <div
+        v-for="asset in (assets as any[])"
+        :key="asset.tokenName"
+      >
+        <div
+          @click="handleContainerClick(asset)"
+          @keydown.enter="handleContainerClick(asset)"
+          tabindex="0"
+          :class="[
+            'performance__portfolio-strategy',
+            { assets: type === 'portfolio' && assets.indexOf(asset) === assets.length - 1 },
+          ]"
+        >
+          <div class="performance__portfolio-strategies-stables-mobile">
+            <div class="performance__portfolio-strategy-token-data-mobile">
+
+              <div class="performance__portfolio-strategy-icon-mobile">
+                <div
+                  v-if="type === 'strategies'"
+                  name="strategyImage"
+                  class="performance__portfolio-strategy-icon"
+                  :style="{ 'background-color': getIconColor(assets.indexOf(asset)) }"
+                />
+                <BaseIcon
+                  v-if="type === 'portfolio'"
+                  :name="getIconName(asset.id.tokenName)"
+                  class="performance__portfolio-asset-icon"
+                />
+                <p
+                  :class="['performance__portfolio-strategy-token-name', { asset: type === 'strategies' }]"
+                >
+                  {{ type === 'portfolio' ? asset.id.tokenName : asset.fullName }}
+                </p>
+              </div>
+              <p>{{ type === 'portfolio' ? 'Stablecoin' : 'Strategy' }}</p>
+            </div>
+            <div class="performance__portfolio-strategy-nav-mobile">
+              <p :class="{ 'performance__portfolio-strategies-stables-score': type === 'portfolio' }">
+                {{ type === 'portfolio' ? 'VERY HIGH' : formatCurrency(asset.netAssetValue, collateralToken) }}
+              </p>
+              <p>{{ type === 'portfolio' ? 'Safety score' : 'Net asset value' }}</p>
+            </div>
+            <div class="performance__portfolio-strategy-liq-val-mobile">
+              <p>
+                {{ type === 'portfolio' ? formatCurrency(asset.netAssetValue, collateralToken) : formatCurrency(asset.liquidationValue, collateralToken) }}
+              </p>
+              <p>{{ type === 'portfolio' ? 'Net Asset Value' : 'Liquidation value' }}</p>
+            </div>
+            <div class="performance__portfolio-strategy-percent-portfolio-mobile">
+              <div class="performance__portfolio-strategy-progress-bar">
+                <div
+                  class="performance__portfolio-strategy-progress"
+                  :style="{ width: calculatePercentPortfolio(asset.netAssetValue, totalPortfolioValue(assets)) + '%', 'background-color': getIconColor(assets.indexOf(asset)) }"
+                />
+                <p class="performance__portfolio-strategy-token-portfolio-num">{{ calculatePercentPortfolio(asset.netAssetValue, totalPortfolioValue(assets)) }}%</p>
+              </div>
+              <p class="performance__portfolio-strategy-percent">% in portfolio</p>
+            </div>
+          </div>
+
+        </div>
+
+        <BaseIcon
+          v-if="type === 'strategies'"
+          class="performance__portfolio-dropdown-arrow"
+          :name="dropdownVisible === asset.fullName ? 'ArrowUp' : 'ArrowDown'"
+        />
+        <div
+          v-if="(type !== 'strategies' || dropdownVisible !== asset.fullName) && (type !== 'portfolio' || assets.indexOf(asset) !== assets.length - 1)"
+          class="performance__portfolio-strategies-divider"
+        />
+        <div
+          v-show="dropdownVisible === asset.fullName"
+          class="performance__portfolio-dropdown-content"
+        >
+          <div class="performance__portfolio-dropdown performance__portfolio-dropdown--dep-to">
+            <p>Lending Protocol Deposited To:</p>
+            <p>{{ asset.lendingProtocolDepositedTo }}</p>
+          </div>
+          <div class="performance__portfolio-dropdown performance__portfolio-dropdown--dep-asset">
+            <p>Deposited asset:</p>
+            <p>{{ asset.depositedAsset }}</p>
+          </div>
+          <div class="performance__portfolio-dropdown performance__portfolio-dropdown--borrowed">
+            <p>Borrowed asset:</p>
+            <p>{{ asset.borrowedAsset }}</p>
+          </div>
+          <div class="performance__portfolio-dropdown performance__portfolio-dropdown--lp-farming">
+            <p>LP Farming:</p>
+            <p>{{ asset.lpFarmingPlatform }}</p>
+          </div>
+          <div class="performance__portfolio-dropdown performance__portfolio-dropdown--lp-pair">
+            <p>LP Pai:</p>
+            <p>{{ asset.lpPair }}</p>
+          </div>
+          <div class="performance__portfolio-dropdown performance__portfolio-dropdown--debank">
+            <p>See on DeBank:</p>
+            <a
+              :href="'https://debank.com/profile/' + asset.linkDepositedProtocol"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="link-ovn"
+            >
+              <p>{{ formatTransactionID(asset.linkDepositedProtocol) }}</p>
+            </a>
+          </div>
+          <div
+            v-if="assets.indexOf(asset) != assets.length - 1"
+            class="performance__portfolio-strategies-divider"
+          />
+        </div>
+      </div>
+      <div
+        v-if="type === 'strategies'"
+        class="performance__portfolio-strategies-total-mobile"
+      >
+        <p>Total</p>
+        <div class="performance__portfolio-total-nv-mobile">
+          <p class="performance__portfolio-total-nav-val">
+            {{ formatCurrency(totalNAV(assets, collateralToken), collateralToken) }}
+          </p>
+          <p>Net asset value</p>
+        </div>
+        <div class="performance__portfolio-total-liq-mobile">
+          <p class="performance__portfolio-total-liquidation-val">
+            {{ formatCurrency(totalLiquidationValue(assets, collateralToken), collateralToken) }}
+          </p>
+          <p>Liquidation value</p>
+        </div>
+        <div class="performance__portfolio-circle-mobile">
+          <p class="performance__portfolio-total-label performance__portfolio-total-label--circl">Total {{ tokenName }} in circulation</p>
+          <p class="performance__portfolio-total-circl-number">
+            {{ formatCurrency(tokenAmountInCirculation, collateralToken) }}
+          </p>
+        </div>
+      </div>
+    </div>
   </div>
 
 </template>
@@ -158,6 +307,7 @@
 <script lang="ts">
 
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import { deviceType } from '@/utils/deviceType.ts';
 
 export default {
   name: 'PortfolioStrategies',
@@ -184,6 +334,11 @@ export default {
     collateralToken: {
       type: String,
       default: '$',
+    },
+  },
+  computed: {
+    device() {
+      return deviceType();
     },
   },
   data() {
@@ -458,6 +613,7 @@ export default {
 .performance__portfolio-dropdown {
   display: flex;
   flex-direction: row;
+  margin-top: 8px;
 }
 
 .performance__portfolio-dropdown p {
@@ -481,6 +637,9 @@ export default {
   flex:7;
 }
 
+.performance__portfolio-dropdown--dep-to {
+  margin-top: 0;
+}
 .performance__portfolio-dropdown--dep-to p:nth-child(1) {
   padding-right: 12px;
 }
@@ -518,12 +677,12 @@ export default {
   font-weight: 500;
 }
 .performance__portfolio-strategy:hover {
-  background-color: var(--color-6);
+  background-color: var(--color-5);
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
   [data-theme="dark"] & {
-    background-color: var(--color-2);
+    background-color: var(--color-17);
   }
 }
 
@@ -631,5 +790,328 @@ export default {
   .performance__portfolio-total-circl-number {
     margin-left: 5px;
   }
+}
+
+@media (max-width: 768px) {
+  .performance__portfolio-strategies-stables-specs {
+    padding: 0 10px;
+    p {
+      font-size: 14px;
+    }
+  }
+  .performance__portfolio-strategy {
+    p {
+      font-size: 13px;
+    }
+  }
+
+  .performance__portfolio-strategy-token-name {
+    max-width: 110px;
+    margin-left: 4px;
+    margin-right: 30px;
+  }
+  .performance__portfolio-strategy p:nth-child(2),
+  .performance__portfolio-strategy p:nth-child(3){
+    text-align: left;
+  }
+
+  .performance__portfolio-strategies-stables-specs p:nth-child(2) {
+    margin-left: 30px;
+  }
+  .performance__portfolio-strategy-progress-bar {
+    display: none;
+  }
+  .performance__portfolio-strategy-portfolio-percent {
+    justify-content: flex-start;
+  }
+  .performance__portfolio-strategy-token-data {
+    margin-left: 10px;
+  }
+  .performance__portfolio-strategies-stables-specs,
+  .performance__portfolio-strategy {
+    grid-template-columns: 1.2fr 1.3fr 1.5fr 1.3fr;
+  }
+
+  .performance__portfolio-total {
+    grid-template-columns: 1fr 1.1fr 1.05fr 1fr;
+  }
+  .performance__portfolio-total-liquidation-val {
+    display: flex;
+    align-items: right;
+    text-align: right;
+  }
+  .performance__portfolio-total-circl {
+    grid-template-columns: 0.9fr 2.8fr 1.8fr 0.1fr;
+  }
+  .performance__portfolio-total p:nth-child(2) {
+    text-align: right;
+    margin-left: 20px;
+  }
+  .performance__portfolio-total p:nth-child(3) {
+    text-align: left;
+    margin-left: 16px;
+  }
+  .performance__portfolio-strategy-portfolio-percent {
+    margin-left: 4px;
+  }
+
+  .performance__portfolio-strategy p:nth-child(3) {
+    margin-left: 10px;
+  }
+  .performance__portfolio-strategy {
+    padding-right: 4px;
+    padding-left: 4px;
+  }
+
+  .performance__portfolio-strategy p {
+    display: flex;
+    align-items: center;
+  }
+  .performance__portfolio-strategy-token-portfolio-num {
+    margin-left: 6px;
+  }
+
+  .performance__portfolio-total-label,
+  .performance__portfolio-total-label--circl {
+    font-size: 14px;
+  }
+
+  .performance__portfolio-total-nav-val,
+  .performance__portfolio-total-liquidation-val,
+  .performance__portfolio-total-circl-number {
+    font-size: 13px;
+  }
+
+  .performance__portfolio-total p:nth-child(3) {
+    margin-left: 30px;
+  }
+
+  .performance__portfolio-total-label--circl {
+    margin: 0;
+  }
+
+  .performance__portfolio-strategies-token-title {
+    font-size: 16px;
+  }
+  .performance__portfolio-description {
+    font-size: 14px;
+    text-align: right;
+  }
+  .performance__portfolio-total-label--circl {
+    margin-right: 12px;
+  }
+  .performance__portfolio-strategies-stables-score {
+    margin-right: 40px;
+  }
+}
+
+@media (max-width: 576px) {
+  .performance__portfolio-strategy-token-name {
+    max-width: 60px;
+    margin-left: 4px;
+    margin-right: 30px;
+    overflow-wrap: break-word;
+    word-break: break-all;
+    display: inline-block;
+  }
+  .performance__portfolio-strategies-stables-score {
+    margin-right: 0;
+  }
+  .performance__portfolio-strategy p:nth-child(3) {
+    margin-left: 4px;
+  }
+
+  .performance__portfolio-strategies-stables-specs p:last-child {
+    text-align: right;
+  }
+
+  .performance__portfolio-strategies-stables-score {
+    margin-right: 10px;
+  }
+  .performance__portfolio-strategy-token-name {
+    margin-right: 20px;
+  }
+
+  .performance__portfolio-total p:nth-child(2),
+  .performance__portfolio-total p:nth-child(3),
+  .performance__portfolio-total-circl p:nth-child(2) {
+    max-width: 66px;
+  }
+
+  .performance__portfolio-total-circl p:nth-child(2) {
+    margin-left: 6px
+  }
+
+  .performance__portfolio-description {
+    font-size: 13px;
+  }
+
+  .performance__portfolio-total p:nth-child(2) {
+    margin-left: 6px;
+  }
+
+  .performance__portfolio-total-circl p:nth-child(2),
+  .performance__portfolio-total p:nth-child(3){
+    align-items: right;
+    text-align: right;
+  }
+
+}
+
+@media (max-width: 400px) {
+  .performance__portfolio-description {
+    font-size: 14px;
+  }
+  .performance__portfolio-assets {
+    padding: 16px 10px;
+  }
+  .performance__portfolio-strategy {
+    padding: 0;
+  }
+  .performance__portfolio-strategy-token-data {
+    justify-content: space-between;
+  }
+  .performance__portfolio-strategy {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  .performance__portfolio-strategies-stables-mobile {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  .performance__portfolio-strategies-stables {
+    background-color: var(--color-8);
+    border-radius: 10px;
+    padding: 16px 10px;
+    [data-theme="dark"] & {
+      background-color: var(--color-7);
+    }
+  }
+  .performance__portfolio-strategy-token-data-mobile,
+  .performance__portfolio-strategy-nav-mobile,
+  .performance__portfolio-strategy-liq-val-mobile,
+  .performance__portfolio-strategy-percent-portfolio-mobile {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  .performance__portfolio-strategy-icon-mobile {
+    display: flex;
+    flex-direction: row;
+  }
+  .performance__portfolio-strategies-stables-mobile {
+    gap: 10px;
+  }
+  .performance__portfolio-strategy-token-name {
+    max-width: none;
+  }
+  .performance__portfolio-strategy-token-data-mobile p:last-child,
+  .performance__portfolio-strategy-token-name {
+    margin: 0;
+  }
+  .performance__portfolio-strategies-divider {
+    border-color: var(--color-7);
+  }
+   .performance__portfolio-strategy-progress-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    max-width: 150px;
+    max-height: 12px;
+  }
+  .performance__portfolio-strategy-token-portfolio-num {
+    position: absolute;
+    left: 100%;
+    margin-left: 10px;
+  }
+  .performance__portfolio-strategies-divider {
+    margin-top: 10px;
+    margin-bottom: 16px
+  }
+
+  .performance__portfolio-strategy-token-data-mobile p,
+  .performance__portfolio-strategy-nav-mobile p,
+  .performance__portfolio-strategy-liq-val-mobile p,
+  .performance__portfolio-strategy-percent-portfolio-mobile p {
+    font-size: 14px;
+  }
+
+  .performance__portfolio-strategy-token-data-mobile:nth-child(1),
+  .performance__portfolio-strategy-nav-mobile p:last-child,
+  .performance__portfolio-strategy-liq-val-mobile p:last-child,
+  .performance__portfolio-strategy-percent  {
+    color: var(--color-2);
+  }
+  .performance__portfolio-asset-icon {
+    margin-right: 10px;
+  }
+  .performance__portfolio-strategy-token-name.asset {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    min-width: 0;
+  }
+
+  .performance__portfolio-dropdown-content {
+    margin: 0;
+  }
+
+  .performance__portfolio-dropdown-content {
+    display: flex;
+    flex-direction: column;
+  }
+  .performance__portfolio-dropdown {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
+  }
+  .performance__portfolio-dropdown p:last-child {
+    margin: 0;
+    text-align: right;
+  }
+  .performance__portfolio-dropdown p {
+    white-space: nowrap;
+  }
+  .performance__portfolio-dropdown-arrow {
+    margin-top: 10px;
+  }
+  .performance__portfolio-dropdown--dep-to {
+    margin-top: 16px;
+  }
+
+  .performance__portfolio-strategies-total-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 10px ;
+    p {
+      font-size: 14px;
+      font-weight: 500;
+    }
+  }
+
+  .performance__portfolio-total-nv-mobile,
+  .performance__portfolio-total-liq-mobile,
+  .performance__portfolio-circle-mobile {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .performance__portfolio-total-label--circl,
+  .performance__portfolio-total-circl-number {
+    margin: 0;
+  }
+
+  .performance__portfolio-strategies-token-portfolio-mob {
+    display: flex;
+    flex-direction: column;
+    .performance__portfolio-description {
+      margin-top: 10px;
+      text-align: left
+    }
+  }
+
 }
 </style>

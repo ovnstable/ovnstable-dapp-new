@@ -7,8 +7,8 @@
         :key="token.id"
         class="selected-tokens__item"
         :class="token.selected ? 'token-container-selected' : ''"
-        @click="toggleToken(token, !token.selected)"
-        @keydown="toggleToken(token, !token.selected)"
+        @click="toggleToken(token)"
+        @keydown="toggleToken(token)"
       >
         <img
           :src="token.logoUrl"
@@ -17,6 +17,9 @@
         <span>
           {{token.symbol}}
         </span>
+        <BaseIcon
+          name="SearchClose"
+        />
       </div>
     </div>
 
@@ -28,16 +31,6 @@
           full-width
           @input="searchTokens"
         />
-
-        <div
-          @click="clearSearchQuery"
-          @keydown="clearSearchQuery"
-          class="search-tokens__clear"
-        >
-          <BaseIcon
-            name="SearchClose"
-          />
-        </div>
       </div>
       <div class="search-tokens__list">
         <div
@@ -45,8 +38,8 @@
           class="search-tokens__list-item"
           :class="selectedTokensAddress.includes(token.address) ? 'search-tokens__list-item--selected' : ''"
           :key="token.id"
-          @click="toggleToken(token, !token.selected)"
-          @keydown="toggleToken(token, !token.selected)"
+          @click="toggleToken(token)"
+          @keydown="toggleToken(token)"
         >
           <div class="search-tokens__list-item__left">
             <img
@@ -76,7 +69,6 @@
   </div>
 </template>
 <script lang="ts">
-import { mapGetters } from 'vuex';
 import { formatMoney, fixedByPrice } from '@/utils/numbers.ts';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import InputComponent from '@/components/Input/Index.vue';
@@ -101,7 +93,7 @@ export default {
   },
   data() {
     return {
-      maxTokenSelectCount: 6,
+      maxTokenSelectCount: 3,
       searchQuery: '',
     };
   },
@@ -153,9 +145,8 @@ export default {
       return this.selectedCount < this.maxTokenSelectCount;
     },
     selectedCount() {
-      return this.tokens.filter((item: any) => item.selected).length;
+      return this.selectedTokens.length;
     },
-    ...mapGetters('theme', ['light']),
   },
   methods: {
     formatMoney,
@@ -163,16 +154,17 @@ export default {
     searchTokens(val: string) {
       this.searchQuery = val;
     },
-    toggleToken(token: any, isSelect: any) {
-      if (isSelect && this.isAvailableCountForSelect) {
-        this.$emit('add-token', token);
+    toggleToken(token: any) {
+      const selected = this.selectedTokensAddress.includes(token.address);
+      if (selected) {
+        this.$emit('remove-token', token);
         return;
       }
 
-      this.$emit('remove-token', token);
-    },
-    clearSearchQuery() {
-      this.searchQuery = '';
+      if (this.isAvailableCountForSelect) {
+        console.log('ADDTOKEN');
+        this.$emit('add-token', token);
+      }
     },
   },
 };
@@ -286,8 +278,8 @@ export default {
   display: flex;
   align-items: center;
   padding: 5px 8px;
-  border-radius: 12px;
-  background-color: var(--color-5);
+  border-radius: 30px;
+  border: 2px solid var(--color-6);
 
   [data-theme="dark"] & {
     background-color: var(--color-7);
@@ -303,6 +295,11 @@ export default {
     font-size: 16px;
     font-weight: 500;
     margin-left: 8px;
+    margin-right: 6px;
   }
+}
+
+.selected-tokens__item:hover {
+  cursor: pointer;
 }
 </style>

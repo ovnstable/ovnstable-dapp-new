@@ -1,38 +1,36 @@
 <template>
-  <div>
+  <div
+    v-if="firstLoad"
+    class="insurance__loader"
+  >
+    <Spinner />
+  </div>
+  <div
+    v-else
+    class="insurance-wrapper"
+  >
     <div
-      v-if="firstLoad"
-      class="insurance__loader"
+      class="insurance"
     >
-      <Spinner />
+      <TokenDataInsurance
+        :tokenData="tokenData"
+        class="insurance__token-data"
+      />
+      <GraphicsInsurance
+        :payoutData="payoutData"
+        :loaded="loaded"
+        class="insurance__graphics"
+      />
+      <InsurancePremiums
+        :premiums-data="premiumsData"
+        class="insurance__premiums"
+      />
     </div>
-    <div
-      v-else
-      class="insurance-wrapper"
-    >
-      <div
-        class="insurance"
-      >
-        <TokenDataInsurance
-          :tokenData="tokenData"
-          class="market__token-data"
-        />
-        <GraphicsInsurance
-          :payoutData="payoutData"
-          :loaded="loaded"
-          class="insurance__graphics"
-        />
-        <InsurancePremiums
-          :premiums-data="premiumsData"
-          class="insurance__premiums"
-        />
-      </div>
-      <div class="insurance__payouts">
-        <InsurancePayouts
-          :payout-data="reversedPayoutData"
-          class="insurance__payout-inner"
-        />
-      </div>
+    <div class="insurance__payouts">
+      <InsurancePayouts
+        :payout-data="reversedPayoutData"
+        class="insurance__payout-inner"
+      />
     </div>
   </div>
 
@@ -97,9 +95,9 @@ export default {
   padding-left: 25px;
   padding-right: 25px;
   padding-bottom: 20px;
-  width: calc(100% - 40px);
+  width: 100%;
   [data-theme="dark"] & {
-    background: var(--color-6);
+    background: var(--color-17);
     border-color: var(--color-2);
     box-shadow: 0px 1px 0px 0px var(--color-2);
   }
@@ -109,6 +107,13 @@ export default {
 .insurance__premiums,
 .insurance__payout-inner {
   width: 100%;
+}
+
+.insurance__token-data,
+.insurance__graphics {
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
+  }
 }
 .insurance__graphics{
   margin-top: 24px;
@@ -123,13 +128,13 @@ export default {
   position: relative;
   display: flex;
   flex-direction: column;
-  width: calc(100% - 40px);
+  width: 100%;
   min-height: 1500px;
   z-index: 1;
 }
 
 .insurance__payouts {
-  width: calc(100% - 40px);
+  width: 100%;
   background: var(--color-8);
   z-index: -1;
   margin-top: -10px;
@@ -149,7 +154,7 @@ export default {
 
 .insurance__loader {
   position: absolute;
-  left: 0;
+  left: 10px;
   top: 0;
   margin: auto;
   height: 100%;
@@ -160,6 +165,38 @@ export default {
   justify-content: center;
   background-color: rgba(255, 255, 255, .4);
   padding-bottom: 50vh;
+}
+@media (max-width: 768px) {
+  .insurance__graphics {
+    padding: 8px 12px;
+  }
+
+  .insurance,
+  .insurance__payouts {
+    width: calc(100% - 40px);
+  }
+}
+
+@media (max-width: 400px) {
+  .insurance,
+  .insurance__payouts,
+  .insurance__payout-inner {
+    width: 100%;
+  }
+
+  .insurance {
+    padding: 16px 20px;
+  }
+  .insurance__payout-inner {
+    padding-left: 20px;
+    padding-right: 20px;
+    border-radius: 0;
+  }
+  .insurance__graphics {
+    padding: 0;
+    margin-top: 14px;
+    border: none;
+  }
 }
 
 </style>

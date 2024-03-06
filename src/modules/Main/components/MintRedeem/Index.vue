@@ -588,8 +588,10 @@ export default {
             amount: this.inputToken.value,
           };
 
+          console.log('closeWaitingModal');
           this.putTransaction(tx);
           this.closeWaitingModal();
+          this.initMintRedeem();
           this.showSuccessModal({
             successTxHash: txData.hash,
             from: [this.inputToken],

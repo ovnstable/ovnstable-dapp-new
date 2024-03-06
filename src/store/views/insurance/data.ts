@@ -3,6 +3,7 @@
 import dayjs from 'dayjs';
 import { axios } from '@/utils/httpUtils.ts';
 import duration from 'dayjs/plugin/duration';
+import BigNumber from 'bignumber.js';
 
 dayjs.extend(duration);
 
@@ -65,13 +66,6 @@ const actions = {
     for (const insuranceChain of insuranceChainList) {
       dispatch('refreshClientData', { chain: insuranceChain });
     }
-    //
-    // dispatch('refreshUsdPlusPayoutsData', "polygon");
-    // dispatch('refreshUsdPlusPayoutsData', "bsc");
-    // dispatch('refreshUsdPlusPayoutsData', "optimism");
-    // dispatch('refreshUsdPlusPayoutsData', "arbitrum");
-    // dispatch('refreshUsdPlusPayoutsData', "zksync");
-
     dispatch('accountData/refreshBalance', null, { root: true });
     // dispatch('supplyData/refreshInsuranceSupply', null, { root: true });
   },
@@ -79,41 +73,6 @@ const actions = {
   async refreshStrategyData({
     commit, dispatch, getters, rootState,
   }: any, refreshParams: any) {
-    let appApiUrl;
-
-    switch (refreshParams.chain.chainId) {
-      case 137:
-        appApiUrl = rootState.network.polygonApi;
-        break;
-      case 10:
-        appApiUrl = rootState.network.opApi;
-        break;
-      case 56:
-        appApiUrl = rootState.network.bscApi;
-        break;
-      case 42161:
-        appApiUrl = rootState.network.arApi;
-        break;
-      case 8453:
-        appApiUrl = rootState.network.baseApi;
-        break;
-      case 59144:
-        appApiUrl = rootState.network.lineaApi;
-        break;
-      case 324:
-        appApiUrl = rootState.network.zkApi;
-        break;
-      default:
-        appApiUrl = rootState.network.polygonApi;
-        break;
-    }
-
-    const fetchOptions = {
-      headers: {
-        'Access-Control-Allow-Origin': appApiUrl,
-      },
-    };
-
     const strategyData = {
       tvlData: 0,
     };
@@ -126,6 +85,8 @@ const actions = {
   }: any, refreshParams: any) {
     let appApiUrl;
 
+    if (!refreshParams?.chain?.chainId) return;
+
     switch (refreshParams.chain.chainId) {
       case 137:
         appApiUrl = rootState.network.polygonApi;
@@ -153,7 +114,6 @@ const actions = {
         break;
     }
 
-    console.log('---refreshClientData');
     if (!rootState.accountData.account) {
       return;
     }
@@ -240,7 +200,7 @@ const actions = {
 
       let date = await contract.withdrawRequests(account);
       try {
-        date = parseFloat(date);
+        date = parseFloat('1709625027');
       } catch (e) {
         date = null;
       }
@@ -260,11 +220,35 @@ const actions = {
           date = new Date(date * 1000);
           const currentDate = new Date();
 
+          console.log(currentDate.getTime(), '--currentDate');
+          console.log(date.getTime(), '--date');
           if (currentDate.getTime() > date.getTime()) {
             const withdrawPeriod = await web3.contracts.insurance[
               `${rootState.network.networkName}_exchanger`
             ].withdrawPeriod();
-            const withdrawDate = new Date(date.getTime() + withdrawPeriod * 1000);
+            const withdrawDate = new Date(
+              new BigNumber(
+                date.getTime(),
+              ).plus(
+                new BigNumber(withdrawPeriod).times(1000),
+              ).toNumber(),
+            );
+
+            console.log(withdrawPeriod.toString(), '---withdrawPeriod');
+            console.log(withdrawDate.getTime(), 'withdrawDate');
+            console.log(currentDate.getTime(), 'currentDate');
+            if (new BigNumber(withdrawPeriod).eq(0)) {
+              const hours = dayjs
+                .duration(dayjs(withdrawDate).diff(dayjs(currentDate)))
+                .asHours();
+              redemptionData.request = 'CAN_WITHDRAW';
+              redemptionData.date = date;
+              redemptionData.hours = hours;
+
+              console.log(`REDEMPTION REQUEST: ${JSON.stringify(redemptionData)}`);
+              commit('setInsuranceRedemptionData', redemptionData);
+              return;
+            }
 
             if (withdrawDate.getTime() > currentDate.getTime()) {
               const hours = dayjs

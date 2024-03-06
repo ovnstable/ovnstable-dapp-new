@@ -2,7 +2,11 @@
   <div class="performance__payouts">
     <div class="performance__payouts-titles">
       <p>Payable date, UTC</p>
-      <p>Daily profit, {{ payoutData.collateralToken }} per {{ payoutData.tokenName }}</p>
+      <p v-if="!device.isMobile">Daily profit,
+        {{ payoutData.collateralToken }} per {{ payoutData.tokenName }}</p>
+      <p v-else>Daily profit,<br>
+        {{ payoutData.collateralToken }} per {{ payoutData.tokenName }}
+      </p>
       <p>Annualized yield, % per year</p>
       <p>Explorer</p>
     </div>
@@ -30,8 +34,15 @@
               aria-label="Link for token"
               class="link-ovn"
             >
-              <p>{{ formatTransactionID(trx.transactionHash) }}</p>
+              <template v-if="!device.isMobile">
+                <p>{{ formatTransactionID(trx.transactionHash) }}</p>
+              </template>
+              <BaseIcon
+                v-else
+                name="ArrowRight"
+              />
             </a>
+
           </div>
         </div>
         <div
@@ -62,6 +73,7 @@
 <script lang="ts">
 
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import { deviceType } from '@/utils/deviceType.ts';
 
 export default {
   name: 'PortfolioPayouts',
@@ -81,6 +93,9 @@ export default {
     };
   },
   computed: {
+    device() {
+      return deviceType();
+    },
     networkScan() {
       return this.$store.state.network.marketExplorerURL;
     },
@@ -278,7 +293,7 @@ export default {
   font-size: 15px;
   font-weight: 600;
   [data-theme="dark"] & {
-    color: var(--color-18);
+    color: var(--color-2);
   }
 }
 
@@ -300,6 +315,84 @@ export default {
 @media (max-width: 1024px) {
   .performance__payouts-date-transaction {
     margin-right: 10px;
+  }
+}
+@media (max-width: 768px) {
+  .performance__payouts-titles p {
+    font-size: 14px;
+  }
+  .performance__payouts-transaction p,
+  .performance__payouts-time {
+    font-size: 13px;
+  }
+  .performance__payouts-time {
+    margin-left: 4px;
+  }
+  .performance__payouts-button-show {
+    padding: 5px;
+  }
+  .performance__payouts-titles p:nth-child(2) {
+    margin-right: 20px;
+  }
+  .performance__payouts-transaction p:nth-child(2) {
+    text-align: left;
+  }
+  .performance__payouts-date-transaction {
+    min-width: 136px;
+  }
+}
+
+@media (max-width: 576px) {
+  .performance__payouts-date-transaction {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    min-width: 60px;
+    margin-right: 40px;
+  }
+  .performance__payouts-id-link {
+    max-width: 76px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .performance__payouts-titles p:last-child {
+    margin-left: 2px;
+  }
+
+  .performance__payouts-titles p {
+    display: flex;
+    align-items: center;
+  }
+  .performance__payouts-button-show {
+    padding: 2px;
+  }
+
+  .performance__payouts {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 400px) {
+  .performance__payouts-titles p {
+    font-size: 12px;
+  }
+
+  .performance__payouts-transaction p,
+  .performance__payouts-time,
+  .performance__payouts-button-show-text {
+    font-size: 14px;
+  }
+
+  .performance__payouts-time,
+  .performance__payouts-titles p:nth-child(2) {
+    margin: 0;
+  }
+
+  .performance__payouts-titles p:nth-child(2) {
+    margin-left: 30px;
+    margin-right: 12px;
   }
 }
 

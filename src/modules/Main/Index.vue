@@ -48,6 +48,7 @@ import TabsComponent from '@/components/Tabs/Index.vue';
 import SwapForm from '@/modules/Main/components/Odos/Index.vue';
 import BridgeComponent from '@/modules/Main/components/Bridge/Index.vue';
 import PathView from '@/modules/Main/components/PathView/Index.vue';
+import { useEventBus } from '@vueuse/core';
 
 export default {
   name: 'MainModule',
@@ -85,6 +86,12 @@ export default {
       isFirstInitializationForPath: true,
     };
   },
+  mounted() {
+    const onTabChange = useEventBus<number>('change-tab-request');
+    onTabChange.on((tabIndex) => {
+      this.activeTab = tabIndex;
+    });
+  },
   methods: {
     ...mapActions('swapModal', ['showSwapModal', 'showMintView']),
 
@@ -121,7 +128,7 @@ export default {
   background-color: var(--color-8);
   border-radius: 30px;
   [data-theme="dark"] & {
-    background-color: var(--color-6);
+    background-color: var(--color-19);
   }
 }
 .swap-module__form {

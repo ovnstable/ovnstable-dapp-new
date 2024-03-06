@@ -449,6 +449,9 @@ export default {
     margin-left: 20px;
     margin-right: 20px;
   }
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
 }
 .dashboard__graphic{
   min-height: 250px;
@@ -582,19 +585,19 @@ export default {
 
 @media (max-width: 768px) {
   .dashboard__graphic-value {
-      font-size: 16px;
+    font-size: 16px;
   }
   .dashboard__graphic-title {
-      font-size: 12px;
+    font-size: 12px;
   }
   .dashboard__graphics-buttons-interval > * {
-      font-size: 10px;
+    font-size: 10px;
   }
   .dashboard__graphic-date {
-        font-size: 10px;
+    font-size: 10px;
   }
   .dashboard__graphic{
-      padding: 15px 30px;
+    padding: 15px 30px;
   }
 }
 @media (max-width: 576px) {

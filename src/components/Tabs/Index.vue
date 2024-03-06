@@ -35,6 +35,7 @@
 
 <script lang="ts">
 import uniqueId from 'lodash/uniqueId';
+import { useEventBus } from '@vueuse/core';
 import type { PropType } from 'vue';
 
 interface ITab {
@@ -90,6 +91,10 @@ export default {
   },
 
   mounted() {
+    const onTabChange = useEventBus<number>('change-tab-request');
+    onTabChange.on((tabIndex) => {
+      this.activeItem = tabIndex;
+    });
     if (this.tabs.length && !this.activeTab) {
       this.activeItem = this.tabs[0].id;
       this.onTabClick(this.activeItem);
@@ -162,7 +167,7 @@ export default {
 }
 
 .tabs-item {
-  width: calc(100% + 3px);
+  width: calc(100% + 3.5px);
   height: calc(100% - 51px);
 }
 .tabs-header__ul {
@@ -184,6 +189,9 @@ export default {
   position: relative;
   z-index: 10;
   padding: 10px 0;
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
 }
 .tabs-header__ul__li span:before {
   [data-theme="dark"] & {

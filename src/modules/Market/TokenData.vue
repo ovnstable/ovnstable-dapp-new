@@ -1,20 +1,44 @@
 <template>
+  <div
+    v-if="device.isMobile"
+    class="performance__token-data-markets"
+  >
+    <router-link
+      v-for="link in linksData"
+      :key="link.name"
+      :to="link.to"
+      class="sidebar__text-market"
+      active-class="active-link"
+    >
+      <div class="performance__token-data-markets-links">
+        <BaseIcon
+          :name="link.iconName"
+          :class="{ 'inactive-link': link.name !== tokenData.tokenName }"
+        />
+        <p>{{ link.name }}</p>
+      </div>
+
+    </router-link>
+  </div>
   <div class="performance__token-data">
-    <BaseIcon
-      :name="tokenData.tokenImageName"
-      class="performance__token-data-main-token"
-    />
-    <div class="performance__token-data-link-title">
-      <p class="performance__token-data-title performance__token-data-title--token">{{ tokenData.tokenName }}</p>
-      <a
-        :href="`${networkScan}${networkName === 'zksync' ? 'address' : 'token'}/` + generateHref(tokenData.tokenName, networkName)"
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="token-address"
-        class="performance__token-data-link-addr link-ovn"
-      >Token address</a>
+    <div class="performance__token-data-header">
+      <BaseIcon
+        :name="tokenData.tokenImageName"
+        class="performance__token-data-main-token"
+      />
+      <div class="performance__token-data-link-title">
+        <p class="performance__token-data-title performance__token-data-title--token">{{ tokenData.tokenName }}</p>
+        <a
+          :href="${networkScan}${networkName === 'zksync' ? 'address' : 'token'}/ + generateHref(tokenData.tokenName, networkName)"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="token-address"
+          class="performance__token-data-link-addr link-ovn"
+        >Token address</a>
+      </div>
+      <p class="performance__token-data__description">{{ tokenData.description }}</p>
     </div>
-    <p class="performance__token-data__description">{{ tokenData.description }}</p>
+
     <div class="performance__divider" />
     <div class="performance__payout-data">
       <p class="performance__token-data-title">Last payout</p>
@@ -30,10 +54,9 @@
           class="performance__icon-chain"
         >
           <BaseIcon
-            :name="formatNetworkIconName(networkName)"
+            :name="networkName.toLocaleLowerCase()"
           />
         </div>
-
       </div>
     </div>
     <div class="performance__divider" />
@@ -57,7 +80,7 @@
       :class="{ selected: chain.toLowerCase() === networkName }"
     >
       <BaseIcon
-        :name="getIconName(chain)"
+        :name="chain.toLocaleLowerCase()"
         class="performance__icon-chain-bottom"
       />
       <p class="performance__chain-data-name">{{ chain }}</p>
@@ -69,27 +92,34 @@
 <script lang="ts">
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { chainContractsMap } from '@/utils/contractsMap.ts';
+import { deviceType } from '@/utils/deviceType.ts';
 
 export default {
   name: 'TokenDataPerformance',
   components: {
     BaseIcon,
   },
+  data() {
+    return {
+      linksData: [
+        { name: 'USD+', to: '/market/usd', iconName: 'USD+_market' },
+        { name: 'USDC+', to: '/market/usdc', iconName: 'USDC+_Account' },
+        { name: 'ETH+', to: '/market/eth', iconName: 'DashboardETH+Tokens' },
+        { name: 'USDT+', to: '/market/usdt', iconName: 'USDT_market' },
+        { name: 'DAI+', to: '/market/dai', iconName: 'DAI+_market' },
+      ],
+    };
+  },
   props: {
     tokenData: {
       type: Object,
       default: () => ({}),
     },
-    chainIcon: {
-      type: String,
-      default: 'IconArbitrum',
-    },
-    chainName: {
-      type: String,
-      default: 'Optimism',
-    },
   },
   computed: {
+    device() {
+      return deviceType();
+    },
     networkName() {
       return this.$store.state.network.marketNetwork;
     },
@@ -136,26 +166,18 @@ export default {
 
       return tokenPlus;
     },
-
-    getIconName(chain:string) {
-      const selectedChain = this.$store.state.network.marketNetwork;
-      const formattedChain = chain.charAt(0).toUpperCase() + chain.slice(1).toLowerCase();
-
-      if (chain.toLowerCase() !== selectedChain.toLowerCase()) {
-        return `Icon${formattedChain}Off`;
-      }
-
-      return `Icon${formattedChain}On`;
-    },
-    formatNetworkIconName(networkName: string) {
-      if (!networkName) return '';
-      return `Icon${networkName.charAt(0).toUpperCase()}${networkName.slice(1)}On`;
-    },
   },
 };
 </script>
 
+
 <style lang="scss" scoped>
+
+.performance__token-data-header {
+  display: flex;
+  flex-direction: row;
+}
+
 .performance__token-data {
   display:flex;
   flex-direction: row;
@@ -163,7 +185,7 @@ export default {
   background: var(--color-4);
   width: 100%;
   [data-theme="dark"] & {
-    background: var(--color-6);
+    background: var(--color-17);
   }
 }
 
@@ -261,6 +283,10 @@ export default {
 }
 .performance__icon-chain {
   margin-left: 10px;
+  svg {
+    width: 24px;
+    height: 24px;
+  }
 }
 
 .performance__token-data-h {
@@ -278,16 +304,30 @@ export default {
   align-items: center;
   border-radius: 30px;
   border: 1px solid var(--color-6);
-  background: var(--color-5);
   padding: 5px 10px;
   margin-top: 24px;
   width: fit-content;
   transition: background 0.3s ease, border 0.3s ease;
+  svg {
+    width: 24px;
+    height: 24px;
+    filter: grayscale(10);
+    opacity: .5;
+  }
+  [data-theme="dark"] & {
+    background: var(--color-7);
+  }
 }
 .selected {
   background: var(--color-4);
+  color: var(--color-3);
+
+  svg {
+    opacity: 1;
+    filter: unset;
+  }
   [data-theme="dark"] & {
-    background: var(--color-2);
+    background: var(--color-17);
   }
 }
 
@@ -305,7 +345,7 @@ export default {
   background: var(--color-6);
   transition: background 0.3s ease, border 0.3s ease;
   [data-theme="dark"] & {
-    background: var(--color-7);
+    background: var(--color-2);
   }
 }
 
@@ -334,6 +374,10 @@ export default {
 
 .performance__token-data-main-token {
   min-width: 70px;
+  [data-theme="dark"] & {
+    border: 1px solid var(--color-4);
+    border-radius: 50%;
+  }
 }
 
 @media (max-width: 1024px) {
@@ -348,7 +392,7 @@ export default {
     margin-top: 24px;
   }
   .performance__token-data-main-token {
-    scale: 65%;
+    scale: 90%;
   }
   .performance__token-data-col-token {
     margin-left: 2px;
@@ -361,12 +405,6 @@ export default {
     margin-left: 5px;
   }
 
-  .performance__token-data-title {
-      font-size: 16px;
-  }
-  .performance__token-data-num {
-    font-size: 14px;
-  }
   .performance__token-data-h {
     font-size: 12px;
   }
@@ -377,42 +415,199 @@ export default {
 }
 
 @media (max-width: 768px) {
-  .performance__divider {
-    margin-left: 20px;
-    margin-right: 20px;
-  }
-  .performance__token-data-col-token {
-    margin: 0;
-  }
-  .performance__token-data-link-addr {
-    margin-top: 40px;
-  }
-  .performance__token-data-num--payout-ago {
-    margin-right: 15px;
+  .performance__chain-data-name {
+    font-size: 10px;
+    margin-left: 2px;
   }
   .performance__chain-data {
-    padding: 2px 5px;
-    margin-top: 20px;
+    padding: 4px;
+  }
+  .performance__chain-data svg {
+    scale: 80%;
+  }
+  .performance__divider {
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+  .performance__token-data-main-token {
+    scale: 80%;
   }
 
-  .performance__chain-data-name {
+  .performance__token-data-title {
+    font-size: 14px;
+    display: flex;
+    text-align: center;
+    max-width: 50px;
+  }
+  .performance__token-data-num,
+  .performance__token-data-num--payout-ago {
     font-size: 12px;
   }
+  .performance__token-data-h {
+    display: flex;
+    text-align: center;
+    margin-top: 10px;
+  }
+
+  .performance__apy-data-chain {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .performance__icon-chain {
+    margin-left: 0;
+    margin-top: 10px;
+    scale: 80%;
+  }
+
+  .performance__token-data-col-token {
+    margin-left: 0;
+    font-size: 12px;
+  }
+  .performance__divider--last-divider {
+   display: none;
+  }
+
 }
 
 @media (max-width: 576px) {
+  .performance__chain-data-name {
+    display: none;
+  }
+  .performance__token-data {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .performance__divider {
+    width: 100%;
+  }
+  .performance__token-data-title--token {
+    margin-left: 20px;
+  }
+  .performance__token-data-title {
+    max-width: none;
+  }
+  .performance__token-data__description {
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+  .performance__token-data-title {
+    margin-top: 10px;
+  }
   .performance__token-data-num {
-    margin-top: 60px;
+    margin-top: 6px;
   }
   .performance__apy-data-chain {
     margin: 0;
   }
   .performance__icon-chain {
-    margin-top: 60px;
+    margin-top: 10px;
   }
   .performance__divider {
     margin-left: 5px;
     margin-right: 5px;
   }
+}
+
+@media (max-width: 400px) {
+  .performance__token-data-header {
+    width: 100%;
+    margin-bottom: 6px;
+  }
+  .performance__token-data-main-token {
+    width: 40px;
+    overflow: visible;
+    min-width: 58px;
+    height: 40px;
+  }
+  .performance__token-data-link-addr {
+    margin-top: 18px;
+  }
+  .performance__token-data-link-title {
+    margin-left: 10px;
+  }
+  .performance__token-data-title--token {
+    font-size: 16px;
+    margin-left: 0;
+  }
+  .performance__token-data__description {
+    margin-top: 0;
+    margin-left: 68px;
+    max-width: 138px;
+  }
+  .performance__divider {
+    margin-top: 12px;
+    margin-bottom: 12px;
+  }
+  .performance__payout-data,
+  .performance__apy-data,
+  .performance__apy-data-chain,
+  .performance__tvl-data {
+    justify-content: space-between;
+    flex-direction: row;
+    width: 100%;
+    p {
+      margin-top: 0;
+    }
+  }
+  .performance__payout-data p:first-child,
+  .performance__tvl-data p:first-child {
+    font-size: 12px;
+    margin-right: auto
+  }
+  .performance__apy-data {
+    .performance__token-data-title {
+      font-size: 12px;
+      width: 100%;
+      margin-right: auto;
+    }
+  }
+  .performance__apy-data-chain {
+    align-items: center;
+    justify-content: right;
+  }
+  .performance__token-data-num--payout-ago,
+  .performance__token-data-num {
+    font-size: 14px;
+    margin-right: 10px;
+  }
+  .performance__token-data-col-token {
+    font-size: 14px;
+  }
+  .performance__apy-data p {
+    text-align: left;
+  }
+  .performance__icon-chain {
+    margin: 0;
+  }
+  .performance__chain-data-container {
+    justify-content: space-between;
+  }
+  .performance__token-data-markets {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  .performance__token-data-markets-links {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    p {
+      font-size: 12px;
+      color: var(--color-1);
+      margin-left: 4px
+    }
+    svg {
+      border-radius: 50%;
+    }
+    .inactive-link {
+      opacity: 0.5;
+      filter: grayscale(10);
+    }
+  }
+
 }
 </style>

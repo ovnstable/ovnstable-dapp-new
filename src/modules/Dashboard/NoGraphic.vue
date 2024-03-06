@@ -79,7 +79,7 @@ export default {
   flex-direction: column;
   align-items: center;
   [data-theme="dark"] & {
-    background-color: var(--color-18);
+    background-color: var(--color-7);
     color: var(--color-6);
   }
 }
@@ -90,6 +90,9 @@ export default {
   span {
     display: inline-block;
     margin-top: 10px;
+  }
+  [data-theme="dark"] & {
+    color: var(--color-18);
   }
 }
 .dashboard__nographic-buttons {

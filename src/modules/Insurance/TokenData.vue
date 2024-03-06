@@ -1,5 +1,8 @@
 <template>
-  <div class="insurance__info">
+  <div
+    v-if="!device.isMobile"
+    class="insurance__info"
+  >
     <BaseIcon
       :name="tokenData.insImage"
       class="insurance__token-image"
@@ -72,6 +75,100 @@
 
   </div>
   <div
+    v-else
+    class="insurance__info-mobile"
+  >
+    <div class="insurance__interact-buttons">
+      <div class="insurance__button-mobile">
+        <ButtonComponent
+          class="insurance__title-button"
+          @click="toggleModalMintRedeem()"
+          @keydown.enter="toggleModalMintRedeem()"
+        >
+          <BaseIcon
+            class="insurance__mint-button"
+            name='InsuranceMint'
+          />
+        </ButtonComponent>
+        <p>MINT</p>
+      </div>
+
+      <div class="insurance__button-mobile">
+        <ButtonComponent class="insurance__title-button">
+          <BaseIcon
+            name='InsuranceBridge'
+          />
+        </ButtonComponent>
+        <p>BRIDGE</p>
+      </div>
+      <div class="insurance__button-mobile">
+        <ButtonComponent
+          class="insurance__title-button"
+          @click="toggleModalMintRedeem()"
+          @keydown.enter="toggleModalMintRedeem()"
+        >
+          <BaseIcon
+            class="insurance__mint-button"
+            name='InsuranceMint'
+          />
+        </ButtonComponent>
+        <p>REDEEM</p>
+      </div>
+
+      <div class="insurance__button-mobile">
+        <ButtonComponent class="insurance__title-button">
+          <BaseIcon
+            name='InsuranceOVN'
+          />
+        </ButtonComponent>
+        <p>MY OVN</p>
+      </div>
+
+      <div class="insurance__button-mobile">
+        <ButtonComponent
+          class="insurance__title-button"
+          :class="{ about_selected: showInsuranceInfo }"
+          @click="toggleInsuranceAbout()"
+          @keydown.enter="toggleInsuranceAbout()"
+        >
+          <BaseIcon
+            name='InsuranceAbout'
+          />
+        </ButtonComponent>
+        <p>ABOUT INS</p>
+      </div>
+
+    </div>
+
+    <div class="insurance__token-title">
+      <BaseIcon
+        :name="tokenData.insImage"
+        class="insurance__token-image"
+      />
+      <div class="insurance__title-token-info">
+        <p class="insurance__token-data-title insurance__token-data-title--token">INSURANCE</p>
+        <div class="insurance__links-info">
+          <a
+            :href="`${networkScan}token/` + generateHref('token_insurance', networkName)"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="token-address"
+            class="insurance__token-data-link-addr link-ovn"
+          >Token address</a>
+          <a
+            href="https://docs.overnight.fi/governance/ovn-token"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="token-address"
+            class="insurance__token-data-ovn-info link-ovn"
+          >What is ovn</a>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+  <div
     class="insurance__about"
     v-if="showInsuranceInfo"
   >
@@ -121,7 +218,7 @@
           class="insurance__icon-chain"
         >
           <BaseIcon
-            :name="getIconName(networkName)"
+            :name="networkName.toLocaleLowerCase()"
           />
         </div>
 
@@ -141,6 +238,7 @@ import ButtonComponent from '@/components/Button/Index.vue';
 import InsuranceAbout from '@/modules/Insurance/InsuranceAbout.vue';
 import MintRedeemModal from '@/modules/Insurance/MintRedeemModal.vue';
 import { chainContractsMap } from '@/utils/contractsMap.ts';
+import { deviceType } from '@/utils/deviceType.ts';
 
 export default {
   name: 'TokenDataInsurance',
@@ -161,12 +259,11 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    chainIcon: {
-      type: String,
-      default: 'IconArbitrum',
-    },
   },
   computed: {
+    device() {
+      return deviceType();
+    },
     networkName() {
       return this.$store.state.network.insuranceNetwork;
     },
@@ -187,11 +284,6 @@ export default {
       return tokenInsurance;
     },
 
-    getIconName(chain: string) {
-      const formattedChain = chain.charAt(0).toUpperCase() + chain.slice(1).toLowerCase();
-      return `Icon${formattedChain}On`;
-    },
-
     formatTVL(number: any) {
       return new Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 0, maximumFractionDigits: 0 })
         .format(number);
@@ -207,9 +299,6 @@ export default {
   flex-direction: row;
   width: 100%;
   margin-bottom: 18px;
-}
-.insurance__token-image {
-  width: 76px;
 }
 
 .insurance__links-info {
@@ -394,7 +483,11 @@ export default {
   align-items: center;
 }
 .insurance__icon-chain {
-  margin-top: 8px
+  margin-top: 8px;
+  svg {
+    width: 24px;
+    height: 24px;
+  }
 }
 
 .insurance__token-data-h {
@@ -477,11 +570,19 @@ export default {
     padding: 2px 5px;
     margin-top: 24px;
   }
-  .insurance__token-data-title {
-    text-align: center;
+  .insurance__title-button {
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+  .insurance__title-token-info p{
+    text-align: left;
   }
   .insurance__token-image {
+    overflow: visible;
     scale: 65%;
+  }
+  .insurance__token-data-title {
+    text-align: center;
   }
   .insurance__token-data-col-token {
     margin-left: 2px;
@@ -499,6 +600,10 @@ export default {
   }
   .insurance__token-data-num {
     font-size: 14px;
+    margin-top: 6px;
+  }
+  .insurance__apy-data-chain {
+    margin-top: 6px;
   }
   .insurance__token-data-h {
     font-size: 12px;
@@ -507,12 +612,46 @@ export default {
     margin-left: 5px;
     margin-right: 5px;
   }
+  .insurance__token-data-ovn-info {
+    margin-right: 6px;
+  }
 }
 
 @media (max-width: 768px) {
   .insurance__divider {
-    margin-left: 20px;
-    margin-right: 20px;
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+  .insurance__divider--first-divider {
+    margin-left: 0;
+  }
+  .insurance__divider--last-divider {
+    margin-right: 0;
+  }
+  .insurance__token-data-title {
+    font-size: 13px;
+  }
+  .insurance__token-data-num,
+  .amount-of-ovn,
+  .insurance__token-data-num--apy-num {
+    font-size: 12px;
+  }
+  .insurance_risk-factor,
+  .insurance__payout-data,
+  .insurance__apy-data-chain {
+    svg {
+      scale: 80%;
+    }
+  }
+  .insurance__title-button {
+    font-size: 10px;
+    svg {
+      overflow: visible;
+      scale: 80%;
+    }
+  }
+  .insurance_risk-factor-text {
+    font-size: 14px;
   }
   .insurance__token-data-col-token {
     margin: 0;
@@ -531,18 +670,103 @@ export default {
 }
 
 @media (max-width: 576px) {
-  .insurance__token-data-num {
-    margin-top: 60px;
+  .insurance__token-data-num,
+  .insurance__icon-chain {
+    margin-top: 10px;
   }
   .insurance__apy-data-chain {
     margin: 0;
-  }
-  .insurance__icon-chain {
-    margin-top: 60px;
   }
   .insurance__divider {
     margin-left: 5px;
     margin-right: 5px;
   }
+}
+
+@media (max-width: 400px) {
+  .insurance__info-mobile {
+    display: flex;
+    flex-direction: column;
+  }
+  .insurance__interact-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  .insurance__button-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    p {
+      font-size: 12px;
+    }
+  }
+  .insurance__title-button {
+    border-radius: 50%;
+    padding: 10px;
+    min-width: 42px;
+    min-height: 42px;
+    svg {
+      max-width: 22px;
+      max-height: 22px;
+      scale: 120%;
+      width: auto;
+    }
+  }
+  .insurance__token-title {
+    margin: 0;
+    align-items: center;
+    justify-content: left;
+  }
+  .insurance__token-data-title--token {
+    font-size: 16px;
+  }
+  .insurance__token-data-ovn-info,
+  .insurance_risk-factor,
+  .insurance__token-data-num,
+  .insurance__icon-chain {
+    margin: 0;
+  }
+  .insurance__token-image {
+    margin-left: -10px;
+  }
+  .insurance__token-data {
+    max-height: none;
+    display: flex;
+    flex-direction: column;
+  }
+  .insurance__payout-data,
+  .performance__apy-data,
+  .insurance__apy-data-chain {
+    display: flex;
+    flex-direction: row;
+  }
+  .insurance_risk-factor {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+  }
+  .insurance__token-data-title {
+    font-size: 12px;
+    margin-right: auto;
+  }
+  .amount-of-ovn {
+    margin-right: 5px;
+  }
+  .insurance__divider {
+    width: 100%;
+    margin: 10px 0;
+  }
+  .insurance__token-data-num--apy-num {
+    margin-right: 10px;
+  }
+  .insurance__token-data-h {
+    margin-left: 10px;
+  }
+  .insurance__token-data-num {
+    font-size: 14px;
+  }
+
 }
 </style>

@@ -2,6 +2,7 @@
   <ModalComponent
     :modelValue="showModal"
     :show-close="false"
+    overlayModals
     type-modal="custom"
   >
     <div class="modal-content">

@@ -2,7 +2,10 @@
   <div class="app-header">
     <div class="app-header__container">
       <div class="app-header__content">
-        <div class="app-header-dapp">
+        <div
+          v-if="deviceType().isDesktop"
+          class="app-header-dapp"
+        >
           <router-link
             to="/"
             class="app-header__content__logo"
@@ -19,6 +22,7 @@
           <router-link
             to="/dashboard"
             class="app-header__dashboard"
+            active-class="active-link"
           >
             <p>
               My dashboard
@@ -33,55 +37,30 @@
           >
             Docs
           </a>
+          <a
+            href="https://dev.overnight.fi/swap"
+            target="_blank"
+            class="app-header__docs"
+            rel="noopener noreferrer"
+          >
+            Old Dapp
+          </a>
 
         </div>
 
         <div class="app-header__content-data">
-          <PopperComponent
-            v-if="walletConnected && account"
-            interactive
-            placement="bottom-end"
-          >
-            <ButtonComponent
-              class="app-header__balance-account"
-              btn-styles="secondary"
-            >
-              {{ totalUserBalance }} $
-              <BaseIcon
-                name="ArrowDown"
-              />
-            </ButtonComponent>
-            <template #content="{ close }">
-              <div
-                class="popper-list"
-              >
-                <div
-                  class="networks-list__item app-header__balance-item"
-                  v-for="(item, key) in (userBalancesList as any)"
-                  :key="key"
-                  @click="close"
-                  @keypress="close"
-                >
-                  {{ item.balance }}
-                  <div class="app-header__balance-row">
-                    {{ item.symbol }}
-                  </div>
-                </div>
-                <div class="popper-list__divider" />
-                <div class="app-header__balance-main">
-                  <span>
-                    {{ totalUserBalance }}
-                  </span>
-                  <span>
-                    USD
-                  </span>
-                </div>
-              </div>
-            </template>
-          </PopperComponent>
+          <div
+            v-if="account && isBalancesLoading"
+            class="lineLoader"
+          />
+          <UserBalances v-else-if="deviceType().isDesktop && walletConnected && account" />
 
+          <div
+            v-if="account && isBalancesLoading"
+            class="lineLoader"
+          />
           <ButtonComponent
-            v-if="walletConnected && account"
+            v-else-if="walletConnected && account"
             class="app-header__content-account"
             btn-styles="secondary"
             @click="openAccountModal"
@@ -97,42 +76,52 @@
 
           <ButtonComponent
             v-else
+            class="app-header__connect"
             @on-click="connectWallet"
           >
             CONNECT
           </ButtonComponent>
-
-          <PopperComponent
+          <div
             v-if="walletConnected && account"
-            interactive
-            placement="bottom-end"
+            class="app-header__network-wrap"
           >
-            <ButtonComponent
-              class="app-header__chain_account"
-              btn-styles="secondary"
+            <img
+              v-if="!deviceType().isDesktop"
+              class="app-header__gear"
+              alt="navbar"
+              :src="getImageUrl(`assets/icons/common/CommonGear.svg`)"
+            />
+            <PopperComponent
+              interactive
+              placement="bottom-end"
             >
-              <BaseIcon
-                class="networks-active"
-                :name="activeNetworkData.name.toLowerCase()"
-              />
-            </ButtonComponent>
-            <template #content="{ close }">
-              <div
-                class="popper-list"
+              <ButtonComponent
+                class="app-header__chain_account"
+                btn-styles="secondary"
               >
+                <BaseIcon
+                  class="networks-active"
+                  :name="activeNetworkData.name.toLowerCase()"
+                />
+              </ButtonComponent>
+              <template #content="{ close }">
                 <div
-                  class="networks-list__item"
-                  v-for="item in networksData"
-                  :key="item.name"
-                  @click="chooseNetwork(item.chain, close)"
-                  @keypress="chooseNetwork(item.chain, close)"
+                  class="popper-list"
                 >
-                  <BaseIcon :name="item.name.toLowerCase()" />
-                  {{ item.name }}
+                  <div
+                    class="networks-list__item"
+                    v-for="item in sortedChains"
+                    :key="item.name"
+                    @click="chooseNetwork(item.chain, close)"
+                    @keypress="chooseNetwork(item.chain, close)"
+                  >
+                    <BaseIcon :name="item.name.toLowerCase()" />
+                    {{ item.name }}
+                  </div>
                 </div>
-              </div>
-            </template>
-          </PopperComponent>
+              </template>
+            </PopperComponent>
+          </div>
         </div>
       </div>
     </div>
@@ -144,29 +133,47 @@
 </template>
 
 <script lang="ts">
-import { mapGetters, mapActions } from 'vuex';
+import { mapGetters, mapActions, mapState } from 'vuex';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { cutString } from '@/utils/strings.ts';
-import { OVN_TOKENS, appNetworksData } from '@/utils/const.ts';
+import { OVN_TOKENS, appNetworksData, getImageUrl } from '@/utils/const.ts';
 import BigNumber from 'bignumber.js';
 import { loadTokenImage } from '@/utils/tokenLogo.ts';
+import { sortedChainsByTVL } from '@/store/helpers/index.ts';
 import AccountModal from '@/modules/Account/Index.vue';
+import { deviceType } from '@/utils/deviceType.ts';
+import UserBalances from './UserBalances.vue';
+
+interface Chain {
+  chainName: string;
+  tvl: number;
+  name: string,
+  chain: number,
+}
 
 export default {
   name: 'HeaderBar',
   components: {
     ButtonComponent,
+    UserBalances,
     AccountModal,
     BaseIcon,
   },
+  async mounted() {
+    this.sortedChains = await sortedChainsByTVL(this.networksData);
+  },
   data() {
     return {
+      sortedChains: [] as Chain[],
       networksData: appNetworksData,
       showModalAccount: false,
     };
   },
   computed: {
+    ...mapState('odosData', [
+      'isBalancesLoading',
+    ]),
     ...mapGetters('walletAction', ['walletConnected']),
     ...mapGetters('accountData', ['originalBalance', 'account']),
     ...mapGetters('network', ['networkId']),
@@ -175,19 +182,6 @@ export default {
     activeNetworkData() {
       const data = appNetworksData.find((_) => _.chain === this.networkId);
       return data || appNetworksData[0];
-    },
-    totalUserBalance() {
-      if (this.allTokensList.length === 0 || this.originalBalance.length === 0) return '0';
-      const total: BigNumber = this.originalBalance.reduce((acc: BigNumber, curr: any) => {
-        const tokenData = this.allTokensList.find((_: any) => _.symbol === curr.symbol);
-        if (!tokenData) return acc;
-        const fixedBalance = new BigNumber(curr.balance)
-          .div(10 ** tokenData.decimals)
-          .times(tokenData.price);
-        return acc.plus(fixedBalance);
-      }, BigNumber(0));
-
-      return total.toFixed(2);
     },
     userBalancesList() {
       if (this.originalBalance.length === 0) return [];
@@ -205,6 +199,8 @@ export default {
   },
   methods: {
     ...mapActions('network', ['setWalletNetwork']),
+    deviceType,
+    getImageUrl,
     openAccountModal() {
       this.showModalAccount = !this.showModalAccount;
     },
@@ -246,16 +242,25 @@ export default {
 
 <style lang="scss" scoped>
 .app-header {
-  position: absolute;
+  position: fixed;
+  z-index: 10;
   top: 0;
   left: 0;
   right: 0;
   width: 100%;
   padding: 12px 0;
   background-color: #fff;
+  border-bottom: 1px solid var(--color-1);
   [data-theme="dark"] & {
     background-color: var(--color-17);
     border-bottom: 1px solid var(--color-2);
+  }
+
+  @media (max-width: 1024px) {
+    background-color: transparent;
+    border-bottom: unset;
+    position: relative;
+    margin-bottom: 20px;
   }
 }
 .app-header-dapp {
@@ -271,6 +276,8 @@ export default {
   margin-left: 36px;
   font-size: 17px;
   font-weight: 600;
+}
+.active-link {
   text-decoration: underline;
 }
 .app-header__docs {
@@ -287,6 +294,10 @@ export default {
 .app-header__content {
   display: flex;
   justify-content: space-between;
+
+  @media (max-width: 1024px) {
+    width: 100%;
+  }
 }
 
 .app-header__content__logo {
@@ -334,6 +345,11 @@ export default {
 .app-header__content-data {
   display: flex;
   gap: 16px;
+
+  @media (max-width: 1024px) {
+    width: 100%;
+    justify-content: space-between;
+  }
 }
 
 .app-header__balance-account {
@@ -419,5 +435,50 @@ export default {
   span:first-child {
     text-decoration: underline;
   }
+}
+
+.app-header__network-wrap {
+  display: flex;
+  gap: 20px;
+}
+
+.app-header__gear {
+  cursor: pointer;
+  transition: opacity .2s ease;
+
+  &:hover {
+    opacity: .8;
+  }
+}
+
+.app-header__connect {
+  margin-left: auto;
+}
+
+$base-color: var(--color-5);
+$shine-color: var(--color-4);
+$animation-duration: 2.0s;
+$avatar-offset: 52 + 16;
+
+@mixin background-gradient {
+  background-image: linear-gradient(90deg, $base-color 0px, $shine-color 40px, $base-color 80px);
+  background-size: 600px;
+}
+
+.lineLoader {
+    float: left;
+    width: 100px;
+    height: 100%;
+    border-radius: 7px;
+    border: 1px solid var(--color-1);
+    box-shadow: 0px 1px 0px 0px var(--color-1);
+
+    @include background-gradient;
+    animation: shine-lines $animation-duration infinite ease-out;
+}
+
+@keyframes shine-lines{
+    0% { background-position: -100px;}
+    40%, 100% {background-position: 140px;}
 }
 </style>
