@@ -161,7 +161,7 @@ export default {
         padding: 30px 40px;
         border: 2px solid var(--color-1);
         [data-theme="dark"] & {
-          border-color: var(--color-17);
+          border-color: var(--color-4);
         }
     }
     .modal--custom {

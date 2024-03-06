@@ -144,8 +144,14 @@ export default {
 
   methods: {
     onInput(event: any) {
-      if (this.emitEvent) this.$emit('input', event);
-      else this.$emit('input', event.target.value);
+      const regex = /^[0-9]*\.?[0-9]*$/;
+      if (regex.test(event.target.value) || event.target.value === '') {
+        if (this.emitEvent) this.$emit('input', event);
+        else this.$emit('input', event.target.value);
+      } else {
+        // eslint-disable-next-line no-param-reassign
+        event.target.value = this.value;
+      }
     },
 
     onChange(event: any) {
