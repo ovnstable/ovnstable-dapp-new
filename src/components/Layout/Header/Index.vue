@@ -481,4 +481,5 @@ $avatar-offset: 52 + 16;
     0% { background-position: -100px;}
     40%, 100% {background-position: 140px;}
 }
+
 </style>
