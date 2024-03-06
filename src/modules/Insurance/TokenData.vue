@@ -507,7 +507,7 @@ export default {
   }
 }
 
-.performance__chain-data {
+.insurance__chain-data {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -526,7 +526,7 @@ export default {
   }
 }
 
-.performance__chain-data-container .selected:hover {
+.insurance__chain-data-container .selected:hover {
   background: var(--color-4);
   cursor: default;
   [data-theme="dark"] & {
@@ -534,7 +534,7 @@ export default {
   }
 }
 
-.performance__chain-data:hover {
+.insurance__chain-data:hover {
   cursor: pointer;
   border: 1px solid var(--color-7);
   background: var(--color-6);
@@ -544,7 +544,7 @@ export default {
   }
 }
 
-.performance__chain-data-name {
+.insurance__chain-data-name {
   margin-left: 8px;
   font-weight: 500;
   font-size: 13px;
@@ -558,12 +558,12 @@ export default {
   flex-shrink: 0
 }
 
-.performance__chain-data-container {
+.insurance__chain-data-container {
   display: flex;
   flex-direction: row;
 }
 
-.performance__chain-data-container > *:not(:last-child) {
+.insurance__chain-data-container > *:not(:last-child) {
   margin-right: 7px;
 }
 
@@ -571,7 +571,7 @@ export default {
   overflow: visible;
 }
 @media (max-width: 1024px) {
-  .performance__chain-data {
+  .insurance__chain-data {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -670,12 +670,12 @@ export default {
   .insurance__token-data-link-addr {
     margin-top: 40px;
   }
-  .performance__chain-data {
+  .insurance__chain-data {
     padding: 2px 5px;
     margin-top: 20px;
   }
 
-  .performance__chain-data-name {
+  .insurance__chain-data-name {
     font-size: 12px;
   }
 }
