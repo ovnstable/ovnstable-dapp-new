@@ -76,7 +76,6 @@ export default {
   },
   methods: {
     closeSelect() {
-      console.log('closeSelect');
       this.$emit('close-select', false);
     },
     selectToken(token: any) {

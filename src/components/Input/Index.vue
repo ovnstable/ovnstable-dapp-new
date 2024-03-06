@@ -195,6 +195,10 @@ export default {
       pointer-events: none;
     }
 
+    &:focus {
+      outline: none;
+    }
+
     &::placeholder {
       color: var(--color-2);
       [data-theme="dark"] & {
@@ -218,7 +222,7 @@ export default {
   }
 
   &.is-focused {
-    box-shadow: 0 0 3px var(--color-1);
+    outline: none;
   }
 
   &.is-disabled {

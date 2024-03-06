@@ -102,7 +102,6 @@ const actions = {
       return;
     }
 
-    console.log(`GAS STATION: ${url}`);
     axios.get(url).then((value) => {
       const { result } = value.data;
       const price: any = {
@@ -116,7 +115,6 @@ const actions = {
       commit('setGasPriceStation', price);
 
       const element = price[getters.gasPriceType];
-      console.log(element, '-GWEI0');
       commit('setGasPrice', element);
       commit('setGasPriceGwei', new BigNumber(element).times(10 ** 9).toString());
     }).catch((reason) => {

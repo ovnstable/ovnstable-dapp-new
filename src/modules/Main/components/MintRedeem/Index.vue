@@ -281,8 +281,6 @@ export default {
           return tokenAddress === self.outputToken.address.toLowerCase();
         });
 
-      console.log(exchangeContract, '---exchangeContract');
-
       const tokenСontract = Object.values(self.contracts)
         .find((cData: any) => (
           cData ? cData.target.toLowerCase() === self.inputToken.address.toLowerCase() : false
@@ -497,7 +495,6 @@ export default {
             const tokenAddress = this.isMintActive
               ? _.token1.toLowerCase() : _.token0.toLowerCase();
 
-            console.log(tokenAddress, '---tokenAddress');
             return tokenAddress === this.outputToken.address.toLowerCase();
           });
         let exchangeContract = null;

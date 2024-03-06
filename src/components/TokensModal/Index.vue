@@ -10,28 +10,21 @@
       <div
         class="tokens-modal__header"
       >
-        <div v-if="isOvnSwap">
-          <h1
-            v-if="selectTokenInput"
-          >
-            Select Input token
-          </h1>
-          <h1
-            v-else
-          >
-            Select Output token
-          </h1>
-        </div>
-        <div v-else>
-          <h1>
-            All tokens
-          </h1>
-        </div>
+        <h1
+          v-if="selectTokenInput"
+        >
+          Select Input token
+        </h1>
+        <h1
+          v-else
+        >
+          Select Output token
+        </h1>
       </div>
 
       <div class="tokens-container">
         <div
-          v-if="!isAllDataLoaded"
+          v-if="!isAllDataLoaded || balancesLoading"
           class="token-select__spinner"
         >
           <Spinner size="40px" />
@@ -63,6 +56,7 @@ export default {
     ModalComponent,
     Spinner,
   },
+  emits: ['set-show', 'add-token-to-list', 'remove-token-from-list'],
   props: {
     isShow: {
       type: Boolean,
@@ -80,11 +74,11 @@ export default {
       type: Array,
       required: true,
     },
-    isAllDataLoaded: {
+    balancesLoading: {
       type: Boolean,
-      required: true,
+      required: false,
     },
-    isOvnSwap: {
+    isAllDataLoaded: {
       type: Boolean,
       required: true,
     },
@@ -104,7 +98,6 @@ export default {
       this.$emit('set-show', false);
     },
     selectToken(token: any) {
-      console.log(token, 'SELECTED');
       // eslint-disable-next-line no-param-reassign
       token.selected = true;
       this.$emit('add-token-to-list', {

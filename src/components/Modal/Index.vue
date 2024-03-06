@@ -63,6 +63,7 @@ export default {
   components: {
     BaseIcon,
   },
+  emits: ['update:modelValue', 'close'],
   props: {
     typeModal: {
       type: String,
@@ -128,7 +129,6 @@ export default {
       }
     },
     closeModal() {
-      console.log('EMIT');
       this.$emit('update:modelValue', false);
       this.$emit('close');
     },

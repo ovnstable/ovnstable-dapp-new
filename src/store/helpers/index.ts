@@ -124,7 +124,6 @@ export const getFilteredPoolTokens = (
   ignoreBaseNetworkCurrency: boolean,
   state: typeof stateData,
 ): any[] => {
-  console.log(state.tokensMap.chainTokenMap, 'state.tokensMap.chainTokenMap');
   if (!state.tokensMap || !state.tokensMap.chainTokenMap) return [];
   let tokens: any = [];
   const { tokenMap } = state.tokensMap.chainTokenMap[`${chainId}`];
@@ -219,13 +218,7 @@ export const getFilteredOvernightTokens = (
 };
 
 export const innerGetDefaultSecondtokenBySymobl = (tokensList: any[], symbolName: string) => {
-  if (!tokensList.length) {
-    console.log(
-      'Inner get default token by symbol fail, secondTokens is empty.',
-      tokensList,
-    );
-    return null;
-  }
+  if (!tokensList.length) return null;
 
   for (let i = 0; i < tokensList.length; i++) {
     const token: any = tokensList[i];
@@ -489,6 +482,5 @@ export const sortedChainsByTVL = async (chains: any) => {
     return networksMap[chainName] || null;
   });
 
-  console.log(orderedNetworks, '--orderedNetworks');
   return orderedNetworks;
 };

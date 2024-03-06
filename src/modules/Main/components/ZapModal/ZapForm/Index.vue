@@ -302,8 +302,8 @@
       :select-token-input="true"
       :tokens="zapAllTokens"
       :is-all-data-loaded="isAllDataLoaded"
-      :is-ovn-swap="true"
       :selected-tokens="inputTokens"
+      :balances-loading="isBalancesLoading"
       @set-show="showSelectTokensModals"
       @add-token-to-list="addSelectedTokenToList"
       @remove-token-from-list="removeSelectedTokenFromList"
@@ -437,6 +437,7 @@ export default {
       'lastPoolInfoData',
       'lastPutIntoPoolEvent',
       'lastReturnedToUserEvent',
+      'isBalancesLoading',
       'lastNftTokenId',
       'swapResponseConfirmInfo',
       'routerContract',

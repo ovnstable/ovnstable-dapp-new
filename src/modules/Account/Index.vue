@@ -35,6 +35,7 @@ import AccountTransactions from '@/modules/Account/AccountTransactions.vue';
 
 export default {
   name: 'AccountModal',
+  emits: ['close-modal'],
   components: {
     ModalComponent,
     ProfilePicture,

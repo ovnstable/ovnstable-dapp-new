@@ -33,7 +33,6 @@ const actions = {
   async initOnboard({
     commit, dispatch, getters, rootState,
   }: any) {
-    console.log('initOnboard');
     const logo = await dispatch('getLogo');
     const wallets = await dispatch('getMainWalletsConfig');
     const chains = await dispatch('getMainWalletsChains');
@@ -96,7 +95,6 @@ const actions = {
     const walletName = localStorage.getItem('walletName');
     // console.log("walletConnect onboard before connect wallet: ", walletName)
     let connectedWallets;
-    console.log('initOnboard2');
 
     if (walletName !== undefined && walletName && walletName !== 'undefined' && walletName !== 'null') {
       connectedWallets = await onboard
@@ -389,6 +387,14 @@ const actions = {
   }: any, newNetworkId: any) {
     try {
       dispatch('setNetwork', newNetworkId);
+
+      if (rootState.odosData.firstRenderDone) {
+        // evmProvider changing actual network with delay
+        // in other case balances wont be loaded correctly
+        setTimeout(() => {
+          dispatch('odosData/loadBalances', rootState.web3.evmProvider, { root: true });
+        }, 500);
+      }
     } catch (e) {
       console.error('Error when on chainChanged');
     }
