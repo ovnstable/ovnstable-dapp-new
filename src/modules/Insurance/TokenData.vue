@@ -710,6 +710,7 @@ export default {
     gap: 10px;
     align-items: center;
     p {
+      color: var(--color-18);
       font-size: 12px;
     }
   }
@@ -721,6 +722,7 @@ export default {
     svg {
       max-width: 22px;
       max-height: 22px;
+      fill: var(--color-4);
       scale: 120%;
       width: auto;
     }

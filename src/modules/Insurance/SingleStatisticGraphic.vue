@@ -460,12 +460,16 @@ export default {
 .insurance__chain-data-container .selected {
   background: var(--color-4);
   color: var(--color-3);
-
+  border-color: var(--color-6);
   svg {
     opacity: 1;
     filter: unset;
   }
   [data-theme="dark"] & {
+    p {
+      color: var(--color-4);
+    }
+    border-color: var(--color-2);
     background: var(--color-17);
   }
 }
@@ -491,11 +495,13 @@ export default {
   flex-direction: row;
   align-items: center;
   border-radius: 30px;
-  border: 1px solid var(--color-6);
+  border: 1px solid var(--color-5);
   padding: 5px 10px;
   width: fit-content;
+  background-color: var(--color-5);
   transition: background 0.3s ease, border 0.3s ease;
   [data-theme="dark"] & {
+   border-color: var(--color-7);
    background: var(--color-7);
   }
 }
@@ -509,7 +515,7 @@ export default {
   font-size: 13px;
   color: var(--color-1);
   [data-theme="dark"] & {
-    color: var(--color-4);
+    color: var(--color-18);
   }
 }
 .insurance__chain-data:hover {

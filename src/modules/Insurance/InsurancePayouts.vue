@@ -383,7 +383,7 @@ export default {
     border: none !important;
   }
   .insurance__payouts-titles {
-    grid-template-columns: 1fr 2fr 1.2fr 1fr;
+    grid-template-columns: 1fr 2.6fr 1.2fr 1fr;
   }
   .insurance__payouts-titles p:nth-child(3),
   .insurance__payouts-transaction p:nth-child(3) {
@@ -394,7 +394,7 @@ export default {
     flex: 2.5;
   }
   .insurance__payouts-transactions p[data-v-f33d99a8]:nth-child(2) {
-    flex: 3.5
+    flex: 4.5
   }
   .insurance__payouts-titles p {
     font-size: 12px;
