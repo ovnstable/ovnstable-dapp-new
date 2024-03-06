@@ -254,5 +254,9 @@ export default {
 .modal-content {
   padding: 50px 70px 30px 70px;
   max-width: 538px;
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
+    border-color: var(--color-4);
+  }
 }
 </style>
