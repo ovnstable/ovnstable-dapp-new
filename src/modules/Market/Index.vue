@@ -160,9 +160,6 @@ export default {
   .market {
     width: 100%;
   }
-  .market-wrapper {
-    margin-left: 20px;
-  }
 }
 
 @media (max-width: 400px) {
