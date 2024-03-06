@@ -29,7 +29,7 @@
       <div class="performance__token-data-link-title">
         <p class="performance__token-data-title performance__token-data-title--token">{{ tokenData.tokenName }}</p>
         <a
-          :href="${networkScan}${networkName === 'zksync' ? 'address' : 'token'}/ + generateHref(tokenData.tokenName, networkName)"
+          :href="tokenLink"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="token-address"
@@ -117,6 +117,11 @@ export default {
     },
   },
   computed: {
+    tokenLink() {
+      const path = this.networkName === 'zksync' ? 'address' : 'token';
+      const genHref = this.generateHref(this.tokenData.tokenName, this.networkName);
+      return `${this.networkScan}${path}/${genHref}`;
+    },
     device() {
       return deviceType();
     },
@@ -169,7 +174,6 @@ export default {
   },
 };
 </script>
-
 
 <style lang="scss" scoped>
 

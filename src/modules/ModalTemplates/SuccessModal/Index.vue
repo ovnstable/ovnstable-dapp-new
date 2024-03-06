@@ -156,59 +156,7 @@ export default {
           return '';
       }
     },
-
-    // tokenActionIcon() {
-    //   switch (this.successAction) {
-    //     case 'mintUsdPlus':
-    //       return require('@/assets/icon/minted.svg');
-    //     case 'redeemUsdPlus':
-    //       return require('@/assets/icon/redeemed.svg');
-    //     case 'mintDaiPlus':
-    //       return require('@/assets/icon/mintedDai.png');
-    //     case 'redeemDaiPlus':
-    //       return require('@/assets/icon/redeemedDai.png');
-    //     case 'mintUsdtPlus':
-    //       return require('@/assets/icon/mintedUsdt.png');
-    //     case 'redeemUsdtPlus':
-    //       return require('@/assets/icon/redeemedUsdt.png');
-    //     case 'mintEthPlus':
-    //       return require('@/assets/icon/mintedEth.png');
-    //     case 'redeemEthPlus':
-    //       return require('@/assets/icon/redeemedEth.png');
-    //     case 'wrapUsdPlus':
-    //       return require('@/assets/icon/wrap.svg');
-    //     case 'unwrapUsdPlus':
-    //       return require('@/assets/icon/unwrap.svg');
-    //     case 'wrapEthPlus':
-    //       return require('@/assets/icon/wETHwrap.svg');
-    //     case 'unwrapEthPlus':
-    //       return require('@/assets/icon/wETHunwrap.svg');
-    //     case 'mintEts':
-    //       if (this.etsData) {
-    //         return require(`@/assets/currencies/market/ets_${this.etsData.name}.svg`);
-    //       }
-    //       return require('@/assets/icon/minted.svg');
-
-    //     case 'redeemEts':
-    //       if (this.etsData) {
-    //         return require(`@/assets/currencies/market/ets_${this.etsData.name}.svg`);
-    //       }
-    //       return require('@/assets/icon/redeemed.svg');
-
-    //     case 'mintInsurance':
-    //       return require('@/assets/currencies/insurance/round_insurance_optimism.svg');
-    //     case 'withdrawInsurance':
-    //       return require('@/assets/currencies/insurance/round_insurance_optimism.svg');
-    //     case 'swapOdosUsdPlus':
-    //       return require('@/assets/icon/minted.svg');
-    //     default:
-    //       return '';
-    //   }
-    // },
   },
-  // mounted() {
-  //   this.loadPools();
-  // },
 
   methods: {
     ...mapActions('successModal', ['closeSuccessModal']),

@@ -42,6 +42,11 @@ export const appNetworksData = [
     color: '#4d8be8',
   },
   {
+    chain: 81457,
+    name: 'Blast',
+    color: '#fff561',
+  },
+  {
     chain: 59144,
     name: 'Linea',
     color: 'black',

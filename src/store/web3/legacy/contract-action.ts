@@ -80,6 +80,8 @@ const actions = {
       contracts.usdcBridged,
       contracts.weth,
       contracts.ovn,
+      // for blast
+      contracts.usdb,
     ] = await Promise.all([
       // Exchange
       buildEvmContractForChain(
@@ -235,6 +237,11 @@ const actions = {
       buildEvmContractForChain(ERC20_ABI, evmSigner, contractsByChain[network]?.usdc ?? null),
       buildEvmContractForChain(ERC20_ABI, evmSigner, contractsByChain[network]?.wETH ?? null),
       buildEvmContractForChain(ERC20_ABI, evmSigner, contractsByChain[network]?.ovn ?? null),
+      buildEvmContractForChain(
+        ERC20_ABI,
+        evmSigner,
+        contractsByChain[network]?.usdb ?? null,
+      ),
     ]);
 
     const insurances = [{ network: 'optimism' }, { network: 'arbitrum' }];

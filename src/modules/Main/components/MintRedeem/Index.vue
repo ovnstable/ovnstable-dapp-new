@@ -99,7 +99,6 @@ import TokenForm from '@/modules/Main/components/MintRedeem/TokenForm.vue';
 import { buildEvmContract, buildEvmContractForChain } from '@/utils/contractsMap.ts';
 import { MINTREDEEM_SCHEME } from '@/store/views/main/mintRedeem/mocks.ts';
 import debounce from 'lodash/debounce';
-import { fixedByPrice } from '@/utils/numbers.ts';
 import StepsRow, { mintRedeemStep } from '@/components/StepsRow/Index.vue';
 
 import {
@@ -193,8 +192,7 @@ export default {
 
     estimateResult() {
       if (!this.inputToken.symbol || !this.inputToken.value) return '0.00';
-      return new BigNumber(this.inputToken.value)
-        .times(0.9996).toFixed(fixedByPrice(this.inputToken.value));
+      return new BigNumber(this.inputToken.value).times(0.9996).toFixed(6);
     },
 
   },
@@ -221,7 +219,8 @@ export default {
 
       const tokenData = this.inputToken;
       let tokenContract = this.tokensContractMap[tokenData.address];
-      const approveValue = new BigNumber(10 ** 25).toFixed(0);
+      const approveValue = new BigNumber(10 ** this.inputToken.decimals)
+        .times(1000000).toFixed(0);
 
       if (!tokenContract) {
         tokenContract = buildEvmContractForChain(
@@ -235,8 +234,8 @@ export default {
       const pairData = MINTREDEEM_SCHEME[networkId]
         .find((_) => {
           const tokenAddress = this.isMintActive
-            ? _.token0.toLowerCase() : _.token1.toLowerCase();
-          return tokenAddress === this.inputToken.address.toLowerCase();
+            ? _.token1.toLowerCase() : _.token0.toLowerCase();
+          return tokenAddress === this.outputToken.address.toLowerCase();
         });
       let exchangeAddress = null;
 
@@ -278,18 +277,19 @@ export default {
       const exchangeContract = MINTREDEEM_SCHEME[networkId]
         .find((_) => {
           const tokenAddress = self.isMintActive
-            ? _.token0.toLowerCase() : _.token1.toLowerCase();
-          return tokenAddress === self.inputToken.address.toLowerCase();
+            ? _.token1.toLowerCase() : _.token0.toLowerCase();
+          return tokenAddress === self.outputToken.address.toLowerCase();
         });
-      const tokenAddress = Object.values(self.contracts)
+
+      const tokenСontract = Object.values(self.contracts)
         .find((cData: any) => (
           cData ? cData.target.toLowerCase() === self.inputToken.address.toLowerCase() : false
         ));
 
-      if (!exchangeContract || !tokenAddress) return;
+      if (!exchangeContract || !tokenСontract) return;
 
       const allowanceValue = await getAllowanceValue(
-        tokenAddress,
+        tokenСontract,
         self.account,
         exchangeContract?.exchange,
       );
@@ -329,7 +329,6 @@ export default {
     },
 
     getContractMethodWithParams(
-      action: any,
       account: any,
       contractSum: any,
       exchangeMethodName: any,
@@ -412,7 +411,6 @@ export default {
     },
 
     async estimateGas(
-      action: any,
       account: any,
       sum: any,
       productName: any,
@@ -429,7 +427,6 @@ export default {
         blockNum = await this.evmProvider.getBlockNumber();
 
         const methodData = this.getContractMethodWithParams(
-          action,
           account,
           sum,
           exchangeMethodName,
@@ -496,8 +493,9 @@ export default {
         const pairData = MINTREDEEM_SCHEME[networkId]
           .find((_) => {
             const tokenAddress = this.isMintActive
-              ? _.token0.toLowerCase() : _.token1.toLowerCase();
-            return tokenAddress === this.inputToken.address.toLowerCase();
+              ? _.token1.toLowerCase() : _.token0.toLowerCase();
+
+            return tokenAddress === this.outputToken.address.toLowerCase();
           });
         let exchangeContract = null;
 
@@ -519,7 +517,6 @@ export default {
             return cData ? cData.target.toLowerCase() === tokenAddress.toLowerCase() : false;
           });
 
-        const action = 'non-market-redeem';
         console.log(pairData, '---pairData');
         // if mint active, using 1st method, else 2nd
         const exchangeMethodName = this.activeMintTab === 0
@@ -529,7 +526,6 @@ export default {
           .times(10 ** this.inputToken.decimals).toString();
 
         console.log(
-          action,
           this.account,
           swapSum,
           'test-product',
@@ -539,7 +535,6 @@ export default {
           '---params',
         );
         const estimatedGasValue = await this.estimateGas(
-          action,
           this.account,
           swapSum,
           'test-product',
@@ -562,7 +557,6 @@ export default {
         };
 
         const method = this.getContractMethodWithParams(
-          action,
           this.account,
           swapSum,
           exchangeMethodName,
@@ -588,15 +582,16 @@ export default {
             amount: this.inputToken.value,
           };
 
-          console.log('closeWaitingModal');
-          this.putTransaction(tx);
-          this.closeWaitingModal();
-          this.initMintRedeem();
           this.showSuccessModal({
             successTxHash: txData.hash,
             from: [this.inputToken],
             to: [this.outputToken],
           });
+
+          console.log('closeWaitingModal');
+          this.putTransaction(tx);
+          this.closeWaitingModal();
+          this.initMintRedeem();
         }
 
         console.log(txData, '---txData');
