@@ -238,7 +238,6 @@ export default {
     },
 
     selectedText() {
-      console.log(this.value, 'SELECTVAL');
       if (typeof this.value === 'object' && this.value !== null) {
         return (this.value as any)[this.valueField] || (this.value as any).value;
       }

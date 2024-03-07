@@ -218,13 +218,7 @@ export const getFilteredOvernightTokens = (
 };
 
 export const innerGetDefaultSecondtokenBySymobl = (tokensList: any[], symbolName: string) => {
-  if (!tokensList.length) {
-    console.log(
-      'Inner get default token by symbol fail, secondTokens is empty.',
-      tokensList,
-    );
-    return null;
-  }
+  if (!tokensList.length) return null;
 
   for (let i = 0; i < tokensList.length; i++) {
     const token: any = tokensList[i];
@@ -462,12 +456,17 @@ export const sortedChainsByTVL = async (chains: any) => {
   const tvl = await SliderApiService.loadTVL();
   const response = await odosApiService.loadPrices(10);
   const ethPrice = (response as any).tokenPrices['0x0000000000000000000000000000000000000000'];
-  const chainsWithTVL = tvl.map((chain: { values: any[]; chainName: any; }) => {
-    const totalTVL = chain.values.reduce((total, token) => {
+
+  const chainsWithTVL = chains.map((chainData: any) => {
+    const chain = tvl.find((_: any) => _.chainName.toLowerCase() === chainData.name.toLowerCase());
+    if (!chain) return { chainName: chainData.name, tvl: 0 };
+
+    const totalTVL = chain.values.reduce((total: any, token: any) => {
       const value = token.name === 'ETH+' ? token.value * ethPrice : token.value;
       return total + value;
     }, 0);
-    return { chainName: chain.chainName, tvl: totalTVL };
+
+    return { chainName: chainData.name, tvl: totalTVL };
   });
 
   const sortedChains = chainsWithTVL.sort((a: { tvl: number; }, b: { tvl: number; }) => b
@@ -481,7 +480,7 @@ export const sortedChainsByTVL = async (chains: any) => {
   const orderedNetworks = sortedChains.map((chain: any) => {
     const chainName = chain.chainName.toLowerCase();
     return networksMap[chainName] || null;
-  }).filter((network: any) => network !== null);
+  });
 
   return orderedNetworks;
 };

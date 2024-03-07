@@ -7,7 +7,9 @@
       class="app-header__balance-account"
       btn-styles="secondary"
     >
-      {{ totalUserBalance }} $
+      <span>
+        {{ totalUserBalance }} $
+      </span>
       <BaseIcon
         name="ArrowDown"
       />
@@ -23,7 +25,9 @@
           @click="close"
           @keypress="close"
         >
-          {{ item.balance }}
+          <span>
+            {{ item.balance }}
+          </span>
           <div class="app-header__balance-row">
             {{ item.symbol }}
           </div>
@@ -43,12 +47,12 @@
 </template>
 
 <script lang="ts">
-import { mapGetters } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { OVN_TOKENS, appNetworksData } from '@/utils/const.ts';
+import { isEmpty } from 'lodash';
 import BigNumber from 'bignumber.js';
-import { loadTokenImage } from '@/utils/tokenLogo.ts';
 
 export default {
   name: 'UserBalances',
@@ -63,17 +67,31 @@ export default {
     };
   },
   computed: {
+    ...mapGetters('network', ['networkId']),
     ...mapGetters('accountData', ['originalBalance']),
     ...mapGetters('odosData', ['allTokensList']),
+    ...mapState('odosData', ['tokensMap', 'isBalancesLoading', 'isTokensLoading']),
 
     totalUserBalance() {
-      if (this.allTokensList.length === 0 || this.originalBalance.length === 0) return '0';
+      if (this.originalBalance.length === 0 || this.isBalancesLoading || this.isTokensLoading) return '0';
+      if (isEmpty(this.allTokensList) && isEmpty(this.tokensMap)) return '0';
       const total: BigNumber = this.originalBalance.reduce((acc: BigNumber, curr: any) => {
-        const tokenData = this.allTokensList.find((_: any) => _.symbol === curr.symbol);
-        if (!tokenData) return acc;
+        // linea/blast doesnt have token from ODOS, so we using our schemas values
+        const tokensForChain = this.allTokensList?.length > 0
+          ? this.allTokensList
+          : Object.values(this.tokensMap?.chainTokenMap[this.networkId]?.tokenMap ?? {});
+        const tokenData = tokensForChain.find((_: any) => _.symbol === curr.symbol);
+
+        // todo: load tokens prices if needed, linea/blast
+
+        const tokenPrice = [81457, 59144].includes(this.networkId) ? 1 : tokenData?.price;
+
+        if (!tokenData || !curr.isOvnToken || !tokenPrice) return acc;
+
         const fixedBalance = new BigNumber(curr.balance)
           .div(10 ** tokenData.decimals)
-          .times(tokenData.price);
+          .times(tokenPrice);
+
         return acc.plus(fixedBalance);
       }, BigNumber(0));
 
@@ -82,13 +100,16 @@ export default {
 
     userBalancesList() {
       if (this.originalBalance.length === 0) return [];
+      if (isEmpty(this.allTokensList) && isEmpty(this.tokensMap)) return [];
       return this.originalBalance
         .filter((_: any) => OVN_TOKENS.includes(_.symbol)).map((bal: any) => {
-          const tokenData = this.allTokensList.find((_: any) => _.symbol === bal.symbol);
+          const tokensForChain = this.allTokensList?.length > 0
+            ? this.allTokensList
+            : Object.values(this.tokensMap?.chainTokenMap[this.networkId]?.tokenMap ?? {});
+          const tokenData = tokensForChain.find((_: any) => _.symbol === bal.symbol);
 
           return {
             balance: tokenData ? new BigNumber(bal.balance).div(10 ** tokenData.decimals).toFixed(2) : '0',
-            srcPath: loadTokenImage(tokenData?.symbol),
             symbol: tokenData?.symbol,
           };
         });
@@ -135,6 +156,10 @@ export default {
   min-width: 130px;
   min-height: 31px;
   justify-content: space-between;
+
+  span {
+    padding-right: 10px;
+  }
 
   svg path {
     fill: var(--color-3);
@@ -191,6 +216,10 @@ export default {
   min-width: 130px;
   justify-content: space-between;
   cursor: default;
+
+  span {
+    margin-right: 5px;
+  }
 }
 
 .popper-list__divider {

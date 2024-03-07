@@ -57,7 +57,6 @@ export default {
 <style lang="scss" scoped>
 
 .account-modal-chains__chain-data-container {
-  max-width: 178px;
   max-height: 24px;
   display: flex;
   flex-direction: row;

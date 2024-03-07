@@ -8,8 +8,8 @@ import Onboard from '@web3-onboard/core';
 import walletConnectModule from '@web3-onboard/walletconnect';
 import coinbaseWalletModule from '@web3-onboard/coinbase';
 
-const SUPPORTED_NETWORKS = [137, 56, 10, 42161, 324, 8453, 59144];
-const WALLETCONNECT_SUPPORTED_NETWORKS = [10, 42161, 8453, 56, 59144, 137];
+const SUPPORTED_NETWORKS = [137, 56, 10, 42161, 324, 8453, 59144, 81457];
+const WALLETCONNECT_SUPPORTED_NETWORKS = [10, 42161, 8453, 56, 59144, 137, 81457];
 const WC_PROJECT_ID = '7a088ae8cc40c1eb6925dc98cd5fe5e3';
 
 const state = {
@@ -33,7 +33,6 @@ const actions = {
   async initOnboard({
     commit, dispatch, getters, rootState,
   }: any) {
-    console.log('initOnboard');
     const logo = await dispatch('getLogo');
     const wallets = await dispatch('getMainWalletsConfig');
     const chains = await dispatch('getMainWalletsChains');
@@ -96,7 +95,6 @@ const actions = {
     const walletName = localStorage.getItem('walletName');
     // console.log("walletConnect onboard before connect wallet: ", walletName)
     let connectedWallets;
-    console.log('initOnboard2');
 
     if (walletName !== undefined && walletName && walletName !== 'undefined' && walletName !== 'null') {
       connectedWallets = await onboard
@@ -389,6 +387,14 @@ const actions = {
   }: any, newNetworkId: any) {
     try {
       dispatch('setNetwork', newNetworkId);
+
+      if (rootState.odosData.firstRenderDone) {
+        // evmProvider changing actual network with delay
+        // in other case balances wont be loaded correctly
+        setTimeout(() => {
+          dispatch('odosData/loadBalances', rootState.web3.evmProvider, { root: true });
+        }, 500);
+      }
     } catch (e) {
       console.error('Error when on chainChanged');
     }

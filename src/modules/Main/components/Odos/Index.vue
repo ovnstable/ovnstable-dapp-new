@@ -59,7 +59,6 @@
 
                 <TokenForm
                   :token-info="token"
-                  :remove-item-func="removeInputToken"
                   :is-token-removable="isInputTokensRemovable"
                   :is-input-token="true"
                   @select-token="selectFormToken"
@@ -109,7 +108,6 @@
               >
                 <TokenForm
                   :token-info="token"
-                  :select-token-func="selectFormToken"
                   :is-input-token="false"
                   :disabled="true"
                   :is-token-removable="isOutputTokensRemovable"
@@ -222,99 +220,12 @@
       </template>
     </div>
 
-    <!--
-    <div v-if="quotaResponseInfo">
-      <div class="transaction-info-container">
-        <div class="transaction-info-body">
-          <div class="row py-2">
-            <div class="col-6 py-0">
-              <div class="transaction-info-title">Slippage</div>
-            </div>
-            <div class="col-6 py-0">
-              <div class="transaction-info">
-                {{ slippagePercent * 1 }}%
-                <span class="transaction-info-additional">
-                  ({{
-                    formatMoney(
-                      (sumOfAllSelectedTokensInUsd * slippagePercent) / 100,
-                      3,
-                    )
-                  }})$
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <div
-            class="row py-2"
-            v-if="ifMoreThanOneSelectedTokensAdded"
-          >
-            <div class="col-6 py-0 with-tooltip">
-              <div class="transaction-info-title">Multi-swap Odos fee</div>
-            </div>
-            <div class="col-6 py-0">
-              <div class="transaction-info">
-                {{ multiSwapOdosFeePercent * 1 }}%
-                <span class="transaction-info-additional">
-                  ({{
-                    formatMoney(
-                      (sumOfAllSelectedTokensInUsd * multiSwapOdosFeePercent)
-                        / 100,
-                      3,
-                    )
-                  }})$
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <div class="row py-2">
-            <div class="col-6 py-0 with-tooltip">
-              <div class="transaction-info-title">Single-swap Odos fee</div>
-            </div>
-            <div class="col-6 py-0">
-              <div class="transaction-info">
-                0.00% <span class="transaction-info-additional">(0)$</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="row py-2">
-            <div class="col-6 py-0">
-              <div class="transaction-info-title">Minimum received</div>
-            </div>
-            <div class="col-6 py-0">
-              <div class="transaction-info">
-                {{ formatMoney(sumOfAllSelectedTokensInUsd, 3) }}$
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="transaction-info-footer">
-          <div class="row py-2">
-            <div class="col-6 py-0">
-              <div class="transaction-info-title">Recipient</div>
-            </div>
-            <div class="col-6 py-0">
-              <div class="transaction-info-address">
-                {{
-                  account.substring(0, 5)
-                    + "..."
-                    + account.substring(account.length - 4)
-                }}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div> -->
-
     <SelectTokensModal
       :is-show="isShowSelectTokensModal"
       :select-token-input="selectModalTypeInput"
       :tokens="allTokensList"
+      :balances-loading="isBalancesLoading"
       :is-all-data-loaded="isAllDataLoaded"
-      :is-ovn-swap="true"
       :selected-tokens="selectModalTypeInput ? inputTokens : outputTokens"
       @set-show="showSelectTokensModals"
       @add-token-to-list="addSelectedTokenToList"
@@ -763,7 +674,6 @@ export default {
         this.allTokensList,
         symbol as string | null,
       );
-      console.log(ovnSelectedToken, 'SELECREOVN');
       if (!ovnSelectedToken) {
         this.addNewInputToken();
         this.addNewOutputToken();
@@ -1164,7 +1074,6 @@ export default {
           this.isSumulateSwapLoading = false;
           this.isSumulateIntervalStarted = false;
 
-          console.log(data, 'EMIT');
           this.$emit('update-path-view', {
             path: data.pathViz,
             input: this.selectedInputTokens,

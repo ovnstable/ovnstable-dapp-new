@@ -307,12 +307,6 @@ export default {
       return now.diff(lastUpdateMoment, 'minutes');
     },
   },
-  watch: {
-    networkId() {
-      this.clearAllFilters();
-      this.loadPools();
-    },
-  },
   async mounted() {
     if (this.type === 'OVN') {
       this.changeState({

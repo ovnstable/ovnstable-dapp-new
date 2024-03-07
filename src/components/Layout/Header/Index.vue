@@ -50,13 +50,13 @@
 
         <div class="app-header__content-data">
           <div
-            v-if="account && isBalancesLoading"
+            v-if="accountRenderLoading"
             class="lineLoader"
           />
           <UserBalances v-else-if="deviceType().isDesktop && walletConnected && account" />
 
           <div
-            v-if="account && isBalancesLoading"
+            v-if="accountRenderLoading"
             class="lineLoader"
           />
           <ButtonComponent
@@ -160,9 +160,6 @@ export default {
     AccountModal,
     BaseIcon,
   },
-  async mounted() {
-    this.sortedChains = await sortedChainsByTVL(this.networksData);
-  },
   data() {
     return {
       sortedChains: [] as Chain[],
@@ -170,15 +167,20 @@ export default {
       showModalAccount: false,
     };
   },
+  async mounted() {
+    this.sortedChains = await sortedChainsByTVL(this.networksData);
+  },
   computed: {
-    ...mapState('odosData', [
-      'isBalancesLoading',
-    ]),
+    ...mapState('odosData', ['isBalancesLoading', 'isTokensLoadedAndFiltered', 'firstRenderDone']),
     ...mapGetters('walletAction', ['walletConnected']),
     ...mapGetters('accountData', ['originalBalance', 'account']),
     ...mapGetters('network', ['networkId']),
     ...mapGetters('odosData', ['allTokensList']),
 
+    accountRenderLoading() {
+      if (this.firstRenderDone) return false;
+      return (this.account && this.isBalancesLoading) || !this.isTokensLoadedAndFiltered;
+    },
     activeNetworkData() {
       const data = appNetworksData.find((_) => _.chain === this.networkId);
       return data || appNetworksData[0];
@@ -388,11 +390,13 @@ export default {
 .networks-list__item {
   display: flex;
   padding: 8px 14px;
+  align-items: center;
   cursor: pointer;
   transition: background-color .2s ease, color .2s ease;
   [data-theme="dark"] & {
     color: var(--color-18);
   }
+
   svg, img {
     width: 18px;
     height: 18px;

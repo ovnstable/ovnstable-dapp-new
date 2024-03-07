@@ -109,29 +109,35 @@ export default {
 
 <style lang="scss" scoped>
 .carousel-container {
-    padding-bottom: 30px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    max-width: 400px;
-    min-width: 400px;
-    min-height: 120px;
-    width: 100%;
+  padding-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 400px;
+  min-width: 400px;
+  min-height: 120px;
+  width: 100%;
 
-    h1 {
-        font-size: 24px;
-        line-height: 36px;
-        font-weight: 700;
-        color: var(--color-1);
-        margin-bottom: 8px;
+  h1 {
+    font-size: 24px;
+    line-height: 36px;
+    font-weight: 700;
+    color: var(--color-1);
+    margin-bottom: 8px;
+    [data-theme="dark"] & {
+      color: var(--color-4);
     }
+  }
 }
 .list-items {
-    font-size: 16px;
-    line-height: 22px;
-    font-weight: 400;
-    color: var(--color-1);
-    text-align: center;
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 400;
+  color: var(--color-1);
+  text-align: center;
+  [data-theme="dark"] & {
+    color: var(--color-18);
+  }
 }
 </style>

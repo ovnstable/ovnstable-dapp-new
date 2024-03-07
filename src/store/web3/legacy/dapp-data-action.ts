@@ -15,8 +15,8 @@ const actions = {
   async updateUserData({
     commit, dispatch, getters, rootState,
   }: any) {
+    console.log('REFRESHUSER');
     dispatch('accountData/refreshBalance', null, { root: true });
-    // dispatch('supplyData/refreshSupply', null, { root: true });
     // dispatch('supplyData/refreshInsuranceSupply', null, { root: true });
     // dispatch('swapData/refreshSwap', null, { root: true });
     // dispatch('marketData/refreshClientData', null, { root: true });

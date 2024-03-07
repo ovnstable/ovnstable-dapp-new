@@ -96,6 +96,7 @@ export default {
     BaseIcon,
     InputComponent,
   },
+  emits: ['select-token', 'remove-token', 'update-token'],
   props: {
     // inputToken = token which we want to swap
     isInputToken: {
