@@ -92,6 +92,7 @@ export default {
 }
 
 .switchtabs__inner {
+  font-size: 15px;
   display: flex;
   color: var(--color-2);
   border: 1px solid var(--color-6);
@@ -163,11 +164,15 @@ export default {
 
 .switchtabs__inner-text.active {
   color: var(--color-1);
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
   &::before {
     transform: translateX(0);
     visibility: visible;
     opacity: 1;
     z-index: -2;
   }
+
 }
 </style>

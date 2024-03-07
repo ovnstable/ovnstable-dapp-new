@@ -135,7 +135,7 @@ export default {
 
   [data-theme="dark"] & {
     color: var(--color-4);
-    background-color: var(--color-5);
+    background-color: var(--color-17);
   }
 
   &:hover {

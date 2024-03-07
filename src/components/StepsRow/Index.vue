@@ -74,7 +74,7 @@ export default {
   padding: 0 20px;
 
   [data-theme="dark"] & {
-    color: var(--color-2);
+    color: var(--color-18);
   }
 
   .active-color {
@@ -84,6 +84,9 @@ export default {
   .active-stage {
     text-decoration: underline;
     color: var(--color-1);
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
   }
 }
 </style>

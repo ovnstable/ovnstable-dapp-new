@@ -551,11 +551,12 @@ export default {
     fill: var(--color-2);
     width: 8px;
     height: 8px;
+    overflow: visible;
   }
 
   [data-theme="dark"] & {
     svg {
-      fill: var(--color-1)
+      fill: var(--color-4)
     }
   }
 }

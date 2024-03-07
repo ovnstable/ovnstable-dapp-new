@@ -470,6 +470,7 @@ export default {
   width: 100%;
   box-sizing: border-box;
   [data-theme="dark"] & {
+    border: none;
     background-color: var(--color-7);
   }
 }
