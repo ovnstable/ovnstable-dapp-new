@@ -206,7 +206,7 @@ import ZapInComponent from '@/modules/Main/components/ZapModal/Index.vue';
 import { buildLink } from '@/store/views/main/pools/helpers.ts';
 
 export default {
-  name: 'PoolTable',
+  name: 'PoolsTable',
   components: {
     BaseIcon,
     ZapInComponent,

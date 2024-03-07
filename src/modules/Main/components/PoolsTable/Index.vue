@@ -14,7 +14,7 @@
       v-else
       class="pools-container"
     >
-      <PoolTable
+      <PoolsTable
         :pools="mergedPools"
         :is-show-only-zap="isShowOnlyZap"
         :is-show-apr-limit="isShowAprLimit"
@@ -54,7 +54,7 @@
             </div>
           </div>
         </template>
-      </PoolTable>
+      </PoolsTable>
     </div>
 
     <ZapModal
@@ -80,7 +80,7 @@ import utc from 'dayjs/plugin/utc';
 
 import ZapModal from '@/modules/Main/components/ZapModal/Index.vue';
 import PoolsFilter from '@/modules/Main/components/PoolsTable/PoolsFilter.vue';
-import PoolTable from '@/modules/Main/components/PoolsTable/Table.vue';
+import PoolsTable from '@/components/PoolsTable/Index.vue';
 import TableSkeleton from '@/components/TableSkeleton/Index.vue';
 import dayjs from 'dayjs';
 
@@ -98,7 +98,7 @@ export default {
     BaseIcon,
     PoolsFilter,
     TableSkeleton,
-    PoolTable,
+    PoolsTable,
     ZapModal,
   },
 
