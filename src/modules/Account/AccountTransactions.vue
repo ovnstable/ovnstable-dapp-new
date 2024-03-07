@@ -138,7 +138,7 @@ export default {
   border-radius: 5px;
   overflow-y: scroll;
   [data-theme="dark"] & {
-    background-color: var(--color-17);
+    background-color: var(--color-7);
   }
 }
 .account__modal-list-trx::-webkit-scrollbar-track {

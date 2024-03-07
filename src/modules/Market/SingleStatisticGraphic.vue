@@ -407,6 +407,7 @@ export default {
   margin-top: 5px;
   [data-theme="dark"] & {
     background-color: var(--color-7);
+    border: none;
   }
 }
 
