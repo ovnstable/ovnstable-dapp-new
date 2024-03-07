@@ -36,7 +36,7 @@ export default {
   margin-bottom: 20px;
   p {
     [data-theme="dark"] & {
-      color: var(--color-18);
+      color: var(--color-4);
     }
   }
 }

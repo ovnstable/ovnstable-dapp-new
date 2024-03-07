@@ -97,6 +97,9 @@ export default {
 .insurane__about-rebase-images-capital :nth-child(1) {
   color: var(--color-3);
   margin-bottom: 8px;
+  [data-theme="dark"] & {
+    color: var(--color-18);
+  }
 }
 .insurane__about-rebase-images-capital :nth-child(2) {
   margin-bottom: 34px;

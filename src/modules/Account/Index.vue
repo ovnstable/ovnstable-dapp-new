@@ -82,7 +82,8 @@ export default {
     }
   }
   [data-theme="dark"] & {
-    background-color: var(--color-6);
+    background-color: var(--color-17);
+    border: 1px solid var(--color-4);
   }
   button {
     padding: 6px 10px;
@@ -97,6 +98,12 @@ export default {
     [data-theme="dark"] & {
       color: var(--color-4);
       border-color: var(--color-4);
+    }
+  }
+  svg {
+    [data-theme="dark"] & {
+      fill: var(--color-4);
+      stroke: var(--color-4);
     }
   }
 

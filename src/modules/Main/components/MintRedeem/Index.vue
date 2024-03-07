@@ -651,6 +651,7 @@ export default {
   margin-bottom: 20px;
   button {
     [data-theme="dark"] & {
+      box-shadow: none;
       background-color: var(--color-7);
       color: var(--color-18);
     }

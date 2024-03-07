@@ -148,6 +148,9 @@ export default {
   justify-content: center;
   background-color: rgba(255, 255, 255, .4);
   padding-bottom: 50vh;
+  [data-theme="dark"] & {
+    background-color: var(--color-19);
+  }
 }
 
 @media (max-width: 576px) {

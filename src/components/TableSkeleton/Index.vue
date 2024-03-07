@@ -123,7 +123,7 @@ $avatar-offset: 52 + 16;
     transform: translateX(-50%);
   }
   [data-theme="dark"] & {
-    background-color: var(--color-2);
+    background-color: var(--color-17);
   }
 }
 

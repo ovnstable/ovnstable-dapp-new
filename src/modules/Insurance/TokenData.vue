@@ -321,8 +321,11 @@ export default {
     fill: var(--color-1);
   }
 
-  .insurance__mint-button svg {
+  .insurance__mint-button {
     stroke: var(--color-1);
+    [data-theme="dark"] & {
+      fill: var(--color-4);
+    }
   }
 
 }
@@ -353,6 +356,11 @@ export default {
   border: none;
   border-radius: 30px;
   padding: 5px 14px;
+  [data-theme="dark"] & {
+    background-color: var(--color-7);
+    border: none;
+    box-shadow: none;
+  }
 }
 .about_selected {
   border: 1px solid var(--color-1);
@@ -380,7 +388,7 @@ export default {
   background: var(--color-4);
   width: 100%;
   [data-theme="dark"] & {
-    background: var(--color-6);
+    background: none;
   }
 }
 
@@ -499,7 +507,7 @@ export default {
   }
 }
 
-.performance__chain-data {
+.insurance__chain-data {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -518,7 +526,7 @@ export default {
   }
 }
 
-.performance__chain-data-container .selected:hover {
+.insurance__chain-data-container .selected:hover {
   background: var(--color-4);
   cursor: default;
   [data-theme="dark"] & {
@@ -526,7 +534,7 @@ export default {
   }
 }
 
-.performance__chain-data:hover {
+.insurance__chain-data:hover {
   cursor: pointer;
   border: 1px solid var(--color-7);
   background: var(--color-6);
@@ -536,7 +544,7 @@ export default {
   }
 }
 
-.performance__chain-data-name {
+.insurance__chain-data-name {
   margin-left: 8px;
   font-weight: 500;
   font-size: 13px;
@@ -550,17 +558,20 @@ export default {
   flex-shrink: 0
 }
 
-.performance__chain-data-container {
+.insurance__chain-data-container {
   display: flex;
   flex-direction: row;
 }
 
-.performance__chain-data-container > *:not(:last-child) {
+.insurance__chain-data-container > *:not(:last-child) {
   margin-right: 7px;
 }
 
+.insurance__token-image {
+  overflow: visible;
+}
 @media (max-width: 1024px) {
-  .performance__chain-data {
+  .insurance__chain-data {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -659,12 +670,12 @@ export default {
   .insurance__token-data-link-addr {
     margin-top: 40px;
   }
-  .performance__chain-data {
+  .insurance__chain-data {
     padding: 2px 5px;
     margin-top: 20px;
   }
 
-  .performance__chain-data-name {
+  .insurance__chain-data-name {
     font-size: 12px;
   }
 }
@@ -699,6 +710,7 @@ export default {
     gap: 10px;
     align-items: center;
     p {
+      color: var(--color-18);
       font-size: 12px;
     }
   }
@@ -710,6 +722,7 @@ export default {
     svg {
       max-width: 22px;
       max-height: 22px;
+      fill: var(--color-4);
       scale: 120%;
       width: auto;
     }

@@ -534,7 +534,14 @@ export default {
     flex-direction: row;
     justify-content: space-between;
   }
+  .insurance__premiums-total-share p:first-child {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   .insurance__premiums-asset-share p {
+    color: var(--color-18);
     text-align: right;
   }
   .insurance__premiums-asset-icon {
@@ -581,7 +588,7 @@ export default {
   .insurance__premiums-asset-nav-mobile p:last-child,
   .insurance__premiums-asset-liq-val-mobile p:last-child,
   .insurance__premiums-asset-percent {
-    color: var(--color-2);
+    color: var(--color-18);
   }
   .insurance__premiums-asset-token-name.asset {
     white-space: nowrap;
@@ -592,10 +599,9 @@ export default {
     margin-top: 10px;
     margin-bottom: 16px;
     border: 1px solid var(--color-7);
-  }
-  .insurance-premium-name {
-    white-space: nowrap;
-    text-overflow: ellipsis
+    [data-theme="dark"] & {
+      border-color: var(--color-2);
+    }
   }
   .insurance__premiums-assets-mobile-score,
   .insurance__premiums-asset-liq-val-mobile p:first-child {
