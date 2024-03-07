@@ -213,5 +213,8 @@ export default {
 .modal__body {
   max-height: 80vh;
   overflow-y: auto;
+  [data-theme="dark"] & {
+    background-color: var(--color-6);
+  }
 }
 </style>
