@@ -1,0 +1,223 @@
+<template>
+  <p class="ovn__overview-tokenomics-title">OVN Tokenomics</p>
+  <div class="ovn__overview-tokenomic">
+		<div class="ovn__overview-distribution">
+      <div
+				class="ovn__overview-distribution-item"
+				v-for="benefit in benefits"
+				:key="`benefit-${benefit.name}`"
+			>
+				<div
+					class="ovn__overview-item-icon"
+					:style="{ 'background-color': benefit.color }"
+					/>
+				<p>{{ benefit.name }}</p>
+				<p>{{ benefit.percent }}</p>
+			</div>
+		</div>
+
+    <BaseIcon name="Tokenomic" />
+  </div>
+  <div class="ovn__overview-tokenomic-pools">
+    <p>all ovn pools</p>
+    <div class="ovn__overview-chain-data-container">
+      <div
+        v-for="chain in availableChains"
+        :key="chain"
+        @click="saveNetworkToLocalStore(chain)"
+        @keydown.enter="saveNetworkToLocalStore(chain)"
+        class="ovn__overview-chain-data"
+        :class="{ selected: (chain as any).toLowerCase() === networkName }"
+      >
+        <BaseIcon
+          :name="chain.toLocaleLowerCase()"
+        />
+      </div>
+    </div>
+  </div>
+
+</template>
+
+<script lang="ts">
+import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import { chainContractsMap } from '@/utils/contractsMap.ts';
+
+export default {
+  name: 'OvnTokenomics',
+  components: {
+    BaseIcon,
+  },
+  computed: {
+    networkName() {
+      return this.$store.state.network.ovnNetwork;
+    },
+    networkScan() {
+      return this.$store.state.network.ovnExplorerURL;
+    },
+    availableChains() {
+      const availableNetworks = Object.entries(chainContractsMap)
+        .reduce((acc: string[], [network, contracts]: [string, any]) => {
+          if (contracts.ovn) {
+            acc.push(network.charAt(0).toUpperCase() + network.slice(1));
+          }
+          return acc;
+        }, []);
+
+      return availableNetworks;
+    },
+  },
+  methods: {
+    saveNetworkToLocalStore(chain: string) {
+      this.$store.dispatch('network/changeOvnNetwork', chain.toLowerCase());
+    },
+  },
+  data() {
+    return {
+      benefits: [
+        {
+          name: 'Treasury',
+          percent: '35',
+          color: 'var(--color-3)',
+        },
+        {
+          name: 'Team',
+          percent: '25',
+          color: 'var(--color-14)',
+        },
+        {
+          name: 'Insurance fund',
+          percent: '20',
+          color: 'var(--color-16)',
+        },
+        {
+          name: 'Public sale',
+          percent: '10',
+          color: 'var(--color-15)',
+        },
+        {
+          name: 'Pre-seed investors',
+          percent: '8.5',
+          color: 'var(--color-9)',
+        },
+        {
+          name: 'Pre-sale',
+          percent: '2.5',
+          color: 'var(--color-6)',
+        },
+      ],
+    };
+  },
+};
+
+</script>
+
+<style lang="scss" scoped>
+
+.ovn__overview-tokenomics-title {
+	font-size: 17px;
+	color: var(--color-1);
+	font-weight: 500;
+	margin-top: 24px;
+	margin-bottom: 24px;
+}
+
+.ovn__overview-tokenomic {
+	display: flex;
+	flex-direction: row;
+}
+.ovn__overview-distribution {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+.ovn__overview-distribution-item {
+	gap: 4px;
+	display: flex;
+	flex-direction: row;
+	p {
+		font-size: 15px;
+		color: var(--color-1);
+		font-weight: 400;
+	}
+}
+.ovn__overview-item-icon {
+  width: 14px;
+  height: 14px;
+  border-radius: 5px;
+  margin-right: 3px;
+}
+
+.ovn__overview-tokenomic-pools {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.ovn__overview-chain-data-container .selected {
+  background: var(--color-4);
+  color: var(--color-3);
+  border-color: var(--color-6);
+  svg {
+    opacity: 1;
+    filter: unset;
+  }
+  [data-theme="dark"] & {
+    p {
+      color: var(--color-4);
+    }
+    border-color: var(--color-2);
+    background: var(--color-17);
+  }
+}
+.ovn__overview-chain-data-container {
+  // margin-top: 24px;
+  display: flex;
+  flex-direction: row;
+  vertical-align: center;
+  transition: background 0.3s ease, border 0.3s ease;
+  svg {
+    width: 24px;
+    height: 24px;
+    filter: grayscale(10);
+    opacity: .5;
+  }
+}
+
+.ovn__overview-chain-data-container > *:not(:last-child) {
+  margin-right: 7px;
+}
+
+.ovn__overview-chain-data {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-radius: 30px;
+  border: 1px solid var(--color-5);
+  padding: 5px 10px;
+  width: fit-content;
+  background-color: var(--color-5);
+  transition: background 0.3s ease, border 0.3s ease;
+  [data-theme="dark"] & {
+   border-color: var(--color-7);
+   background: var(--color-7);
+  }
+}
+.ovn__overview-chain-data-name {
+  margin-left: 8px;
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--color-1);
+  [data-theme="dark"] & {
+    color: var(--color-18);
+  }
+}
+.ovn__overview-chain-data:hover {
+  cursor: pointer;
+  border: 1px solid var(--color-7);
+  background: var(--color-6);
+  transition: background 0.3s ease, border 0.3s ease;
+  [data-theme="dark"] & {
+    background: var(--color-2);
+  }
+}
+</style>

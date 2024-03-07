@@ -16,7 +16,7 @@
         :token-data="tokenData"
       />
       <OvnBenefits />
-      <p>here is ovn tokenomics</p>
+      <OvnTokenomics />
     </div>
   </div>
 
@@ -25,6 +25,7 @@
 <script lang="ts">
 import OvnInfo from '@/modules/Ovn/Info.vue';
 import OvnBenefits from '@/modules/Ovn/Benefits.vue';
+import OvnTokenomics from '@/modules/Ovn/Tokenomics.vue'
 // import Spinner from '@/components/Spinner/Index.vue';
 
 export default {
@@ -32,6 +33,7 @@ export default {
   components: {
     OvnInfo,
     OvnBenefits,
+    OvnTokenomics,
     // Spinner,
   },
   props: {
