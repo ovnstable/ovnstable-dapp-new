@@ -4,58 +4,123 @@
     <div class="ovn__overview-links">
       <BaseIcon
         class='ovn__overview-links-image'
-        name="InsuranceOVNVault"
+        name="OVN_LOGO_dark"
       />
       <div class="ovn__overview-links-data">
         <p>OVN</p>
-        <p>Token address</p>
-        <p>Coinmarketcap</p>
+        <a
+          :href="`${networkScan}token/` + generateHref('ovn', networkName)"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="token-address"
+          class="ovn__overview-link-addr link-ovn"
+        >Token address</a>
+        <a
+          href="https://coinmarketcap.com/currencies/overnight/"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="token-address"
+          class="ovn__overview-link-cmc link-ovn"
+        >Coinmarketcap</a>
       </div>
     </div>
     <div class="ovn__overview-divider" />
     <div class="ovn__overview-price">
-      <p>OVN Price</p>
+      <p class="ovn__overview-price-title">OVN Price</p>
       <div class="ovn__overview-price-change">
-        <p>price</p>
-        <p>change last day</p>
+        <p>{{priceOvn}}</p>
+        <p :class="priceOvnChange < 0 ? 'ovn__overview-price-down' : 'ovn__overview-price-up'">{{ priceOvnChange }}% (1d)</p>
       </div>
     </div>
     <div class="ovn__overview-divider" />
     <div class="ovn__overview-mc">
-      <p>Market cap</p>
+      <p class="ovn__overview-mc-title">Market cap</p>
       <div class="ovn__overview-mc-change">
-        <p>market cap</p>
+        <p>{{marketCap}}</p>
         <p>change last day</p>
       </div>
     </div>
     <div class="ovn__overview-divider" />
     <div class="ovn__overview-tvl">
-      <p>OVN TVL</p>
+      <p class="ovn__overview-tvl-title">OVN TVL</p>
       <div class="ovn__overview-exact-chain">
-        <p>icon chain</p>
+        <div
+          class="ovn__overview-icon-chain"
+        >
+          <BaseIcon
+            :name="networkName.toLocaleLowerCase()"
+          />
+        </div>
+
         <p>00,000.00$</p>
       </div>
       <p>past 2 hours</p>
     </div>
     <div class="ovn__overview-divider" />
-    <div class="ovn__overview-buttons">
-      <ButtonComponent>
-        MINT / REDEEM
-      </ButtonComponent>
-      <ButtonComponent>
-        BRIDGE
-      </ButtonComponent>
-      <ButtonComponent>
-        OVN DASHBOARD
-      </ButtonComponent>
+    <div class="ovn__overview-interact-buttons">
+      <router-link
+        to="/"
+      >
+        <ButtonComponent
+          class="ovn__overview-button"
+        >
+          <BaseIcon
+            class="ovn__overview-mint-icon"
+            name='InsuranceMint'
+          />
+          MINT / REDEEM
+          <BaseIcon
+            name='InsuranceRedeem'
+            class="ovn__overview-redeem-icon"
+          />
+        </ButtonComponent>
+      </router-link>
+      <router-link
+        to="/"
+      >
+        <ButtonComponent class="ovn__overview-button">
+          <BaseIcon
+            class="ovn__overview-bridge-icon"
+            name='InsuranceBridge'
+          />
+          BRIDGE
+        </ButtonComponent>
+      </router-link>
+      <router-link
+        to="/dashboard"
+      >
+        <ButtonComponent class="ovn__overview-button">
+          <BaseIcon
+            class="ovn__overview-dashboard-icon"
+            name='InsuranceOVN'
+          />
+          OVN DASHBOARD
+        </ButtonComponent>
+      </router-link>
+
     </div>
 
   </div>
-
+  <div class="ovn__overview-chain-data-container">
+    <div
+      v-for="chain in availableChains"
+      :key="chain"
+      @click="saveNetworkToLocalStore(chain)"
+      @keydown.enter="saveNetworkToLocalStore(chain)"
+      class="ovn__overview-chain-data"
+      :class="{ selected: (chain as any).toLowerCase() === networkName }"
+    >
+      <BaseIcon
+        :name="chain.toLocaleLowerCase()"
+      />
+      <p class="ovn__overview-chain-data-name">{{ chain }}</p>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
 import ButtonComponent from '@/components/Button/Index.vue';
+import { chainContractsMap } from '@/utils/contractsMap.ts';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 
 export default {
@@ -65,6 +130,48 @@ export default {
     BaseIcon,
   },
   props: {
+    tokenData: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
+  computed: {
+    priceOvn() {
+      return this.tokenData.priceOvnMcChange.data.OVN[0].quote.USD.price.toFixed(2);
+    },
+    priceOvnChange() {
+      return this.tokenData.priceOvnMcChange.data.OVN[0].quote.USD.percent_change_1h.toFixed(2);
+    },
+    marketCap() {
+      return this.tokenData.priceOvnMcChange.data.OVN[0].self_reported_market_cap.toFixed(2);
+    },
+    networkName() {
+      return this.$store.state.network.ovnNetwork;
+    },
+    networkScan() {
+      return this.$store.state.network.ovnExplorerURL;
+    },
+    availableChains() {
+      const availableNetworks = Object.entries(chainContractsMap)
+        .reduce((acc: string[], [network, contracts]: [string, any]) => {
+          if (contracts.ovn) {
+            acc.push(network.charAt(0).toUpperCase() + network.slice(1));
+          }
+          return acc;
+        }, []);
+
+      return availableNetworks;
+    },
+  },
+  methods: {
+    saveNetworkToLocalStore(chain: string) {
+      this.$store.dispatch('network/changeOvnNetwork', chain.toLowerCase());
+    },
+    generateHref(tokenName: string, networkName: string) {
+      const networkContracts = (chainContractsMap as any)[networkName.toLowerCase()];
+      const tokenInsurance = networkContracts[tokenName];
+      return tokenInsurance;
+    },
   },
 };
 
@@ -82,6 +189,27 @@ export default {
   display: flex;
   flex-direction: column;
 }
+.ovn__overview-price,
+.ovn__overview-mc,
+.ovn__overview-tvl {
+  text-align: center;
+}
+
+.ovn__overview-price-title,
+.ovn__overview-mc-title,
+.ovn__overview-tvl-title {
+  font-size: 15px;
+  margin-bottom: 10px;
+}
+.ovn__overview-mint-icon,
+.ovn__overview-bridge-icon,
+.ovn__overview-dashboard-icon {
+  margin-right: 4px;
+}
+.ovn__overview-redeem-icon {
+  margin-left: 4px;
+}
+
 .ovn__overview-divider {
   border: 1px solid var(--color-7);
 }
@@ -90,14 +218,160 @@ export default {
   flex-direction: row;
 }
 .ovn__overview-links-data {
+  display: flex;
+  flex-direction: column;
   margin-left: 10px;
+}
+
+.ovn__overview-links-data p:nth-child(1),
+.ovn__overview-price-change p:nth-child(1),
+.ovn__overview-mc-change p:nth-child(1) {
+  font-size: 20px;
+  color: var(--color-1);
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.ovn__overview-exact-chain {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 10px;
+  p {
+    font-size: 20px;
+    color: var(--color-1);
+    font-weight: 500;
+  }
+}
+.ovn__overview-button {
+  background-color: var(--color-5);
+  color: var(--color-1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: none;
+  border: none;
+  border-radius: 30px;
+  padding: 5px 14px;
+  [data-theme="dark"] & {
+    background-color: var(--color-7);
+    border: none;
+    box-shadow: none;
+  }
+}
+.ovn__overview-interact-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
 }
 .ovn__overview-links-data p:nth-child(1) {
   margin-bottom: 10px;
 }
-.ovn__overview-links-image {
-  width: 70px;
-  height: 70px;
+.ovn__overview-link-addr {
+  margin-bottom: 4px;
+}
+.ovn__overview-link-addr,
+.ovn__overview-link-cmc {
+  font-size: 12px;
 }
 
+.ovn__overview-price-down,
+.ovn__overview-price-up {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.ovn__overview-price-down {
+  color: var(--color-9);
+}
+
+.ovn__overview-price-up {
+  color: var(--color-11);
+}
+
+.ovn__overview-icon-chain {
+  margin-right: 4px;
+  svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+.ovn__overview-chain-data-container .selected {
+  background: var(--color-4);
+  color: var(--color-3);
+  border-color: var(--color-6);
+  svg {
+    opacity: 1;
+    filter: unset;
+  }
+  [data-theme="dark"] & {
+    p {
+      color: var(--color-4);
+    }
+    border-color: var(--color-2);
+    background: var(--color-17);
+  }
+}
+.ovn__overview-chain-data-container {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: row;
+  vertical-align: center;
+  transition: background 0.3s ease, border 0.3s ease;
+  svg {
+    width: 24px;
+    height: 24px;
+    filter: grayscale(10);
+    opacity: .5;
+  }
+}
+
+.ovn__overview-chain-data-container > *:not(:last-child) {
+  margin-right: 7px;
+}
+.ovn__overview-chain-data {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-radius: 30px;
+  border: 1px solid var(--color-5);
+  padding: 5px 10px;
+  width: fit-content;
+  background-color: var(--color-5);
+  transition: background 0.3s ease, border 0.3s ease;
+  [data-theme="dark"] & {
+   border-color: var(--color-7);
+   background: var(--color-7);
+  }
+}
+.ovn__overview-chain-data-name {
+  margin-left: 8px;
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--color-1);
+  [data-theme="dark"] & {
+    color: var(--color-18);
+  }
+}
+.ovn__overview-chain-data:hover {
+  cursor: pointer;
+  border: 1px solid var(--color-7);
+  background: var(--color-6);
+  transition: background 0.3s ease, border 0.3s ease;
+  [data-theme="dark"] & {
+    background: var(--color-2);
+  }
+}
+
+.selected:hover {
+  cursor: default;
+  border: 1px solid var(--color-7);
+  background: var(--color-4);
+  transition: background 0.3s ease, border 0.3s ease;
+  [data-theme="dark"] & {
+    background: var(--color-7);
+  }
+}
 </style>

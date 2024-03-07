@@ -1,4 +1,4 @@
-import OVNApiService from '@/services/ovn-api-service';
+import OVNApiService from '@/services/ovn-api-service.ts';
 
 const state = {
   ovnTokenData: {},
@@ -7,18 +7,14 @@ const state = {
 const actions = {
   async fetchOVNTokenData({ commit }: any) {
     try {
-      console.log('we are in api services');
-      const priceOvn = await OVNApiService.loadHistoricalData();
-      const ovnChangeDay = null;
-      const marketCapOvn = null;
-      const changeMarketCapOvn = null;
-      const ovnTVL = null;
+      const priceOvnMcChange = await OVNApiService.loadPrice();
+      // TODO find another api
+      // const changeMarketCapOvn = null;
+      // const ovnTVL = null;
       const combinedData = {
-        priceOvn,
-        ovnChangeDay,
-        marketCapOvn,
-        changeMarketCapOvn,
-        ovnTVL,
+        // priceOvn,
+        // ovnChangeDay,
+        priceOvnMcChange,
       };
       commit('setOvnTokenData', { combinedData });
     } catch (error) {

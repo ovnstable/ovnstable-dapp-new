@@ -1,6 +1,9 @@
 <template>
-  <p>{{ OvnTokenData }}</p>
-  <OvnPage />
+  <OvnPage
+    :token-data="ovnTokenData"
+    :first-load="firstRender"
+    :loaded="loaded"
+  />
 </template>
 
 <script lang="ts">

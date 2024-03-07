@@ -1,17 +1,20 @@
 <template>
-  <!-- <div
+  <div
     v-if="firstLoad"
     class="ovn__loader"
   >
     <Spinner />
-  </div> -->
+  </div>
   <div
+    v-else
     class="ovn-wrapper"
   >
     <div
       class="ovn"
     >
-      <OvnInfo />
+      <OvnInfo
+        :token-data="tokenData"
+      />
       <p>here is ovn benefits</p>
       <p>here is ovn tokenomics</p>
     </div>
@@ -30,6 +33,18 @@ export default {
     // Spinner,
   },
   props: {
+    tokenData: {
+      type: Object,
+      default: () => ({}),
+    },
+    firstLoad: {
+      type: Boolean,
+      required: true,
+    },
+    loaded: {
+      type: Boolean,
+      default: false,
+    },
   },
 };
 
