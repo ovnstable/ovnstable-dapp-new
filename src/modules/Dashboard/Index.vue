@@ -319,4 +319,14 @@ button {
   }
 }
 
+@media (max-width: 400px) {
+  .dashboard-usd-plus-wrap {
+    padding: 30px 20px;
+  }
+  .dashboard_token_data_graphics {
+    border: none;
+    padding: 0;
+  }
+}
+
 </style>

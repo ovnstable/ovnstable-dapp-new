@@ -26,7 +26,10 @@
       <p class="dashboard__token-data-title">Balance</p>
       <div class="dashboard__apy-data-chain">
         <p class="dashboard__token-data-num"> {{ getBalance() }}</p>
-        <p :class="['dashboard__token-data-growth-balance', { 'negative-growth': isGrowthNegative }]">
+        <p
+          v-if="!device.isMobile"
+          :class="['dashboard__token-data-growth-balance', { 'negative-growth': isGrowthNegative }]"
+        >
           {{ growthPercentage() }}
         </p>
 
@@ -36,7 +39,10 @@
     <div class="dashboard__tvl-data">
       <p class="dashboard__token-data-title"> Profit</p>
       <p class="dashboard__token-data-h">{{calculateProfit()}}</p>
-      <p :class="{ 'negative-growth': isGrowthNegative }">{{ formatInterval() }}</p>
+      <p
+        v-if="!device.isMobile"
+        :class="{ 'negative-growth': isGrowthNegative }"
+      >{{ formatInterval() }}</p>
     </div>
     <div class="dashboard__divider dashboard__divider--last-divider" />
   </div>
@@ -45,6 +51,7 @@
 
 <script lang="ts">
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import { deviceType } from '@/utils/deviceType.ts';
 
 export default {
   name: 'TokenDataDashboard',
@@ -58,6 +65,9 @@ export default {
     },
   },
   computed: {
+    device() {
+      return deviceType();
+    },
     networkName() {
       return this.$store.state.network.dashboardNetwork;
     },
@@ -458,4 +468,37 @@ export default {
     margin-right: 5px;
   }
 }
+
+@media (max-width: 400px) {
+  .dashboard__token-data {
+    flex-direction: column;
+  }
+  .dashboard__payout-data,
+  .dashboard__apy-data,
+  .dashboard__tvl-data,
+  .dashboard__token-data-link-title {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  .dashboard__token-data-h,
+  .dashboard__token-data-num,
+  .dashboard__token-data-risk,
+  .dashboard__token-data-title-period,
+  .dashboard__token-data-link-title {
+    margin: 0;
+  }
+  .dashboard__token-data-from {
+    flex-direction: row;
+  }
+  .dashboard__divider {
+    margin-top: 6px;
+    margin-bottom: 6px;
+    margin-right: 0;
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
 </style>

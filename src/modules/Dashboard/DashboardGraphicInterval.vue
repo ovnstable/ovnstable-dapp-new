@@ -124,4 +124,13 @@ export default {
     }
   }
 }
+
+@media (max-width: 400px) {
+  .switchtabs-dashboard__inner {
+    justify-content: space-between;
+  }
+  .switchtabs-dashboard__inner-text{
+    padding: 4px 10px;
+  }
+}
 </style>
