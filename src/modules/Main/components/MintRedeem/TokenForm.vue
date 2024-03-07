@@ -56,6 +56,8 @@
         </div>
         <div
           class="input-tokens__balance"
+          @click="maxUpdate"
+          @keypress="maxUpdate"
         >
           <div class="select-token-balance-text">
             <div v-if="tokenInfo && tokenInfo.symbol">
@@ -224,7 +226,13 @@ export default {
       this.$emit('update-token', {
         ...this.tokenFullData,
         value,
-      }, this.isInputToken);
+      }, this.isInputToken, false);
+    },
+    maxUpdate() {
+      // todo rates pair
+      this.$emit('update-token', {
+        ...this.tokenFullData,
+      }, this.isInputToken, true);
     },
   },
 };
@@ -263,9 +271,18 @@ export default {
     box-shadow: inset 0px -2px 0px 0px var(--color-6);
   }
 }
+
 .input-tokens__balance {
+  cursor: pointer;
+  transition: color .2s ease, transform .15s ease;
+
   [data-theme="dark"] & {
     color: var(--color-18);
+  }
+
+  &:hover {
+    color: var(--color-3);
+    transform: translateX(2px);
   }
 }
 

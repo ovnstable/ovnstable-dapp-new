@@ -255,13 +255,6 @@ const actions = {
     console.log('init pool swap data for network: ');
     const { networkId } = getNetworkParams(rootState.network.networkName);
 
-    if (state.tokens.length > 0) {
-      await commit('changeState', {
-        field: 'tokens',
-        val: []
-      });
-    }
-
     await commit('changeState', {
       field: 'tokens',
       val: getFilteredPoolTokens(
@@ -330,7 +323,6 @@ const actions = {
   async loadBalances({
     commit, state, getters, rootState
   }: any, providerInstance: any) {
-    console.log(providerInstance, 'LOADBALANCES');
     commit('changeState', { field: 'isBalancesLoading', val: true });
 
     if (!rootState.accountData.account) {
@@ -388,15 +380,10 @@ const actions = {
         })
       );
 
-      await commit('changeState', {
-        field: 'tokens',
-        val: newBalances
-      });
+      await commit('changeBalances', newBalances);
 
       commit('changeState', { field: 'isBalancesLoading', val: false });
       commit('changeState', { field: 'firstRenderDone', val: true });
-      // here to update initialized balances of tokens
-      useEventBus('odos-transaction-finished').emit(true);
     } catch (e) {
       console.error('Error when load balance', e);
       commit('changeState', { field: 'isBalancesLoading', val: false });
@@ -743,6 +730,15 @@ const mutations = {
     val: any
   }) {
     state[data.field] = data.val;
+  },
+  changeBalances(state: any, tokensBalances: any[]) {
+    const balancesArr = state.tokens.map((_: any) => _.id);
+    tokensBalances.forEach((tok: any) => {
+      const index = balancesArr.indexOf(tok.id);
+      if (index === -1 || !state.tokens[index]) return;
+
+      state.tokens[index].balanceData = tok.balanceData;
+    });
   },
 };
 

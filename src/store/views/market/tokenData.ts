@@ -1,5 +1,5 @@
 import { TOKENS } from '@/store/views/market/mock.ts';
-import { type Strategy, type Payout } from '@/modules/Market/types';
+import { type Strategy, type Payout } from '@/modules/Market/types/index.ts';
 import MarketApiService from '@/services/market-api-service.ts';
 
 const state = {

@@ -35,7 +35,7 @@
         <span>0.04%</span>
       </div>
       <div class="mintredeem-form__row-item">
-        <h1>You mint</h1>
+        <h1>You {{ activeMintTab ? "mint" : "redeem" }}</h1>
         <span>${{ estimateResult }}</span>
       </div>
       <div class="mintredeem-form__row-item">
@@ -181,7 +181,7 @@ export default {
   },
   computed: {
     ...mapGetters('network', ['networkId', 'networkName']),
-    ...mapGetters('accountData', ['account']),
+    ...mapGetters('accountData', ['account', 'originalBalance']),
     ...mapGetters('web3', ['contracts', 'evmProvider', 'evmSigner']),
     ...mapGetters('gasPrice', ['gasPriceGwei']),
     ...mapState('odosData', ['tokensContractMap']),
@@ -314,8 +314,18 @@ export default {
 
       this.outputToken = data;
     },
-    updateTokenValueMethod(token: any, isInputToken: boolean) {
-      if (isInputToken) this.inputToken = token;
+    updateTokenValueMethod(token: any, isInputToken: boolean, isMaxBal: boolean) {
+      console.log(token, isInputToken, isMaxBal, '---_DATA');
+      if (isInputToken && !isMaxBal) this.inputToken = token;
+      if (isInputToken && isMaxBal) {
+        const balData = this.originalBalance.find((_: any) => _.symbol === token.symbol);
+        this.inputToken = {
+          ...token,
+          value: new BigNumber(balData.balance).div(10 ** token.decimals).toFixed(4),
+          originalVal: balData.balance,
+        };
+      }
+
       this.outputToken = {
         ...this.outputToken,
         value: this.estimateResult,
@@ -393,7 +403,6 @@ export default {
         };
       }
 
-      console.log(actionContract, 'actionContract');
       if (exchangeMethodName === 'redeem') {
         methodParam = {
           asset: actionContract.target,
@@ -517,33 +526,25 @@ export default {
             return cData ? cData.target.toLowerCase() === tokenAddress.toLowerCase() : false;
           });
 
-        console.log(pairData, '---pairData');
         // if mint active, using 1st method, else 2nd
         const exchangeMethodName = this.activeMintTab === 0
           ? pairData?.methodName[0] : pairData?.methodName[1];
 
-        const swapSum = BigNumber(this.inputToken.value)
+        const swapSum = new BigNumber(this.inputToken.value)
           .times(10 ** this.inputToken.decimals).toString();
 
-        console.log(
-          this.account,
-          swapSum,
-          'test-product',
-          exchangeContract,
-          exchangeMethodName,
-          actionContract,
-          '---params',
-        );
+        const mainValue = new BigNumber(this.inputToken.originalVal).gt(0)
+          ? this.inputToken.originalVal : swapSum;
+
         const estimatedGasValue = await this.estimateGas(
           this.account,
-          swapSum,
+          mainValue,
           'test-product',
           exchangeContract,
           exchangeMethodName,
           actionContract,
         );
 
-        console.log(estimatedGasValue, '-estimatedGasValue');
         if (!estimatedGasValue) return;
 
         const gasValue = new BigNumber(estimatedGasValue)
@@ -558,7 +559,7 @@ export default {
 
         const method = this.getContractMethodWithParams(
           this.account,
-          swapSum,
+          mainValue,
           exchangeMethodName,
           actionContract,
         );

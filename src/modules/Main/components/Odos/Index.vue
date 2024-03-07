@@ -7,11 +7,11 @@
     <div
       v-else
       :class="
-        !isAllLoaded ? 'swap-container swap-container-full' : 'swap-container'
+        !firstRenderDone ? 'swap-container swap-container-full' : 'swap-container'
       "
     >
       <div
-        v-if="!isAllLoaded"
+        v-if="!firstRenderDone"
         class="swap-form__loader"
       >
         <Spinner />
@@ -365,6 +365,9 @@ export default {
     isTokensLoadedAndFiltered(val) {
       if (val) this.clearForm();
     },
+    firstRenderDone(val) {
+      if (val) this.clearForm();
+    },
     hideSwapButton(val) {
       if (val) {
         this.clearQuotaInfo();
@@ -412,6 +415,7 @@ export default {
       'listOfBuyTokensAddresses',
       'dataBeInited',
       'isBalancesLoading',
+      'firstRenderDone',
     ]),
     ...mapGetters('odosData', [
       'allTokensList',
@@ -646,15 +650,27 @@ export default {
       this.inputTokens = maxAll(this.selectedInputTokens, this.checkApproveForToken);
       this.updateQuotaInfo();
     },
-    updateTokenValueMethod(token: any) {
-      const newToken = updateTokenValue(
-        token,
-        token.value,
-        this.checkApproveForToken,
-      );
+    updateTokenValueMethod(tokenData: any) {
+      let currToken = null;
 
-      const indexOf = this.inputTokens.map((_) => _.id).indexOf(newToken.id);
-      this.inputTokens[indexOf] = newToken;
+      if (tokenData.isMaxBal) {
+        currToken = updateTokenValue(
+          tokenData,
+          tokenData.value,
+          this.checkApproveForToken,
+          tokenData.selectedToken.balanceData.originalBalance,
+        );
+      } else {
+        currToken = updateTokenValue(
+          tokenData,
+          tokenData.value,
+          this.checkApproveForToken,
+        );
+      }
+
+      delete currToken.isMaxBal;
+      const indexOf = this.inputTokens.map((_) => _.id).indexOf(currToken.id);
+      this.inputTokens[indexOf] = currToken;
       this.updateQuotaInfo();
     },
     async init() {
@@ -798,6 +814,7 @@ export default {
     },
 
     clearForm() {
+      console.log('CLEAFORM');
       this.clearAllSelectedTokens();
 
       if (this.swapMethod === 'BUY') {
@@ -1247,8 +1264,6 @@ export default {
 
       await tx.wait();
       finishTx();
-
-      console.log(tx, '---tx');
     },
 
     getRequestInputTokens(ignoreNullable?: any) {

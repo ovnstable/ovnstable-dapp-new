@@ -334,13 +334,12 @@ export const updateTokenValue = (
   if (!value) return token;
 
   const { selectedToken } = token;
-  console.log(selectedToken, token, '----selectedToken');
-  console.log(value, '---value');
+
+  console.log(originalBalance, 'originalBalance');
+  console.log(selectedToken, 'SELECTED');
+
   if (selectedToken) {
-    token.contractValue = originalBalance
-    || new BigNumber(value)
-      .times(10 ** selectedToken.decimals)
-      .toFixed(0);
+    token.contractValue = originalBalance;
     token.usdValue = new BigNumber(value)
       .times(selectedToken.price)
       .toFixed(6, BigNumber.ROUND_DOWN);

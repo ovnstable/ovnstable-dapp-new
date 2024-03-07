@@ -64,6 +64,10 @@ export default {
       type: String,
       default: '',
     },
+    isText: {
+      type: Boolean,
+      default: false,
+    },
     isCustom: {
       type: Boolean,
       default: false,
@@ -144,6 +148,11 @@ export default {
 
   methods: {
     onInput(event: any) {
+      if (this.isText) {
+        this.$emit('input', event.target.value);
+        return;
+      }
+
       const regex = /^[0-9]*\.?[0-9]*$/;
       if (regex.test(event.target.value) || event.target.value === '') {
         if (this.emitEvent) this.$emit('input', event);

@@ -27,6 +27,7 @@
       <div class="search-tokens__input">
         <InputComponent
           :value="searchQuery"
+          is-text
           placeholder="Search token by name or paste address"
           full-width
           @input="searchTokens"
@@ -110,6 +111,19 @@ export default {
       if (!this.searchQuery) {
         return this.tokens
           .slice()
+          .sort((a: any, b: any) => {
+            if (b.price * b.balanceData.balance < a.price * a.balanceData.balance) {
+              return -1;
+            } if (b.price * b.balanceData.balance > a.price * a.balanceData.balance) {
+              return 1;
+            }
+            if (b.balanceData.balance < a.balanceData.balance) {
+              return -1;
+            } if (b.balanceData.balance > a.balanceData.balance) {
+              return 1;
+            }
+            return 0;
+          })
           .sort((a: any, b: any) => {
             if (OVN_TOKENS.includes(a.symbol) && !OVN_TOKENS.includes(b.symbol)) {
               return -1;

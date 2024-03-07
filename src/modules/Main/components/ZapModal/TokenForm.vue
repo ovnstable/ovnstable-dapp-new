@@ -63,10 +63,9 @@
         </div>
       </div>
       <div
-        @click="
-          clickOnBalance()"
-        @keypress="clickOnBalance()"
         class="input-tokens__balance"
+        @click="maxUpdate"
+        @keypress="maxUpdate"
       >
         <div class="select-token-balance-text">
           <div v-if="tokenInfo.selectedToken && tokenInfo.selectedToken?.balanceData?.balance">
@@ -140,16 +139,16 @@ export default {
       return true;
     },
     inputUpdate(value: any) {
-      console.log(value, 'inputUpdate');
       this.$emit('update-token', {
         ...this.tokenInfo,
         value,
-      });
+      }, false);
     },
-    clickOnBalance() {
-      if (this.tokenInfo.selectedToken && this.tokenInfo.selectedToken.balanceData.balance) {
-        this.inputUpdate(this.tokenInfo.value);
-      }
+    maxUpdate() {
+      this.$emit('update-token', {
+        ...this.tokenInfo,
+        value: this.tokenInfo.selectedToken?.balanceData?.balance,
+      }, true);
     },
   },
 };
@@ -277,6 +276,20 @@ export default {
 
   &:hover {
     transform: rotate(-90deg);
+  }
+}
+
+.input-tokens__balance {
+  cursor: pointer;
+  transition: color .2s ease, transform .15s ease;
+
+  [data-theme="dark"] & {
+    color: var(--color-18);
+  }
+
+  &:hover {
+    color: var(--color-3);
+    transform: translateX(2px);
   }
 }
 </style>
