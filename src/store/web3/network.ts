@@ -206,8 +206,10 @@ const state = {
   insuranceNetwork: 'optimism',
   dashboardNetwork: 'arbitrum',
   accountModalNetwork: 'arbitrum',
+  ovnNetwork: 'base',
   insuranceExplorerURL: 'https://optimistic.etherscan.io/',
   dashboardExplorerURL: 'https://arbiscan.io/',
+  ovnExplorerURL: 'https://basescan.org/',
 };
 
 const getters = {
@@ -589,6 +591,11 @@ const actions = {
     commit('setInsuranceNetwork', network);
   },
 
+  changeOvnNetwork({ commit }: any, network: any) {
+    commit('setOvnExplorerURL', getNetworkParams(network).explorerUrl);
+    commit('setOvnNetwork', network);
+  },
+
   changeDashboardNetwork({ commit }: any, network: any) {
     commit('setDashboardExplorerURL', getNetworkParams(network).explorerUrl);
     commit('setDashboardNetwork', network);
@@ -677,6 +684,14 @@ const mutations = {
 
   setDashboardExplorerURL(state: any, value: any) {
     state.dashboardExplorerURL = value;
+  },
+
+  setOvnNetwork(state: any, value: any) {
+    state.ovnNetwork = value;
+  },
+
+  setOvnExplorerURL(state: any, value: any) {
+    state.ovnExplorerURL = value;
   },
 };
 

@@ -20,6 +20,11 @@ const router = createRouter({
       component: () => import('@/views/Insurance/Index.vue'),
     },
     {
+      path: '/ovn',
+      name: 'ovn',
+      component: () => import('@/views/Ovn/Index.vue'),
+    },
+    {
       path: '/dashboard',
       name: 'dashboard',
       component: () => import('@/views/Dashboard/Index.vue'),
