@@ -40,6 +40,7 @@ export const WHITE_LIST_ODOS = {
     'Overnight Exchange',
     'Aerodrome Volatile',
     'Aerodrome Stable',
+    'BaseSwap',
     'Uniswap V3',
     'SynthSwap',
     'Maverick',
@@ -336,10 +337,7 @@ export const updateTokenValue = (
   const { selectedToken } = token;
 
   if (selectedToken) {
-    token.contractValue = originalBalance
-    || new BigNumber(value)
-      .times(10 ** selectedToken.decimals)
-      .toFixed(0);
+    token.contractValue = originalBalance;
 
     token.usdValue = new BigNumber(value)
       .times(selectedToken.price)
