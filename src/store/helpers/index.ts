@@ -337,7 +337,10 @@ export const updateTokenValue = (
   const { selectedToken } = token;
 
   if (selectedToken) {
-    token.contractValue = originalBalance;
+    token.contractValue = originalBalance
+    || new BigNumber(value)
+      .times(10 ** selectedToken.decimals)
+      .toFixed(0);
 
     token.usdValue = new BigNumber(value)
       .times(selectedToken.price)
