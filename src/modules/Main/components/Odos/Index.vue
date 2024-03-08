@@ -375,6 +375,10 @@ export default {
     },
   },
   async mounted() {
+    if (this.inputTokens.length === 0 || this.outputTokens.length === 0) {
+      this.clearForm();
+    }
+
     this.$store.commit('odosData/changeState', {
       field: 'baseViewType',
       val: this.viewType,
@@ -390,10 +394,6 @@ export default {
     });
 
     await this.init();
-
-    if (this.inputTokens.length === 0 && this.outputTokens.length === 0) {
-      this.clearForm();
-    }
 
     this.$store.commit('odosData/changeState', {
       field: 'isTokensLoadedAndFiltered',
