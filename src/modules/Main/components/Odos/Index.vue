@@ -319,6 +319,15 @@ export default {
         });
       }
     },
+    // on wallet connect
+    async account(val) {
+      if (val) this.clearForm();
+      if (!val) this.outputTokens = [getNewOutputToken()];
+    },
+    // for first render
+    async loadingWeb3(newVal) {
+      if (newVal) this.clearForm();
+    },
     async networkId(newVal) {
       if (newVal) {
         this.$store.commit('odosData/changeState', {
@@ -338,6 +347,7 @@ export default {
           tokenSeparationScheme: this.tokenSeparationScheme,
           listOfBuyTokensAddresses: this.listOfBuyTokensAddresses,
         });
+        this.clearForm();
         this.loadPricesInfo(newVal);
       }
     },
@@ -376,11 +386,6 @@ export default {
     },
   },
   async mounted() {
-    if (this.inputTokens.length === 0 || this.outputTokens.length === 0) {
-      console.log('MOUNTED');
-      this.clearForm();
-    }
-
     this.$store.commit('odosData/changeState', {
       field: 'baseViewType',
       val: this.viewType,
@@ -394,6 +399,11 @@ export default {
       field: 'isTokensLoadedAndFiltered',
       val: false,
     });
+
+    if (this.inputTokens.length === 0 || this.outputTokens.length === 0) {
+      console.log('MOUNTED');
+      this.clearForm();
+    }
 
     await this.init();
 
@@ -426,6 +436,7 @@ export default {
       'isAllLoaded',
       'isAllDataLoaded',
     ]),
+    ...mapGetters('web3', ['loadingWeb3']),
     ...mapGetters('accountData', ['account']),
     ...mapGetters('network', ['getParams', 'networkId', 'networkName']),
     ...mapGetters('gasPrice', ['gasPrice', 'gasPriceGwei']),
@@ -680,8 +691,6 @@ export default {
       this.updateQuotaInfo();
     },
     async init() {
-      // if (this.allTokensList.length > 0) this.clearForm();
-
       await this.loadChains();
       await this.loadTokens();
       await this.initContractData();
@@ -690,6 +699,20 @@ export default {
       bus.on(() => {
         this.finishTransaction();
       });
+
+      const busTokens = useEventBus('odos-tokens-loaded');
+      busTokens.on(() => {
+        if (this.firstRenderDone) return;
+        this.finishTransaction();
+      });
+    },
+    addDefaultUsdToken() {
+      const ovnSelectedToken: any = getDefaultSecondtoken(
+        this.tokenSeparationScheme,
+        this.allTokensList,
+        null,
+      );
+      this.addSelectedTokenToOutputList(ovnSelectedToken);
     },
     addDefaultOvnToken() {
       const symbol = this.$route.query.symbol ? this.$route.query.symbol : null;

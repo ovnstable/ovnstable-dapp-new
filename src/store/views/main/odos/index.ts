@@ -174,9 +174,7 @@ const actions = {
   async loadChains({
     commit, state,
   }: any) {
-    if (state.isChainsLoading) {
-      return;
-    }
+    if (state.isChainsLoading) return;
 
     commit('changeState', { field: 'isChainsLoading', val: true });
 
@@ -288,8 +286,7 @@ const actions = {
     if (rootState.accountData.account) {
       const ERC20 = await loadJSON('/contracts/ERC20.json');
       await dispatch('loadContractsForTokens', ERC20);
-
-      if (!state.firstRenderDone) await dispatch('loadBalances');
+      await dispatch('loadBalances');
 
       commit('changeState', { field: 'isTokensLoadedAndFiltered', val: true });
     } else {
@@ -328,6 +325,7 @@ const actions = {
   async loadBalances({
     commit, state, getters, rootState
   }: any, providerInstance: any) {
+    console.log('loadBalances');
     commit('changeState', { field: 'isBalancesLoading', val: true });
 
     if (!rootState.accountData.account) {
@@ -383,6 +381,9 @@ const actions = {
           };
         })
       );
+
+      const bus = useEventBus('odos-tokens-loaded');
+      bus.emit(true);
 
       await commit('changeBalances', newBalances);
 
