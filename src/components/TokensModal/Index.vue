@@ -29,6 +29,20 @@
         >
           <Spinner size="40px" />
         </div>
+        <div
+          v-else-if="tokens.length === 0"
+          class="tokens-container__empty"
+        >
+          <h1>Account not found, please connect Your wallet</h1>
+          <ButtonComponent
+            class="tokens__connect"
+            btn-size="large"
+            full
+            @on-click="connectWallet"
+          >
+            CONNECT
+          </ButtonComponent>
+        </div>
 
         <div v-else>
           <SelectTokenWithSearch
@@ -48,6 +62,7 @@
 import SelectTokenWithSearch from '@//components/TokensModal/SelectTokenWithSearch.vue';
 import ModalComponent from '@/components/Modal/Index.vue';
 import Spinner from '@/components/Spinner/Index.vue';
+import ButtonComponent from '@/components/Button/Index.vue';
 
 export default {
   name: 'SelectTokensModal',
@@ -55,8 +70,9 @@ export default {
     SelectTokenWithSearch,
     ModalComponent,
     Spinner,
+    ButtonComponent,
   },
-  emits: ['set-show', 'add-token-to-list', 'remove-token-from-list'],
+  emits: ['set-show', 'add-token-to-list', 'remove-token-from-list', 'connect-wallet'],
   props: {
     isShow: {
       type: Boolean,
@@ -94,6 +110,9 @@ export default {
     },
   },
   methods: {
+    connectWallet() {
+      this.$emit('connect-wallet', false);
+    },
     closeModal() {
       this.$emit('set-show', false);
     },
@@ -161,5 +180,19 @@ export default {
     border-color: var(--color-2);
     background-color: var(--color-17);
   }
+}
+
+.tokens-container__empty {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 400px;
+  padding: 15px 30px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.tokens__connect {
+  margin: auto auto 0 auto;
 }
 </style>

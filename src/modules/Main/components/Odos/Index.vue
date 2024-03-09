@@ -230,6 +230,7 @@
       @set-show="showSelectTokensModals"
       @add-token-to-list="addSelectedTokenToList"
       @remove-token-from-list="removeSelectedTokenFromList"
+      @connect-wallet="connectWalletTrigger"
     />
 
   </div>
@@ -376,6 +377,7 @@ export default {
   },
   async mounted() {
     if (this.inputTokens.length === 0 || this.outputTokens.length === 0) {
+      console.log('MOUNTED');
       this.clearForm();
     }
 
@@ -394,10 +396,6 @@ export default {
     });
 
     await this.init();
-
-    if (this.inputTokens.length === 0 || this.outputTokens.length === 0) {
-      this.clearForm();
-    }
 
     this.$store.commit('odosData/changeState', {
       field: 'isTokensLoadedAndFiltered',
@@ -647,6 +645,10 @@ export default {
     onLeaveList,
     beforeEnterList,
     onEnterList,
+    connectWalletTrigger() {
+      this.connectWallet();
+      this.showSelectTokensModals(false);
+    },
     changeSlippage(val: number) {
       this.slippagePercent = val;
     },
@@ -678,6 +680,8 @@ export default {
       this.updateQuotaInfo();
     },
     async init() {
+      // if (this.allTokensList.length > 0) this.clearForm();
+
       await this.loadChains();
       await this.loadTokens();
       await this.initContractData();

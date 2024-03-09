@@ -199,25 +199,26 @@ const actions = {
     }
 
     commit('changeState', { field: 'isTokensLoading', val: true });
-    await odosApiService
+
+    const odosTokens: any = await odosApiService
       .loadTokens()
-      .then((data: any) => {
-        commit('changeState', {
-          field: 'tokensMap',
-          val: {
-            chainTokenMap: {
-              ...data.chainTokenMap,
-              ...LINEA_TOKENS,
-              ...BLAST_TOKENS
-            },
-          }
-        });
-        commit('changeState', { field: 'isTokensLoading', val: false });
-      })
       .catch((e) => {
         console.log('Error load tokens', e);
         commit('changeState', { field: 'isTokensLoading', val: false });
       });
+
+    await commit('changeState', {
+      field: 'tokensMap',
+      val: {
+        chainTokenMap: {
+          ...odosTokens.chainTokenMap,
+          ...LINEA_TOKENS,
+          ...BLAST_TOKENS
+        },
+      }
+    });
+
+    commit('changeState', { field: 'isTokensLoading', val: false });
   },
 
   async initData(
@@ -233,6 +234,7 @@ const actions = {
     }
   ) {
     dispatch('clearInputData');
+    console.log('INIT1');
 
     if (!getters.isAvailableOnNetwork) {
       console.info(
@@ -290,6 +292,9 @@ const actions = {
       if (!state.firstRenderDone) await dispatch('loadBalances');
 
       commit('changeState', { field: 'isTokensLoadedAndFiltered', val: true });
+    } else {
+      commit('changeState', { field: 'firstRenderDone', val: true });
+      commit('changeState', { field: 'isBalancesLoading', val: false });
     }
   },
   loadContractsForTokens({
@@ -327,7 +332,6 @@ const actions = {
 
     if (!rootState.accountData.account) {
       commit('changeState', { field: 'isBalancesLoading', val: false });
-      commit('changeState', { field: 'firstRenderDone', val: true });
       return;
     }
 
