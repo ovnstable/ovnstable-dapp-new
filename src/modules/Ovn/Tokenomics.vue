@@ -222,4 +222,11 @@ export default {
     background: var(--color-2);
   }
 }
+
+@media (max-width: 768px) {
+  .ovn__overview-tokenomic-pools-all,
+  .ovn__overview-distribution-item p {
+    font-size: 14px;
+  }
+}
 </style>

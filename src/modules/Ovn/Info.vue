@@ -427,4 +427,21 @@ export default {
     background: var(--color-7);
   }
 }
+
+@media (max-width: 768px) {
+  .ovn__overview-price-title,
+  .ovn__overview-mc-title,
+  .ovn__overview-tvl-title,
+  .ovn__overview-price-up,
+  .ovn__overview-button {
+    font-size: 13px;
+  }
+  .ovn__overview-links-data p:nth-child(1),
+  .ovn__overview-price-change p:nth-child(1),
+  .ovn__overview-mc-change p:nth-child(1),
+  .ovn__overview-exact-chain p {
+    font-size: 17px;
+  }
+}
+
 </style>

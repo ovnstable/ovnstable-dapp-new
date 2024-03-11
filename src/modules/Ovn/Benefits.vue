@@ -106,4 +106,21 @@ export default {
     color: var(--color-1);
   }
 }
+
+@media (max-width: 768px) {
+  .ovn__overview-benefits {
+    padding: 8px 12px;
+    p {
+      font-size: 13px;
+    }
+  }
+  .ovn__overview-benefits > .ovn__overview-benefit:nth-child(1),
+  .ovn__overview-benefits > .ovn__overview-benefit:nth-child(3) {
+    max-width: 180px;
+  }
+
+  .ovn__overview-benefits > .ovn__overview-benefit:nth-child(2) {
+    max-width: 250px;
+  }
+}
 </style>
