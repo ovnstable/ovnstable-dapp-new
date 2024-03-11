@@ -25,26 +25,26 @@ export default {
       return this.$store.state.ovnTokenData.ovnTokenData || {};
     },
   },
-  // watch: {
-  //   '$store.state.network.ovnNetwork': {
-  //     immediate: true,
-  //     handler: function handleNetworkNameChange(newVal, oldVal) {
-  //       if (newVal !== oldVal) {
-  //         this.fetchDataForOVN(this.$store.state.network.ovnNetwork);
-  //       }
-  //     },
-  //   },
-  // },
+  watch: {
+    '$store.state.network.ovnNetwork': {
+      immediate: true,
+      handler: function handleNetworkNameChange(newVal, oldVal) {
+        if (newVal !== oldVal) {
+          console.log('changed ovn network');
+          this.fetchDataForOVN(this.$store.state.network.ovnNetwork);
+        }
+      },
+    },
+  },
   async mounted() {
-    await this.fetchDataForOVN();
+    await this.fetchDataForOVN(this.$store.state.network.ovnNetwork.toLowerCase());
   },
   methods: {
-    async fetchDataForOVN() {
+    async fetchDataForOVN(networkName: string) {
       this.loaded = false;
-      console.log('we are in fetchDataForOVN');
       try {
         await Promise.all([
-          this.$store.dispatch('ovnTokenData/fetchOVNTokenData'),
+          this.$store.dispatch('ovnTokenData/fetchOVNTokenData', { networkName }),
         ]);
         this.loaded = true;
         this.firstRender = false;

@@ -450,6 +450,33 @@ export const poolTokensForZapMap = {
   ],
 } as any;
 
+export const poolsForOVN = {
+  base: {
+    api: 'https://api.basescan.org/',
+    pools: [
+      { address: '0x61366A4e6b1DB1b85DD701f2f4BFa275EF271197' },
+    ],
+  },
+  optimism: {
+    api: 'https://api-optimistic.etherscan.io/',
+    pools: [
+      { address: '0x844D7d2fCa6786Be7De6721AabdfF6957ACE73a0' },
+    ],
+  },
+  arbitrum: {
+    api: 'https://api.arbiscan.io/',
+    pools: [
+      { },
+    ],
+  },
+  bsc: {
+    api: 'https://api.bscscan.com/',
+    pools: [
+      { },
+    ],
+  },
+} as any;
+
 export const zapPlatformSupportList = [
   // 'Chronos',
   'Thena',

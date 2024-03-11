@@ -12,7 +12,6 @@
       <p>{{ benefit.description }}</p>
     </div>
   </div>
-
 </template>
 
 <script lang="ts">
@@ -50,30 +49,52 @@ export default {
 
 <style lang="scss" scoped>
 .ovn__overview-benefits-title {
-	font-size: 17px;
-	color: var(--color-1);
-	font-weight: 500;
-	margin-top: 24px;
-	margin-bottom: 24px;
+  font-size: 17px;
+  color: var(--color-1);
+  font-weight: 500;
+  margin-top: 24px;
+  margin-bottom: 24px;
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
 }
 .ovn__overview-benefits {
-	background-color: var(--color-8);
-	border-radius: 5px;
-	display: flex;
-	flex-direction: row;
-	justify-content: space-between;
-	padding: 18px 24px;
+  background-color: var(--color-8);
+  border-radius: 5px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 18px 24px;
+  [data-theme="dark"] & {
+    background-color: var(--color-6);
+    p {
+      color: var(--color-4);
+    }
+    svg {
+      stroke: var(--color-4);
+      fill: var(--color-4);
+    }
+  }
+}
+
+.ovn__overview-benefits > .ovn__overview-benefit:nth-child(1),
+.ovn__overview-benefits > .ovn__overview-benefit:nth-child(3) {
+  max-width: 210px;
+}
+
+.ovn__overview-benefits > .ovn__overview-benefit:nth-child(2) {
+  max-width: 305px;
 }
 
 .ovn__overview-benefit {
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-	align-items: center;
-	text-align: center;
-	p {
-		font-size: 15px;
-		color: var(--color-1);
-	}
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  text-align: center;
+  p {
+    font-size: 15px;
+    color: var(--color-1);
+  }
 }
 </style>

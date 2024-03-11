@@ -36,8 +36,7 @@
     <div class="ovn__overview-mc">
       <p class="ovn__overview-mc-title">Market cap</p>
       <div class="ovn__overview-mc-change">
-        <p>{{marketCap}}</p>
-        <p>change last day</p>
+        <p>${{formatNumber(marketCap)}}</p>
       </div>
     </div>
     <div class="ovn__overview-divider" />
@@ -52,7 +51,7 @@
           />
         </div>
 
-        <p>00,000.00$</p>
+        <p>${{ formatNumber(tokenData.ovnTVL) }}</p>
       </div>
       <p>past 2 hours</p>
     </div>
@@ -106,7 +105,7 @@
       v-for="chain in availableChains"
       :key="chain"
       @click="saveNetworkToLocalStore(chain)"
-      @keydown.enter="saveNetworkToLocalStore(chain)"
+      @keypress="saveNetworkToLocalStore(chain)"
       class="ovn__overview-chain-data"
       :class="{ selected: (chain as any).toLowerCase() === networkName }"
     >
@@ -169,8 +168,11 @@ export default {
     },
     generateHref(tokenName: string, networkName: string) {
       const networkContracts = (chainContractsMap as any)[networkName.toLowerCase()];
-      const tokenInsurance = networkContracts[tokenName];
-      return tokenInsurance;
+      const tokenOvn = networkContracts[tokenName];
+      return tokenOvn;
+    },
+    formatNumber(value: any) {
+      return new Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value);
     },
   },
 };
@@ -200,6 +202,15 @@ export default {
 .ovn__overview-tvl-title {
   font-size: 15px;
   margin-bottom: 10px;
+  [data-theme="dark"] & {
+    color: var(--color-18);
+  }
+}
+.ovn__overview-tvl p:last-child,
+.ovn__overview-mc-change {
+  [data-theme="dark"] & {
+    color: var(--color-18);
+  }
 }
 .ovn__overview-mint-icon,
 .ovn__overview-bridge-icon,
@@ -230,6 +241,9 @@ export default {
   color: var(--color-1);
   font-weight: 500;
   margin-bottom: 10px;
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
 }
 
 .ovn__overview-exact-chain {
@@ -265,6 +279,19 @@ export default {
   flex-direction: column;
   align-items: flex-end;
   gap: 10px;
+
+  [data-theme="dark"] & {
+    svg:not(.insurance__mint-button) {
+      fill: var(--color-1);
+    }
+  }
+
+  .insurance__mint-button {
+    stroke: var(--color-1);
+    [data-theme="dark"] & {
+      fill: var(--color-4);
+    }
+  }
 }
 .ovn__overview-links-data p:nth-child(1) {
   margin-bottom: 10px;
@@ -275,6 +302,9 @@ export default {
 .ovn__overview-link-addr,
 .ovn__overview-link-cmc {
   font-size: 12px;
+  [data-theme="dark"] & {
+    color: var(--color-18);
+  }
 }
 
 .ovn__overview-price-down,

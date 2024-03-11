@@ -1,46 +1,30 @@
 <template>
   <p class="ovn__overview-tokenomics-title">OVN Tokenomics</p>
   <div class="ovn__overview-tokenomic">
-		<div class="ovn__overview-distribution">
+    <div class="ovn__overview-distribution">
       <div
-				class="ovn__overview-distribution-item"
-				v-for="benefit in benefits"
-				:key="`benefit-${benefit.name}`"
-			>
-				<div
-					class="ovn__overview-item-icon"
-					:style="{ 'background-color': benefit.color }"
-					/>
-				<p>{{ benefit.name }}</p>
-				<p>{{ benefit.percent }}</p>
-			</div>
-		</div>
-
+        class="ovn__overview-distribution-item"
+        v-for="benefit in benefits"
+        :key="`benefit-${benefit.name}`"
+      >
+        <div
+          class="ovn__overview-item-icon"
+          :style="{ 'background-color': benefit.color }"
+        />
+        <p>{{ benefit.name }}</p>
+        <p>{{ benefit.percent }}%</p>
+      </div>
+    </div>
     <BaseIcon name="Tokenomic" />
   </div>
   <div class="ovn__overview-tokenomic-pools">
-    <p>all ovn pools</p>
-    <div class="ovn__overview-chain-data-container">
-      <div
-        v-for="chain in availableChains"
-        :key="chain"
-        @click="saveNetworkToLocalStore(chain)"
-        @keydown.enter="saveNetworkToLocalStore(chain)"
-        class="ovn__overview-chain-data"
-        :class="{ selected: (chain as any).toLowerCase() === networkName }"
-      >
-        <BaseIcon
-          :name="chain.toLocaleLowerCase()"
-        />
-      </div>
-    </div>
+    <p class="ovn__overview-tokenomic-pools-all">ALL OVN POOLS</p>
   </div>
 
 </template>
 
 <script lang="ts">
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
-import { chainContractsMap } from '@/utils/contractsMap.ts';
 
 export default {
   name: 'OvnTokenomics',
@@ -53,22 +37,6 @@ export default {
     },
     networkScan() {
       return this.$store.state.network.ovnExplorerURL;
-    },
-    availableChains() {
-      const availableNetworks = Object.entries(chainContractsMap)
-        .reduce((acc: string[], [network, contracts]: [string, any]) => {
-          if (contracts.ovn) {
-            acc.push(network.charAt(0).toUpperCase() + network.slice(1));
-          }
-          return acc;
-        }, []);
-
-      return availableNetworks;
-    },
-  },
-  methods: {
-    saveNetworkToLocalStore(chain: string) {
-      this.$store.dispatch('network/changeOvnNetwork', chain.toLowerCase());
     },
   },
   data() {
@@ -114,31 +82,64 @@ export default {
 <style lang="scss" scoped>
 
 .ovn__overview-tokenomics-title {
-	font-size: 17px;
-	color: var(--color-1);
-	font-weight: 500;
-	margin-top: 24px;
-	margin-bottom: 24px;
+  font-size: 17px;
+  color: var(--color-1);
+  font-weight: 500;
+  margin-top: 24px;
+  margin-bottom: 24px;
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
 }
 
 .ovn__overview-tokenomic {
-	display: flex;
-	flex-direction: row;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
 }
+
 .ovn__overview-distribution {
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-right: 10px;
 }
 .ovn__overview-distribution-item {
-	gap: 4px;
-	display: flex;
-	flex-direction: row;
-	p {
-		font-size: 15px;
-		color: var(--color-1);
-		font-weight: 400;
-	}
+  gap: 4px;
+  display: flex;
+  flex-direction: row;
+  p {
+    font-size: 15px;
+    color: var(--color-1);
+    font-weight: 400;
+  }
+  [data-theme="dark"] & {
+    p {
+      color: var(--color-4);
+    }
+  }
+}
+.ovn__overview-tokenomic-pools-all {
+  font-size: 15px;
+  color: var(--color-1);
+  font-weight: 500;
+  background-color: var(--color-6);
+  padding: 6px 22px;
+  display: flex;
+  align-items: center;
+  border-radius: 30px;
+  border: 1px solid var(--color-1);
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
+}
+.slider__token-image {
+  width: 214px;
+  height: 214px;
+  svg {
+    width: 214px;
+    height: 214px;
+  }
 }
 .ovn__overview-item-icon {
   width: 14px;
@@ -148,6 +149,7 @@ export default {
 }
 
 .ovn__overview-tokenomic-pools {
+  margin-top: 24px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;

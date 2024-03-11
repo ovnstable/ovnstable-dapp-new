@@ -22,7 +22,10 @@
         :set-order-type-func="setOrderType"
         :order-type="orderType"
       >
-        <template #filters>
+        <template
+          v-if="!isOverview"
+          #filters
+        >
           <PoolsFilter
             :selected-network="selectedTabs"
             @change-tab="changePoolsTab"
@@ -91,6 +94,10 @@ export default {
   props: {
     type: {
       type: String,
+      required: true,
+    },
+    isOverview: {
+      type: Boolean,
       required: true,
     },
   },

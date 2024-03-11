@@ -1,7 +1,10 @@
 <template>
   <div class="main-module">
     <MainModule />
-    <PoolsContainer :type="'ALL'" />
+    <PoolsContainer
+      :type="'ALL'"
+      :isOverview="false"
+    />
   </div>
 </template>
 

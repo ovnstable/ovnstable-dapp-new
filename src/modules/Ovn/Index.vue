@@ -18,6 +18,13 @@
       <OvnBenefits />
       <OvnTokenomics />
     </div>
+    <div class="ovn__pools">
+      <PoolsContainer
+        :type="'ALL'"
+        :isOverview="true"
+        class="ovn__pools-inner"
+      />
+    </div>
   </div>
 
 </template>
@@ -25,8 +32,9 @@
 <script lang="ts">
 import OvnInfo from '@/modules/Ovn/Info.vue';
 import OvnBenefits from '@/modules/Ovn/Benefits.vue';
-import OvnTokenomics from '@/modules/Ovn/Tokenomics.vue'
-// import Spinner from '@/components/Spinner/Index.vue';
+import OvnTokenomics from '@/modules/Ovn/Tokenomics.vue';
+import Spinner from '@/components/Spinner/Index.vue';
+import PoolsContainer from '@/modules/Main/components/PoolsTable/Index.vue';
 
 export default {
   name: 'OvnPage',
@@ -34,7 +42,8 @@ export default {
     OvnInfo,
     OvnBenefits,
     OvnTokenomics,
-    // Spinner,
+    Spinner,
+    PoolsContainer,
   },
   props: {
     tokenData: {
@@ -104,7 +113,7 @@ export default {
   z-index: 1;
 }
 
-.ovn__payouts {
+.ovn__pools {
   width: 100%;
   background: var(--color-8);
   z-index: -1;
@@ -138,6 +147,24 @@ export default {
   padding-bottom: 50vh;
   [data-theme="dark"] & {
     background-color: var(--color-19);
+  }
+}
+
+.ovn__pools {
+  width: 100%;
+  background: var(--color-8);
+  z-index: -1;
+  margin-top: -10px;
+  border-radius: 0px 0px 30px 30px;
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
+}
+
+.ovn__pools-inner {
+  border-radius: 0px 0px 30px 30px;
+  [data-theme="dark"] & {
+    border-color: var(--color-2);
   }
 }
 
