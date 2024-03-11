@@ -188,9 +188,8 @@ export default {
       return false;
     },
     requestRequired() {
-      if (this.insuranceRedemptionData.request === 'CAN_WITHDRAW') {
-        return false;
-      }
+      if (this.insuranceRedemptionData.request === 'NEED_WAIT') return false;
+      if (this.insuranceRedemptionData.request === 'CAN_WITHDRAW') return false;
       if (this.selectedAction === 'redeem' && !this.redemptionRequestSent) return true;
       return false;
     },

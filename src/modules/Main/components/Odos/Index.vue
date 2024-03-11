@@ -321,12 +321,12 @@ export default {
     },
     // on wallet connect
     async account(val) {
-      if (val) this.clearForm();
+      if (val) this.clearForm('000');
       if (!val) this.outputTokens = [getNewOutputToken()];
     },
     // for first render
     async loadingWeb3(newVal) {
-      if (newVal) this.clearForm();
+      if (newVal) this.clearForm('0');
     },
     async networkId(newVal) {
       if (newVal) {
@@ -347,7 +347,7 @@ export default {
           tokenSeparationScheme: this.tokenSeparationScheme,
           listOfBuyTokensAddresses: this.listOfBuyTokensAddresses,
         });
-        this.clearForm();
+        this.clearForm('1');
         this.loadPricesInfo(newVal);
       }
     },
@@ -373,11 +373,8 @@ export default {
     sumOfAllSelectedTokensInUsd() {
       this.recalculateOutputTokensSum();
     },
-    isTokensLoadedAndFiltered(val) {
-      if (val) this.clearForm();
-    },
     firstRenderDone(val) {
-      if (val) this.clearForm();
+      if (val) this.clearForm('3');
     },
     hideSwapButton(val) {
       if (val) {
@@ -400,9 +397,9 @@ export default {
       val: false,
     });
 
-    if (this.inputTokens.length === 0 || this.outputTokens.length === 0) {
+    if (this.inputTokens.length === 0 && this.outputTokens.length === 0) {
       console.log('MOUNTED');
-      this.clearForm();
+      this.clearForm('4');
     }
 
     await this.init();
@@ -841,11 +838,11 @@ export default {
 
     finishTransaction() {
       console.log('finishTransaction');
-      this.clearForm();
+      this.clearForm('5');
     },
 
-    clearForm() {
-      console.log('CLEAFORM');
+    clearForm(val: string) {
+      console.log(val, 'CLEAFORM');
       this.clearAllSelectedTokens();
 
       if (this.swapMethod === 'BUY') {

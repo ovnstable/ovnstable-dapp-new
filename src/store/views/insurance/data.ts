@@ -198,7 +198,7 @@ const actions = {
 
       let date = await contract.withdrawRequests(account);
       try {
-        date = parseFloat('1709625027');
+        date = parseFloat(date);
       } catch (e) {
         date = null;
       }
