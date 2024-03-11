@@ -1,5 +1,9 @@
 <template>
   <p class="ovn__overview-benefits-title">BENEFIT FROM OVN TOKEN</p>
+  <BaseIcon
+    name="Tokenomic"
+    class="ovn__overview-tokenomic"
+  />
   <div class="ovn__overview-benefits">
     <div
       class="ovn__overview-benefit"
@@ -48,6 +52,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.ovn__overview-tokenomic {
+  display: none;
+}
+
 .ovn__overview-benefits-title {
   font-size: 17px;
   color: var(--color-1);
@@ -58,6 +66,7 @@ export default {
     color: var(--color-4);
   }
 }
+
 .ovn__overview-benefits {
   background-color: var(--color-8);
   border-radius: 5px;

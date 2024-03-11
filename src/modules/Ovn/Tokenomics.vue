@@ -101,7 +101,7 @@ export default {
 .ovn__overview-distribution {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 20px;
   margin-right: 10px;
 }
 .ovn__overview-distribution-item {

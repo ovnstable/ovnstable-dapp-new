@@ -14,6 +14,7 @@
     >
       <OvnInfo
         :token-data="tokenData"
+        :loaded="loaded"
       />
       <OvnBenefits />
       <OvnTokenomics />

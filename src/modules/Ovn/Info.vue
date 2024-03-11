@@ -1,6 +1,17 @@
 <template>
 
-  <div class="ovn__overview">
+  <div
+    v-if="!loaded"
+  >
+    <div class="ovn__loader">
+      <Spinner />
+    </div>
+
+  </div>
+  <div
+    v-else
+    class="ovn__overview"
+  >
     <div class="ovn__overview-links">
       <BaseIcon
         class='ovn__overview-links-image'
@@ -121,17 +132,23 @@
 import ButtonComponent from '@/components/Button/Index.vue';
 import { chainContractsMap } from '@/utils/contractsMap.ts';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import Spinner from '@/components/Spinner/Index.vue';
 
 export default {
   name: 'OvnInfo',
   components: {
     ButtonComponent,
     BaseIcon,
+    Spinner,
   },
   props: {
     tokenData: {
       type: Object,
       default: () => ({}),
+    },
+    loaded: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {
@@ -180,6 +197,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.ovn__loader {
+  min-height: 102px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
 .ovn__overview {
   display: flex;
