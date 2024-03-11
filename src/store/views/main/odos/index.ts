@@ -174,9 +174,7 @@ const actions = {
   async loadChains({
     commit, state,
   }: any) {
-    if (state.isChainsLoading) {
-      return;
-    }
+    if (state.isChainsLoading) return;
 
     commit('changeState', { field: 'isChainsLoading', val: true });
 
@@ -199,25 +197,26 @@ const actions = {
     }
 
     commit('changeState', { field: 'isTokensLoading', val: true });
-    await odosApiService
+
+    const odosTokens: any = await odosApiService
       .loadTokens()
-      .then((data: any) => {
-        commit('changeState', {
-          field: 'tokensMap',
-          val: {
-            chainTokenMap: {
-              ...data.chainTokenMap,
-              ...LINEA_TOKENS,
-              ...BLAST_TOKENS
-            },
-          }
-        });
-        commit('changeState', { field: 'isTokensLoading', val: false });
-      })
       .catch((e) => {
         console.log('Error load tokens', e);
         commit('changeState', { field: 'isTokensLoading', val: false });
       });
+
+    await commit('changeState', {
+      field: 'tokensMap',
+      val: {
+        chainTokenMap: {
+          ...odosTokens.chainTokenMap,
+          ...LINEA_TOKENS,
+          ...BLAST_TOKENS
+        },
+      }
+    });
+
+    commit('changeState', { field: 'isTokensLoading', val: false });
   },
 
   async initData(
@@ -233,6 +232,7 @@ const actions = {
     }
   ) {
     dispatch('clearInputData');
+    console.log('INIT1');
 
     if (!getters.isAvailableOnNetwork) {
       console.info(
@@ -254,13 +254,6 @@ const actions = {
   }: any) {
     console.log('init pool swap data for network: ');
     const { networkId } = getNetworkParams(rootState.network.networkName);
-
-    if (state.tokens.length > 0) {
-      await commit('changeState', {
-        field: 'tokens',
-        val: []
-      });
-    }
 
     await commit('changeState', {
       field: 'tokens',
@@ -293,10 +286,12 @@ const actions = {
     if (rootState.accountData.account) {
       const ERC20 = await loadJSON('/contracts/ERC20.json');
       await dispatch('loadContractsForTokens', ERC20);
-
-      if (!state.firstRenderDone) await dispatch('loadBalances');
+      await dispatch('loadBalances');
 
       commit('changeState', { field: 'isTokensLoadedAndFiltered', val: true });
+    } else {
+      commit('changeState', { field: 'firstRenderDone', val: true });
+      commit('changeState', { field: 'isBalancesLoading', val: false });
     }
   },
   loadContractsForTokens({
@@ -330,12 +325,11 @@ const actions = {
   async loadBalances({
     commit, state, getters, rootState
   }: any, providerInstance: any) {
-    console.log(providerInstance, 'LOADBALANCES');
+    console.log('loadBalances');
     commit('changeState', { field: 'isBalancesLoading', val: true });
 
     if (!rootState.accountData.account) {
       commit('changeState', { field: 'isBalancesLoading', val: false });
-      commit('changeState', { field: 'firstRenderDone', val: true });
       return;
     }
 
@@ -388,15 +382,13 @@ const actions = {
         })
       );
 
-      await commit('changeState', {
-        field: 'tokens',
-        val: newBalances
-      });
+      const bus = useEventBus('odos-tokens-loaded');
+      bus.emit(true);
+
+      await commit('changeBalances', newBalances);
 
       commit('changeState', { field: 'isBalancesLoading', val: false });
       commit('changeState', { field: 'firstRenderDone', val: true });
-      // here to update initialized balances of tokens
-      useEventBus('odos-transaction-finished').emit(true);
     } catch (e) {
       console.error('Error when load balance', e);
       commit('changeState', { field: 'isBalancesLoading', val: false });
@@ -743,6 +735,15 @@ const mutations = {
     val: any
   }) {
     state[data.field] = data.val;
+  },
+  changeBalances(state: any, tokensBalances: any[]) {
+    const balancesArr = state.tokens.map((_: any) => _.id);
+    tokensBalances.forEach((tok: any) => {
+      const index = balancesArr.indexOf(tok.id);
+      if (index === -1 || !state.tokens[index]) return;
+
+      state.tokens[index].balanceData = tok.balanceData;
+    });
   },
 };
 

@@ -73,3 +73,5 @@ export const awaitDelay = async (time: number) => new Promise((res) => setTimeou
 export const OVN_TOKENS = ['USD+', 'DAI+', 'USDT+', 'USDC+', 'ETH+', 'OVN', 'wETH+', 'wUSD+'];
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
+
+export const DEFAULT_CHAIN = 8453;

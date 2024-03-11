@@ -7,11 +7,11 @@
     <div
       v-else
       :class="
-        !isAllLoaded ? 'swap-container swap-container-full' : 'swap-container'
+        !firstRenderDone ? 'swap-container swap-container-full' : 'swap-container'
       "
     >
       <div
-        v-if="!isAllLoaded"
+        v-if="!firstRenderDone"
         class="swap-form__loader"
       >
         <Spinner />
@@ -230,6 +230,7 @@
       @set-show="showSelectTokensModals"
       @add-token-to-list="addSelectedTokenToList"
       @remove-token-from-list="removeSelectedTokenFromList"
+      @connect-wallet="connectWalletTrigger"
     />
 
   </div>
@@ -318,6 +319,15 @@ export default {
         });
       }
     },
+    // on wallet connect
+    async account(val) {
+      if (val) this.clearForm('000');
+      if (!val) this.outputTokens = [getNewOutputToken()];
+    },
+    // for first render
+    async loadingWeb3(newVal) {
+      if (newVal) this.clearForm('0');
+    },
     async networkId(newVal) {
       if (newVal) {
         this.$store.commit('odosData/changeState', {
@@ -337,6 +347,7 @@ export default {
           tokenSeparationScheme: this.tokenSeparationScheme,
           listOfBuyTokensAddresses: this.listOfBuyTokensAddresses,
         });
+        this.clearForm('1');
         this.loadPricesInfo(newVal);
       }
     },
@@ -362,8 +373,8 @@ export default {
     sumOfAllSelectedTokensInUsd() {
       this.recalculateOutputTokensSum();
     },
-    isTokensLoadedAndFiltered(val) {
-      if (val) this.clearForm();
+    firstRenderDone(val) {
+      if (val) this.clearForm('3');
     },
     hideSwapButton(val) {
       if (val) {
@@ -386,11 +397,12 @@ export default {
       val: false,
     });
 
-    await this.init();
-
     if (this.inputTokens.length === 0 && this.outputTokens.length === 0) {
-      this.clearForm();
+      console.log('MOUNTED');
+      this.clearForm('4');
     }
+
+    await this.init();
 
     this.$store.commit('odosData/changeState', {
       field: 'isTokensLoadedAndFiltered',
@@ -412,6 +424,7 @@ export default {
       'listOfBuyTokensAddresses',
       'dataBeInited',
       'isBalancesLoading',
+      'firstRenderDone',
     ]),
     ...mapGetters('odosData', [
       'allTokensList',
@@ -420,6 +433,7 @@ export default {
       'isAllLoaded',
       'isAllDataLoaded',
     ]),
+    ...mapGetters('web3', ['loadingWeb3']),
     ...mapGetters('accountData', ['account']),
     ...mapGetters('network', ['getParams', 'networkId', 'networkName']),
     ...mapGetters('gasPrice', ['gasPrice', 'gasPriceGwei']),
@@ -639,6 +653,10 @@ export default {
     onLeaveList,
     beforeEnterList,
     onEnterList,
+    connectWalletTrigger() {
+      this.connectWallet();
+      this.showSelectTokensModals(false);
+    },
     changeSlippage(val: number) {
       this.slippagePercent = val;
     },
@@ -646,15 +664,27 @@ export default {
       this.inputTokens = maxAll(this.selectedInputTokens, this.checkApproveForToken);
       this.updateQuotaInfo();
     },
-    updateTokenValueMethod(token: any) {
-      const newToken = updateTokenValue(
-        token,
-        token.value,
-        this.checkApproveForToken,
-      );
+    updateTokenValueMethod(tokenData: any) {
+      let currToken = null;
 
-      const indexOf = this.inputTokens.map((_) => _.id).indexOf(newToken.id);
-      this.inputTokens[indexOf] = newToken;
+      if (tokenData.isMaxBal) {
+        currToken = updateTokenValue(
+          tokenData,
+          tokenData.value,
+          this.checkApproveForToken,
+          tokenData.selectedToken.balanceData.originalBalance,
+        );
+      } else {
+        currToken = updateTokenValue(
+          tokenData,
+          tokenData.value,
+          this.checkApproveForToken,
+        );
+      }
+
+      delete currToken.isMaxBal;
+      const indexOf = this.inputTokens.map((_) => _.id).indexOf(currToken.id);
+      this.inputTokens[indexOf] = currToken;
       this.updateQuotaInfo();
     },
     async init() {
@@ -666,6 +696,20 @@ export default {
       bus.on(() => {
         this.finishTransaction();
       });
+
+      const busTokens = useEventBus('odos-tokens-loaded');
+      busTokens.on(() => {
+        if (this.firstRenderDone) return;
+        this.finishTransaction();
+      });
+    },
+    addDefaultUsdToken() {
+      const ovnSelectedToken: any = getDefaultSecondtoken(
+        this.tokenSeparationScheme,
+        this.allTokensList,
+        null,
+      );
+      this.addSelectedTokenToOutputList(ovnSelectedToken);
     },
     addDefaultOvnToken() {
       const symbol = this.$route.query.symbol ? this.$route.query.symbol : null;
@@ -794,10 +838,11 @@ export default {
 
     finishTransaction() {
       console.log('finishTransaction');
-      this.clearForm();
+      this.clearForm('5');
     },
 
-    clearForm() {
+    clearForm(val: string) {
+      console.log(val, 'CLEAFORM');
       this.clearAllSelectedTokens();
 
       if (this.swapMethod === 'BUY') {
@@ -1247,8 +1292,6 @@ export default {
 
       await tx.wait();
       finishTx();
-
-      console.log(tx, '---tx');
     },
 
     getRequestInputTokens(ignoreNullable?: any) {
