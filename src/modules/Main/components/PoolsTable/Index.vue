@@ -86,6 +86,7 @@ import PoolsFilter from '@/modules/Main/components/PoolsTable/PoolsFilter.vue';
 import PoolsTable from '@/components/PoolsTable/Index.vue';
 import TableSkeleton from '@/components/TableSkeleton/Index.vue';
 import dayjs from 'dayjs';
+import type { PropType } from 'vue';
 
 dayjs.extend(utc);
 
@@ -93,7 +94,7 @@ export default {
   name: 'PoolsContainer',
   props: {
     type: {
-      type: String,
+      type: Number as PropType<poolTypes>,
       required: true,
     },
     isOverview: {
@@ -315,11 +316,12 @@ export default {
     },
   },
   async mounted() {
-    if (this.type === 'OVN') {
+    if (this.type === poolTypes.OVN) {
       this.changeState({
         field: 'typeOfPool',
         val: 'OVN',
       });
+      this.poolTabType = poolTypes.OVN;
     } else {
       this.changeState({
         field: 'typeOfPool',

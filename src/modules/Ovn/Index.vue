@@ -21,7 +21,7 @@
     </div>
     <div class="ovn__pools">
       <PoolsContainer
-        :type="'ALL'"
+        :type="poolTypes.OVN"
         :isOverview="true"
         class="ovn__pools-inner"
       />
@@ -36,6 +36,7 @@ import OvnBenefits from '@/modules/Ovn/Benefits.vue';
 import OvnTokenomics from '@/modules/Ovn/Tokenomics.vue';
 import Spinner from '@/components/Spinner/Index.vue';
 import PoolsContainer from '@/modules/Main/components/PoolsTable/Index.vue';
+import { poolTypes } from '@/modules/Main/components/PoolsTable/types/index.ts';
 
 export default {
   name: 'OvnPage',
@@ -45,6 +46,11 @@ export default {
     OvnTokenomics,
     Spinner,
     PoolsContainer,
+  },
+  data() {
+    return {
+      poolTypes,
+    };
   },
   props: {
     tokenData: {
