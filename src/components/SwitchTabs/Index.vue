@@ -40,13 +40,23 @@ export default {
       default: 'default',
       type: String as PropType<TSize>,
     },
+    activeTab: {
+      default: -1,
+      type: Number,
+    },
   },
 
   data() {
     return {
-      activeItem: 0,
+      activeItem: -1,
       uid: '',
     };
+  },
+  watch: {
+    activeTab(val) {
+      console.log(val, '----val');
+      this.activeItem = val;
+    },
   },
   computed: {
     parentId() {
@@ -66,10 +76,8 @@ export default {
   },
 
   mounted() {
-    if (this.tabs.length) {
-      this.activeItem = this.tabs[0].id;
-      this.onTabClick(this.activeItem);
-    }
+    this.activeItem = this.activeTab;
+    console.log(this.activeTab, 'ACTIVETAB');
   },
 
   methods: {

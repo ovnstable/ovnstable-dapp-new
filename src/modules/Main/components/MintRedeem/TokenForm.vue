@@ -97,6 +97,11 @@ import { formatMoney, fixedByPrice } from '@/utils/numbers.ts';
 import TokensChooseForm from '@/modules/Main/components/MintRedeem/TokenSelect/Index.vue';
 import BigNumber from 'bignumber.js';
 
+// import {
+//   wrapStatus,
+// } from '@/modules/Main/components/MintRedeem/types/index.ts';
+// import { MINTREDEEM_SCHEME } from '@/store/views/main/mintRedeem/mocks';
+
 export default {
   name: 'TokenForm',
   components: {
@@ -122,6 +127,11 @@ export default {
       type: Boolean,
       required: false,
       default: false,
+    },
+    activeWrap: {
+      type: Number,
+      required: true,
+      default: -1,
     },
     activeMint: {
       type: Boolean,
@@ -150,6 +160,10 @@ export default {
     },
     tokensList() {
       const list = this.tokensListGetter[this.networkId];
+
+      // if (this.activeWrap === wrapStatus.WRAP) {
+      //   console.log(list, '----inputList');
+      // }
 
       if (list && this.isInputToken) {
         const inputList = list

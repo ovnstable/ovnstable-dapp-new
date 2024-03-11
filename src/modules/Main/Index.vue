@@ -4,6 +4,7 @@
       <TabsComponent
         :tabs="tabsData"
         :active-tab="activeTab"
+        :key="activeTab"
         @tab-change="changeTab"
       >
         <SwapForm
@@ -41,7 +42,7 @@
 </template>
 
 <script lang="ts">
-import { mapActions } from 'vuex';
+import { mapActions, mapState, mapGetters } from 'vuex';
 import MintRedeemForm from '@/modules/Main/components/MintRedeem/Index.vue';
 import SliderComponent from '@/modules/Main/components/Slider/Index.vue';
 import TabsComponent from '@/components/Tabs/Index.vue';
@@ -91,6 +92,21 @@ export default {
     onTabChange.on((tabIndex) => {
       this.activeTab = tabIndex;
     });
+  },
+  watch: {
+    networkName: {
+      handler(val) {
+        const isAvail = this.availableNetworksList.includes(val);
+        console.log(isAvail, '---isAvailableOnNetwork');
+
+        if (!isAvail) this.changeTab(1);
+      },
+      immediate: true,
+    },
+  },
+  computed: {
+    ...mapGetters('network', ['networkName']),
+    ...mapState('odosData', ['availableNetworksList']),
   },
   methods: {
     ...mapActions('swapModal', ['showSwapModal', 'showMintView']),

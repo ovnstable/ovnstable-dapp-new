@@ -3,11 +3,13 @@
     <div class="mintredeem-form__row">
       <SwitchTabs
         :tabs="mintTabs"
+        :active-tab="activeMintTab"
         @tab-change="changeMintTab"
       />
       <h1>You mint</h1>
       <SwitchTabs
         :tabs="wrapTabs"
+        :active-tab="activeWrapTab"
         @tab-change="changeWrapTab"
       />
     </div>
@@ -17,6 +19,7 @@
         :is-token-removable="true"
         :is-input-token="true"
         :active-mint="isMintActive"
+        :active-wrap="activeWrapTab"
         @add-token="selectFormToken"
         @update-token="updateTokenValueMethod"
       />
@@ -25,6 +28,7 @@
         :is-token-removable="true"
         :is-input-token="false"
         :active-mint="isMintActive"
+        :active-wrap="activeWrapTab"
         @add-token="selectFormToken"
       />
     </div>
@@ -35,7 +39,7 @@
         <span>0.04%</span>
       </div>
       <div class="mintredeem-form__row-item">
-        <h1>You {{ activeMintTab ? "mint" : "redeem" }}</h1>
+        <h1>You {{ swapMsg }}</h1>
         <span>${{ estimateResult }}</span>
       </div>
       <div class="mintredeem-form__row-item">
@@ -129,8 +133,8 @@ export default {
       mintRedeemStep,
       inputToken: getNewInputToken(),
       outputToken: getNewInputToken(),
-      activeMintTab: 0,
-      activeWrapTab: 0,
+      activeMintTab: mintStatus.MINT as mintStatus | -1,
+      activeWrapTab: -1,
       allTokensList: [],
       isAllDataLoaded: false,
       approveLoading: false,
@@ -190,9 +194,22 @@ export default {
       return this.activeMintTab === 0;
     },
 
+    isWrapActive() {
+      return this.activeWrapTab === 0;
+    },
+
     estimateResult() {
       if (!this.inputToken.symbol || !this.inputToken.value) return '0.00';
       return new BigNumber(this.inputToken.value).times(0.9996).toFixed(6);
+    },
+
+    swapMsg() {
+      if (this.activeMintTab === mintStatus.MINT) return 'mint';
+      if (this.activeMintTab === mintStatus.REDEEM) return 'redeem';
+      if (this.activeWrapTab === wrapStatus.WRAP) return 'wrap';
+      if (this.activeWrapTab === wrapStatus.UNWRAP) return 'unwrap';
+
+      return '';
     },
 
   },
@@ -333,9 +350,11 @@ export default {
     },
     changeWrapTab(id: number) {
       this.activeWrapTab = id;
+      this.activeMintTab = -1;
     },
     changeMintTab(id: number) {
       this.activeMintTab = id;
+      this.activeWrapTab = -1;
     },
 
     getContractMethodWithParams(
