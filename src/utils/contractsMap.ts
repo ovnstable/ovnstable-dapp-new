@@ -132,6 +132,7 @@ export const chainContractsMap = {
     usdc: '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d', // pegged usdc
     wrapped: '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d', // pegged usdc
     usdt: '0x55d398326f99059fF775485246999027B3197955', // pegged usdt
+    ovn: '0x259b30c916e440fb79747cd559207ffdabbae057',
   },
   polygon: {
     usdPlus: {
