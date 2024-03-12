@@ -137,18 +137,6 @@ export const poolTokensForZapMap = {
     },
   ],
 
-  // Ramses
-  '0xeb9153afbaa3a6cfbd4fce39988cea786d3f62bb': [
-    {
-      name: 'USD+',
-      address: '0xe80772Eaf6e2E18B651F160Bc9158b2A5caFCA65',
-    },
-    {
-      name: 'DAI+',
-      address: '0xeb8E93A0c7504Bffd8A8fFa56CD754c63aAeBFe8',
-    },
-  ],
-
   // Demeter Sperax TODO: TOKEN ADDRESSES need to update
   '0x9be8026c5c55a3d5513d4c6607355b3678c0afdb': [
     {
@@ -427,18 +415,18 @@ export const poolTokensForZapMap = {
   ],
 
   // PANCAKE ZAPS
-  '0xd01075f7314a6436e8b74fc18069848229d0c555': [
-    {
-      name: 'USD+',
-      address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
-    },
+  '0x721F37495cD70383B0A77Bf1eB8f97eef29498Bb': [
     {
       name: 'USDC',
       address: '0xff970a61a04b1ca14834a43f5de4533ebddb5cc8',
     },
+    {
+      name: 'USD+',
+      address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
+    },
   ],
 
-  '0xb9c2d906f94b27bc403ab76b611d2c4490c2ae3f': [
+  '0x8a06339Abd7499Af755DF585738ebf43D5D62B94': [
     {
       name: 'USDT+',
       address: chainContractsMap.arbitrum.usdtPlus.tokenPlus,

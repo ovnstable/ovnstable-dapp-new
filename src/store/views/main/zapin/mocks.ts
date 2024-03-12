@@ -265,17 +265,17 @@ export const poolsInfoMap: any = {
   },
 
   // PANCAKE
-  '0xd01075f7314a6436e8b74fc18069848229d0c555': {
+  '0x721F37495cD70383B0A77Bf1eB8f97eef29498Bb': {
     // usdc/usd+
-    gauge: '0xd01075f7314a6436e8b74fc18069848229d0c555',
+    gauge: '0x721F37495cD70383B0A77Bf1eB8f97eef29498Bb',
     gaugeForLP: '0x46A15B0b27311cedF172AB29E4f4766fbE7F4364',
     approveType: 'NFT',
     // pool token differ from pool address
     poolTokenType: 'DIFFERENT',
   },
-  '0xb9c2d906f94b27bc403ab76b611d2c4490c2ae3f': {
+  '0x8a06339Abd7499Af755DF585738ebf43D5D62B94': {
     // usdt+/usd+
-    gauge: '0xb9c2d906f94b27bc403ab76b611d2c4490c2ae3f',
+    gauge: '0x8a06339Abd7499Af755DF585738ebf43D5D62B94',
     gaugeForLP: '0x46A15B0b27311cedF172AB29E4f4766fbE7F4364',
     approveType: 'NFT',
     // pool token differ from pool address
@@ -354,12 +354,12 @@ export const zapPlatformContractTypeMap: any = {
     type: 'LP_STAKE_DIFF_STEPS',
     typeOfDepositConstructor: 'BASE_CONSTRUCTOR',
   },
-  '0xd01075f7314a6436e8b74fc18069848229d0c555': {
+  '0x721F37495cD70383B0A77Bf1eB8f97eef29498Bb': {
     name: 'Pancake8020',
     type: 'LP_STAKE_DIFF_STEPS',
     typeOfDepositConstructor: 'CONSTRUCTOR_WITH_NFT_ID',
   },
-  '0xb9c2d906f94b27bc403ab76b611d2c4490c2ae3f': {
+  '0x8a06339Abd7499Af755DF585738ebf43D5D62B94': {
     name: 'PancakeEqual',
     type: 'LP_STAKE_DIFF_STEPS',
     typeOfDepositConstructor: 'CONSTRUCTOR_WITH_NFT_ID',

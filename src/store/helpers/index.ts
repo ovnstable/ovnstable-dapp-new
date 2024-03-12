@@ -272,6 +272,11 @@ export const getTokenBySymbol = (
   tokensList: any[],
 ) => tokensList.find((_) => _.symbol === symbol);
 
+export const getTokenByAddress = (
+  address: string,
+  tokensList: any[],
+) => tokensList.find((_) => _.address.toLowerCase() === address.toLowerCase());
+
 export const getDefaultSecondtoken = (
   tokenSeparationScheme: string,
   tokensList: any[],
