@@ -10,31 +10,38 @@
       <div
         class="tokens-modal__header"
       >
-        <div v-if="isOvnSwap">
-          <h1
-            v-if="selectTokenInput"
-          >
-            Select Input token
-          </h1>
-          <h1
-            v-else
-          >
-            Select Output token
-          </h1>
-        </div>
-        <div v-else>
-          <h1>
-            All tokens
-          </h1>
-        </div>
+        <h1
+          v-if="selectTokenInput"
+        >
+          Select Input token
+        </h1>
+        <h1
+          v-else
+        >
+          Select Output token
+        </h1>
       </div>
 
       <div class="tokens-container">
         <div
-          v-if="!isAllDataLoaded"
+          v-if="!isAllDataLoaded || balancesLoading"
           class="token-select__spinner"
         >
           <Spinner size="40px" />
+        </div>
+        <div
+          v-else-if="tokens.length === 0"
+          class="tokens-container__empty"
+        >
+          <h1>Account not found, please connect Your wallet</h1>
+          <ButtonComponent
+            class="tokens__connect"
+            btn-size="large"
+            full
+            @on-click="connectWallet"
+          >
+            CONNECT
+          </ButtonComponent>
         </div>
 
         <div v-else>
@@ -55,6 +62,7 @@
 import SelectTokenWithSearch from '@//components/TokensModal/SelectTokenWithSearch.vue';
 import ModalComponent from '@/components/Modal/Index.vue';
 import Spinner from '@/components/Spinner/Index.vue';
+import ButtonComponent from '@/components/Button/Index.vue';
 
 export default {
   name: 'SelectTokensModal',
@@ -62,7 +70,9 @@ export default {
     SelectTokenWithSearch,
     ModalComponent,
     Spinner,
+    ButtonComponent,
   },
+  emits: ['set-show', 'add-token-to-list', 'remove-token-from-list', 'connect-wallet'],
   props: {
     isShow: {
       type: Boolean,
@@ -80,11 +90,11 @@ export default {
       type: Array,
       required: true,
     },
-    isAllDataLoaded: {
+    balancesLoading: {
       type: Boolean,
-      required: true,
+      required: false,
     },
-    isOvnSwap: {
+    isAllDataLoaded: {
       type: Boolean,
       required: true,
     },
@@ -100,11 +110,13 @@ export default {
     },
   },
   methods: {
+    connectWallet() {
+      this.$emit('connect-wallet', false);
+    },
     closeModal() {
       this.$emit('set-show', false);
     },
     selectToken(token: any) {
-      console.log(token, 'SELECTED');
       // eslint-disable-next-line no-param-reassign
       token.selected = true;
       this.$emit('add-token-to-list', {
@@ -168,5 +180,19 @@ export default {
     border-color: var(--color-2);
     background-color: var(--color-17);
   }
+}
+
+.tokens-container__empty {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 400px;
+  padding: 15px 30px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.tokens__connect {
+  margin: auto auto 0 auto;
 }
 </style>

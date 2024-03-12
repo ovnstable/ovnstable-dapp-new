@@ -302,8 +302,8 @@
       :select-token-input="true"
       :tokens="zapAllTokens"
       :is-all-data-loaded="isAllDataLoaded"
-      :is-ovn-swap="true"
       :selected-tokens="inputTokens"
+      :balances-loading="isBalancesLoading"
       @set-show="showSelectTokensModals"
       @add-token-to-list="addSelectedTokenToList"
       @remove-token-from-list="removeSelectedTokenFromList"
@@ -437,6 +437,7 @@ export default {
       'lastPoolInfoData',
       'lastPutIntoPoolEvent',
       'lastReturnedToUserEvent',
+      'isBalancesLoading',
       'lastNftTokenId',
       'swapResponseConfirmInfo',
       'routerContract',
@@ -783,12 +784,25 @@ export default {
       this.updateQuotaInfo();
     },
 
-    updateTokenValueMethod(token: any) {
-      const newToken = updateTokenValue(
-        token,
-        token.value,
-        this.checkApproveForToken,
-      );
+    updateTokenValueMethod(tokenData: any, isMaxBal: boolean) {
+      let newToken = null;
+
+      console.log(tokenData, '--tokenData');
+      if (isMaxBal) {
+        newToken = updateTokenValue(
+          tokenData,
+          tokenData.value,
+          this.checkApproveForToken,
+          tokenData.selectedToken.balanceData.originalBalance,
+        );
+      } else {
+        newToken = updateTokenValue(
+          tokenData,
+          tokenData.value,
+          this.checkApproveForToken,
+        );
+      }
+      console.log(newToken, '---newToken');
 
       this.updateTokenState(newToken);
     },
@@ -2081,6 +2095,7 @@ export default {
     },
 
     addSelectedTokenToList(data: any) {
+      console.log(data, '---dataaddSelectedTokenToList');
       if (data.isInput) {
         this.addSelectedTokenToInputList(data.tokenData, false);
         // this.addTokensEmptyIsNeeded();
@@ -2108,9 +2123,9 @@ export default {
         }, 10);
       }
 
-      if (newInputToken.selectedToken.symbol === 'OVN') {
-        this.initDefaultTopInputTokensByBalance(this.noneOvnTokens);
-      }
+      // if (newInputToken.selectedToken.symbol === 'OVN') {
+      //   this.initDefaultTopInputTokensByBalance(this.noneOvnTokens);
+      // }
 
       this.checkApproveForToken(
         newInputToken,

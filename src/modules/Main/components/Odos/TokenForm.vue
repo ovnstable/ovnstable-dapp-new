@@ -63,9 +63,8 @@
         </div>
       </div>
       <div
-        @click="
-          clickOnBalance()"
-        @keypress="clickOnBalance()"
+        @click="clickOnBalance"
+        @keypress="clickOnBalance"
         class="input-tokens__balance"
       >
         <div class="select-token-balance-text">
@@ -96,6 +95,7 @@ export default {
     BaseIcon,
     InputComponent,
   },
+  emits: ['select-token', 'remove-token', 'update-token', 'max-token'],
   props: {
     // inputToken = token which we want to swap
     isInputToken: {
@@ -140,16 +140,17 @@ export default {
       return true;
     },
     inputUpdate(value: any) {
-      console.log(value, 'inputUpdate');
       this.$emit('update-token', {
         ...this.tokenInfo,
         value,
       });
     },
     clickOnBalance() {
-      if (this.tokenInfo.selectedToken && this.tokenInfo.selectedToken.balanceData.balance) {
-        this.inputUpdate(this.tokenInfo.value);
-      }
+      this.$emit('update-token', {
+        ...this.tokenInfo,
+        value: this.tokenInfo.selectedToken?.balanceData?.balance,
+        isMaxBal: true,
+      });
     },
   },
 };
@@ -277,6 +278,16 @@ export default {
 
   &:hover {
     transform: rotate(-90deg);
+  }
+}
+
+.input-tokens__balance {
+  cursor: pointer;
+  transition: color .2s ease, transform .15s ease;
+
+  &:hover {
+    color: var(--color-3);
+    transform: translateX(2px);
   }
 }
 </style>

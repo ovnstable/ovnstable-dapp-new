@@ -64,6 +64,10 @@ export default {
       type: String,
       default: '',
     },
+    isText: {
+      type: Boolean,
+      default: false,
+    },
     isCustom: {
       type: Boolean,
       default: false,
@@ -144,8 +148,19 @@ export default {
 
   methods: {
     onInput(event: any) {
-      if (this.emitEvent) this.$emit('input', event);
-      else this.$emit('input', event.target.value);
+      if (this.isText) {
+        this.$emit('input', event.target.value);
+        return;
+      }
+
+      const regex = /^[0-9]*\.?[0-9]*$/;
+      if (regex.test(event.target.value) || event.target.value === '') {
+        if (this.emitEvent) this.$emit('input', event);
+        else this.$emit('input', event.target.value);
+      } else {
+        // eslint-disable-next-line no-param-reassign
+        event.target.value = this.value;
+      }
     },
 
     onChange(event: any) {
@@ -195,6 +210,10 @@ export default {
       pointer-events: none;
     }
 
+    &:focus {
+      outline: none;
+    }
+
     &::placeholder {
       color: var(--color-2);
       [data-theme="dark"] & {
@@ -218,7 +237,7 @@ export default {
   }
 
   &.is-focused {
-    box-shadow: 0 0 3px var(--color-1);
+    outline: none;
   }
 
   &.is-disabled {

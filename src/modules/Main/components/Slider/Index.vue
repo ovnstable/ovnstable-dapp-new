@@ -305,6 +305,9 @@ export default {
 .slider__overview-title {
   color: var(--color-1);
   font-weight: 600;
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
 }
 
 .slider__overview-title {
@@ -380,6 +383,9 @@ export default {
   color: var(--color-1);
   font-size: 20px;
   font-weight: 600;
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
 }
 
 .slider__second-token-description {

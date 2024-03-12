@@ -7,11 +7,11 @@
     <div
       v-else
       :class="
-        !isAllLoaded ? 'swap-container swap-container-full' : 'swap-container'
+        !firstRenderDone ? 'swap-container swap-container-full' : 'swap-container'
       "
     >
       <div
-        v-if="!isAllLoaded"
+        v-if="!firstRenderDone"
         class="swap-form__loader"
       >
         <Spinner />
@@ -59,7 +59,6 @@
 
                 <TokenForm
                   :token-info="token"
-                  :remove-item-func="removeInputToken"
                   :is-token-removable="isInputTokensRemovable"
                   :is-input-token="true"
                   @select-token="selectFormToken"
@@ -109,7 +108,6 @@
               >
                 <TokenForm
                   :token-info="token"
-                  :select-token-func="selectFormToken"
                   :is-input-token="false"
                   :disabled="true"
                   :is-token-removable="isOutputTokensRemovable"
@@ -222,103 +220,17 @@
       </template>
     </div>
 
-    <!--
-    <div v-if="quotaResponseInfo">
-      <div class="transaction-info-container">
-        <div class="transaction-info-body">
-          <div class="row py-2">
-            <div class="col-6 py-0">
-              <div class="transaction-info-title">Slippage</div>
-            </div>
-            <div class="col-6 py-0">
-              <div class="transaction-info">
-                {{ slippagePercent * 1 }}%
-                <span class="transaction-info-additional">
-                  ({{
-                    formatMoney(
-                      (sumOfAllSelectedTokensInUsd * slippagePercent) / 100,
-                      3,
-                    )
-                  }})$
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <div
-            class="row py-2"
-            v-if="ifMoreThanOneSelectedTokensAdded"
-          >
-            <div class="col-6 py-0 with-tooltip">
-              <div class="transaction-info-title">Multi-swap Odos fee</div>
-            </div>
-            <div class="col-6 py-0">
-              <div class="transaction-info">
-                {{ multiSwapOdosFeePercent * 1 }}%
-                <span class="transaction-info-additional">
-                  ({{
-                    formatMoney(
-                      (sumOfAllSelectedTokensInUsd * multiSwapOdosFeePercent)
-                        / 100,
-                      3,
-                    )
-                  }})$
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <div class="row py-2">
-            <div class="col-6 py-0 with-tooltip">
-              <div class="transaction-info-title">Single-swap Odos fee</div>
-            </div>
-            <div class="col-6 py-0">
-              <div class="transaction-info">
-                0.00% <span class="transaction-info-additional">(0)$</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="row py-2">
-            <div class="col-6 py-0">
-              <div class="transaction-info-title">Minimum received</div>
-            </div>
-            <div class="col-6 py-0">
-              <div class="transaction-info">
-                {{ formatMoney(sumOfAllSelectedTokensInUsd, 3) }}$
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="transaction-info-footer">
-          <div class="row py-2">
-            <div class="col-6 py-0">
-              <div class="transaction-info-title">Recipient</div>
-            </div>
-            <div class="col-6 py-0">
-              <div class="transaction-info-address">
-                {{
-                  account.substring(0, 5)
-                    + "..."
-                    + account.substring(account.length - 4)
-                }}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div> -->
-
     <SelectTokensModal
       :is-show="isShowSelectTokensModal"
       :select-token-input="selectModalTypeInput"
       :tokens="allTokensList"
+      :balances-loading="isBalancesLoading"
       :is-all-data-loaded="isAllDataLoaded"
-      :is-ovn-swap="true"
       :selected-tokens="selectModalTypeInput ? inputTokens : outputTokens"
       @set-show="showSelectTokensModals"
       @add-token-to-list="addSelectedTokenToList"
       @remove-token-from-list="removeSelectedTokenFromList"
+      @connect-wallet="connectWalletTrigger"
     />
 
   </div>
@@ -407,6 +319,15 @@ export default {
         });
       }
     },
+    // on wallet connect
+    async account(val) {
+      if (val) this.clearForm('000');
+      if (!val) this.outputTokens = [getNewOutputToken()];
+    },
+    // for first render
+    async loadingWeb3(newVal) {
+      if (newVal) this.clearForm('0');
+    },
     async networkId(newVal) {
       if (newVal) {
         this.$store.commit('odosData/changeState', {
@@ -426,6 +347,7 @@ export default {
           tokenSeparationScheme: this.tokenSeparationScheme,
           listOfBuyTokensAddresses: this.listOfBuyTokensAddresses,
         });
+        this.clearForm('1');
         this.loadPricesInfo(newVal);
       }
     },
@@ -451,8 +373,8 @@ export default {
     sumOfAllSelectedTokensInUsd() {
       this.recalculateOutputTokensSum();
     },
-    isTokensLoadedAndFiltered(val) {
-      if (val) this.clearForm();
+    firstRenderDone(val) {
+      if (val) this.clearForm('3');
     },
     hideSwapButton(val) {
       if (val) {
@@ -475,11 +397,12 @@ export default {
       val: false,
     });
 
-    await this.init();
-
     if (this.inputTokens.length === 0 && this.outputTokens.length === 0) {
-      this.clearForm();
+      console.log('MOUNTED');
+      this.clearForm('4');
     }
+
+    await this.init();
 
     this.$store.commit('odosData/changeState', {
       field: 'isTokensLoadedAndFiltered',
@@ -501,6 +424,7 @@ export default {
       'listOfBuyTokensAddresses',
       'dataBeInited',
       'isBalancesLoading',
+      'firstRenderDone',
     ]),
     ...mapGetters('odosData', [
       'allTokensList',
@@ -509,6 +433,7 @@ export default {
       'isAllLoaded',
       'isAllDataLoaded',
     ]),
+    ...mapGetters('web3', ['loadingWeb3']),
     ...mapGetters('accountData', ['account']),
     ...mapGetters('network', ['getParams', 'networkId', 'networkName']),
     ...mapGetters('gasPrice', ['gasPrice', 'gasPriceGwei']),
@@ -728,6 +653,10 @@ export default {
     onLeaveList,
     beforeEnterList,
     onEnterList,
+    connectWalletTrigger() {
+      this.connectWallet();
+      this.showSelectTokensModals(false);
+    },
     changeSlippage(val: number) {
       this.slippagePercent = val;
     },
@@ -735,15 +664,27 @@ export default {
       this.inputTokens = maxAll(this.selectedInputTokens, this.checkApproveForToken);
       this.updateQuotaInfo();
     },
-    updateTokenValueMethod(token: any) {
-      const newToken = updateTokenValue(
-        token,
-        token.value,
-        this.checkApproveForToken,
-      );
+    updateTokenValueMethod(tokenData: any) {
+      let currToken = null;
 
-      const indexOf = this.inputTokens.map((_) => _.id).indexOf(newToken.id);
-      this.inputTokens[indexOf] = newToken;
+      if (tokenData.isMaxBal) {
+        currToken = updateTokenValue(
+          tokenData,
+          tokenData.value,
+          this.checkApproveForToken,
+          tokenData.selectedToken.balanceData.originalBalance,
+        );
+      } else {
+        currToken = updateTokenValue(
+          tokenData,
+          tokenData.value,
+          this.checkApproveForToken,
+        );
+      }
+
+      delete currToken.isMaxBal;
+      const indexOf = this.inputTokens.map((_) => _.id).indexOf(currToken.id);
+      this.inputTokens[indexOf] = currToken;
       this.updateQuotaInfo();
     },
     async init() {
@@ -755,6 +696,20 @@ export default {
       bus.on(() => {
         this.finishTransaction();
       });
+
+      const busTokens = useEventBus('odos-tokens-loaded');
+      busTokens.on(() => {
+        if (this.firstRenderDone) return;
+        this.finishTransaction();
+      });
+    },
+    addDefaultUsdToken() {
+      const ovnSelectedToken: any = getDefaultSecondtoken(
+        this.tokenSeparationScheme,
+        this.allTokensList,
+        null,
+      );
+      this.addSelectedTokenToOutputList(ovnSelectedToken);
     },
     addDefaultOvnToken() {
       const symbol = this.$route.query.symbol ? this.$route.query.symbol : null;
@@ -763,7 +718,6 @@ export default {
         this.allTokensList,
         symbol as string | null,
       );
-      console.log(ovnSelectedToken, 'SELECREOVN');
       if (!ovnSelectedToken) {
         this.addNewInputToken();
         this.addNewOutputToken();
@@ -884,10 +838,11 @@ export default {
 
     finishTransaction() {
       console.log('finishTransaction');
-      this.clearForm();
+      this.clearForm('5');
     },
 
-    clearForm() {
+    clearForm(val: string) {
+      console.log(val, 'CLEAFORM');
       this.clearAllSelectedTokens();
 
       if (this.swapMethod === 'BUY') {
@@ -1164,7 +1119,6 @@ export default {
           this.isSumulateSwapLoading = false;
           this.isSumulateIntervalStarted = false;
 
-          console.log(data, 'EMIT');
           this.$emit('update-path-view', {
             path: data.pathViz,
             input: this.selectedInputTokens,
@@ -1338,8 +1292,6 @@ export default {
 
       await tx.wait();
       finishTx();
-
-      console.log(tx, '---tx');
     },
 
     getRequestInputTokens(ignoreNullable?: any) {
@@ -1836,6 +1788,7 @@ export default {
     box-shadow: none;
     border: none;
     [data-theme="dark"] & {
+      box-shadow: none;
       background-color: var(--color-7);
       color: var(--color-18);
     }

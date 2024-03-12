@@ -13,6 +13,7 @@
       </div>
 
       <div class="pools-table__content">
+
         <template v-if="pools.length > 0">
           <div
             v-for="pool in (pools as any)"
@@ -206,7 +207,7 @@ import ZapInComponent from '@/modules/Main/components/ZapModal/Index.vue';
 import { buildLink } from '@/store/views/main/pools/helpers.ts';
 
 export default {
-  name: 'PoolTable',
+  name: 'PoolsTable',
   components: {
     BaseIcon,
     ZapInComponent,
@@ -551,11 +552,12 @@ export default {
     fill: var(--color-2);
     width: 8px;
     height: 8px;
+    overflow: visible;
   }
 
   [data-theme="dark"] & {
     svg {
-      fill: var(--color-1)
+      fill: var(--color-4)
     }
   }
 }

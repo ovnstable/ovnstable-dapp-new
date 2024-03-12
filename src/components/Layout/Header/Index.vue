@@ -50,13 +50,13 @@
 
         <div class="app-header__content-data">
           <div
-            v-if="account && isBalancesLoading"
+            v-if="accountRenderLoading"
             class="lineLoader"
           />
           <UserBalances v-else-if="deviceType().isDesktop && walletConnected && account" />
 
           <div
-            v-if="account && isBalancesLoading"
+            v-if="accountRenderLoading"
             class="lineLoader"
           />
           <ButtonComponent
@@ -160,9 +160,6 @@ export default {
     AccountModal,
     BaseIcon,
   },
-  async mounted() {
-    this.sortedChains = await sortedChainsByTVL(this.networksData);
-  },
   data() {
     return {
       sortedChains: [] as Chain[],
@@ -170,15 +167,20 @@ export default {
       showModalAccount: false,
     };
   },
+  async mounted() {
+    this.sortedChains = await sortedChainsByTVL(this.networksData);
+  },
   computed: {
-    ...mapState('odosData', [
-      'isBalancesLoading',
-    ]),
+    ...mapState('odosData', ['isBalancesLoading', 'isTokensLoadedAndFiltered', 'firstRenderDone']),
     ...mapGetters('walletAction', ['walletConnected']),
     ...mapGetters('accountData', ['originalBalance', 'account']),
     ...mapGetters('network', ['networkId']),
     ...mapGetters('odosData', ['allTokensList']),
 
+    accountRenderLoading() {
+      if (this.firstRenderDone) return false;
+      return (this.account && this.isBalancesLoading) || !this.isTokensLoadedAndFiltered;
+    },
     activeNetworkData() {
       const data = appNetworksData.find((_) => _.chain === this.networkId);
       return data || appNetworksData[0];
@@ -232,7 +234,10 @@ export default {
 .app-header__balance-account {
   min-width: 130px;
   justify-content: space-between;
-
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
+    box-shadow: none !important;
+  }
   svg path {
     fill: var(--color-3);
   }
@@ -318,9 +323,11 @@ export default {
   display: flex;
   align-items: center;
   padding: 5px 8px 5px 20px;
+  border-radius: 12px;
   [data-theme="dark"] & {
     background-color: var(--color-17);
     color: var(--color-4);
+    box-shadow: none;
   }
 
   span {
@@ -329,8 +336,11 @@ export default {
   }
 }
 .app-header__chain_account {
+  padding: 5px 10px;
+  border-radius: 12px;
   [data-theme="dark"] & {
     background-color: var(--color-17);
+    box-shadow: none;
   }
 }
 .app-header__chain {
@@ -380,11 +390,13 @@ export default {
 .networks-list__item {
   display: flex;
   padding: 8px 14px;
+  align-items: center;
   cursor: pointer;
   transition: background-color .2s ease, color .2s ease;
   [data-theme="dark"] & {
     color: var(--color-18);
   }
+
   svg, img {
     width: 18px;
     height: 18px;
@@ -463,22 +475,29 @@ $avatar-offset: 52 + 16;
 @mixin background-gradient {
   background-image: linear-gradient(90deg, $base-color 0px, $shine-color 40px, $base-color 80px);
   background-size: 600px;
+  [data-theme="dark"] & {
+    background-image: linear-gradient(90deg, var(--color-17) 0px, $shine-color 40px, var(--color-17) 80px);
+  }
 }
 
 .lineLoader {
-    float: left;
-    width: 100px;
-    height: 100%;
-    border-radius: 7px;
-    border: 1px solid var(--color-1);
-    box-shadow: 0px 1px 0px 0px var(--color-1);
+  float: left;
+  width: 100px;
+  height: 100%;
+  border-radius: 7px;
+  border: 1px solid var(--color-1);
+  box-shadow: 0px 1px 0px 0px var(--color-1);
 
-    @include background-gradient;
-    animation: shine-lines $animation-duration infinite ease-out;
+  @include background-gradient;
+  animation: shine-lines $animation-duration infinite ease-out;
+  [data-theme="dark"] & {
+    box-shadow: none;
+    border-color: var(--color-2);
+  }
 }
 
 @keyframes shine-lines{
-    0% { background-position: -100px;}
-    40%, 100% {background-position: 140px;}
+  0% { background-position: -100px;}
+  40%, 100% {background-position: 140px;}
 }
 </style>

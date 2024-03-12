@@ -19,7 +19,7 @@ import { ethers } from 'ethers';
 import { ERC20_ABI } from '@/assets/abi/index.ts';
 import { fixedByPrice } from '@/utils/numbers.ts';
 import { ZERO_ADDRESS } from '@/utils/const.ts';
-import { LINEA_TOKENS } from '@/store/views/main/odos/mocks.ts';
+import { LINEA_TOKENS, BLAST_TOKENS } from '@/store/views/main/odos/mocks.ts';
 
 // const KEY = 'REFERRAL_CODE';
 
@@ -34,6 +34,7 @@ export const stateData = {
   isContractLoading: false,
   isTokenExternalDataLoading: false,
 
+  firstRenderDone: false,
   isTokensLoading: false,
   isTokensLoadedAndFiltered: false,
 
@@ -139,9 +140,6 @@ const getters = {
         .includes(item.address),
     );
   },
-  tokensToBalanceUpdate(state: typeof stateData) {
-    return state.tokens;
-  },
 };
 
 const actions = {
@@ -176,9 +174,7 @@ const actions = {
   async loadChains({
     commit, state,
   }: any) {
-    if (state.isChainsLoading) {
-      return;
-    }
+    if (state.isChainsLoading) return;
 
     commit('changeState', { field: 'isChainsLoading', val: true });
 
@@ -201,24 +197,26 @@ const actions = {
     }
 
     commit('changeState', { field: 'isTokensLoading', val: true });
-    await odosApiService
+
+    const odosTokens: any = await odosApiService
       .loadTokens()
-      .then((data: any) => {
-        commit('changeState', {
-          field: 'tokensMap',
-          val: {
-            chainTokenMap: {
-              ...data.chainTokenMap,
-              ...LINEA_TOKENS
-            },
-          }
-        });
-        commit('changeState', { field: 'isTokensLoading', val: false });
-      })
       .catch((e) => {
         console.log('Error load tokens', e);
         commit('changeState', { field: 'isTokensLoading', val: false });
       });
+
+    await commit('changeState', {
+      field: 'tokensMap',
+      val: {
+        chainTokenMap: {
+          ...odosTokens.chainTokenMap,
+          ...LINEA_TOKENS,
+          ...BLAST_TOKENS
+        },
+      }
+    });
+
+    commit('changeState', { field: 'isTokensLoading', val: false });
   },
 
   async initData(
@@ -234,13 +232,13 @@ const actions = {
     }
   ) {
     dispatch('clearInputData');
+    console.log('INIT1');
 
     if (!getters.isAvailableOnNetwork) {
       console.info(
         'Swap init not available on this network.',
       );
       await dispatch('initAccountData');
-      commit('changeState', { field: 'isTokensLoadedAndFiltered', val: true });
       return;
     }
 
@@ -256,6 +254,7 @@ const actions = {
   }: any) {
     console.log('init pool swap data for network: ');
     const { networkId } = getNetworkParams(rootState.network.networkName);
+
     await commit('changeState', {
       field: 'tokens',
       val: getFilteredPoolTokens(
@@ -275,7 +274,6 @@ const actions = {
     commit, state, dispatch, rootState,
   }: any) {
     const { networkId } = getNetworkParams(rootState.network.networkName);
-    console.log(state, '---state');
     await commit('changeState', { field: 'tokens', val: await getFilteredOvernightTokens(state, networkId, false) });
 
     commit('changeState', { field: 'isTokensLoadedAndFiltered', val: true });
@@ -289,6 +287,11 @@ const actions = {
       const ERC20 = await loadJSON('/contracts/ERC20.json');
       await dispatch('loadContractsForTokens', ERC20);
       await dispatch('loadBalances');
+
+      commit('changeState', { field: 'isTokensLoadedAndFiltered', val: true });
+    } else {
+      commit('changeState', { field: 'firstRenderDone', val: true });
+      commit('changeState', { field: 'isBalancesLoading', val: false });
     }
   },
   loadContractsForTokens({
@@ -306,17 +309,23 @@ const actions = {
 
     commit('changeState', { field: 'tokensContractMap', val: tokensList });
   },
-  // initUpdateBalancesInterval() {
-  //   setTimeout(() => {
-  //     state.updateBalancesIntervalId = setInterval(async () => {
-  //       await state.loadBalances();
-  //     }, 30000);
-  //   }, 30000);
-  // },
+  initUpdateBalancesInterval({
+    commit, state, dispatch
+  }: any) {
+    setTimeout(() => {
+      commit('changeState', {
+        field: 'updateBalancesIntervalId',
+        val: setInterval(() => {
+          dispatch('loadBalances');
+        }, 30000)
+      });
+    }, 30000);
+  },
 
   async loadBalances({
     commit, state, getters, rootState
-  }: any) {
+  }: any, providerInstance: any) {
+    console.log('loadBalances');
     commit('changeState', { field: 'isBalancesLoading', val: true });
 
     if (!rootState.accountData.account) {
@@ -325,10 +334,9 @@ const actions = {
     }
 
     try {
-      const provider = rootState.web3.evmProvider;
+      const provider = providerInstance || rootState.web3.evmProvider;
       const multicaller = MulticallWrapper.wrap(provider);
-      const tokens = getters.tokensToBalanceUpdate;
-      const requests = tokens
+      const requests = getters.allTokensList
         .map((_: any) => new ethers.Contract(
           _.address,
           ERC20_ABI,
@@ -352,30 +360,39 @@ const actions = {
         return '0';
       };
 
-      for (let i = 0; i < tokens.length; i++) {
-        const token = tokens[i];
-        let balance = balancesData[i] ? balancesData[i].toString() : '0';
+      const newBalances = await Promise.all(
+        getters.allTokensList.map(async (token: any, key: number) => {
+          let balance = balancesData[key] ? balancesData[key].toString() : '0';
 
-        if (token.address === ZERO_ADDRESS) balance = await handleNativeBal();
+          if (token.address === ZERO_ADDRESS) balance = await handleNativeBal();
 
-        const balanceFormatted = new BigNumber(balance).div(10 ** token.decimals);
-        const fixedBy = balanceFormatted.gt(0) ? fixedByPrice(balanceFormatted.toNumber()) : 2;
+          const balanceFormatted = new BigNumber(balance).div(10 ** token.decimals);
+          const fixedBy = balanceFormatted.gt(0) ? fixedByPrice(balanceFormatted.toNumber()) : 2;
 
-        token.balanceData = {
-          name: token.symbol,
-          balance: balanceFormatted.toFixed(fixedBy),
-          balanceInUsd: new BigNumber(balanceFormatted).times(token.price).toString(),
-          originalBalance: balance,
-          decimal: token.decimals,
-        };
-      }
+          return {
+            ...token,
+            balanceData: {
+              name: token.symbol,
+              balance: balanceFormatted.toFixed(fixedBy),
+              balanceInUsd: new BigNumber(balanceFormatted).times(token.price).toString(),
+              originalBalance: balance,
+              decimal: token.decimals,
+            }
+          };
+        })
+      );
+
+      const bus = useEventBus('odos-tokens-loaded');
+      bus.emit(true);
+
+      await commit('changeBalances', newBalances);
 
       commit('changeState', { field: 'isBalancesLoading', val: false });
-      // here to update initialized balances of tokens
-      useEventBus('odos-transaction-finished').emit(true);
+      commit('changeState', { field: 'firstRenderDone', val: true });
     } catch (e) {
       console.error('Error when load balance', e);
       commit('changeState', { field: 'isBalancesLoading', val: false });
+      commit('changeState', { field: 'firstRenderDone', val: true });
     }
   },
 
@@ -718,6 +735,15 @@ const mutations = {
     val: any
   }) {
     state[data.field] = data.val;
+  },
+  changeBalances(state: any, tokensBalances: any[]) {
+    const balancesArr = state.tokens.map((_: any) => _.id);
+    tokensBalances.forEach((tok: any) => {
+      const index = balancesArr.indexOf(tok.id);
+      if (index === -1 || !state.tokens[index]) return;
+
+      state.tokens[index].balanceData = tok.balanceData;
+    });
   },
 };
 

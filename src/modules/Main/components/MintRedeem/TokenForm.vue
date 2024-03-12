@@ -56,6 +56,8 @@
         </div>
         <div
           class="input-tokens__balance"
+          @click="maxUpdate"
+          @keypress="maxUpdate"
         >
           <div class="select-token-balance-text">
             <div v-if="tokenInfo && tokenInfo.symbol">
@@ -95,6 +97,11 @@ import { formatMoney, fixedByPrice } from '@/utils/numbers.ts';
 import TokensChooseForm from '@/modules/Main/components/MintRedeem/TokenSelect/Index.vue';
 import BigNumber from 'bignumber.js';
 
+// import {
+//   wrapStatus,
+// } from '@/modules/Main/components/MintRedeem/types/index.ts';
+// import { MINTREDEEM_SCHEME } from '@/store/views/main/mintRedeem/mocks';
+
 export default {
   name: 'TokenForm',
   components: {
@@ -120,6 +127,11 @@ export default {
       type: Boolean,
       required: false,
       default: false,
+    },
+    activeWrap: {
+      type: Number,
+      required: true,
+      default: -1,
     },
     activeMint: {
       type: Boolean,
@@ -149,7 +161,18 @@ export default {
     tokensList() {
       const list = this.tokensListGetter[this.networkId];
 
-      if (list && this.isInputToken) return list.map((_: any[]) => (this.activeMint ? _[0] : _[1]));
+      // if (this.activeWrap === wrapStatus.WRAP) {
+      //   console.log(list, '----inputList');
+      // }
+
+      if (list && this.isInputToken) {
+        const inputList = list
+          .map((_: any[]) => (this.activeMint ? _[0] : _[1]));
+
+        const ids = inputList.map(({ symbol }: any) => symbol);
+        return inputList
+          .filter(({ symbol }: any, index: number) => !ids.includes(symbol, index + 1));
+      }
       if (list && !this.isInputToken) {
         return list
           .map((_: any[]) => (this.activeMint ? _[1] : _[0]));
@@ -217,7 +240,13 @@ export default {
       this.$emit('update-token', {
         ...this.tokenFullData,
         value,
-      }, this.isInputToken);
+      }, this.isInputToken, false);
+    },
+    maxUpdate() {
+      // todo rates pair
+      this.$emit('update-token', {
+        ...this.tokenFullData,
+      }, this.isInputToken, true);
     },
   },
 };
@@ -256,9 +285,18 @@ export default {
     box-shadow: inset 0px -2px 0px 0px var(--color-6);
   }
 }
+
 .input-tokens__balance {
+  cursor: pointer;
+  transition: color .2s ease, transform .15s ease;
+
   [data-theme="dark"] & {
     color: var(--color-18);
+  }
+
+  &:hover {
+    color: var(--color-3);
+    transform: translateX(2px);
   }
 }
 

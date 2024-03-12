@@ -17,6 +17,7 @@
 <script lang="ts">
 export default {
   name: 'SwitchBox',
+  emits: ['change'],
   props: {
     isChecked: Boolean,
   },

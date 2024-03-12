@@ -42,6 +42,11 @@ export const appNetworksData = [
     color: '#4d8be8',
   },
   {
+    chain: 81457,
+    name: 'Blast',
+    color: '#fff561',
+  },
+  {
     chain: 59144,
     name: 'Linea',
     color: 'black',
@@ -68,3 +73,5 @@ export const awaitDelay = async (time: number) => new Promise((res) => setTimeou
 export const OVN_TOKENS = ['USD+', 'DAI+', 'USDT+', 'USDC+', 'ETH+', 'OVN', 'wETH+', 'wUSD+'];
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
+
+export const DEFAULT_CHAIN = 8453;

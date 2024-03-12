@@ -284,10 +284,8 @@ export default {
       this.setShowFunc({ isShow: false });
     },
     initStakeList() {
-      console.log('initStakeList: ', this.successData);
       if (!this.successData || !this.successData.inputTokens) return;
 
-      console.log(this.successData.inputTokens, 'inputTokens');
       for (let i = 0; i < this.successData.inputTokens.length; i++) {
         const token = this.successData.inputTokens[i];
         const { value } = token;

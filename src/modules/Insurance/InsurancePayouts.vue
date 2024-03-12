@@ -43,7 +43,7 @@
             >
               <ButtonComponent class="insurance__button-payout">
                 <BaseIcon
-                  :name="device.isMobile != true ? 'PayoutArrow' : 'ArrowRight' "
+                  :name="device.isMobile != true ? 'PayoutArrow' : 'ArrowRight'"
                 />
               </ButtonComponent>
             </a>
@@ -197,9 +197,6 @@ export default {
   font-weight: 400;
   margin-bottom: 22px;
   margin-top: 14px;
-  [data-theme="dark"] & {
-    color: var(--color-18);
-  }
 }
 .insurance__payouts-divider {
   border: 1px solid var(--color-17);
@@ -381,11 +378,12 @@ export default {
     }
   }
   .insurance__button-payout {
-    background: none;
-    border: none;
+    box-shadow: none !important;
+    background: none !important;
+    border: none !important;
   }
   .insurance__payouts-titles {
-    grid-template-columns: 1fr 2fr 1.2fr 1fr;
+    grid-template-columns: 1fr 2.6fr 1.2fr 1fr;
   }
   .insurance__payouts-titles p:nth-child(3),
   .insurance__payouts-transaction p:nth-child(3) {
@@ -396,7 +394,7 @@ export default {
     flex: 2.5;
   }
   .insurance__payouts-transactions p[data-v-f33d99a8]:nth-child(2) {
-    flex: 3.5
+    flex: 4.5
   }
   .insurance__payouts-titles p {
     font-size: 12px;

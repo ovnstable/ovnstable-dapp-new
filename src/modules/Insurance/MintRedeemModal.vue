@@ -188,9 +188,8 @@ export default {
       return false;
     },
     requestRequired() {
-      if (this.insuranceRedemptionData.request === 'CAN_WITHDRAW') {
-        return false;
-      }
+      if (this.insuranceRedemptionData.request === 'NEED_WAIT') return false;
+      if (this.insuranceRedemptionData.request === 'CAN_WITHDRAW') return false;
       if (this.selectedAction === 'redeem' && !this.redemptionRequestSent) return true;
       return false;
     },
@@ -556,6 +555,9 @@ export default {
       border-radius: 0px 30px 30px 0px;
       margin-right: 0
     }
+    [data-theme="dark"] & {
+      color: var(--color-18);
+    }
   }
   .insurance__modal-mint-redeem-button-overlap-first {
     border-radius: 30px 0px 0px 30px !important;
@@ -571,6 +573,9 @@ export default {
     border-color: var(--color-1);
     z-index: 1;
     padding: 2px 26px;
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
   }
 }
 
@@ -656,11 +661,14 @@ export default {
   text-decoration: underline;
   color: var(--color-2);
   [data-theme="dark"] & {
-    color: var(--color-18);
+    color: var(--color-4);
   }
 }
 
 .insurance__modal-steps {
   margin-bottom: 20px;
+  [data-theme="dark"] & {
+    background-color: var(--color-6);
+  }
 }
 </style>

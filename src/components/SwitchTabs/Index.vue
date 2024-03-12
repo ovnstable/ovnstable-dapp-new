@@ -40,13 +40,23 @@ export default {
       default: 'default',
       type: String as PropType<TSize>,
     },
+    activeTab: {
+      default: -1,
+      type: Number,
+    },
   },
 
   data() {
     return {
-      activeItem: 0,
+      activeItem: -1,
       uid: '',
     };
+  },
+  watch: {
+    activeTab(val) {
+      console.log(val, '----val');
+      this.activeItem = val;
+    },
   },
   computed: {
     parentId() {
@@ -66,10 +76,8 @@ export default {
   },
 
   mounted() {
-    if (this.tabs.length) {
-      this.activeItem = this.tabs[0].id;
-      this.onTabClick(this.activeItem);
-    }
+    this.activeItem = this.activeTab;
+    console.log(this.activeTab, 'ACTIVETAB');
   },
 
   methods: {
@@ -92,6 +100,7 @@ export default {
 }
 
 .switchtabs__inner {
+  font-size: 15px;
   display: flex;
   color: var(--color-2);
   border: 1px solid var(--color-6);
@@ -163,11 +172,15 @@ export default {
 
 .switchtabs__inner-text.active {
   color: var(--color-1);
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
   &::before {
     transform: translateX(0);
     visibility: visible;
     opacity: 1;
     z-index: -2;
   }
+
 }
 </style>

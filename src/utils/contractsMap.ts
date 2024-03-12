@@ -132,6 +132,7 @@ export const chainContractsMap = {
     usdc: '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d', // pegged usdc
     wrapped: '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d', // pegged usdc
     usdt: '0x55d398326f99059fF775485246999027B3197955', // pegged usdt
+    ovn: '0x259b30c916e440fb79747cd559207ffdabbae057',
   },
   polygon: {
     usdPlus: {
@@ -144,6 +145,17 @@ export const chainContractsMap = {
     usdc: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174',
     market: '0x4f1499185aBf3BcAb91a9B77DDC113f97bF0342C',
     dai: '0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063',
+  },
+  blast: {
+    usdPlus: {
+      tokenPlus: '0x4fEE793d435c6D2c10C135983BB9d6D4fC7B9BBd',
+      exchange: '0x46B0Bc31238195fBdc7258f91fE848FFFDe5d123',
+    },
+    usdcPlus: {
+      tokenPlus: '0x870a8F46b62B8BDeda4c02530C1750CddF2ED32e',
+      exchange: '0x756D97C96aE80796C4c7A0ba4BfE607119366789',
+    },
+    usdb: '0x4300000000000000000000000000000000000003',
   },
 };
 

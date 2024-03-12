@@ -14,7 +14,7 @@
       v-else
       class="pools-container"
     >
-      <PoolTable
+      <PoolsTable
         :pools="mergedPools"
         :is-show-only-zap="isShowOnlyZap"
         :is-show-apr-limit="isShowAprLimit"
@@ -22,7 +22,10 @@
         :set-order-type-func="setOrderType"
         :order-type="orderType"
       >
-        <template #filters>
+        <template
+          v-if="!isOverview"
+          #filters
+        >
           <PoolsFilter
             :selected-network="selectedTabs"
             @change-tab="changePoolsTab"
@@ -54,7 +57,7 @@
             </div>
           </div>
         </template>
-      </PoolTable>
+      </PoolsTable>
     </div>
 
     <ZapModal
@@ -80,9 +83,10 @@ import utc from 'dayjs/plugin/utc';
 
 import ZapModal from '@/modules/Main/components/ZapModal/Index.vue';
 import PoolsFilter from '@/modules/Main/components/PoolsTable/PoolsFilter.vue';
-import PoolTable from '@/modules/Main/components/PoolsTable/Table.vue';
+import PoolsTable from '@/components/PoolsTable/Index.vue';
 import TableSkeleton from '@/components/TableSkeleton/Index.vue';
 import dayjs from 'dayjs';
+import type { PropType } from 'vue';
 
 dayjs.extend(utc);
 
@@ -90,7 +94,11 @@ export default {
   name: 'PoolsContainer',
   props: {
     type: {
-      type: String,
+      type: Number as PropType<poolTypes>,
+      required: true,
+    },
+    isOverview: {
+      type: Boolean,
       required: true,
     },
   },
@@ -98,7 +106,7 @@ export default {
     BaseIcon,
     PoolsFilter,
     TableSkeleton,
-    PoolTable,
+    PoolsTable,
     ZapModal,
   },
 
@@ -307,18 +315,13 @@ export default {
       return now.diff(lastUpdateMoment, 'minutes');
     },
   },
-  watch: {
-    networkId() {
-      this.clearAllFilters();
-      this.loadPools();
-    },
-  },
   async mounted() {
-    if (this.type === 'OVN') {
+    if (this.type === poolTypes.OVN) {
       this.changeState({
         field: 'typeOfPool',
         val: 'OVN',
       });
+      this.poolTabType = poolTypes.OVN;
     } else {
       this.changeState({
         field: 'typeOfPool',

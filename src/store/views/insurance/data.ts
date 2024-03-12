@@ -179,8 +179,6 @@ const actions = {
     const { web3 } = rootState;
     const { account } = rootState.accountData;
 
-    console.log('refreshIsNeedRedemption');
-
     if (account) {
       const insurance = {
         // chainName: 'polygon'
@@ -200,7 +198,7 @@ const actions = {
 
       let date = await contract.withdrawRequests(account);
       try {
-        date = parseFloat('1709625027');
+        date = parseFloat(date);
       } catch (e) {
         date = null;
       }
@@ -220,8 +218,6 @@ const actions = {
           date = new Date(date * 1000);
           const currentDate = new Date();
 
-          console.log(currentDate.getTime(), '--currentDate');
-          console.log(date.getTime(), '--date');
           if (currentDate.getTime() > date.getTime()) {
             const withdrawPeriod = await web3.contracts.insurance[
               `${rootState.network.networkName}_exchanger`
@@ -234,9 +230,6 @@ const actions = {
               ).toNumber(),
             );
 
-            console.log(withdrawPeriod.toString(), '---withdrawPeriod');
-            console.log(withdrawDate.getTime(), 'withdrawDate');
-            console.log(currentDate.getTime(), 'currentDate');
             if (new BigNumber(withdrawPeriod).eq(0)) {
               const hours = dayjs
                 .duration(dayjs(withdrawDate).diff(dayjs(currentDate)))

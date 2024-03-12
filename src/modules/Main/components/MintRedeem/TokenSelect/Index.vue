@@ -8,7 +8,7 @@
       @keypress="closeSelect"
     >
       <h1>
-        Choose 1 token to {{activeMint && isInputToken ? "mint" : "redeem"}}
+        Choose token to use for {{activeMint && isInputToken ? "minting" : "redeeming"}}
       </h1>
       <div
         class="slider__arrow-wrapper"
@@ -76,7 +76,6 @@ export default {
   },
   methods: {
     closeSelect() {
-      console.log('closeSelect');
       this.$emit('close-select', false);
     },
     selectToken(token: any) {
