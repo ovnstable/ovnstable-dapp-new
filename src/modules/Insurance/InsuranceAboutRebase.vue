@@ -160,5 +160,64 @@ export default {
     margin-bottom: 16px;
   }
 }
+@media (max-width: 768px) {
+  .insurane__about-rebase-title {
+    font-size: 13px;
+  }
+  .insurane__about-rebase-images {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+  .negative_text {
+    margin-top: 10px;
+  }
+}
+@media (max-width: 400px) {
+  .insurane__about-rebase-images svg{
+    scale: 60%;
+  }
+  .insurane__about-rebase-images-provider,
+  .insurane__about-rebase-images-vault,
+  .insurane__about-rebase-images-premiums,
+  .insurane__about-rebase-images-provider p,
+  .insurane__about-rebase-images-vault p,
+  .insurane__about-rebase-images-tokens-plus p {
+    margin: 0;
+  }
+  .insurane__about-rebase-images-capital,
+  .insurane__about-rebase-images-vault,
+  .insurane__about-rebase-images-premiums,
+  .insurane__about-rebase-images-tokens-plus {
+    align-items: center;
+  }
+  .insurane__about-rebase-images-capital p {
+    max-width: 50px;
+  }
+  .insurane__about-rebase-images-capital {
+    max-width: 60px;
+  }
+  .insurane__about-rebase-images-provider,
+  .insurane__about-rebase-images-vault {
+    max-width: 70px;
+  }
+  .insurane__about-rebase-images-premiums {
+    max-width: 40px
+  }
+  .insurane__about-rebase-images-tokens-plus {
+    max-width: 56px
+  }
+  .positive_text,
+  .negative_text {
+    margin-bottom: 26px;
+  }
+  .insurane__about-rebase-title {
+    font-size: 15px;
+  }
+  .insurane__about-rebase-images-capital :nth-child(2) {
+    margin-bottom: 20px;
+  }
+
+}
 
 </style>

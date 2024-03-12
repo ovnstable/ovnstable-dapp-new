@@ -17,16 +17,21 @@
         class="insurance__token-data"
       />
       <GraphicsInsurance
+        v-if="!insuranceIsMobileAboutOvn"
         :payoutData="payoutData"
         :loaded="loaded"
         class="insurance__graphics"
       />
       <InsurancePremiums
+        v-if="!insuranceIsMobileAboutOvn"
         :premiums-data="premiumsData"
         class="insurance__premiums"
       />
     </div>
-    <div class="insurance__payouts">
+    <div
+      v-if="!insuranceIsMobileAboutOvn"
+      class="insurance__payouts"
+    >
       <InsurancePayouts
         :payout-data="reversedPayoutData"
         class="insurance__payout-inner"
@@ -77,6 +82,9 @@ export default {
   computed: {
     reversedPayoutData() {
       return [...this.payoutData.payouts].reverse();
+    },
+    insuranceIsMobileAboutOvn() {
+      return this.$store.state.insuranceTokenData.isMobileAboutOvn.value;
     },
   },
 };

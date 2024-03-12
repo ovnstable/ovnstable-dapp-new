@@ -78,7 +78,10 @@
     v-else
     class="insurance__info-mobile"
   >
-    <div class="insurance__interact-buttons">
+    <div
+      v-if="!insuranceIsMobileAboutOvn"
+      class="insurance__interact-buttons"
+    >
       <div class="insurance__button-mobile">
         <ButtonComponent
           class="insurance__title-button"
@@ -139,8 +142,25 @@
       </div>
 
     </div>
+    <div
+      v-else
+      class="insurance__about-mobile-on"
+    >
+      <ButtonComponent
+        @click="toggleInsuranceAbout()"
+        @keydown.enter="toggleInsuranceAbout()"
+      >
+        <BaseIcon
+          name='ArrowExitMobile'
+        />
+      </ButtonComponent>
+      <p>ABOUT INSURANCE</p>
+    </div>
 
-    <div class="insurance__token-title">
+    <div
+      v-if="!insuranceIsMobileAboutOvn"
+      class="insurance__token-title"
+    >
       <BaseIcon
         :name="tokenData.insImage"
         class="insurance__token-image"
@@ -174,7 +194,10 @@
   >
     <InsuranceAbout />
   </div>
-  <div class="insurance__token-data">
+  <div
+    v-if="!insuranceIsMobileAboutOvn"
+    class="insurance__token-data"
+  >
     <div class="insurance__divider insurance__divider--first-divider" />
     <div class="insurance__payout-data">
       <p class="insurance__token-data-title">Risk factor</p>
@@ -270,6 +293,9 @@ export default {
     networkScan() {
       return this.$store.state.network.insuranceExplorerURL;
     },
+    insuranceIsMobileAboutOvn() {
+      return this.$store.state.insuranceTokenData.isMobileAboutOvn.value;
+    },
   },
   methods: {
     toggleModalMintRedeem() {
@@ -277,6 +303,11 @@ export default {
     },
     toggleInsuranceAbout() {
       this.showInsuranceInfo = !this.showInsuranceInfo;
+      if (this.device.isMobile) {
+        this.$store.commit('insuranceTokenData/setIsMobileAboutOvn', {
+          value: this.showInsuranceInfo,
+        });
+      }
     },
     generateHref(tokenName: string, networkName: string) {
       const networkContracts = (chainContractsMap as any)[networkName.toLowerCase()];
@@ -781,6 +812,24 @@ export default {
   }
   .insurance__token-data-num {
     font-size: 14px;
+  }
+  .insurance__about-mobile-on {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 20px;
+    button {
+      background: none;
+      padding: 0;
+      margin-right: 76px;
+      border: none;
+      box-shadow: none;
+    }
+    p {
+      font-size: 16px;
+      color: var(--color-1);
+      font-weight: 500;
+    }
   }
 
 }

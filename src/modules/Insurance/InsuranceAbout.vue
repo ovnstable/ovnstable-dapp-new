@@ -7,8 +7,8 @@
           name="InsuranceDividends"
         />
         <p>
-          Stake OVN on the Insurance Vault in<br>
-          exchange for insurance premiums<br>
+          Stake OVN on the Insurance Vault in<template v-if="!device.isMobile"><br></template>
+          exchange for insurance premiums<template v-if="!device.isMobile"><br></template>
           (1 INS = 1 OVN)
         </p>
 
@@ -18,8 +18,8 @@
           class="insurance__about-img-yield"
           name="InsuranceYield"
         />
-        <p> By staking OVN tokens,<br>
-          you can participate in high-yield,<br>
+        <p> By staking OVN tokens,<template v-if="!device.isMobile"><br></template>
+          you can participate in high-yield,<template v-if="!device.isMobile"><br></template>
           but more risky strategies </p>
       </div>
       <div class="insurance__about-text-ins">
@@ -27,7 +27,7 @@
           class="insurance__about-img-ins"
           name="InsuranceINS"
         />
-        <p> Minting and withdrawing<br>
+        <p> Minting and withdrawing<template v-if="!device.isMobile"><br></template>
           INS with no fee </p>
       </div>
     </div>
@@ -46,12 +46,18 @@
 <script lang="ts">
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import InsuranceAboutRebase from '@/modules/Insurance/InsuranceAboutRebase.vue';
+import { deviceType } from '@/utils/deviceType.ts';
 
 export default {
   name: 'AboutInsurance',
   components: {
     BaseIcon,
     InsuranceAboutRebase,
+  },
+  computed: {
+    device() {
+      return deviceType();
+    },
   },
 };
 </script>
@@ -106,6 +112,49 @@ export default {
 
   .insurance__about-img-ins {
     fill: var(--color-1);
+  }
+}
+
+@media (max-width: 1024px) {
+  .insurance__about {
+    padding: 20px 36px;
+  }
+}
+
+@media (max-width: 768px) {
+  .insurance__about {
+    padding: 10px 16px;
+    margin-bottom: 20px;
+    svg {
+      scale: 80%;
+    }
+  }
+  .insurance__about-text {
+    p {
+      font-size: 13px;
+    }
+  }
+  .insurance__about-rebase {
+    flex-direction: column;
+  }
+}
+@media (max-width: 400px) {
+  .insurance__about {
+    background: none;
+    padding: 0;
+  }
+  .insurance__about-text {
+    border-radius: 10px;
+    background-color: var(--color-8);
+    flex-direction: column;
+    gap: 18px;
+    padding: 14px 10px;
+    [data-theme="dark"] & {
+      background-color: var(--color-7);
+    }
+  }
+  .insurance__about-rebase {
+    flex-direction: column;
   }
 }
 </style>
