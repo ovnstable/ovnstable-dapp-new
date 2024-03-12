@@ -264,11 +264,13 @@
 
       </div>
     </div>
+
     <div class="insurance__divider insurance__divider--last-divider" />
     <MintRedeemModal
       v-model="showModalMintRedeem"
     />
   </div>
+
   <div v-if="insuranceIsMobileMintRedeem">
     <MintRedeemModal
       v-model="showModalMintRedeem"
@@ -323,11 +325,13 @@ export default {
   },
   methods: {
     toggleModalMintRedeem() {
-      this.showModalMintRedeem = !this.showModalMintRedeem;
       if (this.device.isMobile) {
+        this.showModalMintRedeem = true;
         this.$store.commit('insuranceTokenData/setIsMobileMintRedeem', {
           value: this.showModalMintRedeem,
         });
+      } else {
+        this.showModalMintRedeem = !this.showModalMintRedeem;
       }
     },
     toggleInsuranceAbout() {

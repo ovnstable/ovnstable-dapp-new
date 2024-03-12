@@ -107,7 +107,10 @@
       :current-stage="currentStage"
     />
   </ModalComponent>
-  <div v-else-if="insuranceIsMobileMintRedeem">
+  <div
+    class="insurance__modal-mint-redeem"
+    v-else-if="insuranceIsMobileMintRedeem"
+  >
     <div class="insurance__modal-mint-redeem-buttons">
       <ButtonComponent
         @click="toggleModalMintRedeem()"
@@ -327,6 +330,7 @@ export default {
       this.showModal = false;
     },
     toggleModalMintRedeem() {
+      this.showModal = false;
       this.$store.commit('insuranceTokenData/setIsMobileMintRedeem', {
         value: false,
       });
@@ -804,6 +808,12 @@ export default {
     padding: 0;
     width: auto;
   }
+  .insurance__modal-mint-redeem,
+  .insurance__modal-steps {
+    [data-theme="dark"] & {
+      background-color: var(--color-17);
+    }
+  }
   .insurance__modal-mint-redeem-buttons {
     gap: 70px;
     margin-bottom: 24px;
@@ -812,15 +822,27 @@ export default {
       box-shadow: none;
       border: none;
       padding: 0;
+      [data-theme="dark"] & {
+        background: none;
+        box-shadow: none;
+      }
     }
     p {
       font-size: 16px;
+    }
+    svg {
+      [data-theme="dark"] & {
+        fill: var(--color-4);
+      }
     }
     .insurance__modal-mint-redeem-button-selected {
       background: none;
       p {
         color: var(--color-1);
         text-decoration: underline;
+        [data-theme="dark"] & {
+          color: var(--color-4);
+        }
       }
     }
   }
