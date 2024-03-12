@@ -5,8 +5,15 @@
         name="USD+_money_markets"
         class="dashboard__token-data-main-token"
       />
+      <p
+        v-if="device.isMobile"
+        class="dashboard__token-data-title--token-mobile"
+      > USD+ </p>
       <div class="dashboard__token-data-link-title">
-        <p class="dashboard__token-data-title--token"> USD+ </p>
+        <p
+          v-if="!device.isMobile"
+          class="dashboard__token-data-title--token"
+        > USD+ </p>
         <p class="dashboard__token-data-title-period">{{ formattedPeriod() }}</p>
       </div>
     </div>
@@ -492,9 +499,6 @@ export default {
   .dashboard__token-data-link-title {
     margin: 0;
   }
-  .dashboard__token-data-from {
-    flex-direction: row;
-  }
   .dashboard__divider {
     margin-top: 6px;
     margin-bottom: 6px;
@@ -502,6 +506,27 @@ export default {
     margin-left: 0;
     width: 100%;
   }
+  .dashboard__token-data-title--token-mobile {
+    display: flex;
+    align-items: center;
+    margin-right: auto;
+    font-size: 16px;
+    color: var(--color-1);
+    font-weight: 600;
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
+  }
+  .dashboard__token-data-title-period,
+  .dashboard__token-data-title {
+    font-size: 12px;
+  }
+
+  .dashboard__token-data-h,
+  .dashboard__token-data-risk p {
+    font-size: 14px;
+  }
+
 }
 
 </style>

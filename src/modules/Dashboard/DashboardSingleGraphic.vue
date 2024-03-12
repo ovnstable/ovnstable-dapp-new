@@ -2,7 +2,7 @@
   <p class="dashboard__graphic-usd-plus-balance">
     {{ onlyUSD ? 'USD+ Balance' : 'AVERAGE TOKENS+ BALANCE' }}
     <span class="period">
-      <span class="divider">| </span>{{ formattedPeriod() }}
+      <span class="divider">| </span>{{ getFormattedPeriod }}
     </span>
   </p>
 
@@ -40,6 +40,7 @@
 <script lang="ts">
 import { Chart, registerables } from 'chart.js';
 import { appNetworksData } from '@/utils/const.ts';
+import { getFormattedPeriodDashboard } from '@/store/helpers/index.ts';
 import NoGraphic from '@/modules/Dashboard/NoGraphic.vue';
 
 const originPointPlugin = {
@@ -240,6 +241,9 @@ export default {
         },
       };
     },
+    getFormattedPeriod() {
+      return getFormattedPeriodDashboard(this.getDashboardInterval, this.portfolioBalanceData);
+    },
   },
 
   methods: {
@@ -327,64 +331,6 @@ export default {
       const minutes = date.getUTCMinutes().toString().padStart(2, '0');
       const formattedDate = `${day}.${month}.${year}, ${hours}:${minutes} UTC`;
       return formattedDate;
-    },
-    formattedPeriod() {
-      const today = new Date();
-      let formattedDate = '';
-      switch (this.getDashboardInterval.toLowerCase()) {
-        case 'day': {
-          formattedDate = today.toLocaleDateString('en-GB', {
-            day: '2-digit',
-            month: 'short',
-            year: '2-digit',
-          }).replace(',', '').replace(/ /g, ' ');
-          break;
-        }
-        case 'week': {
-          const weekAgo = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
-          formattedDate = weekAgo.toLocaleDateString('en-GB', {
-            day: '2-digit',
-            month: 'short',
-            year: '2-digit',
-          }).replace(',', '').replace(/ /g, ' ');
-          break;
-        }
-        case 'month': {
-          const monthAgo = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
-          formattedDate = monthAgo.toLocaleDateString('en-GB', {
-            day: '2-digit',
-            month: 'short',
-            year: '2-digit',
-          }).replace(',', '').replace(/ /g, ' ');
-          break;
-        }
-        case 'all time':
-          if (this.portfolioBalanceData && this.portfolioBalanceData.length > 0) {
-            const earliestTransaction = this
-              .portfolioBalanceData[this.portfolioBalanceData.length - 1];
-            const earliestDate = new Date(earliestTransaction.date);
-            formattedDate = earliestDate.toLocaleDateString('en-GB', {
-              day: '2-digit',
-              month: 'short',
-              year: '2-digit',
-            }).replace(',', '').replace(/ /g, ' ');
-          }
-          break;
-        default: {
-          formattedDate = today.toLocaleDateString('en-GB', {
-            day: '2-digit',
-            month: 'short',
-            year: '2-digit',
-          }).replace(',', '').replace(/ /g, ' ');
-        }
-      }
-
-      const formattedDateParts = formattedDate.split(' ');
-      if (formattedDateParts.length === 3) {
-        formattedDate = `From ${formattedDateParts[0]} ${formattedDateParts[1]} ‘${formattedDateParts[2]}`;
-      }
-
-      return formattedDate || '';
     },
     getInterval() {
       const intervalMapping = {
@@ -618,4 +564,23 @@ export default {
       padding: 10px 20px;
   }
 }
+
+@media (max-width: 400px) {
+  .dashboard__graphic-usd-plus-balance {
+    display: flex;
+    justify-content: space-between;
+    font-size: 16px;
+  }
+  .divider {
+    display: none;
+  }
+  .period {
+    font-size: 14px;
+  }
+  .dashboard__data-comp-today {
+    align-items: right;
+    text-align: right;
+  }
+}
+
 </style>

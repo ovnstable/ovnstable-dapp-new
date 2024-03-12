@@ -327,6 +327,10 @@ button {
     border: none;
     padding: 0;
   }
+  .dashboard-tokens-transactions {
+    margin-top: 22px;
+    font-size: 16px;
+  }
 }
 
 </style>
