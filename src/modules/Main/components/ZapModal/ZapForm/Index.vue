@@ -1481,7 +1481,7 @@ export default {
             val: null,
           });
           this.clearZapData();
-          this.$emit('close-modal');
+          this.$emit('close-form');
           this.loadBalances();
         })
         .catch((e) => {
@@ -1552,7 +1552,7 @@ export default {
       this.clearZapData();
       this.loadBalances();
       this.closeWaitingModal();
-      this.$emit('close-modal');
+      this.$emit('close-form');
     },
     async initZapInTransaction(
       responseData: any,
