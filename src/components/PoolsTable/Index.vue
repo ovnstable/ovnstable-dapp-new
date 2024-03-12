@@ -7,8 +7,24 @@
         <div class="pools-header__item">Chain</div>
         <div class="pools-header__item">Pool tokens</div>
         <div class="pools-header__item">Staking platform</div>
-        <div class="pools-header__item">APR</div>
-        <div class="pools-header__item">TVL</div>
+        <div
+          class="pools-header__item pools-header__item--hover"
+          :class="{ 'pools-header__item--active': ['APR_UP', 'APR_DOWN'].includes(orderType) }"
+          @click="toggleOrderType('APR')"
+          @keypress="toggleOrderType('APR')"
+        >
+          APR
+          <BaseIcon name="ArrowsFilter" />
+        </div>
+        <div
+          class="pools-header__item pools-header__item--hover"
+          :class="{ 'pools-header__item--active': ['TVL_UP', 'TVL_DOWN'].includes(orderType) }"
+          @click="toggleOrderType('TVL')"
+          @keypress="toggleOrderType('TVL')"
+        >
+          TVL
+          <BaseIcon name="ArrowsFilter" />
+        </div>
         <div class="pools-header__item" />
       </div>
 
@@ -327,6 +343,15 @@ export default {
 };
 </script>
 
+<style>
+.pools-header__item--active svg {
+  transform: scale(1.1);
+}
+
+.pools-header__item--active svg path {
+  fill: var(--color-3);
+}
+</style>
 <style lang="scss" scoped>
 .pools-table {
   position: relative;
@@ -567,6 +592,15 @@ export default {
     svg {
       fill: var(--color-4)
     }
+  }
+}
+
+.pools-header__item--hover {
+  transition: transform .2s ease, color .2s ease;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--color-3);
   }
 }
 </style>
