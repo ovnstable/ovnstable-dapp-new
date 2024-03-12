@@ -437,7 +437,6 @@ export const poolTokensForZapMap = {
       address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
     },
   ],
-
   '0x8a06339abd7499af755df585738ebf43d5d62b94': [
     {
       name: 'USDT+',
