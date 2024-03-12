@@ -224,6 +224,7 @@
       :is-show="isShowSelectTokensModal"
       :select-token-input="selectModalTypeInput"
       :tokens="allTokensList"
+      :user-account="account"
       :balances-loading="isBalancesLoading"
       :is-all-data-loaded="isAllDataLoaded"
       :selected-tokens="selectModalTypeInput ? inputTokens : outputTokens"
@@ -231,6 +232,7 @@
       @add-token-to-list="addSelectedTokenToList"
       @remove-token-from-list="removeSelectedTokenFromList"
       @connect-wallet="connectWalletTrigger"
+      @reload="reloadList"
     />
 
   </div>
@@ -653,6 +655,13 @@ export default {
     onLeaveList,
     beforeEnterList,
     onEnterList,
+    reloadList() {
+      try {
+        this.init();
+      } catch (e) {
+        console.log(e, 'reloadList');
+      }
+    },
     connectWalletTrigger() {
       this.connectWallet();
       this.showSelectTokensModals(false);

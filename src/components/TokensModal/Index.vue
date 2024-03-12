@@ -24,13 +24,27 @@
 
       <div class="tokens-container">
         <div
-          v-if="!isAllDataLoaded || balancesLoading"
+          v-if="!isAllDataLoaded || balancesLoading && !userAccount"
           class="token-select__spinner"
         >
           <Spinner size="40px" />
         </div>
         <div
-          v-else-if="tokens.length === 0"
+          v-else-if="userAccount && tokens.length === 0"
+          class="tokens-container__empty"
+        >
+          <h1>Chain tokens failed to load, please reload list</h1>
+          <ButtonComponent
+            class="tokens__connect"
+            btn-size="large"
+            full
+            @on-click="reloadTrigger"
+          >
+            RELOAD
+          </ButtonComponent>
+        </div>
+        <div
+          v-else-if="!userAccount && tokens.length === 0"
           class="tokens-container__empty"
         >
           <h1>Account not found, please connect Your wallet</h1>
@@ -72,11 +86,16 @@ export default {
     Spinner,
     ButtonComponent,
   },
-  emits: ['set-show', 'add-token-to-list', 'remove-token-from-list', 'connect-wallet'],
+  emits: ['set-show', 'add-token-to-list', 'remove-token-from-list', 'connect-wallet', 'reload'],
   props: {
     isShow: {
       type: Boolean,
       default: false,
+    },
+    userAccount: {
+      type: String,
+      required: false,
+      default: '',
     },
     selectTokenInput: {
       type: Boolean,
@@ -110,6 +129,9 @@ export default {
     },
   },
   methods: {
+    reloadTrigger() {
+      this.$emit('reload');
+    },
     connectWallet() {
       this.$emit('connect-wallet', false);
     },
