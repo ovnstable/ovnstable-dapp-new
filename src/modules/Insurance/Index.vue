@@ -189,6 +189,9 @@ export default {
   .insurance__payout-inner {
     width: 100%;
   }
+  .insurance-wrapper {
+    height: 100%;
+  }
 
   .insurance {
     padding: 16px 20px;

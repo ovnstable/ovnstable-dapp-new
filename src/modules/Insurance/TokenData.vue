@@ -722,9 +722,11 @@ export default {
     svg {
       max-width: 22px;
       max-height: 22px;
-      fill: var(--color-4);
       scale: 120%;
       width: auto;
+      [data-theme="dark"] & {
+        fill: var(--color-4);
+      }
     }
   }
   .insurance__token-title {
