@@ -88,13 +88,6 @@ export const poolsInfoMap: any = {
     approveType: 'TOKEN',
   },
 
-  // Aerodrome
-  '0x1b05e4e814b3431a48b8164c41eac834d9ce2da6': {
-    gauge: '0x87803Cb321624921cedaAD4555F07Daa0D1Ed325',
-    poolId: 0,
-    approveType: 'TOKEN',
-  },
-
   '0x4a3636608d7bc5776cb19eb72caa36ebb9ea683b': {
     // usd+/usdbc stable
     gauge: '0xa5972f0C07a2D1cc5A8457c28d88ec4f3C009864',
@@ -257,8 +250,15 @@ export const poolsInfoMap: any = {
     approveType: 'TOKEN',
   },
 
+  // Aerodrome
+  '0x1b05e4e814b3431a48b8164c41eac834d9ce2da6': {
+    gauge: '0x87803Cb321624921cedaAD4555F07Daa0D1Ed325',
+    poolId: 0,
+    approveType: 'TOKEN',
+  },
+
   '0xe96c788e66a97cf455f46c5b27786191fd3bc50b': {
-    gauge: '0xe96c788e66a97cf455f46c5b27786191fd3bc50b',
+    gauge: '0x87803Cb321624921cedaAD4555F07Daa0D1Ed325',
     poolId: 0,
     approveType: 'TOKEN',
   },

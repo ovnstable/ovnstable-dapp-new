@@ -405,12 +405,12 @@ export const poolTokensForZapMap = {
   '0xe96c788e66a97cf455f46c5b27786191fd3bc50b': [
     // Aerodrome
     {
-      name: 'OVN',
-      address: '0xA3d1a8DEB97B111454B294E2324EfAD13a9d8396',
+      name: 'USDC+',
+      address: chainContractsMap.base.usdcPlus.tokenPlus,
     },
     {
       name: 'USD+',
-      address: '0xb79dd08ea68a908a97220c76d19a6aa9cbde4376',
+      address: chainContractsMap.base.usdPlus.tokenPlus,
     },
   ],
 
