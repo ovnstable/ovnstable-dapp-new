@@ -62,6 +62,7 @@
           <SelectTokenWithSearch
             :tokens="tokens"
             :selected-tokens="selectedTokens"
+            :removeNative="removeNative"
             @add-token="selectToken"
             @remove-token="removeToken"
           />
@@ -90,6 +91,11 @@ export default {
   props: {
     isShow: {
       type: Boolean,
+      default: false,
+    },
+    removeNative: {
+      type: Boolean,
+      required: false,
       default: false,
     },
     userAccount: {

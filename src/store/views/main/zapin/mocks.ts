@@ -258,7 +258,7 @@ export const poolsInfoMap: any = {
   },
 
   '0xe96c788e66a97cf455f46c5b27786191fd3bc50b': {
-    gauge: '0x87803Cb321624921cedaAD4555F07Daa0D1Ed325',
+    gauge: '0x526b3D92fF55263dd24E3e14ccD0f5c2Dab81d3b',
     poolId: 0,
     approveType: 'TOKEN',
   },

@@ -304,6 +304,8 @@
       :is-all-data-loaded="isAllDataLoaded"
       :selected-tokens="inputTokens"
       :balances-loading="isBalancesLoading"
+      :user-account="account"
+      removeNative
       @set-show="showSelectTokensModals"
       @add-token-to-list="addSelectedTokenToList"
       @remove-token-from-list="removeSelectedTokenFromList"
@@ -1549,6 +1551,7 @@ export default {
 
       this.clearZapData();
       this.loadBalances();
+      this.closeWaitingModal();
       this.$emit('close-modal');
     },
     async initZapInTransaction(
