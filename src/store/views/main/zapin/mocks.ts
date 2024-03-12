@@ -257,6 +257,12 @@ export const poolsInfoMap: any = {
     approveType: 'TOKEN',
   },
 
+  '0xe96c788e66a97cf455f46c5b27786191fd3bc50b': {
+    gauge: '0xe96c788e66a97cf455f46c5b27786191fd3bc50b',
+    poolId: 0,
+    approveType: 'TOKEN',
+  },
+
   '0x844D7d2fCa6786Be7De6721AabdfF6957ACE73a0_Velodrome': {
     // ovn/usd+ Velodrome volatile
     gauge: '0x366776D0709F7C49ce5ea7cF7eAEF0AB4E746cc9',
@@ -265,17 +271,17 @@ export const poolsInfoMap: any = {
   },
 
   // PANCAKE
-  '0x721F37495cD70383B0A77Bf1eB8f97eef29498Bb': {
+  '0x721f37495cd70383b0a77bf1eb8f97eef29498bb': {
     // usdc/usd+
-    gauge: '0x721F37495cD70383B0A77Bf1eB8f97eef29498Bb',
+    gauge: '0x721f37495cd70383b0a77bf1eb8f97eef29498bb',
     gaugeForLP: '0x46A15B0b27311cedF172AB29E4f4766fbE7F4364',
     approveType: 'NFT',
     // pool token differ from pool address
     poolTokenType: 'DIFFERENT',
   },
-  '0x8a06339Abd7499Af755DF585738ebf43D5D62B94': {
+  '0x8a06339abd7499af755df585738ebf43d5d62b94': {
     // usdt+/usd+
-    gauge: '0x8a06339Abd7499Af755DF585738ebf43D5D62B94',
+    gauge: '0x8a06339abd7499af755df585738ebf43d5d62b94',
     gaugeForLP: '0x46A15B0b27311cedF172AB29E4f4766fbE7F4364',
     approveType: 'NFT',
     // pool token differ from pool address
@@ -354,12 +360,12 @@ export const zapPlatformContractTypeMap: any = {
     type: 'LP_STAKE_DIFF_STEPS',
     typeOfDepositConstructor: 'BASE_CONSTRUCTOR',
   },
-  '0x721F37495cD70383B0A77Bf1eB8f97eef29498Bb': {
+  '0x721f37495cd70383b0a77bf1eb8f97eef29498bb': {
     name: 'Pancake8020',
     type: 'LP_STAKE_DIFF_STEPS',
     typeOfDepositConstructor: 'CONSTRUCTOR_WITH_NFT_ID',
   },
-  '0x8a06339Abd7499Af755DF585738ebf43D5D62B94': {
+  '0x8a06339abd7499af755df585738ebf43d5d62b94': {
     name: 'PancakeEqual',
     type: 'LP_STAKE_DIFF_STEPS',
     typeOfDepositConstructor: 'CONSTRUCTOR_WITH_NFT_ID',

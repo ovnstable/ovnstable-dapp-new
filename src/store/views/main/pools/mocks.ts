@@ -402,20 +402,32 @@ export const poolTokensForZapMap = {
     },
   ],
 
-  '0x844D7d2fCa6786Be7De6721AabdfF6957ACE73a0_Velodrome': [
-    // Velodrome
+  '0xe96c788e66a97cf455f46c5b27786191fd3bc50b': [
+    // Aerodrome
     {
       name: 'OVN',
-      address: '0x3b08fcd15280e7B5A6e404c4abb87F7C774D1B2e',
+      address: '0xA3d1a8DEB97B111454B294E2324EfAD13a9d8396',
     },
     {
       name: 'USD+',
-      address: '0x73cb180bf0521828d8849bc8CF2B920918e23032',
+      address: '0xb79dd08ea68a908a97220c76d19a6aa9cbde4376',
+    },
+  ],
+
+  '0x844D7d2fCa6786Be7De6721AabdfF6957ACE73a0_Velodrome': [
+    // Velodrome
+    {
+      name: 'USDC+',
+      address: chainContractsMap.base.usdcPlus.tokenPlus,
+    },
+    {
+      name: 'USD+',
+      address: chainContractsMap.base.usdPlus.tokenPlus,
     },
   ],
 
   // PANCAKE ZAPS
-  '0x721F37495cD70383B0A77Bf1eB8f97eef29498Bb': [
+  '0x721f37495cd70383b0a77bf1eb8f97eef29498bb': [
     {
       name: 'USDC',
       address: '0xff970a61a04b1ca14834a43f5de4533ebddb5cc8',
@@ -426,7 +438,7 @@ export const poolTokensForZapMap = {
     },
   ],
 
-  '0x8a06339Abd7499Af755DF585738ebf43D5D62B94': [
+  '0x8a06339abd7499af755df585738ebf43d5d62b94': [
     {
       name: 'USDT+',
       address: chainContractsMap.arbitrum.usdtPlus.tokenPlus,

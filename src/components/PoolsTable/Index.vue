@@ -126,7 +126,7 @@
                 see on platform
               </div>
             </div>
-            <div class="col-2 col-xl-2 col-lg-2 col-md-2 col-sm-2">
+            <div class="pools-table__tvl">
               <div class="pool-table-header-item">
                 <div
                   v-if="pool.tvl"
@@ -510,7 +510,15 @@ export default {
   margin-right: 8px;
 }
 
+.pools-table__tvl {
+  display: flex;
+  align-items: center;
+}
+
 .pools-table__apy {
+  display: flex;
+  align-items: center;
+
   sup {
     position: relative;
     font-size: 10px;

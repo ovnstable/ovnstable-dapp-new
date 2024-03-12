@@ -417,8 +417,9 @@ export const initFeature = (pools: any[]) => {
     // promoting special pool in FEATURES/all-pools
     const featurePromote = [
       '0x1b05e4e814b3431a48b8164c41eac834d9ce2da6',
-      '0x8a06339Abd7499Af755DF585738ebf43D5D62B94',
+      '0x8a06339abd7499af755df585738ebf43d5d62b94',
     ];
+
     const convexPromote = ['0xb34a7d1444a707349bc7b981b7f2e1f20f81f013'];
     const loweredAdd = address?.toLowerCase();
 
