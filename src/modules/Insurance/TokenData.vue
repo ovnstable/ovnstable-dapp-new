@@ -88,7 +88,7 @@
     class="insurance__info-mobile"
   >
     <div
-      v-if="!insuranceIsMobileAboutOvn"
+      v-if="!insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem"
       class="insurance__interact-buttons"
     >
       <div class="insurance__button-mobile">
@@ -160,7 +160,7 @@
 
     </div>
     <div
-      v-else
+      v-else-if="insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem"
       class="insurance__about-mobile-on"
     >
       <ButtonComponent
@@ -175,7 +175,7 @@
     </div>
 
     <div
-      v-if="!insuranceIsMobileAboutOvn"
+      v-if="!insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem"
       class="insurance__token-title"
     >
       <BaseIcon
@@ -212,7 +212,7 @@
     <InsuranceAbout />
   </div>
   <div
-    v-if="!insuranceIsMobileAboutOvn"
+    v-if="!insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem"
     class="insurance__token-data"
   >
     <div class="insurance__divider insurance__divider--first-divider" />
@@ -265,7 +265,11 @@
       </div>
     </div>
     <div class="insurance__divider insurance__divider--last-divider" />
-
+    <MintRedeemModal
+      v-model="showModalMintRedeem"
+    />
+  </div>
+  <div v-if="insuranceIsMobileMintRedeem">
     <MintRedeemModal
       v-model="showModalMintRedeem"
     />
@@ -313,10 +317,18 @@ export default {
     insuranceIsMobileAboutOvn() {
       return this.$store.state.insuranceTokenData.isMobileAboutOvn.value;
     },
+    insuranceIsMobileMintRedeem() {
+      return this.$store.state.insuranceTokenData.isMobileMintRedeem.value;
+    },
   },
   methods: {
     toggleModalMintRedeem() {
       this.showModalMintRedeem = !this.showModalMintRedeem;
+      if (this.device.isMobile) {
+        this.$store.commit('insuranceTokenData/setIsMobileMintRedeem', {
+          value: this.showModalMintRedeem,
+        });
+      }
     },
     toggleInsuranceAbout() {
       this.showInsuranceInfo = !this.showInsuranceInfo;
