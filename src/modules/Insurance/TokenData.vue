@@ -46,18 +46,27 @@
             />
           </ButtonComponent>
 
-          <ButtonComponent class="insurance__title-button">
-            <BaseIcon
-              name='InsuranceBridge'
-            />
-            BRIDGE
-          </ButtonComponent>
-          <ButtonComponent class="insurance__title-button">
-            <BaseIcon
-              name='InsuranceOVN'
-            />
-            OVN DASHBOARD
-          </ButtonComponent>
+          <router-link
+            to="/"
+          >
+            <ButtonComponent class="insurance__title-button">
+              <BaseIcon
+                name='InsuranceBridge'
+              />
+              BRIDGE
+            </ButtonComponent>
+          </router-link>
+
+          <router-link
+            to="/dashboard"
+          >
+            <ButtonComponent class="insurance__title-button">
+              <BaseIcon
+                name='InsuranceOVN'
+              />
+              OVN DASHBOARD
+            </ButtonComponent>
+          </router-link>
         </div>
         <ButtonComponent
           class="insurance__title-button"
@@ -97,11 +106,15 @@
       </div>
 
       <div class="insurance__button-mobile">
-        <ButtonComponent class="insurance__title-button">
-          <BaseIcon
-            name='InsuranceBridge'
-          />
-        </ButtonComponent>
+        <router-link
+          to="/"
+        >
+          <ButtonComponent class="insurance__title-button">
+            <BaseIcon
+              name='InsuranceBridge'
+            />
+          </ButtonComponent>
+        </router-link>
         <p>BRIDGE</p>
       </div>
       <div class="insurance__button-mobile">
@@ -119,11 +132,15 @@
       </div>
 
       <div class="insurance__button-mobile">
-        <ButtonComponent class="insurance__title-button">
-          <BaseIcon
-            name='InsuranceOVN'
-          />
-        </ButtonComponent>
+        <router-link
+          to="/dashboard"
+        >
+          <ButtonComponent class="insurance__title-button">
+            <BaseIcon
+              name='InsuranceOVN'
+            />
+          </ButtonComponent>
+        </router-link>
         <p>MY OVN</p>
       </div>
 
@@ -824,11 +841,22 @@ export default {
       margin-right: 76px;
       border: none;
       box-shadow: none;
+      [data-theme="dark"] & {
+        box-shadow: none;
+      }
+    }
+    svg {
+      [data-theme="dark"] & {
+        fill: var(--color-4);
+      }
     }
     p {
       font-size: 16px;
       color: var(--color-1);
       font-weight: 500;
+      [data-theme="dark"] & {
+        color: var(--color-4);
+      }
     }
   }
 
