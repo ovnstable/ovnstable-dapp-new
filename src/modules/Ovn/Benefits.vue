@@ -11,8 +11,20 @@
       :key="`benefit-${benefit.title}`"
     >
 
-      <BaseIcon :name="benefit.icon" />
-      <p>{{ benefit.title }}</p>
+      <BaseIcon
+        v-if="!device.isMobile"
+        :name="benefit.icon"
+      />
+      <p v-if="!device.isMobile">{{ benefit.title }}</p>
+      <div
+        v-if="device.isMobile"
+        class="ovn__overview-benefit-icon-title"
+      >
+        <BaseIcon
+          :name="benefit.icon"
+        />
+        <p>{{ benefit.title }}</p>
+      </div>
       <p>{{ benefit.description }}</p>
     </div>
   </div>
@@ -20,6 +32,7 @@
 
 <script lang="ts">
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import { deviceType } from '@/utils/deviceType.ts';
 
 export default {
   name: 'OvnBenefits',
@@ -46,6 +59,11 @@ export default {
         },
       ],
     };
+  },
+  computed: {
+    device() {
+      return deviceType();
+    },
   },
 };
 
@@ -121,6 +139,31 @@ export default {
 
   .ovn__overview-benefits > .ovn__overview-benefit:nth-child(2) {
     max-width: 250px;
+  }
+}
+
+@media (max-width: 400px) {
+  .ovn__overview-benefits-title {
+    font-size: 16px;
+  }
+  .ovn__overview-benefits {
+    text-align: left;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 22px;
+  }
+  .ovn__overview-benefit-icon-title {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    text-align: left;
+  }
+  .ovn__overview-benefit {
+    width: 100%;
+    align-items: flex-start;
+    text-align: left;
+    min-width: 100%;
   }
 }
 </style>

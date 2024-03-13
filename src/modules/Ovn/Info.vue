@@ -9,10 +9,13 @@
 
   </div>
   <div
-    v-else-if="!device.isMobile"
-    class="ovn__overview"
+    v-else
+    :class="{ ovn__overview: !device.isMobile }"
   >
-    <div class="ovn__overview-links">
+    <div
+      v-if="!device.isMobile"
+      class="ovn__overview-links"
+    >
       <BaseIcon
         class='ovn__overview-links-image'
         name="OVN_LOGO_dark"
@@ -35,80 +38,10 @@
         >Coinmarketcap</a>
       </div>
     </div>
-    <div class="ovn__overview-divider" />
-    <div class="ovn__overview-price">
-      <p class="ovn__overview-price-title">OVN Price</p>
-      <div class="ovn__overview-price-change">
-        <p>{{priceOvn}}</p>
-        <p :class="priceOvnChange < 0 ? 'ovn__overview-price-down' : 'ovn__overview-price-up'">{{ priceOvnChange }}% (1d)</p>
-      </div>
-    </div>
-    <div class="ovn__overview-divider" />
-    <div class="ovn__overview-mc">
-      <p class="ovn__overview-mc-title">Market cap</p>
-      <div class="ovn__overview-mc-change">
-        <p>${{formatNumber(marketCap)}}</p>
-      </div>
-    </div>
-    <div class="ovn__overview-divider" />
-    <div class="ovn__overview-tvl">
-      <p class="ovn__overview-tvl-title">OVN TVL</p>
-      <div class="ovn__overview-exact-chain">
-        <div
-          class="ovn__overview-icon-chain"
-        >
-          <BaseIcon
-            :name="networkName.toLocaleLowerCase()"
-          />
-        </div>
-
-        <p>${{ formatNumber(tokenData.ovnTVL) }}</p>
-      </div>
-      <p>past 2 hours</p>
-    </div>
-    <div class="ovn__overview-divider" />
-    <div class="ovn__overview-interact-buttons">
-      <router-link
-        to="/"
-      >
-        <ButtonComponent
-          class="ovn__overview-button"
-        >
-          <BaseIcon
-            class="ovn__overview-mint-icon"
-            name='InsuranceMint'
-          />
-          MINT / REDEEM
-          <BaseIcon
-            name='InsuranceRedeem'
-            class="ovn__overview-redeem-icon"
-          />
-        </ButtonComponent>
-      </router-link>
-      <router-link
-        to="/"
-      >
-        <ButtonComponent class="ovn__overview-button">
-          <BaseIcon
-            class="ovn__overview-bridge-icon"
-            name='InsuranceBridge'
-          />
-          BRIDGE
-        </ButtonComponent>
-      </router-link>
-      <ButtonComponent class="ovn__overview-button">
-        <BaseIcon
-          class="ovn__overview-dashboard-icon"
-          name='InsuranceOVN'
-        />
-        OVN DASHBOARD
-      </ButtonComponent>
-
-    </div>
-
-  </div>
-  <div v-else-if="loaded && device.isMobile">
-    <div class="ovn__overview-links">
+    <div
+      v-if="device.isMobile"
+      class="ovn__overview-links"
+    >
       <BaseIcon
         class='ovn__overview-links-image'
         name="OVN_LOGO_dark"
@@ -172,11 +105,53 @@
         </div>
 
         <p>${{ formatNumber(tokenData.ovnTVL) }}</p>
-        <p>past 2 hours</p>
+        <p v-if="device.isMobile">past 2 hours</p>
       </div>
-
+      <p v-if="!device.isMobile">past 2 hours</p>
     </div>
     <div class="ovn__overview-divider" />
+    <div
+      v-if="!device.isMobile"
+      class="ovn__overview-interact-buttons"
+    >
+      <router-link
+        to="/"
+      >
+        <ButtonComponent
+          class="ovn__overview-button"
+        >
+          <BaseIcon
+            class="ovn__overview-mint-icon"
+            name='InsuranceMint'
+          />
+          MINT / REDEEM
+          <BaseIcon
+            name='InsuranceRedeem'
+            class="ovn__overview-redeem-icon"
+          />
+        </ButtonComponent>
+      </router-link>
+      <router-link
+        to="/"
+      >
+        <ButtonComponent class="ovn__overview-button">
+          <BaseIcon
+            class="ovn__overview-bridge-icon"
+            name='InsuranceBridge'
+          />
+          BRIDGE
+        </ButtonComponent>
+      </router-link>
+      <ButtonComponent class="ovn__overview-button">
+        <BaseIcon
+          class="ovn__overview-dashboard-icon"
+          name='InsuranceOVN'
+        />
+        OVN DASHBOARD
+      </ButtonComponent>
+
+    </div>
+
   </div>
   <div class="ovn__overview-chain-data-container">
     <div
@@ -543,16 +518,25 @@ export default {
       font-size: 12px;
       color: var(--color-2);
       margin-bottom: 16px;
+      [data-theme="dark"] & {
+        color: var(--color-18);
+      }
     }
   }
   .ovn__overview-dashboard-icon {
     padding: 0;
     margin: 0;
     scale: 150%;
+    [data-theme="dark"] & {
+      fill: var(--color-4);
+    }
   }
   .ovn__overview-button {
     border-radius: 50%;
     padding: 11px 11px;
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
   }
   .ovn__overview-price-change p:nth-child(1),
   .ovn__overview-price-title,
@@ -577,6 +561,42 @@ export default {
   .ovn__overview-chain-data-container {
     justify-content: space-between;
   }
+
+  .ovn__overview-divider {
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+  .ovn__overview-price-up,
+  .ovn__overview-exact-chain p:last-child {
+    margin-left: 10px;
+  }
+
+  .ovn__overview-price-title,
+  .ovn__overview-mc-title,
+  .ovn__overview-tvl-title {
+    font-size: 15px;
+    color: var(--color-2);
+    [data-theme="dark"] & {
+      color: var(--color-18);
+    }
+  }
+
+  .ovn__overview-price-change p:first-child,
+  .ovn__overview-price-up,
+  .ovn__overview-mc-change p,
+  .ovn__overview-exact-chain p {
+    font-size: 14px;
+  }
+  .ovn__overview-exact-chain p:last-child {
+    color: var(--color-2);
+    [data-theme="dark"] & {
+      color: var(--color-18);
+    }
+  }
+  .ovn__overview-chain-data-container {
+    margin-top: 12px;
+  }
+
 }
 
 </style>

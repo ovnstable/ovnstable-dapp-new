@@ -11,7 +11,7 @@
           class="ovn__overview-item-icon"
           :style="{ 'background-color': benefit.color }"
         />
-        <p>{{ benefit.name }}</p>
+        <p>{{ benefit.name }}:</p>
         <p>{{ benefit.percent }}%</p>
       </div>
     </div>
@@ -229,4 +229,29 @@ export default {
     font-size: 14px;
   }
 }
+
+@media (max-width: 400px) {
+  .ovn__overview-tokenomic {
+    background-color: var(--color-8);
+    border-radius: 10px;
+    padding: 16px 10px;
+    [data-theme="dark"] & {
+      background-color: var(--color-6)
+    }
+    svg {
+      scale: 85%;
+      overflow: visible;
+    }
+  }
+  .ovn__overview-distribution {
+    gap: 10px
+  }
+  .ovn__overview-distribution-item {
+    font-size: 12px;
+  }
+  .ovn__overview-item-icon {
+    min-width: 14px;
+  }
+}
+
 </style>
