@@ -88,13 +88,6 @@ export const poolsInfoMap: any = {
     approveType: 'TOKEN',
   },
 
-  // Aerodrome
-  '0x1b05e4e814b3431a48b8164c41eac834d9ce2da6': {
-    gauge: '0x87803Cb321624921cedaAD4555F07Daa0D1Ed325',
-    poolId: 0,
-    approveType: 'TOKEN',
-  },
-
   '0x4a3636608d7bc5776cb19eb72caa36ebb9ea683b': {
     // usd+/usdbc stable
     gauge: '0xa5972f0C07a2D1cc5A8457c28d88ec4f3C009864',
@@ -257,6 +250,19 @@ export const poolsInfoMap: any = {
     approveType: 'TOKEN',
   },
 
+  // Aerodrome
+  '0x1b05e4e814b3431a48b8164c41eac834d9ce2da6': {
+    gauge: '0x87803Cb321624921cedaAD4555F07Daa0D1Ed325',
+    poolId: 0,
+    approveType: 'TOKEN',
+  },
+
+  '0xe96c788e66a97cf455f46c5b27786191fd3bc50b': {
+    gauge: '0x526b3D92fF55263dd24E3e14ccD0f5c2Dab81d3b',
+    poolId: 0,
+    approveType: 'TOKEN',
+  },
+
   '0x844D7d2fCa6786Be7De6721AabdfF6957ACE73a0_Velodrome': {
     // ovn/usd+ Velodrome volatile
     gauge: '0x366776D0709F7C49ce5ea7cF7eAEF0AB4E746cc9',
@@ -265,17 +271,17 @@ export const poolsInfoMap: any = {
   },
 
   // PANCAKE
-  '0xd01075f7314a6436e8b74fc18069848229d0c555': {
+  '0x721f37495cd70383b0a77bf1eb8f97eef29498bb': {
     // usdc/usd+
-    gauge: '0xd01075f7314a6436e8b74fc18069848229d0c555',
+    gauge: '0x721f37495cd70383b0a77bf1eb8f97eef29498bb',
     gaugeForLP: '0x46A15B0b27311cedF172AB29E4f4766fbE7F4364',
     approveType: 'NFT',
     // pool token differ from pool address
     poolTokenType: 'DIFFERENT',
   },
-  '0xb9c2d906f94b27bc403ab76b611d2c4490c2ae3f': {
+  '0x8a06339abd7499af755df585738ebf43d5d62b94': {
     // usdt+/usd+
-    gauge: '0xb9c2d906f94b27bc403ab76b611d2c4490c2ae3f',
+    gauge: '0x8a06339abd7499af755df585738ebf43d5d62b94',
     gaugeForLP: '0x46A15B0b27311cedF172AB29E4f4766fbE7F4364',
     approveType: 'NFT',
     // pool token differ from pool address
@@ -354,12 +360,12 @@ export const zapPlatformContractTypeMap: any = {
     type: 'LP_STAKE_DIFF_STEPS',
     typeOfDepositConstructor: 'BASE_CONSTRUCTOR',
   },
-  '0xd01075f7314a6436e8b74fc18069848229d0c555': {
+  '0x721f37495cd70383b0a77bf1eb8f97eef29498bb': {
     name: 'Pancake8020',
     type: 'LP_STAKE_DIFF_STEPS',
     typeOfDepositConstructor: 'CONSTRUCTOR_WITH_NFT_ID',
   },
-  '0xb9c2d906f94b27bc403ab76b611d2c4490c2ae3f': {
+  '0x8a06339abd7499af755df585738ebf43d5d62b94': {
     name: 'PancakeEqual',
     type: 'LP_STAKE_DIFF_STEPS',
     typeOfDepositConstructor: 'CONSTRUCTOR_WITH_NFT_ID',

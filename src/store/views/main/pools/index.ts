@@ -81,6 +81,7 @@ const actions = {
 
               if (pool?.id?.name === 'Convex USD+FRAXBP') {
                 tokenNames = ['USD+', 'FRAX'];
+                pool.id.name = 'USD+/FRAXBP';
               }
 
               const token0Icon = loadTokenImage(tokenNames[0]);

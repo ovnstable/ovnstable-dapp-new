@@ -314,6 +314,11 @@ export const getSortedPools = (
     '0xb34a7d1444a707349Bc7b981B7F2E1f20F81F013',
     '0xd01075f7314a6436e8b74fc18069848229d0c555',
     '0xb9c2d906f94b27bc403ab76b611d2c4490c2ae3f',
+    // LYNEX
+    '0x58aacbccaec30938cb2bb11653cad726e5c4194a',
+    '0xc5f4c5c2077bbbac5a8381cf30ecdf18fde42a91',
+    // FRAX
+    '0x56390acF12bce9675ab3922060D8d955149BE286',
   ];
 
   // execute revert aggregator
@@ -412,8 +417,9 @@ export const initFeature = (pools: any[]) => {
     // promoting special pool in FEATURES/all-pools
     const featurePromote = [
       '0x1b05e4e814b3431a48b8164c41eac834d9ce2da6',
-      '0xb9c2d906f94b27bc403ab76b611d2c4490c2ae3f',
+      '0x8a06339abd7499af755df585738ebf43d5d62b94',
     ];
+
     const convexPromote = ['0xb34a7d1444a707349bc7b981b7f2e1f20f81f013'];
     const loweredAdd = address?.toLowerCase();
 

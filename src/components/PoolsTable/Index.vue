@@ -7,8 +7,30 @@
         <div class="pools-header__item">Chain</div>
         <div class="pools-header__item">Pool tokens</div>
         <div class="pools-header__item">Staking platform</div>
-        <div class="pools-header__item">APR</div>
-        <div class="pools-header__item">TVL</div>
+        <div
+          class="pools-header__item pools-header__item--hover"
+          :class="{
+            'pools-header__item--active-down': ['APR_UP'].includes(orderType),
+            'pools-header__item--active-up': ['APR_DOWN'].includes(orderType),
+          }"
+          @click="toggleOrderType('APR')"
+          @keypress="toggleOrderType('APR')"
+        >
+          APR
+          <BaseIcon name="ArrowsFilter" />
+        </div>
+        <div
+          class="pools-header__item pools-header__item--hover"
+          :class="{
+            'pools-header__item--active-down': ['TVL_UP'].includes(orderType),
+            'pools-header__item--active-up': ['TVL_DOWN'].includes(orderType),
+          }"
+          @click="toggleOrderType('TVL')"
+          @keypress="toggleOrderType('TVL')"
+        >
+          TVL
+          <BaseIcon name="ArrowsFilter" />
+        </div>
         <div class="pools-header__item" />
       </div>
 
@@ -126,7 +148,7 @@
                 see on platform
               </div>
             </div>
-            <div class="col-2 col-xl-2 col-lg-2 col-md-2 col-sm-2">
+            <div class="pools-table__tvl">
               <div class="pool-table-header-item">
                 <div
                   v-if="pool.tvl"
@@ -327,6 +349,19 @@ export default {
 };
 </script>
 
+<style>
+.pools-header__item--active-up svg {
+  transform: translateY(4px) scale(1.1);
+}
+
+.pools-header__item--active-down svg {
+  transform: translateY(-4px) scale(1.1);
+}
+
+.pools-header__item--active-up svg path, .pools-header__item--active-down svg path {
+  fill: var(--color-3);
+}
+</style>
 <style lang="scss" scoped>
 .pools-table {
   position: relative;
@@ -510,7 +545,15 @@ export default {
   margin-right: 8px;
 }
 
+.pools-table__tvl {
+  display: flex;
+  align-items: center;
+}
+
 .pools-table__apy {
+  display: flex;
+  align-items: center;
+
   sup {
     position: relative;
     font-size: 10px;
@@ -559,6 +602,15 @@ export default {
     svg {
       fill: var(--color-4)
     }
+  }
+}
+
+.pools-header__item--hover {
+  transition: transform .2s ease, color .2s ease;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--color-3);
   }
 }
 </style>

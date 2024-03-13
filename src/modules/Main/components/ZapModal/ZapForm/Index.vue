@@ -304,6 +304,8 @@
       :is-all-data-loaded="isAllDataLoaded"
       :selected-tokens="inputTokens"
       :balances-loading="isBalancesLoading"
+      :user-account="account"
+      removeNative
       @set-show="showSelectTokensModals"
       @add-token-to-list="addSelectedTokenToList"
       @remove-token-from-list="removeSelectedTokenFromList"
@@ -326,8 +328,8 @@ import {
   maxAll,
   getNewOutputToken,
   getNewInputToken,
-  getTokenBySymbol,
   WHITE_LIST_ODOS,
+  getTokenByAddress,
 } from '@/store/helpers/index.ts';
 import {
   getProportion,
@@ -787,7 +789,6 @@ export default {
     updateTokenValueMethod(tokenData: any, isMaxBal: boolean) {
       let newToken = null;
 
-      console.log(tokenData, '--tokenData');
       if (isMaxBal) {
         newToken = updateTokenValue(
           tokenData,
@@ -802,7 +803,6 @@ export default {
           this.checkApproveForToken,
         );
       }
-      console.log(newToken, '---newToken');
 
       this.updateTokenState(newToken);
     },
@@ -868,8 +868,8 @@ export default {
     },
     addDefaultPoolToken() {
       const poolTokens = poolTokensForZapMap[this.zapPool.address];
-      const poolSelectedToken = getTokenBySymbol(poolTokens[0].name, this.allTokensList);
-      const ovnSelectSelectedToken = getTokenBySymbol(poolTokens[1].name, this.allTokensList);
+      const poolSelectedToken = getTokenByAddress(poolTokens[0].address, this.allTokensList);
+      const ovnSelectSelectedToken = getTokenByAddress(poolTokens[1].address, this.allTokensList);
 
       if (!poolSelectedToken || !ovnSelectSelectedToken) {
         this.addNewInputToken();
@@ -1060,6 +1060,7 @@ export default {
       const formulaInputTokens = [];
       let formulaOutputTokens = [];
 
+      console.log(poolOutputTokens, '----poolOutputTokens');
       for (let i = 0; i < userInputTokens.length; i++) {
         const inputToken = userInputTokens[i];
         const userInputToken = inputToken.selectedToken;
@@ -1127,6 +1128,17 @@ export default {
       );
       const outputPrices = formulaOutputTokens.map((token: any) => token.price);
 
+      console.log({
+        inputTokensDecimals: [...inputDecimals],
+        inputTokensAddresses: [...inputAddresses],
+        inputTokensAmounts: [...inputAmounts],
+        inputTokensPrices: [...inputPrices],
+        outputTokensDecimals: [...outputDecimals],
+        outputTokensAddresses: [...outputAddresses],
+        outputTokensAmounts: [...outputAmounts],
+        outputTokensPrices: [...outputPrices],
+        proportion0: new BigNumber(reserves[0]).times(outputPrices[0]).div(sumReserves).toNumber(),
+      }, '-----PARMAS');
       const proportions = calculateProportionForPool({
         inputTokensDecimals: [...inputDecimals],
         inputTokensAddresses: [...inputAddresses],
@@ -1469,7 +1481,7 @@ export default {
             val: null,
           });
           this.clearZapData();
-          this.$emit('close-modal');
+          this.$emit('close-form');
           this.loadBalances();
         })
         .catch((e) => {
@@ -1539,7 +1551,8 @@ export default {
 
       this.clearZapData();
       this.loadBalances();
-      this.$emit('close-modal');
+      this.closeWaitingModal();
+      this.$emit('close-form');
     },
     async initZapInTransaction(
       responseData: any,
@@ -2095,7 +2108,6 @@ export default {
     },
 
     addSelectedTokenToList(data: any) {
-      console.log(data, '---dataaddSelectedTokenToList');
       if (data.isInput) {
         this.addSelectedTokenToInputList(data.tokenData, false);
         // this.addTokensEmptyIsNeeded();
@@ -2133,6 +2145,7 @@ export default {
       );
     },
     addSelectedTokenToOutputList(selectedToken: any, isLocked: any, startPercent: any) {
+      console.log(selectedToken, 'SELECTED');
       const newOutputToken = getNewOutputToken();
       newOutputToken.locked = isLocked;
       newOutputToken.value = startPercent;

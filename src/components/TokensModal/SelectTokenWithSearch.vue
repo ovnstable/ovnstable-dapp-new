@@ -75,6 +75,8 @@ import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import InputComponent from '@/components/Input/Index.vue';
 import { OVN_TOKENS } from '@/utils/const.ts';
 
+const NATIVE_ID = 'eth0x0000000000000000000000000000000000000000';
+
 export default {
   name: 'SelectTokenWithSearch',
   components: {
@@ -90,6 +92,11 @@ export default {
     selectedTokens: {
       type: Array,
       required: true,
+    },
+    removeNative: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
   data() {
@@ -108,9 +115,25 @@ export default {
       return [];
     },
     queryTokens() {
+      let arrList = this.tokens.slice();
+
+      if (this.removeNative) arrList = arrList.filter((_: any) => _.id !== NATIVE_ID);
+
       if (!this.searchQuery) {
-        return this.tokens
-          .slice()
+        return arrList
+          .sort((a: any, b: any) => {
+            if (b.price * b.balanceData.balance < a.price * a.balanceData.balance) {
+              return -1;
+            } if (b.price * b.balanceData.balance > a.price * a.balanceData.balance) {
+              return 1;
+            }
+            if (b.balanceData.balance < a.balanceData.balance) {
+              return -1;
+            } if (b.balanceData.balance > a.balanceData.balance) {
+              return 1;
+            }
+            return 0;
+          })
           .sort((a: any, b: any) => {
             if (OVN_TOKENS.includes(a.symbol) && !OVN_TOKENS.includes(b.symbol)) {
               return -1;
@@ -123,7 +146,7 @@ export default {
           });
       }
 
-      return this.tokens
+      return arrList
         .filter((token: any) => token.name.toLowerCase()
           .includes(this.searchQuery?.toLowerCase())
               || token.symbol.toLowerCase().includes(this.searchQuery.toLowerCase())

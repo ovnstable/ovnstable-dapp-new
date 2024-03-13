@@ -3,6 +3,7 @@
     <div class="pools-wrap__tabs">
       <SwitchTabs
         :tabs="filterTabs"
+        :active-tab="poolTypes.ALL"
         type="large"
         @tab-change="changeTab"
       />
@@ -81,6 +82,7 @@ export default {
     return {
       sortedChains: [] as Chain[],
       networksData: appNetworksData,
+      poolTypes,
       filterTabs: [
         {
           id: poolTypes.ALL,

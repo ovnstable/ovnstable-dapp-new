@@ -217,7 +217,10 @@ export default {
   color: var(--color-1);
   font-size: 17px;
   font-weight: 600;
-  margin-top:20px;
+  margin-top: 20px;
+  &:last-child {
+    margin-top: 10px;
+  }
 }
 .active-link {
   text-decoration: underline;
