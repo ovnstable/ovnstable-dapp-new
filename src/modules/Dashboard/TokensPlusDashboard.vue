@@ -81,7 +81,7 @@
       <div class="dasboard__tokens-data-total-mobile">
         <div class="dasboard__tokens-data-total-mobile-item">
           <p class="dasboard__tokens-data-total-title">TOTAL</p>
-          <p>{{getFormattedPeriod}}</p>
+          <p class="dasboard__tokens-data-total-period">{{getFormattedPeriod}}</p>
         </div>
         <div class="dashboard__divider" />
         <div class="dasboard__tokens-data-total-mobile-item">
@@ -622,6 +622,18 @@ export default {
     flex-direction: column;
     margin-top: 22px;
   }
+  .dasboard__tokens-data-token-mobile p:first-child {
+    [data-theme="dark"] & {
+      color: var(--color-18);
+    }
+  }
+
+  .dasboard__tokens-data-total-period {
+    [data-theme="dark"] & {
+      color: var(--color-18) !important;
+    }
+  }
+
   .dasboard__tokens-data-token {
     display: flex;
     flex-direction: row;
@@ -654,7 +666,11 @@ export default {
       color: var(--color-4);
     }
   }
-
+  .dasboard__tokens-data-total-mobile-item p:first-child {
+    [data-theme="dark"] & {
+      color: var(--color-18);
+    }
+  }
   .dasboard__tokens-data-token-balance p:first-child,
   .dasboard__tokens-data-usd-balance p:first-child,
   .dasboard__tokens-data-token-profit p:first-child,
@@ -663,11 +679,19 @@ export default {
   }
   .dasboard__tokens-data-total-title {
     font-size: 16px !important;
+    [data-theme="dark"] & {
+      color: var(--color-4) !important;
+    }
   }
 
   .dasboard__tokens-data-total-mobile-item p:last-child,
   .dasboard__tokens-data-token-form-period {
     font-size: 14px;
+  }
+  .dasboard__tokens-data-total-mobile-item p:last-child {
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
   }
   .dasboard__tokens-data-token {
     margin-bottom: 16px;

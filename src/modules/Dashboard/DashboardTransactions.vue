@@ -490,5 +490,10 @@ export default {
   .dashboard__transactions-button-show {
     padding: 5px;
   }
+  .dashboard__transactions-button-show-text {
+    [data-theme="dark"] & {
+      color: var(--color-18);
+    }
+  }
 }
 </style>
