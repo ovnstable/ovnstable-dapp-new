@@ -137,18 +137,6 @@ export const poolTokensForZapMap = {
     },
   ],
 
-  // Ramses
-  '0xeb9153afbaa3a6cfbd4fce39988cea786d3f62bb': [
-    {
-      name: 'USD+',
-      address: '0xe80772Eaf6e2E18B651F160Bc9158b2A5caFCA65',
-    },
-    {
-      name: 'DAI+',
-      address: '0xeb8E93A0c7504Bffd8A8fFa56CD754c63aAeBFe8',
-    },
-  ],
-
   // Demeter Sperax TODO: TOKEN ADDRESSES need to update
   '0x9be8026c5c55a3d5513d4c6607355b3678c0afdb': [
     {
@@ -414,31 +402,42 @@ export const poolTokensForZapMap = {
     },
   ],
 
-  '0x844D7d2fCa6786Be7De6721AabdfF6957ACE73a0_Velodrome': [
-    // Velodrome
+  '0xe96c788e66a97cf455f46c5b27786191fd3bc50b': [
+    // Aerodrome
     {
-      name: 'OVN',
-      address: '0x3b08fcd15280e7B5A6e404c4abb87F7C774D1B2e',
+      name: 'USDC+',
+      address: chainContractsMap.base.usdcPlus.tokenPlus,
     },
     {
       name: 'USD+',
-      address: '0x73cb180bf0521828d8849bc8CF2B920918e23032',
+      address: chainContractsMap.base.usdPlus.tokenPlus,
+    },
+  ],
+
+  '0x844D7d2fCa6786Be7De6721AabdfF6957ACE73a0_Velodrome': [
+    // Velodrome
+    {
+      name: 'USDC+',
+      address: chainContractsMap.base.usdcPlus.tokenPlus,
+    },
+    {
+      name: 'USD+',
+      address: chainContractsMap.base.usdPlus.tokenPlus,
     },
   ],
 
   // PANCAKE ZAPS
-  '0xd01075f7314a6436e8b74fc18069848229d0c555': [
-    {
-      name: 'USD+',
-      address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
-    },
+  '0x721f37495cd70383b0a77bf1eb8f97eef29498bb': [
     {
       name: 'USDC',
       address: '0xff970a61a04b1ca14834a43f5de4533ebddb5cc8',
     },
+    {
+      name: 'USD+',
+      address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
+    },
   ],
-
-  '0xb9c2d906f94b27bc403ab76b611d2c4490c2ae3f': [
+  '0x8a06339abd7499af755df585738ebf43d5d62b94': [
     {
       name: 'USDT+',
       address: chainContractsMap.arbitrum.usdtPlus.tokenPlus,

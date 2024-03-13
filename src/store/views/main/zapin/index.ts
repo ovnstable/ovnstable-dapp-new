@@ -34,7 +34,8 @@ const actions = {
 
     console.log(state.zapPoolRoot, 'this.zapPoolRoot');
     console.log(
-      zapPlatformContractTypeMap[state.zapPoolRoot.address],
+      zapPlatformContractTypeMap[state.zapPoolRoot.platform]
+      ?? zapPlatformContractTypeMap[state.zapPoolRoot.address],
       '---zapPlatformContractTypeMap[this.zapPoolRoot.address]',
     );
     if (!state.currentZapPlatformContractType) {
@@ -47,6 +48,7 @@ const actions = {
 
     const platformName = state.currentZapPlatformContractType.name;
 
+    console.log(platformName, '---platformName');
     const abiFile = await loadJSON(
       `/contracts/${state.zapPoolRoot.chainName}/${platformName}Zap.json`,
     );

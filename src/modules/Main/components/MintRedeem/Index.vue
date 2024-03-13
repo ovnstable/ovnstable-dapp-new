@@ -222,10 +222,14 @@ export default {
     ...mapActions('errorModal', ['showErrorModal', 'showErrorModalWithMsg']),
     ...mapActions('waitingModal', ['showWaitingModal', 'closeWaitingModal']),
     ...mapActions('successModal', ['showSuccessModal', 'closeSuccessModal']),
+    ...mapActions('odosData', ['loadChains', 'loadTokens']),
     gasChange() {
       console.log('gasChange');
     },
-    initMintRedeem() {
+    async initMintRedeem() {
+      await this.loadChains();
+      await this.loadTokens();
+
       this.initTokens();
       this.inputToken = getNewInputToken();
       this.outputToken = getNewInputToken();
