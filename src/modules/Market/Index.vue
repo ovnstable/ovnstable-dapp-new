@@ -153,6 +153,28 @@ export default {
   }
 }
 
+@media (max-width: 1024px) {
+   .market,
+  .market__payouts {
+    width: 100%;
+  }
+  .market-wrapper  {
+    width: 100%;
+    align-items: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .market,
+  .market__payouts {
+    width: 100%;
+  }
+  .market-wrapper  {
+    width: 100%;
+    align-items: center;
+  }
+}
+
 @media (max-width: 576px) {
   .market {
     padding-left: 10px;

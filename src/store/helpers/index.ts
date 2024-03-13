@@ -492,3 +492,66 @@ export const sortedChainsByTVL = async (chains: any) => {
 
   return orderedNetworks;
 };
+
+export const getFormattedPeriodDashboard = (dashboardInterval: any, portfolioBalanceData: any) => {
+  const today = new Date();
+  let formattedDate = '';
+  switch (dashboardInterval.toLowerCase()) {
+    case 'day': {
+      formattedDate = today.toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: 'short',
+        year: '2-digit',
+      }).replace(',', '').replace(/ /g, ' ');
+      break;
+    }
+    case 'week': {
+      const weekAgo = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
+      formattedDate = weekAgo.toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: 'short',
+        year: '2-digit',
+      }).replace(',', '').replace(/ /g, ' ');
+      break;
+    }
+    case 'month': {
+      const monthAgo = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
+      formattedDate = monthAgo.toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: 'short',
+        year: '2-digit',
+      }).replace(',', '').replace(/ /g, ' ');
+      break;
+    }
+    case 'all time':
+      console.log('portfolioBalanceData from all time');
+      console.log(portfolioBalanceData);
+      console.log(portfolioBalanceData.length);
+      if (portfolioBalanceData && portfolioBalanceData.length > 0) {
+        const earliestTransaction = portfolioBalanceData[portfolioBalanceData.length - 1];
+        const earliestDate = new Date(earliestTransaction.date);
+        formattedDate = earliestDate.toLocaleDateString('en-GB', {
+          day: '2-digit',
+          month: 'short',
+          year: '2-digit',
+        }).replace(',', '').replace(/ /g, ' ');
+        console.log('formatted date in all time case');
+        console.log(formattedDate);
+      }
+      break;
+    default: {
+      formattedDate = today.toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: 'short',
+        year: '2-digit',
+      }).replace(',', '').replace(/ /g, ' ');
+    }
+  }
+
+  const formattedDateParts = formattedDate.split(' ');
+  if (formattedDateParts.length === 3) {
+    formattedDate = `From ${formattedDateParts[0]} ${formattedDateParts[1]} ‘${formattedDateParts[2]}`;
+  }
+  return formattedDate || '';
+};
+

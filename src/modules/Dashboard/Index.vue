@@ -53,6 +53,7 @@
             <TokensPlusDashboard
               class="dashboard__token-data"
               :portfolioBalanceData="portfolioBalanceData"
+              :portfolioBalanceDataFull="combinedPortfolioData"
             />
             <DashboardGraphic
               :portfolioBalanceData="combinedPortfolioData"
@@ -316,6 +317,20 @@ button {
   }
   &:hover {
     color: var(--color-1);
+  }
+}
+
+@media (max-width: 400px) {
+  .dashboard-usd-plus-wrap {
+    padding: 30px 20px;
+  }
+  .dashboard_token_data_graphics {
+    border: none;
+    padding: 0;
+  }
+  .dashboard-tokens-transactions {
+    margin-top: 22px;
+    font-size: 16px;
   }
 }
 

@@ -15,9 +15,13 @@
         :class="{ 'dashboard__tokens-data-token-selected': selectedTokens.includes(token.name) }"
       >
         <BaseIcon :name="token.iconName" />
+        <p v-if="device.isMobile">{{ token.name }}</p>
       </div>
     </div>
-    <div class="dasboard__tokens-data-balances-profit">
+    <div
+      v-if="!device.isMobile"
+      class="dasboard__tokens-data-balances-profit"
+    >
       <div class="dasboard__tokens-data-tokens-wrapper">
         <div class="dashboard__divider-first" />
         <div class="dasboard__tokens-data-tokens">
@@ -42,7 +46,6 @@
             .filter((token: any) => selectedTokens.includes(token.name + '+'))"
           :key="`balance-${token.name}`"
         >
-          <!-- {{ getBalance(token.name + '+', token.isETH) }} -->
           {{ getBalance(portfolioBalanceData[`data${token.name}Plus`], token.isETH) }}
         </p>
       </div>
@@ -71,6 +74,62 @@
       </div>
       <div class="dashboard__divider-last" />
     </div>
+    <div
+      v-else
+      class="dasboard__tokens-data-balances-profit"
+    >
+      <div class="dasboard__tokens-data-total-mobile">
+        <div class="dasboard__tokens-data-total-mobile-item">
+          <p class="dasboard__tokens-data-total-title">TOTAL</p>
+          <p class="dasboard__tokens-data-total-period">{{getFormattedPeriod}}</p>
+        </div>
+        <div class="dashboard__divider" />
+        <div class="dasboard__tokens-data-total-mobile-item">
+          <p>USD Balance</p>
+          <p class="dasboard__tokens-data-total">{{getTotalBalance()}}</p>
+        </div>
+        <div class="dashboard__divider" />
+        <div class="dasboard__tokens-data-total-mobile-item">
+          <p>Profit</p>
+          <p class="dasboard__tokens-data-total">{{totalProfit()}}</p>
+        </div>
+        <div
+          v-for="(token, index) in availableTokens
+            .filter((token: any) => selectedTokens.includes(token.name))"
+          :key="index"
+          class="dasboard__tokens-data-token-mobile"
+        >
+          <div class="dasboard__tokens-data-token">
+            <div class="dasboard__tokens-data-token-icon">
+              <BaseIcon :name="token.iconName" />
+              <p>{{ token.name }}</p>
+            </div>
+          </div>
+          <div class="dasboard__tokens-data-token-balance">
+            <p>Token balance</p>
+            <p>
+              {{ calculateProfit(portfolioBalanceData[`data${token.name.slice(0, -1)}Plus`]) }}
+            </p>
+          </div>
+          <div class="dashboard__divider" />
+          <div class="dasboard__tokens-data-usd-balance">
+            <p>USD balance</p>
+            <p>
+              {{ getBalanceUSD(getBalance(portfolioBalanceData[`data${token.name.slice(0, -1)}Plus`], token.isETH), token.name.slice(0, -1).toLowerCase() + 'Plus') }}
+            </p>
+          </div>
+          <div class="dashboard__divider" />
+          <div class="dasboard__tokens-data-token-profit">
+            <p>Profit</p>
+            <p>
+              {{ calculateProfit(portfolioBalanceData[`data${token.name.slice(0, -1)}Plus`]) }}
+            </p>
+          </div>
+          <div class="dashboard__divider" />
+        </div>
+      </div>
+
+    </div>
   </div>
 </template>
 
@@ -78,6 +137,8 @@
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { chainContractsMap } from '@/utils/contractsMap.ts';
 import ButtonComponent from '@/components/Button/Index.vue';
+import { deviceType } from '@/utils/deviceType.ts';
+import { getFormattedPeriodDashboard } from '@/store/helpers/index.ts';
 
 export default {
   name: 'TokensPlusDashboard',
@@ -101,6 +162,10 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    portfolioBalanceDataFull: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   mounted() {
     this.selectedTokens = this.availableTokens.map((token: any) => token.name);
@@ -116,6 +181,12 @@ export default {
     },
   },
   computed: {
+    device() {
+      return deviceType();
+    },
+    getDashboardInterval() {
+      return this.$store.state.intervalDashboard.intervalDashboard;
+    },
     networkName() {
       return this.$store.state.network.dashboardNetwork;
     },
@@ -148,6 +219,9 @@ export default {
           iconName: `Dashboard${key.charAt(0).toUpperCase() + key.slice(1)}Tokens`,
           isETH: key === 'ethPlus',
         }));
+    },
+    getFormattedPeriod() {
+      return getFormattedPeriodDashboard(this.getDashboardInterval, this.portfolioBalanceDataFull);
     },
   },
   methods: {
@@ -437,7 +511,7 @@ export default {
   margin-top: 20px;
 }
 .dasboard__tokens-data-total {
-  margin-top: 22px !important;
+  margin-top: 22px;
 }
 @media (max-width: 1024px) {
   .dashboard__token-data-main-token {
@@ -493,4 +567,151 @@ export default {
     margin-right: 5px;
   }
 }
+
+@media (max-width: 400px) {
+  .dashboard__tokens-data-select {
+    gap: 12px;
+  }
+  .dashboard__tokens-data-icon-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    p {
+      font-size: 12px;
+      color: var(--color-1);
+      [data-theme="dark"] & {
+        color: var(--color-4);
+      }
+    }
+  }
+  .dasboard__tokens-data-total-mobile {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .dashboard__divider,
+  .dasboard__tokens-data-total {
+    padding: 0;
+    margin: 0;
+  }
+  .dashboard__divider {
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+
+  .dasboard__tokens-data-total-mobile-item {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+  }
+
+  .dasboard__tokens-data-total-title {
+    font-size: 16px;
+    color: var(--color-1);
+    font-weight: 600;
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
+  }
+  .dasboard__tokens-data-token-mobile {
+    display: flex;
+    flex-direction: column;
+    margin-top: 22px;
+  }
+  .dasboard__tokens-data-token-mobile p:first-child {
+    [data-theme="dark"] & {
+      color: var(--color-18);
+    }
+  }
+
+  .dasboard__tokens-data-total-period {
+    [data-theme="dark"] & {
+      color: var(--color-18) !important;
+    }
+  }
+
+  .dasboard__tokens-data-token {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+  .dasboard__tokens-data-token-icon {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    margin-right: auto;
+    svg {
+      margin-right: 10px;
+    }
+  }
+
+  .dasboard__tokens-data-token-balance,
+  .dasboard__tokens-data-usd-balance,
+  .dasboard__tokens-data-token-profit {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .dasboard__tokens-data-token-balance p:last-child,
+  .dasboard__tokens-data-usd-balance p:last-child,
+  .dasboard__tokens-data-token-profit p:last-child {
+    color: var(--color-1);
+    font-size: 14px;
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
+  }
+  .dasboard__tokens-data-total-mobile-item p:first-child {
+    [data-theme="dark"] & {
+      color: var(--color-18);
+    }
+  }
+  .dasboard__tokens-data-token-balance p:first-child,
+  .dasboard__tokens-data-usd-balance p:first-child,
+  .dasboard__tokens-data-token-profit p:first-child,
+  .dasboard__tokens-data-total-mobile-item p:first-child {
+    font-size: 12px;
+  }
+  .dasboard__tokens-data-total-title {
+    font-size: 16px !important;
+    [data-theme="dark"] & {
+      color: var(--color-4) !important;
+    }
+  }
+
+  .dasboard__tokens-data-total-mobile-item p:last-child,
+  .dasboard__tokens-data-token-form-period {
+    font-size: 14px;
+  }
+  .dasboard__tokens-data-total-mobile-item p:last-child {
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
+  }
+  .dasboard__tokens-data-token {
+    margin-bottom: 16px;
+  }
+
+  .dasboard__tokens-data-token-icon {
+    svg {
+      border-radius: 50%;
+      overflow: hidden;
+      scale: 150%;
+    }
+    p {
+      font-size: 16px;
+      color: var(--color-1);
+      font-weight: 600;
+      [data-theme="dark"] & {
+        color: var(--color-4);
+      }
+    }
+  }
+}
+
 </style>

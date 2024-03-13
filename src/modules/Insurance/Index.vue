@@ -17,16 +17,21 @@
         class="insurance__token-data"
       />
       <GraphicsInsurance
+        v-if="!insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem"
         :payoutData="payoutData"
         :loaded="loaded"
         class="insurance__graphics"
       />
       <InsurancePremiums
+        v-if="!insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem"
         :premiums-data="premiumsData"
         class="insurance__premiums"
       />
     </div>
-    <div class="insurance__payouts">
+    <div
+      v-if="!insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem"
+      class="insurance__payouts"
+    >
       <InsurancePayouts
         :payout-data="reversedPayoutData"
         class="insurance__payout-inner"
@@ -77,6 +82,12 @@ export default {
   computed: {
     reversedPayoutData() {
       return [...this.payoutData.payouts].reverse();
+    },
+    insuranceIsMobileMintRedeem() {
+      return this.$store.state.insuranceTokenData.isMobileMintRedeem.value;
+    },
+    insuranceIsMobileAboutOvn() {
+      return this.$store.state.insuranceTokenData.isMobileAboutOvn.value;
     },
   },
 };
@@ -188,6 +199,9 @@ export default {
   .insurance__payouts,
   .insurance__payout-inner {
     width: 100%;
+  }
+  .insurance-wrapper {
+    height: 100%;
   }
 
   .insurance {

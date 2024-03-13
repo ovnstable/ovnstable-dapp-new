@@ -2,6 +2,8 @@ import InsuranceApiService from '@/services/insurance-api-service.ts';
 
 const state = {
   insuranceTokenData: {},
+  isMobileAboutOvn: false,
+  isMobileMintRedeem: false,
 };
 
 function capitalizeFirstLetter(string: string) {
@@ -56,6 +58,12 @@ const actions = {
 const mutations = {
   setInsuranceTokenData(state: any, value: any) {
     state.insuranceTokenData = value.combinedData;
+  },
+  setIsMobileAboutOvn(state: any, value: any) {
+    state.isMobileAboutOvn = value;
+  },
+  setIsMobileMintRedeem(state: any, value: any) {
+    state.isMobileMintRedeem = value;
   },
 };
 

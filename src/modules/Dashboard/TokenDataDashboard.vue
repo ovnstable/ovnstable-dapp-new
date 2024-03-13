@@ -5,9 +5,16 @@
         name="USD+_money_markets"
         class="dashboard__token-data-main-token"
       />
+      <p
+        v-if="device.isMobile"
+        class="dashboard__token-data-title--token-mobile"
+      > USD+ </p>
       <div class="dashboard__token-data-link-title">
-        <p class="dashboard__token-data-title--token"> USD+ </p>
-        <p class="dashboard__token-data-title-period">{{ formattedPeriod() }}</p>
+        <p
+          v-if="!device.isMobile"
+          class="dashboard__token-data-title--token"
+        > USD+ </p>
+        <p class="dashboard__token-data-title-period">{{ getFormattedPeriod }}</p>
       </div>
     </div>
 
@@ -26,7 +33,10 @@
       <p class="dashboard__token-data-title">Balance</p>
       <div class="dashboard__apy-data-chain">
         <p class="dashboard__token-data-num"> {{ getBalance() }}</p>
-        <p :class="['dashboard__token-data-growth-balance', { 'negative-growth': isGrowthNegative }]">
+        <p
+          v-if="!device.isMobile"
+          :class="['dashboard__token-data-growth-balance', { 'negative-growth': isGrowthNegative }]"
+        >
           {{ growthPercentage() }}
         </p>
 
@@ -36,7 +46,10 @@
     <div class="dashboard__tvl-data">
       <p class="dashboard__token-data-title"> Profit</p>
       <p class="dashboard__token-data-h">{{calculateProfit()}}</p>
-      <p :class="{ 'negative-growth': isGrowthNegative }">{{ formatInterval() }}</p>
+      <p
+        v-if="!device.isMobile"
+        :class="{ 'negative-growth': isGrowthNegative }"
+      >{{ formatInterval() }}</p>
     </div>
     <div class="dashboard__divider dashboard__divider--last-divider" />
   </div>
@@ -45,6 +58,8 @@
 
 <script lang="ts">
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import { deviceType } from '@/utils/deviceType.ts';
+import { getFormattedPeriodDashboard } from '@/store/helpers/index.ts';
 
 export default {
   name: 'TokenDataDashboard',
@@ -58,10 +73,16 @@ export default {
     },
   },
   computed: {
+    device() {
+      return deviceType();
+    },
     networkName() {
       return this.$store.state.network.dashboardNetwork;
     },
     currentIntervalDashboard() {
+      return this.$store.state.intervalDashboard.intervalDashboard;
+    },
+    getDashboardInterval() {
       return this.$store.state.intervalDashboard.intervalDashboard;
     },
     isGrowthNegative() {
@@ -70,6 +91,9 @@ export default {
         return false;
       }
       return growth.startsWith('-');
+    },
+    getFormattedPeriod() {
+      return getFormattedPeriodDashboard(this.getDashboardInterval, this.portfolioBalanceData);
     },
   },
   methods: {
@@ -170,65 +194,6 @@ export default {
         currency: 'USD',
         minimumFractionDigits: 4,
       }).format(totalProfit);
-    },
-
-    formattedPeriod() {
-      const today = new Date();
-      let formattedDate = '';
-      switch (this.currentIntervalDashboard.toLowerCase()) {
-        case 'day': {
-          formattedDate = today.toLocaleDateString('en-GB', {
-            day: '2-digit',
-            month: 'short',
-            year: '2-digit',
-          }).replace(',', '').replace(/ /g, ' ');
-          break;
-        }
-        case 'week': {
-          const weekAgo = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
-          formattedDate = weekAgo.toLocaleDateString('en-GB', {
-            day: '2-digit',
-            month: 'short',
-            year: '2-digit',
-          }).replace(',', '').replace(/ /g, ' ');
-          break;
-        }
-        case 'month': {
-          const monthAgo = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
-          formattedDate = monthAgo.toLocaleDateString('en-GB', {
-            day: '2-digit',
-            month: 'short',
-            year: '2-digit',
-          }).replace(',', '').replace(/ /g, ' ');
-          break;
-        }
-        case 'all time':
-          if (this.portfolioBalanceData && this.portfolioBalanceData.length > 0) {
-            const earliestTransaction = this
-              .portfolioBalanceData[this.portfolioBalanceData.length - 1];
-            const earliestDate = new Date(earliestTransaction.date);
-            formattedDate = earliestDate.toLocaleDateString('en-GB', {
-              day: '2-digit',
-              month: 'short',
-              year: '2-digit',
-            }).replace(',', '').replace(/ /g, ' ');
-          }
-          break;
-        default: {
-          formattedDate = today.toLocaleDateString('en-GB', {
-            day: '2-digit',
-            month: 'short',
-            year: '2-digit',
-          }).replace(',', '').replace(/ /g, ' ');
-        }
-      }
-
-      const formattedDateParts = formattedDate.split(' ');
-      if (formattedDateParts.length === 3) {
-        formattedDate = `From ${formattedDateParts[0]} ${formattedDateParts[1]} ‘${formattedDateParts[2]}`;
-      }
-
-      return formattedDate || '';
     },
 
     formatInterval() {
@@ -461,4 +426,55 @@ export default {
     margin-right: 5px;
   }
 }
+
+@media (max-width: 400px) {
+  .dashboard__token-data {
+    flex-direction: column;
+  }
+  .dashboard__payout-data,
+  .dashboard__apy-data,
+  .dashboard__tvl-data,
+  .dashboard__token-data-link-title {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  .dashboard__token-data-h,
+  .dashboard__token-data-num,
+  .dashboard__token-data-risk,
+  .dashboard__token-data-title-period,
+  .dashboard__token-data-link-title {
+    margin: 0;
+  }
+  .dashboard__divider {
+    margin-top: 6px;
+    margin-bottom: 6px;
+    margin-right: 0;
+    margin-left: 0;
+    width: 100%;
+  }
+  .dashboard__token-data-title--token-mobile {
+    display: flex;
+    align-items: center;
+    margin-right: auto;
+    font-size: 16px;
+    color: var(--color-1);
+    font-weight: 600;
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
+  }
+  .dashboard__token-data-title-period,
+  .dashboard__token-data-title {
+    font-size: 12px;
+  }
+
+  .dashboard__token-data-h,
+  .dashboard__token-data-risk p {
+    font-size: 14px;
+  }
+
+}
+
 </style>

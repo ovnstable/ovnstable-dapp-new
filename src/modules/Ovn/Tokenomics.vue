@@ -1,26 +1,39 @@
 <template>
   <p class="ovn__overview-tokenomics-title">OVN Tokenomics</p>
   <div class="ovn__overview-tokenomic">
-    <div class="ovn__overview-distribution">
-      <div
-        class="ovn__overview-distribution-item"
-        v-for="benefit in benefits"
-        :key="`benefit-${benefit.name}`"
-      >
+    <div class="ovn__overview-tokenomic-diagram">
+      <div class="ovn__overview-distribution">
         <div
-          class="ovn__overview-item-icon"
-          :style="{ 'background-color': benefit.color }"
-        />
-        <p>{{ benefit.name }}</p>
-        <p>{{ benefit.percent }}%</p>
+          class="ovn__overview-distribution-item"
+          v-for="benefit in benefits"
+          :key="`benefit-${benefit.name}`"
+        >
+          <div
+            class="ovn__overview-item-icon"
+            :style="{ 'background-color': benefit.color }"
+          />
+          <p>{{ benefit.name }}:</p>
+          <p>{{ benefit.percent }}%</p>
+        </div>
       </div>
+      <BaseIcon name="Tokenomic" />
     </div>
-    <BaseIcon name="Tokenomic" />
+
+    <div class="ovn__overview-description">
+      <p>The OVN token distribution is fixed at 1,000,000 tokens, with no plans for
+        additional emissions </p>
+      <p>The tokenomics of OVN are designed to maximize the token's value over the
+        next 30 months</p>
+      <p> &bull;&nbsp; 33.5% reserved for the team and
+        pre-seed investors will vest over 30 months</p>
+      <p> &bull;&nbsp;44%  reserved for Treasury will be used for seeding liquidity to OVN pools
+        and incentivizing USD+ pools</p>
+      <p> &bull;&nbsp;20% once vested, will be used for staking into specific Insurance Vaults</p>
+    </div>
   </div>
   <div class="ovn__overview-tokenomic-pools">
     <p class="ovn__overview-tokenomic-pools-all">ALL OVN POOLS</p>
   </div>
-
 </template>
 
 <script lang="ts">
@@ -44,7 +57,7 @@ export default {
       benefits: [
         {
           name: 'Treasury',
-          percent: '35',
+          percent: '44',
           color: 'var(--color-3)',
         },
         {
@@ -56,11 +69,6 @@ export default {
           name: 'Insurance fund',
           percent: '20',
           color: 'var(--color-16)',
-        },
-        {
-          name: 'Public sale',
-          percent: '10',
-          color: 'var(--color-15)',
         },
         {
           name: 'Pre-seed investors',
@@ -96,6 +104,7 @@ export default {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
+  justify-content: space-between;
 }
 
 .ovn__overview-distribution {
@@ -115,6 +124,21 @@ export default {
   }
   [data-theme="dark"] & {
     p {
+      color: var(--color-4);
+    }
+  }
+}
+.ovn__overview-description {
+  max-width: 530px;
+  display: flex;
+  flex-direction: column;
+  align-items: right;
+  gap: 20px;
+  text-align: right;
+  p {
+    color: var(--color-1);
+    font-size: 14px;
+    [data-theme="dark"] & {
       color: var(--color-4);
     }
   }
@@ -188,7 +212,13 @@ export default {
 .ovn__overview-chain-data-container > *:not(:last-child) {
   margin-right: 7px;
 }
-
+.ovn__overview-tokenomic-diagram {
+  display: flex;
+  flex-direction: row;
+  svg {
+    overflow: visible;
+  }
+}
 .ovn__overview-chain-data {
   display: flex;
   flex-direction: row;
@@ -229,4 +259,31 @@ export default {
     font-size: 14px;
   }
 }
+
+@media (max-width: 400px) {
+  .ovn__overview-tokenomic {
+    flex-direction: column;
+    background-color: var(--color-8);
+    border-radius: 10px;
+    padding: 16px 10px;
+    [data-theme="dark"] & {
+      background-color: var(--color-6)
+    }
+    svg {
+      scale: 85%;
+      overflow: visible;
+    }
+  }
+  .ovn__overview-distribution {
+    gap: 25px;
+    margin-bottom: 30px;
+  }
+  .ovn__overview-distribution-item {
+    font-size: 12px;
+  }
+  .ovn__overview-item-icon {
+    min-width: 14px;
+  }
+}
+
 </style>

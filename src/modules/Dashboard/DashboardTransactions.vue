@@ -1,5 +1,8 @@
 <template>
-  <div class="dashboard__transactions">
+  <div
+    v-if="!device.isMobile"
+    class="dashboard__transactions"
+  >
     <div class="dashboard__transactions-titles">
       <p>Payable date, UTS</p>
       <p>Opening balance</p>
@@ -20,7 +23,7 @@
       >
         <div class="dashboard__transactions-transaction">
           <div class="dashboard__transactions-date-transaction">
-            <p>{{formatDateTime(trx.date)}}</p>
+            <p>{{formatDateTime(trx.date).date}}</p>
           </div>
           <p>${{ trx.opening_balance.toFixed(2) }}</p>
           <p>{{ trx.type.charAt(0).toUpperCase() + trx.type.slice(1).toLowerCase() }}</p>
@@ -65,12 +68,105 @@
     </button>
 
   </div>
+  <div
+    v-else
+    class="dashboard__transactions"
+  >
+    <div class="dashboard__transactions-titles">
+      <p>Payable date, UTS</p>
+      <p>Opening balance</p>
+      <p>Transaction type</p>
+      <p>More</p>
+    </div>
+    <TransitionGroup
+      name="list"
+      tag="ul"
+    >
+      <div
+        v-for="(trx) in visibleTransactions"
+        :key="trx.transaction_hash"
+        class="dashboard__transactions-transactions"
+      >
+        <div class="dashboard__transactions-transaction">
+          <div class="dashboard__transactions-date-transaction">
+            <p>{{formatDateTime(trx.date).date}}</p>
+            <p>{{formatDateTime(trx.date).time}}</p>
+          </div>
+          <p>${{ trx.opening_balance.toFixed(2) }}</p>
+          <p>{{ trx.type.charAt(0).toUpperCase() + trx.type.slice(1).toLowerCase() }}</p>
+          <div class="dashboard__transactions-id-link">
+            <ButtonComponent
+              class="dashboard__button-trx"
+              :class="{ 'dashboard__arrow-dropdown-up': activeDropdown === trx.transaction_hash }"
+              @click="toggleDropdown(trx.transaction_hash)"
+            >
+              <BaseIcon
+                name="ArrowExitMobile"
+              />
+            </ButtonComponent>
+          </div>
+        </div>
+        <div
+          v-if="activeDropdown === trx.transaction_hash"
+          class="dashboard__dropdown-menu-mobile"
+        >
+          <div class="dashboard__dropdown-menu-item-balance-mobile">
+            <p>Balance change</p>
+            <p>{{ trx.change_balance < 0 ? '- ' : '' }}${{ Math.abs(trx.change_balance).toFixed(2) }}</p>
+          </div>
+          <div class="dashboard__dropdown-menu-item-mobile">
+            <p>Fees</p>
+            <p>{{ trx.fee !== null ? trx.fee : '0' }}</p>
+          </div>
+          <div class="dashboard__dropdown-menu-item-mobile">
+            <p>Closing balance</p>
+            <p>${{ trx.closing_balance.toFixed(2) }}</p>
+          </div>
+          <div class="dashboard__dropdown-menu-item-mobile">
+            <p>Explorer</p>
+            <a
+              :href="`${networkScan}tx/${trx.transaction_hash}`"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Link for token"
+              class="link-ovn"
+            >
+              <ButtonComponent class="dashboard__button-explorer">
+                <BaseIcon
+                  name="PayoutArrow"
+                />
+              </ButtonComponent>
+            </a>
+          </div>
+        </div>
+        <div
+          class="dashboard__transactions-divider"
+        />
+      </div>
+    </TransitionGroup>
+
+    <button
+      class="dashboard__transactions-button-show"
+      @click="showMoreTransactions"
+      v-if="hasMoreTransactions"
+      type="button"
+    >
+      <BaseIcon
+        name="ArrowDown"
+      />
+      <p class="dashboard__transactions-button-show-text">SHOW MORE</p>
+      <BaseIcon
+        name="ArrowDown"
+      />
+    </button>
+  </div>
 </template>
 
 <script lang="ts">
 
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
+import { deviceType } from '@/utils/deviceType.ts';
 
 export default {
   name: 'DashboardTransactions',
@@ -88,9 +184,13 @@ export default {
     return {
       showMore: false,
       visibleTransactionCount: 6,
+      activeDropdown: null,
     };
   },
   computed: {
+    device() {
+      return deviceType();
+    },
     networkScan() {
       return this.$store.state.network.dashboardExplorerURL;
     },
@@ -110,6 +210,9 @@ export default {
     formatTransactionID(id: string): string {
       return `${id.substring(0, 5)}...${id.substring(id.length - 4)}`;
     },
+    toggleDropdown(transactionHash: any) {
+      this.activeDropdown = this.activeDropdown === transactionHash ? null : transactionHash;
+    },
     formatProfit(profit: any, token: string) {
       if (token !== 'WETH') {
         return new Intl.NumberFormat('en-US', {
@@ -123,9 +226,16 @@ export default {
     },
     formatDateTime(dateTimeStr: string) {
       const optionsDate = { year: 'numeric', month: '2-digit', day: '2-digit' } as any;
+      const optionsTime = { hour: '2-digit', minute: '2-digit' } as any;
+
       const date = new Date(dateTimeStr);
       const formattedDate = new Intl.DateTimeFormat('en-GB', optionsDate).format(date).replace(/\//g, '.');
-      return formattedDate;
+      const formattedTime = new Intl.DateTimeFormat('en-GB', optionsTime).format(date);
+
+      return {
+        date: formattedDate,
+        time: formattedTime,
+      };
     },
     showMoreTransactions() {
       this.visibleTransactionCount += 14;
@@ -310,4 +420,80 @@ export default {
   }
 }
 
+@media (max-width: 400px) {
+  .dashboard__transactions-titles,
+  .dashboard__transactions-transaction {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    text-align: center;
+  }
+  .dashboard__transactions-date-transaction {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+  }
+  .dashboard__button-trx {
+    background: none;
+    border: none;
+    svg {
+      transform: rotate(270deg);
+    }
+  }
+  .dashboard__dropdown-menu-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .dashboard__dropdown-menu-item-mobile,
+  .dashboard__dropdown-menu-item-balance-mobile {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .dashboard__dropdown-menu-item-balance-mobile p:nth-child(1),
+  .dashboard__dropdown-menu-item-mobile p:nth-child(1){
+    color: var(--color-2);
+  }
+
+  .dashboard__dropdown-menu-item-balance-mobile p:nth-child(2),
+  .dashboard__dropdown-menu-item-mobile p:nth-child(2){
+    color: var(--color-1);
+  }
+
+  .dashboard__dropdown-menu-item-balance-mobile {
+    margin-top: 18px;
+  }
+  .dashboard__button-explorer {
+    box-shadow: none;
+    align-items: center;
+    border: 1px solid var(--color-6);
+    padding: 6px 12px;
+    background-color: var(--color-5);
+    border-radius: 30px;
+    svg {
+      fill: var(--color-1)
+    }
+    [data-theme="dark"] & {
+      border-color: var(--color-2);
+      svg {
+        fill: var(--color-1)
+      }
+    }
+  }
+  .dashboard__arrow-dropdown-up {
+    svg {
+      transform: rotate(90deg);
+      fill: var(--color-3)
+    }
+  }
+  .dashboard__transactions-button-show {
+    padding: 5px;
+  }
+  .dashboard__transactions-button-show-text {
+    [data-theme="dark"] & {
+      color: var(--color-18);
+    }
+  }
+}
 </style>

@@ -73,5 +73,8 @@ export default {
   @media (min-width: 1024px) {
     gap: 80px;
   }
+  @media (max-width: 400px) {
+    padding: 0;
+  }
 }
 </style>

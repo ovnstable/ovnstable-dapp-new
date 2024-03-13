@@ -1,5 +1,6 @@
 <template>
   <ModalComponent
+    v-if="!insuranceIsMobileMintRedeem && !device.isMobile"
     type-modal="custom"
     v-model="showModal"
     @close="closeModal"
@@ -106,11 +107,127 @@
       :current-stage="currentStage"
     />
   </ModalComponent>
+  <div
+    class="insurance__modal-mint-redeem"
+    v-else-if="insuranceIsMobileMintRedeem"
+  >
+    <div class="insurance__modal-mint-redeem-buttons">
+      <ButtonComponent
+        @click="toggleModalMintRedeem()"
+        @keydown.enter="toggleModalMintRedeem()"
+      >
+        <BaseIcon
+          name='ArrowExitMobile'
+        />
+      </ButtonComponent>
+      <ButtonComponent
+        :class="{
+          'insurance__modal-mint-redeem-button-selected': selectedAction === 'mint',
+          'insurance__modal-mint-redeem-button-first': true,
+          'insurance__modal-mint-redeem-button-overlap-first': selectedAction !== 'mint',
+        }"
+        @click="selectedAction = 'mint'"
+      >
+        <p>MINT</p>
+      </ButtonComponent>
+      <ButtonComponent
+        :class="{
+          'insurance__modal-mint-redeem-button-selected': selectedAction === 'redeem',
+          'insurance__modal-mint-redeem-button-last': true,
+          'insurance__modal-mint-redeem-button-overlap-last': selectedAction === 'redeem',
+        }"
+        @click="selectedAction = 'redeem'"
+      >
+        <p>REDEEM</p>
+      </ButtonComponent>
+    </div>
+    <StepsRow
+      class="insurance__modal-steps"
+      :current-stage="currentStage"
+    />
+    <div class="insurance__modal-mint-redeem">
+
+      <p class="insurance__modal-mint-redeem-mint-text">You {{selectedAction === 'mint' ? "Mint" : "Redeem"}}</p>
+      <div class="insurance__modal-input-group">
+        <InputTokenInsurance
+          :is-mint="selectedAction === 'mint'"
+          :original-balance="originalBalance"
+          :token-val="fromValue"
+          @input-change="changeInput"
+        />
+        <InputTokenInsurance
+          :is-mint="selectedAction !== 'mint'"
+          :original-balance="originalBalance"
+          :token-val="toValue"
+          @input-change="changeInput"
+        />
+      </div>
+      <div class="insurance__modal-info">
+        <div class="insurance__modal-info-fee">
+          <p>Overight fee:</p>
+          <p>0.0%</p>
+        </div>
+        <div class="insurance__modal-info-mint">
+          <p>You mint:</p>
+          <p>{{ fromValueInUsd }}$</p>
+        </div>
+        <p>1 OVN = 1 OVN INS</p>
+      </div>
+      <InsuranceGasSettings />
+      <ButtonComponent
+        v-if="!fromValue"
+        btn-size="medium"
+        btn-styles="faded"
+        class="insurance__modal-mint-button"
+        disabled
+      >
+        {{ selectedAction === 'mint' ? 'ENTER AMOUNT TO MINT' : 'ENTER AMOUNT TO REDEEM' }}
+      </ButtonComponent>
+      <ButtonComponent
+        v-else-if="requestRequired"
+        btn-size="medium"
+        class="insurance__modal-mint-button"
+        @on-click="sendRedemptionRequest"
+      >
+        Send redeem request (72 hours)
+      </ButtonComponent>
+      <ButtonComponent
+        v-else-if="pendingRedemption"
+        btn-size="medium"
+        :btn-styles="redemptionDisabled ? 'faded' : 'primary'"
+        :disabled="redemptionDisabled"
+        class="insurance__modal-mint-button"
+        @on-click="sendRedemptionRequest"
+      >
+        Wait for redeem ({{ insuranceRedemptionData?.hours?.toFixed(2) }} hours)
+      </ButtonComponent>
+      <ButtonComponent
+        btn-styles="primary"
+        btn-size="medium"
+        v-else-if="!tokenApproved"
+        class="insurance__modal-mint-button"
+        @on-click="triggerApprove"
+      >
+        APPROVE
+      </ButtonComponent>
+      <ButtonComponent
+        btn-size="medium"
+        btn-styles="primary"
+        class="insurance__modal-mint-button"
+        v-else
+        @on-click="confirmSwapAction"
+      >
+        {{ selectedAction === 'mint' ? 'MINT' : 'REDEEM' }}
+      </ButtonComponent>
+    </div>
+
+  </div>
 </template>
 
 <!-- eslint-disable no-param-reassign -->
 <script lang="ts">
 import { mapActions, mapGetters } from 'vuex';
+import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import ModalComponent from '@/components/Modal/Index.vue';
 import InsuranceGasSettings from '@/modules/Insurance/InsuranceGasSettings.vue';
@@ -118,11 +235,13 @@ import InputTokenInsurance from '@/modules/Insurance/InsuranceTokenForm.vue';
 import BigNumber from 'bignumber.js';
 import { approveToken, getAllowanceValue } from '@/utils/contractApprove.ts';
 import { debounce } from 'lodash';
+import { deviceType } from '@/utils/deviceType.ts';
 import StepsRow, { mintRedeemStep } from '@/components/StepsRow/Index.vue';
 
 export default {
   name: 'MintRedeemModal',
   components: {
+    BaseIcon,
     ModalComponent,
     InsuranceGasSettings,
     ButtonComponent,
@@ -170,6 +289,12 @@ export default {
     ...mapGetters('web3', ['contracts', 'evmProvider', 'evmSigner']),
     ...mapGetters('gasPrice', ['gasPriceGwei', 'gasPrice', 'gasPriceStation']),
 
+    insuranceIsMobileMintRedeem() {
+      return this.$store.state.insuranceTokenData.isMobileMintRedeem.value;
+    },
+    device() {
+      return deviceType();
+    },
     fromValueInUsd() {
       if (!this.ovnPrice || !this.fromValue) return '0';
       return new BigNumber(this.fromValue).times(this.ovnPrice).toFixed(2);
@@ -182,7 +307,7 @@ export default {
     },
     pendingRedemption() {
       if (this.selectedAction === 'redeem'
-      && this.insuranceRedemptionData.hours > 0 && this.insuranceRedemptionData.hours < 72) {
+        && this.insuranceRedemptionData.hours > 0 && this.insuranceRedemptionData.hours < 72) {
         return true;
       }
       return false;
@@ -203,6 +328,12 @@ export default {
     ...mapActions('waitingModal', ['showWaitingModal', 'closeWaitingModal']),
     closeModal() {
       this.showModal = false;
+    },
+    toggleModalMintRedeem() {
+      this.showModal = false;
+      this.$store.commit('insuranceTokenData/setIsMobileMintRedeem', {
+        value: false,
+      });
     },
     checkOvnPrice() {
       if (this.allTokensList.length === 0 || this.ovnPrice) return;
@@ -670,5 +801,78 @@ export default {
   [data-theme="dark"] & {
     background-color: var(--color-6);
   }
+}
+
+@media (max-width: 400px) {
+  .insurance__modal-mint-redeem {
+    padding: 0;
+    width: auto;
+  }
+  .insurance__modal-mint-redeem,
+  .insurance__modal-steps {
+    [data-theme="dark"] & {
+      background-color: var(--color-17);
+    }
+  }
+  .insurance__modal-mint-redeem-buttons {
+    gap: 70px;
+    margin-bottom: 24px;
+    button {
+      background: none;
+      box-shadow: none;
+      border: none;
+      padding: 0;
+      [data-theme="dark"] & {
+        background: none;
+        box-shadow: none;
+      }
+    }
+    p {
+      font-size: 16px;
+    }
+    svg {
+      [data-theme="dark"] & {
+        fill: var(--color-4);
+      }
+    }
+    .insurance__modal-mint-redeem-button-selected {
+      background: none;
+      p {
+        color: var(--color-1);
+        text-decoration: underline;
+        [data-theme="dark"] & {
+          color: var(--color-4);
+        }
+      }
+    }
+  }
+
+  .insurance__modal-mint-redeem-mint-text {
+    margin-top: 30px;
+    margin-bottom: 24px;
+  }
+  .insurance__modal-steps{
+    font-size: 12px;
+  }
+
+  .insurance__modal-mint-redeem-mint-text {
+    text-align: left;
+  }
+
+  .insurance__modal-info {
+    gap: 5px;
+    flex-direction: column;
+  }
+  .insurance__modal-info-mint,
+  .insurance__modal-info-fee {
+    justify-content: space-between;
+    display: flex;
+    flex-direction: row;
+  }
+  .insurance__modal-info p:last-child {
+    font-size: 14px;
+    color: var(--color-2);
+  }
+
 }
 </style>

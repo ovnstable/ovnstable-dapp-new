@@ -136,4 +136,17 @@ export default {
     background: var(--color-7);
   }
 }
+
+@media (max-width: 400px) {
+  .dashboard__chains-interval {
+    flex-direction: column;
+  }
+  .dashboard__chain-data {
+    margin: 0;
+  }
+  .dashboard__chain-data-container {
+    margin-top: 22px;
+    justify-content: space-between;
+  }
+}
 </style>

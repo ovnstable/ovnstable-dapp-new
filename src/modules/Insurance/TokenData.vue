@@ -46,12 +46,17 @@
             />
           </ButtonComponent>
 
-          <ButtonComponent class="insurance__title-button">
-            <BaseIcon
-              name='InsuranceBridge'
-            />
-            BRIDGE
-          </ButtonComponent>
+          <router-link
+            to="/"
+          >
+            <ButtonComponent class="insurance__title-button">
+              <BaseIcon
+                name='InsuranceBridge'
+              />
+              BRIDGE
+            </ButtonComponent>
+          </router-link>
+
           <ButtonComponent class="insurance__title-button">
             <BaseIcon
               name='InsuranceOVN'
@@ -78,7 +83,10 @@
     v-else
     class="insurance__info-mobile"
   >
-    <div class="insurance__interact-buttons">
+    <div
+      v-if="!insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem"
+      class="insurance__interact-buttons"
+    >
       <div class="insurance__button-mobile">
         <ButtonComponent
           class="insurance__title-button"
@@ -94,11 +102,15 @@
       </div>
 
       <div class="insurance__button-mobile">
-        <ButtonComponent class="insurance__title-button">
-          <BaseIcon
-            name='InsuranceBridge'
-          />
-        </ButtonComponent>
+        <router-link
+          to="/"
+        >
+          <ButtonComponent class="insurance__title-button">
+            <BaseIcon
+              name='InsuranceBridge'
+            />
+          </ButtonComponent>
+        </router-link>
         <p>BRIDGE</p>
       </div>
       <div class="insurance__button-mobile">
@@ -116,11 +128,15 @@
       </div>
 
       <div class="insurance__button-mobile">
-        <ButtonComponent class="insurance__title-button">
-          <BaseIcon
-            name='InsuranceOVN'
-          />
-        </ButtonComponent>
+        <router-link
+          to="/dashboard"
+        >
+          <ButtonComponent class="insurance__title-button">
+            <BaseIcon
+              name='InsuranceOVN'
+            />
+          </ButtonComponent>
+        </router-link>
         <p>MY OVN</p>
       </div>
 
@@ -139,8 +155,25 @@
       </div>
 
     </div>
+    <div
+      v-else-if="insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem"
+      class="insurance__about-mobile-on"
+    >
+      <ButtonComponent
+        @click="toggleInsuranceAbout()"
+        @keydown.enter="toggleInsuranceAbout()"
+      >
+        <BaseIcon
+          name='ArrowExitMobile'
+        />
+      </ButtonComponent>
+      <p>ABOUT INSURANCE</p>
+    </div>
 
-    <div class="insurance__token-title">
+    <div
+      v-if="!insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem"
+      class="insurance__token-title"
+    >
       <BaseIcon
         :name="tokenData.insImage"
         class="insurance__token-image"
@@ -174,7 +207,10 @@
   >
     <InsuranceAbout />
   </div>
-  <div class="insurance__token-data">
+  <div
+    v-if="!insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem"
+    class="insurance__token-data"
+  >
     <div class="insurance__divider insurance__divider--first-divider" />
     <div class="insurance__payout-data">
       <p class="insurance__token-data-title">Risk factor</p>
@@ -224,8 +260,14 @@
 
       </div>
     </div>
-    <div class="insurance__divider insurance__divider--last-divider" />
 
+    <div class="insurance__divider insurance__divider--last-divider" />
+    <MintRedeemModal
+      v-model="showModalMintRedeem"
+    />
+  </div>
+
+  <div v-if="insuranceIsMobileMintRedeem">
     <MintRedeemModal
       v-model="showModalMintRedeem"
     />
@@ -270,13 +312,31 @@ export default {
     networkScan() {
       return this.$store.state.network.insuranceExplorerURL;
     },
+    insuranceIsMobileAboutOvn() {
+      return this.$store.state.insuranceTokenData.isMobileAboutOvn.value;
+    },
+    insuranceIsMobileMintRedeem() {
+      return this.$store.state.insuranceTokenData.isMobileMintRedeem.value;
+    },
   },
   methods: {
     toggleModalMintRedeem() {
-      this.showModalMintRedeem = !this.showModalMintRedeem;
+      if (this.device.isMobile) {
+        this.showModalMintRedeem = true;
+        this.$store.commit('insuranceTokenData/setIsMobileMintRedeem', {
+          value: this.showModalMintRedeem,
+        });
+      } else {
+        this.showModalMintRedeem = !this.showModalMintRedeem;
+      }
     },
     toggleInsuranceAbout() {
       this.showInsuranceInfo = !this.showInsuranceInfo;
+      if (this.device.isMobile) {
+        this.$store.commit('insuranceTokenData/setIsMobileAboutOvn', {
+          value: this.showInsuranceInfo,
+        });
+      }
     },
     generateHref(tokenName: string, networkName: string) {
       const networkContracts = (chainContractsMap as any)[networkName.toLowerCase()];
@@ -725,6 +785,9 @@ export default {
       fill: var(--color-4);
       scale: 120%;
       width: auto;
+      [data-theme="dark"] & {
+        fill: var(--color-4);
+      }
     }
   }
   .insurance__token-title {
@@ -779,6 +842,35 @@ export default {
   }
   .insurance__token-data-num {
     font-size: 14px;
+  }
+  .insurance__about-mobile-on {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 20px;
+    button {
+      background: none;
+      padding: 0;
+      margin-right: 76px;
+      border: none;
+      box-shadow: none;
+      [data-theme="dark"] & {
+        box-shadow: none;
+      }
+    }
+    svg {
+      [data-theme="dark"] & {
+        fill: var(--color-4);
+      }
+    }
+    p {
+      font-size: 16px;
+      color: var(--color-1);
+      font-weight: 500;
+      [data-theme="dark"] & {
+        color: var(--color-4);
+      }
+    }
   }
 
 }

@@ -148,7 +148,7 @@
           <p>Net asset value, USDC</p>
         </div>
         <div class="insurance__premiums-total-share">
-          <p>Total share of yield retained as premiums in %</p>
+          <p>Premiums in %</p>
           <p>{{calculateTotalPremiumsPercentage(premiumsData as any)}}</p>
         </div>
       </div>
