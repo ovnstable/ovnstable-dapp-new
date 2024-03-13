@@ -196,10 +196,8 @@ export default {
   display: flex;
   flex-direction: column;
   border-radius: 30px;
-  border: 1px solid var(--color-1);
   background: var(--color-4);
   box-shadow: 0px 1px 0px 0px var(--color-1);
-  border-top: none;
   width: 100%;
   [data-theme="dark"] & {
     background: var(--color-6);
@@ -210,6 +208,8 @@ export default {
 .dashboard-usd-plus-wrap,
 .dashboard-tokens-plus-wrap {
   padding-top: 40px;
+  border: 1px solid var(--color-1);
+  border-top: none;
   padding-left: 25px;
   padding-right: 25px;
   padding-bottom: 20px;
