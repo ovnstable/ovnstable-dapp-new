@@ -53,6 +53,7 @@
             <TokensPlusDashboard
               class="dashboard__token-data"
               :portfolioBalanceData="portfolioBalanceData"
+              :portfolioBalanceDataFull="combinedPortfolioData"
             />
             <DashboardGraphic
               :portfolioBalanceData="combinedPortfolioData"

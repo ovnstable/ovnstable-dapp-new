@@ -14,7 +14,7 @@
           v-if="!device.isMobile"
           class="dashboard__token-data-title--token"
         > USD+ </p>
-        <p class="dashboard__token-data-title-period">{{ formattedPeriod() }}</p>
+        <p class="dashboard__token-data-title-period">{{ getFormattedPeriod }}</p>
       </div>
     </div>
 
@@ -59,6 +59,7 @@
 <script lang="ts">
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { deviceType } from '@/utils/deviceType.ts';
+import { getFormattedPeriodDashboard } from '@/store/helpers/index.ts';
 
 export default {
   name: 'TokenDataDashboard',
@@ -81,12 +82,18 @@ export default {
     currentIntervalDashboard() {
       return this.$store.state.intervalDashboard.intervalDashboard;
     },
+    getDashboardInterval() {
+      return this.$store.state.intervalDashboard.intervalDashboard;
+    },
     isGrowthNegative() {
       const growth = this.growthPercentage();
       if (growth === 0) {
         return false;
       }
       return growth.startsWith('-');
+    },
+    getFormattedPeriod() {
+      return getFormattedPeriodDashboard(this.getDashboardInterval, this.portfolioBalanceData);
     },
   },
   methods: {
@@ -187,65 +194,6 @@ export default {
         currency: 'USD',
         minimumFractionDigits: 4,
       }).format(totalProfit);
-    },
-
-    formattedPeriod() {
-      const today = new Date();
-      let formattedDate = '';
-      switch (this.currentIntervalDashboard.toLowerCase()) {
-        case 'day': {
-          formattedDate = today.toLocaleDateString('en-GB', {
-            day: '2-digit',
-            month: 'short',
-            year: '2-digit',
-          }).replace(',', '').replace(/ /g, ' ');
-          break;
-        }
-        case 'week': {
-          const weekAgo = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
-          formattedDate = weekAgo.toLocaleDateString('en-GB', {
-            day: '2-digit',
-            month: 'short',
-            year: '2-digit',
-          }).replace(',', '').replace(/ /g, ' ');
-          break;
-        }
-        case 'month': {
-          const monthAgo = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
-          formattedDate = monthAgo.toLocaleDateString('en-GB', {
-            day: '2-digit',
-            month: 'short',
-            year: '2-digit',
-          }).replace(',', '').replace(/ /g, ' ');
-          break;
-        }
-        case 'all time':
-          if (this.portfolioBalanceData && this.portfolioBalanceData.length > 0) {
-            const earliestTransaction = this
-              .portfolioBalanceData[this.portfolioBalanceData.length - 1];
-            const earliestDate = new Date(earliestTransaction.date);
-            formattedDate = earliestDate.toLocaleDateString('en-GB', {
-              day: '2-digit',
-              month: 'short',
-              year: '2-digit',
-            }).replace(',', '').replace(/ /g, ' ');
-          }
-          break;
-        default: {
-          formattedDate = today.toLocaleDateString('en-GB', {
-            day: '2-digit',
-            month: 'short',
-            year: '2-digit',
-          }).replace(',', '').replace(/ /g, ' ');
-        }
-      }
-
-      const formattedDateParts = formattedDate.split(' ');
-      if (formattedDateParts.length === 3) {
-        formattedDate = `From ${formattedDateParts[0]} ${formattedDateParts[1]} ‘${formattedDateParts[2]}`;
-      }
-
-      return formattedDate || '';
     },
 
     formatInterval() {

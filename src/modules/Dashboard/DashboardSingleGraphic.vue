@@ -570,6 +570,9 @@ export default {
     display: flex;
     justify-content: space-between;
     font-size: 16px;
+    span.period {
+      font-size: 14px;
+    }
   }
   .divider {
     display: none;

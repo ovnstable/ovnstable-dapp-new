@@ -517,6 +517,9 @@ export const getFormattedPeriodDashboard = (dashboardInterval: any, portfolioBal
       break;
     }
     case 'all time':
+      console.log('portfolioBalanceData from all time');
+      console.log(portfolioBalanceData);
+      console.log(portfolioBalanceData.length);
       if (portfolioBalanceData && portfolioBalanceData.length > 0) {
         const earliestTransaction = portfolioBalanceData[portfolioBalanceData.length - 1];
         const earliestDate = new Date(earliestTransaction.date);
@@ -525,6 +528,8 @@ export const getFormattedPeriodDashboard = (dashboardInterval: any, portfolioBal
           month: 'short',
           year: '2-digit',
         }).replace(',', '').replace(/ /g, ' ');
+        console.log('formatted date in all time case');
+        console.log(formattedDate);
       }
       break;
     default: {
@@ -540,6 +545,5 @@ export const getFormattedPeriodDashboard = (dashboardInterval: any, portfolioBal
   if (formattedDateParts.length === 3) {
     formattedDate = `From ${formattedDateParts[0]} ${formattedDateParts[1]} ‘${formattedDateParts[2]}`;
   }
-
   return formattedDate || '';
 };

@@ -104,26 +104,28 @@
               <BaseIcon :name="token.iconName" />
               <p>{{ token.name }}</p>
             </div>
-            <p>{{getFormattedPeriod}}</p>
           </div>
-          <div>
+          <div class="dasboard__tokens-data-token-balance">
             <p>Token balance</p>
             <p>
               {{ calculateProfit(portfolioBalanceData[`data${token.name.slice(0, -1)}Plus`]) }}
             </p>
           </div>
-          <div>
+          <div class="dashboard__divider" />
+          <div class="dasboard__tokens-data-usd-balance">
             <p>USD balance</p>
             <p>
               {{ getBalanceUSD(getBalance(portfolioBalanceData[`data${token.name.slice(0, -1)}Plus`], token.isETH), token.name.slice(0, -1).toLowerCase() + 'Plus') }}
             </p>
           </div>
-          <div>
+          <div class="dashboard__divider" />
+          <div class="dasboard__tokens-data-token-profit">
             <p>Profit</p>
             <p>
               {{ calculateProfit(portfolioBalanceData[`data${token.name.slice(0, -1)}Plus`]) }}
             </p>
           </div>
+          <div class="dashboard__divider" />
         </div>
       </div>
 
@@ -157,6 +159,10 @@ export default {
   },
   props: {
     portfolioBalanceData: {
+      type: Object,
+      default: () => ({}),
+    },
+    portfolioBalanceDataFull: {
       type: Object,
       default: () => ({}),
     },
@@ -215,7 +221,7 @@ export default {
         }));
     },
     getFormattedPeriod() {
-      return getFormattedPeriodDashboard(this.getDashboardInterval, this.portfolioBalanceData);
+      return getFormattedPeriodDashboard(this.getDashboardInterval, this.portfolioBalanceDataFull);
     },
   },
   methods: {
@@ -614,6 +620,7 @@ export default {
   .dasboard__tokens-data-token-mobile {
     display: flex;
     flex-direction: column;
+    margin-top: 22px;
   }
   .dasboard__tokens-data-token {
     display: flex;
@@ -627,6 +634,58 @@ export default {
     margin-right: auto;
     svg {
       margin-right: 10px;
+    }
+  }
+
+  .dasboard__tokens-data-token-balance,
+  .dasboard__tokens-data-usd-balance,
+  .dasboard__tokens-data-token-profit {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .dasboard__tokens-data-token-balance p:last-child,
+  .dasboard__tokens-data-usd-balance p:last-child,
+  .dasboard__tokens-data-token-profit p:last-child {
+    color: var(--color-1);
+    font-size: 14px;
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
+  }
+
+  .dasboard__tokens-data-token-balance p:first-child,
+  .dasboard__tokens-data-usd-balance p:first-child,
+  .dasboard__tokens-data-token-profit p:first-child,
+  .dasboard__tokens-data-total-mobile-item p:first-child {
+    font-size: 12px;
+  }
+  .dasboard__tokens-data-total-title {
+    font-size: 16px !important;
+  }
+
+  .dasboard__tokens-data-total-mobile-item p:last-child,
+  .dasboard__tokens-data-token-form-period {
+    font-size: 14px;
+  }
+  .dasboard__tokens-data-token {
+    margin-bottom: 16px;
+  }
+
+  .dasboard__tokens-data-token-icon {
+    svg {
+      border-radius: 50%;
+      overflow: hidden;
+      scale: 150%;
+    }
+    p {
+      font-size: 16px;
+      color: var(--color-1);
+      font-weight: 600;
+      [data-theme="dark"] & {
+        color: var(--color-4);
+      }
     }
   }
 }
