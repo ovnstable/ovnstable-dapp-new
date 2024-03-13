@@ -291,8 +291,9 @@ export default {
 
 .app-header__container {
   width: 100%;
-  max-width: 1350px;
-  padding: 0 20px;
+  max-width: 1360px;
+  padding-left: 10px;
+  padding-right: 20px;
   margin: 0 auto;
 }
 

@@ -146,12 +146,6 @@ export default {
   }
 }
 
-.app-header__container {
-  width: 100%;
-  max-width: 1350px;
-  padding: 0 20px;
-  margin: 0 auto;
-}
 .app-header__balance-account {
   min-width: 130px;
   min-height: 31px;
