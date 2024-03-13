@@ -166,6 +166,13 @@ export default {
     }
   }
 }
+.insurance__button-payout:hover {
+  background-color: var(--color-6);
+  border-color: var(--color-3);
+  svg {
+    fill: var(--color-1)
+  }
+}
 .insurance__payouts-horizontal-divider {
   height: 1px;
   width: 100%;
