@@ -9,7 +9,7 @@
 
   </div>
   <div
-    v-else
+    v-else-if="!device.isMobile"
     class="ovn__overview"
   >
     <div class="ovn__overview-links">
@@ -96,20 +96,87 @@
           BRIDGE
         </ButtonComponent>
       </router-link>
-      <router-link
-        to="/dashboard"
-      >
+      <ButtonComponent class="ovn__overview-button">
+        <BaseIcon
+          class="ovn__overview-dashboard-icon"
+          name='InsuranceOVN'
+        />
+        OVN DASHBOARD
+      </ButtonComponent>
+
+    </div>
+
+  </div>
+  <div v-else-if="loaded && device.isMobile">
+    <div class="ovn__overview-links">
+      <BaseIcon
+        class='ovn__overview-links-image'
+        name="OVN_LOGO_dark"
+      />
+      <div class="ovn__overview-links-data">
+        <p>OVN</p>
+        <div class="ovn__overview-links-data-cmc-addr">
+          <a
+            :href="`${networkScan}token/` + generateHref('ovn', networkName)"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="token-address"
+            class="ovn__overview-link-addr link-ovn"
+          >Token address</a>
+          <a
+            href="https://coinmarketcap.com/currencies/overnight/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="token-address"
+            class="ovn__overview-link-cmc link-ovn"
+          >Coinmarketcap</a>
+
+        </div>
+
+      </div>
+      <div class="ovn__overview-links-data-button">
         <ButtonComponent class="ovn__overview-button">
           <BaseIcon
             class="ovn__overview-dashboard-icon"
             name='InsuranceOVN'
           />
-          OVN DASHBOARD
         </ButtonComponent>
-      </router-link>
+        <p>MY OVN</p>
+      </div>
+    </div>
+    <div class="ovn__overview-divider" />
+    <div class="ovn__overview-price">
+      <p class="ovn__overview-price-title">OVN Price</p>
+      <div class="ovn__overview-price-change">
+        <p>{{priceOvn}}</p>
+        <p :class="priceOvnChange < 0 ? 'ovn__overview-price-down' : 'ovn__overview-price-up'">{{ priceOvnChange }}% (1d)</p>
+      </div>
+    </div>
+    <div class="ovn__overview-divider" />
+    <div class="ovn__overview-mc">
+      <p class="ovn__overview-mc-title">Market cap</p>
+      <div class="ovn__overview-mc-change">
+        <p>${{formatNumber(marketCap)}}</p>
+      </div>
+    </div>
+    <div class="ovn__overview-divider" />
+    <div class="ovn__overview-tvl">
+      <p class="ovn__overview-tvl-title">OVN TVL</p>
+      <div class="ovn__overview-exact-chain">
+        <div
+          class="ovn__overview-icon-chain"
+        >
+          <BaseIcon
+            :name="networkName.toLocaleLowerCase()"
+          />
+        </div>
+
+        <p>${{ formatNumber(tokenData.ovnTVL) }}</p>
+        <p>past 2 hours</p>
+      </div>
 
     </div>
-
+    <div class="ovn__overview-divider" />
   </div>
   <div class="ovn__overview-chain-data-container">
     <div
@@ -123,7 +190,10 @@
       <BaseIcon
         :name="chain.toLocaleLowerCase()"
       />
-      <p class="ovn__overview-chain-data-name">{{ chain }}</p>
+      <p
+        v-if="!device.isMobile"
+        class="ovn__overview-chain-data-name"
+      >{{ chain }}</p>
     </div>
   </div>
 </template>
@@ -131,6 +201,7 @@
 <script lang="ts">
 import ButtonComponent from '@/components/Button/Index.vue';
 import { chainContractsMap } from '@/utils/contractsMap.ts';
+import { deviceType } from '@/utils/deviceType.ts';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import Spinner from '@/components/Spinner/Index.vue';
 
@@ -152,6 +223,9 @@ export default {
     },
   },
   computed: {
+    device() {
+      return deviceType();
+    },
     priceOvn() {
       return this.tokenData.priceOvnMcChange.data.OVN[0].quote.USD.price.toFixed(2);
     },
@@ -441,6 +515,67 @@ export default {
   .ovn__overview-mc-change p:nth-child(1),
   .ovn__overview-exact-chain p {
     font-size: 17px;
+  }
+}
+@media (max-width: 400px) {
+  .ovn__overview-links {
+    display: flex;
+    align-items: center;
+  }
+  .ovn__overview-links-image {
+    scale: 50%;
+  }
+  .ovn__overview-links-data {
+    margin-left: 0;
+  }
+  .ovn__overview-links-data-cmc-addr {
+    display: flex;
+    flex-direction: row;
+    gap: 14px;
+  }
+  .ovn__overview-links-data-button {
+    align-items: center;
+    margin-left: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    p {
+      font-size: 12px;
+      color: var(--color-2);
+      margin-bottom: 16px;
+    }
+  }
+  .ovn__overview-dashboard-icon {
+    padding: 0;
+    margin: 0;
+    scale: 150%;
+  }
+  .ovn__overview-button {
+    border-radius: 50%;
+    padding: 11px 11px;
+  }
+  .ovn__overview-price-change p:nth-child(1),
+  .ovn__overview-price-title,
+  .ovn__overview-mc-title,
+  .ovn__overview-mc-change p:nth-child(1),
+  .ovn__overview-exact-chain,
+  .ovn__overview-tvl-title {
+    margin: 0;
+  }
+  .ovn__overview-price,
+  .ovn__overview-price-change,
+  .ovn__overview-mc,
+  .ovn__overview-tvl {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .ovn__overview-price,
+  .ovn__overview-mc,
+  .ovn__overview-tvl,
+  .ovn__overview-chain-data-container {
+    justify-content: space-between;
   }
 }
 

@@ -57,16 +57,12 @@
             </ButtonComponent>
           </router-link>
 
-          <router-link
-            to="/dashboard"
-          >
-            <ButtonComponent class="insurance__title-button">
-              <BaseIcon
-                name='InsuranceOVN'
-              />
-              OVN DASHBOARD
-            </ButtonComponent>
-          </router-link>
+          <ButtonComponent class="insurance__title-button">
+            <BaseIcon
+              name='InsuranceOVN'
+            />
+            OVN DASHBOARD
+          </ButtonComponent>
         </div>
         <ButtonComponent
           class="insurance__title-button"
