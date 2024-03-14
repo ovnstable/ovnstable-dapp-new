@@ -116,7 +116,7 @@ export default {
           if (this.tokenData.tokenName === 'ETH+') {
             return `${latestPayout.totalUsdPlus.toFixed(6)} WETH`;
           }
-          return new Intl.NumberFormat('en-US', {
+          return new Intl.NumberFormat('de-DE', {
             style: 'currency',
             currency: 'USD',
             minimumFractionDigits: 2,

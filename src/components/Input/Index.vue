@@ -153,7 +153,7 @@ export default {
         return;
       }
 
-      const regex = /^[0-9]*\.?[0-9]*$/;
+      const regex = /^[A-Za-z0-9+]*\.?[A-Za-z0-9+]*$/;
       if (regex.test(event.target.value) || event.target.value === '') {
         if (this.emitEvent) this.$emit('input', event);
         else this.$emit('input', event.target.value);
@@ -184,6 +184,7 @@ export default {
 
   &.primary {
     background-color: var(--color-5);
+    border: 1px solid var(--color-6);
     [data-theme="dark"] & {
       background-color: var(--color-6);
     }
