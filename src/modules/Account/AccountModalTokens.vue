@@ -4,6 +4,7 @@
       v-for="(token, index) in availableTokens"
       :key="index"
       class="account__modal-token-wrapper"
+
       @click="addTokenToWalletMethod(token.contractAddress,
                                      token.name, token.decimals, token.image)"
       @keypress="addTokenToWalletMethod(token.contractAddress,
@@ -38,28 +39,28 @@ export default {
     return {
       tokenDisplayInfo: {
         usdPlus: {
-          name: 'USD+', iconName: 'USD+_market', image: UsdPlusImage.image, decimals: 6,
+          name: 'USD+', iconName: 'USD+_market', image: UsdPlusImage.image,
         },
         usdcPlus: {
-          name: 'USDC+', iconName: 'USDC+_Account', image: UsdcPlus.image, decimals: 6,
+          name: 'USDC+', iconName: 'USDC+_Account', image: UsdcPlus.image,
         },
         wUsdPlus: {
-          name: 'WUSD+', iconName: 'wUsdPlus', image: WrappedUsdPlusImage.image, decimals: 6,
+          name: 'WUSD+', iconName: 'wUsdPlus', image: WrappedUsdPlusImage.image,
         },
         ovn: {
-          name: 'OVN', iconName: 'OVN_Account', image: OvnImage.image, decimals: 18,
+          name: 'OVN', iconName: 'OVN_Account', image: OvnImage.image,
         },
         daiPlus: {
-          name: 'DAI+', iconName: 'DAI+_market', image: DaiPlusImage.image, decimals: 6,
+          name: 'DAI+', iconName: 'DAI+_market', image: DaiPlusImage.image,
         },
         usdtPlus: {
-          name: 'USDT+', iconName: 'USDT_market', image: UsdtPlusImage.image, decimals: 6,
+          name: 'USDT+', iconName: 'USDT_market', image: UsdtPlusImage.image,
         },
         ethPlus: {
-          name: 'ETH+', iconName: 'DashboardETH+Tokens', image: EthPlusImage.image, decimals: 18,
+          name: 'ETH+', iconName: 'DashboardETH+Tokens', image: EthPlusImage.image,
         },
         wEthPlus: {
-          name: 'WETH+', iconName: 'wETH+_Account', image: wEthPlus.image, decimals: 18,
+          name: 'WETH+', iconName: 'wETH+_Account', image: wEthPlus.image,
         },
       },
       networksData: appNetworksData,
@@ -78,19 +79,22 @@ export default {
       return Object.keys(currentChainTokens)
         .filter((token) => token.endsWith('Plus') || token === 'ovn')
         .flatMap((token) => {
+          const chainTokenInfo = (currentChainTokens as any)[token];
           const baseTokenInfo = this.tokenDisplayInfo[token as keyof typeof this.tokenDisplayInfo];
 
-          if ((currentChainTokens as any)[token].tokenPlus) {
+          if (chainTokenInfo.tokenPlus) {
             const baseTokenObject = {
               ...baseTokenInfo,
-              contractAddress: (currentChainTokens as any)[token].tokenPlus,
+              contractAddress: chainTokenInfo.tokenPlus,
+              decimals: chainTokenInfo.decimals,
             };
 
-            const additionalTokens = Object.keys((currentChainTokens as any)[token])
-              .filter((key) => key.startsWith('w') && token.endsWith('Plus') && (currentChainTokens as any)[token][key] !== '')
+            const additionalTokens = Object.keys(chainTokenInfo)
+              .filter((key) => key.startsWith('w') && token.endsWith('Plus') && chainTokenInfo[key] !== '')
               .map((key) => ({
                 ...this.tokenDisplayInfo[key as keyof typeof this.tokenDisplayInfo],
-                contractAddress: (currentChainTokens as any)[token][key],
+                contractAddress: chainTokenInfo[key],
+                decimals: chainTokenInfo.decimals,
               }));
             return [baseTokenObject, ...additionalTokens].filter(Boolean);
           }
@@ -98,7 +102,8 @@ export default {
           if (token === 'ovn') {
             return [{
               ...baseTokenInfo,
-              contractAddress: (currentChainTokens as any).ovn,
+              contractAddress: chainTokenInfo,
+              decimals: 18,
             }];
           }
           return [];
