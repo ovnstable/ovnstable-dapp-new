@@ -270,6 +270,7 @@
       v-model="showModalMintRedeem"
     />
     <OvnDashboardModal
+      :price="tokenData.ovnPrice"
       v-model="showModalOvnDashboard"
     />
   </div>
@@ -338,6 +339,12 @@ export default {
     },
   },
   methods: {
+    closeOvnDashboardModal() {
+      this.showModalOvnDashboard = false;
+    },
+    openMintRedeemModal() {
+      this.showModalMintRedeem = true;
+    },
     toggleModalOvnDasbhoard() {
       if (this.device.isMobile) {
         this.showModalOvnDashboard = true;

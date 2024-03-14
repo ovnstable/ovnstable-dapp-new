@@ -61,8 +61,8 @@
             <p>OVN BALANCE</p>
           </div>
           <div class="insurance__modal-ovn-dashboard-balance-info-numbers">
-            <p>000.00 OVN</p>
-            <p>$000.00</p>
+            <p>{{getBalanceOVNIns('DAI+')}} OVN</p>
+            <p>${{costOvn.toFixed(2)}}</p>
           </div>
         </div>
         <div class="insurance__modal-ovn-dashboard-balance-info-ins">
@@ -73,8 +73,8 @@
             <p>BALANCE IN INS</p>
           </div>
           <div class="insurance__modal-ovn-dashboard-balance-info-numbers">
-            <p>000.00 OVN</p>
-            <p>$000.00</p>
+            <p>{{getBalanceOVNIns('OVNINS')}} OVN</p>
+            <p>${{costOvnINS.toFixed(2)}}</p>
           </div>
         </div>
       </div>
@@ -97,6 +97,9 @@
       <div class="insurance__modal-divider" />
       <AccountTransactions class="insurance__modal-ovn-dashboard-trxs" />
     </div>
+    <MintRedeemModal
+      v-model="showModalMintRedeem"
+    />
   </ModalComponent>
   <div
     class="insurance__modal-ovn-dashboard"
@@ -114,8 +117,9 @@ import { deviceType } from '@/utils/deviceType.ts';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ModalComponent from '@/components/Modal/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
+import MintRedeemModal from '@/modules/Insurance/MintRedeemModal.vue';
 import AccountTransactions from '@/modules/Account/AccountTransactions.vue';
-import BigNumber from 'bignumber.js';
+// import BigNumber from 'bignumber.js';
 
 export default {
   name: 'OvnDashboardModal',
@@ -124,18 +128,26 @@ export default {
     ButtonComponent,
     BaseIcon,
     AccountTransactions,
+    MintRedeemModal,
   },
   data() {
     return {
       showModal: false,
       ovnAmount: 0,
       ovnDecimals: 18,
+      costOvn: 0,
+      costOvnINS: 0,
+      showModalMintRedeem: false,
     };
   },
+  props: {
+    price: {
+      type: Number,
+      default: null,
+    },
+  },
   computed: {
-    ...mapGetters('insuranceData', ['insuranceRedemptionData']),
-    ...mapGetters('accountData', ['account', 'originalBalance']),
-
+    ...mapGetters('accountData', ['originalBalance']),
     insuranceIsMobileOvnDashboard() {
       return this.$store.state.insuranceTokenData.isMobileOvnDashboard.value;
     },
@@ -148,12 +160,23 @@ export default {
       this.showModal = false;
     },
     toggleModalMintRedeem() {
-      this.showModal = false;
-      this.$store.commit('insuranceTokenData/setIsMobileOvnDashboard', {
-        value: false,
-      });
+      this.showModalMintRedeem = true;
     },
-
+    getBalanceOVNIns(symbol: any) {
+      const balanceItem = this.originalBalance.find((item: any) => item.symbol === symbol);
+      if (!balanceItem) {
+        return '0.00';
+      }
+      const balanceBigInt = BigInt(balanceItem.balance);
+      const mainPart = balanceBigInt / BigInt(10 ** this.ovnDecimals);
+      const remainder = balanceBigInt % BigInt(10 ** this.ovnDecimals);
+      const remainderString = remainder.toString().padStart(this.ovnDecimals, '0');
+      const formattedBalance = `${mainPart}.${remainderString.slice(0, this.ovnDecimals)}`;
+      const finalBalance = parseFloat(formattedBalance).toFixed(2);
+      this.costOvn = parseFloat(formattedBalance) * this.price;
+      this.costOvnINS = parseFloat(formattedBalance) * this.price;
+      return finalBalance;
+    },
   },
 };
 </script>
