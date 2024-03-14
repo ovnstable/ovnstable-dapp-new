@@ -117,14 +117,59 @@
     class="insurance__modal-ovn-dashboard"
     v-else-if="insuranceIsMobileOvnDashboard"
   >
-    <ButtonComponent
-      @click="toggleModalOvnDashboard()"
-      @keydown.enter="toggleModalOvnDashboard()"
+    <div class="insurance__modal-ovn-dashboard-exit">
+      <ButtonComponent
+        @click="toggleModalOvnDashboard()"
+        @keydown.enter="toggleModalOvnDashboard()"
+      >
+        <BaseIcon
+          name='ArrowExitMobile'
+        />
+      </ButtonComponent>
+      <p>OVN AND INSURANCE DASHBOARD</p>
+    </div>
+    <div
+      v-if="isAnyOvnInsBalance"
+      class="insurance__modal-ovn-dashboard-buttons"
     >
-      <BaseIcon
-        name='ArrowExitMobile'
-      />
-    </ButtonComponent>
+      <div class="insurance__modal-ovn-dashboard-button-wrapper">
+        <ButtonComponent
+          class="insurance__modal-ovn-dashboard-button"
+        >
+          <BaseIcon
+            class="insurance__mint-button"
+            name='InsuranceMint'
+          />
+        </ButtonComponent>
+        <p>MINT</p>
+      </div>
+
+      <div class="insurance__modal-ovn-dashboard-button-wrapper">
+        <ButtonComponent
+          class="insurance__modal-ovn-dashboard-button"
+          @click="toggleModalMintRedeem()"
+          @keydown.enter="toggleModalMintRedeem()"
+        >
+          <BaseIcon
+            name='InsuranceRedeem'
+            class="insurance__redeem-button"
+          />
+        </ButtonComponent>
+        <p>REDEEM</p>
+      </div>
+
+      <router-link
+        class="insurance__modal-ovn-dashboard-button-wrapper"
+        to="/"
+      >
+        <ButtonComponent class="insurance__modal-ovn-dashboard-button">
+          <BaseIcon
+            name='InsuranceBridge'
+          />
+        </ButtonComponent>
+        <p>BRIDGE</p>
+      </router-link>
+    </div>
 
   </div>
 </template>
@@ -347,5 +392,73 @@ export default {
 }
 .no-ovn-ins {
   color: var(--color-7) !important;
+}
+
+@media (max-width: 768px) {
+  .insurance__modal-ovn-dashboard {
+    width: 650px;
+  }
+  .insurance__modal-ovn-dashboard-balance-info-ovn,
+  .insurance__modal-ovn-dashboard-balance-info-ins {
+    gap: 30px;
+  }
+}
+
+@media (max-width: 400px) {
+  .insurance__modal-ovn-dashboard {
+    padding: 0;
+  }
+  .insurance__modal-ovn-dashboard-exit {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 20px;
+    button {
+      padding: 0;
+      margin-right: 30px;
+      background: none;
+      box-shadow: none;
+      border: none;
+      fill: var(--color-1);
+      [data-theme="dark"] & {
+        fill: var(--color-4);
+      }
+    }
+    color: var(--color-1);
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
+  }
+  .insurance__modal-ovn-dashboard-buttons {
+    max-width: 360px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    button {
+      border-radius: 50%;
+      margin: 0;
+      padding: 10px;
+    }
+  }
+  .insurance__redeem-button {
+    margin: 0;
+  }
+  .insurance__modal-ovn-dashboard-button {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    p {
+      color: var(--color-18);
+      font-size: 12px;
+    }
+  }
+  .insurance__modal-ovn-dashboard-button-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
 }
 </style>

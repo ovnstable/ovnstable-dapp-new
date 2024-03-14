@@ -88,7 +88,8 @@
     class="insurance__info-mobile"
   >
     <div
-      v-if="!insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem"
+      v-if="!insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem
+        && !insuranceIsMobileOvnDashboard"
       class="insurance__interact-buttons"
     >
       <div class="insurance__button-mobile">
