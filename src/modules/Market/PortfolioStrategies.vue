@@ -101,12 +101,12 @@
                 <p>{{ asset.lendingProtocolDepositedTo }}</p>
                 <p>See on Debank:</p>
                 <a
-                  :href="'https://debank.com/profile/' + asset.linkDepositedProtocol"
+                  :href="'https://debank.com/profile/' + asset.address"
                   target="_blank"
                   rel="noopener noreferrer"
                   class="link-ovn"
                 >
-                  <p>{{ formatTransactionID(asset.linkDepositedProtocol) }}</p>
+                  <p>{{ formatTransactionID(asset.address) }}</p>
                 </a>
               </div>
               <div class="performance__portfolio-dropdown performance__portfolio-dropdown--dep-asset">
@@ -261,12 +261,12 @@
           <div class="performance__portfolio-dropdown performance__portfolio-dropdown--debank">
             <p>See on DeBank:</p>
             <a
-              :href="'https://debank.com/profile/' + asset.linkDepositedProtocol"
+              :href="'https://debank.com/profile/' + asset.address"
               target="_blank"
               rel="noopener noreferrer"
               class="link-ovn"
             >
-              <p>{{ formatTransactionID(asset.linkDepositedProtocol) }}</p>
+              <p>{{ formatTransactionID(asset.address) }}</p>
             </a>
           </div>
           <div
