@@ -8,7 +8,10 @@
     <div class="insurance__modal-ovn-dashboard">
       <div class="insurance__modal-ovn-dashboard-title">
         <p>OVN DASHBOARD</p>
-        <div class="insurance__modal-ovn-dashboard-buttons">
+        <div
+          v-if="isAnyOvnInsBalance"
+          class="insurance__modal-ovn-dashboard-buttons"
+        >
           <router-link
             to="/"
           >
@@ -52,7 +55,10 @@
         </div>
       </div>
       <div class="insurance__modal-divider" />
-      <div class="insurance__modal-ovn-dashboard-balance-info">
+      <div
+        v-if="isAnyOvnInsBalance"
+        class="insurance__modal-ovn-dashboard-balance-info"
+      >
         <div class="insurance__modal-ovn-dashboard-balance-info-ovn">
           <div class="insurance__modal-ovn-dashboard-balance-info-icon">
             <BaseIcon
@@ -61,7 +67,7 @@
             <p>OVN BALANCE</p>
           </div>
           <div class="insurance__modal-ovn-dashboard-balance-info-numbers">
-            <p>{{getBalanceOVNIns('DAI+')}} OVN</p>
+            <p>{{getBalanceOVNIns('OVN')}} OVN</p>
             <p>${{costOvn.toFixed(2)}}</p>
           </div>
         </div>
@@ -78,24 +84,30 @@
           </div>
         </div>
       </div>
+      <div v-else>
+        <NoOvnInsBalance />
+      </div>
       <div class="insurance__modal-divider" />
       <div class="insurance__modal-ovn-dashboard-profit-loss">
         <p>YOUR OVN PROFIT/LOSS</p>
         <div class="insurance__modal-ovn-dashboard-profit-loss-day">
           <p>LAST DAY:</p>
-          <p>000.00 OVN</p>
-          <p>$000.00</p>
-          <p>+0%</p>
+          <p :class="{ 'no-ovn-ins': !isAnyOvnInsBalance }">000.00 OVN</p>
+          <p :class="{ 'no-ovn-ins': !isAnyOvnInsBalance }">$000.00</p>
+          <p :class="{ 'no-ovn-ins': !isAnyOvnInsBalance }">+0%</p>
         </div>
         <div class="insurance__modal-ovn-dashboard-profit-loss-all">
           <p>ALL TIME:</p>
-          <p>000.00 OVN</p>
-          <p>$000.00</p>
-          <p>+0%</p>
+          <p :class="{ 'no-ovn-ins': !isAnyOvnInsBalance }">000.00 OVN</p>
+          <p :class="{ 'no-ovn-ins': !isAnyOvnInsBalance }">$000.00</p>
+          <p :class="{ 'no-ovn-ins': !isAnyOvnInsBalance }">+0%</p>
         </div>
       </div>
       <div class="insurance__modal-divider" />
-      <AccountTransactions class="insurance__modal-ovn-dashboard-trxs" />
+      <AccountTransactions
+        :isOvnTrxs="true"
+        class="insurance__modal-ovn-dashboard-trxs"
+      />
     </div>
     <MintRedeemModal
       v-model="showModalMintRedeem"
@@ -105,12 +117,18 @@
     class="insurance__modal-ovn-dashboard"
     v-else-if="insuranceIsMobileOvnDashboard"
   >
-    <p>v-else-if="insuranceIsMobileOvnDashboard"</p>
+    <ButtonComponent
+      @click="toggleModalOvnDashboard()"
+      @keydown.enter="toggleModalOvnDashboard()"
+    >
+      <BaseIcon
+        name='ArrowExitMobile'
+      />
+    </ButtonComponent>
 
   </div>
 </template>
 
-<!-- eslint-disable no-param-reassign -->
 <script lang="ts">
 import { mapGetters } from 'vuex';
 import { deviceType } from '@/utils/deviceType.ts';
@@ -119,7 +137,7 @@ import ModalComponent from '@/components/Modal/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import MintRedeemModal from '@/modules/Insurance/MintRedeemModal.vue';
 import AccountTransactions from '@/modules/Account/AccountTransactions.vue';
-// import BigNumber from 'bignumber.js';
+import NoOvnInsBalance from '@/modules/Insurance/NoOnvInsBalance.vue';
 
 export default {
   name: 'OvnDashboardModal',
@@ -129,6 +147,7 @@ export default {
     BaseIcon,
     AccountTransactions,
     MintRedeemModal,
+    NoOvnInsBalance,
   },
   data() {
     return {
@@ -154,6 +173,9 @@ export default {
     device() {
       return deviceType();
     },
+    isAnyOvnInsBalance() {
+      return (this.getBalanceOVNIns('OVN') !== '0.00' || this.getBalanceOVNIns('OVNINS') !== '0.00');
+    },
   },
   methods: {
     closeModal() {
@@ -161,6 +183,11 @@ export default {
     },
     toggleModalMintRedeem() {
       this.showModalMintRedeem = true;
+    },
+    toggleModalOvnDashboard() {
+      this.$store.commit('insuranceTokenData/setIsMobileOvnDashboard', {
+        value: false,
+      });
     },
     getBalanceOVNIns(symbol: any) {
       const balanceItem = this.originalBalance.find((item: any) => item.symbol === symbol);
@@ -274,6 +301,7 @@ export default {
   flex-direction: column;
   gap: 10px;
 }
+
 .insurance__modal-ovn-dashboard-profit-loss p:nth-child(1) {
   color: var(--color-1);
   font-size: 16px;
@@ -316,5 +344,8 @@ export default {
 
 .insurance__modal-ovn-dashboard-trxs {
   margin-bottom: 30px
+}
+.no-ovn-ins {
+  color: var(--color-7) !important;
 }
 </style>

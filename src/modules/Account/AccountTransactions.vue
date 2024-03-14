@@ -2,7 +2,10 @@
   <div class="account__modal-transactions">
     <div class="account__modal-trx-history">
       <p>TRANSACTION HISTORY</p>
-      <div class="account__modal-clear-trx">
+      <div
+        v-if="transactions.length != 0"
+        class="account__modal-clear-trx"
+      >
         <p>Clear history</p>
         <ButtonComponent
           @click="clearTransaction"
@@ -13,7 +16,10 @@
 
       </div>
     </div>
-    <div class="account__modal-list-trx">
+    <div
+      v-if="transactions.length != 0"
+      class="account__modal-list-trx"
+    >
       <div class="account__modal-list-trx-titles">
         <p>Token</p>
         <p>Amount</p>
@@ -43,6 +49,12 @@
         </div>
       </TransitionGroup>
     </div>
+    <div
+      v-else
+      class="account__modal-list-no-trx"
+    >
+      <p>YOU HAVEN'T ANY <span v-if="isOvnTrxs">OVN</span> TRANSACTIONS YET</p>
+    </div>
   </div>
 </template>
 
@@ -56,6 +68,12 @@ export default {
   components: {
     BaseIcon,
     ButtonComponent,
+  },
+  props: {
+    isOvnTrxs: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -129,7 +147,8 @@ export default {
   }
 }
 
-.account__modal-list-trx {
+.account__modal-list-trx,
+.account__modal-list-no-trx {
   display: flex;
   flex-direction: column;
   background: var(--color-8);
@@ -140,6 +159,11 @@ export default {
   [data-theme="dark"] & {
     background-color: var(--color-7);
   }
+}
+.account__modal-list-no-trx {
+  text-align: center;
+  padding-top: 10px;
+  padding-bottom: 20px;
 }
 .account__modal-list-trx::-webkit-scrollbar-track {
   background-color: var(--color-4);
@@ -247,7 +271,6 @@ export default {
   max-width: 160px;
   justify-content: space-between;
 }
-
 
 @media (max-width: 1024px) {
   .account__modal-list-trx-date-transaction {

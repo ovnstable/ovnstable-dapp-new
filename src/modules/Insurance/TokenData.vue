@@ -160,7 +160,8 @@
 
     </div>
     <div
-      v-else-if="insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem"
+      v-else-if="insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem
+        && !insuranceIsMobileOvnDashboard"
       class="insurance__about-mobile-on"
     >
       <ButtonComponent
@@ -175,7 +176,8 @@
     </div>
 
     <div
-      v-if="!insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem"
+      v-if="!insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem
+        && !insuranceIsMobileOvnDashboard"
       class="insurance__token-title"
     >
       <BaseIcon
@@ -212,7 +214,8 @@
     <InsuranceAbout />
   </div>
   <div
-    v-if="!insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem"
+    v-if="!insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem
+      && !insuranceIsMobileOvnDashboard"
     class="insurance__token-data"
   >
     <div class="insurance__divider insurance__divider--first-divider" />

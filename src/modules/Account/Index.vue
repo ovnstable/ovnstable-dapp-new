@@ -11,7 +11,10 @@
       <div class="account__modal-divider" />
       <AddTokensAccount />
       <div class="account__modal-divider" />
-      <AccountTransactions class="account__modal-trxs" />
+      <AccountTransactions
+        :isOvnTrxs="false"
+        class="account__modal-trxs"
+      />
       <ButtonComponent
         @click="logout"
         @keypress="logout"
