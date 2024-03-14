@@ -1,0 +1,297 @@
+<template>
+  <ModalComponent
+    v-if="!insuranceIsMobileOvnDashboard && !device.isMobile"
+    type-modal="custom"
+    v-model="showModal"
+    @close="closeModal"
+  >
+    <div class="insurance__modal-ovn-dashboard">
+      <div class="insurance__modal-ovn-dashboard-title">
+        <p>OVN DASHBOARD</p>
+        <div class="insurance__modal-ovn-dashboard-buttons">
+          <router-link
+            to="/"
+          >
+            <ButtonComponent
+              class="insurance__title-button"
+            >
+              <BaseIcon
+                name='SwapIcon'
+              />
+              Swap
+            </ButtonComponent>
+          </router-link>
+
+          <ButtonComponent
+            class="insurance__title-button"
+            @click="toggleModalMintRedeem()"
+            @keydown.enter="toggleModalMintRedeem()"
+          >
+            <BaseIcon
+              class="insurance__mint-button"
+              name='InsuranceMint'
+            />
+            MINT / REDEEM
+            <BaseIcon
+              name='InsuranceRedeem'
+              class="insurance__redeem-button"
+            />
+          </ButtonComponent>
+
+          <router-link
+            to="/"
+          >
+            <ButtonComponent class="insurance__title-button">
+              <BaseIcon
+                name='InsuranceBridge'
+              />
+              BRIDGE
+            </ButtonComponent>
+          </router-link>
+
+        </div>
+      </div>
+      <div class="insurance__modal-divider" />
+      <div class="insurance__modal-ovn-dashboard-balance-info">
+        <div class="insurance__modal-ovn-dashboard-balance-info-ovn">
+          <div class="insurance__modal-ovn-dashboard-balance-info-icon">
+            <BaseIcon
+              name='InsuranceOVNVault'
+            />
+            <p>OVN BALANCE</p>
+          </div>
+          <div class="insurance__modal-ovn-dashboard-balance-info-numbers">
+            <p>000.00 OVN</p>
+            <p>$000.00</p>
+          </div>
+        </div>
+        <div class="insurance__modal-ovn-dashboard-balance-info-ins">
+          <div class="insurance__modal-ovn-dashboard-balance-info-icon">
+            <BaseIcon
+              name='InsuranceModalINS'
+            />
+            <p>BALANCE IN INS</p>
+          </div>
+          <div class="insurance__modal-ovn-dashboard-balance-info-numbers">
+            <p>000.00 OVN</p>
+            <p>$000.00</p>
+          </div>
+        </div>
+      </div>
+      <div class="insurance__modal-divider" />
+      <div class="insurance__modal-ovn-dashboard-profit-loss">
+        <p>YOUR OVN PROFIT/LOSS</p>
+        <div class="insurance__modal-ovn-dashboard-profit-loss-day">
+          <p>LAST DAY:</p>
+          <p>000.00 OVN</p>
+          <p>$000.00</p>
+          <p>+0%</p>
+        </div>
+        <div class="insurance__modal-ovn-dashboard-profit-loss-all">
+          <p>ALL TIME:</p>
+          <p>000.00 OVN</p>
+          <p>$000.00</p>
+          <p>+0%</p>
+        </div>
+      </div>
+      <div class="insurance__modal-divider" />
+      <AccountTransactions class="insurance__modal-ovn-dashboard-trxs" />
+    </div>
+  </ModalComponent>
+  <div
+    class="insurance__modal-ovn-dashboard"
+    v-else-if="insuranceIsMobileOvnDashboard"
+  >
+    <p>v-else-if="insuranceIsMobileOvnDashboard"</p>
+
+  </div>
+</template>
+
+<!-- eslint-disable no-param-reassign -->
+<script lang="ts">
+import { mapGetters } from 'vuex';
+import { deviceType } from '@/utils/deviceType.ts';
+import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import ModalComponent from '@/components/Modal/Index.vue';
+import ButtonComponent from '@/components/Button/Index.vue';
+import AccountTransactions from '@/modules/Account/AccountTransactions.vue';
+import BigNumber from 'bignumber.js';
+
+export default {
+  name: 'OvnDashboardModal',
+  components: {
+    ModalComponent,
+    ButtonComponent,
+    BaseIcon,
+    AccountTransactions,
+  },
+  data() {
+    return {
+      showModal: false,
+      ovnAmount: 0,
+      ovnDecimals: 18,
+    };
+  },
+  computed: {
+    ...mapGetters('insuranceData', ['insuranceRedemptionData']),
+    ...mapGetters('accountData', ['account', 'originalBalance']),
+
+    insuranceIsMobileOvnDashboard() {
+      return this.$store.state.insuranceTokenData.isMobileOvnDashboard.value;
+    },
+    device() {
+      return deviceType();
+    },
+  },
+  methods: {
+    closeModal() {
+      this.showModal = false;
+    },
+    toggleModalMintRedeem() {
+      this.showModal = false;
+      this.$store.commit('insuranceTokenData/setIsMobileOvnDashboard', {
+        value: false,
+      });
+    },
+
+  },
+};
+</script>
+
+<style lang="scss" scoped>
+.insurance__modal-divider {
+  border: 1px solid var(--color-7);
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+.insurance__modal-ovn-dashboard {
+  width: 860px;
+  padding: 30px;
+  padding-bottom: 0;
+  display: flex;
+  flex-direction: column;
+  [data-theme="dark"] & {
+    background-color: var(--color-6);
+  }
+}
+.insurance__modal-ovn-dashboard-title,
+.insurance__modal-ovn-dashboard-balance-info {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+.insurance__modal-ovn-dashboard-balance-info p {
+  color: var(--color-1);
+  font-weight: 600;
+  font-size: 16px;
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
+}
+.insurance__modal-ovn-dashboard-title p:nth-child(1) {
+  color: var(--color-1);
+  font-size: 16px;
+  font-weight: 600;
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
+}
+.insurance__modal-ovn-dashboard-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  button {
+    box-shadow: none;
+    border: none;
+    border-radius: 30px;
+    background-color: var(--color-5);
+    padding: 3px 14px;
+    color: var(--color-1);
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
+  }
+}
+.insurance__title-button {
+  svg{
+    margin-right: 8px;
+  }
+}
+.insurance__redeem-button {
+  margin-left: 8px;
+}
+.insurance__modal-ovn-dashboard-balance-info-icon {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+  svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.insurance__modal-ovn-dashboard-balance-info-numbers {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.insurance__modal-ovn-dashboard-balance-info-ovn,
+.insurance__modal-ovn-dashboard-balance-info-ins {
+  display: flex;
+  flex-direction: row;
+  gap: 70px;
+  align-items: start;
+}
+
+.insurance__modal-ovn-dashboard-profit-loss {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.insurance__modal-ovn-dashboard-profit-loss p:nth-child(1) {
+  color: var(--color-1);
+  font-size: 16px;
+  font-weight: 600;
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
+}
+.insurance__modal-ovn-dashboard-profit-loss-day,
+.insurance__modal-ovn-dashboard-profit-loss-all {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.insurance__modal-ovn-dashboard-profit-loss-day p:nth-child(1),
+.insurance__modal-ovn-dashboard-profit-loss-all p:nth-child(1){
+  color: var(--color-2);
+  font-weight: 400;
+  [data-theme="dark"] & {
+    color: var(--color-18);
+  }
+}
+
+.insurance__modal-ovn-dashboard-profit-loss-day p:nth-child(2),
+.insurance__modal-ovn-dashboard-profit-loss-all p:nth-child(2),
+.insurance__modal-ovn-dashboard-profit-loss-day p:nth-child(3),
+.insurance__modal-ovn-dashboard-profit-loss-all p:nth-child(3){
+  color: var(--color-1);
+  font-weight: 600;
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
+}
+
+.insurance__modal-ovn-dashboard-profit-loss-day p:nth-child(4),
+.insurance__modal-ovn-dashboard-profit-loss-all p:nth-child(4) {
+  color: var(--color-12);
+}
+
+.insurance__modal-ovn-dashboard-trxs {
+  margin-bottom: 30px
+}
+</style>

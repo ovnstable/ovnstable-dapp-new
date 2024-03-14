@@ -4,6 +4,7 @@ const state = {
   insuranceTokenData: {},
   isMobileAboutOvn: false,
   isMobileMintRedeem: false,
+  isMobileOvnDashboard: false,
 };
 
 function capitalizeFirstLetter(string: string) {
@@ -64,6 +65,9 @@ const mutations = {
   },
   setIsMobileMintRedeem(state: any, value: any) {
     state.isMobileMintRedeem = value;
+  },
+  setIsMobileOvnDashboard(state: any, value: any) {
+    state.isMobileOvnDashboard = value;
   },
 };
 

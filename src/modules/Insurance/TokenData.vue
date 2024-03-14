@@ -57,7 +57,11 @@
             </ButtonComponent>
           </router-link>
 
-          <ButtonComponent class="insurance__title-button">
+          <ButtonComponent
+            class="insurance__title-button"
+            @click="toggleModalOvnDasbhoard()"
+            @keydown.enter="toggleModalOvnDasbhoard()"
+          >
             <BaseIcon
               name='InsuranceOVN'
             />
@@ -128,15 +132,15 @@
       </div>
 
       <div class="insurance__button-mobile">
-        <router-link
-          to="/dashboard"
+        <ButtonComponent
+          class="insurance__title-button"
+          @click="toggleModalOvnDasbhoard()"
+          @keydown.enter="toggleModalOvnDasbhoard()"
         >
-          <ButtonComponent class="insurance__title-button">
-            <BaseIcon
-              name='InsuranceOVN'
-            />
-          </ButtonComponent>
-        </router-link>
+          <BaseIcon
+            name='InsuranceOVN'
+          />
+        </ButtonComponent>
         <p>MY OVN</p>
       </div>
 
@@ -265,11 +269,19 @@
     <MintRedeemModal
       v-model="showModalMintRedeem"
     />
+    <OvnDashboardModal
+      v-model="showModalOvnDashboard"
+    />
   </div>
 
   <div v-if="insuranceIsMobileMintRedeem">
     <MintRedeemModal
       v-model="showModalMintRedeem"
+    />
+  </div>
+  <div v-if="insuranceIsMobileOvnDashboard">
+    <OvnDashboardModal
+      v-model="showModalOvnDashboard"
     />
   </div>
 </template>
@@ -279,6 +291,7 @@ import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import InsuranceAbout from '@/modules/Insurance/InsuranceAbout.vue';
 import MintRedeemModal from '@/modules/Insurance/MintRedeemModal.vue';
+import OvnDashboardModal from '@/modules/Insurance/OvnDashboardModal.vue';
 import { chainContractsMap } from '@/utils/contractsMap.ts';
 import { deviceType } from '@/utils/deviceType.ts';
 
@@ -289,11 +302,13 @@ export default {
     ButtonComponent,
     InsuranceAbout,
     MintRedeemModal,
+    OvnDashboardModal,
   },
   data() {
     return {
       showInsuranceInfo: false,
       showModalMintRedeem: false,
+      showModalOvnDashboard: false,
     };
   },
   props: {
@@ -318,8 +333,21 @@ export default {
     insuranceIsMobileMintRedeem() {
       return this.$store.state.insuranceTokenData.isMobileMintRedeem.value;
     },
+    insuranceIsMobileOvnDashboard() {
+      return this.$store.state.insuranceTokenData.isMobileOvnDashboard.value;
+    },
   },
   methods: {
+    toggleModalOvnDasbhoard() {
+      if (this.device.isMobile) {
+        this.showModalOvnDashboard = true;
+        this.$store.commit('insuranceTokenData/setIsMobileOvnDashboard', {
+          value: this.showModalOvnDashboard,
+        });
+      } else {
+        this.showModalOvnDashboard = !this.showModalOvnDashboard;
+      }
+    },
     toggleModalMintRedeem() {
       if (this.device.isMobile) {
         this.showModalMintRedeem = true;
@@ -782,7 +810,6 @@ export default {
     svg {
       max-width: 22px;
       max-height: 22px;
-      fill: var(--color-4);
       scale: 120%;
       width: auto;
       [data-theme="dark"] & {
