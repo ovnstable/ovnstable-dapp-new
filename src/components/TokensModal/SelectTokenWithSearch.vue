@@ -145,8 +145,6 @@ export default {
           return 0;
         });
 
-      console.log(arrList, '---arrList');
-
       // input and output tokens have different sorting logic
       if (!this.searchQuery && !this.isInputTokens) {
         return arrList;
