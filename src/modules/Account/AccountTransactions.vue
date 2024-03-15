@@ -166,6 +166,11 @@ export default {
   text-align: center;
   padding-top: 10px;
   padding-bottom: 20px;
+  p {
+    [data-theme="dark"] & {
+      color: var(--color-18);
+    }
+  }
 }
 .account__modal-list-trx::-webkit-scrollbar-track {
   background-color: var(--color-4);

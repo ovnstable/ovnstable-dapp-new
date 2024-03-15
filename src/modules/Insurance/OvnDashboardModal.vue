@@ -480,6 +480,9 @@ export default {
 }
 .no-ovn-ins {
   color: var(--color-7) !important;
+  [data-theme="dark"] & {
+    color: var(--color-2) !important;
+  }
 }
 
 @media (max-width: 768px) {

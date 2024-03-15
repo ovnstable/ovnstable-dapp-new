@@ -12,6 +12,7 @@
           class="ovn-dashboard__nobalance-button"
         >
           <BaseIcon
+            class="ovn-dashboard__nobalance-button-swap"
             name='SwapIcon'
           />
           Swap
@@ -143,7 +144,7 @@ export default {
   text-align: center;
   [data-theme="dark"] & {
     background-color: var(--color-7);
-    color: var(--color-6);
+    color: var(--color-18);
   }
 }
 .ovn-dashboard__nobalance-text {
@@ -173,14 +174,23 @@ export default {
     font-weight: 500;
     color: var(--color-1);
     [data-theme="dark"] & {
+      box-shadow: none;
       color: var(--color-4);
     }
   }
 }
 
 .ovn-dashboard__nobalance-button {
-  svg{
+  svg {
     margin-right: 8px;
+    [data-theme="dark"] & {
+      fill: var(--color-4);
+    }
+  }
+}
+.ovn-dashboard__nobalance-button-swap {
+  [data-theme="dark"] & {
+    stroke: var(--color-4);
   }
 }
 .insurance__redeem-button {
