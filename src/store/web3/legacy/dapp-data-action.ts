@@ -17,7 +17,10 @@ const actions = {
   }: any) {
     console.log('REFRESHUSER');
     dispatch('accountData/refreshBalance', null, { root: true });
-    // dispatch('odosData/loadBalances', null, { root: true });
+    // possibly remove, only for account change
+
+    dispatch('odosData/loadBalances', null, { root: true });
+    dispatch('web3/initWeb3', null, { root: true });
     // dispatch('supplyData/refreshInsuranceSupply', null, { root: true });
     // dispatch('swapData/refreshSwap', null, { root: true });
     // dispatch('marketData/refreshClientData', null, { root: true });

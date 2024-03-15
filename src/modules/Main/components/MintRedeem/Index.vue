@@ -241,7 +241,8 @@ export default {
       const tokenData = this.inputToken;
       let tokenContract = this.tokensContractMap[tokenData.address];
       const approveValue = new BigNumber(10 ** this.inputToken.decimals)
-        .times(1000000).toFixed(0);
+        .times(1000000)
+        .toFixed(0);
 
       if (!tokenContract) {
         tokenContract = buildEvmContractForChain(

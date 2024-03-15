@@ -74,6 +74,7 @@ const actions = {
       provider: markRaw(evmProvider),
       signer: markRaw(signer),
     });
+    dispatch('contractAction/initContracts', signer, { root: true });
   },
 
   async initWeb3({
@@ -89,8 +90,6 @@ const actions = {
         console.log(e, '---error provider init');
       }
     }
-
-    await dispatch('contractAction/initContracts', null, { root: true });
 
     dispatch('gasPrice/refreshGasPrice', null, { root: true });
     dispatch('insuranceData/refreshInsurance', null, { root: true });
