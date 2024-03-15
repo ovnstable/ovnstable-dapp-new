@@ -172,6 +172,65 @@
         <p>BRIDGE</p>
       </router-link>
     </div>
+    <div v-else>
+      <NoOvnInsBalance />
+    </div>
+    <div
+      v-if="isAnyOvnInsBalance"
+      class="insurance__modal-divider"
+    />
+
+    <div
+      v-if="isAnyOvnInsBalance"
+      class="insurance__modal-ovn-dashboard-balance-info"
+    >
+      <div class="insurance__modal-ovn-dashboard-balance-info-ovn">
+        <div class="insurance__modal-ovn-dashboard-balance-info-icon">
+          <BaseIcon
+            name='InsuranceOVNVault'
+          />
+          <p>OVN BALANCE</p>
+        </div>
+        <div class="insurance__modal-ovn-dashboard-balance-info-numbers">
+          <p>{{getBalanceOVNIns('OVN')}} OVN</p>
+          <p>${{costOvn.toFixed(2)}}</p>
+        </div>
+      </div>
+      <div class="insurance__modal-ovn-dashboard-balance-info-ins">
+        <div class="insurance__modal-ovn-dashboard-balance-info-icon">
+          <BaseIcon
+            name='InsuranceModalINS'
+          />
+          <p>BALANCE IN INS</p>
+        </div>
+        <div class="insurance__modal-ovn-dashboard-balance-info-numbers">
+          <p>{{getBalanceOVNIns('OVNINS')}} OVN</p>
+          <p>${{costOvnINS.toFixed(2)}}</p>
+        </div>
+      </div>
+    </div>
+    <div class="insurance__modal-divider" />
+    <div class="insurance__modal-ovn-dashboard-profit-loss">
+      <p>PROFIT/LOSS</p>
+      <div class="insurance__modal-ovn-dashboard-profit-loss-day">
+        <p class="insurance__modal-ovn-dashboard-profit-loss-day-title-mob">LAST DAY:</p>
+        <p :class="{ 'no-ovn-ins': !isAnyOvnInsBalance }">000.00 OVN</p>
+        <p :class="{ 'no-ovn-ins': !isAnyOvnInsBalance }">$000.00</p>
+        <p :class="{ 'no-ovn-ins': !isAnyOvnInsBalance }">+0%</p>
+      </div>
+      <div class="insurance__modal-ovn-dashboard-profit-loss-all">
+        <p class="insurance__modal-ovn-dashboard-profit-loss-day-title-mob">ALL TIME:</p>
+        <p :class="{ 'no-ovn-ins': !isAnyOvnInsBalance }">000.00 OVN</p>
+        <p :class="{ 'no-ovn-ins': !isAnyOvnInsBalance }">$000.00</p>
+        <p :class="{ 'no-ovn-ins': !isAnyOvnInsBalance }">+0%</p>
+      </div>
+    </div>
+    <div class="insurance__modal-divider" />
+    <AccountTransactions
+      :isOvnTrxs="true"
+      class="insurance__modal-ovn-dashboard-trxs"
+    />
+
   </div>
 </template>
 
@@ -239,6 +298,7 @@ export default {
       });
     },
     toggleModalMintRedeemMobile() {
+      console.log('toggleModalMintRedeemMobile clicked');
       if (this.device.isMobile) {
         this.showModalMintRedeem = true;
         this.$store.commit('insuranceTokenData/setIsMobileMintRedeem', {
@@ -420,6 +480,7 @@ export default {
 
 @media (max-width: 400px) {
   .insurance__modal-ovn-dashboard {
+    width: auto;
     padding: 0;
   }
   .insurance__modal-ovn-dashboard-exit {
@@ -440,6 +501,8 @@ export default {
       }
     }
     color: var(--color-1);
+    font-weight: 600;
+    font-size: 16px;
     [data-theme="dark"] & {
       color: var(--color-4);
     }
@@ -473,6 +536,50 @@ export default {
     flex-direction: column;
     align-items: center;
     gap: 10px;
+  }
+  .insurance__modal-divider {
+    margin-top: 22px;
+    margin-bottom: 22px;
+  }
+  .insurance__modal-ovn-dashboard-balance-info {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: 10px;
+  }
+  .insurance__modal-divider,
+  .insurance__modal-ovn-dashboard-balance-info,
+  .insurance__modal-ovn-dashboard-profit-loss {
+    max-width: 360px;
+  }
+  .insurance__modal-ovn-dashboard-profit-loss {
+    gap: 20px;
+  }
+   .insurance__modal-ovn-dashboard-balance-info {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    p {
+      font-size: 14px;
+    }
+  }
+  .insurance__modal-ovn-dashboard-balance-info-numbers {
+    text-align: right;
+  }
+  .insurance__modal-ovn-dashboard-balance-info-ovn,
+  .insurance__modal-ovn-dashboard-balance-info-ins {
+    width: 100%;
+    gap: 0;
+    justify-content: space-between;
+  }
+  .insurance__modal-ovn-dashboard-profit-loss-day,
+  .insurance__modal-ovn-dashboard-profit-loss-all {
+    font-size: 14px;
+  }
+  .insurance__modal-ovn-dashboard-profit-loss-day-title-mob {
+    font-size: 14px !important;
   }
 }
 </style>

@@ -63,17 +63,17 @@ export default {
         {
           name: 'Team',
           percent: '25',
-          color: 'var(--color-14)',
+          color: 'var(--color-15)',
         },
         {
           name: 'Insurance fund',
           percent: '20',
-          color: 'var(--color-16)',
+          color: 'var(--color-13)',
         },
         {
           name: 'Pre-seed investors',
           percent: '8.5',
-          color: 'var(--color-9)',
+          color: 'var(--color-10)',
         },
         {
           name: 'Pre-sale',

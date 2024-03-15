@@ -1,7 +1,10 @@
 <template>
   <div class="ovn-dashboard__nobalance">
     <p>MINT OR SWAP OVN TO SEE YOUR OVN AND INSURANCE BALANCE</p>
-    <div class="ovn-dashboard__nobalance-buttons">
+    <div
+      v-if="!device.isMobile"
+      class="ovn-dashboard__nobalance-buttons"
+    >
       <router-link
         to="/"
       >
@@ -39,23 +42,64 @@
       </router-link>
 
     </div>
-    <MintRedeemModal
-      v-model="showModalMintRedeem"
-    />
+    <div
+      v-else
+      class="ovn-dashboard__nobalance-buttons"
+    >
+      <div class="ovn-dashboard__nobalance-button-wrap">
+        <ButtonComponent
+          class="ovn-dashboard__nobalance-button"
+          @click="toggleModalMintRedeemMobile()"
+          @keydown.enter="toggleModalMintRedeemMobile()"
+        >
+          <BaseIcon
+            name='InsuranceMint'
+          />
+
+        </ButtonComponent>
+        <p>MINT</p>
+      </div>
+      <div class="ovn-dashboard__nobalance-button-wrap">
+        <router-link
+          to="/"
+        >
+          <ButtonComponent class="ovn-dashboard__nobalance-button">
+            <BaseIcon
+              name='InsuranceBridge'
+            />
+          </ButtonComponent>
+        </router-link>
+        <p>BRIDGE</p>
+      </div>
+
+      <div class="ovn-dashboard__nobalance-button-wrap">
+        <ButtonComponent
+          class="ovn-dashboard__nobalance-button"
+          @click="toggleModalMintRedeemMobile()"
+          @keydown.enter="toggleModalMintRedeemMobile()"
+        >
+          <BaseIcon
+            class="insurance__redeem-button"
+            name='InsuranceRedeem'
+          />
+        </ButtonComponent>
+        <p>REDEEM</p>
+      </div>
+
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
-import MintRedeemModal from '@/modules/Insurance/MintRedeemModal.vue';
+import { deviceType } from '@/utils/deviceType.ts';
 
 export default {
   name: 'NoOvnInsBalance',
   components: {
     ButtonComponent,
     BaseIcon,
-    MintRedeemModal,
   },
   data() {
     return {
@@ -65,6 +109,21 @@ export default {
   methods: {
     toggleModalMintRedeem() {
       this.showModalMintRedeem = true;
+    },
+    toggleModalMintRedeemMobile() {
+      if (this.device.isMobile) {
+        this.showModalMintRedeem = true;
+        this.$store.commit('insuranceTokenData/setIsMobileMintRedeem', {
+          value: this.showModalMintRedeem,
+        });
+      } else {
+        this.showModalMintRedeem = !this.showModalMintRedeem;
+      }
+    },
+  },
+  computed: {
+    device() {
+      return deviceType();
     },
   },
 };
@@ -152,4 +211,28 @@ export default {
   gap: 5px;
 }
 
+@media (max-width: 400px) {
+  .ovn-dashboard__nobalance {
+    max-width: 360px;
+  }
+  .ovn-dashboard__nobalance-buttons {
+    margin-top: 20px;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0 20px;
+  }
+  .ovn-dashboard__nobalance-button-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  .ovn-dashboard__nobalance-button {
+    padding: 10px;
+    border-radius: 50%;
+    svg {
+      margin: 0;
+    }
+  }
+}
 </style>

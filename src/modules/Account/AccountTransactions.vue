@@ -19,6 +19,7 @@
     <div
       v-if="transactions.length != 0"
       class="account__modal-list-trx"
+      :class="{ 'ovn-trxs': isOvnTrxs }"
     >
       <div class="account__modal-list-trx-titles">
         <p>Token</p>
@@ -52,6 +53,7 @@
     <div
       v-else
       class="account__modal-list-no-trx"
+      :class="{ 'ovn-trxs': isOvnTrxs }"
     >
       <p>YOU HAVEN'T ANY <span v-if="isOvnTrxs">OVN</span> TRANSACTIONS YET</p>
     </div>
@@ -275,6 +277,12 @@ export default {
 @media (max-width: 1024px) {
   .account__modal-list-trx-date-transaction {
     margin-right: 10px;
+  }
+}
+
+@media (max-width: 400px) {
+  .ovn-trxs {
+    max-width: 360px;
   }
 }
 </style>

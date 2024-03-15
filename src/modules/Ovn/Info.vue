@@ -39,7 +39,7 @@
       </div>
     </div>
     <div
-      v-if="device.isMobile"
+      v-if="device.isMobile && !insuranceIsMobileOvnDashboard"
       class="ovn__overview-links"
     >
       <BaseIcon
@@ -68,7 +68,11 @@
 
       </div>
       <div class="ovn__overview-links-data-button">
-        <ButtonComponent class="ovn__overview-button">
+        <ButtonComponent
+          class="ovn__overview-button"
+          @click="toggleModalOvnDasbhoard()"
+          @keydown.enter="toggleModalOvnDasbhoard()"
+        >
           <BaseIcon
             class="ovn__overview-dashboard-icon"
             name='InsuranceOVN'
@@ -77,23 +81,41 @@
         <p>MY OVN</p>
       </div>
     </div>
-    <div class="ovn__overview-divider" />
-    <div class="ovn__overview-price">
+    <div
+      v-if="!insuranceIsMobileOvnDashboard"
+      class="ovn__overview-divider"
+    />
+    <div
+      v-if="!insuranceIsMobileOvnDashboard"
+      class="ovn__overview-price"
+    >
       <p class="ovn__overview-price-title">OVN Price</p>
       <div class="ovn__overview-price-change">
         <p>{{priceOvn}}</p>
         <p :class="priceOvnChange < 0 ? 'ovn__overview-price-down' : 'ovn__overview-price-up'">{{ priceOvnChange }}% (1d)</p>
       </div>
     </div>
-    <div class="ovn__overview-divider" />
-    <div class="ovn__overview-mc">
+    <div
+      v-if="!insuranceIsMobileOvnDashboard"
+      class="ovn__overview-divider"
+    />
+    <div
+      v-if="!insuranceIsMobileOvnDashboard"
+      class="ovn__overview-mc"
+    >
       <p class="ovn__overview-mc-title">Market cap</p>
       <div class="ovn__overview-mc-change">
         <p>${{formatNumber(marketCap)}}</p>
       </div>
     </div>
-    <div class="ovn__overview-divider" />
-    <div class="ovn__overview-tvl">
+    <div
+      v-if="!insuranceIsMobileOvnDashboard"
+      class="ovn__overview-divider"
+    />
+    <div
+      v-if="!insuranceIsMobileOvnDashboard"
+      class="ovn__overview-tvl"
+    >
       <p class="ovn__overview-tvl-title">OVN TVL</p>
       <div class="ovn__overview-exact-chain">
         <div
@@ -109,7 +131,10 @@
       </div>
       <p v-if="!device.isMobile">past 2 hours</p>
     </div>
-    <div class="ovn__overview-divider" />
+    <div
+      v-if="!insuranceIsMobileOvnDashboard"
+      class="ovn__overview-divider"
+    />
     <div
       v-if="!device.isMobile"
       class="ovn__overview-interact-buttons"
@@ -142,7 +167,11 @@
           BRIDGE
         </ButtonComponent>
       </router-link>
-      <ButtonComponent class="ovn__overview-button">
+      <ButtonComponent
+        class="ovn__overview-button"
+        @click="toggleModalOvnDasbhoard()"
+        @keydown.enter="toggleModalOvnDasbhoard()"
+      >
         <BaseIcon
           class="ovn__overview-dashboard-icon"
           name='InsuranceOVN'
@@ -153,7 +182,10 @@
     </div>
 
   </div>
-  <div class="ovn__overview-chain-data-container">
+  <div
+    v-if="!insuranceIsMobileOvnDashboard"
+    class="ovn__overview-chain-data-container"
+  >
     <div
       v-for="chain in availableChains"
       :key="chain"
@@ -171,6 +203,15 @@
       >{{ chain }}</p>
     </div>
   </div>
+  <OvnDashboardModal
+    :price="priceOvn"
+    v-model="showModalOvnDashboard"
+  />
+  <div v-if="insuranceIsMobileMintRedeem">
+    <MintRedeemModal
+      v-model="showModalMintRedeem"
+    />
+  </div>
 </template>
 
 <script lang="ts">
@@ -178,6 +219,8 @@ import ButtonComponent from '@/components/Button/Index.vue';
 import { chainContractsMap } from '@/utils/contractsMap.ts';
 import { deviceType } from '@/utils/deviceType.ts';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import OvnDashboardModal from '@/modules/Insurance/OvnDashboardModal.vue';
+import MintRedeemModal from '@/modules/Insurance/MintRedeemModal.vue';
 import Spinner from '@/components/Spinner/Index.vue';
 
 export default {
@@ -186,6 +229,14 @@ export default {
     ButtonComponent,
     BaseIcon,
     Spinner,
+    OvnDashboardModal,
+    MintRedeemModal,
+  },
+  data() {
+    return {
+      showModalOvnDashboard: false,
+      showModalMintRedeem: false,
+    };
   },
   props: {
     tokenData: {
@@ -200,6 +251,12 @@ export default {
   computed: {
     device() {
       return deviceType();
+    },
+    insuranceIsMobileMintRedeem() {
+      return this.$store.state.insuranceTokenData.isMobileMintRedeem.value;
+    },
+    insuranceIsMobileOvnDashboard() {
+      return this.$store.state.insuranceTokenData.isMobileOvnDashboard.value;
     },
     priceOvn() {
       return this.tokenData.priceOvnMcChange.data.OVN[0].quote.USD.price.toFixed(2);
@@ -229,6 +286,16 @@ export default {
     },
   },
   methods: {
+    toggleModalOvnDasbhoard() {
+      if (this.device.isMobile) {
+        this.showModalOvnDashboard = true;
+        this.$store.commit('insuranceTokenData/setIsMobileOvnDashboard', {
+          value: this.showModalOvnDashboard,
+        });
+      } else {
+        this.showModalOvnDashboard = !this.showModalOvnDashboard;
+      }
+    },
     saveNetworkToLocalStore(chain: string) {
       this.$store.dispatch('network/changeOvnNetwork', chain.toLowerCase());
     },

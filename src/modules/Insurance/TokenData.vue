@@ -126,7 +126,7 @@
         >
           <BaseIcon
             class="insurance__mint-button"
-            name='InsuranceMint'
+            name='InsuranceRedeem'
           />
         </ButtonComponent>
         <p>REDEEM</p>
@@ -286,6 +286,7 @@
   </div>
   <div v-if="insuranceIsMobileOvnDashboard">
     <OvnDashboardModal
+      :price="tokenData.ovnPrice"
       v-model="showModalOvnDashboard"
     />
   </div>
