@@ -74,6 +74,7 @@ import { formatMoney, fixedByPrice } from '@/utils/numbers.ts';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import InputComponent from '@/components/Input/Index.vue';
 import { OVN_TOKENS } from '@/utils/const.ts';
+import BigNumber from 'bignumber.js';
 
 const NATIVE_ID = 'eth0x0000000000000000000000000000000000000000';
 
@@ -123,6 +124,29 @@ export default {
 
       if (this.removeNative) arrList = arrList.filter((_: any) => _.id !== NATIVE_ID);
 
+      arrList = arrList
+        .filter((token: any) => token.name.toLowerCase()
+          .includes(this.searchQuery?.toLowerCase())
+              || token.symbol.toLowerCase().includes(this.searchQuery.toLowerCase())
+              || token.address.toLowerCase().includes(this.searchQuery.toLowerCase()))
+        .sort((a: any, b: any) => {
+          if (new BigNumber(b.balanceData.balanceInUsd).lt(a.balanceData.balanceInUsd)) {
+            return -1;
+          } if (new BigNumber(b.balanceData.balanceInUsd).gt(a.balanceData.balanceInUsd)) {
+            return 1;
+          }
+
+          if (new BigNumber(b.balanceData.balance).lt(a.balanceData.balance)) {
+            return -1;
+          }
+          if (new BigNumber(b.balanceData.balance).gt(a.balanceData.balance)) {
+            return 1;
+          }
+          return 0;
+        });
+
+      console.log(arrList, '---arrList');
+
       // input and output tokens have different sorting logic
       if (!this.searchQuery && !this.isInputTokens) {
         return arrList;
@@ -142,24 +166,7 @@ export default {
           });
       }
 
-      return arrList
-        .filter((token: any) => token.name.toLowerCase()
-          .includes(this.searchQuery?.toLowerCase())
-              || token.symbol.toLowerCase().includes(this.searchQuery.toLowerCase())
-              || token.address.toLowerCase().includes(this.searchQuery.toLowerCase()))
-        .sort((a: any, b: any) => {
-          if (b.price * b.balanceData.balance < a.price * a.balanceData.balance) {
-            return -1;
-          } if (b.price * b.balanceData.balance > a.price * a.balanceData.balance) {
-            return 1;
-          }
-          if (b.balanceData.balance < a.balanceData.balance) {
-            return -1;
-          } if (b.balanceData.balance > a.balanceData.balance) {
-            return 1;
-          }
-          return 0;
-        });
+      return arrList;
     },
     isAvailableCountForSelect() {
       return this.selectedCount < this.maxTokenSelectCount;
