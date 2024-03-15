@@ -61,7 +61,7 @@
               {{token.balanceData.balance ? token.balanceData.balance : '0'}}
             </span>
             <span class="token-usd-balance">
-              ${{token.balanceData.balance ? formatMoney(token.balanceData.balanceInUsd, fixedByPrice(token.price)) : '0'}}
+              ${{token.balanceData.balance ? formatMoney(token.balanceData.balanceInUsd ?? "0", 2) : '0'}}
             </span>
           </div>
         </div>
@@ -93,6 +93,10 @@ export default {
       type: Array,
       required: true,
     },
+    isInputTokens: {
+      type: Boolean,
+      required: true,
+    },
     removeNative: {
       type: Boolean,
       required: false,
@@ -119,7 +123,12 @@ export default {
 
       if (this.removeNative) arrList = arrList.filter((_: any) => _.id !== NATIVE_ID);
 
-      if (!this.searchQuery) {
+      // input and output tokens have different sorting logic
+      if (!this.searchQuery && !this.isInputTokens) {
+        return arrList;
+      }
+
+      if (!this.searchQuery && this.isInputTokens) {
         return arrList
           .sort((a: any, b: any) => {
             if (OVN_TOKENS.includes(a.symbol) && !OVN_TOKENS.includes(b.symbol)) {
@@ -173,7 +182,6 @@ export default {
       }
 
       if (this.isAvailableCountForSelect) {
-        console.log('ADDTOKEN');
         this.$emit('add-token', token);
       }
     },

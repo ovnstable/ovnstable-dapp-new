@@ -63,6 +63,7 @@
             :tokens="tokens"
             :selected-tokens="selectedTokens"
             :removeNative="removeNative"
+            :is-input-tokens="selectTokenInput"
             @add-token="selectToken"
             @remove-token="removeToken"
           />

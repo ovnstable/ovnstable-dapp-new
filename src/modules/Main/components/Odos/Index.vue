@@ -78,7 +78,7 @@
           </div>
 
           <div
-            @click="changeSwap()"
+            @click="changeSwap"
             @keypress="changeSwap"
             class="swap-form__body-arrow"
           >
@@ -603,7 +603,6 @@ export default {
       const tokens = this.selectedInputTokens;
       for (let i = 0; i < tokens.length; i++) {
         const token: any = tokens[i];
-        console.log(token, '---token');
         if (token.value > 0) return true;
       }
 
@@ -919,7 +918,6 @@ export default {
       return odosApiService
         .quoteRequest(requestData)
         .then((data) => {
-          console.log('Response data for odos quota request: ', data);
           this.$store.commit('odosData/changeState', {
             field: 'quotaResponseInfo',
             val: data,
@@ -1080,7 +1078,6 @@ export default {
       });
     },
     async simulateSwap() {
-      console.log(this.isSumulateSwapLoading, this.getSlippagePercent, 'simulateSwap');
       if (this.isSumulateSwapLoading) {
         return;
       }
@@ -1408,7 +1405,6 @@ export default {
     },
 
     addSelectedTokenToList(data: any) {
-      console.log(data, 'NEW TOKENS');
       if (data.isInput) {
         this.addSelectedTokenToInputList(data.tokenData);
         this.removeOutputToken(data.tokenData.id);
@@ -1560,7 +1556,6 @@ export default {
     },
 
     updateQuotaInfo() {
-      console.log('updateQuotaInfo');
       if (!this.tokensQuotaCounterId) {
         // first call
         this.tokensQuotaCounterId = -1;

@@ -189,7 +189,6 @@ export const getFilteredOvernightTokens = (
   chainId: number,
   isOnlyOvnToken: any,
 ) => {
-  console.log(state.tokensMap, '--getFilteredOvernightTokens');
   if (!state.tokensMap || !state.tokensMap.chainTokenMap) return [];
 
   const tokens: any = [];
@@ -356,10 +355,6 @@ export const updateTokenValue = (
     if (
       selectedToken.address === '0x0000000000000000000000000000000000000000'
     ) {
-      console.log(
-        'Check approve in update value not available. its a root token: ',
-        token,
-      );
       selectedToken.approveData.approved = true;
     }
 
@@ -554,4 +549,3 @@ export const getFormattedPeriodDashboard = (dashboardInterval: any, portfolioBal
   }
   return formattedDate || '';
 };
-

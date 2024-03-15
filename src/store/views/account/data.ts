@@ -91,8 +91,6 @@ const actions = {
       .getBalance(getters.account))
       .toString();
 
-    console.log(userBalance, networkId, '---userBalance');
-
     const balances = await Promise.all(USER_BALANCES_SCHEME[networkId].map(async (_) => {
       try {
         if (_.symbol === 'OVNINS') {
@@ -128,8 +126,6 @@ const actions = {
         };
       }
     }));
-
-    console.log(balances, '---balances');
 
     // original meaning without decimals
     commit('setOriginalBalance', balances);
