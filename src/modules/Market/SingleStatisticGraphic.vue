@@ -390,7 +390,7 @@ export default {
 
 <style lang="scss" scoped>
 .performance__graphic-display {
-  width: 100%;
+  width: 97%;
   min-height: 250px;
 }
 .performance__graphic{

@@ -501,6 +501,15 @@ export default {
   }
 }
 
+@media (max-width: 650px) {
+  .insurance__modal-ovn-dashboard {
+    padding: 10px;
+  }
+  .insurance__modal-ovn-dashboard-buttons,
+  .insurance__modal-ovn-dashboard-balance-info {
+    flex-direction: column;
+  }
+}
 @media (max-width: 400px) {
   .insurance__modal-ovn-dashboard {
     padding: 8px;

@@ -414,16 +414,37 @@ export default {
   }
 }
 
-@media (max-width: 576px) {
-  .dashboard__token-data-num {
-    margin-top: 60px;
+@media (max-width: 620px) {
+  .dashboard__token-data {
+    flex-direction: column;
   }
+  .dashboard__payout-data,
+  .dashboard__apy-data,
+  .dashboard__tvl-data,
+  .dashboard__token-data-link-title,
   .dashboard__apy-data-chain {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  .dashboard__token-data-h,
+  .dashboard__token-data-num,
+  .dashboard__token-data-risk,
+  .dashboard__token-data-title-period,
+  .dashboard__token-data-link-title {
     margin: 0;
   }
   .dashboard__divider {
-    margin-left: 5px;
-    margin-right: 5px;
+    margin-top: 6px;
+    margin-bottom: 6px;
+    margin-right: 0;
+    margin-left: 0;
+    width: 100%;
+  }
+  .dashboard__token-data-growth-balance {
+    margin-top: 0;
+    margin-left: 6px;
   }
 }
 

@@ -124,6 +124,11 @@ export default {
     }
   }
 }
+@media (max-width: 420px) {
+  .switchtabs-dashboard__inner-text{
+    padding: 2px 5px;
+  }
+}
 
 @media (max-width: 400px) {
   .switchtabs-dashboard__inner {

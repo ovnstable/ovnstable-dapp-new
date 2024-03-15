@@ -432,8 +432,8 @@ export default {
   margin-bottom: 10px;
 }
 .insurance__graphic-display {
-  width: 100%;
-  min-height: 250px;
+  width: 97%;
+  min-height: 150px;
 }
 .insurance__graphic{
   min-height: 250px;

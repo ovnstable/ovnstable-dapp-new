@@ -376,7 +376,7 @@ export default {
 
 <style lang="scss" scoped>
 .dashboard__graphic-display {
-  width: 100%;
+  width: 97%;
   min-height: 250px;
 }
 .dashboard__graphic-usd-plus-balance {
