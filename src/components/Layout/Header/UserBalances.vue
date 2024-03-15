@@ -108,6 +108,7 @@ export default {
             : Object.values(this.tokensMap?.chainTokenMap[this.networkId]?.tokenMap ?? {});
           const tokenData = tokensForChain.find((_: any) => _.symbol === bal.symbol);
 
+          console.log(tokenData, '---tokenData');
           return {
             balance: tokenData ? new BigNumber(bal.balance).div(10 ** tokenData.decimals).toFixed(2) : '0',
             symbol: tokenData?.symbol,
