@@ -122,11 +122,10 @@ export default {
     aprLimitForFilter: 15,
     searchQuery: '',
 
-    orderType: 'APR', // APR, APR_UP, APR_DOWN, TVL, TVL_UP, TVL_DOWN
+    orderType: 'TVL_UP', // APR, APR_UP, APR_DOWN, TVL, TVL_UP, TVL_DOWN
   }),
 
   computed: {
-    ...mapGetters('theme', ['light']),
     ...mapGetters('network', ['getParams', 'networkId']),
     ...mapState('poolsData', [
       'sortedPoolSecondList',
