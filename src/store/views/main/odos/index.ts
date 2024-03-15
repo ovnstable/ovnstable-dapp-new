@@ -324,15 +324,16 @@ const actions = {
     commit, state, getters, rootState
   }: any, providerInstance: any) {
     console.log('loadBalances');
+    const provider = providerInstance || rootState.web3.evmProvider;
+
     commit('changeState', { field: 'isBalancesLoading', val: true });
 
-    if (!rootState.accountData.account) {
+    if (!rootState.accountData.account || !provider) {
       commit('changeState', { field: 'isBalancesLoading', val: false });
       return;
     }
 
     try {
-      const provider = providerInstance || rootState.web3.evmProvider;
       const multicaller = MulticallWrapper.wrap(provider);
       const requests = getters.allTokensList
         .map((_: any) => new ethers.Contract(
