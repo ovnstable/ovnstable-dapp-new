@@ -196,7 +196,6 @@ export default {
   }
 }
 .ovn__overview-chain-data-container {
-  // margin-top: 24px;
   display: flex;
   flex-direction: row;
   vertical-align: center;
@@ -257,6 +256,14 @@ export default {
   .ovn__overview-tokenomic-pools-all,
   .ovn__overview-distribution-item p {
     font-size: 14px;
+  }
+}
+@media (max-width: 500px) {
+  .ovn__overview-tokenomic  {
+    flex-direction: column;
+  }
+  .ovn__overview-description {
+    margin-top: 10px;
   }
 }
 

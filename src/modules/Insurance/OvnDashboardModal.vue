@@ -335,7 +335,7 @@ export default {
   margin-bottom: 20px;
 }
 .insurance__modal-ovn-dashboard {
-  width: 860px;
+  max-width: 860px;
   padding: 30px;
   padding-bottom: 0;
   display: flex;
@@ -484,14 +484,32 @@ export default {
     color: var(--color-2) !important;
   }
 }
-
+@media (max-width: 1024px) {
+  .insurance__modal-ovn-dashboard {
+    max-width: 100%;
+    margin: 0 10px
+  }
+}
 @media (max-width: 768px) {
   .insurance__modal-ovn-dashboard {
-    width: 650px;
+    max-width: 100%;
+    margin: 0 10px
   }
   .insurance__modal-ovn-dashboard-balance-info-ovn,
   .insurance__modal-ovn-dashboard-balance-info-ins {
     gap: 30px;
+  }
+}
+
+@media (max-width: 400px) {
+  .insurance__modal-ovn-dashboard {
+    padding: 8px;
+    margin: 6px;
+  }
+  .insurance__modal-ovn-dashboard-title,
+  .insurance__modal-ovn-dashboard-balance-info {
+    flex-direction: column;
+    gap: 20px
   }
 }
 

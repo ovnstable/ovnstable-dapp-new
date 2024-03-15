@@ -543,7 +543,43 @@ export default {
   }
 }
 
+@media (max-width: 500px) {
+  .ovn__overview-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    svg {
+      margin: 0
+    }
+  }
+}
+
 @media (max-width: 768px) {
+  .ovn__overview {
+    flex-direction: column;
+  }
+
+  .ovn__overview-links-data p:nth-child(1),
+  .ovn__overview-price-change p:nth-child(1),
+  .ovn__overview-mc-change p:nth-child(1),
+  .ovn__overview-exact-chain,
+  .ovn__overview-tvl-title {
+    margin: 0;
+  }
+  .ovn__overview-price-up {
+    margin-left: 10px;
+  }
+  .ovn__overview-price,
+  .ovn__overview-interact-buttons,
+  .ovn__overview-price-change,
+  .ovn__overview-mc,
+  .ovn__overview-tvl {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
   .ovn__overview-price-title,
   .ovn__overview-mc-title,
   .ovn__overview-tvl-title,
@@ -556,6 +592,16 @@ export default {
   .ovn__overview-mc-change p:nth-child(1),
   .ovn__overview-exact-chain p {
     font-size: 17px;
+  }
+  .ovn__overview-divider {
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+}
+
+@media (max-width: 500px) {
+  .ovn__overview-chain-data-name {
+    display: none;
   }
 }
 @media (max-width: 400px) {

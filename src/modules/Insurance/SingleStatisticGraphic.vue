@@ -709,6 +709,19 @@ export default {
     padding: 10px 20px;
   }
 }
+@media (max-width: 510px) {
+  .insurance-cumulitives {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .insurance__accumulator-data {
+    margin-right: 16px;
+    p {
+      font-size: 14px;
+    }
+  }
+}
 @media (max-width: 400px) {
   .insurance__chains-interval {
     flex-direction: column;
@@ -732,6 +745,7 @@ export default {
     font-weight: 500;
   }
   .insurance-cumulitives {
+    flex-direction: row;
     justify-content: space-between;
     margin-bottom: 8px;
   }

@@ -489,11 +489,24 @@ export default {
     width: 40px;
   }
 }
+@media (max-width: 500px) {
+  .insurance-premium {
+    padding: 0px 2px;
+    display: flex;
+    gap: 10px;
+  }
+  .insurance-premium-name {
+    max-width: 30px;
+  }
+}
 
 @media (max-width: 400px) {
   .insurance__premiums-title {
     font-size: 17px;
     margin-bottom: 24px;
+  }
+  .insurance-premium-name {
+    max-width: 100%;
   }
   .insurance__premiums-strategies {
     display: flex;
