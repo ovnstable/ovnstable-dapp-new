@@ -50,7 +50,7 @@
 
         <div class="app-header__content-data">
           <div
-            v-if="accountRenderLoading"
+            v-if="accountRenderLoading || balancesLoading"
             class="lineLoader"
           />
           <UserBalances v-else-if="deviceType().isDesktop && walletConnected && account" />
@@ -171,12 +171,17 @@ export default {
     this.sortedChains = await sortedChainsByTVL(this.networksData);
   },
   computed: {
-    ...mapState('odosData', ['isBalancesLoading', 'isTokensLoadedAndFiltered', 'firstRenderDone']),
+    ...mapState('odosData', ['isBalancesLoading', 'isTokensLoadedAndFiltered', 'firstRenderDone', 'isTokensLoading']),
     ...mapGetters('walletAction', ['walletConnected']),
-    ...mapGetters('accountData', ['originalBalance', 'account']),
+    ...mapGetters('accountData', ['originalBalance', 'account', 'isLoadingOvnBalances']),
     ...mapGetters('network', ['networkId']),
     ...mapGetters('odosData', ['allTokensList']),
 
+    balancesLoading() {
+      if (this.originalBalance.length === 0 || this.isTokensLoading) return true;
+      if (this.isLoadingOvnBalances || this.isBalancesLoading) return true;
+      return false;
+    },
     accountRenderLoading() {
       if (this.firstRenderDone) return false;
       return (this.account && this.isBalancesLoading) || !this.isTokensLoadedAndFiltered;
