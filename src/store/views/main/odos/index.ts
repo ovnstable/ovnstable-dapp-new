@@ -57,8 +57,6 @@ export const stateData = {
     'zksync',
     'base',
   ],
-  dataBeInited: false,
-
   swapResponseInfo: null,
   quotaResponseInfo: null,
   swapResponseConfirmInfo: {

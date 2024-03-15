@@ -310,14 +310,10 @@ export default {
   },
   watch: {
     async isAllDataLoaded(newVal) {
-      if (newVal && !this.dataBeInited) {
+      if (newVal) {
         await this.initData({
           tokenSeparationScheme: this.tokenSeparationScheme,
           listOfBuyTokensAddresses: this.listOfBuyTokensAddresses,
-        });
-        this.$store.commit('odosData/changeState', {
-          field: 'dataBeInited',
-          val: true,
         });
       }
     },
@@ -424,7 +420,6 @@ export default {
       'isShowDecreaseAllowance',
       'tokenSeparationScheme',
       'listOfBuyTokensAddresses',
-      'dataBeInited',
       'isBalancesLoading',
       'firstRenderDone',
     ]),
@@ -654,8 +649,12 @@ export default {
     onLeaveList,
     beforeEnterList,
     onEnterList,
-    reloadList() {
+    async reloadList() {
       try {
+        await this.initData({
+          tokenSeparationScheme: this.tokenSeparationScheme,
+          listOfBuyTokensAddresses: this.listOfBuyTokensAddresses,
+        });
         this.init();
       } catch (e) {
         console.log(e, 'reloadList');
