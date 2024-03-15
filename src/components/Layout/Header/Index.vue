@@ -467,38 +467,4 @@ export default {
 .app-header__connect {
   margin-left: auto;
 }
-
-$base-color: var(--color-5);
-$shine-color: var(--color-4);
-$animation-duration: 2.0s;
-$avatar-offset: 52 + 16;
-
-@mixin background-gradient {
-  background-image: linear-gradient(90deg, $base-color 0px, $shine-color 40px, $base-color 80px);
-  background-size: 600px;
-  [data-theme="dark"] & {
-    background-image: linear-gradient(90deg, var(--color-17) 0px, $shine-color 40px, var(--color-17) 80px);
-  }
-}
-
-.lineLoader {
-  float: left;
-  width: 100px;
-  height: 100%;
-  border-radius: 7px;
-  border: 1px solid var(--color-1);
-  box-shadow: 0px 1px 0px 0px var(--color-1);
-
-  @include background-gradient;
-  animation: shine-lines $animation-duration infinite ease-out;
-  [data-theme="dark"] & {
-    box-shadow: none;
-    border-color: var(--color-2);
-  }
-}
-
-@keyframes shine-lines{
-  0% { background-position: -100px;}
-  40%, 100% {background-position: 140px;}
-}
 </style>

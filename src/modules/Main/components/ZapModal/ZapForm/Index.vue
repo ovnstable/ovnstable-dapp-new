@@ -62,6 +62,7 @@
                       :is-token-removable="isInputTokensRemovable"
                       :is-input-token="true"
                       :disabled="false"
+                      :balances-loading="isBalancesLoading"
                       @select-token="selectFormToken"
                       @remove-token="removeInputToken"
                       @update-token="updateTokenValueMethod"
@@ -98,6 +99,7 @@
                   :is-token-removable="isOutputTokensRemovable"
                   :is-input-token="false"
                   :disabled="true"
+                  :balances-loading="isBalancesLoading"
                   @select-token="selectOutputToken"
                   @remove-token="removeOutputToken"
                 />

@@ -49,7 +49,11 @@
     <div class="input-tokens__row">
       <div class="input-tokens__balance">
         <div
-          v-if="isInputToken && tokenInfo.selectedToken"
+          v-if="balancesLoading"
+          class="lineLoader lineLoader--balance"
+        />
+        <div
+          v-else-if="isInputToken && tokenInfo.selectedToken"
         >
           ~ ${{formatMoney(tokenInfo.usdValue, 2)}}
         </div>
@@ -68,7 +72,11 @@
         class="input-tokens__balance"
       >
         <div class="select-token-balance-text">
-          <div v-if="tokenInfo.selectedToken && tokenInfo.selectedToken?.balanceData?.balance">
+          <div
+            v-if="balancesLoading"
+            class="lineLoader lineLoader--balance"
+          />
+          <div v-else-if="tokenInfo.selectedToken && tokenInfo.selectedToken?.balanceData?.balance">
             <span class="select-token-balance-text-enabled">
               {{formatMoney(tokenInfo.selectedToken.balanceData.balance,
                             fixedByPrice(tokenInfo.selectedToken.price))}}
@@ -101,6 +109,11 @@ export default {
     isInputToken: {
       type: Boolean,
       required: true,
+    },
+    balancesLoading: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
     tokenInfo: {
       type: Object,

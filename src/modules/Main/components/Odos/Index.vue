@@ -61,6 +61,7 @@
                   :token-info="token"
                   :is-token-removable="isInputTokensRemovable"
                   :is-input-token="true"
+                  :balances-loading="isBalancesLoading"
                   @select-token="selectFormToken"
                   @remove-token="removeInputToken"
                   @update-token="updateTokenValueMethod"
@@ -111,6 +112,7 @@
                   :is-input-token="false"
                   :disabled="true"
                   :is-token-removable="isOutputTokensRemovable"
+                  :balances-loading="isBalancesLoading"
                   @select-token="selectFormToken"
                   @remove-token="removeOutputToken"
                 />
@@ -319,7 +321,10 @@ export default {
     },
     // on wallet connect
     async account(val) {
-      if (val) this.clearForm('000');
+      if (val) {
+        this.clearForm('000');
+        this.init();
+      }
       if (!val) this.outputTokens = [getNewOutputToken()];
     },
     // for first render
