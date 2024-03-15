@@ -189,7 +189,6 @@ const actions = {
         return;
       }
 
-      console.log(web3.contracts.insurance[`${rootState.network.networkName}_exchanger`], '--web3');
       const contract = web3.contracts.insurance[`${rootState.network.networkName}_exchanger`];
       if (!contract) {
         console.log('Insurance/redemptionCheck: contract not found');

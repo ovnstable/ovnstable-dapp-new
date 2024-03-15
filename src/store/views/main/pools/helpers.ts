@@ -122,6 +122,9 @@ export const buildLink = (pool: any) => {
     case 'Pancake':
       url = `https://pancakeswap.finance/info/v3/arb/pairs/${pool.address}`;
       break;
+    case 'Lynex':
+      url = 'https://app.lynex.fi/liquidity';
+      break;
     case 'Baseswapdefiedge':
       url = 'https://baseswap.defiedge.io/s/base/';
       break;

@@ -312,14 +312,12 @@ const actions = {
   initUpdateBalancesInterval({
     commit, state, dispatch
   }: any) {
-    setTimeout(() => {
-      commit('changeState', {
-        field: 'updateBalancesIntervalId',
-        val: setInterval(() => {
-          dispatch('loadBalances');
-        }, 30000)
-      });
-    }, 30000);
+    commit('changeState', {
+      field: 'updateBalancesIntervalId',
+      val: setInterval(() => {
+        dispatch('loadBalances');
+      }, 30000)
+    });
   },
 
   async loadBalances({
@@ -347,18 +345,9 @@ const actions = {
 
       const balancesData = await Promise.all(requests);
 
-      const handleNativeBal = async () => {
-        if (new BigNumber(rootState.accountData.accountNativeBalance).gt(0)) {
-          return rootState.accountData.accountNativeBalance;
-        }
-        if (new BigNumber(rootState.accountData.accountNativeBalance).eq(0)) {
-          return (await rootState.web3.evmProvider
-            .getBalance(rootState.accountData.account))
-            .toString();
-        }
-
-        return '0';
-      };
+      const handleNativeBal = async () => (await rootState.web3.evmProvider
+        .getBalance(rootState.accountData.account))
+        .toString();
 
       const newBalances = await Promise.all(
         getters.allTokensList.map(async (token: any, key: number) => {
@@ -368,13 +357,14 @@ const actions = {
 
           const balanceFormatted = new BigNumber(balance).div(10 ** token.decimals);
           const fixedBy = balanceFormatted.gt(0) ? fixedByPrice(balanceFormatted.toNumber()) : 2;
+          const tokenPrice = token.price ?? '0';
 
           return {
             ...token,
             balanceData: {
               name: token.symbol,
               balance: balanceFormatted.toFixed(fixedBy),
-              balanceInUsd: new BigNumber(balanceFormatted).times(token.price).toString(),
+              balanceInUsd: new BigNumber(balanceFormatted).times(tokenPrice).toString(),
               originalBalance: balance,
               decimal: token.decimals,
             }
@@ -382,6 +372,7 @@ const actions = {
         })
       );
 
+      // console.log(newBalances, 'newBalances');
       const bus = useEventBus('odos-tokens-loaded');
       bus.emit(true);
 
@@ -458,7 +449,7 @@ const actions = {
         const { tokens } = state;
         for (let i = 0; i < tokens.length; i++) {
           const token: any = tokens[i];
-          token.price = new BigNumber(tokenPricesMap[token.address]).toFixed(20);
+          token.price = new BigNumber(tokenPricesMap[token.address] ?? 0).toFixed(20);
           try {
             token.estimatePerOne = new BigNumber(1).div(10 ** token.decimals).toFixed(20);
           } catch (e) {
@@ -489,7 +480,6 @@ const actions = {
     return odosApiService
       .quoteRequest(requestData)
       .then((data) => {
-        console.log('Response data for odos quota request: ', data);
         commit('changeState', { field: 'quotaResponseInfo', val: data });
         return data;
       })
