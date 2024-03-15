@@ -115,7 +115,7 @@
   </ModalComponent>
   <div
     class="insurance__modal-ovn-dashboard"
-    v-else-if="insuranceIsMobileOvnDashboard"
+    v-else-if="insuranceIsMobileOvnDashboard && !insuranceIsMobileMintRedeem"
   >
     <div class="insurance__modal-ovn-dashboard-exit">
       <ButtonComponent
@@ -135,6 +135,8 @@
       <div class="insurance__modal-ovn-dashboard-button-wrapper">
         <ButtonComponent
           class="insurance__modal-ovn-dashboard-button"
+          @click="toggleModalMintRedeemMobile"
+          @keydown.enter="toggleModalMintRedeemMobile"
         >
           <BaseIcon
             class="insurance__mint-button"
@@ -147,8 +149,8 @@
       <div class="insurance__modal-ovn-dashboard-button-wrapper">
         <ButtonComponent
           class="insurance__modal-ovn-dashboard-button"
-          @click="toggleModalMintRedeem()"
-          @keydown.enter="toggleModalMintRedeem()"
+          @click="toggleModalMintRedeemMobile()"
+          @keydown.enter="toggleModalMintRedeemMobile()"
         >
           <BaseIcon
             name='InsuranceRedeem'
@@ -170,7 +172,6 @@
         <p>BRIDGE</p>
       </router-link>
     </div>
-
   </div>
 </template>
 
@@ -215,6 +216,9 @@ export default {
     insuranceIsMobileOvnDashboard() {
       return this.$store.state.insuranceTokenData.isMobileOvnDashboard.value;
     },
+    insuranceIsMobileMintRedeem() {
+      return this.$store.state.insuranceTokenData.isMobileMintRedeem.value;
+    },
     device() {
       return deviceType();
     },
@@ -233,6 +237,16 @@ export default {
       this.$store.commit('insuranceTokenData/setIsMobileOvnDashboard', {
         value: false,
       });
+    },
+    toggleModalMintRedeemMobile() {
+      if (this.device.isMobile) {
+        this.showModalMintRedeem = true;
+        this.$store.commit('insuranceTokenData/setIsMobileMintRedeem', {
+          value: this.showModalMintRedeem,
+        });
+      } else {
+        this.showModalMintRedeem = !this.showModalMintRedeem;
+      }
     },
     getBalanceOVNIns(symbol: any) {
       const balanceItem = this.originalBalance.find((item: any) => item.symbol === symbol);
