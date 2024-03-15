@@ -19,6 +19,7 @@
               class="insurance__title-button"
             >
               <BaseIcon
+                class="swap-icon"
                 name='SwapIcon'
               />
               Swap
@@ -340,7 +341,7 @@ export default {
   display: flex;
   flex-direction: column;
   [data-theme="dark"] & {
-    background-color: var(--color-6);
+    background-color: var(--color-17);
   }
 }
 .insurance__modal-ovn-dashboard-title,
@@ -378,13 +379,26 @@ export default {
     padding: 3px 14px;
     color: var(--color-1);
     [data-theme="dark"] & {
+      box-shadow: none;
+        background-color: var(--color-7);
       color: var(--color-4);
     }
   }
 }
 .insurance__title-button {
+  [data-theme="dark"] & {
+    box-shadow: none;
+  }
   svg{
     margin-right: 8px;
+    [data-theme="dark"] & {
+      fill: var(--color-4);
+    }
+  }
+  .swap-icon {
+    [data-theme="dark"] & {
+      stroke: var(--color-4);
+    }
   }
 }
 .insurance__redeem-button {
@@ -482,6 +496,9 @@ export default {
   .insurance__modal-ovn-dashboard {
     width: auto;
     padding: 0;
+    [data-theme="dark"] & {
+      background-color: var(--color-17);
+    }
   }
   .insurance__modal-ovn-dashboard-exit {
     display: flex;
@@ -497,6 +514,7 @@ export default {
       border: none;
       fill: var(--color-1);
       [data-theme="dark"] & {
+        box-shadow: none;
         fill: var(--color-4);
       }
     }
@@ -516,6 +534,16 @@ export default {
       border-radius: 50%;
       margin: 0;
       padding: 10px;
+      [data-theme="dark"] & {
+        box-shadow: none;
+        background-color: var(--color-7);
+        svg {
+          fill: var(--color-4);
+        }
+      }
+    }
+    [data-theme="dark"] & {
+      color: var(--color-4);
     }
   }
   .insurance__redeem-button {

@@ -345,10 +345,9 @@ export default {
     color: var(--color-18);
   }
 }
-.ovn__overview-tvl p:last-child,
-.ovn__overview-mc-change {
+.ovn__overview-tvl p:last-child {
   [data-theme="dark"] & {
-    color: var(--color-18);
+    color: var(--color-4);
   }
 }
 .ovn__overview-mint-icon,
