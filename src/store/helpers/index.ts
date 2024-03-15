@@ -125,7 +125,6 @@ export const getFilteredPoolTokens = (
   ignoreBaseNetworkCurrency: boolean,
   state: typeof stateData,
 ): any[] => {
-  console.log(state.tokensMap, '---state.tokensMap');
   if (!state.tokensMap || !state.tokensMap.chainTokenMap) return [];
   let tokens: any = [];
   const { tokenMap } = state.tokensMap.chainTokenMap[`${chainId}`];
