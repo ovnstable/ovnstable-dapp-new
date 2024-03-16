@@ -352,7 +352,6 @@ export default {
       this.outputToken = data;
     },
     updateTokenValueMethod(token: any, isInputToken: boolean, isMaxBal: boolean) {
-      console.log(token, isInputToken, isMaxBal, '---_DATA');
       if (isInputToken && !isMaxBal) this.inputToken = token;
       if (isInputToken && isMaxBal) {
         const balData = this.originalBalance.find((_: any) => _.symbol === token.symbol);

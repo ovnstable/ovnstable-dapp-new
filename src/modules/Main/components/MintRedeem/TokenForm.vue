@@ -169,13 +169,10 @@ export default {
       const wrapUnwrapPairs = MINTREDEEM_SCHEME[networkId]
         .filter((_) => _.methodName[0] === mintRedeemTypes.WRAP);
 
-      console.log(wrapUnwrapPairs, '---wrapUnwrapPairs');
-      console.log(this.activeWrap, '----inputList1');
       // FILTERING tokens from wrap/unwrap, based on tab
       list = this.filterTokens(list, this.activeWrap, wrapUnwrapPairs);
-      console.log(list, this.reverseArray, '----inputList');
 
-      // MINT/REDEEM TABS choosen
+      // returning 1 token of pair or 2, based on tab
       if (list && this.isInputToken) {
         const inputList = list.map((_: any[]) => (this.reverseArray ? _[0] : _[1]));
 

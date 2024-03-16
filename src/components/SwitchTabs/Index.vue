@@ -54,7 +54,6 @@ export default {
   },
   watch: {
     activeTab(val) {
-      console.log(val, '----val');
       this.activeItem = val;
     },
   },
