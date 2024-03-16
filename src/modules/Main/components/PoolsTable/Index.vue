@@ -28,6 +28,7 @@
         >
           <PoolsFilter
             :selected-network="selectedTabs"
+            :is-show-deprecated="isShowDeprecated"
             @change-tab="changePoolsTab"
             @change-network="setSelectedNetwork"
             @search="updateSearch"
@@ -126,7 +127,7 @@ export default {
   }),
 
   computed: {
-    ...mapGetters('network', ['getParams', 'networkId']),
+    ...mapGetters('network', ['getParams', 'networkId', 'isShowDeprecated']),
     ...mapState('poolsData', [
       'sortedPoolSecondList',
       'sortedPoolList',

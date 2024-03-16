@@ -210,9 +210,13 @@ const state = {
   insuranceExplorerURL: 'https://optimistic.etherscan.io/',
   dashboardExplorerURL: 'https://arbiscan.io/',
   ovnExplorerURL: 'https://basescan.org/',
+  showDeprecated: false,
 };
 
 const getters = {
+  isShowDeprecated(state: any) {
+    return state.showDeprecated;
+  },
 
   appApiUrl(state: any) {
     return state.appApiUrl;
@@ -326,7 +330,9 @@ const getters = {
 };
 
 const actions = {
-
+  showDeprecated({ commit, state }: any) {
+    commit('setShowDepracated', !state.showDeprecated);
+  },
   changeDappNetwork({
     commit, dispatch, getters, rootState,
   }: any, networkName: any) {
@@ -606,6 +612,9 @@ const actions = {
 };
 
 const mutations = {
+  setShowDepracated(state: any, value: any) {
+    state.showDeprecated = value;
+  },
 
   setAppApiUrl(state: any, value: any) {
     state.appApiUrl = value;

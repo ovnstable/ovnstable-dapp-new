@@ -190,7 +190,6 @@ const actions = {
   async loadTokens({
     commit, state,
   }: any) {
-    console.log(state.isTokensLoading, '---loadTokens');
     if (state.isTokensLoading) return;
 
     commit('changeState', { field: 'isTokensLoading', val: true });
@@ -374,7 +373,6 @@ const actions = {
       const bus = useEventBus('odos-tokens-loaded');
       bus.emit(true);
 
-      console.log(newBalances.length, 'newBalancesload');
       await commit('changeBalances', newBalances);
 
       commit('changeState', { field: 'isBalancesLoading', val: false });

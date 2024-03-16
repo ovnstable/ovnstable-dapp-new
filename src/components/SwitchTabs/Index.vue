@@ -77,7 +77,6 @@ export default {
 
   mounted() {
     this.activeItem = this.activeTab;
-    console.log(this.activeTab, 'ACTIVETAB');
   },
 
   methods: {

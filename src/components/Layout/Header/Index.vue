@@ -118,6 +118,26 @@
                     <BaseIcon :name="item.name.toLowerCase()" />
                     {{ item.name }}
                   </div>
+                  <div class="networks-list__depr">
+                    <div class="networks__divider" />
+                    <h3>
+                      Deprecated
+                    </h3>
+                    <div class="networks-list__row">
+                      <SpinnerComponent
+                        v-if="chainsLoading"
+                        size="20px"
+                      />
+                      <div v-else>
+                        {{ isShowDeprecated ? "On" : "Off" }}
+                      </div>
+                      <SwitchComponent
+                        :isChecked="isShowDeprecated"
+                        :disabled="chainsLoading"
+                        @change-switch="showDeprecated"
+                      />
+                    </div>
+                  </div>
                 </div>
               </template>
             </PopperComponent>
@@ -134,7 +154,9 @@
 
 <script lang="ts">
 import { mapGetters, mapActions, mapState } from 'vuex';
+import SwitchComponent from '@/components/Switch/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
+import SpinnerComponent from '@/components/Spinner/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { cutString } from '@/utils/strings.ts';
 import { OVN_TOKENS, appNetworksData, getImageUrl } from '@/utils/const.ts';
@@ -156,6 +178,8 @@ export default {
   name: 'HeaderBar',
   components: {
     ButtonComponent,
+    SwitchComponent,
+    SpinnerComponent,
     UserBalances,
     AccountModal,
     BaseIcon,
@@ -163,18 +187,26 @@ export default {
   data() {
     return {
       sortedChains: [] as Chain[],
+      chainsLoading: false,
       networksData: appNetworksData,
       showModalAccount: false,
     };
   },
   async mounted() {
-    this.sortedChains = await sortedChainsByTVL(this.networksData);
+    this.sortedChains = await sortedChainsByTVL(this.networksData, this.isShowDeprecated);
+  },
+  watch: {
+    async isShowDeprecated() {
+      this.chainsLoading = true;
+      this.sortedChains = await sortedChainsByTVL(this.networksData, this.isShowDeprecated);
+      this.chainsLoading = false;
+    },
   },
   computed: {
     ...mapState('odosData', ['isBalancesLoading', 'isTokensLoadedAndFiltered', 'firstRenderDone', 'isTokensLoading']),
     ...mapGetters('walletAction', ['walletConnected']),
     ...mapGetters('accountData', ['originalBalance', 'account', 'isLoadingOvnBalances']),
-    ...mapGetters('network', ['networkId']),
+    ...mapGetters('network', ['networkId', 'isShowDeprecated']),
     ...mapGetters('odosData', ['allTokensList']),
 
     balancesLoading() {
@@ -205,7 +237,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions('network', ['setWalletNetwork']),
+    ...mapActions('network', ['setWalletNetwork', 'showDeprecated']),
     deviceType,
     getImageUrl,
     openAccountModal() {
@@ -471,5 +503,26 @@ export default {
 
 .app-header__connect {
   margin-left: auto;
+}
+
+.networks__divider {
+  margin: 10px 0;
+  width: 100%;
+  height: 1px;
+  background-color: var(--color-7);
+}
+
+.networks-list__depr {
+  padding: 0 14px 12px 14px;
+
+  h3 {
+    margin-bottom: 10px;
+  }
+}
+
+.networks-list__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 </style>

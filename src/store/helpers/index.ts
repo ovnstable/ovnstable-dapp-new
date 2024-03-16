@@ -6,6 +6,7 @@ import BigNumber from 'bignumber.js';
 import { loadTokenImage, loadOvernightTokenImage } from '@/utils/tokenLogo.ts';
 import odosApiService from '@/services/odos-api-service.ts';
 import SliderApiService from '@/services/slider-api-service.ts';
+import { DEPRECATED_NETWORKS } from '@/utils/const.ts';
 import type { stateData } from '@/store/views/main/odos/index';
 
 const SECONDTOKEN_SECOND_DEFAULT_SYMBOL = 'DAI+';
@@ -455,12 +456,18 @@ export const loadPrices = async (chainId: number | string) => odosApiService
     console.error('Error load contract', e);
   });
 
-export const sortedChainsByTVL = async (chains: any) => {
+export const sortedChainsByTVL = async (chains: any, showDeprecated: boolean) => {
   const tvl = await SliderApiService.loadTVL();
   const response = await odosApiService.loadPrices(10);
   const ethPrice = (response as any).tokenPrices['0x0000000000000000000000000000000000000000'];
 
-  const chainsWithTVL = chains.map((chainData: any) => {
+  const filterDeprecated = chains.filter((_: any) => {
+    if (showDeprecated) return chains;
+
+    return !DEPRECATED_NETWORKS.includes(_.chain);
+  });
+
+  const chainsWithTVL = filterDeprecated.map((chainData: any) => {
     const chain = tvl.find((_: any) => _.chainName.toLowerCase() === chainData.name.toLowerCase());
     if (!chain) return { chainName: chainData.name, tvl: 0 };
 
@@ -475,7 +482,7 @@ export const sortedChainsByTVL = async (chains: any) => {
   const sortedChains = chainsWithTVL.sort((a: { tvl: number; }, b: { tvl: number; }) => b
     .tvl - a.tvl);
 
-  const networksMap: any = chains.reduce((acc: any, network: any) => ({
+  const networksMap: any = filterDeprecated.reduce((acc: any, network: any) => ({
     ...acc,
     [network.name.toLowerCase()]: network,
   }), {});
