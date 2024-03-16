@@ -555,7 +555,8 @@ export default {
           ? pairData?.methodName[0] : pairData?.methodName[1];
 
         const swapSum = new BigNumber(this.inputToken.value)
-          .times(10 ** this.inputToken.decimals).toString();
+          .times(10 ** this.inputToken.decimals)
+          .toFixed(0);
 
         const mainValue = new BigNumber(this.inputToken.originalVal).gt(0)
           ? this.inputToken.originalVal : swapSum;
