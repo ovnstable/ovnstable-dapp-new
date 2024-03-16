@@ -77,9 +77,11 @@
       <TokensChooseForm
         v-if="showTokenSelect"
         :tokens-list="tokensList"
-        :active-mint="reverseArray"
+        :reverse-array="reverseArray"
         :is-input-token="isInputToken"
         :selected-token="tokenFullData.symbol"
+        :active-wrap="activeWrap"
+        :is-loading="isLoading"
         @add-token="addSelectedTokenToList"
         @remove-token="removeSelectedTokenFromList"
         @close-select="toggleSelect"
@@ -126,6 +128,11 @@ export default {
     isTokenRemovable: {
       type: Boolean,
       required: true,
+    },
+    isLoading: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
     disabled: {
       type: Boolean,

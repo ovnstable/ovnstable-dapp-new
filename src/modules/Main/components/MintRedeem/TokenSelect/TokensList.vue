@@ -4,6 +4,7 @@
     <div
       class="select-tokens__list"
       ref="listBlock"
+      v-if="tokens.length > 0"
     >
       <div
         v-for="token in (tokens as any)"
@@ -23,6 +24,12 @@
           </div>
         </div>
       </div>
+    </div>
+    <div
+      class="select-tokens__list"
+      v-else
+    >
+      No Tokens found
     </div>
   </div>
 </template>

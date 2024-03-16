@@ -19,7 +19,8 @@
         :is-token-removable="true"
         :is-input-token="true"
         :reverse-array="isReverseArray"
-        :active-wrap="activeWrapTab"
+        :active-wrap="mintWrapTab"
+        :is-loading="isLoading"
         @add-token="selectFormToken"
         @update-token="updateTokenValueMethod"
       />
@@ -28,7 +29,8 @@
         :is-token-removable="true"
         :is-input-token="false"
         :reverse-array="isReverseArray"
-        :active-wrap="activeWrapTab"
+        :active-wrap="mintWrapTab"
+        :is-loading="isLoading"
         @add-token="selectFormToken"
       />
     </div>
@@ -138,6 +140,7 @@ export default {
       isAllDataLoaded: false,
       approveLoading: false,
       isApprovedToken: false,
+      isLoading: false,
       currentStage: mintRedeemStep.START,
 
       mintTabs: [
@@ -224,6 +227,10 @@ export default {
       return this.isMintActive || this.isWrapActive;
     },
 
+    mintWrapTab() {
+      return this.activeMintTab >= 0 ? this.activeMintTab : this.activeWrapTab;
+    },
+
   },
   methods: {
     ...mapActions('walletAction', ['connectWallet']),
@@ -243,11 +250,13 @@ export default {
       this.outputToken = getNewInputToken();
     },
     async initMintRedeem() {
+      this.isLoading = true;
       await this.loadChains();
       await this.loadTokens();
 
       this.initForm();
       this.initTokens();
+      this.isLoading = false;
     },
     async approveTrigger() {
       this.showWaitingModal('Approving in process');
@@ -352,7 +361,8 @@ export default {
       this.outputToken = data;
     },
     updateTokenValueMethod(token: any, isInputToken: boolean, isMaxBal: boolean) {
-      if (isInputToken && !isMaxBal) this.inputToken = token;
+      console.log(isMaxBal, token, '---isMaxBal');
+      if (isInputToken && !isMaxBal) this.inputToken = { ...token, originalVal: 0 };
       if (isInputToken && isMaxBal) {
         const balData = this.originalBalance.find((_: any) => _.symbol === token.symbol);
         this.inputToken = {
@@ -631,13 +641,11 @@ export default {
             to: [this.outputToken],
           });
 
-          console.log('closeWaitingModal');
           this.putTransaction(tx);
           this.closeWaitingModal();
           this.initMintRedeem();
         }
 
-        console.log(txData, '---txData');
         this.refreshBalance();
       } catch (e) {
         console.log(e, '-e');
