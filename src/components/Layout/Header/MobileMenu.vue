@@ -108,6 +108,11 @@ export default {
   width: 100%;
   padding: 0 20px!important;
   border: unset!important;
+  z-index: 100;
+
+  @media (max-width: 400px) {
+    max-width: 100%;
+  }
 }
 </style>
 
