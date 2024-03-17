@@ -372,15 +372,12 @@ export const updateTokenValue = (
 export const maxAll = (
   selectedInputTokens: any[],
   checkApprove: (tokenData: any, val: string) => void,
-) => {
-  console.log(selectedInputTokens, 'SELECTED');
-  return selectedInputTokens.map((item) => updateTokenValue(
-    item,
-    item.selectedToken.balanceData.balance,
-    checkApprove,
-    item.selectedToken.balanceData.originalBalance,
-  ));
-};
+) => selectedInputTokens.map((item) => updateTokenValue(
+  item,
+  item.selectedToken.balanceData.balance,
+  checkApprove,
+  item.selectedToken.balanceData.originalBalance,
+));
 
 export const loadBalance = async (
   rootState: any,
