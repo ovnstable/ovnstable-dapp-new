@@ -169,7 +169,12 @@ export default {
 .tabs-item {
   width: calc(100% + 3.5px);
   height: calc(100% - 51px);
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 }
+
 .tabs-header__ul {
   width: 100%;
   display: flex;
@@ -177,7 +182,12 @@ export default {
   list-style-type: none;
   margin: 0;
   padding: 0;
+
+  @media (max-width: 768px) {
+    width: calc(100% - 4px);
+  }
 }
+
 .tabs-header {
   display: flex;
   border-radius: 20px 20px 0 0;
@@ -203,8 +213,6 @@ export default {
 }
 
 .tabs-header__ul {
-  width: 100%;
-
   * {
     box-sizing: content-box;
   }

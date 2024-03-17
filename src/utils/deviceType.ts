@@ -12,7 +12,7 @@ export const deviceType = () => {
 
   if (width.value >= 1024) {
     obj.isDesktop = true;
-  } else if (width.value < 1024 && width.value > 400) {
+  } else if (width.value < 1024 && width.value > 640) {
     obj.isTablet = true;
   } else {
     obj.isMobile = true;

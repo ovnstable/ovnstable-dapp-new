@@ -255,6 +255,14 @@ export default {
 };
 </script>
 
+<style>
+.swiper-slide {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+</style>
+
 <style lang='scss' scoped>
 
 * {
@@ -274,10 +282,14 @@ export default {
   [data-theme="dark"] & {
     background-color: none;
   }
+  @media (max-width: 768px) {
+    width: 100%;
+    margin: 30px auto;
+    padding: 0 20px;
+  }
 }
 
 .slider__info {
-  max-width:283px;
   margin-left: 25px;
   margin-right: 25px;
   display: flex;
@@ -285,7 +297,7 @@ export default {
 }
 
 .swiper-container {
-  max-width: 283px;
+  max-width: 280px;
 }
 
 .slider__token-overview,
@@ -434,7 +446,6 @@ export default {
 
 @media (max-width: 1024px) {
   .slider__info {
-    max-width:200px;
     margin-right: 20px;
     margin-left: 20px;
   }
@@ -460,12 +471,12 @@ export default {
 
 @media (max-width: 768px) {
   .slider__info {
-    max-width:150px;
+    width: 100%;
     margin-right: 15px;
     margin-left: 15px;
   }
   .swiper-container {
-    max-width: 150px;
+    max-width: 300px;
   }
   .slider__icon-plus,
   .slider__arrow-icon {
@@ -514,12 +525,12 @@ export default {
 
 @media (max-width: 576px) {
   .slider__info {
-    max-width:100px;
     margin-right: 10px;
     margin-left: 10px;
   }
   .swiper-container {
-    max-width: 100px;
+    max-width: 100%;
+    margin: 0 20px;
 }
   .slider__token-title{
     margin-right: 1px;
