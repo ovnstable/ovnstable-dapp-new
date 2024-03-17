@@ -279,13 +279,13 @@ export default {
   flex-direction: row;
   align-items: center;
   margin: 50px 40px 50px auto;
-  [data-theme="dark"] & {
-    background-color: none;
-  }
+
   @media (max-width: 768px) {
     width: 100%;
     margin: 30px auto;
-    padding: 0 20px;
+    padding: 30px 20px;
+    background-color: var(--color-8);
+    border-radius: 30px;
   }
 }
 

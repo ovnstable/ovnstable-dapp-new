@@ -157,6 +157,22 @@ export default {
   svg path {
     fill: var(--color-3);
   }
+
+  @media (max-width: 640px) {
+    margin-top: 20px;
+  }
+
+  @media (max-width: 768px) {
+    width: calc(100vw - 40px);
+    min-height: 50px;
+    font-size: 20px;
+    font-weight: 700;
+    background: var(--color-4);
+
+    &:hover {
+      background: var(--color-8);
+    }
+  }
 }
 
 .app-header__balance-row {
@@ -169,8 +185,16 @@ export default {
   border: 1px solid var(--color-1);
   background: var(--color-4);
   box-shadow: 0px 1px 0px 0px var(--color-1);
+  font-size: 20px;
+  font-weight: 700;
+
   [data-theme="dark"] & {
     background: var(--color-17);
+  }
+
+  @media (max-width: 768px) {
+    width: calc(100vw - 40px);
+    border-radius: 10px;
   }
 }
 

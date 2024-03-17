@@ -50,10 +50,13 @@
 
         <div class="app-header__content-data">
           <div
-            v-if="(accountRenderLoading || balancesLoading) && deviceSize.isDesktop"
+            v-if="(accountRenderLoading || balancesLoading) && !deviceSize.isMobile"
             class="lineLoader"
           />
-          <UserBalances v-else-if="deviceSize.isDesktop && walletConnected && account" />
+          <UserBalances
+            class="app-header__balances"
+            v-else-if="!deviceSize.isMobile && walletConnected && account"
+          />
 
           <div
             v-if="accountRenderLoading && deviceSize.isDesktop"
@@ -150,6 +153,8 @@
           </div>
         </div>
       </div>
+
+      <UserBalances v-if="deviceSize.isMobile && walletConnected && account" />
     </div>
   </div>
   <AccountModal
@@ -340,8 +345,7 @@ export default {
 .app-header__container {
   width: 100%;
   max-width: 1360px;
-  padding-left: 10px;
-  padding-right: 20px;
+  padding: 0 20px;
   margin: 0 auto;
 }
 
@@ -408,6 +412,7 @@ export default {
   @media (max-width: 1024px) {
     width: 100%;
     justify-content: space-between;
+    flex-wrap: wrap;
   }
 }
 
@@ -501,6 +506,9 @@ export default {
 .app-header__network-wrap {
   display: flex;
   gap: 20px;
+  @media (max-width: 1024px) {
+    margin-left: auto;
+  }
 }
 
 .app-header__gear {
@@ -535,5 +543,11 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.app-header__balances {
+  @media (max-width: 1024px) {
+    order: 3;
+  }
 }
 </style>

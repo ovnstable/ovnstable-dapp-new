@@ -31,23 +31,29 @@
         </div>
       </TabsComponent>
     </div>
+
     <div
       v-else
       class="swap-module__mob-nav"
     >
-      <div class="swap-module__col">
+      <div
+        class="swap-module__col"
+        @click="showMobileSwap = !showMobileSwap"
+        @keypress="showMobileSwap = !showMobileSwap"
+      >
         <BaseIcon name="swapMob" />
-        <span>swap</span>
+        <span>Swap</span>
       </div>
       <div class="swap-module__col">
         <BaseIcon name="mintredeemMob" />
-        <span>mint/redeem</span>
+        <span>Mint/Redeem</span>
       </div>
       <div class="swap-module__col">
         <BaseIcon name="bridgeMob" />
-        <span>bridge</span>
+        <span>Bridge</span>
       </div>
     </div>
+
     <SliderComponent
       v-if="isFirstInitializationForPath || !pathViz"
     />
@@ -57,6 +63,11 @@
       :input-tokens="inputTokens"
       :output-tokens="outputTokens"
       :is-loading-data="isLoadingData"
+    />
+
+    <SwapMobile
+      :is-show="showMobileSwap"
+      @close="showMobileSwap = !showMobileSwap"
     />
   </div>
 </template>
@@ -70,6 +81,7 @@ import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import SwapForm from '@/modules/Main/components/Odos/Index.vue';
 import BridgeComponent from '@/modules/Main/components/Bridge/Index.vue';
 import PathView from '@/modules/Main/components/PathView/Index.vue';
+import SwapMobile from '@/modules/Main/components/MobileModals/Swap.vue';
 import { useEventBus } from '@vueuse/core';
 import { deviceType } from '@/utils/deviceType.ts';
 
@@ -82,6 +94,7 @@ export default {
     BaseIcon,
     BridgeComponent,
     SwapForm,
+    SwapMobile,
     PathView,
   },
   data() {
@@ -108,6 +121,7 @@ export default {
       outputTokens: [] as any[],
       stablecoinTokens: [],
       isFirstInitializationForPath: true,
+      showMobileSwap: false,
     };
   },
   mounted() {

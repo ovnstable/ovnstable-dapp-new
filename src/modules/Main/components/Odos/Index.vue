@@ -1716,7 +1716,6 @@ export default {
 }
 .swap-form, .swap-container {
   height: 100%;
-  // width: calc(100% + 4px);
   border-radius: 0 0 30px 30px;
 }
 
@@ -1738,6 +1737,12 @@ export default {
     background-color: var(--color-17);
     border: 2px solid var(--color-2);
     border-top: none;
+  }
+
+  @media (max-width: 640px) {
+    margin-top: 50px;
+    border-top: 2px solid var(--color-1);
+    border-radius: 30px;
   }
 }
 .swap-form__body-block {

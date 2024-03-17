@@ -101,6 +101,8 @@ $avatar-offset: 52 + 16;
   }
 }
 
+// GLOBAL STYLES, features
+
 .lineLoader--balance {
   width: 50px;
   min-height: 15px;
@@ -140,5 +142,29 @@ $avatar-offset: 52 + 16;
 
   [data-theme="dark"] & {
     color: var(--color-18);
+  }
+}
+
+.mob-menu {
+  justify-content: flex-end!important;
+  align-items: flex-start!important;
+  min-height: 100%;
+  z-index: 100!important;
+
+  .modal__close {
+    display: none;
+  }
+}
+
+.mob-menu .modal--custom {
+  min-height: 100vh;
+  border-radius: 0!important;
+  max-width: 350px;
+  width: 100%;
+  padding: 0 20px!important;
+  border: unset!important;
+
+  @media (max-width: 400px) {
+    max-width: 100%;
   }
 }

@@ -16,54 +16,32 @@
         />
       </div>
       <h1>
-        HELP AND SETTINGS
+        Swap
       </h1>
     </div>
-    <div class="sidebar__divider" />
-    <div class="mob-menu__socials">
-      <h1>
-        OUR SOCIALS MEDIA
-      </h1>
-      <div class="mob-menu__socials-row">
-        <a
-          href="https://twitter.com/overnight_fi"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Twitter"
-        >
-          <BaseIcon
-            name="IconTwitter"
-            class="sidebar__icon-social icon-twitter"
-          />
-        </a>
-        <a
-          href="https://discord.gg/overnight-fi"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Discord"
-        >
-          <BaseIcon
-            name="IconDiscord"
-            class="sidebar__icon-social icon-discord"
-          />
-        </a>
-      </div>
-    </div>
-    <div class="sidebar__divider" />
+
+    <SwapForm
+      view-type="SWAP"
+      @update-path-view="updatePathView"
+      @update-is-loading-data="updateIsLoadingData"
+      @update-stablecoins-list="updateStablecoinsList"
+    />
   </ModalComponent>
 </template>
 
 <script lang="ts">
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ModalComponent from '@/components/Modal/Index.vue';
+import SwapForm from '@/modules/Main/components/Odos/Index.vue';
 
 export default {
   name: 'MobileMenu',
   components: {
     BaseIcon,
     ModalComponent,
+    SwapForm,
   },
-  emits: ['close'],
+  emits: ['close', 'update-path', 'update-loading', 'update-stable'],
   props: {
     isShow: {
       type: Boolean,
@@ -83,8 +61,16 @@ export default {
   },
   methods: {
     closeModal() {
-      console.log('closeModal');
       this.$emit('close');
+    },
+    updatePathView() {
+      this.$emit('update-path');
+    },
+    updateIsLoadingData() {
+      this.$emit('update-loading');
+    },
+    updateStablecoinsList() {
+      this.$emit('update-stable');
     },
   },
 };
@@ -126,4 +112,5 @@ export default {
   display: flex;
   gap: 20px;
 }
+
 </style>
