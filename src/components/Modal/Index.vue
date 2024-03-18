@@ -224,7 +224,7 @@ export default {
 }
 @media (max-width: 400px) {
   .modal__body {
-    max-height: 100%;
+    max-height: 90vh;
   }
 }
 
