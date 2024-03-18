@@ -161,4 +161,10 @@ export default {
   cursor: pointer;
   opacity: 0.7;
 }
+
+@media (max-width: 768px) {
+  .account__modal-token-add {
+    flex-direction: column;
+  }
+}
 </style>
