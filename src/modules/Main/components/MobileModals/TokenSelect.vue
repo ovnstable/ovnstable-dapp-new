@@ -1,5 +1,6 @@
 <template>
   <ModalComponent
+    :customClass="'mob-menu'"
     type-modal="custom"
     v-model="showModal"
     @close="closeModal"
@@ -10,15 +11,25 @@
       <div
         class="tokens-modal__header"
       >
+        <div
+          class="mob-menu__header-arr"
+          @click="closeModal"
+          @keypress="closeModal"
+        >
+          <BaseIcon
+            class="mob-menu__arr"
+            name="ArrowLeft"
+          />
+        </div>
         <h1
           v-if="selectTokenInput"
         >
-          Select Input token
+          YOU SEND
         </h1>
         <h1
           v-else
         >
-          Select Output token
+          YOU RECEIVE
         </h1>
       </div>
 
@@ -78,15 +89,17 @@
 import SelectTokenWithSearch from '@//components/TokensModal/SelectTokenWithSearch.vue';
 import ModalComponent from '@/components/Modal/Index.vue';
 import Spinner from '@/components/Spinner/Index.vue';
+import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 
 export default {
-  name: 'SelectTokensModal',
+  name: 'SelectTokensModalMobile',
   components: {
     SelectTokenWithSearch,
     ModalComponent,
     Spinner,
     ButtonComponent,
+    BaseIcon,
   },
   emits: ['set-show', 'add-token-to-list', 'remove-token-from-list', 'connect-wallet', 'reload'],
   props: {
@@ -172,61 +185,32 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.tokens-modal {
-  min-width: 500px;
-  max-width: 500px;
-  [data-theme="dark"] & {
-    border-color: var(--color-2);
-    background-color: var(--color-17);
+@media (max-width: 400px) {
+  .tokens-modal__header {
+    margin-top: 16px;
+    margin-bottom: 24px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    h1 {
+      color: var(--color-1);
+      font-size: 16px;
+      text-align: center;
+      flex: 1;
+      [data-theme="dark"] & {
+        color: var(--color-4);
+      }
+    }
   }
-}
-
-.tokens-modal__header {
-  padding: 15px 30px;
-  [data-theme="dark"] & {
-    border-color: var(--color-2);
-  }
-  h1 {
-    font-size: 24px;
-    font-style: normal;
-    font-weight: 400;
-    color: var(--color-1);
-    [data-theme="dark"] & {
-      color: var(--color-4);
+  .mob-menu__header-arr {
+    svg {
+      fill: var(--color-1);
+      [data-theme="dark"] & {
+        fill: var(--color-4);
+      }
     }
   }
 }
-.token-select__spinner {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 15px 0;
-  border: 2px solid var(--color-5);
-  background-color: var(--color-4);
-  min-height: 50vh;
 
-  [data-theme="dark"] & {
-    border-color: var(--color-2);
-    background-color: var(--color-17);
-  }
-}
-
-.tokens-container__empty {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  min-height: 400px;
-  padding: 15px 30px;
-  font-size: 16px;
-  font-weight: 500;
-}
-
-.tokens__connect {
-  margin: auto auto 0 auto;
-}
-@media (max-width: 500px) {
-  .tokens-modal {
-    min-width: auto;
-  }
-}
 </style>

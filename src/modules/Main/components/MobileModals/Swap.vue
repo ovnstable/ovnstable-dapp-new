@@ -113,4 +113,27 @@ export default {
   gap: 20px;
 }
 
+@media (max-width: 400px) {
+  .mob-menu__header {
+    margin-top: 16px;
+    h1 {
+      font-size: 16px;
+      color: var(--color-1);
+      text-transform: uppercase;
+      font-weight: 600;
+      [data-theme="dark"] & {
+        color: var(--color-4);
+      }
+    }
+  }
+  .mob-menu__header-arr {
+    svg {
+      fill: var(--color-1);
+      [data-theme="dark"] & {
+        fill: var(--color-4);
+      }
+    }
+  }
+}
+
 </style>

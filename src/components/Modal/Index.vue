@@ -222,4 +222,10 @@ export default {
     background-color: var(--color-6);
   }
 }
+@media (max-width: 400px) {
+  .modal__body {
+    max-height: 100%;
+  }
+}
+
 </style>

@@ -222,20 +222,38 @@
       </template>
     </div>
 
-    <SelectTokensModal
-      :is-show="isShowSelectTokensModal"
-      :select-token-input="selectModalTypeInput"
-      :tokens="allTokensList"
-      :user-account="account"
-      :balances-loading="isBalancesLoading"
-      :is-all-data-loaded="isAllDataLoaded"
-      :selected-tokens="selectModalTypeInput ? inputTokens : outputTokens"
-      @set-show="showSelectTokensModals"
-      @add-token-to-list="addSelectedTokenToList"
-      @remove-token-from-list="removeSelectedTokenFromList"
-      @connect-wallet="connectWalletTrigger"
-      @reload="reloadList"
-    />
+    <div v-if="!deviceSize.isMobile">
+      <SelectTokensModal
+        :is-show="isShowSelectTokensModal"
+        :select-token-input="selectModalTypeInput"
+        :tokens="allTokensList"
+        :user-account="account"
+        :balances-loading="isBalancesLoading"
+        :is-all-data-loaded="isAllDataLoaded"
+        :selected-tokens="selectModalTypeInput ? inputTokens : outputTokens"
+        @set-show="showSelectTokensModals"
+        @add-token-to-list="addSelectedTokenToList"
+        @remove-token-from-list="removeSelectedTokenFromList"
+        @connect-wallet="connectWalletTrigger"
+        @reload="reloadList"
+      />
+    </div>
+    <div v-else>
+      <SelectTokensModalMobile
+        :is-show="isShowSelectTokensModal"
+        :select-token-input="selectModalTypeInput"
+        :tokens="allTokensList"
+        :user-account="account"
+        :balances-loading="isBalancesLoading"
+        :is-all-data-loaded="isAllDataLoaded"
+        :selected-tokens="selectModalTypeInput ? inputTokens : outputTokens"
+        @set-show="showSelectTokensModals"
+        @add-token-to-list="addSelectedTokenToList"
+        @remove-token-from-list="removeSelectedTokenFromList"
+        @connect-wallet="connectWalletTrigger"
+        @reload="reloadList"
+      />
+    </div>
 
   </div>
 </template>
@@ -252,7 +270,9 @@ import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import NetworkNotAvailable from '@/modules/Main/components/Odos/network-not-available.vue';
 import SelectTokensModal from '@/components/TokensModal/Index.vue';
+import SelectTokensModalMobile from '@/modules/Main/components/MobileModals/TokenSelect.vue';
 import SwapSlippageSettings from '@/modules/Main/components/Common/SwapSlippageSettings.vue';
+import { deviceType } from '@/utils/deviceType.ts';
 import { formatMoney, fixedByPrice } from '@/utils/numbers.ts';
 import { getRandomString } from '@/utils/strings.ts';
 import { clearApproveToken, getAllowanceValue, approveToken } from '@/utils/contractApprove.ts';
@@ -278,6 +298,7 @@ export default {
     SwapSlippageSettings,
     TokenForm,
     BaseIcon,
+    SelectTokensModalMobile,
   },
   props: {
     viewType: {
@@ -440,6 +461,9 @@ export default {
     ...mapGetters('network', ['getParams', 'networkId', 'networkName']),
     ...mapGetters('gasPrice', ['gasPrice', 'gasPriceGwei']),
 
+    deviceSize() {
+      return deviceType();
+    },
     getSlippagePercent() {
       return this.slippagePercent;
     },
@@ -1805,6 +1829,15 @@ export default {
       background-color: var(--color-7);
       color: var(--color-18);
     }
+  }
+}
+@media (max-width: 400px) {
+  .swap-form {
+    border: none;
+    padding: 0;
+  }
+  .swap-form__body-block__inputs {
+    flex-direction: column;
   }
 }
 </style>
