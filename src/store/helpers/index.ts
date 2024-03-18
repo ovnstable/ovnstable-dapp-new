@@ -115,7 +115,6 @@ export const addItemToFilteredTokens = (
       approved: false,
     },
     price: 0,
-    estimatePerOne: 0,
   });
 };
 

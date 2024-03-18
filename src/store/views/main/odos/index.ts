@@ -434,36 +434,27 @@ const actions = {
         throw e;
       });
   },
-  loadPricesInfo({
-    commit, state, dispatch, rootState,
+  async loadPricesInfo({
+    commit, state, getters, rootState
   }: any, chainId: string | number) {
     if (state.isPricesLoading) return;
 
     commit('changeState', { field: 'isPricesLoading', val: true });
+    const networkId = chainId ?? rootState.network.networkId;
 
-    loadPrices(chainId)
-      .then((tokenPricesMap) => {
-        const { tokens } = state;
-        for (let i = 0; i < tokens.length; i++) {
-          const token: any = tokens[i];
-          token.price = new BigNumber(tokenPricesMap[token.address] ?? 0).toFixed(20);
-          try {
-            token.estimatePerOne = new BigNumber(1).div(10 ** token.decimals).toFixed(20);
-          } catch (e) {
-            console.error(
-              'token.estimatePerOne error',
-              token.estimatePerOne,
-              e,
-            );
-          }
-        }
-
-        commit('changeState', { field: 'isPricesLoading', val: false });
-      })
+    const tokenPricesMap = await loadPrices(networkId)
       .catch((e) => {
         console.error('Error when load prices info', e);
         commit('changeState', { field: 'isPricesLoading', val: false });
       });
+
+    const { tokens } = state;
+    for (let i = 0; i < tokens.length; i++) {
+      const token: any = tokens[i];
+      token.price = new BigNumber(tokenPricesMap[token.address] ?? 0).toFixed(20);
+    }
+
+    commit('changeState', { field: 'isPricesLoading', val: false });
   },
   clearInputData({
     commit
@@ -639,9 +630,6 @@ const actions = {
 
     const inputTokens = [...data.selectedInputTokens];
     const outputTokens = [...data.selectedOutputTokens];
-    const addressesToUpdate = [...inputTokens, ...outputTokens].map(
-      (item) => item.selectedToken.address,
-    );
 
     // event
     const bus = useEventBus('odos-transaction-finished');
