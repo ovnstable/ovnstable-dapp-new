@@ -165,7 +165,6 @@ export default {
   },
   methods: {
     toggleTheme() {
-      console.log('CHANGE2');
       this.$store.dispatch('theme/switchTheme');
     },
     setCookie(key: string, value: string) {

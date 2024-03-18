@@ -361,7 +361,6 @@ export default {
       this.outputToken = data;
     },
     updateTokenValueMethod(token: any, isInputToken: boolean, isMaxBal: boolean) {
-      console.log(isMaxBal, token, '---isMaxBal');
       if (isInputToken && !isMaxBal) this.inputToken = { ...token, originalVal: 0 };
       if (isInputToken && isMaxBal) {
         const balData = this.originalBalance.find((_: any) => _.symbol === token.symbol);
@@ -503,9 +502,6 @@ export default {
           this.closeWaitingModal();
           return;
         }
-
-        console.log(estimateOptions, 'estimateOptions');
-        console.log(methodData, 'method');
 
         // if (this.networkName === 'zksync') {
         //   await this.addedZkSyncGasHistoryData(method, estimateOptions);
