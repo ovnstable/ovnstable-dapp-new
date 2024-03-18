@@ -13,6 +13,7 @@ const getters = {
 const actions = {
 
   async switchTheme({ commit, getters }: any) {
+    console.log('switchTheme');
     const storageType = localStorage.getItem('theme-type');
     const isLightTheme = !storageType || storageType === 'light';
 

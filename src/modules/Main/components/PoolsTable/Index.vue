@@ -28,6 +28,7 @@
         >
           <PoolsFilter
             :selected-network="selectedTabs"
+            :is-show-deprecated="isShowDeprecated"
             @change-tab="changePoolsTab"
             @change-network="setSelectedNetwork"
             @search="updateSearch"
@@ -122,12 +123,11 @@ export default {
     aprLimitForFilter: 15,
     searchQuery: '',
 
-    orderType: 'APR', // APR, APR_UP, APR_DOWN, TVL, TVL_UP, TVL_DOWN
+    orderType: 'TVL_UP', // APR, APR_UP, APR_DOWN, TVL, TVL_UP, TVL_DOWN
   }),
 
   computed: {
-    ...mapGetters('theme', ['light']),
-    ...mapGetters('network', ['getParams', 'networkId']),
+    ...mapGetters('network', ['getParams', 'networkId', 'isShowDeprecated']),
     ...mapState('poolsData', [
       'sortedPoolSecondList',
       'sortedPoolList',

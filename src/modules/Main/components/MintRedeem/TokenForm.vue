@@ -77,9 +77,11 @@
       <TokensChooseForm
         v-if="showTokenSelect"
         :tokens-list="tokensList"
-        :active-mint="activeMint"
+        :reverse-array="reverseArray"
         :is-input-token="isInputToken"
         :selected-token="tokenFullData.symbol"
+        :active-wrap="activeWrap"
+        :is-loading="isLoading"
         @add-token="addSelectedTokenToList"
         @remove-token="removeSelectedTokenFromList"
         @close-select="toggleSelect"
@@ -96,6 +98,10 @@ import InputComponent from '@/components/Input/Index.vue';
 import { formatMoney, fixedByPrice } from '@/utils/numbers.ts';
 import TokensChooseForm from '@/modules/Main/components/MintRedeem/TokenSelect/Index.vue';
 import BigNumber from 'bignumber.js';
+import { MINTREDEEM_SCHEME } from '@/store/views/main/mintRedeem/mocks.ts';
+import { mintRedeemTypes, mintWrapStatus } from './types/index.ts';
+
+const wrapStatusArr = [mintWrapStatus.WRAP, mintWrapStatus.UNWRAP];
 
 // import {
 //   wrapStatus,
@@ -123,6 +129,11 @@ export default {
       type: Boolean,
       required: true,
     },
+    isLoading: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
     disabled: {
       type: Boolean,
       required: false,
@@ -133,7 +144,7 @@ export default {
       required: true,
       default: -1,
     },
-    activeMint: {
+    reverseArray: {
       type: Boolean,
       required: true,
       default: true,
@@ -159,26 +170,28 @@ export default {
       return formatMoney(formattedBalance, fixedByPrice(formattedBalance));
     },
     tokensList() {
-      const list = this.tokensListGetter[this.networkId];
+      let list = this.tokensListGetter[this.networkId];
 
-      // if (this.activeWrap === wrapStatus.WRAP) {
-      //   console.log(list, '----inputList');
-      // }
+      const networkId = this.networkId as keyof typeof MINTREDEEM_SCHEME;
+      const wrapUnwrapPairs = MINTREDEEM_SCHEME[networkId]
+        .filter((_) => _.methodName[0] === mintRedeemTypes.WRAP);
 
+      // FILTERING tokens from wrap/unwrap, based on tab
+      list = this.filterTokens(list, this.activeWrap, wrapUnwrapPairs);
+
+      // returning 1 token of pair or 2, based on tab
       if (list && this.isInputToken) {
-        const inputList = list
-          .map((_: any[]) => (this.activeMint ? _[0] : _[1]));
+        const inputList = list.map((_: any[]) => (this.reverseArray ? _[0] : _[1]));
 
         const ids = inputList.map(({ symbol }: any) => symbol);
         return inputList
           .filter(({ symbol }: any, index: number) => !ids.includes(symbol, index + 1));
       }
+
       if (list && !this.isInputToken) {
-        return list
-          .map((_: any[]) => (this.activeMint ? _[1] : _[0]));
+        return list.map((_: any[]) => (this.reverseArray ? _[1] : _[0]));
       }
 
-      // when first choosen, searching for pair, and return
       return [];
     },
 
@@ -188,6 +201,29 @@ export default {
   },
   methods: {
     formatMoney,
+    filterTokens(list: any[], wrapType: mintWrapStatus, schemePair: any): any[] {
+      const arr = list.filter((_: any) => {
+        if (wrapStatusArr.includes(wrapType)) {
+          const itemInScheme = schemePair.find(
+            (schemeItem: any) => schemeItem.token0?.toLowerCase() === _[0].address?.toLowerCase(),
+          );
+
+          return !!itemInScheme;
+        }
+
+        if (!wrapStatusArr.includes(wrapType)) {
+          const itemInScheme = schemePair.find(
+            (schemeItem: any) => schemeItem.token0?.toLowerCase() === _[0].address?.toLowerCase(),
+          );
+
+          return !itemInScheme;
+        }
+
+        return false;
+      });
+
+      return arr;
+    },
     removeSelectedTokenFromList() {
       console.log('removeSelectedTokenFromList');
     },
@@ -198,7 +234,7 @@ export default {
       if (isInputToken) {
         const output = this.tokensListGetter[this.networkId].find((_: any) => {
           const index = _.map((item: any) => item.address).indexOf(token.address);
-          const pairAddress = _[this.activeMint ? 0 : 1].address === token.address;
+          const pairAddress = _[this.reverseArray ? 0 : 1].address === token.address;
 
           // pair found, additional checking with mock
           if (index !== -1 && pairAddress) return _;
@@ -207,7 +243,7 @@ export default {
 
         if (!output) return;
         this.$emit('add-token', {
-          ...output[this.activeMint ? 1 : 0],
+          ...output[this.reverseArray ? 1 : 0],
           value: '',
           selected: true,
         }, !isInputToken);
@@ -217,7 +253,7 @@ export default {
       if (!isInputToken) {
         const output = this.tokensListGetter[this.networkId].find((_: any) => {
           const index = _.map((item: any) => item.address).indexOf(token.address);
-          const pairAddress = _[this.activeMint ? 1 : 0].address === token.address;
+          const pairAddress = _[this.reverseArray ? 1 : 0].address === token.address;
 
           // pair found, additional checking with mock
           if (index !== -1 && pairAddress) return _;
@@ -225,7 +261,7 @@ export default {
         });
 
         this.$emit('add-token', {
-          ...output[this.activeMint ? 0 : 1],
+          ...output[this.reverseArray ? 0 : 1],
           value: '',
           selected: true,
         }, !isInputToken);

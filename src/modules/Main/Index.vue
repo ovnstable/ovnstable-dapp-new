@@ -97,7 +97,6 @@ export default {
     networkName: {
       handler(val) {
         const isAvail = this.availableNetworksList.includes(val);
-        console.log(isAvail, '---isAvailableOnNetwork');
 
         if (!isAvail) this.changeTab(1);
       },

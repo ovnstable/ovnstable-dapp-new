@@ -54,7 +54,6 @@ export default {
   },
   watch: {
     activeTab(val) {
-      console.log(val, '----val');
       this.activeItem = val;
     },
   },
@@ -77,7 +76,6 @@ export default {
 
   mounted() {
     this.activeItem = this.activeTab;
-    console.log(this.activeTab, 'ACTIVETAB');
   },
 
   methods: {

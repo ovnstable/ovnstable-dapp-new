@@ -162,7 +162,6 @@ export default {
     ...mapActions('successModal', ['closeSuccessModal']),
     ...mapActions('swapModal', ['showSwapModal', 'showMintView']),
     ...mapActions('tokenAction', ['addUsdPlusToken', 'addDaiPlusToken', 'addUsdtPlusToken', 'addwUsdPlusToken', 'addEthPlusToken', 'addwEthPlusToken', 'addEtsToken', 'addInsuranceToken']),
-    ...mapActions('accountUI', ['showTxHistory']),
 
     addTokenAction() {
       console.log(this.successAction);
@@ -219,8 +218,6 @@ export default {
     },
 
     goToTransactionHistory() {
-      this.showTxHistory();
-
       this.close();
     },
   },

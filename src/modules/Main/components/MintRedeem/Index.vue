@@ -6,7 +6,7 @@
         :active-tab="activeMintTab"
         @tab-change="changeMintTab"
       />
-      <h1>You mint</h1>
+      <h1>You {{ swapMsg }}</h1>
       <SwitchTabs
         :tabs="wrapTabs"
         :active-tab="activeWrapTab"
@@ -18,8 +18,9 @@
         :token-info="inputToken"
         :is-token-removable="true"
         :is-input-token="true"
-        :active-mint="isMintActive"
-        :active-wrap="activeWrapTab"
+        :reverse-array="isReverseArray"
+        :active-wrap="mintWrapTab"
+        :is-loading="isLoading"
         @add-token="selectFormToken"
         @update-token="updateTokenValueMethod"
       />
@@ -27,8 +28,9 @@
         :token-info="outputToken"
         :is-token-removable="true"
         :is-input-token="false"
-        :active-mint="isMintActive"
-        :active-wrap="activeWrapTab"
+        :reverse-array="isReverseArray"
+        :active-wrap="mintWrapTab"
+        :is-loading="isLoading"
         @add-token="selectFormToken"
       />
     </div>
@@ -83,7 +85,7 @@
         btn-size="large"
         full
       >
-        {{isMintActive ? "MINT" : "REDEEM"}}
+        {{ swapMsg.toUpperCase() }}
       </ButtonComponent>
     </div>
 
@@ -106,8 +108,7 @@ import debounce from 'lodash/debounce';
 import StepsRow, { mintRedeemStep } from '@/components/StepsRow/Index.vue';
 
 import {
-  mintStatus,
-  wrapStatus,
+  mintWrapStatus,
   mintRedeemTypes,
   type IMethodData,
 } from '@/modules/Main/components/MintRedeem/types/index.ts';
@@ -133,31 +134,32 @@ export default {
       mintRedeemStep,
       inputToken: getNewInputToken(),
       outputToken: getNewInputToken(),
-      activeMintTab: mintStatus.MINT as mintStatus | -1,
+      activeMintTab: mintWrapStatus.MINT as mintWrapStatus | -1,
       activeWrapTab: -1,
       allTokensList: [],
       isAllDataLoaded: false,
       approveLoading: false,
       isApprovedToken: false,
+      isLoading: false,
       currentStage: mintRedeemStep.START,
 
       mintTabs: [
         {
-          id: mintStatus.MINT,
+          id: mintWrapStatus.MINT,
           name: 'MINT',
         },
         {
-          id: mintStatus.REDEEM,
+          id: mintWrapStatus.REDEEM,
           name: 'REDEEM',
         },
       ],
       wrapTabs: [
         {
-          id: wrapStatus.WRAP,
+          id: mintWrapStatus.WRAP,
           name: 'WRAP',
         },
         {
-          id: wrapStatus.UNWRAP,
+          id: mintWrapStatus.UNWRAP,
           name: 'UNWRAP',
         },
       ],
@@ -166,6 +168,15 @@ export default {
   watch: {
     inputToken() {
       this.checkApprove(this);
+    },
+    activeWrapTab() {
+      if (this.inputToken?.symbol) {
+        const input = this.inputToken;
+        const output = this.outputToken;
+        this.inputToken = output;
+        this.outputToken = input;
+        this.checkApprove(this);
+      }
     },
     activeMintTab() {
       if (this.inputToken?.symbol) {
@@ -191,11 +202,11 @@ export default {
     ...mapState('odosData', ['tokensContractMap']),
 
     isMintActive() {
-      return this.activeMintTab === 0;
+      return this.activeMintTab === mintWrapStatus.MINT;
     },
 
     isWrapActive() {
-      return this.activeWrapTab === 0;
+      return this.activeWrapTab === mintWrapStatus.WRAP;
     },
 
     estimateResult() {
@@ -204,12 +215,20 @@ export default {
     },
 
     swapMsg() {
-      if (this.activeMintTab === mintStatus.MINT) return 'mint';
-      if (this.activeMintTab === mintStatus.REDEEM) return 'redeem';
-      if (this.activeWrapTab === wrapStatus.WRAP) return 'wrap';
-      if (this.activeWrapTab === wrapStatus.UNWRAP) return 'unwrap';
+      if (this.activeMintTab === mintWrapStatus.MINT) return 'mint';
+      if (this.activeMintTab === mintWrapStatus.REDEEM) return 'redeem';
+      if (this.activeWrapTab === mintWrapStatus.WRAP) return 'wrap';
+      if (this.activeWrapTab === mintWrapStatus.UNWRAP) return 'unwrap';
 
       return '';
+    },
+
+    isReverseArray() {
+      return this.isMintActive || this.isWrapActive;
+    },
+
+    mintWrapTab() {
+      return this.activeMintTab >= 0 ? this.activeMintTab : this.activeWrapTab;
     },
 
   },
@@ -226,13 +245,18 @@ export default {
     gasChange() {
       console.log('gasChange');
     },
+    initForm() {
+      this.inputToken = getNewInputToken();
+      this.outputToken = getNewInputToken();
+    },
     async initMintRedeem() {
+      this.isLoading = true;
       await this.loadChains();
       await this.loadTokens();
 
+      this.initForm();
       this.initTokens();
-      this.inputToken = getNewInputToken();
-      this.outputToken = getNewInputToken();
+      this.isLoading = false;
     },
     async approveTrigger() {
       this.showWaitingModal('Approving in process');
@@ -241,7 +265,8 @@ export default {
       const tokenData = this.inputToken;
       let tokenContract = this.tokensContractMap[tokenData.address];
       const approveValue = new BigNumber(10 ** this.inputToken.decimals)
-        .times(1000000).toFixed(0);
+        .times(1000000)
+        .toFixed(0);
 
       if (!tokenContract) {
         tokenContract = buildEvmContractForChain(
@@ -254,7 +279,7 @@ export default {
       const networkId = this.networkId as keyof typeof MINTREDEEM_SCHEME;
       const pairData = MINTREDEEM_SCHEME[networkId]
         .find((_) => {
-          const tokenAddress = this.isMintActive
+          const tokenAddress = this.isReverseArray
             ? _.token1.toLowerCase() : _.token0.toLowerCase();
           return tokenAddress === this.outputToken.address.toLowerCase();
         });
@@ -297,7 +322,7 @@ export default {
       const networkId = self.networkId as keyof typeof MINTREDEEM_SCHEME;
       const exchangeContract = MINTREDEEM_SCHEME[networkId]
         .find((_) => {
-          const tokenAddress = self.isMintActive
+          const tokenAddress = self.isReverseArray
             ? _.token1.toLowerCase() : _.token0.toLowerCase();
           return tokenAddress === self.outputToken.address.toLowerCase();
         });
@@ -336,8 +361,8 @@ export default {
       this.outputToken = data;
     },
     updateTokenValueMethod(token: any, isInputToken: boolean, isMaxBal: boolean) {
-      console.log(token, isInputToken, isMaxBal, '---_DATA');
-      if (isInputToken && !isMaxBal) this.inputToken = token;
+      console.log(isMaxBal, token, '---isMaxBal');
+      if (isInputToken && !isMaxBal) this.inputToken = { ...token, originalVal: 0 };
       if (isInputToken && isMaxBal) {
         const balData = this.originalBalance.find((_: any) => _.symbol === token.symbol);
         this.inputToken = {
@@ -353,10 +378,13 @@ export default {
       };
     },
     changeWrapTab(id: number) {
+      if (this.activeMintTab >= 0) this.initForm();
       this.activeWrapTab = id;
       this.activeMintTab = -1;
     },
     changeMintTab(id: number) {
+      if (this.activeWrapTab >= 0) this.initForm();
+
       this.activeMintTab = id;
       this.activeWrapTab = -1;
     },
@@ -369,7 +397,7 @@ export default {
     ): IMethodData | null {
       let methodParam;
 
-      const referral = getReferralCode() || '0x4473D652fb0b40b36d549545e5fF6A363c9cd686';
+      const referral = getReferralCode() || '0xEd446C56F89e84b3dC9ACec060154eC6BC6bB299';
 
       if (exchangeMethodName === 'mint') {
         methodParam = {
@@ -524,7 +552,7 @@ export default {
         const networkId = this.networkId as keyof typeof MINTREDEEM_SCHEME;
         const pairData = MINTREDEEM_SCHEME[networkId]
           .find((_) => {
-            const tokenAddress = this.isMintActive
+            const tokenAddress = this.isReverseArray
               ? _.token1.toLowerCase() : _.token0.toLowerCase();
 
             return tokenAddress === this.outputToken.address.toLowerCase();
@@ -544,17 +572,18 @@ export default {
 
         const actionContract = Object.values(this.contracts)
           .find((cData: any) => {
-            const tokenAddress = this.isMintActive
+            const tokenAddress = this.isReverseArray
               ? this.inputToken.address : this.outputToken.address;
             return cData ? cData.target.toLowerCase() === tokenAddress.toLowerCase() : false;
           });
 
         // if mint active, using 1st method, else 2nd
-        const exchangeMethodName = this.activeMintTab === 0
+        const exchangeMethodName = this.isReverseArray
           ? pairData?.methodName[0] : pairData?.methodName[1];
 
         const swapSum = new BigNumber(this.inputToken.value)
-          .times(10 ** this.inputToken.decimals).toString();
+          .times(10 ** this.inputToken.decimals)
+          .toFixed(0);
 
         const mainValue = new BigNumber(this.inputToken.originalVal).gt(0)
           ? this.inputToken.originalVal : swapSum;
@@ -612,13 +641,11 @@ export default {
             to: [this.outputToken],
           });
 
-          console.log('closeWaitingModal');
           this.putTransaction(tx);
           this.closeWaitingModal();
           this.initMintRedeem();
         }
 
-        console.log(txData, '---txData');
         this.refreshBalance();
       } catch (e) {
         console.log(e, '-e');

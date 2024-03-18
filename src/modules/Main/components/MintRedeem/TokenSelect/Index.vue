@@ -8,7 +8,7 @@
       @keypress="closeSelect"
     >
       <h1>
-        Choose token to use for {{activeMint && isInputToken ? "minting" : "redeeming"}}
+        Choose token to use for {{getStatus}}
       </h1>
       <div
         class="slider__arrow-wrapper"
@@ -21,7 +21,7 @@
     </div>
 
     <div
-      v-if="tokensList?.length === 0"
+      v-if="tokensList?.length === 0 && isLoading"
       class="token-select__spinner"
     >
       <Spinner size="40px" />
@@ -45,6 +45,7 @@
 import Spinner from '@/components/Spinner/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import TokensList from '@/modules/Main/components/MintRedeem/TokenSelect/TokensList.vue';
+import { mintWrapStatus } from '../types/index.ts';
 
 export default {
   name: 'TokenSelect',
@@ -58,7 +59,17 @@ export default {
       type: Array,
       default: () => [],
     },
-    activeMint: {
+    activeWrap: {
+      type: Number,
+      required: true,
+      default: -1,
+    },
+    isLoading: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    reverseArray: {
       type: Boolean,
       required: true,
       default: false,
@@ -72,6 +83,15 @@ export default {
       type: String,
       required: false,
       default: '',
+    },
+  },
+  computed: {
+    getStatus() {
+      if (this.activeWrap === mintWrapStatus.MINT) return 'minting';
+      if (this.activeWrap === mintWrapStatus.REDEEM) return 'redeeming';
+      if (this.activeWrap === mintWrapStatus.WRAP) return 'wraping';
+      if (this.activeWrap === mintWrapStatus.UNWRAP) return 'unwraping';
+      return '';
     },
   },
   methods: {

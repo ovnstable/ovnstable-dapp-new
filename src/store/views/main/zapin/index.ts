@@ -32,12 +32,12 @@ const actions = {
       ?? zapPlatformContractTypeMap[state.zapPoolRoot.address],
     });
 
-    console.log(state.zapPoolRoot, 'this.zapPoolRoot');
-    console.log(
-      zapPlatformContractTypeMap[state.zapPoolRoot.platform]
-      ?? zapPlatformContractTypeMap[state.zapPoolRoot.address],
-      '---zapPlatformContractTypeMap[this.zapPoolRoot.address]',
-    );
+    // console.log(state.zapPoolRoot, 'this.zapPoolRoot');
+    // console.log(
+    //   zapPlatformContractTypeMap[state.zapPoolRoot.platform]
+    //   ?? zapPlatformContractTypeMap[state.zapPoolRoot.address],
+    //   '---zapPlatformContractTypeMap[this.zapPoolRoot.address]',
+    // );
     if (!state.currentZapPlatformContractType) {
       console.error(
         'Error when load zap contract name. Contract not found.',
@@ -48,7 +48,6 @@ const actions = {
 
     const platformName = state.currentZapPlatformContractType.name;
 
-    console.log(platformName, '---platformName');
     const abiFile = await loadJSON(
       `/contracts/${state.zapPoolRoot.chainName}/${platformName}Zap.json`,
     );
@@ -103,11 +102,6 @@ const actions = {
     // exclude _ from pool address (aggregators)
     if (poolAddress.includes('_')) poolAddress = poolAddress.split('_')[0];
 
-    console.log(
-      abiPoolTokenContractFile,
-      poolInfo,
-      '--abiPoolTokenContractFile',
-    );
     const tokenContract = poolInfo.poolTokenType
       ? buildEvmContract(
         abiPoolTokenContractFile.abi,

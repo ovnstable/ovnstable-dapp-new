@@ -14,11 +14,15 @@ const state = {
   insuranceBalance: {},
   insuranceOriginalBalance: {},
 
+  loadingOvnBalances: false,
   account: null,
   uns: null,
 };
 
 const getters = {
+  isLoadingOvnBalances(state: any) {
+    return state.loadingOvnBalances;
+  },
 
   accNativeBalance(state: any) {
     return state.accountNativeBalance;
@@ -83,7 +87,7 @@ const actions = {
       return;
     }
 
-    commit('accountUI/setLoadingBalance', true, { root: true });
+    commit('setLoadingBalance', true);
     const { web3 } = rootState;
 
     const networkId = rootState.network.networkId as keyof typeof USER_BALANCES_SCHEME;
@@ -227,11 +231,14 @@ const actions = {
     }
 
     commit('setActionAssetBalance', resultActionAssetBalance);
-    commit('accountUI/setLoadingBalance', false, { root: true });
+    commit('setLoadingBalance', false);
   },
 };
 
 const mutations = {
+  setLoadingBalance(state: any, value: any) {
+    state.loadingOvnBalances = value;
+  },
 
   setAccBalance(state: any, value: any) {
     state.accountNativeBalance = value;

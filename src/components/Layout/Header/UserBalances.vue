@@ -50,7 +50,7 @@
 import { mapGetters, mapState } from 'vuex';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
-import { OVN_TOKENS, appNetworksData } from '@/utils/const.ts';
+import { OVN_TOKENS, appNetworksData, EMPTY_TOKENS_NETWORKS } from '@/utils/const.ts';
 import { isEmpty } from 'lodash';
 import BigNumber from 'bignumber.js';
 
@@ -73,11 +73,10 @@ export default {
     ...mapState('odosData', ['tokensMap', 'isBalancesLoading', 'isTokensLoading']),
 
     totalUserBalance() {
-      if (this.originalBalance.length === 0 || this.isBalancesLoading || this.isTokensLoading) return '0';
       if (isEmpty(this.allTokensList) && isEmpty(this.tokensMap)) return '0';
       const total: BigNumber = this.originalBalance.reduce((acc: BigNumber, curr: any) => {
         // linea/blast doesnt have token from ODOS, so we using our schemas values
-        const tokensForChain = this.allTokensList?.length > 0
+        const tokensForChain = !EMPTY_TOKENS_NETWORKS.includes(this.networkId)
           ? this.allTokensList
           : Object.values(this.tokensMap?.chainTokenMap[this.networkId]?.tokenMap ?? {});
         const tokenData = tokensForChain.find((_: any) => _.symbol === curr.symbol);
@@ -103,7 +102,7 @@ export default {
       if (isEmpty(this.allTokensList) && isEmpty(this.tokensMap)) return [];
       return this.originalBalance
         .filter((_: any) => OVN_TOKENS.includes(_.symbol)).map((bal: any) => {
-          const tokensForChain = this.allTokensList?.length > 0
+          const tokensForChain = !EMPTY_TOKENS_NETWORKS.includes(this.networkId)
             ? this.allTokensList
             : Object.values(this.tokensMap?.chainTokenMap[this.networkId]?.tokenMap ?? {});
           const tokenData = tokensForChain.find((_: any) => _.symbol === bal.symbol);
