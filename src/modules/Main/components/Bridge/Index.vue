@@ -15,7 +15,7 @@
       height="690"
       width="400"
       :src="link"
-      @load="handleIframeLoad(link)"
+      @load="handleIframeLoad()"
     />
   </div>
 </template>
@@ -195,7 +195,7 @@ export default {
       return `https://squid-widget-git-main-v2-0xsquid.vercel.app/iframe?config=${encodedConfig}`;
     },
 
-    async handleIframeLoad(link: string) {
+    async handleIframeLoad() {
       await new Promise((resolve) => setTimeout(() => resolve(0), 2000));
       this.isIframeLoaded = true;
     },
