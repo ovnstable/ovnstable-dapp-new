@@ -17,6 +17,7 @@
       tabindex="0"
     >
       <BaseIcon
+        v-if="!deviceSize.isMobile"
         class="slider__arrow-icon"
         name="ArrowLeft"
       />
@@ -46,13 +47,15 @@
               <p class="slider__token-title">{{ slide.tokenName }}</p>
               <p class="slider__overview-title">OVERVIEW</p>
             </div>
-            <div class="slider__divider" />
+            <div
+              class="slider__divider"
+              :class="{ 'mobile-divider': deviceSize.isMobile }"
+            />
             <div class="slider__data">
               <div class="slider__apy-info">
                 <p class="slider__apy-title">Average APY:</p>
                 <div class="slider__apy-numbers">
                   <p class="slider__data-total-number">{{ slide.apy }}<span class="slider__data-apy-percent">%</span></p>
-                  <!-- <p class="slider__data-growth-number">+{{ slide.apyGrowth }}%</p> -->
                 </div>
               </div>
               <div class="slider__tvl-info">
@@ -69,7 +72,6 @@
                       class="slider__data-tvl-millions"
                     >WETH</span>
                   </p>
-                  <!-- <p class="slider__data-growth-number">+{{ slide.tvlGrowth }}%</p> -->
                 </div>
               </div>
               <div class="slider__payout-info">
@@ -105,10 +107,22 @@
       tabindex="0"
     >
       <BaseIcon
+        v-if="!deviceSize.isMobile"
         name="ArrowRight"
         class="slider__arrow-icon"
       />
     </div>
+  </div>
+  <div class="slider__pagination">
+    <div
+      class="slider__dot"
+      v-for="index in sliderData.length"
+      :key="index"
+      :class="{ 'slider__dot--active': currentIndex === index - 1 }"
+      @click="goToSlide(index - 1)"
+      @keydown.enter="goToSlide(index - 1)"
+      tabindex="0"
+    />
   </div>
 </template>
 <script lang="ts">
@@ -117,6 +131,7 @@ import { ref } from 'vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import { Swiper as SwiperClass } from 'swiper/core';
+import { deviceType } from '@/utils/deviceType.ts';
 import Spinner from '@/components/Spinner/Index.vue';
 import SliderApiService from '@/services/slider-api-service.ts';
 import 'swiper/swiper.min.css';
@@ -158,6 +173,11 @@ export default {
     this.sliderLoaded = false;
     await this.loadDataSlider();
     this.sliderLoaded = true;
+  },
+  computed: {
+    deviceSize() {
+      return deviceType();
+    },
   },
   methods: {
     async loadDataSlider() {
@@ -236,6 +256,12 @@ export default {
     handleSlideChange() {
       if (this.swiperInstance) {
         this.currentIndex = this.swiperInstance.realIndex;
+      }
+    },
+    goToSlide(index: any) {
+      if (this.swiperInstance) {
+        this.currentIndex = index;
+        this.swiperInstance.slideTo(index);
       }
     },
 
@@ -578,6 +604,68 @@ export default {
   .slider__arrow-wrapper {
     width: 14px;
     height: 14px;
+  }
+}
+
+@media (max-width: 400px) {
+  .swap-slider {
+    margin-bottom: 0;
+    padding: 22px 10px;
+  }
+  .swiper-container {
+    margin: 0;
+  }
+  .slider__token-title,
+  .slider__overview-title,
+  .slider__second-token-title-text {
+    font-size: 16px;
+  }
+  .slider__data p {
+    font-size: 14px;
+  }
+
+  .slider__token-overview {
+    margin-bottom: 6px;
+  }
+  .slider__second-token-description {
+    font-size: 12px;
+  }
+  .slider__token-title,
+  .slider__second-token-title-text {
+    margin-left: 10px;
+  }
+  .slider__divider {
+    border-color: var(--color-2);
+    margin: 16px 0;
+    [data-theme="dark"] & {
+      color: var(--color-18);
+    }
+  }
+  .mobile-divider {
+    display: none;
+  }
+  .slider__token-image {
+    width: 30px;
+    height: 30px;
+  }
+  .slider__pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .slider__dot {
+    width: 6px;
+    height: 6px;
+    margin: 0 10px;
+    background-color: var(--color-6);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .slider__dot--active {
+    background-color: var(--color-3);
   }
 }
 

@@ -254,4 +254,12 @@ export default {
   align-items: center;
   justify-content: space-evenly;
 }
+
+@media (max-width: 400px) {
+  .swap-module {
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+  }
+}
 </style>
