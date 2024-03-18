@@ -1,6 +1,31 @@
 <template>
+  <div
+    v-if="deviceSize.isMobile"
+    class="mintredeem-form__row-switches"
+  >
+    <SwitchTabs
+      :tabs="mintTabs"
+      :active-tab="activeMintTab"
+      @tab-change="changeMintTab"
+    />
+    <SwitchTabs
+      :tabs="wrapTabs"
+      :active-tab="activeWrapTab"
+      @tab-change="changeWrapTab"
+    />
+  </div>
   <div class="mintredeem-form">
-    <div class="mintredeem-form__row">
+    <div
+      v-if="deviceSize.isMobile"
+      class="mintredeem-form-steps"
+    >
+      <StepsRow :current-stage="currentStage" />
+    </div>
+
+    <div
+      v-if="!deviceSize.isMobile"
+      class="mintredeem-form__row"
+    >
       <SwitchTabs
         :tabs="mintTabs"
         :active-tab="activeMintTab"
@@ -14,6 +39,7 @@
       />
     </div>
     <div class="mintredeem-form__inputs">
+      <p v-if="deviceSize.isMobile">You send</p>
       <TokenForm
         :token-info="inputToken"
         :is-token-removable="true"
@@ -24,6 +50,7 @@
         @add-token="selectFormToken"
         @update-token="updateTokenValueMethod"
       />
+      <p v-if="deviceSize.isMobile">You receive</p>
       <TokenForm
         :token-info="outputToken"
         :is-token-removable="true"
@@ -89,7 +116,9 @@
       </ButtonComponent>
     </div>
 
-    <StepsRow :current-stage="currentStage" />
+    <div v-if="!deviceSize.isMobile">
+      <StepsRow :current-stage="currentStage" />
+    </div>
   </div>
 
 </template>
@@ -99,6 +128,7 @@
 <!-- eslint-disable no-param-reassign -->
 <script lang="ts">
 import { mapActions, mapGetters, mapState } from 'vuex';
+import { deviceType } from '@/utils/deviceType.ts';
 import SwitchTabs from '@/components/SwitchTabs/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import TokenForm from '@/modules/Main/components/MintRedeem/TokenForm.vue';
@@ -204,7 +234,9 @@ export default {
     isMintActive() {
       return this.activeMintTab === mintWrapStatus.MINT;
     },
-
+    deviceSize() {
+      return deviceType();
+    },
     isWrapActive() {
       return this.activeWrapTab === mintWrapStatus.WRAP;
     },
@@ -741,4 +773,30 @@ export default {
     color: var(--color-1);
   }
 }
+@media (max-width: 400px) {
+  .mintredeem-form-steps {
+    margin-top: 18px;
+    margin-bottom: 30px;
+  }
+  .mintredeem-form__inputs p,
+  .gas-block {
+    margin-bottom: 24px;
+  }
+  .mintredeem-form__row-item {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between !important;
+  }
+  .mintredeem-form__row {
+    gap: 5px;
+    flex-direction: column;
+  }
+  .mintredeem-form__row-switches {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
 </style>

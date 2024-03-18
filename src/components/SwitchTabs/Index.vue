@@ -179,6 +179,31 @@ export default {
     opacity: 1;
     z-index: -2;
   }
+}
 
+@media (max-width: 400px) {
+  .switchtabs__inner,
+  .switchtabs__inner-text {
+    background: none;
+    border: none;
+  }
+  .switchtabs__inner-text:hover {
+    color: var(--color-1);
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
+  }
+  .switchtabs__inner-text.active {
+    color: var(--color-1);
+    font-weight: 600;
+    text-decoration: underline;
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
+    &::before {
+      background: none;
+      border: none;
+    }
+  }
 }
 </style>

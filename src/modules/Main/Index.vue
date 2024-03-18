@@ -44,7 +44,11 @@
         <BaseIcon name="swapMob" />
         <span>Swap</span>
       </div>
-      <div class="swap-module__col">
+      <div
+        class="swap-module__col"
+        @click="showMobileMintRedeem = !showMobileMintRedeem"
+        @keypress="showMobileMintRedeem = !showMobileMintRedeem"
+      >
         <BaseIcon name="mintredeemMob" />
         <span>Mint/Redeem</span>
       </div>
@@ -69,6 +73,10 @@
       :is-show="showMobileSwap"
       @close="showMobileSwap = !showMobileSwap"
     />
+    <MobileMintRedeemMenu
+      :is-show="showMobileMintRedeem"
+      @close="showMobileMintRedeem = !showMobileMintRedeem"
+    />
   </div>
 </template>
 
@@ -82,6 +90,7 @@ import SwapForm from '@/modules/Main/components/Odos/Index.vue';
 import BridgeComponent from '@/modules/Main/components/Bridge/Index.vue';
 import PathView from '@/modules/Main/components/PathView/Index.vue';
 import SwapMobile from '@/modules/Main/components/MobileModals/Swap.vue';
+import MobileMintRedeemMenu from '@/modules/Main/components/MobileModals/MintRedeem.vue';
 import { useEventBus } from '@vueuse/core';
 import { deviceType } from '@/utils/deviceType.ts';
 
@@ -96,6 +105,7 @@ export default {
     SwapForm,
     SwapMobile,
     PathView,
+    MobileMintRedeemMenu,
   },
   data() {
     return {
@@ -122,6 +132,7 @@ export default {
       stablecoinTokens: [],
       isFirstInitializationForPath: true,
       showMobileSwap: false,
+      showMobileMintRedeem: false,
     };
   },
   mounted() {
