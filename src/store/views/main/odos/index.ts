@@ -320,7 +320,6 @@ const actions = {
   async loadBalances({
     commit, state, getters, rootState
   }: any, providerInstance: any) {
-    console.log('loadBalances');
     const provider = providerInstance || rootState.web3.evmProvider;
 
     commit('changeState', { field: 'isBalancesLoading', val: true });
@@ -580,21 +579,7 @@ const actions = {
       selectedOutputTokens: any,
     }
   ) {
-    console.log({
-      message: 'Odos init transaction data',
-      swapSession: state.swapSessionId,
-      data: data.txData,
-    });
-
-    if (!state.routerContract || !state.executorContract) {
-      console.log({
-        message:
-            'Init wallet transactions failed, odos contracts not found. txData: ',
-        swapSession: state.swapSessionId,
-        data: data.txData,
-      });
-      return;
-    }
+    if (!state.routerContract || !state.executorContract) return;
 
     dispatch('startSwapConfirmTimer');
 
@@ -676,7 +661,7 @@ const actions = {
     dispatch('stopSwapConfirmTimer');
 
     setTimeout(() => {
-      dispatch('loadBalances', addressesToUpdate);
+      dispatch('loadBalances');
     }, 2000);
   },
   async getActualGasPrice({
