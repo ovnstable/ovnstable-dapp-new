@@ -38,8 +38,8 @@
 
         <template v-if="pools.length > 0">
           <div
-            v-for="pool in (pools as any)"
-            :key="pool.id"
+            v-for="(pool, key) in (pools as any)"
+            :key="key"
             class="pools-table__row"
             @click="toggleDetails(pool)"
             @keypress="toggleDetails(pool)"

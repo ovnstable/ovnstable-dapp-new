@@ -84,9 +84,9 @@
       </div>
       <div class="sidebar__divider-bottom" />
       <div class="sidebar__icons-bottom">
-        <SwitchBox
+        <SwitchComponent
           :isChecked="isDarkTheme"
-          @change="toggleTheme"
+          @change-switch="toggleTheme"
         />
         <div style="position: relative;">
           <div
@@ -111,14 +111,14 @@
 <script lang="ts">
 
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
-import SwitchBox from '@/components/Switch/Index.vue';
+import SwitchComponent from '@/components/Switch/Index.vue';
 import SelectComponent from '@/components/Select/Index.vue';
 import { delay } from 'lodash';
 
 export default {
   components: {
     BaseIcon,
-    SwitchBox,
+    SwitchComponent,
     SelectComponent,
   },
   name: 'SideBar',
@@ -165,6 +165,7 @@ export default {
   },
   methods: {
     toggleTheme() {
+      console.log('CHANGE2');
       this.$store.dispatch('theme/switchTheme');
     },
     setCookie(key: string, value: string) {

@@ -1,11 +1,8 @@
 /* eslint-disable no-shadow */
 /* eslint-disable no-unused-vars */
-export enum mintStatus {
+export enum mintWrapStatus {
   MINT,
-  REDEEM
-}
-
-export enum wrapStatus {
+  REDEEM,
   WRAP,
   UNWRAP
 }

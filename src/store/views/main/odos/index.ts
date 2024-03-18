@@ -57,8 +57,6 @@ export const stateData = {
     'zksync',
     'base',
   ],
-  dataBeInited: false,
-
   swapResponseInfo: null,
   quotaResponseInfo: null,
   swapResponseConfirmInfo: {
@@ -88,7 +86,7 @@ export const stateData = {
   typeOfPoolScheme: null, // OVN, ALL, null
 
   listOfBuyTokensAddresses: null, // for POOL_SWAP scheme
-  odosReferalCode: 7777777,
+  odosReferalCode: 4073435732, // test account or user acc
 
   swapSessionId: null,
 };
@@ -192,9 +190,7 @@ const actions = {
   async loadTokens({
     commit, state,
   }: any) {
-    if (state.isTokensLoading) {
-      return;
-    }
+    if (state.isTokensLoading) return;
 
     commit('changeState', { field: 'isTokensLoading', val: true });
 

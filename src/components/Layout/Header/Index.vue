@@ -50,7 +50,7 @@
 
         <div class="app-header__content-data">
           <div
-            v-if="accountRenderLoading"
+            v-if="accountRenderLoading || balancesLoading"
             class="lineLoader"
           />
           <UserBalances v-else-if="deviceType().isDesktop && walletConnected && account" />
@@ -118,6 +118,26 @@
                     <BaseIcon :name="item.name.toLowerCase()" />
                     {{ item.name }}
                   </div>
+                  <div class="networks-list__depr">
+                    <div class="networks__divider" />
+                    <h3>
+                      Deprecated
+                    </h3>
+                    <div class="networks-list__row">
+                      <SpinnerComponent
+                        v-if="chainsLoading"
+                        size="20px"
+                      />
+                      <div v-else>
+                        {{ isShowDeprecated ? "On" : "Off" }}
+                      </div>
+                      <SwitchComponent
+                        :isChecked="isShowDeprecated"
+                        :disabled="chainsLoading"
+                        @change-switch="showDeprecated"
+                      />
+                    </div>
+                  </div>
                 </div>
               </template>
             </PopperComponent>
@@ -134,7 +154,9 @@
 
 <script lang="ts">
 import { mapGetters, mapActions, mapState } from 'vuex';
+import SwitchComponent from '@/components/Switch/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
+import SpinnerComponent from '@/components/Spinner/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { cutString } from '@/utils/strings.ts';
 import { OVN_TOKENS, appNetworksData, getImageUrl } from '@/utils/const.ts';
@@ -156,6 +178,8 @@ export default {
   name: 'HeaderBar',
   components: {
     ButtonComponent,
+    SwitchComponent,
+    SpinnerComponent,
     UserBalances,
     AccountModal,
     BaseIcon,
@@ -163,20 +187,33 @@ export default {
   data() {
     return {
       sortedChains: [] as Chain[],
+      chainsLoading: false,
       networksData: appNetworksData,
       showModalAccount: false,
     };
   },
   async mounted() {
-    this.sortedChains = await sortedChainsByTVL(this.networksData);
+    this.sortedChains = await sortedChainsByTVL(this.networksData, this.isShowDeprecated);
+  },
+  watch: {
+    async isShowDeprecated() {
+      this.chainsLoading = true;
+      this.sortedChains = await sortedChainsByTVL(this.networksData, this.isShowDeprecated);
+      this.chainsLoading = false;
+    },
   },
   computed: {
-    ...mapState('odosData', ['isBalancesLoading', 'isTokensLoadedAndFiltered', 'firstRenderDone']),
+    ...mapState('odosData', ['isBalancesLoading', 'isTokensLoadedAndFiltered', 'firstRenderDone', 'isTokensLoading']),
     ...mapGetters('walletAction', ['walletConnected']),
-    ...mapGetters('accountData', ['originalBalance', 'account']),
-    ...mapGetters('network', ['networkId']),
+    ...mapGetters('accountData', ['originalBalance', 'account', 'isLoadingOvnBalances']),
+    ...mapGetters('network', ['networkId', 'isShowDeprecated']),
     ...mapGetters('odosData', ['allTokensList']),
 
+    balancesLoading() {
+      if (this.originalBalance.length === 0 || this.isTokensLoading) return true;
+      if (this.isLoadingOvnBalances || this.isBalancesLoading) return true;
+      return false;
+    },
     accountRenderLoading() {
       if (this.firstRenderDone) return false;
       return (this.account && this.isBalancesLoading) || !this.isTokensLoadedAndFiltered;
@@ -200,7 +237,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions('network', ['setWalletNetwork']),
+    ...mapActions('network', ['setWalletNetwork', 'showDeprecated']),
     deviceType,
     getImageUrl,
     openAccountModal() {
@@ -468,37 +505,24 @@ export default {
   margin-left: auto;
 }
 
-$base-color: var(--color-5);
-$shine-color: var(--color-4);
-$animation-duration: 2.0s;
-$avatar-offset: 52 + 16;
+.networks__divider {
+  margin: 10px 0;
+  width: 100%;
+  height: 1px;
+  background-color: var(--color-7);
+}
 
-@mixin background-gradient {
-  background-image: linear-gradient(90deg, $base-color 0px, $shine-color 40px, $base-color 80px);
-  background-size: 600px;
-  [data-theme="dark"] & {
-    background-image: linear-gradient(90deg, var(--color-17) 0px, $shine-color 40px, var(--color-17) 80px);
+.networks-list__depr {
+  padding: 0 14px 12px 14px;
+
+  h3 {
+    margin-bottom: 10px;
   }
 }
 
-.lineLoader {
-  float: left;
-  width: 100px;
-  height: 100%;
-  border-radius: 7px;
-  border: 1px solid var(--color-1);
-  box-shadow: 0px 1px 0px 0px var(--color-1);
-
-  @include background-gradient;
-  animation: shine-lines $animation-duration infinite ease-out;
-  [data-theme="dark"] & {
-    box-shadow: none;
-    border-color: var(--color-2);
-  }
-}
-
-@keyframes shine-lines{
-  0% { background-position: -100px;}
-  40%, 100% {background-position: 140px;}
+.networks-list__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 </style>

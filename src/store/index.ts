@@ -19,7 +19,6 @@ import referral from '@/store/common/referral.ts';
 import etsAction from '@/store/web3/legacy/ets-action.ts';
 
 // views
-import accountUI from '@/store/views/account/ui.ts';
 import accountData from '@/store/views/account/data.ts';
 import insuranceData from '@/store/views/insurance/data.ts';
 import tokenData from '@/store/views/market/tokenData.ts';
@@ -55,7 +54,6 @@ export default new Vuex.Store({
     successModal,
 
     // views
-    accountUI,
     accountData,
     poolsData,
     accTransaction,

@@ -350,8 +350,6 @@ export default {
       const from = this.account;
       let result;
 
-      console.log(this.contracts, '---contracts');
-
       try {
         const estimateOptions = { from, gasPrice: this.gasPriceGwei };
         const params = {
@@ -359,15 +357,12 @@ export default {
         };
         const methodEstimate = this.contracts.insurance[`${this.networkName}_exchanger`].mint;
 
-        console.log(estimateOptions, '---estimateOptions');
-        console.log(methodEstimate, '--val1');
         const gasVal = await methodEstimate
           .estimateGas(params, estimateOptions)
           .catch((error: any) => {
             console.log(error, '--estimateGas');
           });
 
-        console.log(gasVal, '---gasVal');
         result = gasVal;
       } catch (e) {
         console.error(
@@ -389,14 +384,6 @@ export default {
           ? this.contracts.ovn
           : this.contracts.insurance[`${this.networkName}_token`];
 
-        console.log(
-          ovnContract,
-          this.contracts.insurance[`${this.networkName}_exchanger`].target,
-          approveSum,
-          this.account,
-          this.gasPriceGwei,
-          '---approveToken',
-        );
         const tx = await approveToken(
           ovnContract,
           this.contracts.insurance[`${this.networkName}_exchanger`].target,
@@ -409,7 +396,6 @@ export default {
 
         this.tokenApproved = true;
         this.currentStage = mintRedeemStep.CONFIRMATION;
-        console.log(tx, 'TX___');
 
         this.closeWaitingModal();
       } catch (e) {
@@ -459,11 +445,9 @@ export default {
     }, 250),
     async buyAction() {
       try {
-        console.log(this.ovnDecimals, '--this.ovnDecimals');
         const sum = new BigNumber(this.fromValue).times(10 ** this.ovnDecimals).toFixed(0);
         await this.checkApprove(this);
 
-        console.log(this.estimatedGas, '---estimatedGas');
         const { contracts } = this;
         const from = this.account;
         const self = this;
@@ -492,7 +476,6 @@ export default {
           );
 
           if (this.selectedAction === 'mint') {
-            console.log(contracts.insurance[`${this.networkName}_exchanger`], gasParams, 'MINT');
             const tx = await contracts.insurance[`${this.networkName}_exchanger`].mint(params, gasParams);
 
             await tx.wait();
@@ -503,8 +486,6 @@ export default {
               successAction: 'mintInsurance',
             });
           } else {
-            console.log(contracts, '---contracts');
-            console.log(gasParams, params, 'REDEEM');
             const tx = await contracts.insurance[
               `${this.networkName}_exchanger`
             ].redeem(params, gasParams);
@@ -537,8 +518,6 @@ export default {
     },
 
     async confirmSwapAction() {
-      console.log(this.gasPrice, this.gasPriceStation, 'confirmSwapAction');
-
       if (!this.gasPrice || !this.gasPriceStation) return;
       try {
         const sum = new BigNumber(this.fromValue).times(10 ** this.ovnDecimals).toFixed(0);
@@ -550,7 +529,6 @@ export default {
 
           await this.buyAction();
         } else {
-          console.log(estimatedGasValue, '==estimatedGasValue');
           this.estimatedGas = estimatedGasValue;
 
           this.gas = new BigNumber(this.estimatedGas)
@@ -585,7 +563,6 @@ export default {
 
       if (!insurance.chainName.includes(this.networkName)) return;
 
-      console.log(this.networkName, estimateResult, 'sendRedemptionRequest---');
       if (estimateResult?.haveError) {
         this.showErrorModalWithMsg({
           errorType: 'redemptionRequest',
@@ -596,12 +573,6 @@ export default {
 
         const requestParams = { from: this.account, gasPrice: this.gasPriceGwei };
 
-        console.log(requestParams, '---requestParams');
-        console.log(
-          `${this.networkName}_exchanger`,
-          'this.networkName + "_exchanger"',
-        );
-        console.log(this.contracts.insurance, '--this.contracts.insurance');
         try {
           const tx = await this.contracts.insurance[
             `${this.networkName}_exchanger`

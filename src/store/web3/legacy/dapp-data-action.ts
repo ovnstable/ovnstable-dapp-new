@@ -16,8 +16,12 @@ const actions = {
     commit, dispatch, getters, rootState,
   }: any) {
     console.log('REFRESHUSER');
+    await dispatch('web3/initWeb3', null, { root: true });
     dispatch('accountData/refreshBalance', null, { root: true });
-    // dispatch('odosData/loadBalances', null, { root: true });
+    // possibly remove, only for account change
+
+    dispatch('odosData/loadTokens', null, { root: true });
+    dispatch('odosData/loadBalances', null, { root: true });
     // dispatch('supplyData/refreshInsuranceSupply', null, { root: true });
     // dispatch('swapData/refreshSwap', null, { root: true });
     // dispatch('marketData/refreshClientData', null, { root: true });

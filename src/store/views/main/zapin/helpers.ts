@@ -40,10 +40,7 @@ export const getProportion = (poolAddress: string, zapPool: any, zapContract: an
 
   return zapContract
     .getProportion(gauge)
-    .then((data: any) => {
-      console.log('Get proportion: ', poolAddress, gauge, data, poolInfo);
-      return data;
-    })
+    .then((data: any) => data)
     .catch((e: any) => {
       console.error(
         'Error get proportion for: ',

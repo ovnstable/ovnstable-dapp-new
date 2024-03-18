@@ -61,6 +61,7 @@
                   :token-info="token"
                   :is-token-removable="isInputTokensRemovable"
                   :is-input-token="true"
+                  :balances-loading="isBalancesLoading"
                   @select-token="selectFormToken"
                   @remove-token="removeInputToken"
                   @update-token="updateTokenValueMethod"
@@ -111,6 +112,7 @@
                   :is-input-token="false"
                   :disabled="true"
                   :is-token-removable="isOutputTokensRemovable"
+                  :balances-loading="isBalancesLoading"
                   @select-token="selectFormToken"
                   @remove-token="removeOutputToken"
                 />
@@ -310,20 +312,19 @@ export default {
   },
   watch: {
     async isAllDataLoaded(newVal) {
-      if (newVal && !this.dataBeInited) {
+      if (newVal) {
         await this.initData({
           tokenSeparationScheme: this.tokenSeparationScheme,
           listOfBuyTokensAddresses: this.listOfBuyTokensAddresses,
-        });
-        this.$store.commit('odosData/changeState', {
-          field: 'dataBeInited',
-          val: true,
         });
       }
     },
     // on wallet connect
     async account(val) {
-      if (val) this.clearForm('000');
+      if (val) {
+        this.clearForm('000');
+        this.init();
+      }
       if (!val) this.outputTokens = [getNewOutputToken()];
     },
     // for first render
@@ -424,7 +425,6 @@ export default {
       'isShowDecreaseAllowance',
       'tokenSeparationScheme',
       'listOfBuyTokensAddresses',
-      'dataBeInited',
       'isBalancesLoading',
       'firstRenderDone',
     ]),
@@ -654,8 +654,12 @@ export default {
     onLeaveList,
     beforeEnterList,
     onEnterList,
-    reloadList() {
+    async reloadList() {
       try {
+        await this.initData({
+          tokenSeparationScheme: this.tokenSeparationScheme,
+          listOfBuyTokensAddresses: this.listOfBuyTokensAddresses,
+        });
         this.init();
       } catch (e) {
         console.log(e, 'reloadList');

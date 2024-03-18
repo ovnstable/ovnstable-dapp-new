@@ -25,6 +25,10 @@ export const svgIconsMap = (() => {
   return svgMap;
 })();
 
+// odos do not support currently that networks
+export const EMPTY_TOKENS_NETWORKS = [81457, 59144];
+export const DEPRECATED_NETWORKS = [137];
+
 export const appNetworksData = [
   {
     chain: 10,

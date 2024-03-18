@@ -74,9 +74,18 @@ export default {
       required: false,
       default: () => [],
     },
+    isShowDeprecated: {
+      type: Boolean,
+      required: true,
+    },
   },
   async mounted() {
-    this.sortedChains = await sortedChainsByTVL(this.networksData);
+    this.sortedChains = await sortedChainsByTVL(this.networksData, this.isShowDeprecated);
+  },
+  watch: {
+    async isShowDeprecated() {
+      this.sortedChains = await sortedChainsByTVL(this.networksData, this.isShowDeprecated);
+    },
   },
   data() {
     return {
