@@ -476,6 +476,13 @@ export default {
     color: var(--color-18);
   }
 }
+
+@media (max-width: 1080px) {
+  .performance__graphic {
+    padding: 0;
+  }
+}
+
 @media (max-width: 1024px) {
   .performance__graphic-display {
     width: 100%;
