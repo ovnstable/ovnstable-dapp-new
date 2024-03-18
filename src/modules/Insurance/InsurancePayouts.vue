@@ -377,6 +377,11 @@ export default {
   }
 }
 
+@media (max-width: 560px) {
+.insurance__payouts-button-show {
+  padding: 5px;
+}
+
 @media (max-width: 400px) {
   .insurance__payouts-button-show {
     padding: 5px 120px;
@@ -414,5 +419,5 @@ export default {
     display: block;
   }
 }
-
+}
 </style>
