@@ -446,6 +446,7 @@ export default {
       'swapResponseConfirmInfo',
       'routerContract',
       'odosZapReferalCode',
+      'odosReferalCode',
     ]),
 
     ...mapState('zapinData', [
@@ -1185,7 +1186,7 @@ export default {
         simulate: false,
         pathViz: false,
         disableRFQs: false,
-        referralCode: this.odosZapReferalCode,
+        referralCode: this.odosZapReferalCode ?? this.odosReferalCode,
       };
 
       this.odosSwapRequest(requestData)
@@ -1647,6 +1648,7 @@ export default {
       console.log(txData, 'ZAPIN');
       console.log(gaugeData, 'gaugeData');
       console.log(params, 'params');
+      console.log(this.zapContract, '-this.zapContract');
 
       try {
         const tx = await this.zapContract.zapIn(txData, gaugeData, params);
@@ -1775,6 +1777,7 @@ export default {
         sourceWhitelist: whiteList ?? [],
         simulate: true,
         pathViz: true,
+        referralCode: this.odosReferalCode,
       };
 
       this.clearQuotaInfo();

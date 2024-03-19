@@ -87,7 +87,7 @@ export const stateData = {
 
   listOfBuyTokensAddresses: null, // for POOL_SWAP scheme
   odosReferalCode: 7777777, // test account or user acc
-  odosZapReferalCode: 7777777, // test account or user acc
+  odosZapReferalCode: 3000000005 || 7777777, // test account
 
   swapSessionId: null,
 };
@@ -583,14 +583,9 @@ const actions = {
 
     dispatch('waitingModal/showWaitingModal', 'Swapping in process', { root: true });
 
-    const txLogMessage = console.log({
-      message: 'Odos send transaction',
-      swapSession: state.swapSessionId,
-      data: transactionData,
-      log: ` | Current block: ${await rootState.web3.evmProvider.getBlockNumber()}`,
-    });
+    // console.log(rootState.web3, '---rootState.web3');
+    // console.log(transactionData, '---transactionData');
 
-    console.debug(txLogMessage);
     const dataTx = await rootState.web3.evmSigner
       .sendTransaction(transactionData)
       .catch((e: any) => {

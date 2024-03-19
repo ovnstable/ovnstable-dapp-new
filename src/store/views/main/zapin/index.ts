@@ -10,8 +10,6 @@ const stateData = {
   zapContract: null,
   poolTokenContract: null,
   gaugeContract: null,
-
-  pollsMap: {},
 };
 
 const getters = {
@@ -32,12 +30,6 @@ const actions = {
       ?? zapPlatformContractTypeMap[state.zapPoolRoot.address],
     });
 
-    // console.log(state.zapPoolRoot, 'this.zapPoolRoot');
-    // console.log(
-    //   zapPlatformContractTypeMap[state.zapPoolRoot.platform]
-    //   ?? zapPlatformContractTypeMap[state.zapPoolRoot.address],
-    //   '---zapPlatformContractTypeMap[this.zapPoolRoot.address]',
-    // );
     if (!state.currentZapPlatformContractType) {
       console.error(
         'Error when load zap contract name. Contract not found.',

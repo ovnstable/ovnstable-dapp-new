@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-unused-expressions */
 import { poolTypes } from '@/modules/Main/components/PoolsTable/types/index.ts';
+import { LOW_TVL_PROMOTE } from './mocks.ts';
 
 const STABLE_TOKENS = ['USD+', 'DAI+', 'WUSD+', 'USDC+', 'USDT+'];
 
@@ -128,6 +129,9 @@ export const buildLink = (pool: any) => {
     case 'Baseswapdefiedge':
       url = 'https://baseswap.defiedge.io/s/base/';
       break;
+    case 'Syncswap':
+      url = `https://syncswap.xyz/pool/${pool.address}`;
+      break;
 
     default:
       url = `${pool.explorerUrl}/address/`;
@@ -153,6 +157,7 @@ export const buildLink = (pool: any) => {
     || pool.platform === 'Alienbase'
     || pool.platform === 'Convex'
     || pool.platform === 'Pancake'
+    || pool.platform === 'Syncswap'
   ) {
     return url;
   }
@@ -307,17 +312,6 @@ export const getSortedPools = (
     '0x61366A4e6b1DB1b85DD701f2f4BFa275EF271197',
   ];
 
-  // if pool tvl too low
-  const promotePools = [
-    '0xd01075f7314a6436e8b74fc18069848229d0c555',
-    '0xb9c2d906f94b27bc403ab76b611d2c4490c2ae3f',
-    // LYNEX
-    '0x58aacbccaec30938cb2bb11653cad726e5c4194a',
-    '0xc5f4c5c2077bbbac5a8381cf30ecdf18fde42a91',
-    // FRAX
-    '0x56390acF12bce9675ab3922060D8d955149BE286',
-  ];
-
   // execute revert aggregator
   const filteredPools = pools.filter((pool) => {
     if (!revertAgg.includes(pool.address)) false;
@@ -326,7 +320,7 @@ export const getSortedPools = (
 
   if (!filterByTvl) {
     poolsList = filteredPools
-      .filter((pool) => (promotePools.includes(pool.address) ? pool : pool.tvl >= MIN_AMOUNT));
+      .filter((pool) => (LOW_TVL_PROMOTE.includes(pool.address) ? pool : pool.tvl >= MIN_AMOUNT));
   } else {
     poolsList = filteredPools;
   }
@@ -352,15 +346,9 @@ export const getSortedSecondPools = (
   let secondPools = pools.filter((pool) => {
     // this is for new pools which TVL do not pass pool.tvl < 300000 && pool.tvl > 100000
     // but its should be displayed
-    const exception = [
-      '0x0627dcdca49d749583c6a00327eb5e3846e265d3',
-      '0x77ca2ddfd61d1d5e5d709cf07549fec3e2d80315',
-    ];
 
     // if its tvl higher than restrictions and its promotoed, its gonna duplicate
     if (pool.tvl > MIN_AMOUNT && pool.promoted) return false;
-
-    if (exception.includes(pool.address)) return true;
     if (pool.promoted !== false) return true;
 
     return false;
@@ -378,7 +366,6 @@ export const getSortedSecondPools = (
 
 export const initReversePools = (pool: any, pools: any[]) => {
   pool.aggregators = [];
-  // usd+ dola arb
   const poolAddress = pool.address;
 
   if (

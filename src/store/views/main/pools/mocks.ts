@@ -462,6 +462,8 @@ export const zapPlatformSupportList = [
 
 // POOLS WITH EARNINGS MORE THAN 500$ per month
 // https://docs.google.com/spreadsheets/d/1zyNA4mbpmyG30R1aIqkkRvbCJSjfyb7pV4hhCa7pohM/edit#gid=813615557
+// or promoted pools, which launched recently
+
 export const FEATURED_POOLS = [
   // AERODROME
   '0xe96c788e66a97cf455f46c5b27786191fd3bc50b',
@@ -472,10 +474,28 @@ export const FEATURED_POOLS = [
 
   // PANCAKE
   '0x8a06339abd7499af755df585738ebf43d5d62b94',
+  '0x6a8fc7e8186ddc572e149dfaa49cfae1e571108b',
 
   // LINEA
   '0x1d0188c4b276a09366d05d6be06af61a73bc7535',
 
   // VELODROME
   '0x667002F9DC61ebcBA8Ee1Cbeb2ad04060388f223',
+
+  // SYNCSWAP
+  '0xA06f1cce2Bb89f59D244178C2134e4Fc17B07306',
+];
+
+export const LOW_TVL_PROMOTE = [
+  '0xd01075f7314a6436e8b74fc18069848229d0c555',
+  '0xb9c2d906f94b27bc403ab76b611d2c4490c2ae3f',
+  // PANCAKE
+  '0x6a8fc7e8186ddc572e149dfaa49cfae1e571108b',
+  // LYNEX
+  '0x58aacbccaec30938cb2bb11653cad726e5c4194a',
+  '0xc5f4c5c2077bbbac5a8381cf30ecdf18fde42a91',
+  // FRAX
+  '0x56390acF12bce9675ab3922060D8d955149BE286',
+  // SYNCSWAP
+  '0xA06f1cce2Bb89f59D244178C2134e4Fc17B07306',
 ];

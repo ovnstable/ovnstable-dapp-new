@@ -76,6 +76,7 @@ export default {
   border: unset;
   background-color: transparent;
   cursor: pointer;
+  white-space: nowrap;
   transition: transform .15s ease, background-color .2s ease, color .2s ease, opacity .2s ease;
 
   &:active {

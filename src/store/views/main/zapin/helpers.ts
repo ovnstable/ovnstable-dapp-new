@@ -66,13 +66,13 @@ export const calculateProportionForPool = ({
   const tokenOut0 = Number.parseFloat(
     new BigNumber(outputTokensAmounts[0].toString())
       .div(new BigNumber(10).pow(outputTokensDecimals[0]))
-      .toFixed(3)
+      .toFixed(3, BigNumber.ROUND_DOWN)
       .toString(),
   ) * outputTokensPrices[0];
   const tokenOut1 = Number.parseFloat(
     new BigNumber(outputTokensAmounts[1].toString())
       .div(new BigNumber(10).pow(outputTokensDecimals[1]))
-      .toFixed(3)
+      .toFixed(3, BigNumber.ROUND_DOWN)
       .toString(),
   ) * outputTokensPrices[1];
   const sumInitialOut = tokenOut0 + tokenOut1;
@@ -82,7 +82,7 @@ export const calculateProportionForPool = ({
       += Number.parseFloat(
         new BigNumber(inputTokensAmounts[i].toString())
           .div(new BigNumber(10).pow(inputTokensDecimals[i]))
-          .toFixed(3)
+          .toFixed(3, BigNumber.ROUND_DOWN)
           .toString(),
       ) * inputTokensPrices[i];
   }
@@ -102,7 +102,7 @@ export const calculateProportionForPool = ({
       (dif / outputTokensPrices[0]).toString(),
     )
       .times(new BigNumber(10).pow(outputTokensDecimals[0]))
-      .toFixed(0);
+      .toFixed(0, BigNumber.ROUND_DOWN);
     inputTokens.push({
       tokenAddress: outputTokensAddresses[0],
       amount: token0AmountForSwap.toString(),
@@ -118,7 +118,7 @@ export const calculateProportionForPool = ({
       inputTokens,
       amountToken0Out: new BigNumber(outputTokensAmounts[0])
         .minus(token0AmountForSwap)
-        .toFixed(0),
+        .toFixed(0, BigNumber.ROUND_DOWN),
       amountToken1Out: outputTokensAmounts[1].toString(),
     };
   } if (output1InMoneyWithProportion < tokenOut1) {
@@ -127,7 +127,8 @@ export const calculateProportionForPool = ({
       (dif / outputTokensPrices[1]).toString(),
     )
       .times(new BigNumber(10).pow(outputTokensDecimals[1]))
-      .toFixed(0);
+      .toFixed(0, BigNumber.ROUND_DOWN);
+
     inputTokens.push({
       tokenAddress: outputTokensAddresses[1],
       amount: token1AmountForSwap.toString(),
@@ -144,7 +145,7 @@ export const calculateProportionForPool = ({
       amountToken0Out: outputTokensAmounts[0].toString(),
       amountToken1Out: new BigNumber(outputTokensAmounts[1])
         .minus(token1AmountForSwap)
-        .toFixed(0),
+        .toFixed(0, BigNumber.ROUND_DOWN),
     };
   }
   const difToGetFromOdos0 = output0InMoneyWithProportion - tokenOut0;
