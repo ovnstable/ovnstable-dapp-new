@@ -319,7 +319,7 @@ button {
   }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 640px) {
   .dashboard-usd-plus-wrap {
     padding: 30px 20px;
     border: none;

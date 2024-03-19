@@ -709,7 +709,7 @@ export default {
     padding: 10px 20px;
   }
 }
-@media (max-width: 400px) {
+@media (max-width: 640px) {
   .insurance__chains-interval {
     flex-direction: column;
   }

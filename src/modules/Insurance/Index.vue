@@ -6,7 +6,7 @@
     <Spinner />
   </div>
   <div
-    v-else-if="!device.isMobile"
+    v-else-if="device.isDesktop"
     class="insurance-wrapper"
   >
     <div
@@ -39,7 +39,7 @@
     </div>
   </div>
   <div
-    v-else-if="device.isMobile"
+    v-else-if="!device.isDesktop"
     class="insurance-wrapper"
   >
 
@@ -299,7 +299,7 @@ export default {
   }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 640px) {
   .insurance,
   .insurance__payouts,
   .insurance__payout-inner {

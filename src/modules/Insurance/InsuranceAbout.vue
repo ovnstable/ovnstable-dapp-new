@@ -138,7 +138,7 @@ export default {
     flex-direction: column;
   }
 }
-@media (max-width: 400px) {
+@media (max-width: 640px) {
   .insurance__about {
     background: none;
     padding: 0;

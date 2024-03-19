@@ -609,7 +609,7 @@ export default {
   }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 640px) {
   .swap-slider {
     margin-bottom: 0;
     padding: 22px 10px;

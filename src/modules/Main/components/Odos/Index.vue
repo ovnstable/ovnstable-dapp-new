@@ -1803,7 +1803,7 @@ export default {
     }
   }
 }
-@media (max-width: 400px) {
+@media (max-width: 640px) {
   .swap-form {
     border: none;
     padding: 0;

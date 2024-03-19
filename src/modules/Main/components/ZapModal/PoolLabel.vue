@@ -153,7 +153,7 @@ export default {
   flex-direction: column;
   gap: 8px;
 }
-@media (max-width: 400px) {
+@media (max-width: 640px) {
   .zap-header__col {
     font-size: 12px;
   }

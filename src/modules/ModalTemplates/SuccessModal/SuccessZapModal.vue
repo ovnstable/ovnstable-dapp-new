@@ -401,7 +401,7 @@ export default {
     }
   }
 }
-@media (max-width: 400px) {
+@media (max-width: 640px) {
   .modal-content {
     padding: 5px 7px 3px 7px;
     min-width: 0;

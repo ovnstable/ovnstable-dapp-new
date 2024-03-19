@@ -113,7 +113,7 @@ export default {
   gap: 20px;
 }
 
-@media (max-width: 400px) {
+@media (max-width: 640px) {
   .mob-menu__header {
     margin-top: 16px;
     h1 {

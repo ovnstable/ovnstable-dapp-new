@@ -293,9 +293,11 @@ export default {
 .ovn__overview-bridge-icon,
 .ovn__overview-dashboard-icon {
   margin-right: 4px;
+  overflow: visible;
 }
 .ovn__overview-redeem-icon {
   margin-left: 4px;
+  overflow: visible;
 }
 
 .ovn__overview-divider {
@@ -497,7 +499,11 @@ export default {
     font-size: 17px;
   }
 }
-@media (max-width: 400px) {
+@media (max-width: 640px) {
+  .ovn__overview-price-down,
+  .ovn__overview-price-up {
+    margin-left: 10px;
+  }
   .ovn__overview-links {
     display: flex;
     align-items: center;

@@ -111,7 +111,7 @@ export default {
     width: 100%;
     min-width: 90vw;
   }
-  @media (max-width: 400px) {
+  @media (max-width: 640px) {
     padding: 10px;
   }
 }

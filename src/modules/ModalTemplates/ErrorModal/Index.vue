@@ -260,7 +260,7 @@ export default {
   }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 640px) {
   .modal-content {
     padding: 20px 40px 10px 40px;
     max-width: 400px;

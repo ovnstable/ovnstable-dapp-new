@@ -274,7 +274,7 @@ export default {
 .slippage-block__item--selected {
   box-shadow: 0 0 0px 2px var(--color-3);
 }
-@media (max-width: 400px) {
+@media (max-width: 640px) {
   .slippage-block__item {
     color: var(--color-1);
     font-size: 14px;

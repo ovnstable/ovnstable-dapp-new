@@ -61,7 +61,7 @@ export default {
   }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 640px) {
   .interval-option {
     margin: 0;
   }

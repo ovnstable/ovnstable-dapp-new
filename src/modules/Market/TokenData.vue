@@ -420,67 +420,6 @@ export default {
   }
 }
 
-@media (max-width: 768px) {
-  .performance__chain-data-name {
-    font-size: 10px;
-    margin-left: 2px;
-  }
-  .performance__chain-data {
-    padding: 4px;
-  }
-  .performance__chain-data svg {
-    scale: 80%;
-  }
-  .performance__divider {
-    margin-left: 10px;
-    margin-right: 10px;
-  }
-  .performance__token-data-main-token {
-    scale: 80%;
-  }
-
-  .performance__token-data-title {
-    font-size: 14px;
-    display: flex;
-    text-align: center;
-    max-width: 50px;
-  }
-  .performance__token-data-num,
-  .performance__token-data-num--payout-ago {
-    font-size: 12px;
-  }
-  .performance__token-data-h {
-    display: flex;
-    text-align: center;
-    margin-top: 10px;
-  }
-
-  .performance__apy-data-chain {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .performance__icon-chain {
-    margin-left: 0;
-    margin-top: 10px;
-    scale: 80%;
-  }
-
-  .performance__token-data-col-token {
-    margin-left: 0;
-    font-size: 12px;
-  }
-  .performance__divider--last-divider {
-   display: none;
-  }
-    .performance__token-data {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-}
-
 @media (max-width: 576px) {
   .performance__token-data-markets {
     display: flex;
@@ -579,7 +518,7 @@ export default {
   }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 640px) {
   .performance__token-data-header {
     width: 100%;
     margin-bottom: 6px;
@@ -602,7 +541,7 @@ export default {
   }
   .performance__token-data__description {
     margin-top: 0;
-    margin-left: 68px;
+    margin-left: 10px;
     max-width: 138px;
   }
   .performance__divider {
@@ -675,6 +614,101 @@ export default {
     .inactive-link {
       opacity: 0.5;
       filter: grayscale(10);
+    }
+  }
+  .performance__token-data-markets {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+
+  .performance__token-data-markets-links {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    p {
+      font-size: 12px;
+      color: var(--color-1);
+      margin-left: 4px
+    }
+    svg {
+      border-radius: 50%;
+    }
+    .inactive-link {
+      opacity: 0.5;
+      filter: grayscale(10);
+    }
+  }
+  .performance__chain-data-name {
+    display: none;
+  }
+  .performance__token-data {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .performance__divider {
+    width: 100%;
+  }
+  .performance__token-data-title--token {
+    margin-left: 20px;
+  }
+  .performance__token-data-title {
+    max-width: none;
+  }
+  .performance__token-data__description {
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+  .performance__token-data-title {
+    margin-top: 10px;
+  }
+  .performance__token-data-num {
+    margin-top: 6px;
+  }
+  .performance__apy-data-chain {
+    margin: 0;
+  }
+  .performance__icon-chain {
+    margin-top: 10px;
+  }
+  .performance__divider {
+    margin-left: 5px;
+    margin-right: 5px;
+  }
+    .performance__payout-data,
+  .performance__apy-data,
+  .performance__apy-data-chain,
+  .performance__tvl-data {
+    justify-content: space-between;
+    flex-direction: row;
+    width: 100%;
+    p {
+      margin-top: 0;
+    }
+  }
+    .performance__divider {
+    margin-top: 12px;
+    margin-bottom: 12px;
+  }
+    .performance__token-data-header {
+    width: 100%;
+    margin-bottom: 6px;
+  }
+  .performance__token-data__description {
+    margin-left: 20px;
+  }
+  .performance__token-data-num  {
+    margin-left: auto;
+  }
+  .performance__token-data-h {
+    margin-left: 10px;
+  }
+  .performance__apy-data-chain {
+    svg {
+      margin-left: 10px;
     }
   }
 

@@ -138,7 +138,7 @@ export default {
   }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 640px) {
   .dashboard__chains-interval {
     flex-direction: column;
   }

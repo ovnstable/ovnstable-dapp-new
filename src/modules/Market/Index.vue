@@ -187,7 +187,7 @@ export default {
   }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 640px) {
   .market {
     padding-top: 16px;
     padding-left: 20px;

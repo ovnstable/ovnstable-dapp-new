@@ -158,7 +158,7 @@ export default {
   @media (max-width: 1240px) {
     flex-wrap: wrap;
   }
-  @media (max-width: 400px) {
+  @media (max-width: 640px) {
     position: sticky;
     left: 0;
   }
@@ -225,7 +225,7 @@ export default {
   }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 640px) {
   .pools-wrap__tabs {
     width: 100%;
   }

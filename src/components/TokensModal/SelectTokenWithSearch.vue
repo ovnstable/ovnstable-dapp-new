@@ -354,7 +354,7 @@ export default {
   cursor: pointer;
 }
 
-@media (max-width: 400px) {
+@media (max-width: 640px) {
   .search-tokens__list {
     max-height: 100vh;
   }

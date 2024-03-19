@@ -637,7 +637,7 @@ export default {
     overflow-x: scroll;
   }
 }
-@media (max-width: 400px) {
+@media (max-width: 640px) {
   .pools-table {
     overflow: hidden;
     overflow-x: auto

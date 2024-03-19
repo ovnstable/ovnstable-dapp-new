@@ -62,7 +62,7 @@ export default {
     margin: 0 auto;
   }
 }
-@media (max-width: 400px) {
+@media (max-width: 640px) {
   .change-network__btn {
     font-size: 16px;
   }

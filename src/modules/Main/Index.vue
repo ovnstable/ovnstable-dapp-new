@@ -266,7 +266,7 @@ export default {
   justify-content: space-evenly;
 }
 
-@media (max-width: 400px) {
+@media (max-width: 640px) {
   .swap-module {
     flex-direction: column;
     display: flex;

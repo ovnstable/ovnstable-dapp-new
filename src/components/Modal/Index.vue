@@ -223,7 +223,7 @@ export default {
     background-color: var(--color-6);
   }
 }
-@media (max-width: 400px) {
+@media (max-width: 640px) {
   .modal__body {
     max-height: 90vh;
   }

@@ -769,7 +769,7 @@ export default {
     color: var(--color-1);
   }
 }
-@media (max-width: 400px) {
+@media (max-width: 640px) {
   .mintredeem-form-steps {
     margin-top: 18px;
     margin-bottom: 30px;
