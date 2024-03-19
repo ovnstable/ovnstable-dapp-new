@@ -141,13 +141,13 @@ export default {
   left: 10px;
   top: 0;
   margin: auto;
-  height: 100%;
+  min-height: 100vh;
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: rgba(255, 255, 255, .4);
-  padding-bottom: 50vh;
+
   [data-theme="dark"] & {
     background-color: var(--color-19);
   }

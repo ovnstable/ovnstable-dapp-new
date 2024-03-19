@@ -154,12 +154,11 @@ export default {
   margin: auto;
   height: 100%;
   width: 100%;
-  min-height: 474px;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: rgba(255, 255, 255, .4);
-  padding-bottom: 50vh;
   [data-theme="dark"] & {
     background-color: var(--color-19);
   }
