@@ -71,20 +71,18 @@
         @keypress="clickOnBalance"
         class="input-tokens__balance"
       >
-        <div class="select-token-balance-text">
-          <div
-            v-if="balancesLoading"
-            class="lineLoader lineLoader--balance"
-          />
-          <div v-else-if="tokenInfo.selectedToken && tokenInfo.selectedToken?.balanceData?.balance">
-            <span class="select-token-balance-text-enabled">
-              {{formatMoney(tokenInfo.selectedToken.balanceData.balance,
-                            fixedByPrice(tokenInfo.selectedToken.price))}}
-            </span>
-          </div>
-          <div v-else>
-            Balance: 0
-          </div>
+        <div
+          v-if="balancesLoading"
+          class="lineLoader lineLoader--balance"
+        />
+        <div v-else-if="tokenInfo.selectedToken && tokenInfo.selectedToken?.balanceData?.balance">
+          <span>
+            {{formatMoney(tokenInfo.selectedToken.balanceData.balance,
+                          fixedByPrice(tokenInfo.selectedToken.price))}}
+          </span>
+        </div>
+        <div v-else>
+          Balance: 0
         </div>
       </div>
     </div>

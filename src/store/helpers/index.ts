@@ -115,7 +115,6 @@ export const addItemToFilteredTokens = (
       approved: false,
     },
     price: 0,
-    estimatePerOne: 0,
   });
 };
 
@@ -189,7 +188,6 @@ export const getFilteredOvernightTokens = (
   chainId: number,
   isOnlyOvnToken: any,
 ) => {
-  console.log(state.tokensMap, 'getFilteredOvernightTokens');
   if (!state.tokensMap || !state.tokensMap.chainTokenMap) return [];
 
   const tokens: any = [];
@@ -372,15 +370,12 @@ export const updateTokenValue = (
 export const maxAll = (
   selectedInputTokens: any[],
   checkApprove: (tokenData: any, val: string) => void,
-) => {
-  console.log(selectedInputTokens, 'SELECTED');
-  return selectedInputTokens.map((item) => updateTokenValue(
-    item,
-    item.selectedToken.balanceData.balance,
-    checkApprove,
-    item.selectedToken.balanceData.originalBalance,
-  ));
-};
+) => selectedInputTokens.map((item) => updateTokenValue(
+  item,
+  item.selectedToken.balanceData.balance,
+  checkApprove,
+  item.selectedToken.balanceData.originalBalance,
+));
 
 export const loadBalance = async (
   rootState: any,

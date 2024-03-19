@@ -20,7 +20,8 @@ const actions = {
     dispatch('accountData/refreshBalance', null, { root: true });
     // possibly remove, only for account change
 
-    dispatch('odosData/loadTokens', null, { root: true });
+    await dispatch('odosData/loadTokens', null, { root: true });
+    await dispatch('odosData/loadPricesInfo', null, { root: true });
     dispatch('odosData/loadBalances', null, { root: true });
     // dispatch('supplyData/refreshInsuranceSupply', null, { root: true });
     // dispatch('swapData/refreshSwap', null, { root: true });

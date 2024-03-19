@@ -53,7 +53,7 @@
           class="lineLoader lineLoader--balance"
         />
         <div
-          v-if="isInputToken && tokenInfo.selectedToken"
+          v-else-if="isInputToken && tokenInfo.selectedToken"
         >
           ~ ${{formatMoney(tokenInfo.usdValue, 2)}}
         </div>
@@ -71,21 +71,19 @@
         @click="maxUpdate"
         @keypress="maxUpdate"
       >
-        <div class="select-token-balance-text">
-          <div
-            v-if="balancesLoading"
-            class="lineLoader lineLoader--balance"
-          />
-          <div v-if="tokenInfo.selectedToken && tokenInfo.selectedToken?.balanceData?.balance">
-            <span class="select-token-balance-text-enabled">
-              {{formatMoney(tokenInfo.selectedToken.balanceData.balance,
-                            fixedByPrice(tokenInfo.selectedToken.price))}}
-            </span>
-          </div>
-          <div v-else>
-            Balance: 0
-          </div>
+        <div
+          v-if="balancesLoading"
+          class="lineLoader lineLoader--balance"
+        />
+        <div v-else-if="tokenInfo.selectedToken && tokenInfo.selectedToken?.balanceData?.balance">
+          <span>
+            {{formatMoney(tokenInfo.selectedToken.balanceData.balance,
+                          fixedByPrice(tokenInfo.selectedToken.price))}}
+          </span>
         </div>
+        <span v-else>
+          Balance: 0
+        </span>
       </div>
     </div>
   </div>
