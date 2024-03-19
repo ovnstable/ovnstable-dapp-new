@@ -1,14 +1,14 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-unused-expressions */
 import { poolTypes } from '@/modules/Main/components/PoolsTable/types/index.ts';
-import { LOW_TVL_PROMOTE } from './mocks.ts';
+import { LOW_TVL_PROMOTE, MIN_AMOUNT } from './mocks.ts';
 
 const STABLE_TOKENS = ['USD+', 'DAI+', 'WUSD+', 'USDC+', 'USDT+'];
 
-export const buildLink = (pool: any) => {
+export const buildLink = (pool: any, poolPlatform: string) => {
   let url;
 
-  switch (pool.platform) {
+  switch (poolPlatform) {
     case 'Dystopia':
       url = 'https://www.dystopia.exchange/liquidity/';
       break;
@@ -139,65 +139,64 @@ export const buildLink = (pool: any) => {
   }
 
   if (
-    pool.platform === 'Thena'
-    || pool.platform === 'Wombat'
-    || pool.platform === 'Beefy'
-    || pool.platform === 'Ezkalibur'
-    || pool.platform === 'Mute'
-    || pool.platform === 'Velodrome'
-    || pool.platform === 'Aerodrome'
-    || pool.platform === 'Ennead'
-    || pool.platform === 'Arbidex'
-    || pool.platform === 'Gnd'
-    || pool.platform === 'Baseswap'
-    || pool.platform === 'Velocimeter'
-    || pool.platform === 'Swapbased'
-    || pool.platform === 'Shekel'
-    || pool.platform === 'Maverick'
-    || pool.platform === 'Alienbase'
-    || pool.platform === 'Convex'
-    || pool.platform === 'Pancake'
-    || pool.platform === 'Syncswap'
+    poolPlatform === 'Thena'
+    || poolPlatform === 'Wombat'
+    || poolPlatform === 'Beefy'
+    || poolPlatform === 'Ezkalibur'
+    || poolPlatform === 'Mute'
+    || poolPlatform === 'Velodrome'
+    || poolPlatform === 'Aerodrome'
+    || poolPlatform === 'Ennead'
+    || poolPlatform === 'Arbidex'
+    || poolPlatform === 'Gnd'
+    || poolPlatform === 'Baseswap'
+    || poolPlatform === 'Velocimeter'
+    || poolPlatform === 'Swapbased'
+    || poolPlatform === 'Maverick'
+    || poolPlatform === 'Alienbase'
+    || poolPlatform === 'Convex'
+    || poolPlatform === 'Pancake'
+    || poolPlatform === 'Syncswap'
   ) {
     return url;
   }
 
   // promoting / exceptions
   if (
-    pool.platform === 'Defiedge'
+    poolPlatform === 'Defiedge'
     && pool.address === '0xd1c33d0af58eb7403f7c01b21307713aa18b29d3'
   ) {
     return `https://app.defiedge.io/s/optimism/${pool.address}`;
   }
 
   if (
-    pool.platform === 'Defiedge'
+    poolPlatform === 'Defiedge'
     && pool.address === '0x4784be205996d53d7a40bdb4e1d7b84e551d71d4'
   ) {
     return `https://app.defiedge.io/s/arbitrum/${pool.address}`;
   }
 
   if (
-    pool.platform === 'Defiedge'
+    poolPlatform === 'Defiedge'
     && pool.address === '0x73f7039224c88378de8e2ce31b13debba1f0e05a'
   ) {
     return `https://app.defiedge.io/s/arbitrum/${pool.address}`;
   }
 
   if (
-    pool.platform === 'Defiedge'
+    poolPlatform === 'Defiedge'
     && pool.address === '0x35a3b69f579ed1b0b88dc433ebcd7c65fdf57389'
   ) {
     return `https://app.defiedge.io/s/arbitrum/${pool.address}`;
   }
 
-  if (pool.platform === 'Beethoven') {
+  if (poolPlatform === 'Beethoven') {
     url += `${pool.address}000200000000000000000105`;
     return url;
   }
 
   if (
-    pool.platform === 'Balancer'
+    poolPlatform === 'Balancer'
     && pool.address === '0xa8af146d79ac0bb981e4e0d8b788ec5711b1d5d0'
   ) {
     url += `${pool.address}00000000000000000000047b`;
@@ -205,7 +204,7 @@ export const buildLink = (pool: any) => {
   }
 
   if (
-    pool.platform === 'Balancer'
+    poolPlatform === 'Balancer'
     && pool.address === '0x519cce718fcd11ac09194cff4517f12d263be067'
   ) {
     url += `${pool.address}000000000000000000000382`;
@@ -213,7 +212,7 @@ export const buildLink = (pool: any) => {
   }
 
   if (
-    pool.platform === 'Balancer'
+    poolPlatform === 'Balancer'
     && pool.address === '0xd6d20527c7b0669989ee082b9d3a1c63af742290'
   ) {
     url += `${pool.address}000000000000000000000483`;
@@ -221,7 +220,7 @@ export const buildLink = (pool: any) => {
   }
 
   if (
-    pool.platform === 'Balancer'
+    poolPlatform === 'Balancer'
     && pool.address === '0x85ec6ae01624ae0d2a04d0ffaad3a25884c7d0f3'
   ) {
     url += `${pool.address}0002000000000000000004b6`;
@@ -229,7 +228,7 @@ export const buildLink = (pool: any) => {
   }
 
   if (
-    pool.platform === 'Balancer'
+    poolPlatform === 'Balancer'
     && pool.address === '0xa036553ad30f077bd46c37b1e8ac28e010d7b39e'
   ) {
     url = `https://app.balancer.fi/#/base/pool/${
@@ -239,20 +238,20 @@ export const buildLink = (pool: any) => {
   }
 
   if (
-    pool.platform === 'Curve'
+    poolPlatform === 'Curve'
     && pool.address === '0xda3de145054ED30Ee937865D31B500505C4bDfe7'
   ) {
     url = 'https://curve.fi/#/base/pools/factory-v2-2/deposit';
     return url;
   }
 
-  if (pool.platform === 'Velocore' && pool.chainName === 'linea') {
+  if (poolPlatform === 'Velocore' && pool.chainName === 'linea') {
     url = 'https://linea.velocore.xyz/stable-liquidity';
     return url;
   }
 
   if (
-    pool.platform === 'Velocore'
+    poolPlatform === 'Velocore'
     && pool.address === '0xf5E67261CB357eDb6C7719fEFAFaaB280cB5E2A6'
   ) {
     url = 'https://zksync.velocore.xyz/stable-liquidity';
@@ -260,7 +259,7 @@ export const buildLink = (pool: any) => {
   }
 
   if (
-    pool.platform === 'Velocore'
+    poolPlatform === 'Velocore'
     && pool.address === '0x4b9f00860d7f42870addeb687fa4e47062df71d9'
   ) {
     url = 'https://zksync-v1.velocore.xyz/liquidity/0x4b9f00860d7f42870addeb687fa4e47062df71d9';
@@ -298,8 +297,6 @@ const filterByPoolType = (
   return poolsList;
 };
 
-const MIN_AMOUNT = 100000;
-
 export const getSortedPools = (
   pools: any[],
   filterByTvl: boolean,
@@ -320,7 +317,15 @@ export const getSortedPools = (
 
   if (!filterByTvl) {
     poolsList = filteredPools
-      .filter((pool) => (LOW_TVL_PROMOTE.includes(pool.address) ? pool : pool.tvl >= MIN_AMOUNT));
+      .filter((pool) => {
+        // duplicate beefy/aerodrome, currently unique case
+        if (pool.address === '0x61366A4e6b1DB1b85DD701f2f4BFa275EF271197') return false;
+
+        if (LOW_TVL_PROMOTE.includes(pool.address)) return true;
+        if (pool.tvl >= MIN_AMOUNT) return true;
+
+        return false;
+      });
   } else {
     poolsList = filteredPools;
   }
@@ -408,7 +413,7 @@ export const initAggregators = (pool: any) => {
 
   if (poolAddress === '0x1F3cA66c98d682fA1BeC31264692daD4f17340BC') {
     pool.aggregators.push({
-      id: `Aggregator${pool.id.name}${pool.tvl}${pool.platform}`,
+      id: `Aggregator${pool.id.name}${pool.tvl}`,
       name: pool.id.name,
       address: pool.id.address,
       platform: 'Beefy',
@@ -419,7 +424,7 @@ export const initAggregators = (pool: any) => {
 
   if (poolAddress === '0xa99817d2d286c894f8f3888096a5616d06f20d46') {
     pool.aggregators.push({
-      id: `Aggregator${pool.id.name}${pool.tvl}${pool.platform}`,
+      id: `Aggregator${pool.id.name}${pool.tvl}`,
       name: pool.id.name,
       address: pool.id.address,
       platform: 'Beefy',
@@ -430,7 +435,7 @@ export const initAggregators = (pool: any) => {
 
   if (poolAddress === '0x219fbc3ed20152a9501ddaa47f2a8c193e32d0c6') {
     pool.aggregators.push({
-      id: `Aggregator${pool.id.name}${pool.tvl}${pool.platform}`,
+      id: `Aggregator${pool.id.name}${pool.tvl}`,
       name: pool.id.name,
       address: pool.id.address,
       platform: 'Beefy',
@@ -441,7 +446,7 @@ export const initAggregators = (pool: any) => {
 
   if (poolAddress === '0x69c28d5bbe392ef48c0dc347c575023daf0cd243') {
     pool.aggregators.push({
-      id: `Aggregator${pool.id.name}${pool.tvl}${pool.platform}`,
+      id: `Aggregator${pool.id.name}${pool.tvl}`,
       name: pool.id.name,
       address: pool.id.address,
       platform: 'Beefy',
@@ -452,7 +457,7 @@ export const initAggregators = (pool: any) => {
 
   if (poolAddress === '0x8a9cd3dce710e90177b4332c108e159a15736a0f') {
     pool.aggregators.push({
-      id: `Aggregator${pool.id.name}${pool.tvl}${pool.platform}`,
+      id: `Aggregator${pool.id.name}${pool.tvl}`,
       name: pool.id.name,
       address: pool.id.address,
       platform: 'Beefy',
@@ -463,7 +468,7 @@ export const initAggregators = (pool: any) => {
 
   if (poolAddress === '0x67124355cce2ad7a8ea283e990612ebe12730175') {
     pool.aggregators.push({
-      id: `Aggregator${pool.id.name}${pool.tvl}${pool.platform}`,
+      id: `Aggregator${pool.id.name}${pool.tvl}`,
       name: pool.id.name,
       address: pool.id.address,
       platform: 'Beefy',
@@ -474,7 +479,7 @@ export const initAggregators = (pool: any) => {
 
   if (poolAddress === '0xeb9153afbaa3a6cfbd4fce39988cea786d3f62bb') {
     pool.aggregators.push({
-      id: `Aggregator${pool.id.name}${pool.tvl}${pool.platform}`,
+      id: `Aggregator${pool.id.name}${pool.tvl}`,
       name: pool.id.name,
       address: pool.id.address,
       platform: 'Ennead',

@@ -110,33 +110,33 @@
                 </div>
               </div>
             </div>
-            <a
-              :href="getPlatformLink(pool)"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="pools-table__platform"
-            >
-              <BaseIcon
-                class="pools-table__platform-icon"
-                :name="pool.platform"
-              />
-
-              <span v-if="pool.poolNameForAgregator">
-                {{ pool.poolNameForAgregator.toUpperCase() }}
-              </span>
-              <span v-else>
-                {{
-                  pool.platform === "Shekel"
-                    ? "Shekelswap"
-                    : pool.platform.toUpperCase()
-                }}
-              </span>
-              <div class="button-link">
+            <div class="pools-table__platform-row">
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                class="pools-table__platform"
+                v-for="(poolPlat, key) in pool.platform"
+                :href="getPlatformLink(pool, poolPlat)"
+                :key="key"
+              >
                 <BaseIcon
-                  name="PayoutArrow"
+                  class="pools-table__platform-icon"
+                  :name="poolPlat"
                 />
-              </div>
-            </a>
+
+                <span v-if="pool.poolNameForAgregator">
+                  {{ pool.poolNameForAgregator.toUpperCase() }}
+                </span>
+                <span v-else>
+                  {{ poolPlat.toUpperCase() }}
+                </span>
+                <div class="button-link">
+                  <BaseIcon
+                    name="PayoutArrow"
+                  />
+                </div>
+              </a>
+            </div>
 
             <div class="pools-table__apy">
               <div
@@ -144,7 +144,7 @@
                 class="card-label text-center"
               >
                 {{ formatMoneyComma(pool.apr, 2) }}%<sup
-                  v-if="pool.platform === 'Beefy'"
+                  v-if="pool.platform.includes['Beefy']"
                 >(apy)</sup>
               </div>
               <div
@@ -273,7 +273,7 @@ export default {
       return (pool: any) => pool.name.split('/');
     },
     getPlatformLink() {
-      return (pool: any) => buildLink(pool) ?? '';
+      return (pool: any, platform: string) => buildLink(pool, platform) ?? '';
     },
 
     // getPoolType() {
@@ -550,6 +550,13 @@ export default {
     background-color: unset;
     padding: 2px 9px;
   }
+}
+
+.pools-table__platform-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding-right: 10px;
 }
 
 .pools-table__platform {

@@ -20,9 +20,9 @@ export const getProportion = (poolAddress: string, zapPool: any, zapContract: an
 
   // todo 4: get type from configuration
   if (
-    zapPool.data.platform === 'Arbidex'
-    || zapPool.data.platform === 'Baseswap'
-    || zapPool.data.platform === 'Alienbase'
+    zapPool.data.platform[0] === 'Arbidex'
+    || zapPool.data.platform[0] === 'Baseswap'
+    || zapPool.data.platform[0] === 'Alienbase'
   ) {
     return zapContract
       .getProportion(gauge, poolInfo.poolId.toString())

@@ -33,7 +33,7 @@
           class="platform-label-container"
         >
           <div class="platform-label">
-            {{pool.platform ? pool.platform.toUpperCase() : '-'}}
+            {{pool.platform ? pool.platform[0]?.toUpperCase() : '-'}}
           </div>
         </div>
       </div>
@@ -42,7 +42,7 @@
           :class="isShort ? 'pool-detail-title-short' : ''"
           class="pool-detail-title"
         >
-          <span v-if="pool.platform === 'Beefy'">
+          <span v-if="pool.platform[0] === 'Beefy'">
             APY
           </span>
           <span v-else>
@@ -90,7 +90,7 @@
         >
           Staking
         </div>
-        <BaseIcon :name="pool.platform" />
+        <BaseIcon :name="pool.platform[0]" />
       </div>
     </div>
   </div>

@@ -49,7 +49,7 @@
               <BaseIcon name="ArrowDown" />
             </div>
             <h1>
-              {{openPoolList ? "CLOSE" : "OPEN"}} Pools with TVL less than $100K
+              {{openPoolList ? "CLOSE" : "OPEN"}} Pools with TVL less than $300K
             </h1>
             <div
               class="table-extend__arrow"
@@ -228,7 +228,7 @@ export default {
               || pool.id.toLowerCase().includes(this.searchQuery.toLowerCase())
               || pool.chainName.toLowerCase().includes(this.searchQuery.toLowerCase())
               || pool.address.toLowerCase().includes(this.searchQuery.toLowerCase())
-              || pool.platform.toLowerCase().includes(this.searchQuery.toLowerCase()));
+              || pool.platform.join('').toLowerCase().includes(this.searchQuery.toLowerCase()));
     },
     filteredBySearchQuerySecondPools() {
       if (!this.searchQuery) return this.filteredAprSecondPools;
@@ -238,7 +238,7 @@ export default {
               || pool.id.toLowerCase().includes(this.searchQuery.toLowerCase())
               || pool.chainName.toLowerCase().includes(this.searchQuery.toLowerCase())
               || pool.address.toLowerCase().includes(this.searchQuery.toLowerCase())
-              || pool.platform.toLowerCase().includes(this.searchQuery.toLowerCase()));
+              || pool.platform.join('').toLowerCase().includes(this.searchQuery.toLowerCase()));
     },
     filteredAprPools() {
       if (!this.isShowAprLimit) return this.filteredByNetwork;

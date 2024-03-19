@@ -162,7 +162,7 @@
         </div>
 
         <div
-          v-if="zapPool && zapPool.platform === 'Swapbased'"
+          v-if="zapPool && zapPool.platform[0][0] === 'Swapbased'"
           class="slippage-info-container"
         >
           <div class="slippage-info-title">
@@ -1271,7 +1271,7 @@ export default {
       let sourceBlacklist = [...this.sourceLiquidityBlacklist];
       // excluding platform for big liquidities zapins
       const excludeLiquidityByPlatform = this.mapExcludeLiquidityPlatform[
-        this.zapPool.platform
+        this.zapPool.platform[0][0]
       ];
       if (excludeLiquidityByPlatform && excludeLiquidityByPlatform.length) {
         sourceBlacklist = [...sourceBlacklist, ...excludeLiquidityByPlatform];
@@ -1604,9 +1604,9 @@ export default {
 
       let gaugeData;
       if (
-        zapPool.platform === 'Arbidex'
-        || zapPool.platform === 'Baseswap'
-        || zapPool.platform === 'Alienbase'
+        zapPool.platform[0] === 'Arbidex'
+        || zapPool.platform[0] === 'Baseswap'
+        || zapPool.platform[0] === 'Alienbase'
       ) {
         gaugeData = {
           gauge: gaugeAddress,
@@ -1616,14 +1616,14 @@ export default {
           ],
           poolId: poolInfo.poolId,
         };
-      } else if (zapPool.platform === 'Defiedge') {
+      } else if (zapPool.platform[0] === 'Defiedge') {
         gaugeData = {
           chef: this.lastPoolInfoData.chef,
           pid: this.lastPoolInfoData.poolId,
           gauge: gaugeAddress,
           amountsOut: [proportions.amountToken0Out, proportions.amountToken1Out],
         };
-      } else if (zapPool.platform === 'Pancake') {
+      } else if (zapPool.platform[0] === 'Pancake') {
         gaugeData = {
           amountsOut: [
             proportions.amountToken0Out,

@@ -49,7 +49,7 @@
           <div class="modal-content__data-row">
             <div class="success-token-title">Staking platform</div>
             <span class="success-data-item">
-              {{ successData.pool.platform }}
+              {{ successData.pool.platform[0][0] }}
             </span>
           </div>
           <div class="modal-content__data-row">
@@ -202,73 +202,73 @@ export default {
   computed: {
     ...mapGetters('network', ['getParams']),
     openPositionOnPool() {
-      if (this.successData.pool.platform === 'Chronos') {
+      if (this.successData.pool.platform[0] === 'Chronos') {
         return `https://app.chronos.exchange/liquidity/${this.successData.pool.address}`;
       }
 
-      if (this.successData.pool.platform === 'Thena') {
+      if (this.successData.pool.platform[0] === 'Thena') {
         return `https://www.thena.fi/liquidity/manage/${this.successData.pool.address}`;
       }
 
-      if (this.successData.pool.platform === 'Ramses') {
+      if (this.successData.pool.platform[0] === 'Ramses') {
         return `https://app.ramses.exchange/liquidity/${this.successData.pool.address}`;
       }
 
-      if (this.successData.pool.platform === 'Velodrome') {
+      if (this.successData.pool.platform[0] === 'Velodrome') {
         return 'https://velodrome.finance/dash';
       }
 
-      if (this.successData.pool.platform === 'Aerodrome') {
+      if (this.successData.pool.platform[0] === 'Aerodrome') {
         return 'https://aerodrome.finance/dash';
       }
 
-      if (this.successData.pool.platform === 'Arbidex') {
+      if (this.successData.pool.platform[0] === 'Arbidex') {
         return 'https://arbidex.fi/xarxfarms';
       }
 
-      if (this.successData.pool.platform === 'Baseswap') {
+      if (this.successData.pool.platform[0] === 'Baseswap') {
         return 'https://baseswap.fi/farms';
       }
 
-      if (this.successData.pool.platform === 'Alienbase') {
+      if (this.successData.pool.platform[0] === 'Alienbase') {
         return 'https://app.alienbase.xyz/farms';
       }
 
-      if (this.successData.pool.platform === 'Swapbased') {
+      if (this.successData.pool.platform[0] === 'Swapbased') {
         return 'https://swapbased.finance/#/farm';
       }
 
-      if (this.successData.pool.platform === 'Velocimeter') {
+      if (this.successData.pool.platform[0] === 'Velocimeter') {
         return 'https://base.velocimeter.xyz/liquidity';
       }
 
-      if (this.successData.pool.platform === 'Sperax') {
+      if (this.successData.pool.platform[0] === 'Sperax') {
         return `https://demeter.sperax.io/farm/42161/${this.successData.pool.address}`;
       }
 
-      if (this.successData.pool.platform === 'Defiedge') {
+      if (this.successData.pool.platform[0] === 'Defiedge') {
         return `https://app.defiedge.io/s/optimism/${this.successData.pool.address}`;
       }
 
-      if (this.successData.pool.platform === 'Curve') {
+      if (this.successData.pool.platform[0] === 'Curve') {
         return 'https://curve.fi/#/base/pools/factory-v2-2/deposit';
       }
 
-      if (this.successData.pool.platform === 'Convex') {
+      if (this.successData.pool.platform[0] === 'Convex') {
         return 'https://www.convexfinance.com/stake/arbitrum/13';
       }
 
-      if (this.successData.pool.platform === 'Beefy') {
+      if (this.successData.pool.platform[0] === 'Beefy') {
         return 'https://app.beefy.com/dashboard';
       }
 
-      if (this.successData.pool.platform === 'Pancake') {
+      if (this.successData.pool.platform[0] === 'Pancake') {
         return `https://pancakeswap.finance/info/v3/arb/pairs/${this.successData.pool.address}`;
       }
 
       console.error(
         'Open Position failed, dex not found.',
-        this.successData.pool.platform,
+        this.successData.pool.platform[0],
       );
 
       return '';

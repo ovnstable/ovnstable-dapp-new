@@ -12,6 +12,7 @@ import {
 } from '@/store/views/main/pools/helpers.ts';
 import { FEATURED_POOLS, poolTokensForZapMap, zapPlatformSupportList } from '@/store/views/main/pools/mocks.ts';
 import { loadTokenImage } from '@/utils/tokenLogo.ts';
+import { isArray } from 'lodash';
 
 const stateData = {
   sortedPoolList: [],
@@ -98,6 +99,11 @@ const actions = {
                 pool.zappable = true;
               }
 
+              // unique case
+              if (pool.id.address === '0x61366A4e6b1DB1b85DD701f2f4BFa275EF271197_Aerodrome') {
+                pool.platform = ['Beefy', 'Aerodrome'];
+              }
+
               if (pool && pool?.tvl >= 0) {
                 pool = initAggregators(pool);
 
@@ -119,7 +125,7 @@ const actions = {
                   chain: networkConfig.networkId,
                   chainName: networkConfig.networkName,
                   address: pool.id.address,
-                  platform: pool.platform,
+                  platform: isArray(pool.platform) ? pool.platform : [pool.platform],
                   tvl: pool.tvl,
                   apr: pool.apr,
                   skimEnabled: pool.skimEnabled,
