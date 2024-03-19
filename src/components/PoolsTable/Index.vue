@@ -72,6 +72,13 @@
                   <span>
                     {{ getTokenNames(pool)[1] }}
                   </span>
+                  <div
+                    class="pools-table__hot"
+                    v-if="pool.feature && !pool.token2Icon"
+                  >
+                    <BaseIcon name="CommonHot" />
+                    HOT
+                  </div>
                 </div>
                 <div
                   v-if="pool.token2Icon"
@@ -81,6 +88,13 @@
                     alt="token"
                     :src="pool.token2Icon"
                   />
+                  <div
+                    class="pools-table__hot"
+                    v-if="pool.feature && pool.token2Icon"
+                  >
+                    <BaseIcon name="CommonHot" />
+                    HOT
+                  </div>
                 </div>
                 <div
                   v-if="pool.token3Icon"
@@ -91,13 +105,6 @@
                     :src="pool.token3Icon"
                   />
                 </div>
-              </div>
-              <div
-                class="pools-table__hot"
-                v-if="pool.feature"
-              >
-                <BaseIcon name="CommonHot" />
-                HOT
               </div>
             </div>
             <a
@@ -458,7 +465,6 @@ export default {
   align-items: center;
   width: fit-content;
   border-radius: 30px;
-  overflow: hidden;
 
   @media (max-width: 1024px) {
     flex-direction: column;
@@ -499,7 +505,7 @@ export default {
   img {
     width: 24px;
     height: 24px;
-    margin-right: 8px;
+    margin-right: 5px;
     border-radius: 50%;
   }
 
@@ -620,7 +626,7 @@ export default {
 .pools-table__hot {
   position: absolute;
   top: -10px;
-  right: -2px;
+  right: -31px;
   display: flex;
   align-items: center;
   gap: 6px;
