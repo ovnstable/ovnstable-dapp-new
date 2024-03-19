@@ -286,4 +286,10 @@ export default {
   }
 }
 
+@media (max-width: 380px) {
+  .ovn__overview-tokenomic-diagram {
+    flex-direction: column;
+  }
+}
+
 </style>

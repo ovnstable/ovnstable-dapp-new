@@ -607,6 +607,9 @@ export default {
   .ovn__overview-chain-data-container {
     margin-top: 12px;
   }
+  .ovn__overview-link-cmc {
+    margin-right: 10px;
+  }
 
 }
 
