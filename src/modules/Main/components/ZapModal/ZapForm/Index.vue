@@ -397,7 +397,7 @@ export default {
 
       isSwapLoading: false,
       isSumulateSwapLoading: false,
-      slippagePercent: 0.05,
+      slippagePercent: 0.5,
       multiSwapOdosFeePercent: 0.01,
 
       tokensQuotaCounterId: null as any,
@@ -445,7 +445,7 @@ export default {
       'lastNftTokenId',
       'swapResponseConfirmInfo',
       'routerContract',
-      'odosReferalCode',
+      'odosZapReferalCode',
     ]),
 
     ...mapState('zapinData', [
@@ -720,6 +720,12 @@ export default {
   watch: {
     sumOfAllSelectedTokensInUsd() {
       this.recalculateOutputTokensSum();
+    },
+
+    // on wallet connect
+    async account(val) {
+      if (val) this.clearAndInitForm();
+      if (!val) this.outputTokens = [getNewOutputToken()];
     },
 
     isTokensLoadedAndFiltered(val) {
@@ -1062,7 +1068,7 @@ export default {
       const formulaInputTokens = [];
       let formulaOutputTokens = [];
 
-      console.log(poolOutputTokens, '----poolOutputTokens');
+      console.log(userInputTokens, '----userInputTokens');
       for (let i = 0; i < userInputTokens.length; i++) {
         const inputToken = userInputTokens[i];
         const userInputToken = inputToken.selectedToken;
@@ -1125,9 +1131,7 @@ export default {
       // (!) List - formulaOutputTokens with 0 amount and sort like in pool pair.
       const outputDecimals = formulaOutputTokens.map((token: any) => token.decimals);
       const outputAddresses = formulaOutputTokens.map((token: any) => token.address);
-      const outputAmounts = formulaOutputTokens.map(
-        (token: any) => token.contractValue,
-      );
+      const outputAmounts = formulaOutputTokens.map((token: any) => token.contractValue);
       const outputPrices = formulaOutputTokens.map((token: any) => token.price);
 
       console.log({
@@ -1181,7 +1185,7 @@ export default {
         simulate: false,
         pathViz: false,
         disableRFQs: false,
-        referralCode: this.odosReferalCode,
+        referralCode: this.odosZapReferalCode,
       };
 
       this.odosSwapRequest(requestData)
@@ -1834,7 +1838,7 @@ export default {
       const tokenContract = this.tokensContractMap[selectedToken.address];
       const approveValue = new BigNumber(10)
         .pow(selectedToken.decimals)
-        .times(100000)
+        .times(1000000)
         .toFixed(0);
 
       const tx = await approveToken(
@@ -2143,11 +2147,10 @@ export default {
 
       this.checkApproveForToken(
         newInputToken,
-        new BigNumber(10 ** selectedToken.decimals).times(100000).toFixed(0),
+        new BigNumber(10 ** selectedToken.decimals).times(1000000).toFixed(0),
       );
     },
     addSelectedTokenToOutputList(selectedToken: any, isLocked: any, startPercent: any) {
-      console.log(selectedToken, 'SELECTED');
       const newOutputToken = getNewOutputToken();
       newOutputToken.locked = isLocked;
       newOutputToken.value = startPercent;

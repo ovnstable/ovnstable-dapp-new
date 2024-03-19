@@ -341,11 +341,8 @@ export default {
       }
     },
     // on wallet connect
-    async account(val) {
-      if (val) {
-        this.clearForm('000');
-        this.init();
-      }
+    async allTokensList(val) {
+      if (val) this.clearForm('000');
       if (!val) this.outputTokens = [getNewOutputToken()];
     },
     // for first render
@@ -668,6 +665,7 @@ export default {
         'initWalletTransaction',
         'initData',
         'loadPricesInfo',
+        'loadBalances',
       ],
     ),
     ...mapActions('errorModal', ['showErrorModalWithMsg']),
@@ -754,6 +752,7 @@ export default {
         this.allTokensList,
         symbol as string | null,
       );
+
       if (!ovnSelectedToken) {
         this.addNewInputToken();
         this.addNewOutputToken();
@@ -997,23 +996,8 @@ export default {
         referralCode: this.odosReferalCode,
       };
 
-      console.log(requestData, 'sWAPP2');
-      console.log({
-        message: 'Odos Swap quota request data',
-        swapSession: this.swapSessionId,
-        data: requestData,
-        actualGas,
-      });
-
       this.odosSwapRequest(requestData)
         .then(async (data: any) => {
-          console.log({
-            message: 'Odos Swap quota response data',
-            swapSession: this.swapSessionId,
-            data,
-            actualGas,
-          });
-
           const assembleData = {
             userAddr: ethers.getAddress(
               this.account.toLowerCase(),
@@ -1022,12 +1006,6 @@ export default {
             simulate: true,
           };
 
-          console.log({
-            message: 'Odos Assemble request data',
-            swapSession: this.swapSessionId,
-            data: assembleData,
-            actualGas,
-          });
           this.odosAssembleRequest(assembleData)
             .then(async (responseAssembleData: any) => {
               console.log({
@@ -1047,12 +1025,6 @@ export default {
                   ? responseAssembleData.simulation.simulationError
                     .errorMessage
                   : 'Transaction simulation is failed';
-                console.log({
-                  message: 'Error before send swap transaction',
-                  swapSession: this.swapSessionId,
-                  data: errMsg,
-                  actualGas,
-                });
 
                 this.showErrorModalWithMsg({
                   errorType: 'approve',

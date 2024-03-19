@@ -306,6 +306,7 @@ export default {
       return false;
     },
     pendingRedemption() {
+      if (this.insuranceRedemptionData.request === 'CAN_WITHDRAW') return false;
       if (this.selectedAction === 'redeem'
         && this.insuranceRedemptionData.hours > 0 && this.insuranceRedemptionData.hours < 72) {
         return true;

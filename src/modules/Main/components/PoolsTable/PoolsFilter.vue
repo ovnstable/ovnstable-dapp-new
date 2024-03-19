@@ -107,7 +107,7 @@ export default {
         },
         {
           id: poolTypes.FEATURED,
-          name: 'FEATURED',
+          name: 'HOT',
         },
       ],
     };

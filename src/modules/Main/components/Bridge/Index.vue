@@ -15,7 +15,7 @@
       height="690"
       width="400"
       :src="link"
-      @load="handleIframeLoad(link)"
+      @load="handleIframeLoad()"
     />
   </div>
 </template>
@@ -153,6 +153,11 @@ export default {
             name: 'OVN',
           },
         ],
+        collectFees: {
+          // dev test wallet
+          integratorAddress: '0xEd446C56F89e84b3dC9ACec060154eC6BC6bB299',
+          fee: 20,
+        },
       },
     },
   }),
@@ -176,13 +181,11 @@ export default {
       if (this.light) {
         // Light theme link config
         this.link = this.generateIframeURL(this.allConfigs.widgetConfig);
-        console.log('Widget White Theme Link:', this.link);
       } else {
         // Dark theme link config
         this.link = this.generateIframeURL(
           this.allConfigs.widgetConfigForDarkTheme,
         );
-        console.log('Widget Dark Theme Link:', this.link);
       }
     },
 
@@ -192,10 +195,9 @@ export default {
       return `https://squid-widget-git-main-v2-0xsquid.vercel.app/iframe?config=${encodedConfig}`;
     },
 
-    async handleIframeLoad(link: string) {
+    async handleIframeLoad() {
       await new Promise((resolve) => setTimeout(() => resolve(0), 2000));
       this.isIframeLoaded = true;
-      console.log(`Iframe loaded with link: ${link}`);
     },
   },
 };
