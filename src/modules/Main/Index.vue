@@ -259,6 +259,11 @@ export default {
   padding: 6px;
   border-radius: 4px;
 
+  svg {
+    width: 27px;
+    height: 27px;
+  }
+
   cursor: pointer;
   transition: background-color .2s ease;
 
