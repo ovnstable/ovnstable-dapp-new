@@ -312,7 +312,7 @@ export default {
   }
   .insurance-wrapper {
     height: auto;
-    margin-bottom: 100px;
+    margin-bottom: 150px;
   }
   .insurance {
     padding: 16px 20px;

@@ -371,7 +371,7 @@ export default {
   }
 
   @media (max-width: 768px) {
-    margin: 0 0 120px 0;
+    margin: 0 0 150px 0;
   }
 }
 
