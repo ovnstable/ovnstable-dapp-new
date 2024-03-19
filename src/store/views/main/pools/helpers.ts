@@ -233,11 +233,6 @@ export const buildLink = (pool: any) => {
     return url;
   }
 
-  if (pool.address === '0xb34a7d1444a707349Bc7b981B7F2E1f20F81F013') {
-    url = 'https://www.convexfinance.com/stake/arbitrum/13';
-    return url;
-  }
-
   if (
     pool.platform === 'Curve'
     && pool.address === '0xda3de145054ED30Ee937865D31B500505C4bDfe7'
@@ -312,11 +307,8 @@ export const getSortedPools = (
     '0x61366A4e6b1DB1b85DD701f2f4BFa275EF271197',
   ];
 
-  const convexDuplicatePromote = '0xb34a7d1444a707349bc7b981b7f2e1f20f81f013_convex';
-
   // if pool tvl too low
   const promotePools = [
-    '0xb34a7d1444a707349Bc7b981B7F2E1f20F81F013',
     '0xd01075f7314a6436e8b74fc18069848229d0c555',
     '0xb9c2d906f94b27bc403ab76b611d2c4490c2ae3f',
     // LYNEX
@@ -329,7 +321,6 @@ export const getSortedPools = (
   // execute revert aggregator
   const filteredPools = pools.filter((pool) => {
     if (!revertAgg.includes(pool.address)) false;
-    if (pool.address?.toLowerCase() === convexDuplicatePromote) return false;
     return true;
   });
 
@@ -366,11 +357,6 @@ export const getSortedSecondPools = (
       '0x77ca2ddfd61d1d5e5d709cf07549fec3e2d80315',
     ];
 
-    // convex duplicating
-    const removeFromSecondPools = [
-      '0xb34a7d1444a707349Bc7b981B7F2E1f20F81F013',
-    ];
-    if (removeFromSecondPools.includes(pool.address)) return false;
     // if its tvl higher than restrictions and its promotoed, its gonna duplicate
     if (pool.tvl > MIN_AMOUNT && pool.promoted) return false;
 

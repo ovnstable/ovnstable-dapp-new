@@ -102,15 +102,6 @@ const actions = {
                 pool = initAggregators(pool);
 
                 const newName = pool.id.name.toUpperCase();
-                let { platform } = pool;
-
-                // cases when LP staking platform differ from actual
-                if (
-                  pool.id.address
-                  === '0xb34a7d1444a707349Bc7b981B7F2E1f20F81F013'
-                ) {
-                  platform = 'Convex';
-                }
 
                 if (FEATURED_POOLS.includes(pool.id.address)) {
                   pool.feature = true;
@@ -128,7 +119,7 @@ const actions = {
                   chain: networkConfig.networkId,
                   chainName: networkConfig.networkName,
                   address: pool.id.address,
-                  platform,
+                  platform: pool.platform,
                   tvl: pool.tvl,
                   apr: pool.apr,
                   skimEnabled: pool.skimEnabled,
