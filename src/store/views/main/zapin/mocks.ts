@@ -6,11 +6,6 @@ export const poolsInfoMap: any = {
     poolId: 0,
     approveType: 'TOKEN',
   },
-  '0x0d20ef7033b73ea0c9c320304b05da82e2c14e33': {
-    gauge: '0xaF618E6F5EF781e3aCFe00708BD005E0cc9A2e6F',
-    poolId: 0,
-    approveType: 'TOKEN',
-  },
   '0x0df5f52afa0308fdd65423234c4fda9add0b9eba': {
     gauge: '0xF319285fa8b5323A40c71D3c006dBd0BE4f5171b',
     poolId: 0,
@@ -123,13 +118,6 @@ export const poolsInfoMap: any = {
     approveType: 'TOKEN',
   },
 
-  // Sperax Demeter https://api.sperax.finance/api/v1/pairs
-  '0x9be8026c5c55a3d5513d4c6607355b3678c0afdb': {
-    gauge: '0xC8F82e522BC5ca3C340753b69Cb18e68dA216362',
-    poolId: 0,
-    approveType: 'NFT',
-  },
-
   // Arbidex
   '0xeE5e74Dc56594d070E0827ec270F974A68EBAF22': {
     gauge: '0xd2bcFd6b84E778D2DE5Bb6A167EcBBef5D053A06',
@@ -228,17 +216,6 @@ export const poolsInfoMap: any = {
     // usd+/crvUSD
     gauge: '0xc0798d022eEE81F1408895325A9fBe171d2a24f1',
     poolId: 0,
-    approveType: 'TOKEN',
-  },
-
-  // 3x tokens pool
-  // gauge is for deposit tokens
-  // gaugeForLP for LP tokens from gauge
-  '0xb34a7d1444a707349Bc7b981B7F2E1f20F81F013': {
-    // usd+/fraxbp
-    gauge: '0xb34a7d1444a707349Bc7b981B7F2E1f20F81F013',
-    gaugeForLP: '0xF403C135812408BFbE8713b5A23a04b3D48AAE31',
-    poolId: 13,
     approveType: 'TOKEN',
   },
 

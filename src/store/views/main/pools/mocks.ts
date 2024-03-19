@@ -25,17 +25,6 @@ export const poolTokensForZapMap = {
     },
   ],
 
-  '0x0d20ef7033b73ea0c9c320304b05da82e2c14e33': [
-    {
-      name: 'FRAX',
-      address: '0x17FC002b466eEc40DaE837Fc4bE5c67993ddBd6F',
-    },
-    {
-      name: 'USD+',
-      address: '0xe80772Eaf6e2E18B651F160Bc9158b2A5caFCA65',
-    },
-  ],
-
   '0xcd78e225e36e724c9fb4bd8287296557d728cda7': [
     {
       name: 'LUSD',
@@ -134,18 +123,6 @@ export const poolTokensForZapMap = {
     {
       name: 'USD+',
       address: '0x73cb180bf0521828d8849bc8CF2B920918e23032',
-    },
-  ],
-
-  // Demeter Sperax TODO: TOKEN ADDRESSES need to update
-  '0x9be8026c5c55a3d5513d4c6607355b3678c0afdb': [
-    {
-      name: 'USDS',
-      address: '0xD74f5255D557944cf7Dd0E45FF521520002D5748',
-    },
-    {
-      name: 'USD+',
-      address: '0xe80772Eaf6e2E18B651F160Bc9158b2A5caFCA65',
     },
   ],
 
@@ -377,18 +354,6 @@ export const poolTokensForZapMap = {
       address: '0x417Ac0e078398C154EdFadD9Ef675d30Be60Af93',
     },
   ],
-  // Curve (3 tokens) -> usd+ / fraxbp
-  '0xb34a7d1444a707349Bc7b981B7F2E1f20F81F013': [
-    {
-      name: 'USD+',
-      address: '0xe80772Eaf6e2E18B651F160Bc9158b2A5caFCA65',
-    },
-    {
-      name: 'FRAXbp',
-      address: '0xC9B8a3FDECB9D5b218d02555a8Baf332E5B740d5',
-    },
-  ],
-
   // Beefy
   '0x61366A4e6b1DB1b85DD701f2f4BFa275EF271197_Aerodrome': [
     // Aerodrome
@@ -510,4 +475,7 @@ export const FEATURED_POOLS = [
 
   // LINEA
   '0x1d0188c4b276a09366d05d6be06af61a73bc7535',
+
+  // VELODROME
+  '0x667002F9DC61ebcBA8Ee1Cbeb2ad04060388f223',
 ];
