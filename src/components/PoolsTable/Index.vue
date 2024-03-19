@@ -465,7 +465,6 @@ export default {
   align-items: center;
   width: fit-content;
   border-radius: 30px;
-  overflow: hidden;
   [data-theme="dark"] & {
     background-color: var(--color-7);
     border: none;
