@@ -213,12 +213,20 @@ export default {
     background-color: transparent;
     border-radius: 0;
   }
+
+  @media (max-width: 640px) {
+    margin-bottom: 30px;
+  }
 }
 .swap-module__form {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 60%;
+
+  @media (max-width: 1024px) {
+    width: 70%;
+  }
 
   @media (max-width: 768px) {
     width: 100%;
@@ -264,13 +272,5 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-evenly;
-}
-
-@media (max-width: 640px) {
-  .swap-module {
-    flex-direction: column;
-    display: flex;
-    align-items: center;
-  }
 }
 </style>

@@ -333,6 +333,7 @@ export default {
   display: flex;
   flex-direction: row;
   align-items: center;
+  gap: 8px;
 }
 
 .slider__token-title,
@@ -470,6 +471,11 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    margin: 40px 0;
+  }
 }
 
 @media (max-width: 1024px) {
@@ -497,7 +503,7 @@ export default {
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .slider__info {
     width: 100%;
     margin-right: 15px;
@@ -551,7 +557,7 @@ export default {
   }
 }
 
-@media (max-width: 576px) {
+@media (max-width: 640px) {
   .slider__info {
     margin-right: 10px;
     margin-left: 10px;
@@ -613,7 +619,6 @@ export default {
   .swap-slider {
     margin-bottom: 0;
     padding: 22px 10px;
-    
   }
   .swiper-container {
     margin: 0;
@@ -655,6 +660,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+    width: 100%;
   }
 
   .slider__dot {

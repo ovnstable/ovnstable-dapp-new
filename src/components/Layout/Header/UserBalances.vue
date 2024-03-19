@@ -186,7 +186,7 @@ export default {
   background: var(--color-4);
   box-shadow: 0px 1px 0px 0px var(--color-1);
   font-size: 20px;
-  font-weight: 700;
+  font-weight: 500;
 
   [data-theme="dark"] & {
     background: var(--color-17);
@@ -195,6 +195,7 @@ export default {
   @media (max-width: 768px) {
     width: calc(100vw - 40px);
     border-radius: 10px;
+    font-weight: 700;
   }
 }
 
