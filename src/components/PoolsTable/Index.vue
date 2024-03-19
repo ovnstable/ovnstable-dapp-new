@@ -613,4 +613,24 @@ export default {
     color: var(--color-3);
   }
 }
+@media (max-width: 400px) {
+  .pools-table {
+    overflow: hidden;
+    overflow-x: auto
+  }
+
+  .pools-header,
+  .pools-table__content {
+    min-width: 650px;
+    overflow-x: scroll;
+  }
+  .pools-header__item {
+    font-size: 12px;
+  }
+  .pools-table__row {
+    button {
+      font-size: 14px;
+    }
+  }
+}
 </style>
