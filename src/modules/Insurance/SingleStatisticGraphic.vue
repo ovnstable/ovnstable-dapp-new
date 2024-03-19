@@ -432,8 +432,8 @@ export default {
   margin-bottom: 10px;
 }
 .insurance__graphic-display {
-  width: 100%;
-  min-height: 250px;
+  width: 97%;
+  min-height: 150px;
 }
 .insurance__graphic{
   min-height: 250px;
@@ -732,6 +732,7 @@ export default {
     font-weight: 500;
   }
   .insurance-cumulitives {
+    flex-direction: row;
     justify-content: space-between;
     margin-bottom: 8px;
   }

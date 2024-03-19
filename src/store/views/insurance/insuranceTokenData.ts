@@ -4,6 +4,7 @@ const state = {
   insuranceTokenData: {},
   isMobileAboutOvn: false,
   isMobileMintRedeem: false,
+  isMobileOvnDashboard: false,
 };
 
 function capitalizeFirstLetter(string: string) {
@@ -40,6 +41,7 @@ const actions = {
     try {
       const data = await InsuranceApiService.loadInsuranceData(networkName);
       const insurancePayouts = await InsuranceApiService.loadPayouts(networkName);
+      const ovnPrice = await InsuranceApiService.loadOvnPrice();
       const insImage = generateInsuranceImageName(networkName);
       const { lastPayoutType, lastPayoutTime } = getLastPayout(insurancePayouts);
       const combinedData = {
@@ -47,6 +49,7 @@ const actions = {
         lastPayoutType,
         lastPayoutTime,
         data,
+        ovnPrice,
       };
       commit('setInsuranceTokenData', { combinedData });
     } catch (error) {
@@ -64,6 +67,9 @@ const mutations = {
   },
   setIsMobileMintRedeem(state: any, value: any) {
     state.isMobileMintRedeem = value;
+  },
+  setIsMobileOvnDashboard(state: any, value: any) {
+    state.isMobileOvnDashboard = value;
   },
 };
 

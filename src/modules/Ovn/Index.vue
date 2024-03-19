@@ -16,10 +16,13 @@
         :token-data="tokenData"
         :loaded="loaded"
       />
-      <OvnBenefits />
-      <OvnTokenomics />
+      <OvnBenefits v-if="!insuranceIsMobileOvnDashboard" />
+      <OvnTokenomics v-if="!insuranceIsMobileOvnDashboard" />
     </div>
-    <div class="ovn__pools">
+    <div
+      v-if="!insuranceIsMobileOvnDashboard"
+      class="ovn__pools"
+    >
       <PoolsContainer
         :type="poolTypes.OVN"
         :isOverview="true"
@@ -64,6 +67,11 @@ export default {
     loaded: {
       type: Boolean,
       default: false,
+    },
+  },
+  computed: {
+    insuranceIsMobileOvnDashboard() {
+      return this.$store.state.insuranceTokenData.isMobileOvnDashboard.value;
     },
   },
 };

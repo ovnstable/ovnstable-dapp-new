@@ -57,7 +57,11 @@
             </ButtonComponent>
           </router-link>
 
-          <ButtonComponent class="insurance__title-button">
+          <ButtonComponent
+            class="insurance__title-button"
+            @click="toggleModalOvnDasbhoard()"
+            @keydown.enter="toggleModalOvnDasbhoard()"
+          >
             <BaseIcon
               name='InsuranceOVN'
             />
@@ -84,7 +88,8 @@
     class="insurance__info-mobile"
   >
     <div
-      v-if="!insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem"
+      v-if="!insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem
+        && !insuranceIsMobileOvnDashboard"
       class="insurance__interact-buttons"
     >
       <div class="insurance__button-mobile">
@@ -121,22 +126,22 @@
         >
           <BaseIcon
             class="insurance__mint-button"
-            name='InsuranceMint'
+            name='InsuranceRedeem'
           />
         </ButtonComponent>
         <p>REDEEM</p>
       </div>
 
       <div class="insurance__button-mobile">
-        <router-link
-          to="/dashboard"
+        <ButtonComponent
+          class="insurance__title-button"
+          @click="toggleModalOvnDasbhoard()"
+          @keydown.enter="toggleModalOvnDasbhoard()"
         >
-          <ButtonComponent class="insurance__title-button">
-            <BaseIcon
-              name='InsuranceOVN'
-            />
-          </ButtonComponent>
-        </router-link>
+          <BaseIcon
+            name='InsuranceOVN'
+          />
+        </ButtonComponent>
         <p>MY OVN</p>
       </div>
 
@@ -156,7 +161,8 @@
 
     </div>
     <div
-      v-else-if="insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem"
+      v-else-if="insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem
+        && !insuranceIsMobileOvnDashboard"
       class="insurance__about-mobile-on"
     >
       <ButtonComponent
@@ -171,7 +177,8 @@
     </div>
 
     <div
-      v-if="!insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem"
+      v-if="!insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem
+        && !insuranceIsMobileOvnDashboard"
       class="insurance__token-title"
     >
       <BaseIcon
@@ -208,7 +215,8 @@
     <InsuranceAbout />
   </div>
   <div
-    v-if="!insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem"
+    v-if="!insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem
+      && !insuranceIsMobileOvnDashboard"
     class="insurance__token-data"
   >
     <div class="insurance__divider insurance__divider--first-divider" />
@@ -265,11 +273,21 @@
     <MintRedeemModal
       v-model="showModalMintRedeem"
     />
+    <OvnDashboardModal
+      :price="tokenData.ovnPrice"
+      v-model="showModalOvnDashboard"
+    />
   </div>
 
   <div v-if="insuranceIsMobileMintRedeem">
     <MintRedeemModal
       v-model="showModalMintRedeem"
+    />
+  </div>
+  <div v-if="insuranceIsMobileOvnDashboard">
+    <OvnDashboardModal
+      :price="tokenData.ovnPrice"
+      v-model="showModalOvnDashboard"
     />
   </div>
 </template>
@@ -279,6 +297,7 @@ import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import InsuranceAbout from '@/modules/Insurance/InsuranceAbout.vue';
 import MintRedeemModal from '@/modules/Insurance/MintRedeemModal.vue';
+import OvnDashboardModal from '@/modules/Insurance/OvnDashboardModal.vue';
 import { chainContractsMap } from '@/utils/contractsMap.ts';
 import { deviceType } from '@/utils/deviceType.ts';
 
@@ -289,11 +308,13 @@ export default {
     ButtonComponent,
     InsuranceAbout,
     MintRedeemModal,
+    OvnDashboardModal,
   },
   data() {
     return {
       showInsuranceInfo: false,
       showModalMintRedeem: false,
+      showModalOvnDashboard: false,
     };
   },
   props: {
@@ -318,8 +339,27 @@ export default {
     insuranceIsMobileMintRedeem() {
       return this.$store.state.insuranceTokenData.isMobileMintRedeem.value;
     },
+    insuranceIsMobileOvnDashboard() {
+      return this.$store.state.insuranceTokenData.isMobileOvnDashboard.value;
+    },
   },
   methods: {
+    closeOvnDashboardModal() {
+      this.showModalOvnDashboard = false;
+    },
+    openMintRedeemModal() {
+      this.showModalMintRedeem = true;
+    },
+    toggleModalOvnDasbhoard() {
+      if (this.device.isMobile) {
+        this.showModalOvnDashboard = true;
+        this.$store.commit('insuranceTokenData/setIsMobileOvnDashboard', {
+          value: this.showModalOvnDashboard,
+        });
+      } else {
+        this.showModalOvnDashboard = !this.showModalOvnDashboard;
+      }
+    },
     toggleModalMintRedeem() {
       if (this.device.isMobile) {
         this.showModalMintRedeem = true;
@@ -740,7 +780,15 @@ export default {
   }
 }
 
-@media (max-width: 576px) {
+@media (max-width: 580px) {
+  .insurance__info,
+  .insurance__title-buttons,
+  .insurance__token-title {
+    flex-direction: column;
+  }
+  .insurance__title-button {
+    padding: 2px 4px;
+  }
   .insurance__token-data-num,
   .insurance__icon-chain {
     margin-top: 10px;
@@ -790,6 +838,7 @@ export default {
     }
   }
   .insurance__token-title {
+    flex-direction: row;
     margin: 0;
     align-items: center;
     justify-content: left;
@@ -825,9 +874,6 @@ export default {
   .insurance__token-data-title {
     font-size: 12px;
     margin-right: auto;
-  }
-  .amount-of-ovn {
-    margin-right: 5px;
   }
   .insurance__divider {
     width: 100%;

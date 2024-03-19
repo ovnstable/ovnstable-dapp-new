@@ -152,6 +152,12 @@ export default {
     background-color: var(--color-19);
   }
 }
+@media (max-width: 1080px) {
+  .market {
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+}
 
 @media (max-width: 1024px) {
    .market,

@@ -18,6 +18,19 @@ class InsuranceApiService {
     });
   }
 
+  loadOvnPrice(): any {
+    return new Promise((resolve, reject) => {
+      const url = `${API_URL}/root/dapp/price/ovn`;
+      apiService.get(url)
+        .then((data) => {
+          resolve(data);
+        })
+        .catch((e) => {
+          reject(getErrorObject(e));
+        });
+    });
+  }
+
   loadPayouts(chain: string): any {
     return new Promise((resolve, reject) => {
       const url = `${API_URL}/${chain}/usd+/ins/payouts`;

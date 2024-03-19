@@ -419,6 +419,11 @@ export default {
     margin-right: 10px;
   }
 }
+@media (max-width: 530px) {
+  .dashboard__transactions-button-show {
+    padding: 0;
+  }
+}
 
 @media (max-width: 640px) {
   .dashboard__transactions-titles,
