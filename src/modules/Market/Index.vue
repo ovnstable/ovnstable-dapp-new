@@ -167,6 +167,7 @@ export default {
   .market-wrapper  {
     width: 100%;
     align-items: center;
+    margin-bottom: 100px;
   }
 }
 
@@ -178,7 +179,6 @@ export default {
   .market-wrapper  {
     width: 100%;
     align-items: center;
-    margin-bottom: 100px;
   }
 }
 

@@ -95,12 +95,16 @@ export default {
       fill: var(--color-3);
       stroke: var(--color-3);
     }
-        &:nth-child(2) {
-    svg * {
-      stroke: none;
-      fill: var(--color-3);
+
+    &:nth-child(2) {
+      svg * {
+        stroke: initial;
+        fill: initial;
+      }
+      svg rect, svg path {
+        fill: var(--color-3);
+      }
     }
-  }
 
   }
 }
