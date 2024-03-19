@@ -228,7 +228,6 @@ const actions = {
     }
   ) {
     dispatch('clearInputData');
-    console.log('INIT1');
 
     if (!getters.isAvailableOnNetwork) {
       console.info(
