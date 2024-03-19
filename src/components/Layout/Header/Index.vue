@@ -49,8 +49,23 @@
         </div>
 
         <div class="app-header__content-data">
+          <router-link
+            to="/"
+            class="app-header__content__logo"
+            v-if="!account && !deviceSize.isDesktop"
+          >
+            <BaseIcon
+              class="app-header__content__logo-svg"
+              name="IconLogo"
+            />
+
+            <h1>
+              OVERNIGHT
+            </h1>
+          </router-link>
+
           <div
-            v-if="(accountRenderLoading || balancesLoading) && !deviceSize.isMobile"
+            v-if="account && (accountRenderLoading || balancesLoading) && !deviceSize.isMobile"
             class="lineLoader"
           />
           <UserBalances
