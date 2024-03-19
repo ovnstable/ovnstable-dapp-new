@@ -617,6 +617,7 @@ export default {
     }
   }
 }
+
 .pools-table__hot,
 .pools-table__hot-token-3 {
   position: absolute;
@@ -631,7 +632,7 @@ export default {
   font-size: 10px;
   height: 19px;
   padding: 0 4px;
-  animation: pulse-animation-blue 2s infinite;
+  animation: pulse-animation-blue 3s infinite;
 }
 .pools-table__hot {
   top: -12px;

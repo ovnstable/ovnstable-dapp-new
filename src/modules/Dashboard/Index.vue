@@ -260,7 +260,6 @@ export default {
   display: flex;
   flex-direction: column;
   width: 100%;
-  min-height: 1500px;
   z-index: 1;
 }
 

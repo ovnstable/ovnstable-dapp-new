@@ -305,7 +305,7 @@ export default {
   }
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 1024px) {
   .insurance,
   .insurance__payouts,
   .insurance__payout-inner {
@@ -313,6 +313,7 @@ export default {
   }
   .insurance-wrapper {
     height: auto;
+    margin-bottom: 100px;
   }
   .insurance {
     padding: 16px 20px;
