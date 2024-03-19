@@ -305,7 +305,9 @@ export default {
   flex-direction: row;
   align-items: center;
   margin: 50px 40px 50px auto;
-
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
+  }
   @media (max-width: 768px) {
     width: 100%;
     margin: 30px auto;
@@ -611,6 +613,7 @@ export default {
   .swap-slider {
     margin-bottom: 0;
     padding: 22px 10px;
+    
   }
   .swiper-container {
     margin: 0;

@@ -456,6 +456,10 @@ export default {
   width: fit-content;
   border-radius: 30px;
   overflow: hidden;
+  [data-theme="dark"] & {
+    background-color: var(--color-7);
+    border: none;
+  }
 
   @media (max-width: 1024px) {
     flex-direction: column;

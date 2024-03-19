@@ -166,6 +166,7 @@ export default {
         padding: 30px 40px;
         border: 2px solid var(--color-1);
         [data-theme="dark"] & {
+          background-color: var(--color-6);
           border-color: var(--color-4);
         }
     }
