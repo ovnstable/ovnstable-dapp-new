@@ -223,6 +223,7 @@ export default {
     background-color: var(--color-6);
   }
 }
+
 @media (max-width: 640px) {
   .modal__wrap {
     .modal--custom {
@@ -232,6 +233,7 @@ export default {
 
   .modal__body {
     max-height: 90vh;
+    padding-bottom: 100px;
   }
 }
 

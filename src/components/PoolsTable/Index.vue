@@ -677,7 +677,9 @@ export default {
   }
 
   .pools-table__footer {
-    padding-bottom: 70px;
+    position: sticky;
+    left: 0;
+    padding-bottom: 30px;
   }
   .pools-header,
   .pools-table__content {

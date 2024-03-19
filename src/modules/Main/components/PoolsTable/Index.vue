@@ -366,7 +366,7 @@ export default {
 .pools-wrap {
   margin: 30px 0;
 
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     margin: 0 0 120px 0;
   }
 }
