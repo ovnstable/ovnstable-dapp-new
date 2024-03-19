@@ -92,7 +92,7 @@
                     {{ getTokenNames(pool)[2] }}
                   </span>
                   <div
-                    class="pools-table__hot"
+                    class="pools-table__hot-token-3"
                     v-if="pool.feature && pool.token2Icon"
                   >
                     <BaseIcon name="CommonHot" />
@@ -616,13 +616,46 @@ export default {
     }
   }
 }
-
+.pools-table__hot,
+.pools-table__hot-token-3 {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 30px;
+  border: 1px solid var(--color-6);
+  color: var(--color-3);
+  background-color: var(--color-4);
+  font-weight: 500;
+  font-size: 10px;
+  height: 19px;
+  padding: 0 4px;
+  animation: pulse-animation-blue 2s infinite;
+}
+.pools-table__hot {
+  top: -12px;
+  right: -25px;
+}
+.pools-table__hot-token-3  {
+  top: -12px;
+  right: -25px;
+}
 .pools-header__item--hover {
   transition: transform .2s ease, color .2s ease;
   cursor: pointer;
 
   &:hover {
     color: var(--color-3);
+  }
+}
+@media (max-width: 1024px) {
+  .pools-table__hot {
+    top: -40px;
+    right: -30px;
+  }
+  .pools-table__hot-token-3  {
+    top: -60px;
+    right: -35px;
   }
 }
 @media (max-width: 640px) {
@@ -658,23 +691,14 @@ export default {
       font-size: 14px;
     }
   }
+  .pools-table__hot {
+    top: -40px;
+    right: -31px;
+  }
+  .pools-table__hot-token-3  {
+    top: -60px;
+    right: -36px;
+  }
 }
 
-.pools-table__hot {
-  position: absolute;
-  top: -40px;
-  right: -31px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  border-radius: 30px;
-  border: 1px solid var(--color-6);
-  color: var(--color-3);
-  background-color: var(--color-4);
-  font-weight: 500;
-  font-size: 10px;
-  height: 19px;
-  padding: 0 4px;
-  animation: pulse-animation-blue 2s infinite;
-}
 </style>
