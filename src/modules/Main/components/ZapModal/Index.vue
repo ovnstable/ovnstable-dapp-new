@@ -81,4 +81,9 @@ export default {
   min-width: 600px;
   max-width: 600px;
 }
+@media (max-width: 400px) {
+  .modal-content {
+    min-width: 0;
+  }
+}
 </style>

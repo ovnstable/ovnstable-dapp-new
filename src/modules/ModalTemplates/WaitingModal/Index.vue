@@ -100,4 +100,10 @@ export default {
   margin-top: 40px;
 }
 
+@media (max-width: 400px) {
+  .modal-content {
+    padding: 5px 7px 3px 7px;
+    max-width: 380px;
+  }
+}
 </style>

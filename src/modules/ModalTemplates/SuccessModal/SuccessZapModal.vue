@@ -401,4 +401,14 @@ export default {
     }
   }
 }
+@media (max-width: 400px) {
+  .modal-content {
+    padding: 5px 7px 3px 7px;
+    min-width: 0;
+    max-width: 400px;
+  }
+  .modal-content__link {
+    margin-left: 40px;
+  }
+}
 </style>
