@@ -188,7 +188,6 @@ export const getFilteredOvernightTokens = (
   chainId: number,
   isOnlyOvnToken: any,
 ) => {
-  console.log(state.tokensMap, 'getFilteredOvernightTokens');
   if (!state.tokensMap || !state.tokensMap.chainTokenMap) return [];
 
   const tokens: any = [];

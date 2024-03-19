@@ -320,11 +320,8 @@ export default {
       }
     },
     // on wallet connect
-    async account(val) {
-      if (val) {
-        this.clearForm('000');
-        this.init();
-      }
+    async allTokensList(val) {
+      if (val) this.clearForm('000');
       if (!val) this.outputTokens = [getNewOutputToken()];
     },
     // for first render
@@ -644,6 +641,7 @@ export default {
         'initWalletTransaction',
         'initData',
         'loadPricesInfo',
+        'loadBalances',
       ],
     ),
     ...mapActions('errorModal', ['showErrorModalWithMsg']),
@@ -730,6 +728,7 @@ export default {
         this.allTokensList,
         symbol as string | null,
       );
+
       if (!ovnSelectedToken) {
         this.addNewInputToken();
         this.addNewOutputToken();

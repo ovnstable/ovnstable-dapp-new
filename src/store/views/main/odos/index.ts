@@ -86,7 +86,7 @@ export const stateData = {
   typeOfPoolScheme: null, // OVN, ALL, null
 
   listOfBuyTokensAddresses: null, // for POOL_SWAP scheme
-  odosReferalCode: 3000000001, // test account or user acc
+  odosReferalCode: 3000000004, // test account or user acc
   odosZapReferalCode: 3000000002, // test account or user acc
 
   swapSessionId: null,
@@ -177,16 +177,15 @@ const actions = {
 
     commit('changeState', { field: 'isChainsLoading', val: true });
 
-    await odosApiService
+    const data: any = await odosApiService
       .loadChains()
-      .then((data: any) => {
-        commit('changeState', { field: 'chains', val: data.chains });
-        commit('changeState', { field: 'isChainsLoading', val: false });
-      })
       .catch((e) => {
         console.log('Error load chains', e);
         commit('changeState', { field: 'isChainsLoading', val: false });
       });
+
+    commit('changeState', { field: 'chains', val: data.chains });
+    commit('changeState', { field: 'isChainsLoading', val: false });
   },
   async loadTokens({
     commit, state,
