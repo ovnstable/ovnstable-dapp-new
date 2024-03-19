@@ -67,7 +67,11 @@
         </div>
 
       </div>
-      <div class="ovn__overview-links-data-button">
+
+      <router-link
+        class="ovn__overview-links-data-button"
+        to="/dashboard"
+      >
         <ButtonComponent class="ovn__overview-button">
           <BaseIcon
             class="ovn__overview-dashboard-icon"
@@ -75,7 +79,8 @@
           />
         </ButtonComponent>
         <p>MY OVN</p>
-      </div>
+      </router-link>
+
     </div>
     <div class="ovn__overview-divider" />
     <div class="ovn__overview-price">

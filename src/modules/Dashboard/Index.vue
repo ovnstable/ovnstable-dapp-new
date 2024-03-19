@@ -130,7 +130,6 @@ export default {
         },
       ],
       activeTab: 0,
-      ethToUsdRate: 3000,
     };
   },
   watch: {
@@ -323,6 +322,7 @@ button {
 @media (max-width: 400px) {
   .dashboard-usd-plus-wrap {
     padding: 30px 20px;
+    border: none;
   }
   .dashboard_token_data_graphics {
     border: none;
