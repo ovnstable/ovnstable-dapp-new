@@ -225,6 +225,7 @@ const actions = {
       });
     }
 
+    console.log(state.allPools, '--state.allPools');
     commit('changeState', {
       field: 'allPools',
       val: initFeature(state.allPools),

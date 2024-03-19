@@ -278,7 +278,7 @@ const filterByPoolType = (
   if (filterType === poolTypes.TOKENPLUS) {
     return poolsList.filter((_) => {
       const poolTokens = _.name.split('/');
-      if (poolTokens.some((id: string) => STABLE_TOKENS.includes(id))) return true;
+      if (poolTokens.every((id: string) => STABLE_TOKENS.includes(id))) return true;
       return false;
     });
   }
@@ -297,6 +297,8 @@ const filterByPoolType = (
 
   return poolsList;
 };
+
+const MIN_AMOUNT = 100000;
 
 export const getSortedPools = (
   pools: any[],
@@ -331,9 +333,11 @@ export const getSortedPools = (
     return true;
   });
 
+  console.log(pools, '---filteredPools');
+
   if (!filterByTvl) {
     poolsList = filteredPools
-      .filter((pool) => (promotePools.includes(pool.address) ? pool : pool.tvl >= 300000));
+      .filter((pool) => (promotePools.includes(pool.address) ? pool : pool.tvl >= MIN_AMOUNT));
   } else {
     poolsList = filteredPools;
   }
@@ -370,10 +374,9 @@ export const getSortedSecondPools = (
     ];
     if (removeFromSecondPools.includes(pool.address)) return false;
     // if its tvl higher than restrictions and its promotoed, its gonna duplicate
-    if (pool.tvl > 300000 && pool.promoted) return false;
+    if (pool.tvl > MIN_AMOUNT && pool.promoted) return false;
 
     if (exception.includes(pool.address)) return true;
-    if (pool.tvl < 300000 && pool.tvl > 100000) return true;
     if (pool.promoted !== false) return true;
 
     return false;

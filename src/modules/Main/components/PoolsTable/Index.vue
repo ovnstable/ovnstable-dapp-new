@@ -140,40 +140,40 @@ export default {
         ? [...this.filteredPools, ...this.filteredPoolsForSecondTab] : this.filteredPools;
     },
     filteredPools() {
-      const tabOrderedPool = getSortedPools(
+      const tabOrderedPools = getSortedPools(
         this.filteredBySearchQueryPools,
         true,
         this.poolTabType,
       );
 
-      if (['APR', 'TVL'].includes(this.orderType)) return tabOrderedPool;
+      if (['APR', 'TVL'].includes(this.orderType)) return tabOrderedPools;
 
       if (this.orderType === 'APR_UP') {
         // last step filter
-        return tabOrderedPool
+        return tabOrderedPools
           .slice()
           .sort((a: any, b: any) => b.apr - a.apr);
       }
 
       if (this.orderType === 'APR_DOWN') {
         // last step filter
-        return tabOrderedPool
+        return tabOrderedPools
           .slice()
           .sort((a: any, b: any) => a.apr - b.apr);
       }
 
-      if (this.orderType === 'TVL') return tabOrderedPool;
+      if (this.orderType === 'TVL') return tabOrderedPools;
 
       if (this.orderType === 'TVL_UP') {
         // last step filter
-        return tabOrderedPool
+        return tabOrderedPools
           .slice()
           .sort((a: any, b: any) => b.tvl - a.tvl);
       }
 
       if (this.orderType === 'TVL_DOWN') {
         // last step filter
-        return tabOrderedPool
+        return tabOrderedPools
           .slice()
           .sort((a: any, b: any) => a.tvl - b.tvl);
       }
@@ -182,52 +182,46 @@ export default {
     },
 
     filteredPoolsForSecondTab() {
-      if (this.orderType === 'APR') {
-        // last step filter
-        return getSortedSecondPools(this.filteredBySearchQuerySecondPools, this.poolTabType);
-      }
+      const tabOrderedPools = getSortedSecondPools(
+        this.filteredBySearchQuerySecondPools,
+        this.poolTabType,
+      );
+
+      if (['APR', 'TVL'].includes(this.orderType)) return tabOrderedPools;
 
       if (this.orderType === 'APR_UP') {
         // last step filter
-        return this.filteredBySearchQuerySecondPools
+        return tabOrderedPools
           .slice()
           .sort((a: any, b: any) => b.apr - a.apr);
       }
 
       if (this.orderType === 'APR_DOWN') {
         // last step filter
-        return this.filteredBySearchQuerySecondPools
+        return tabOrderedPools
           .slice()
           .sort((a: any, b: any) => a.apr - b.apr);
       }
 
-      if (this.orderType === 'TVL') {
-        // last step filter. same like type 'APR'
-        return getSortedSecondPools(this.filteredBySearchQuerySecondPools, this.poolTabType);
-      }
-
       if (this.orderType === 'TVL_UP') {
         // last step filter
-        return this.filteredBySearchQuerySecondPools
+        return tabOrderedPools
           .slice()
           .sort((a: any, b: any) => b.tvl - a.tvl);
       }
 
       if (this.orderType === 'TVL_DOWN') {
         // last step filter
-        return this.filteredBySearchQuerySecondPools
+        return tabOrderedPools
           .slice()
           .sort((a: any, b: any) => a.tvl - b.tvl);
       }
 
-      console.error('Order type not found when order pools', this.orderType);
       return [];
     },
 
     filteredBySearchQueryPools() {
-      if (!this.searchQuery) {
-        return this.filteredAprPools;
-      }
+      if (!this.searchQuery) return this.filteredAprPools;
 
       return this.filteredAprPools
         .filter((pool: any) => pool.name.toLowerCase().includes(this.searchQuery.toLowerCase())
@@ -237,9 +231,7 @@ export default {
               || pool.platform.toLowerCase().includes(this.searchQuery.toLowerCase()));
     },
     filteredBySearchQuerySecondPools() {
-      if (!this.searchQuery) {
-        return this.filteredAprSecondPools;
-      }
+      if (!this.searchQuery) return this.filteredAprSecondPools;
 
       return this.filteredAprSecondPools
         .filter((pool: any) => pool.name.toLowerCase().includes(this.searchQuery.toLowerCase())
@@ -249,38 +241,18 @@ export default {
               || pool.platform.toLowerCase().includes(this.searchQuery.toLowerCase()));
     },
     filteredAprPools() {
-      if (!this.isShowAprLimit) {
-        return this.filteredZappablePools;
-      }
+      if (!this.isShowAprLimit) return this.filteredByNetwork;
 
-      return this.filteredZappablePools
+      return this.filteredByNetwork
         .filter((pool: any) => pool.apr && this.aprLimitForFilter <= pool.apr * 1);
     },
     filteredAprSecondPools() {
-      if (!this.isShowAprLimit) {
-        return this.filteredZappableSecondPools;
-      }
+      if (!this.isShowAprLimit) return this.filteredByNetworkSecond;
 
-      return this.filteredZappableSecondPools
+      return this.filteredByNetworkSecond
         .filter((pool: any) => pool.apr && this.aprLimitForFilter <= pool.apr * 1);
     },
-
-    filteredZappablePools() {
-      if (!this.isShowOnlyZap) {
-        return this.filteredByTabPools;
-      }
-
-      return this.filteredByTabPools.filter((pool: any) => this.isShowOnlyZap && pool.zappable);
-    },
-    filteredZappableSecondPools() {
-      if (!this.isShowOnlyZap) {
-        return this.filteredBySecondTabPools;
-      }
-
-      return this.filteredBySecondTabPools
-        .filter((pool: any) => this.isShowOnlyZap && pool.zappable);
-    },
-    filteredByTabPools() {
+    filteredByNetwork() {
       if (this.selectedTabs.length === 1 && this.selectedTabs.includes('ALL')) {
         return this.sortedPoolList;
       }
@@ -288,7 +260,7 @@ export default {
       return this.sortedPoolList
         .filter((pool: any) => this.selectedTabs.includes(this.getParams(pool.chain).networkId));
     },
-    filteredBySecondTabPools() {
+    filteredByNetworkSecond() {
       if (this.selectedTabs.length === 1 && this.selectedTabs.includes('ALL')) {
         return this.sortedPoolSecondList;
       }
