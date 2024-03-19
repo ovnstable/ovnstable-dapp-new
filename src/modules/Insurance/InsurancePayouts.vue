@@ -376,6 +376,7 @@ export default {
 
 @media (max-width: 640px) {
   .insurance__payouts-button-show {
+    margin-top: 0;
     padding: 5px 120px;
     svg {
       overflow: visible;
