@@ -401,6 +401,14 @@ export default {
   button {
     border-radius: 30px;
   }
+
+  @media (max-width: 1024px) {
+    button {
+      border-radius: 16px;
+      white-space: nowrap;
+    }
+  }
+
   [data-theme="dark"] & {
     border-bottom-color: var(--color-7);
   }
@@ -506,6 +514,14 @@ export default {
     padding: 2px 9px;
   }
 
+  &:nth-child(3) {
+    right: 52px;
+
+    span {
+      display: none;
+    }
+  }
+
   img {
     width: 24px;
     height: 24px;
@@ -518,6 +534,14 @@ export default {
     border: unset;
     background-color: unset;
     padding: 2px 9px;
+
+    &:nth-child(3) {
+      right: unset;
+
+      span {
+        display: block;
+      }
+    }
   }
 
   @media (max-width: 1024px) {
