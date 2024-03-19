@@ -500,7 +500,7 @@ export default {
   }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 640px) {
   .insurance__premiums-title {
     font-size: 17px;
     margin-bottom: 24px;

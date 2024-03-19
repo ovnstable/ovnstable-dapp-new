@@ -47,54 +47,67 @@
             <div class="pools-table__chain">
               <BaseIcon :name="pool.chainName" />
             </div>
-            <div class="pools-table__tokens">
-              <div
-                v-if="pool.token0Icon"
-                class="pools-table__tokens-item"
-              >
-                <img
-                  alt="token"
-                  :src="pool.token0Icon"
-                />
-                <span>
-                  {{ getTokenNames(pool)[0] }}
-                </span>
-              </div>
-              <div
-                v-if="pool.token1Icon"
-                class="pools-table__tokens-item"
-              >
-                <img
-                  alt="token"
-                  :src="pool.token1Icon"
-                />
-                <span>
-                  {{ getTokenNames(pool)[1] }}
-                </span>
-              </div>
-              <div
-                v-if="pool.token2Icon"
-                class="pools-table__tokens-item"
-              >
-                <img
-                  alt="token"
-                  :src="pool.token2Icon"
-                />
-                <span>
-                  {{ getTokenNames(pool)[2] }}
-                </span>
-              </div>
-              <div
-                v-if="pool.token3Icon"
-                class="pools-table__tokens-item"
-              >
-                <img
-                  alt="token"
-                  :src="pool.token3Icon"
-                />
-                <span>
-                  {{ getTokenNames(pool)[3] }}
-                </span>
+            <div class="pools-table__tokens-wrap">
+              <div class="pools-table__tokens">
+                <div
+                  v-if="pool.token0Icon"
+                  class="pools-table__tokens-item"
+                >
+                  <img
+                    alt="token"
+                    :src="pool.token0Icon"
+                  />
+                  <span>
+                    {{ getTokenNames(pool)[0] }}
+                  </span>
+                </div>
+                <div
+                  v-if="pool.token1Icon"
+                  class="pools-table__tokens-item"
+                >
+                  <img
+                    alt="token"
+                    :src="pool.token1Icon"
+                  />
+                  <span>
+                    {{ getTokenNames(pool)[1] }}
+                  </span>
+                  <div
+                    class="pools-table__hot"
+                    v-if="pool.feature && !pool.token2Icon"
+                  >
+                    <BaseIcon name="CommonHot" />
+                    HOT
+                  </div>
+                </div>
+                <div
+                  v-if="pool.token2Icon"
+                  class="pools-table__tokens-item"
+                >
+                  <img
+                    alt="token"
+                    :src="pool.token2Icon"
+                  />
+                  <span>
+                    {{ getTokenNames(pool)[2] }}
+                  </span>
+                  <div
+                    class="pools-table__hot-token-3"
+                    v-if="pool.feature && pool.token2Icon"
+                  >
+                    <BaseIcon name="CommonHot" />
+                    HOT
+                  </div>
+                </div>
+                <div
+                  v-if="pool.token3Icon"
+                  class="pools-table__tokens-item"
+                >
+                  <img
+                    alt="token"
+                    :src="pool.token3Icon"
+                  />
+                </div>
               </div>
             </div>
             <a
@@ -107,13 +120,6 @@
                 class="pools-table__platform-icon"
                 :name="pool.platform"
               />
-
-              <!-- <div v-if="pool.platform === 'Swapbased'">
-            <Tooltip
-                          text="This pool have 1% deposit fee"
-                          bottom
-                        />
-          </div> -->
 
               <span v-if="pool.poolNameForAgregator">
                 {{ pool.poolNameForAgregator.toUpperCase() }}
@@ -451,14 +457,25 @@ export default {
   }
 }
 
+.pools-table__tokens-wrap {
+  position: relative;
+  width: fit-content;
+}
+
 .pools-table__tokens {
+  position: relative;
   display: flex;
+  align-items: center;
   width: fit-content;
   border-radius: 30px;
-  overflow: hidden;
+  [data-theme="dark"] & {
+    background-color: var(--color-7);
+    border: none;
+  }
 
   @media (max-width: 1024px) {
     flex-direction: column;
+    align-items: flex-start;
     border: 1px solid var(--color-17);
     background-color: var(--color-4);
     padding: 5px;
@@ -485,10 +502,6 @@ export default {
     right: 0;
   }
 
-  &:nth-child(3) {
-    right: 52px;
-  }
-
   &:last-child {
     padding: 2px 9px;
   }
@@ -496,7 +509,7 @@ export default {
   img {
     width: 24px;
     height: 24px;
-    margin-right: 8px;
+    margin-right: 5px;
     border-radius: 50%;
   }
 
@@ -604,7 +617,30 @@ export default {
     }
   }
 }
-
+.pools-table__hot,
+.pools-table__hot-token-3 {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 30px;
+  border: 1px solid var(--color-6);
+  color: var(--color-3);
+  background-color: var(--color-4);
+  font-weight: 500;
+  font-size: 10px;
+  height: 19px;
+  padding: 0 4px;
+  animation: pulse-animation-blue 2s infinite;
+}
+.pools-table__hot {
+  top: -12px;
+  right: -25px;
+}
+.pools-table__hot-token-3  {
+  top: -12px;
+  right: -25px;
+}
 .pools-header__item--hover {
   transition: transform .2s ease, color .2s ease;
   cursor: pointer;
@@ -613,4 +649,57 @@ export default {
     color: var(--color-3);
   }
 }
+@media (max-width: 1024px) {
+  .pools-table__hot {
+    top: -40px;
+    right: -30px;
+  }
+  .pools-table__hot-token-3  {
+    top: -60px;
+    right: -35px;
+  }
+}
+@media (max-width: 640px) {
+  .pools-table {
+    overflow: hidden;
+    overflow-x: auto
+  }
+  .pools-header,
+  .pools-table__content {
+    min-width: 850px;
+    overflow-x: scroll;
+  }
+}
+@media (max-width: 640px) {
+  .pools-table {
+    overflow: hidden;
+    overflow-x: auto
+  }
+
+  .pools-table__footer {
+    padding-bottom: 70px;
+  }
+  .pools-header,
+  .pools-table__content {
+    min-width: 650px;
+    overflow-x: scroll;
+  }
+  .pools-header__item {
+    font-size: 12px;
+  }
+  .pools-table__row {
+    button {
+      font-size: 14px;
+    }
+  }
+  .pools-table__hot {
+    top: -40px;
+    right: -31px;
+  }
+  .pools-table__hot-token-3  {
+    top: -60px;
+    right: -36px;
+  }
+}
+
 </style>

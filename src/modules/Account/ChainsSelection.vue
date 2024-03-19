@@ -62,6 +62,10 @@ export default {
   flex-direction: row;
   align-items: center;
   gap: 6px;
+  @media (max-width: 1024px) {
+    margin-top: 10px;
+    justify-content: space-between;
+  }
 }
 
 .account-modal__chain-data {

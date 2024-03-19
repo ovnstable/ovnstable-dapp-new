@@ -82,7 +82,7 @@
           />
         </a>
       </div>
-      <div class="sidebar__divider-bottom" />
+      <div class="sidebar__divider" />
       <div class="sidebar__icons-bottom">
         <SwitchComponent
           :isChecked="isDarkTheme"
@@ -165,7 +165,6 @@ export default {
   },
   methods: {
     toggleTheme() {
-      console.log('CHANGE2');
       this.$store.dispatch('theme/switchTheme');
     },
     setCookie(key: string, value: string) {
@@ -291,43 +290,12 @@ export default {
 .sidebar__text-bottom:first-child {
   margin-top: 0;
 }
-.sidebar__icon-social:hover {
-  cursor: pointer;
-  transform: scale(1.2);
-  transition: transform 0.15s ease;
-}
-.sidebar__icon-social {
-  fill: var(--color-2);
-  [data-theme="dark"] & {
-    fill: var(--color-18);
-  }
-}
-
-.icon-twitter:hover {
-  fill: var(--color-3);
-  [data-theme="dark"] & {
-    fill: var(--color-8);
-  }
-}
-
-.icon-discord:hover {
-  fill: #5765f1;
-}
-
-.sidebar__divider-bottom {
-  margin-top: 20px;
-  margin-bottom: 20px;
-  border: 1px solid var(--color-2);
-
-  [data-theme="dark"] & {
-    color: var(--color-18);
-  }
-}
 
 .sidebar__icons-bottom {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  margin-top: 20px;
 }
 
 .sidebar__button-switch-language:hover {

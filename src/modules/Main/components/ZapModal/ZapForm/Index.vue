@@ -445,7 +445,7 @@ export default {
       'lastNftTokenId',
       'swapResponseConfirmInfo',
       'routerContract',
-      'odosReferalCode',
+      'odosZapReferalCode',
     ]),
 
     ...mapState('zapinData', [
@@ -1185,7 +1185,7 @@ export default {
         simulate: false,
         pathViz: false,
         disableRFQs: false,
-        referralCode: this.odosReferalCode,
+        referralCode: this.odosZapReferalCode,
       };
 
       this.odosSwapRequest(requestData)

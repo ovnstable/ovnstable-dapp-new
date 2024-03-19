@@ -17,6 +17,7 @@
       tabindex="0"
     >
       <BaseIcon
+        v-if="!deviceSize.isMobile"
         class="slider__arrow-icon"
         name="ArrowLeft"
       />
@@ -46,13 +47,15 @@
               <p class="slider__token-title">{{ slide.tokenName }}</p>
               <p class="slider__overview-title">OVERVIEW</p>
             </div>
-            <div class="slider__divider" />
+            <div
+              class="slider__divider"
+              :class="{ 'mobile-divider': deviceSize.isMobile }"
+            />
             <div class="slider__data">
               <div class="slider__apy-info">
                 <p class="slider__apy-title">Average APY:</p>
                 <div class="slider__apy-numbers">
                   <p class="slider__data-total-number">{{ slide.apy }}<span class="slider__data-apy-percent">%</span></p>
-                  <!-- <p class="slider__data-growth-number">+{{ slide.apyGrowth }}%</p> -->
                 </div>
               </div>
               <div class="slider__tvl-info">
@@ -69,7 +72,6 @@
                       class="slider__data-tvl-millions"
                     >WETH</span>
                   </p>
-                  <!-- <p class="slider__data-growth-number">+{{ slide.tvlGrowth }}%</p> -->
                 </div>
               </div>
               <div class="slider__payout-info">
@@ -105,10 +107,22 @@
       tabindex="0"
     >
       <BaseIcon
+        v-if="!deviceSize.isMobile"
         name="ArrowRight"
         class="slider__arrow-icon"
       />
     </div>
+  </div>
+  <div class="slider__pagination">
+    <div
+      class="slider__dot"
+      v-for="index in sliderData.length"
+      :key="index"
+      :class="{ 'slider__dot--active': currentIndex === index - 1 }"
+      @click="goToSlide(index - 1)"
+      @keydown.enter="goToSlide(index - 1)"
+      tabindex="0"
+    />
   </div>
 </template>
 <script lang="ts">
@@ -117,6 +131,7 @@ import { ref } from 'vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import { Swiper as SwiperClass } from 'swiper/core';
+import { deviceType } from '@/utils/deviceType.ts';
 import Spinner from '@/components/Spinner/Index.vue';
 import SliderApiService from '@/services/slider-api-service.ts';
 import 'swiper/swiper.min.css';
@@ -158,6 +173,11 @@ export default {
     this.sliderLoaded = false;
     await this.loadDataSlider();
     this.sliderLoaded = true;
+  },
+  computed: {
+    deviceSize() {
+      return deviceType();
+    },
   },
   methods: {
     async loadDataSlider() {
@@ -238,6 +258,12 @@ export default {
         this.currentIndex = this.swiperInstance.realIndex;
       }
     },
+    goToSlide(index: any) {
+      if (this.swiperInstance) {
+        this.currentIndex = index;
+        this.swiperInstance.slideTo(index);
+      }
+    },
 
     formatFirstTokenIconName(tokenName: string) {
       return `${tokenName.slice(0, -1).toLowerCase()}Plus`;
@@ -254,6 +280,14 @@ export default {
   },
 };
 </script>
+
+<style>
+.swiper-slide {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+</style>
 
 <style lang='scss' scoped>
 
@@ -272,12 +306,18 @@ export default {
   align-items: center;
   margin: 50px 40px 50px auto;
   [data-theme="dark"] & {
-    background-color: none;
+    background-color: var(--color-17);
+  }
+  @media (max-width: 768px) {
+    width: 100%;
+    margin: 30px auto;
+    padding: 30px 20px;
+    background-color: var(--color-8);
+    border-radius: 30px;
   }
 }
 
 .slider__info {
-  max-width:283px;
   margin-left: 25px;
   margin-right: 25px;
   display: flex;
@@ -285,7 +325,7 @@ export default {
 }
 
 .swiper-container {
-  max-width: 283px;
+  max-width: 280px;
 }
 
 .slider__token-overview,
@@ -293,6 +333,7 @@ export default {
   display: flex;
   flex-direction: row;
   align-items: center;
+  gap: 8px;
 }
 
 .slider__token-title,
@@ -430,11 +471,15 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    margin: 40px 0;
+  }
 }
 
 @media (max-width: 1024px) {
   .slider__info {
-    max-width:200px;
     margin-right: 20px;
     margin-left: 20px;
   }
@@ -458,14 +503,14 @@ export default {
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .slider__info {
-    max-width:150px;
+    width: 100%;
     margin-right: 15px;
     margin-left: 15px;
   }
   .swiper-container {
-    max-width: 150px;
+    max-width: 300px;
   }
   .slider__icon-plus,
   .slider__arrow-icon {
@@ -512,14 +557,14 @@ export default {
   }
 }
 
-@media (max-width: 576px) {
+@media (max-width: 640px) {
   .slider__info {
-    max-width:100px;
     margin-right: 10px;
     margin-left: 10px;
   }
   .swiper-container {
-    max-width: 100px;
+    max-width: 100%;
+    margin: 0 20px;
 }
   .slider__token-title{
     margin-right: 1px;
@@ -567,6 +612,69 @@ export default {
   .slider__arrow-wrapper {
     width: 14px;
     height: 14px;
+  }
+}
+
+@media (max-width: 640px) {
+  .swap-slider {
+    margin-bottom: 0;
+    padding: 22px 10px;
+  }
+  .swiper-container {
+    margin: 0;
+  }
+  .slider__token-title,
+  .slider__overview-title,
+  .slider__second-token-title-text {
+    font-size: 16px;
+  }
+  .slider__data p {
+    font-size: 14px;
+  }
+
+  .slider__token-overview {
+    margin-bottom: 6px;
+  }
+  .slider__second-token-description {
+    font-size: 12px;
+  }
+  .slider__token-title,
+  .slider__second-token-title-text {
+    margin-left: 10px;
+  }
+  .slider__divider {
+    border-color: var(--color-2);
+    margin: 16px 0;
+    [data-theme="dark"] & {
+      color: var(--color-18);
+    }
+  }
+  .mobile-divider {
+    display: none;
+  }
+  .slider__token-image {
+    width: 30px;
+    height: 30px;
+  }
+  .slider__pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+
+  .slider__dot {
+    width: 6px;
+    height: 6px;
+    margin: 0 10px;
+    background-color: var(--color-6);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .slider__dot--active {
+    background-color: var(--color-3);
   }
 }
 

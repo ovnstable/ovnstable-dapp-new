@@ -107,7 +107,7 @@ export default {
         },
         {
           id: poolTypes.FEATURED,
-          name: 'FEATURED',
+          name: 'HOT',
         },
       ],
     };
@@ -153,6 +153,14 @@ export default {
   [data-theme="dark"] & {
     background-color: var(--color-17);
     border-color: var(--color-2);
+  }
+
+  @media (max-width: 1240px) {
+    flex-wrap: wrap;
+  }
+  @media (max-width: 640px) {
+    position: sticky;
+    left: 0;
   }
 }
 .pools-wrap__filters-item {
@@ -208,5 +216,19 @@ export default {
 .pools-wrap__filters-networks {
   display: flex;
   margin-left: auto;
+
+  @media (max-width: 1240px) {
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 0;
+  }
 }
+
+@media (max-width: 640px) {
+  .pools-wrap__tabs {
+    width: 100%;
+  }
+}
+
 </style>

@@ -3,7 +3,7 @@
     <div class="app-header__container">
       <div class="app-header__content">
         <div
-          v-if="deviceType().isDesktop"
+          v-if="deviceSize.isDesktop"
           class="app-header-dapp"
         >
           <router-link
@@ -50,13 +50,16 @@
 
         <div class="app-header__content-data">
           <div
-            v-if="accountRenderLoading || balancesLoading"
+            v-if="(accountRenderLoading || balancesLoading) && !deviceSize.isMobile"
             class="lineLoader"
           />
-          <UserBalances v-else-if="deviceType().isDesktop && walletConnected && account" />
+          <UserBalances
+            class="app-header__balances"
+            v-else-if="!deviceSize.isMobile && walletConnected && account"
+          />
 
           <div
-            v-if="accountRenderLoading"
+            v-if="accountRenderLoading && deviceSize.isDesktop"
             class="lineLoader"
           />
           <ButtonComponent
@@ -86,10 +89,16 @@
             class="app-header__network-wrap"
           >
             <img
-              v-if="!deviceType().isDesktop"
+              v-if="!deviceSize.isDesktop"
               class="app-header__gear"
               alt="navbar"
               :src="getImageUrl(`assets/icons/common/CommonGear.svg`)"
+              @click="showMobMenu = !showMobMenu"
+              @keypress="showMobMenu = !showMobMenu"
+            />
+            <MobileMenu
+              :is-show="showMobMenu"
+              @close="showMobMenu = false"
             />
             <PopperComponent
               interactive
@@ -144,6 +153,8 @@
           </div>
         </div>
       </div>
+
+      <UserBalances v-if="deviceSize.isMobile && walletConnected && account" />
     </div>
   </div>
   <AccountModal
@@ -166,6 +177,7 @@ import { sortedChainsByTVL } from '@/store/helpers/index.ts';
 import AccountModal from '@/modules/Account/Index.vue';
 import { deviceType } from '@/utils/deviceType.ts';
 import UserBalances from './UserBalances.vue';
+import MobileMenu from './MobileMenu.vue';
 
 interface Chain {
   chainName: string;
@@ -181,6 +193,7 @@ export default {
     SwitchComponent,
     SpinnerComponent,
     UserBalances,
+    MobileMenu,
     AccountModal,
     BaseIcon,
   },
@@ -190,6 +203,7 @@ export default {
       chainsLoading: false,
       networksData: appNetworksData,
       showModalAccount: false,
+      showMobMenu: false,
     };
   },
   async mounted() {
@@ -235,10 +249,12 @@ export default {
           };
         });
     },
+    deviceSize() {
+      return deviceType();
+    },
   },
   methods: {
     ...mapActions('network', ['setWalletNetwork', 'showDeprecated']),
-    deviceType,
     getImageUrl,
     openAccountModal() {
       this.showModalAccount = !this.showModalAccount;
@@ -329,8 +345,7 @@ export default {
 .app-header__container {
   width: 100%;
   max-width: 1360px;
-  padding-left: 10px;
-  padding-right: 20px;
+  padding: 0 20px;
   margin: 0 auto;
 }
 
@@ -397,6 +412,7 @@ export default {
   @media (max-width: 1024px) {
     width: 100%;
     justify-content: space-between;
+    flex-wrap: wrap;
   }
 }
 
@@ -490,6 +506,9 @@ export default {
 .app-header__network-wrap {
   display: flex;
   gap: 20px;
+  @media (max-width: 1024px) {
+    margin-left: auto;
+  }
 }
 
 .app-header__gear {
@@ -524,5 +543,11 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.app-header__balances {
+  @media (max-width: 1024px) {
+    order: 3;
+  }
 }
 </style>

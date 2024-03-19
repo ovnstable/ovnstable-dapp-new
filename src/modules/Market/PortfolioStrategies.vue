@@ -952,7 +952,7 @@ export default {
 
 }
 
-@media (max-width: 400px) {
+@media (max-width: 640px) {
   .performance__portfolio-description {
     font-size: 14px;
   }

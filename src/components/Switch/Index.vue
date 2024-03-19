@@ -32,7 +32,6 @@ export default {
   },
   methods: {
     switchTrigger() {
-      console.log('CHANGE');
       this.$emit('change-switch');
     },
   },

@@ -73,7 +73,9 @@
       </div>
     </div>
 
-    <Transition name="slide-fade-small">
+    <Transition
+      name="slide-fade-small"
+    >
       <TokensChooseForm
         v-if="showTokenSelect"
         :tokens-list="tokensList"
@@ -87,6 +89,23 @@
         @close-select="toggleSelect"
       />
     </Transition>
+    <!-- <Transition
+      v-else
+      name="slide-fade-small"
+    >
+      <MintRedeemSelectToken
+        v-if="showTokenSelect"
+        :tokens-list="tokensList"
+        :reverse-array="reverseArray"
+        :is-input-token="isInputToken"
+        :selected-token="tokenFullData.symbol"
+        :active-wrap="activeWrap"
+        :is-loading="isLoading"
+        @add-token="addSelectedTokenToList"
+        @remove-token="removeSelectedTokenFromList"
+        @close-select="toggleSelect"
+      />
+    </Transition> -->
 
   </div>
 </template>
@@ -97,6 +116,8 @@ import { mapGetters } from 'vuex';
 import InputComponent from '@/components/Input/Index.vue';
 import { formatMoney, fixedByPrice } from '@/utils/numbers.ts';
 import TokensChooseForm from '@/modules/Main/components/MintRedeem/TokenSelect/Index.vue';
+import MintRedeemSelectToken from '@/modules/Main/components/MobileModals/MintRedeemSelectToken.vue';
+import { deviceType } from '@/utils/deviceType.ts';
 import BigNumber from 'bignumber.js';
 import { MINTREDEEM_SCHEME } from '@/store/views/main/mintRedeem/mocks.ts';
 import { mintRedeemTypes, mintWrapStatus } from './types/index.ts';
@@ -113,6 +134,7 @@ export default {
   components: {
     InputComponent,
     TokensChooseForm,
+    MintRedeemSelectToken,
   },
   props: {
     // inputToken = token which we want to swap
@@ -159,6 +181,9 @@ export default {
     ...mapGetters('network', ['networkId']),
     ...mapGetters('mintRedeem', ['tokensListGetter']),
     ...mapGetters('accountData', ['account', 'originalBalance']),
+    deviceSize() {
+      return deviceType();
+    },
     tokenBalance() {
       if (!this.originalBalance) return '0';
       const balanceData = this.originalBalance.find((_: any) => _.symbol === this.tokenInfo.symbol);

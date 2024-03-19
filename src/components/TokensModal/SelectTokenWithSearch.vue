@@ -1,7 +1,25 @@
 <!-- eslint-disable vuejs-accessibility/form-control-has-label -->
 <template>
   <div>
-    <div class="selected-tokens">
+
+    <div
+      v-if="deviceSize.isMobile"
+      class="selected-tokens"
+    >
+      <p
+        class="selected-tokens-amount"
+      >{{ selectedCount }} / 3</p>
+      <div
+        class="search-tokens__input"
+      >
+        <InputComponent
+          :value="searchQuery"
+          is-text
+          placeholder="Search token by name or paste address"
+          full-width
+          @input="searchTokens"
+        />
+      </div>
       <div
         v-for="token in (selectedTokensList as any)"
         :key="token.id"
@@ -24,7 +42,10 @@
     </div>
 
     <div class="search-tokens">
-      <div class="search-tokens__input">
+      <div
+        v-if="!deviceSize.isMobile"
+        class="search-tokens__input"
+      >
         <InputComponent
           :value="searchQuery"
           is-text
@@ -65,6 +86,7 @@
             </span>
           </div>
         </div>
+
       </div>
     </div>
   </div>
@@ -74,6 +96,7 @@ import { formatMoney, fixedByPrice } from '@/utils/numbers.ts';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import InputComponent from '@/components/Input/Index.vue';
 import { OVN_TOKENS } from '@/utils/const.ts';
+import { deviceType } from '@/utils/deviceType.ts';
 import BigNumber from 'bignumber.js';
 
 const NATIVE_ID = 'eth0x0000000000000000000000000000000000000000';
@@ -111,6 +134,9 @@ export default {
     };
   },
   computed: {
+    deviceSize() {
+      return deviceType();
+    },
     selectedTokensList() {
       if (!(this.selectedTokens[0] as any).selectedToken) return [];
       return this.selectedTokens.map((item: any) => item?.selectedToken).filter((_) => _?.selected);
@@ -232,6 +258,7 @@ export default {
   &:hover {
     background-color: var(--color-6);
   }
+
 }
 
 .search-tokens__list-item--selected {
@@ -326,4 +353,41 @@ export default {
 .selected-tokens__item:hover {
   cursor: pointer;
 }
+
+@media (max-width: 640px) {
+  .search-tokens__list {
+    max-height: 100vh;
+  }
+  .search-tokens__list-item {
+    &:not(:last-child) {
+      border-bottom: 1px solid var(--color-5);
+    }
+  }
+  .selected-tokens {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    gap: 10px;
+    border: 2px solid var(--color-5);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .search-tokens__input {
+    margin: 0;
+    background-color: var(--color-8);
+    border-radius: 30px;
+  }
+  .selected-tokens-amount {
+    text-align: center;
+    margin: 10px 0;
+  }
+  .token-container-selected {
+    padding: 5px;
+    width: 100%;
+    span {
+      font-size: 14px;
+    }
+  }
+}
+
 </style>

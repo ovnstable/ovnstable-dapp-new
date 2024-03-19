@@ -233,11 +233,6 @@ export const buildLink = (pool: any) => {
     return url;
   }
 
-  if (pool.address === '0xb34a7d1444a707349Bc7b981B7F2E1f20F81F013') {
-    url = 'https://www.convexfinance.com/stake/arbitrum/13';
-    return url;
-  }
-
   if (
     pool.platform === 'Curve'
     && pool.address === '0xda3de145054ED30Ee937865D31B500505C4bDfe7'
@@ -278,7 +273,7 @@ const filterByPoolType = (
   if (filterType === poolTypes.TOKENPLUS) {
     return poolsList.filter((_) => {
       const poolTokens = _.name.split('/');
-      if (poolTokens.some((id: string) => STABLE_TOKENS.includes(id))) return true;
+      if (poolTokens.every((id: string) => STABLE_TOKENS.includes(id))) return true;
       return false;
     });
   }
@@ -298,6 +293,8 @@ const filterByPoolType = (
   return poolsList;
 };
 
+const MIN_AMOUNT = 100000;
+
 export const getSortedPools = (
   pools: any[],
   filterByTvl: boolean,
@@ -310,11 +307,8 @@ export const getSortedPools = (
     '0x61366A4e6b1DB1b85DD701f2f4BFa275EF271197',
   ];
 
-  const convexDuplicatePromote = '0xb34a7d1444a707349bc7b981b7f2e1f20f81f013_convex';
-
   // if pool tvl too low
   const promotePools = [
-    '0xb34a7d1444a707349Bc7b981B7F2E1f20F81F013',
     '0xd01075f7314a6436e8b74fc18069848229d0c555',
     '0xb9c2d906f94b27bc403ab76b611d2c4490c2ae3f',
     // LYNEX
@@ -327,13 +321,12 @@ export const getSortedPools = (
   // execute revert aggregator
   const filteredPools = pools.filter((pool) => {
     if (!revertAgg.includes(pool.address)) false;
-    if (pool.address?.toLowerCase() === convexDuplicatePromote) return false;
     return true;
   });
 
   if (!filterByTvl) {
     poolsList = filteredPools
-      .filter((pool) => (promotePools.includes(pool.address) ? pool : pool.tvl >= 300000));
+      .filter((pool) => (promotePools.includes(pool.address) ? pool : pool.tvl >= MIN_AMOUNT));
   } else {
     poolsList = filteredPools;
   }
@@ -364,16 +357,10 @@ export const getSortedSecondPools = (
       '0x77ca2ddfd61d1d5e5d709cf07549fec3e2d80315',
     ];
 
-    // convex duplicating
-    const removeFromSecondPools = [
-      '0xb34a7d1444a707349Bc7b981B7F2E1f20F81F013',
-    ];
-    if (removeFromSecondPools.includes(pool.address)) return false;
     // if its tvl higher than restrictions and its promotoed, its gonna duplicate
-    if (pool.tvl > 300000 && pool.promoted) return false;
+    if (pool.tvl > MIN_AMOUNT && pool.promoted) return false;
 
     if (exception.includes(pool.address)) return true;
-    if (pool.tvl < 300000 && pool.tvl > 100000) return true;
     if (pool.promoted !== false) return true;
 
     return false;
@@ -387,74 +374,6 @@ export const getSortedSecondPools = (
   });
 
   return filterByPoolType(secondPools, filterByType);
-};
-
-export const initFeature = (pools: any[]) => {
-  const topAprByChain = pools.reduce((acc, curr) => {
-    const { chain, apr } = curr;
-
-    // ignore binance chain
-    if (curr.chainName === 'bsc') {
-      return acc;
-    }
-
-    if (curr.tvl < 500000) {
-      return acc;
-    }
-
-    if (!acc[chain] || apr > acc[chain].apr) {
-      acc[chain] = curr;
-      return acc;
-    }
-
-    return acc;
-  }, {});
-
-  const topAprByAddress = Object
-    .values(topAprByChain)
-    .map((_: any) => _.address?.toLowerCase());
-
-  const newPools = pools.map((entry) => {
-    const { address } = entry;
-
-    // promoting special pool in FEATURES/all-pools
-    const featurePromote = [
-      '0x1b05e4e814b3431a48b8164c41eac834d9ce2da6',
-      '0x8a06339abd7499af755df585738ebf43d5d62b94',
-    ];
-
-    const convexPromote = ['0xb34a7d1444a707349bc7b981b7f2e1f20f81f013'];
-    const loweredAdd = address?.toLowerCase();
-
-    // remove after CONVEX PROMO
-    if (convexPromote.includes(loweredAdd)) {
-      const aprConvex = pools.find(
-        (_) => _?.address.toLowerCase()
-          === '0xb34a7d1444a707349bc7b981b7f2e1f20f81f013_convex',
-      );
-
-      return {
-        ...entry,
-        apr: aprConvex?.apr ?? entry.apr,
-        feature: true,
-      };
-    }
-
-    // for all other PROMO FEATURED pools
-    if (
-      featurePromote.includes(loweredAdd)
-      || topAprByAddress.includes(loweredAdd)
-    ) {
-      return {
-        ...entry,
-        feature: true,
-      };
-    }
-
-    return entry;
-  });
-
-  return newPools;
 };
 
 export const initReversePools = (pool: any, pools: any[]) => {

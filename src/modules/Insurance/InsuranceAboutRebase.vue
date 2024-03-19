@@ -173,7 +173,7 @@ export default {
     margin-top: 10px;
   }
 }
-@media (max-width: 400px) {
+@media (max-width: 640px) {
   .insurane__about-rebase-images svg{
     scale: 60%;
   }

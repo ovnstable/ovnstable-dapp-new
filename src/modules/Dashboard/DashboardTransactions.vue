@@ -425,7 +425,7 @@ export default {
   }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 640px) {
   .dashboard__transactions-titles,
   .dashboard__transactions-transaction {
     display: grid;

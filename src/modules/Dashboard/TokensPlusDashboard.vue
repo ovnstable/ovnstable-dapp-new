@@ -568,14 +568,7 @@ export default {
   }
 }
 
-@media (max-width: 450px) {
-  .dashboard__divider-first,
-  .dashboard__divider-last {
-    display: none;
-  }
-}
-
-@media (max-width: 400px) {
+@media (max-width: 640px) {
   .dashboard__tokens-data-select {
     gap: 12px;
   }

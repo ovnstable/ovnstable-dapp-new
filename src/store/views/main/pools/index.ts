@@ -8,10 +8,9 @@ import {
   getSortedPools,
   getSortedSecondPools,
   initAggregators,
-  initFeature,
   initReversePools,
 } from '@/store/views/main/pools/helpers.ts';
-import { poolTokensForZapMap, zapPlatformSupportList } from '@/store/views/main/pools/mocks.ts';
+import { FEATURED_POOLS, poolTokensForZapMap, zapPlatformSupportList } from '@/store/views/main/pools/mocks.ts';
 import { loadTokenImage } from '@/utils/tokenLogo.ts';
 
 const stateData = {
@@ -103,15 +102,13 @@ const actions = {
                 pool = initAggregators(pool);
 
                 const newName = pool.id.name.toUpperCase();
-                let { platform } = pool;
 
-                // cases when LP staking platform differ from actual
-                if (
-                  pool.id.address
-                  === '0xb34a7d1444a707349Bc7b981B7F2E1f20F81F013'
-                ) {
-                  platform = 'Convex';
+                if (FEATURED_POOLS.includes(pool.id.address)) {
+                  pool.feature = true;
+                } else {
+                  pool.feature = false;
                 }
+
                 return {
                   id: pool.id.name + pool.tvl + pool.platform,
                   name: newName,
@@ -122,7 +119,7 @@ const actions = {
                   chain: networkConfig.networkId,
                   chainName: networkConfig.networkName,
                   address: pool.id.address,
-                  platform,
+                  platform: pool.platform,
                   tvl: pool.tvl,
                   apr: pool.apr,
                   skimEnabled: pool.skimEnabled,
@@ -225,11 +222,6 @@ const actions = {
       });
     }
 
-    commit('changeState', {
-      field: 'allPools',
-      val: initFeature(state.allPools),
-    });
-
     if (state.typeOfPool === 'OVN') {
       commit('changeState', {
         field: 'sortedPoolList',
@@ -255,26 +247,6 @@ const actions = {
       field: 'isPoolsLoading',
       val: false,
     });
-
-    const map = new Map();
-
-    map.set('0x1561d9618db2dcfe954f5d51f4381fa99c8e5689', '1577'); // 5. Thena USDT+/USD+
-    map.set('0x667002F9DC61ebcBA8Ee1Cbeb2ad04060388f223', '1619'); // 7. Velodrome USD+/DAI+
-    map.set('0xd95E98fc33670dC033424E7Aa0578D742D00f9C7', '1618'); // 8. Velodrome USD+/USDC
-    map.set('0x37e7D30CC180A750C83D68ED0C2511dA10694d63', '1621'); // 9. Velodrome USD+/LUSD
-    map.set('0x0b28C2e41058EDc7D66c516c617b664Ea86eeC5d', '1620'); // 10. Velodrome USD+/DOLA
-    map.set('0xD330841EF9527E3Bd0abc28a230C7cA8dec9423B', '1622'); // 11. Velodrome FRAX/USD+
-    map.set('0xd1c33d0af58eb7403f7c01b21307713aa18b29d3', '1625'); // 12. DefiEdge USD+/USDC
-    map.set('0xeb9153afbaa3a6cfbd4fce39988cea786d3f62bb', '1575'); // 12. Ramses USD+/DAI+
-
-    for (let i = 0; i < state.allPools.length; i++) {
-      const pool = state.allPools[i];
-      const stableFishId = map.get(pool.address);
-
-      if (stableFishId) {
-        pool.stableFishUrl = `https://stable.fish/defi/${stableFishId}`;
-      }
-    }
   },
 };
 

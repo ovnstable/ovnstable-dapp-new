@@ -115,7 +115,6 @@ export const addItemToFilteredTokens = (
       approved: false,
     },
     price: 0,
-    estimatePerOne: 0,
   });
 };
 
@@ -189,7 +188,6 @@ export const getFilteredOvernightTokens = (
   chainId: number,
   isOnlyOvnToken: any,
 ) => {
-  console.log(state.tokensMap, 'getFilteredOvernightTokens');
   if (!state.tokensMap || !state.tokensMap.chainTokenMap) return [];
 
   const tokens: any = [];

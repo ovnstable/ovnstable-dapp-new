@@ -157,6 +157,22 @@ export default {
   svg path {
     fill: var(--color-3);
   }
+
+  @media (max-width: 640px) {
+    margin-top: 20px;
+  }
+
+  @media (max-width: 768px) {
+    width: calc(100vw - 40px);
+    min-height: 50px;
+    font-size: 20px;
+    font-weight: 700;
+    background: var(--color-4);
+
+    &:hover {
+      background: var(--color-8);
+    }
+  }
 }
 
 .app-header__balance-row {
@@ -169,18 +185,29 @@ export default {
   border: 1px solid var(--color-1);
   background: var(--color-4);
   box-shadow: 0px 1px 0px 0px var(--color-1);
+  font-size: 20px;
+  font-weight: 500;
+
   [data-theme="dark"] & {
     background: var(--color-17);
+  }
+
+  @media (max-width: 768px) {
+    width: calc(100vw - 40px);
+    border-radius: 10px;
+    font-weight: 700;
   }
 }
 
 .networks-list__item {
   display: flex;
+  font-size: 14px;
+  color: var(--color-1);
   padding: 8px 14px;
   cursor: pointer;
   transition: background-color .2s ease, color .2s ease;
   [data-theme="dark"] & {
-    color: var(--color-18);
+    color: var(--color-4);
   }
   svg, img {
     width: 18px;
@@ -227,6 +254,11 @@ export default {
   justify-content: space-between;
   padding: 0 15px;
   margin-bottom: 10px;
+  font-size: 14px;
+  color: var(--color-1);
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
 
   span:first-child {
     text-decoration: underline;

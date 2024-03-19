@@ -67,19 +67,20 @@
         </div>
 
       </div>
-      <div class="ovn__overview-links-data-button">
-        <ButtonComponent
-          class="ovn__overview-button"
-          @click="toggleModalOvnDasbhoard()"
-          @keydown.enter="toggleModalOvnDasbhoard()"
-        >
+
+      <router-link
+        class="ovn__overview-links-data-button"
+        to="/dashboard"
+      >
+        <ButtonComponent class="ovn__overview-button">
           <BaseIcon
             class="ovn__overview-dashboard-icon"
             name='InsuranceOVN'
           />
         </ButtonComponent>
         <p>MY OVN</p>
-      </div>
+      </router-link>
+
     </div>
     <div
       v-if="!insuranceIsMobileOvnDashboard"
@@ -354,9 +355,11 @@ export default {
 .ovn__overview-bridge-icon,
 .ovn__overview-dashboard-icon {
   margin-right: 4px;
+  overflow: visible;
 }
 .ovn__overview-redeem-icon {
   margin-left: 4px;
+  overflow: visible;
 }
 
 .ovn__overview-divider {
@@ -604,7 +607,11 @@ export default {
     display: none;
   }
 }
-@media (max-width: 400px) {
+@media (max-width: 640px) {
+  .ovn__overview-price-down,
+  .ovn__overview-price-up {
+    margin-left: 10px;
+  }
   .ovn__overview-links {
     display: flex;
     align-items: center;
@@ -707,6 +714,9 @@ export default {
   }
   .ovn__overview-chain-data-container {
     margin-top: 12px;
+  }
+  .ovn__overview-link-cmc {
+    margin-right: 10px;
   }
 
 }

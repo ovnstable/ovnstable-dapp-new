@@ -3,10 +3,7 @@
     <router-link
       class="footer-mobile__btn"
       v-for="item in linksData"
-      :class="{
-        'basic-hover': item.icon !== 'FooterOvn',
-        'ovn-hover': item.icon === 'FooterOvn',
-      }"
+      :class="{ insurance: item.icon === 'FooterOvn' }"
       active-class="active-link"
       :key="item.icon"
       :to="item.link"
@@ -35,7 +32,7 @@ export default {
         },
         {
           icon: 'FooterOvn',
-          link: '/ovn',
+          link: '/insurance',
         },
         {
           icon: 'FooterHome',
@@ -83,7 +80,7 @@ export default {
     height: 18px;
   }
 
-  &:nth-child(1), &:nth-child(2) {
+  &:nth-child(1) {
     pointer-events: none;
     opacity: .5;
   }
@@ -98,6 +95,13 @@ export default {
       fill: var(--color-3);
       stroke: var(--color-3);
     }
+        &:nth-child(2) {
+    svg * {
+      stroke: none;
+      fill: var(--color-3);
+    }
+  }
+
   }
 }
 

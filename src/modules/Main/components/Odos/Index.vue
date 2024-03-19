@@ -222,20 +222,38 @@
       </template>
     </div>
 
-    <SelectTokensModal
-      :is-show="isShowSelectTokensModal"
-      :select-token-input="selectModalTypeInput"
-      :tokens="allTokensList"
-      :user-account="account"
-      :balances-loading="isBalancesLoading"
-      :is-all-data-loaded="isAllDataLoaded"
-      :selected-tokens="selectModalTypeInput ? inputTokens : outputTokens"
-      @set-show="showSelectTokensModals"
-      @add-token-to-list="addSelectedTokenToList"
-      @remove-token-from-list="removeSelectedTokenFromList"
-      @connect-wallet="connectWalletTrigger"
-      @reload="reloadList"
-    />
+    <div v-if="!deviceSize.isMobile">
+      <SelectTokensModal
+        :is-show="isShowSelectTokensModal"
+        :select-token-input="selectModalTypeInput"
+        :tokens="allTokensList"
+        :user-account="account"
+        :balances-loading="isBalancesLoading"
+        :is-all-data-loaded="isAllDataLoaded"
+        :selected-tokens="selectModalTypeInput ? inputTokens : outputTokens"
+        @set-show="showSelectTokensModals"
+        @add-token-to-list="addSelectedTokenToList"
+        @remove-token-from-list="removeSelectedTokenFromList"
+        @connect-wallet="connectWalletTrigger"
+        @reload="reloadList"
+      />
+    </div>
+    <div v-else>
+      <SelectTokensModalMobile
+        :is-show="isShowSelectTokensModal"
+        :select-token-input="selectModalTypeInput"
+        :tokens="allTokensList"
+        :user-account="account"
+        :balances-loading="isBalancesLoading"
+        :is-all-data-loaded="isAllDataLoaded"
+        :selected-tokens="selectModalTypeInput ? inputTokens : outputTokens"
+        @set-show="showSelectTokensModals"
+        @add-token-to-list="addSelectedTokenToList"
+        @remove-token-from-list="removeSelectedTokenFromList"
+        @connect-wallet="connectWalletTrigger"
+        @reload="reloadList"
+      />
+    </div>
 
   </div>
 </template>
@@ -252,7 +270,9 @@ import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import NetworkNotAvailable from '@/modules/Main/components/Odos/network-not-available.vue';
 import SelectTokensModal from '@/components/TokensModal/Index.vue';
+import SelectTokensModalMobile from '@/modules/Main/components/MobileModals/TokenSelect.vue';
 import SwapSlippageSettings from '@/modules/Main/components/Common/SwapSlippageSettings.vue';
+import { deviceType } from '@/utils/deviceType.ts';
 import { formatMoney, fixedByPrice } from '@/utils/numbers.ts';
 import { getRandomString } from '@/utils/strings.ts';
 import { clearApproveToken, getAllowanceValue, approveToken } from '@/utils/contractApprove.ts';
@@ -278,6 +298,7 @@ export default {
     SwapSlippageSettings,
     TokenForm,
     BaseIcon,
+    SelectTokensModalMobile,
   },
   props: {
     viewType: {
@@ -320,11 +341,8 @@ export default {
       }
     },
     // on wallet connect
-    async account(val) {
-      if (val) {
-        this.clearForm('000');
-        this.init();
-      }
+    async allTokensList(val) {
+      if (val) this.clearForm('000');
       if (!val) this.outputTokens = [getNewOutputToken()];
     },
     // for first render
@@ -440,6 +458,9 @@ export default {
     ...mapGetters('network', ['getParams', 'networkId', 'networkName']),
     ...mapGetters('gasPrice', ['gasPrice', 'gasPriceGwei']),
 
+    deviceSize() {
+      return deviceType();
+    },
     getSlippagePercent() {
       return this.slippagePercent;
     },
@@ -644,6 +665,7 @@ export default {
         'initWalletTransaction',
         'initData',
         'loadPricesInfo',
+        'loadBalances',
       ],
     ),
     ...mapActions('errorModal', ['showErrorModalWithMsg']),
@@ -730,6 +752,7 @@ export default {
         this.allTokensList,
         symbol as string | null,
       );
+
       if (!ovnSelectedToken) {
         this.addNewInputToken();
         this.addNewOutputToken();
@@ -973,23 +996,8 @@ export default {
         referralCode: this.odosReferalCode,
       };
 
-      console.log(requestData, 'sWAPP2');
-      console.log({
-        message: 'Odos Swap quota request data',
-        swapSession: this.swapSessionId,
-        data: requestData,
-        actualGas,
-      });
-
       this.odosSwapRequest(requestData)
         .then(async (data: any) => {
-          console.log({
-            message: 'Odos Swap quota response data',
-            swapSession: this.swapSessionId,
-            data,
-            actualGas,
-          });
-
           const assembleData = {
             userAddr: ethers.getAddress(
               this.account.toLowerCase(),
@@ -998,12 +1006,6 @@ export default {
             simulate: true,
           };
 
-          console.log({
-            message: 'Odos Assemble request data',
-            swapSession: this.swapSessionId,
-            data: assembleData,
-            actualGas,
-          });
           this.odosAssembleRequest(assembleData)
             .then(async (responseAssembleData: any) => {
               console.log({
@@ -1023,12 +1025,6 @@ export default {
                   ? responseAssembleData.simulation.simulationError
                     .errorMessage
                   : 'Transaction simulation is failed';
-                console.log({
-                  message: 'Error before send swap transaction',
-                  swapSession: this.swapSessionId,
-                  data: errMsg,
-                  actualGas,
-                });
 
                 this.showErrorModalWithMsg({
                   errorType: 'approve',
@@ -1059,6 +1055,7 @@ export default {
                 swapSession: this.swapSessionId,
                 data: e,
               });
+              this.closeWaitingModal();
               this.isSwapLoading = false;
             });
         })
@@ -1716,7 +1713,6 @@ export default {
 }
 .swap-form, .swap-container {
   height: 100%;
-  // width: calc(100% + 4px);
   border-radius: 0 0 30px 30px;
 }
 
@@ -1738,6 +1734,12 @@ export default {
     background-color: var(--color-17);
     border: 2px solid var(--color-2);
     border-top: none;
+  }
+
+  @media (max-width: 640px) {
+    margin-top: 50px;
+    border-top: 2px solid var(--color-1);
+    border-radius: 30px;
   }
 }
 .swap-form__body-block {
@@ -1800,6 +1802,16 @@ export default {
       background-color: var(--color-7);
       color: var(--color-18);
     }
+  }
+}
+@media (max-width: 640px) {
+  .swap-form {
+    width: 100%;
+    border: none;
+    padding: 0;
+  }
+  .swap-form__body-block__inputs {
+    flex-direction: column;
   }
 }
 </style>

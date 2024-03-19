@@ -306,6 +306,7 @@ export default {
       return false;
     },
     pendingRedemption() {
+      if (this.insuranceRedemptionData.request === 'CAN_WITHDRAW') return false;
       if (this.selectedAction === 'redeem'
         && this.insuranceRedemptionData.hours > 0 && this.insuranceRedemptionData.hours < 72) {
         return true;
@@ -774,7 +775,7 @@ export default {
   }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 640px) {
   .insurance__modal-mint-redeem {
     padding: 0;
     width: auto;

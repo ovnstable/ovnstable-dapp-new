@@ -372,18 +372,11 @@ export default {
     margin: 0;
     padding: 0;
   }
-  .insurance__payouts {
-    padding-right: 0px;
-  }
 }
 
-@media (max-width: 560px) {
-.insurance__payouts-button-show {
-  padding: 5px;
-}
-
-@media (max-width: 400px) {
+@media (max-width: 640px) {
   .insurance__payouts-button-show {
+    margin-top: 0;
     padding: 5px 120px;
     svg {
       overflow: visible;
@@ -418,6 +411,5 @@ export default {
   .insurance__payouts-date-transaction {
     display: block;
   }
-}
 }
 </style>

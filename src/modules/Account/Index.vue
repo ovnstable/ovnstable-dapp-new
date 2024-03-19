@@ -114,6 +114,9 @@ export default {
     width: 100%;
     min-width: 90vw;
   }
+  @media (max-width: 640px) {
+    padding: 10px;
+  }
 }
 .account__modal-profile {
   margin-top: 30px;

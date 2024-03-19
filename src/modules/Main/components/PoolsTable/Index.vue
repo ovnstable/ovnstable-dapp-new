@@ -36,7 +36,7 @@
         </template>
         <template
           #footer
-          v-if="!isPoolsLoading && typeOfPool === 'ALL' && filteredPoolsForSecondTab?.length > 0"
+          v-if="!isPoolsLoading && filteredPoolsForSecondTab?.length > 0"
         >
           <div
             class="table-extend"
@@ -49,7 +49,7 @@
               <BaseIcon name="ArrowDown" />
             </div>
             <h1>
-              {{openPoolList ? "CLOSE" : "OPEN"}} Pools with TVL less than $300K
+              {{openPoolList ? "CLOSE" : "OPEN"}} Pools with TVL less than $100K
             </h1>
             <div
               class="table-extend__arrow"
@@ -131,7 +131,6 @@ export default {
     ...mapState('poolsData', [
       'sortedPoolSecondList',
       'sortedPoolList',
-      'typeOfPool',
       'isPoolsLoading',
       'currentZapPool',
       'isZapModalShow',
@@ -141,95 +140,88 @@ export default {
         ? [...this.filteredPools, ...this.filteredPoolsForSecondTab] : this.filteredPools;
     },
     filteredPools() {
-      if (this.orderType === 'APR') {
-        // last step filter
-        return getSortedPools(this.filteredBySearchQueryPools, this.typeOfPool === 'OVN', this.poolTabType);
-      }
+      const tabOrderedPools = getSortedPools(
+        this.filteredBySearchQueryPools,
+        true,
+        this.poolTabType,
+      );
+
+      if (['APR', 'TVL'].includes(this.orderType)) return tabOrderedPools;
 
       if (this.orderType === 'APR_UP') {
         // last step filter
-        return this.filteredBySearchQueryPools
+        return tabOrderedPools
           .slice()
           .sort((a: any, b: any) => b.apr - a.apr);
       }
 
       if (this.orderType === 'APR_DOWN') {
         // last step filter
-        return this.filteredBySearchQueryPools
+        return tabOrderedPools
           .slice()
           .sort((a: any, b: any) => a.apr - b.apr);
       }
 
-      if (this.orderType === 'TVL') {
-        // last step filter. same like type 'APR'
-        return getSortedPools(this.filteredBySearchQueryPools, this.typeOfPool === 'OVN', this.poolTabType);
-      }
+      if (this.orderType === 'TVL') return tabOrderedPools;
 
       if (this.orderType === 'TVL_UP') {
         // last step filter
-        return this.filteredBySearchQueryPools
+        return tabOrderedPools
           .slice()
           .sort((a: any, b: any) => b.tvl - a.tvl);
       }
 
       if (this.orderType === 'TVL_DOWN') {
         // last step filter
-        return this.filteredBySearchQueryPools
+        return tabOrderedPools
           .slice()
           .sort((a: any, b: any) => a.tvl - b.tvl);
       }
 
-      console.error('Order type not found when order pools', this.orderType);
       return [];
     },
 
     filteredPoolsForSecondTab() {
-      if (this.orderType === 'APR') {
-        // last step filter
-        return getSortedSecondPools(this.filteredBySearchQuerySecondPools, this.poolTabType);
-      }
+      const tabOrderedPools = getSortedSecondPools(
+        this.filteredBySearchQuerySecondPools,
+        this.poolTabType,
+      );
+
+      if (['APR', 'TVL'].includes(this.orderType)) return tabOrderedPools;
 
       if (this.orderType === 'APR_UP') {
         // last step filter
-        return this.filteredBySearchQuerySecondPools
+        return tabOrderedPools
           .slice()
           .sort((a: any, b: any) => b.apr - a.apr);
       }
 
       if (this.orderType === 'APR_DOWN') {
         // last step filter
-        return this.filteredBySearchQuerySecondPools
+        return tabOrderedPools
           .slice()
           .sort((a: any, b: any) => a.apr - b.apr);
       }
 
-      if (this.orderType === 'TVL') {
-        // last step filter. same like type 'APR'
-        return getSortedSecondPools(this.filteredBySearchQuerySecondPools, this.poolTabType);
-      }
-
       if (this.orderType === 'TVL_UP') {
         // last step filter
-        return this.filteredBySearchQuerySecondPools
+        return tabOrderedPools
           .slice()
           .sort((a: any, b: any) => b.tvl - a.tvl);
       }
 
       if (this.orderType === 'TVL_DOWN') {
         // last step filter
-        return this.filteredBySearchQuerySecondPools
+        return tabOrderedPools
           .slice()
           .sort((a: any, b: any) => a.tvl - b.tvl);
       }
 
-      console.error('Order type not found when order pools', this.orderType);
       return [];
     },
 
     filteredBySearchQueryPools() {
-      if (!this.searchQuery) {
-        return this.filteredAprPools;
-      }
+      if (!this.searchQuery) return this.filteredAprPools;
 
       return this.filteredAprPools
         .filter((pool: any) => pool.name.toLowerCase().includes(this.searchQuery.toLowerCase())
@@ -239,9 +231,7 @@ export default {
               || pool.platform.toLowerCase().includes(this.searchQuery.toLowerCase()));
     },
     filteredBySearchQuerySecondPools() {
-      if (!this.searchQuery) {
-        return this.filteredAprSecondPools;
-      }
+      if (!this.searchQuery) return this.filteredAprSecondPools;
 
       return this.filteredAprSecondPools
         .filter((pool: any) => pool.name.toLowerCase().includes(this.searchQuery.toLowerCase())
@@ -251,38 +241,18 @@ export default {
               || pool.platform.toLowerCase().includes(this.searchQuery.toLowerCase()));
     },
     filteredAprPools() {
-      if (!this.isShowAprLimit) {
-        return this.filteredZappablePools;
-      }
+      if (!this.isShowAprLimit) return this.filteredByNetwork;
 
-      return this.filteredZappablePools
+      return this.filteredByNetwork
         .filter((pool: any) => pool.apr && this.aprLimitForFilter <= pool.apr * 1);
     },
     filteredAprSecondPools() {
-      if (!this.isShowAprLimit) {
-        return this.filteredZappableSecondPools;
-      }
+      if (!this.isShowAprLimit) return this.filteredByNetworkSecond;
 
-      return this.filteredZappableSecondPools
+      return this.filteredByNetworkSecond
         .filter((pool: any) => pool.apr && this.aprLimitForFilter <= pool.apr * 1);
     },
-
-    filteredZappablePools() {
-      if (!this.isShowOnlyZap) {
-        return this.filteredByTabPools;
-      }
-
-      return this.filteredByTabPools.filter((pool: any) => this.isShowOnlyZap && pool.zappable);
-    },
-    filteredZappableSecondPools() {
-      if (!this.isShowOnlyZap) {
-        return this.filteredBySecondTabPools;
-      }
-
-      return this.filteredBySecondTabPools
-        .filter((pool: any) => this.isShowOnlyZap && pool.zappable);
-    },
-    filteredByTabPools() {
+    filteredByNetwork() {
       if (this.selectedTabs.length === 1 && this.selectedTabs.includes('ALL')) {
         return this.sortedPoolList;
       }
@@ -290,7 +260,7 @@ export default {
       return this.sortedPoolList
         .filter((pool: any) => this.selectedTabs.includes(this.getParams(pool.chain).networkId));
     },
-    filteredBySecondTabPools() {
+    filteredByNetworkSecond() {
       if (this.selectedTabs.length === 1 && this.selectedTabs.includes('ALL')) {
         return this.sortedPoolSecondList;
       }
@@ -338,6 +308,7 @@ export default {
     ...mapMutations('poolsData', ['changeState']),
 
     changePoolsTab(type: poolTypes) {
+      console.log(type, 'POOLTYPE');
       this.poolTabType = type;
     },
     updateSearch(searchQuery: string) {
@@ -345,15 +316,6 @@ export default {
     },
     setOrderType(orderType: any) {
       this.orderType = orderType;
-    },
-    zapFilter(isShow: boolean) {
-      this.isShowOnlyZap = isShow;
-      console.log('Is show zap? ', this.isShowOnlyZap);
-    },
-    aprLimitFilter(isShow: boolean, limit: any) {
-      this.isShowAprLimit = isShow;
-      this.aprLimitForFilter = limit;
-      console.log('Apr limit ', isShow, limit);
     },
     setSelectedNetwork(tab: string) {
       if (tab === 'all' && this.selectedTabs.includes('ALL')) {
@@ -403,6 +365,10 @@ export default {
 <style lang="scss" scoped>
 .pools-wrap {
   margin: 30px 0;
+
+  @media (max-width: 768px) {
+    margin: 0 0 120px 0;
+  }
 }
 
 .pools-wrap__loader {
