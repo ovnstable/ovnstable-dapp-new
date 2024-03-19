@@ -7,6 +7,7 @@ import injectedModule, { ProviderLabel } from '@web3-onboard/injected-wallets';
 import Onboard from '@web3-onboard/core';
 import walletConnectModule from '@web3-onboard/walletconnect';
 import coinbaseWalletModule from '@web3-onboard/coinbase';
+import { deviceType } from '@/utils/deviceType.ts';
 
 const SUPPORTED_NETWORKS = [137, 56, 10, 42161, 324, 8453, 59144, 81457];
 const WALLETCONNECT_SUPPORTED_NETWORKS = [10, 42161, 8453, 56, 59144, 137, 81457];
@@ -318,6 +319,8 @@ const actions = {
   async getMainWalletsConfig({
     commit, dispatch, getters, rootState,
   }: any) {
+    const deviceSize = deviceType();
+
     const injected = injectedModule({
       filter: await dispatch('getWalletsFilter'),
       sort: (wallets) => {
@@ -334,6 +337,7 @@ const actions = {
             .filter((wallet) => wallet)
         ) as any;
       },
+      displayUnavailable: !!deviceSize.isMobile,
       walletUnavailableMessage: (wallet) => `Oops ${wallet.label} is unavailable!`,
 
     });

@@ -178,3 +178,13 @@ $avatar-offset: 52 + 16;
     box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
   }
 }
+
+:root {
+  /* CUSTOMIZE ACCOUNT CENTER*/
+  --account-center-z-index: 200000;
+  /* MAIN MODAL POSITIONING */
+  --onboard-modal-z-index: 200000;
+  /* MAGIC WALLET MODAL POSITIONING */
+  --onboard-login-modal-z-index: 200000;
+  --notify-onboard-z-index: 200000;
+}
