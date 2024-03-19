@@ -88,6 +88,9 @@
                     alt="token"
                     :src="pool.token2Icon"
                   />
+                  <span>
+                    {{ getTokenNames(pool)[2] }}
+                  </span>
                   <div
                     class="pools-table__hot"
                     v-if="pool.feature && pool.token2Icon"
@@ -496,10 +499,6 @@ export default {
 
   &:first-child {
     right: 0;
-  }
-
-  &:nth-child(3) {
-    right: 52px;
   }
 
   &:last-child {

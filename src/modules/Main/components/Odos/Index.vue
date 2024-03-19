@@ -1805,6 +1805,7 @@ export default {
 }
 @media (max-width: 640px) {
   .swap-form {
+    width: 100%;
     border: none;
     padding: 0;
   }
