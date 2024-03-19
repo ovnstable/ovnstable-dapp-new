@@ -49,7 +49,7 @@
           <div class="modal-content__data-row">
             <div class="success-token-title">Staking platform</div>
             <span class="success-data-item">
-              {{ successData.pool.platform[0][0] }}
+              {{ successData.pool.platform[0] }}
             </span>
           </div>
           <div class="modal-content__data-row">

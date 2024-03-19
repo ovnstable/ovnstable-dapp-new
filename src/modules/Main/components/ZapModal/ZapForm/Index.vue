@@ -162,7 +162,7 @@
         </div>
 
         <div
-          v-if="zapPool && zapPool.platform[0][0] === 'Swapbased'"
+          v-if="zapPool && zapPool.platform[0] === 'Swapbased'"
           class="slippage-info-container"
         >
           <div class="slippage-info-title">
@@ -1271,7 +1271,7 @@ export default {
       let sourceBlacklist = [...this.sourceLiquidityBlacklist];
       // excluding platform for big liquidities zapins
       const excludeLiquidityByPlatform = this.mapExcludeLiquidityPlatform[
-        this.zapPool.platform[0][0]
+        this.zapPool.platform[0]
       ];
       if (excludeLiquidityByPlatform && excludeLiquidityByPlatform.length) {
         sourceBlacklist = [...sourceBlacklist, ...excludeLiquidityByPlatform];
