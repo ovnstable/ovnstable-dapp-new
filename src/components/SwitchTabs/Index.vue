@@ -182,6 +182,13 @@ export default {
 }
 
 @media (max-width: 400px) {
+  .switchtabs__inner {
+    min-width: 100%;
+    display: flex;
+    justify-content: space-between;
+    background: none;
+    border: none;
+  }
   .switchtabs__inner,
   .switchtabs__inner-text {
     background: none;

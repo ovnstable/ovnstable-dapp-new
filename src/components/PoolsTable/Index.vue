@@ -633,6 +633,9 @@ export default {
     overflow-x: auto
   }
 
+  .pools-table__footer {
+    padding-bottom: 70px;
+  }
   .pools-header,
   .pools-table__content {
     min-width: 650px;

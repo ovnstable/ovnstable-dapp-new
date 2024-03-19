@@ -158,6 +158,10 @@ export default {
   @media (max-width: 1240px) {
     flex-wrap: wrap;
   }
+  @media (max-width: 400px) {
+    position: sticky;
+    left: 0;
+  }
 }
 .pools-wrap__filters-item {
   display: flex;
@@ -220,4 +224,11 @@ export default {
     margin: 10px 0;
   }
 }
+
+@media (max-width: 400px) {
+  .pools-wrap__tabs {
+    width: 100%;
+  }
+}
+
 </style>
