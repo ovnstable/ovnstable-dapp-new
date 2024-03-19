@@ -259,4 +259,15 @@ export default {
     border-color: var(--color-4);
   }
 }
+
+@media (max-width: 400px) {
+  .modal-content {
+    padding: 20px 40px 10px 40px;
+    max-width: 400px;
+    [data-theme="dark"] & {
+      background-color: var(--color-17);
+      border-color: var(--color-4);
+    }
+  }
+}
 </style>

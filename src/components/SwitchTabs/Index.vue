@@ -182,6 +182,11 @@ export default {
 }
 
 @media (max-width: 400px) {
+  .switchtabs__inner,
+  .switchtabs__inner-text {
+    background: none;
+    border: none;
+  }
   .switchtabs__inner-text:hover {
     color: var(--color-1);
     [data-theme="dark"] & {
