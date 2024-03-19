@@ -292,16 +292,10 @@ export default {
   }
 }
 @media (max-width: 768px) {
-  .insurance__graphics {
-    padding: 8px 12px;
-  }
-
-  .insurance,
-  .insurance__payouts {
-    width: calc(100% - 40px);
-  }
-  .insurance-wrapper {
-    align-items: center;
+  .insurance {
+    border-top: 0;
+    border-bottom: 0;
+    border-radius: 0 0 30px 30px;
   }
 }
 
@@ -312,7 +306,7 @@ export default {
     width: 100%;
   }
   .insurance-wrapper {
-    height: auto; /* Change to auto if you want the container to expand based on content */
+    height: auto;
   }
   .insurance {
     padding: 16px 20px;
@@ -329,9 +323,8 @@ export default {
     padding-left: 20px;
     padding-right: 20px;
     border-radius: 0;
-    /* Added styles to push the payouts under the text */
-    margin-top: 20px; /* Adjust as needed to create space under the text */
-    order: 2; /* If using Flexbox, this will ensure payouts are placed under the text */
+    margin-top: 20px;
+    order: 2;
   }
   .insurance__graphics {
     padding: 0;
@@ -342,7 +335,6 @@ export default {
   .insurance-tabs {
     width: 100%;
   }
-  /* Ensure container is using Flexbox and ordering correctly */
   .insurance-usd-plus-wrap {
     display: flex;
     flex-direction: column;

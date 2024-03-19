@@ -39,5 +39,9 @@ export default {
       color: var(--color-4);
     }
   }
+  @media (max-width: 400px) {
+    flex-direction: column;
+    gap: 10px;
+  }
 }
 </style>

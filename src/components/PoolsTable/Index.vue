@@ -626,6 +626,17 @@ export default {
     color: var(--color-3);
   }
 }
+@media (max-width: 640px) {
+  .pools-table {
+    overflow: hidden;
+    overflow-x: auto
+  }
+  .pools-header,
+  .pools-table__content {
+    min-width: 850px;
+    overflow-x: scroll;
+  }
+}
 @media (max-width: 400px) {
   .pools-table {
     overflow: hidden;
@@ -652,7 +663,7 @@ export default {
 
 .pools-table__hot {
   position: absolute;
-  top: -10px;
+  top: -40px;
   right: -31px;
   display: flex;
   align-items: center;
