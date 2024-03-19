@@ -49,7 +49,7 @@
               <BaseIcon name="ArrowDown" />
             </div>
             <h1>
-              {{openPoolList ? "CLOSE" : "OPEN"}} Pools with TVL less than $300K
+              {{openPoolList ? "CLOSE" : "OPEN"}} Pools with TVL less than $100K
             </h1>
             <div
               class="table-extend__arrow"
