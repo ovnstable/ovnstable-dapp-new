@@ -224,6 +224,12 @@ export default {
   }
 }
 @media (max-width: 640px) {
+  .modal__wrap {
+    .modal--custom {
+      width: calc(100vw - 20px);
+    }
+  }
+
   .modal__body {
     max-height: 90vh;
   }

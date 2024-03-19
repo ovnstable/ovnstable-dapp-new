@@ -200,11 +200,13 @@ export default {
 
 .networks-list__item {
   display: flex;
+  font-size: 14px;
+  color: var(--color-1);
   padding: 8px 14px;
   cursor: pointer;
   transition: background-color .2s ease, color .2s ease;
   [data-theme="dark"] & {
-    color: var(--color-18);
+    color: var(--color-4);
   }
   svg, img {
     width: 18px;
@@ -251,6 +253,11 @@ export default {
   justify-content: space-between;
   padding: 0 15px;
   margin-bottom: 10px;
+  font-size: 14px;
+  color: var(--color-1);
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
 
   span:first-child {
     text-decoration: underline;
