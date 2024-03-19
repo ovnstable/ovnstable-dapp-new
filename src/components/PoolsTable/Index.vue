@@ -475,6 +475,7 @@ export default {
 
   @media (max-width: 1024px) {
     flex-direction: column;
+    align-items: flex-start;
     border: 1px solid var(--color-17);
     background-color: var(--color-4);
     padding: 5px;
