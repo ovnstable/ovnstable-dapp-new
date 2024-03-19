@@ -36,7 +36,7 @@
         </template>
         <template
           #footer
-          v-if="!isPoolsLoading && typeOfPool === 'ALL' && filteredPoolsForSecondTab?.length > 0"
+          v-if="!isPoolsLoading && filteredPoolsForSecondTab?.length > 0"
         >
           <div
             class="table-extend"
@@ -131,7 +131,6 @@ export default {
     ...mapState('poolsData', [
       'sortedPoolSecondList',
       'sortedPoolList',
-      'typeOfPool',
       'isPoolsLoading',
       'currentZapPool',
       'isZapModalShow',
@@ -141,45 +140,44 @@ export default {
         ? [...this.filteredPools, ...this.filteredPoolsForSecondTab] : this.filteredPools;
     },
     filteredPools() {
-      if (this.orderType === 'APR') {
-        // last step filter
-        return getSortedPools(this.filteredBySearchQueryPools, this.typeOfPool === 'OVN', this.poolTabType);
-      }
+      const tabOrderedPool = getSortedPools(
+        this.filteredBySearchQueryPools,
+        true,
+        this.poolTabType,
+      );
+
+      if (['APR', 'TVL'].includes(this.orderType)) return tabOrderedPool;
 
       if (this.orderType === 'APR_UP') {
         // last step filter
-        return this.filteredBySearchQueryPools
+        return tabOrderedPool
           .slice()
           .sort((a: any, b: any) => b.apr - a.apr);
       }
 
       if (this.orderType === 'APR_DOWN') {
         // last step filter
-        return this.filteredBySearchQueryPools
+        return tabOrderedPool
           .slice()
           .sort((a: any, b: any) => a.apr - b.apr);
       }
 
-      if (this.orderType === 'TVL') {
-        // last step filter. same like type 'APR'
-        return getSortedPools(this.filteredBySearchQueryPools, this.typeOfPool === 'OVN', this.poolTabType);
-      }
+      if (this.orderType === 'TVL') return tabOrderedPool;
 
       if (this.orderType === 'TVL_UP') {
         // last step filter
-        return this.filteredBySearchQueryPools
+        return tabOrderedPool
           .slice()
           .sort((a: any, b: any) => b.tvl - a.tvl);
       }
 
       if (this.orderType === 'TVL_DOWN') {
         // last step filter
-        return this.filteredBySearchQueryPools
+        return tabOrderedPool
           .slice()
           .sort((a: any, b: any) => a.tvl - b.tvl);
       }
 
-      console.error('Order type not found when order pools', this.orderType);
       return [];
     },
 
@@ -338,6 +336,7 @@ export default {
     ...mapMutations('poolsData', ['changeState']),
 
     changePoolsTab(type: poolTypes) {
+      console.log(type, 'POOLTYPE');
       this.poolTabType = type;
     },
     updateSearch(searchQuery: string) {
@@ -345,15 +344,6 @@ export default {
     },
     setOrderType(orderType: any) {
       this.orderType = orderType;
-    },
-    zapFilter(isShow: boolean) {
-      this.isShowOnlyZap = isShow;
-      console.log('Is show zap? ', this.isShowOnlyZap);
-    },
-    aprLimitFilter(isShow: boolean, limit: any) {
-      this.isShowAprLimit = isShow;
-      this.aprLimitForFilter = limit;
-      console.log('Apr limit ', isShow, limit);
     },
     setSelectedNetwork(tab: string) {
       if (tab === 'all' && this.selectedTabs.includes('ALL')) {
