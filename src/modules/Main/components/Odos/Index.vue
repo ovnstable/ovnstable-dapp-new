@@ -1055,6 +1055,7 @@ export default {
                 swapSession: this.swapSessionId,
                 data: e,
               });
+              this.closeWaitingModal();
               this.isSwapLoading = false;
             });
         })
