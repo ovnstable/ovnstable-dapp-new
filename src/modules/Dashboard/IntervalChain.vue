@@ -80,6 +80,7 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+   flex-wrap: wrap;
 }
 
 .dashboard__chain-data-container {
