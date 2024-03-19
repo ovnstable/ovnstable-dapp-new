@@ -80,6 +80,7 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+   flex-wrap: wrap;
 }
 
 .dashboard__chain-data-container {
@@ -136,10 +137,22 @@ export default {
     background: var(--color-7);
   }
 }
-
-@media (max-width: 400px) {
+@media (max-width: 1024px) {
   .dashboard__chains-interval {
     flex-direction: column;
+  }
+  .dashboard__chain-data-container {
+    justify-content: space-between;
+    margin-top: 10px;
+  }
+}
+
+@media (max-width: 640px) {
+  .dashboard__chains-interval {
+    flex-direction: column;
+  }
+  .dashboard__chain-data-container {
+    margin-top: 10px;
   }
   .dashboard__chain-data {
     margin: 0;

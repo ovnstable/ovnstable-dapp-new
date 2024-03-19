@@ -775,7 +775,7 @@ export default {
   }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 640px) {
   .insurance__modal-mint-redeem {
     padding: 0;
     width: auto;

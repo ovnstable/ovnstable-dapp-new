@@ -260,7 +260,7 @@ export default {
   }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 640px) {
   .ovn__overview-tokenomic {
     flex-direction: column;
     background-color: var(--color-8);
@@ -283,6 +283,12 @@ export default {
   }
   .ovn__overview-item-icon {
     min-width: 14px;
+  }
+}
+
+@media (max-width: 380px) {
+  .ovn__overview-tokenomic-diagram {
+    flex-direction: column;
   }
 }
 

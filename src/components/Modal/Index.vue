@@ -13,7 +13,7 @@
         <div
           v-if="opened"
           class="modal__wrap"
-          :class="{ 'modal__wrap-overlay-modal': overlayModals }"
+          :class="{ 'modal__wrap-overlay-modal': overlayModals, [customClass]: customClass }"
           @click="closeModal"
           @keydown.esc="closeModal"
         >
@@ -65,6 +65,10 @@ export default {
   },
   emits: ['update:modelValue', 'close'],
   props: {
+    customClass: {
+      type: String,
+      default: '',
+    },
     typeModal: {
       type: String,
       default: 'default',
@@ -151,6 +155,7 @@ export default {
     height: 100%;
     background-color: rgba(0, 0, 0, 0.1);
     user-select: none;
+
     .modal__wrap-stop {
         position: relative;
         z-index: 250;
@@ -161,6 +166,7 @@ export default {
         padding: 30px 40px;
         border: 2px solid var(--color-1);
         [data-theme="dark"] & {
+          background-color: var(--color-6);
           border-color: var(--color-4);
         }
     }
@@ -217,4 +223,16 @@ export default {
     background-color: var(--color-6);
   }
 }
+@media (max-width: 640px) {
+  .modal__wrap {
+    .modal--custom {
+      width: calc(100vw - 20px);
+    }
+  }
+
+  .modal__body {
+    max-height: 90vh;
+  }
+}
+
 </style>

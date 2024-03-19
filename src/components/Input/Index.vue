@@ -263,4 +263,13 @@ export default {
     }
   }
 }
+
+@media (max-width: 640px) {
+  .input-component {
+
+  &.primary {
+    width: 100%;
+  }
+}
+}
 </style>

@@ -364,4 +364,10 @@ export default {
     font-weight: 500;
 }
 
+@media (max-width: 640px) {
+  .main-container {
+    padding: 0;
+  }
+ }
+
 </style>

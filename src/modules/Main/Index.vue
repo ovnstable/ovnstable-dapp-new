@@ -1,6 +1,9 @@
 <template>
   <div class="swap-module">
-    <div class="swap-module__form">
+    <div
+      v-if="!deviceSize.isMobile"
+      class="swap-module__form"
+    >
       <TabsComponent
         :tabs="tabsData"
         :active-tab="activeTab"
@@ -28,6 +31,37 @@
         </div>
       </TabsComponent>
     </div>
+
+    <div
+      v-else
+      class="swap-module__mob-nav"
+    >
+      <div
+        class="swap-module__col"
+        @click="showMobileSwap = !showMobileSwap"
+        @keypress="showMobileSwap = !showMobileSwap"
+      >
+        <BaseIcon name="swapMob" />
+        <span>Swap</span>
+      </div>
+      <div
+        class="swap-module__col"
+        @click="showMobileMintRedeem = !showMobileMintRedeem"
+        @keypress="showMobileMintRedeem = !showMobileMintRedeem"
+      >
+        <BaseIcon name="mintredeemMob" />
+        <span>Mint/Redeem</span>
+      </div>
+      <div
+        class="swap-module__col"
+        @click="showMobileBridge = !showMobileBridge"
+        @keypress="showMobileBridge = !showMobileBridge"
+      >
+        <BaseIcon name="bridgeMob" />
+        <span>Bridge</span>
+      </div>
+    </div>
+
     <SliderComponent
       v-if="isFirstInitializationForPath || !pathViz"
     />
@@ -38,6 +72,19 @@
       :output-tokens="outputTokens"
       :is-loading-data="isLoadingData"
     />
+
+    <SwapMobile
+      :is-show="showMobileSwap"
+      @close="showMobileSwap = !showMobileSwap"
+    />
+    <MobileMintRedeemMenu
+      :is-show="showMobileMintRedeem"
+      @close="showMobileMintRedeem = !showMobileMintRedeem"
+    />
+    <BridgeMobile
+      :is-show="showMobileBridge"
+      @close="showMobileBridge = !showMobileBridge"
+    />
   </div>
 </template>
 
@@ -46,10 +93,15 @@ import { mapActions, mapState, mapGetters } from 'vuex';
 import MintRedeemForm from '@/modules/Main/components/MintRedeem/Index.vue';
 import SliderComponent from '@/modules/Main/components/Slider/Index.vue';
 import TabsComponent from '@/components/Tabs/Index.vue';
+import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import SwapForm from '@/modules/Main/components/Odos/Index.vue';
 import BridgeComponent from '@/modules/Main/components/Bridge/Index.vue';
 import PathView from '@/modules/Main/components/PathView/Index.vue';
+import SwapMobile from '@/modules/Main/components/MobileModals/Swap.vue';
+import MobileMintRedeemMenu from '@/modules/Main/components/MobileModals/MintRedeem.vue';
+import BridgeMobile from '@/modules/Main/components/MobileModals/BridgeMobile.vue';
 import { useEventBus } from '@vueuse/core';
+import { deviceType } from '@/utils/deviceType.ts';
 
 export default {
   name: 'MainModule',
@@ -57,9 +109,13 @@ export default {
     SliderComponent,
     TabsComponent,
     MintRedeemForm,
+    BaseIcon,
     BridgeComponent,
     SwapForm,
+    SwapMobile,
     PathView,
+    MobileMintRedeemMenu,
+    BridgeMobile,
   },
   data() {
     return {
@@ -85,6 +141,9 @@ export default {
       outputTokens: [] as any[],
       stablecoinTokens: [],
       isFirstInitializationForPath: true,
+      showMobileSwap: false,
+      showMobileMintRedeem: false,
+      showMobileBridge: false,
     };
   },
   mounted() {
@@ -106,6 +165,9 @@ export default {
   computed: {
     ...mapGetters('network', ['networkName']),
     ...mapState('odosData', ['availableNetworksList']),
+    deviceSize() {
+      return deviceType();
+    },
   },
   methods: {
     ...mapActions('swapModal', ['showSwapModal', 'showMintView']),
@@ -133,7 +195,7 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
 .swap-module {
   display: flex;
   width: 100%;
@@ -145,12 +207,30 @@ export default {
   [data-theme="dark"] & {
     background-color: var(--color-19);
   }
+
+  @media (max-width: 768px) {
+    flex-wrap: wrap;
+    background-color: transparent;
+    border-radius: 0;
+  }
+
+  @media (max-width: 640px) {
+    margin-bottom: 30px;
+  }
 }
 .swap-module__form {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 60%;
+
+  @media (max-width: 1024px) {
+    width: 70%;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 }
 .form-wrap {
   height: 100%;
@@ -167,5 +247,30 @@ export default {
     background-color: var(--color-17);
     border-color: var(--color-2);
   }
+}
+
+.swap-module__col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 33%;
+  gap: 10px;
+  padding: 6px;
+  border-radius: 4px;
+
+  cursor: pointer;
+  transition: background-color .2s ease;
+
+  &:hover {
+    background-color: var(--color-6);
+  }
+}
+
+.swap-module__mob-nav {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
 }
 </style>

@@ -1,6 +1,7 @@
 @import './base.scss';
 
 #app {
+  height: 100vh;
   padding-top: 100px;
   overflow-x: hidden;
 
@@ -100,11 +101,73 @@ $avatar-offset: 52 + 16;
   }
 }
 
+// GLOBAL STYLES, features
+
 .lineLoader--balance {
   width: 50px;
   min-height: 15px;
   box-shadow: unset;
   border: 0;
+}
+
+.sidebar__icon-social:hover {
+  cursor: pointer;
+  transform: scale(1.2);
+  transition: transform 0.15s ease;
+}
+
+.sidebar__icon-social {
+  fill: var(--color-2);
+  [data-theme="dark"] & {
+    fill: var(--color-18);
+  }
+}
+
+.icon-twitter:hover {
+  fill: var(--color-3);
+  [data-theme="dark"] & {
+    fill: var(--color-8);
+  }
+}
+
+.icon-discord:hover {
+  fill: #5765f1;
+}
+
+.sidebar__divider {
+  width: 100%;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  border: 1px solid var(--color-7);
+
+  [data-theme="dark"] & {
+    color: var(--color-18);
+  }
+}
+
+.mob-menu {
+  justify-content: flex-end!important;
+  align-items: flex-start!important;
+  min-height: 100%;
+  z-index: 100!important;
+
+  .modal__close {
+    display: none;
+  }
+}
+
+.mob-menu .modal--custom {
+  min-height: 100vh;
+  border-radius: 0!important;
+  max-width: 350px;
+  width: 100%;
+  padding: 0 20px!important;
+  border: unset!important;
+
+  @media (max-width: 640px) {
+    max-width: 100%;
+    width: 100%!important;
+  }
 }
 
 @keyframes pulse-animation-blue {

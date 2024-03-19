@@ -125,7 +125,7 @@ export default {
   }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 640px) {
   .switchtabs-dashboard__inner {
     justify-content: space-between;
   }

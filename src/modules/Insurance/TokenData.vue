@@ -754,7 +754,7 @@ export default {
   }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 640px) {
   .insurance__info-mobile {
     display: flex;
     flex-direction: column;
@@ -782,7 +782,6 @@ export default {
     svg {
       max-width: 22px;
       max-height: 22px;
-      fill: var(--color-4);
       scale: 120%;
       width: auto;
       [data-theme="dark"] & {

@@ -565,7 +565,7 @@ export default {
   }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 640px) {
   .dashboard__graphic-usd-plus-balance {
     display: flex;
     justify-content: space-between;

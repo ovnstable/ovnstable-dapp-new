@@ -6,7 +6,7 @@
     <Spinner />
   </div>
   <div
-    v-else
+    v-else-if="device.isDesktop"
     class="insurance-wrapper"
   >
     <div
@@ -38,6 +38,62 @@
       />
     </div>
   </div>
+  <div
+    v-else-if="!device.isDesktop"
+    class="insurance-wrapper"
+  >
+
+    <TabsComponent
+      :tabs="tabsData"
+      :active-tab="activeTab"
+      @tab-change="changeTab"
+      class="insurance-tabs"
+    >
+      <div
+        v-if="activeTab === 0"
+        class="insurance-usd-plus-wrap"
+      >
+        <div class="insurance">
+          <TokenDataInsurance
+            :tokenData="tokenData"
+            class="insurance__token-data"
+          />
+          <GraphicsInsurance
+            v-if="!insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem"
+            :payoutData="payoutData"
+            :loaded="loaded"
+            class="insurance__graphics"
+          />
+          <InsurancePremiums
+            v-if="!insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem"
+            :premiums-data="premiumsData"
+            class="insurance__premiums"
+          />
+        </div>
+        <div
+          v-if="!insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem"
+          class="insurance__payouts"
+        >
+          <InsurancePayouts
+            :payout-data="reversedPayoutData"
+            class="insurance__payout-inner"
+          />
+        </div>
+
+      </div>
+      <div
+        v-if="activeTab === 1"
+        class="insurance-tokens-plus-wrap"
+      >
+        <OvnPage
+          :token-data="ovnTokenData"
+          :first-load="firstLoad"
+          :loaded="loadedDataDashboard"
+        />
+      </div>
+    </TabsComponent>
+
+  </div>
 
 </template>
 
@@ -45,7 +101,10 @@
 import TokenDataInsurance from '@/modules/Insurance/TokenData.vue';
 import GraphicsInsurance from '@/modules/Insurance/Graphic.vue';
 import Spinner from '@/components/Spinner/Index.vue';
+import TabsComponent from '@/components/Tabs/Index.vue';
+import OvnPage from '@/modules/Ovn/Index.vue';
 import InsurancePremiums from '@/modules/Insurance/Premiums.vue';
+import { deviceType } from '@/utils/deviceType.ts';
 import InsurancePayouts from '@/modules/Insurance/InsurancePayouts.vue';
 
 export default {
@@ -56,6 +115,8 @@ export default {
     GraphicsInsurance,
     InsurancePayouts,
     Spinner,
+    TabsComponent,
+    OvnPage,
   },
   props: {
     tokenData: {
@@ -79,7 +140,29 @@ export default {
       default: false,
     },
   },
+  data() {
+    return {
+      tabsData: [
+        {
+          id: 0,
+          name: 'INSURANCE',
+        },
+        {
+          id: 1,
+          name: 'OVN OVERVIEW',
+        },
+      ],
+      activeTab: 0,
+      loadedDataDashboard: false,
+    };
+  },
   computed: {
+    device() {
+      return deviceType();
+    },
+    ovnTokenData() {
+      return this.$store.state.ovnTokenData.ovnTokenData || {};
+    },
     reversedPayoutData() {
       return [...this.payoutData.payouts].reverse();
     },
@@ -88,6 +171,34 @@ export default {
     },
     insuranceIsMobileAboutOvn() {
       return this.$store.state.insuranceTokenData.isMobileAboutOvn.value;
+    },
+  },
+  methods: {
+    changeTab(id: number) {
+      this.activeTab = id;
+    },
+    async fetchDataForOVN(networkName: string) {
+      this.loadedDataDashboard = false;
+      try {
+        await Promise.all([
+          this.$store.dispatch('ovnTokenData/fetchOVNTokenData', { networkName }),
+        ]);
+        this.loadedDataDashboard = true;
+      } catch (error) {
+        this.loadedDataDashboard = false;
+        console.error('Error fetching data:', error);
+      }
+    },
+  },
+  watch: {
+    '$store.state.network.ovnNetwork': {
+      immediate: true,
+      handler: function handleNetworkNameChange(newVal, oldVal) {
+        if (newVal !== oldVal) {
+          console.log('changed ovn network');
+          this.fetchDataForOVN(this.$store.state.network.ovnNetwork);
+        }
+      },
     },
   },
 };
@@ -181,41 +292,52 @@ export default {
   }
 }
 @media (max-width: 768px) {
-  .insurance__graphics {
-    padding: 8px 12px;
-  }
-
-  .insurance,
-  .insurance__payouts {
-    width: calc(100% - 40px);
-  }
-  .insurance-wrapper {
-    align-items: center;
+  .insurance {
+    border-top: 0;
+    border-bottom: 0;
+    border-radius: 0 0 30px 30px;
   }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 1023px) {
   .insurance,
   .insurance__payouts,
   .insurance__payout-inner {
     width: 100%;
   }
   .insurance-wrapper {
-    height: 100%;
+    height: auto;
   }
-
   .insurance {
     padding: 16px 20px;
+    border: 1px solid var(--color-1);
+    border-top: 0;
+    border-bottom: 0;
+    border-radius: 0 0 30px 30px;
+  }
+  .dashboard-usd-plus-wrap {
+    padding: 16px 20px;
+    padding-top: 0;
   }
   .insurance__payout-inner {
     padding-left: 20px;
     padding-right: 20px;
     border-radius: 0;
+    margin-top: 20px;
+    order: 2;
   }
   .insurance__graphics {
     padding: 0;
     margin-top: 14px;
     border: none;
+  }
+  .tabs-header,
+  .insurance-tabs {
+    width: 100%;
+  }
+  .insurance-usd-plus-wrap {
+    display: flex;
+    flex-direction: column;
   }
 }
 

@@ -365,6 +365,10 @@ export default {
 <style lang="scss" scoped>
 .pools-wrap {
   margin: 30px 0;
+
+  @media (max-width: 768px) {
+    margin: 0 0 120px 0;
+  }
 }
 
 .pools-wrap__loader {

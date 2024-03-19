@@ -374,7 +374,7 @@ export default {
   }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 640px) {
   .performance__payouts-titles p {
     font-size: 12px;
   }

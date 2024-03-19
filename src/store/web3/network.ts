@@ -356,7 +356,6 @@ const actions = {
     commit, dispatch, getters, rootState,
   }: any, network: any) {
     const networkId = `${network}`;
-    console.log(networkId, 'TO LOCALSTORE NETWORK');
     switch (networkId) {
       case 'blast':
       case '81457':

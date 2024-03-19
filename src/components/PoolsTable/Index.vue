@@ -88,8 +88,11 @@
                     alt="token"
                     :src="pool.token2Icon"
                   />
+                  <span>
+                    {{ getTokenNames(pool)[2] }}
+                  </span>
                   <div
-                    class="pools-table__hot"
+                    class="pools-table__hot-token-3"
                     v-if="pool.feature && pool.token2Icon"
                   >
                     <BaseIcon name="CommonHot" />
@@ -465,9 +468,14 @@ export default {
   align-items: center;
   width: fit-content;
   border-radius: 30px;
+  [data-theme="dark"] & {
+    background-color: var(--color-7);
+    border: none;
+  }
 
   @media (max-width: 1024px) {
     flex-direction: column;
+    align-items: flex-start;
     border: 1px solid var(--color-17);
     background-color: var(--color-4);
     padding: 5px;
@@ -492,10 +500,6 @@ export default {
 
   &:first-child {
     right: 0;
-  }
-
-  &:nth-child(3) {
-    right: 52px;
   }
 
   &:last-child {
@@ -613,20 +617,9 @@ export default {
     }
   }
 }
-
-.pools-header__item--hover {
-  transition: transform .2s ease, color .2s ease;
-  cursor: pointer;
-
-  &:hover {
-    color: var(--color-3);
-  }
-}
-
-.pools-table__hot {
+.pools-table__hot,
+.pools-table__hot-token-3 {
   position: absolute;
-  top: -10px;
-  right: -31px;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -640,4 +633,73 @@ export default {
   padding: 0 4px;
   animation: pulse-animation-blue 2s infinite;
 }
+.pools-table__hot {
+  top: -12px;
+  right: -25px;
+}
+.pools-table__hot-token-3  {
+  top: -12px;
+  right: -25px;
+}
+.pools-header__item--hover {
+  transition: transform .2s ease, color .2s ease;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--color-3);
+  }
+}
+@media (max-width: 1024px) {
+  .pools-table__hot {
+    top: -40px;
+    right: -30px;
+  }
+  .pools-table__hot-token-3  {
+    top: -60px;
+    right: -35px;
+  }
+}
+@media (max-width: 640px) {
+  .pools-table {
+    overflow: hidden;
+    overflow-x: auto
+  }
+  .pools-header,
+  .pools-table__content {
+    min-width: 850px;
+    overflow-x: scroll;
+  }
+}
+@media (max-width: 640px) {
+  .pools-table {
+    overflow: hidden;
+    overflow-x: auto
+  }
+
+  .pools-table__footer {
+    padding-bottom: 70px;
+  }
+  .pools-header,
+  .pools-table__content {
+    min-width: 650px;
+    overflow-x: scroll;
+  }
+  .pools-header__item {
+    font-size: 12px;
+  }
+  .pools-table__row {
+    button {
+      font-size: 14px;
+    }
+  }
+  .pools-table__hot {
+    top: -40px;
+    right: -31px;
+  }
+  .pools-table__hot-token-3  {
+    top: -60px;
+    right: -36px;
+  }
+}
+
 </style>

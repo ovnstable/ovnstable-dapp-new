@@ -175,4 +175,13 @@ export default {
   }
 }
 
+@media (max-width: 1024px) {
+  .ovn {
+    border-radius: 0 0 30px 30px;
+    border: 1px solid var(--color-1);
+    border-top: 0;
+    border-bottom: 0;
+  }
+}
+
 </style>

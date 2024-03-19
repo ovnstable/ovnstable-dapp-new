@@ -1,59 +1,86 @@
 <template>
-
-  <div
-    class="tokens-select"
+  <ModalComponent
+    :customClass="'mob-menu'"
+    type-modal="custom"
+    v-model="showModal"
+    @close="closeModal"
   >
-    <div
-      class="tokens-select__header"
-      @click="closeSelect"
-      @keypress="closeSelect"
-    >
-      <h1>
-        Choose token to use for {{getStatus}}
-      </h1>
+    <div class="mob-menu__header">
       <div
-        class="slider__arrow-wrapper"
+        class="mob-menu__header-arr"
+        @click="closeModal"
+        @keypress="closeModal"
       >
         <BaseIcon
-          name="ArrowRight"
-          class="slider__arrow-icon"
+          class="mob-menu__arr"
+          name="ArrowLeft"
         />
       </div>
     </div>
-
     <div
-      v-if="tokensList?.length === 0 && isLoading"
-      class="token-select__spinner"
+      class="tokens-select"
     >
-      <Spinner size="40px" />
+      <div
+        class="tokens-select__header"
+        @click="closeSelect"
+        @keypress="closeSelect"
+      >
+        <p>mobile</p>
+        <h1>
+          Choose token to use for {{getStatus}}
+        </h1>
+        <div
+          class="slider__arrow-wrapper"
+        >
+          <BaseIcon
+            name="ArrowRight"
+            class="slider__arrow-icon"
+          />
+        </div>
+      </div>
+
+      <div
+        v-if="tokensList?.length === 0 && isLoading"
+        class="token-select__spinner"
+      >
+        <Spinner size="40px" />
+      </div>
+
+      <template v-else>
+        <TokensList
+          :tokens="tokensList"
+          :is-input-token="isInputToken"
+          :selected-token="selectedToken"
+          @select-token="selectToken"
+          @remove-token="removeToken"
+          @close-select="closeSelect"
+        />
+      </template>
+
     </div>
-
-    <template v-else>
-      <TokensList
-        :tokens="tokensList"
-        :is-input-token="isInputToken"
-        :selected-token="selectedToken"
-        @select-token="selectToken"
-        @remove-token="removeToken"
-        @close-select="closeSelect"
-      />
-    </template>
-
-  </div>
+  </ModalComponent>
 </template>
 
 <script lang="ts">
 import Spinner from '@/components/Spinner/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import ModalComponent from '@/components/Modal/Index.vue';
 import TokensList from '@/modules/Main/components/MintRedeem/TokenSelect/TokensList.vue';
-import { mintWrapStatus } from '../types/index.ts';
+import { mintWrapStatus } from '@/modules/Main/components/MintRedeem/types/index.ts';
 
 export default {
-  name: 'TokenSelect',
+  name: 'MintRedeemSelectToken',
   components: {
     TokensList,
     BaseIcon,
     Spinner,
+    ModalComponent,
+  },
+  emits: ['close', 'close-select', 'add-token', 'remove-token'],
+  data() {
+    return {
+      showModal: false,
+    };
   },
   props: {
     tokensList: {
@@ -86,6 +113,7 @@ export default {
       default: '',
     },
   },
+
   computed: {
     getStatus() {
       if (this.activeWrap === mintWrapStatus.MINT) return 'minting';
@@ -96,6 +124,9 @@ export default {
     },
   },
   methods: {
+    closeModal() {
+      this.$emit('close');
+    },
     closeSelect() {
       this.$emit('close-select', false);
     },
