@@ -106,3 +106,12 @@ $avatar-offset: 52 + 16;
   box-shadow: unset;
   border: 0;
 }
+
+@keyframes pulse-animation-blue {
+  0% {
+    box-shadow: 0 0 0 0 rgba(4, 151, 236, 0.4);
+  }
+  100% {
+    box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
+  }
+}

@@ -20,9 +20,6 @@
           Best APR of the day
         </div>
       </div>
-      <div v-if="false">
-        <!-- <PoolLabel :pool="topPool" /> -->
-      </div>
       <div class="container-subtitle mt-2">
         <div class="subtitle">
           See all pools here

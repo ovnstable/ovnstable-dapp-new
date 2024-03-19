@@ -494,3 +494,12 @@ export const zapPlatformSupportList = [
   'Pancake',
   'Beefy',
 ];
+
+// POOLS WITH EARNINGS MORE THAN 500$ per month
+// https://docs.google.com/spreadsheets/d/1zyNA4mbpmyG30R1aIqkkRvbCJSjfyb7pV4hhCa7pohM/edit#gid=813615557
+export const FEATURED_POOLS = [
+  '0xe96c788e66a97cf455f46c5b27786191fd3bc50b',
+  '0x61366A4e6b1DB1b85DD701f2f4BFa275EF271197',
+  '0x61366A4e6b1DB1b85DD701f2f4BFa275EF271197_Aerodrome',
+  '0x1b05e4e814b3431a48b8164c41eac834d9ce2da6',
+];

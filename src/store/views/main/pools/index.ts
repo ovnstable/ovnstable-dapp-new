@@ -8,10 +8,9 @@ import {
   getSortedPools,
   getSortedSecondPools,
   initAggregators,
-  initFeature,
   initReversePools,
 } from '@/store/views/main/pools/helpers.ts';
-import { poolTokensForZapMap, zapPlatformSupportList } from '@/store/views/main/pools/mocks.ts';
+import { FEATURED_POOLS, poolTokensForZapMap, zapPlatformSupportList } from '@/store/views/main/pools/mocks.ts';
 import { loadTokenImage } from '@/utils/tokenLogo.ts';
 
 const stateData = {
@@ -112,6 +111,13 @@ const actions = {
                 ) {
                   platform = 'Convex';
                 }
+
+                if (FEATURED_POOLS.includes(pool.id.address)) {
+                  pool.feature = true;
+                } else {
+                  pool.feature = false;
+                }
+
                 return {
                   id: pool.id.name + pool.tvl + pool.platform,
                   name: newName,
@@ -224,12 +230,6 @@ const actions = {
         ),
       });
     }
-
-    console.log(state.allPools, '--state.allPools');
-    commit('changeState', {
-      field: 'allPools',
-      val: initFeature(state.allPools),
-    });
 
     if (state.typeOfPool === 'OVN') {
       commit('changeState', {

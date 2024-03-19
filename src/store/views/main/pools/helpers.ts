@@ -333,8 +333,6 @@ export const getSortedPools = (
     return true;
   });
 
-  console.log(pools, '---filteredPools');
-
   if (!filterByTvl) {
     poolsList = filteredPools
       .filter((pool) => (promotePools.includes(pool.address) ? pool : pool.tvl >= MIN_AMOUNT));
@@ -390,74 +388,6 @@ export const getSortedSecondPools = (
   });
 
   return filterByPoolType(secondPools, filterByType);
-};
-
-export const initFeature = (pools: any[]) => {
-  const topAprByChain = pools.reduce((acc, curr) => {
-    const { chain, apr } = curr;
-
-    // ignore binance chain
-    if (curr.chainName === 'bsc') {
-      return acc;
-    }
-
-    if (curr.tvl < 500000) {
-      return acc;
-    }
-
-    if (!acc[chain] || apr > acc[chain].apr) {
-      acc[chain] = curr;
-      return acc;
-    }
-
-    return acc;
-  }, {});
-
-  const topAprByAddress = Object
-    .values(topAprByChain)
-    .map((_: any) => _.address?.toLowerCase());
-
-  const newPools = pools.map((entry) => {
-    const { address } = entry;
-
-    // promoting special pool in FEATURES/all-pools
-    const featurePromote = [
-      '0x1b05e4e814b3431a48b8164c41eac834d9ce2da6',
-      '0x8a06339abd7499af755df585738ebf43d5d62b94',
-    ];
-
-    const convexPromote = ['0xb34a7d1444a707349bc7b981b7f2e1f20f81f013'];
-    const loweredAdd = address?.toLowerCase();
-
-    // remove after CONVEX PROMO
-    if (convexPromote.includes(loweredAdd)) {
-      const aprConvex = pools.find(
-        (_) => _?.address.toLowerCase()
-          === '0xb34a7d1444a707349bc7b981b7f2e1f20f81f013_convex',
-      );
-
-      return {
-        ...entry,
-        apr: aprConvex?.apr ?? entry.apr,
-        feature: true,
-      };
-    }
-
-    // for all other PROMO FEATURED pools
-    if (
-      featurePromote.includes(loweredAdd)
-      || topAprByAddress.includes(loweredAdd)
-    ) {
-      return {
-        ...entry,
-        feature: true,
-      };
-    }
-
-    return entry;
-  });
-
-  return newPools;
 };
 
 export const initReversePools = (pool: any, pools: any[]) => {
