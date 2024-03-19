@@ -52,7 +52,11 @@
         <BaseIcon name="mintredeemMob" />
         <span>Mint/Redeem</span>
       </div>
-      <div class="swap-module__col">
+      <div
+        class="swap-module__col"
+        @click="showMobileBridge = !showMobileBridge"
+        @keypress="showMobileBridge = !showMobileBridge"
+      >
         <BaseIcon name="bridgeMob" />
         <span>Bridge</span>
       </div>
@@ -77,6 +81,10 @@
       :is-show="showMobileMintRedeem"
       @close="showMobileMintRedeem = !showMobileMintRedeem"
     />
+    <BridgeMobile
+      :is-show="showMobileBridge"
+      @close="showMobileBridge = !showMobileBridge"
+    />
   </div>
 </template>
 
@@ -91,6 +99,7 @@ import BridgeComponent from '@/modules/Main/components/Bridge/Index.vue';
 import PathView from '@/modules/Main/components/PathView/Index.vue';
 import SwapMobile from '@/modules/Main/components/MobileModals/Swap.vue';
 import MobileMintRedeemMenu from '@/modules/Main/components/MobileModals/MintRedeem.vue';
+import BridgeMobile from '@/modules/Main/components/MobileModals/BridgeMobile.vue';
 import { useEventBus } from '@vueuse/core';
 import { deviceType } from '@/utils/deviceType.ts';
 
@@ -106,6 +115,7 @@ export default {
     SwapMobile,
     PathView,
     MobileMintRedeemMenu,
+    BridgeMobile,
   },
   data() {
     return {
@@ -133,6 +143,7 @@ export default {
       isFirstInitializationForPath: true,
       showMobileSwap: false,
       showMobileMintRedeem: false,
+      showMobileBridge: false,
     };
   },
   mounted() {
