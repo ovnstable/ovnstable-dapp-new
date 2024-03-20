@@ -579,17 +579,15 @@ export default {
   .performance__apy-data-chain {
     margin: 0;
   }
-  .performance__icon-chain {
-    margin-top: 10px;
-  }
   .performance__divider {
     margin-left: 5px;
     margin-right: 5px;
   }
-    .performance__payout-data,
+  .performance__payout-data,
   .performance__apy-data,
   .performance__apy-data-chain,
   .performance__tvl-data {
+    min-height: 27px;
     justify-content: space-between;
     flex-direction: row;
     width: 100%;

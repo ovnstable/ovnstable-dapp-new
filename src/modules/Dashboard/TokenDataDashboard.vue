@@ -428,6 +428,9 @@ export default {
     flex-direction: row;
     justify-content: space-between;
   }
+  .dashboard__apy-data-chain {
+    margin-top: 0;
+  }
   .dashboard__token-data-h,
   .dashboard__token-data-num,
   .dashboard__token-data-risk,
@@ -449,6 +452,9 @@ export default {
 }
 
 @media (max-width: 640px) {
+  .dashboard__apy-data-chain {
+    margin-top: 0;
+  }
   .dashboard__token-data {
     flex-direction: column;
   }
