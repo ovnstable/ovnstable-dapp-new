@@ -168,8 +168,6 @@
           </div>
         </div>
       </div>
-
-      <UserBalances v-if="deviceSize.isMobile && walletConnected && account" />
     </div>
   </div>
   <AccountModal
@@ -328,8 +326,7 @@ export default {
     background-color: var(--color-17);
     border-bottom: 1px solid var(--color-2);
   }
-
-  @media (max-width: 1024px) {
+   @media (max-width: 1024px) {
     background-color: transparent;
     border-bottom: unset;
     position: relative;

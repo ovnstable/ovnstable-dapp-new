@@ -287,6 +287,7 @@ export default {
 }
 .performance__icon-chain {
   margin-left: 10px;
+  overflow: visible;
   svg {
     width: 24px;
     height: 24px;
@@ -364,6 +365,7 @@ export default {
 }
 
 .performance__icon-chain-bottom {
+  overflow: visible;
   flex-shrink: 0
 }
 
