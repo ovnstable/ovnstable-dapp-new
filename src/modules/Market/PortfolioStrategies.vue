@@ -230,7 +230,6 @@
 
         </div>
 
-
         <div
           v-if="(type !== 'strategies' || dropdownVisible !== asset.fullName) && (type !== 'portfolio' || assets.indexOf(asset) !== assets.length - 1)"
           class="performance__portfolio-strategies-divider"
