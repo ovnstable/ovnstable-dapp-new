@@ -379,6 +379,7 @@ export default {
   flex-wrap: wrap;
 }
 
+
 .performance__chain-data-container > *:not(:last-child) {
   margin-right: 7px;
 }
@@ -617,6 +618,18 @@ export default {
     svg {
       margin-left: 10px;
     }
+  }
+
+}
+
+@media (max-width: 380px) {
+  .performance__chain-data {
+    min-width: 10px;
+    max-width: 18%;
+    flex: 0 0 20%;
+  }
+  .performance__chain-data-container > * {
+    margin-right: 7px;
   }
 
 }
