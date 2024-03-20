@@ -332,6 +332,11 @@ export default {
     position: relative;
     margin-bottom: 20px;
   }
+  @media (max-width: 640px) {
+    background-color: var(--color-5);
+    border-bottom: unset;
+    position: fixed;
+  }
 }
 .app-header-dapp {
   display: flex;
