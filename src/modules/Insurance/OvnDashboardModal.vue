@@ -428,6 +428,9 @@ export default {
   gap: 70px;
   align-items: start;
 }
+.insurance__modal-ovn-dashboard-balance-info-ins {
+  margin-left: 20px;
+}
 
 .insurance__modal-ovn-dashboard-profit-loss {
   display: flex;
@@ -501,16 +504,10 @@ export default {
   }
 }
 
-@media (max-width: 650px) {
-  .insurance__modal-ovn-dashboard {
-    padding: 10px;
+@media (max-width: 640px) {
+  .insurance__modal-ovn-dashboard-balance-info-ins {
+    margin: 0;
   }
-  .insurance__modal-ovn-dashboard-buttons,
-  .insurance__modal-ovn-dashboard-balance-info {
-    flex-direction: column;
-  }
-}
-@media (max-width: 400px) {
   .insurance__modal-ovn-dashboard {
     padding: 8px;
     margin: 6px;
@@ -520,11 +517,15 @@ export default {
     flex-direction: column;
     gap: 20px
   }
-}
-
-@media (max-width: 400px) {
+   .insurance__modal-ovn-dashboard {
+    padding: 10px;
+  }
+  .insurance__modal-ovn-dashboard-buttons,
+  .insurance__modal-ovn-dashboard-balance-info {
+    flex-direction: column;
+  }
   .insurance__modal-ovn-dashboard {
-    width: auto;
+    min-width: 100%;
     padding: 0;
     [data-theme="dark"] & {
       background-color: var(--color-17);
@@ -556,7 +557,6 @@ export default {
     }
   }
   .insurance__modal-ovn-dashboard-buttons {
-    max-width: 360px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -605,11 +605,6 @@ export default {
     flex-direction: column;
     align-items: start;
     gap: 10px;
-  }
-  .insurance__modal-divider,
-  .insurance__modal-ovn-dashboard-balance-info,
-  .insurance__modal-ovn-dashboard-profit-loss {
-    max-width: 360px;
   }
   .insurance__modal-ovn-dashboard-profit-loss {
     gap: 20px;

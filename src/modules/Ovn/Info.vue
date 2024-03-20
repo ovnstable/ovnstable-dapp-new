@@ -68,18 +68,21 @@
 
       </div>
 
-      <router-link
+      <div
         class="ovn__overview-links-data-button"
-        to="/dashboard"
       >
-        <ButtonComponent class="ovn__overview-button">
+        <ButtonComponent
+          class="ovn__overview-button"
+          @click="toggleModalOvnDasbhoard()"
+          @keydown.enter="toggleModalOvnDasbhoard()"
+        >
           <BaseIcon
             class="ovn__overview-dashboard-icon"
             name='InsuranceOVN'
           />
         </ButtonComponent>
         <p>MY OVN</p>
-      </router-link>
+      </div>
 
     </div>
     <div

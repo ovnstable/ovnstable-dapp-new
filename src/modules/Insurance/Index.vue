@@ -62,19 +62,22 @@
             class="insurance__token-data"
           />
           <GraphicsInsurance
-            v-if="!insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem"
+            v-if="!insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem
+              && !insuranceIsMobileOvnDashboard"
             :payoutData="payoutData"
             :loaded="loaded"
             class="insurance__graphics"
           />
           <InsurancePremiums
-            v-if="!insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem"
+            v-if="!insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem
+              && !insuranceIsMobileOvnDashboard"
             :premiums-data="premiumsData"
             class="insurance__premiums"
           />
         </div>
         <div
-          v-if="!insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem"
+          v-if="!insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem
+            && !insuranceIsMobileOvnDashboard"
           class="insurance__payouts"
         >
           <InsurancePayouts
