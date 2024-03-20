@@ -379,7 +379,6 @@ export default {
   flex-wrap: wrap;
 }
 
-
 .performance__chain-data-container > *:not(:last-child) {
   margin-right: 7px;
 }

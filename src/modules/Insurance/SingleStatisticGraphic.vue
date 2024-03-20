@@ -499,7 +499,7 @@ export default {
   border: 1px solid var(--color-5);
   padding: 5px 10px;
   width: fit-content;
-  background-color: var(--color-5);
+  background-color: none;
   transition: background 0.3s ease, border 0.3s ease;
   [data-theme="dark"] & {
    border-color: var(--color-7);
@@ -705,7 +705,7 @@ export default {
   }
   .insurance__chain-data {
     padding: 5px 25px;
-    background-color: var(--color-5);
+    background-color: none;
   }
   .insurance__chain-data-name {
     display: none;
