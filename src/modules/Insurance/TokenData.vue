@@ -655,6 +655,7 @@ export default {
 }
 
 .insurance__icon-chain-bottom {
+  overflow: visible;
   flex-shrink: 0
 }
 

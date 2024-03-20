@@ -287,8 +287,9 @@ export default {
 }
 .performance__icon-chain {
   margin-left: 10px;
-  overflow: visible;
+
   svg {
+    overflow: visible;
     width: 24px;
     height: 24px;
   }
@@ -330,6 +331,8 @@ export default {
   svg {
     opacity: 1;
     filter: unset;
+    border-radius: 50%;
+    overflow: visible;
   }
   [data-theme="dark"] & {
     background: var(--color-17);

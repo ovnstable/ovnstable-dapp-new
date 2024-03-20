@@ -154,10 +154,17 @@ export default {
 }
 .dashboard__nographic-wallet {
   display: flex;
+  flex-wrap: wrap;
   flex-direction: row;
   align-items: center;
   justify-content: center;
   gap: 5px;
+}
+
+@media (max-width: 640px) {
+  .dashboard__nographic {
+    margin-bottom: 40px;
+  }
 }
 
 </style>

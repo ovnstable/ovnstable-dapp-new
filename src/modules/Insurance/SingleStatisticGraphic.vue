@@ -479,6 +479,7 @@ export default {
   vertical-align: center;
   transition: background 0.3s ease, border 0.3s ease;
   svg {
+    overflow: auto;
     width: 24px;
     height: 24px;
     filter: grayscale(10);
@@ -506,6 +507,7 @@ export default {
   }
 }
 .insurance__icon-chain-bottom {
+   overflow: visible;
   flex-shrink: 0
 }
 

@@ -1038,8 +1038,7 @@ export default {
     margin-right: 10px;
   }
   .performance__portfolio-strategy-token-name.asset {
-    white-space: nowrap;
-    text-overflow: ellipsis;
+    flex-wrap: wrap;
     min-width: 0;
   }
 
