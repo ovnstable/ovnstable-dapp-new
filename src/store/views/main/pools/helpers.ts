@@ -109,7 +109,7 @@ export const buildLink = (pool: any, poolPlatform: string) => {
       url = 'https://swapbased.finance/#/farm';
       break;
     case 'Curve':
-      url = 'https://curve.fi/#/arbitrum/pools/factory-v2-117/deposit';
+      url = `https://curve.fi/#/arbitrum/pools?hideSmallPools=false&search=${pool.address}`;
       break;
     case 'Alienbase':
       url = 'https://app.alienbase.xyz/farms';
@@ -353,6 +353,7 @@ export const getSortedSecondPools = (
     // but its should be displayed
 
     // if its tvl higher than restrictions and its promotoed, its gonna duplicate
+    if (LOW_TVL_PROMOTE.includes(pool.address)) return false;
     if (pool.tvl > MIN_AMOUNT && pool.promoted) return false;
     if (pool.promoted !== false) return true;
 
@@ -408,7 +409,6 @@ export const initReversePools = (pool: any, pools: any[]) => {
 
 export const initAggregators = (pool: any) => {
   pool.aggregators = [];
-  // usd+ dola arb
   const poolAddress = pool.id.address;
 
   if (poolAddress === '0x1F3cA66c98d682fA1BeC31264692daD4f17340BC') {
@@ -488,4 +488,16 @@ export const initAggregators = (pool: any) => {
   }
 
   return pool;
+};
+
+export const checkForSamePlatform = (address: string) => {
+  if (address === '0x61366A4e6b1DB1b85DD701f2f4BFa275EF271197_Aerodrome') {
+    return ['Beefy', 'Aerodrome'];
+  }
+
+  if (address === '0xb34a7d1444a707349Bc7b981B7F2E1f20F81F013') {
+    return ['Curve', 'Convex'];
+  }
+
+  return null;
 };
