@@ -494,6 +494,7 @@ export default {
   }
   .dashboard__transactions-button-show {
     padding: 5px;
+    margin-bottom: 70px
   }
   .dashboard__transactions-button-show-text {
     [data-theme="dark"] & {
