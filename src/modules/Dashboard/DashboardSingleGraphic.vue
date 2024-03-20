@@ -547,23 +547,6 @@ export default {
     padding: 15px 30px;
   }
 }
-@media (max-width: 576px) {
-  .dashboard__graphic-value {
-      font-size: 14px;
-  }
-  .dashboard__graphic-title {
-      font-size: 10px;
-  }
-  .dashboard__graphics-buttons-interval > * {
-      font-size: 8px;
-  }
-  .dashboard__graphic-date {
-        font-size: 8px;
-  }
-  .dashboard__graphic{
-      padding: 10px 20px;
-  }
-}
 
 @media (max-width: 640px) {
   .dashboard__graphic-usd-plus-balance {
@@ -583,6 +566,21 @@ export default {
   .dashboard__data-comp-today {
     align-items: right;
     text-align: right;
+  }
+  .dashboard__graphic-value {
+    font-size: 14px;
+  }
+  .dashboard__graphic-title {
+    font-size: 10px;
+  }
+  .dashboard__graphics-buttons-interval > * {
+    font-size: 8px;
+  }
+  .dashboard__graphic-date {
+    font-size: 8px;
+  }
+  .dashboard__graphic{
+    padding: 10px 20px;
   }
 }
 

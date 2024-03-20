@@ -182,19 +182,12 @@ export default {
   }
 }
 
-@media (max-width: 576px) {
-  .market {
-    padding-left: 10px;
-    padding-right: 10px;
-  }
+@media (max-width: 640px) {
   .market__payouts,
   .market-wrapper,
   .market {
     width: 100%;
   }
-}
-
-@media (max-width: 640px) {
   .market {
     padding-top: 16px;
     padding-left: 20px;

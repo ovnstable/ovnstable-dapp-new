@@ -692,23 +692,6 @@ export default {
     padding: 15px 30px;
   }
 }
-@media (max-width: 576px) {
-  .insurance__graphic-value {
-    font-size: 14px;
-  }
-  .insurance__graphic-title {
-    font-size: 10px;
-  }
-  .insurance__graphics-buttons-interval > * {
-    font-size: 8px;
-  }
-  .insurance__graphic-date {
-    font-size: 8px;
-  }
-  .insurance__graphic{
-    padding: 10px 20px;
-  }
-}
 @media (max-width: 640px) {
   .insurance__chains-interval {
     flex-direction: column;

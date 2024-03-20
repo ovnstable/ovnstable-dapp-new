@@ -905,7 +905,7 @@ export default {
   }
 }
 
-@media (max-width: 576px) {
+@media (max-width: 640px) {
   .performance__portfolio-strategy-token-name {
     max-width: 60px;
     margin-left: 4px;
@@ -949,10 +949,6 @@ export default {
   .performance__portfolio-total p:nth-child(2) {
     margin-left: 6px;
   }
-
-}
-
-@media (max-width: 640px) {
   .performance__portfolio-description {
     font-size: 14px;
   }

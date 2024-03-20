@@ -342,7 +342,7 @@ export default {
   }
 }
 
-@media (max-width: 576px) {
+@media (max-width: 640px) {
   .performance__payouts-date-transaction {
     display: inline-block;
     margin: 0;
@@ -372,9 +372,6 @@ export default {
   .performance__payouts {
     padding: 20px;
   }
-}
-
-@media (max-width: 640px) {
   .performance__payouts-titles p {
     font-size: 12px;
   }
