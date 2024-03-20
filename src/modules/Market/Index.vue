@@ -195,6 +195,7 @@ export default {
   }
   .market-wrapper {
     margin-left: 0;
+    margin-bottom: 0;
   }
   .market__graphics{
     margin-top: 24px;

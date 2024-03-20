@@ -13,6 +13,7 @@
     <TransitionGroup
       name="list"
       tag="ul"
+      class="performance__payouts-transactions-ul"
     >
       <div
         v-for="(trx, index) in visibleTransactions"
@@ -100,7 +101,10 @@ export default {
       return this.$store.state.network.marketExplorerURL;
     },
     visibleTransactions() {
-      return this.payoutData.payouts.slice(0, this.visibleTransactionCount);
+      if (!this.device.isMobile) {
+        return this.payoutData.payouts.slice(0, this.visibleTransactionCount);
+      }
+      return this.payoutData.payouts;
     },
     hasMoreTransactions() {
       return this.payoutData.payouts.length > this.visibleTransactionCount;
@@ -343,6 +347,10 @@ export default {
 }
 
 @media (max-width: 640px) {
+  .performance__payouts-transactions-ul {
+    max-height: 340px;
+    overflow-y: scroll;
+  }
   .performance__payouts-date-transaction {
     display: inline-block;
     margin: 0;
@@ -366,7 +374,7 @@ export default {
     align-items: center;
   }
   .performance__payouts-button-show {
-    padding: 2px;
+    display: none;
   }
 
   .performance__payouts {

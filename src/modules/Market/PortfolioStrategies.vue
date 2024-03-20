@@ -222,14 +222,15 @@
               <p class="performance__portfolio-strategy-percent">% in portfolio</p>
             </div>
           </div>
+          <BaseIcon
+            v-if="type === 'strategies'"
+            class="performance__portfolio-dropdown-arrow"
+            :name="dropdownVisible === asset.fullName ? 'ArrowUp' : 'ArrowDown'"
+          />
 
         </div>
 
-        <BaseIcon
-          v-if="type === 'strategies'"
-          class="performance__portfolio-dropdown-arrow"
-          :name="dropdownVisible === asset.fullName ? 'ArrowUp' : 'ArrowDown'"
-        />
+
         <div
           v-if="(type !== 'strategies' || dropdownVisible !== asset.fullName) && (type !== 'portfolio' || assets.indexOf(asset) !== assets.length - 1)"
           class="performance__portfolio-strategies-divider"
