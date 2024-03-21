@@ -80,6 +80,14 @@
         >
           <h1 v-if="index === 0">OVERNIGHT TOKENS</h1>
           <div
+            v-if="index === firstZeroBalanceIndexOvnTokens"
+            class="search-tokens__list-divider-zero-balance"
+          />
+          <div
+            v-if="index === firstZeroBalanceIndexNonOvnTokens"
+            class="search-tokens__list-divider-zero-balance"
+          />
+          <div
             class="search-tokens__list-item-info"
             :class="selectedTokensAddress.includes(token.address) ? 'search-tokens__list-item--selected' : ''"
           >
@@ -216,7 +224,20 @@ export default {
       return this.queryTokens.reduceRight((lastIndex: number, token: any, index: number) => (
         lastIndex === -1 && OVN_TOKENS.includes(token.symbol) ? index : lastIndex), -1);
     },
-
+    firstZeroBalanceIndexOvnTokens() {
+      const ovnTokens = this.queryTokens.filter((token: any) => OVN_TOKENS.includes(token.symbol));
+      return this.queryTokens.findIndex(
+        (token: any) => ovnTokens.includes(token)
+          && (token.balanceData.balance === '0.00'),
+      );
+    },
+    firstZeroBalanceIndexNonOvnTokens() {
+      const nonOvnTokens = this.queryTokens
+        .filter((token: any) => !OVN_TOKENS.includes(token.symbol));
+      return this.queryTokens.findIndex(
+        (token: any) => nonOvnTokens.includes(token) && token.balanceData.balance === '0.00',
+      );
+    },
     isAvailableCountForSelect() {
       return this.selectedCount < this.maxTokenSelectCount;
     },
@@ -297,7 +318,7 @@ export default {
   transition: background-color .1s ease;
 
   &:hover {
-    background-color: var(--color-16);
+    background-color: var(--color-5);
   }
 }
 
@@ -393,12 +414,17 @@ export default {
 .selected-tokens__item:hover {
   cursor: pointer;
 }
-.search-tokens__list-divider-plus-tokens {
+.search-tokens__list-divider-plus-tokens,
+.search-tokens__list-divider-zero-balance {
   align-items: center;
   border: 1px solid var(--color-2);
   margin: 0 30px;
   margin-bottom: 15px;
   margin-top: 10px;
+}
+.search-tokens__list-divider-zero-balance {
+  margin: 0 30px;
+  border-color: var(--color-17);
 }
 
 @media (max-width: 640px) {
