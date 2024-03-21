@@ -180,12 +180,7 @@ export default {
           return 0;
         });
 
-      // input and output tokens have different sorting logic
-      if (!this.searchQuery && !this.isInputTokens) {
-        return arrList;
-      }
-
-      if (!this.searchQuery && this.isInputTokens) {
+      if (!this.searchQuery) {
         return arrList
           .sort((a: any, b: any) => {
             if (OVN_TOKENS.includes(a.symbol) && !OVN_TOKENS.includes(b.symbol)) {
