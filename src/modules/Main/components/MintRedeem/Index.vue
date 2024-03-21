@@ -646,6 +646,7 @@ export default {
 
         if (!method) return;
 
+        console.log(exchangeContract, 'exchangeContract1');
         const txData = method.iterateArgs
           ? await exchangeContract[method.name](
             ...Object.values(method.params),

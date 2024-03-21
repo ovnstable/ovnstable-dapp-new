@@ -74,6 +74,7 @@ const actions = {
       provider: markRaw(evmProvider),
       signer: markRaw(signer),
     });
+    console.log('CONTRACTSINIT');
     dispatch('contractAction/initContracts', signer, { root: true });
   },
 

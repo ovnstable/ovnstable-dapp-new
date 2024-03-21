@@ -424,9 +424,7 @@ export default {
     };
   },
   mounted() {
-    if (this.zapPool.chain !== this.networkId) {
-      return;
-    }
+    if (this.zapPool.chain !== this.networkId) return;
 
     this.firstInit();
   },
@@ -1189,6 +1187,7 @@ export default {
         referralCode: this.odosZapReferalCode ?? this.odosReferalCode,
       };
 
+      console.log(requestData, '---requestData');
       this.odosSwapRequest(requestData)
         .then(async (data: any) => {
           const assembleData = {
@@ -1645,6 +1644,7 @@ export default {
         gasPrice: this.gasPriceGwei,
       };
 
+      console.log(zapPool, '----zapPool');
       console.log(txData, 'ZAPIN');
       console.log(gaugeData, 'gaugeData');
       console.log(params, 'params');
@@ -1773,7 +1773,7 @@ export default {
         gasPrice: actualGas,
         userAddr: ethers.getAddress(this.account.toLowerCase()),
         slippageLimitPercent: this.getSlippagePercent(),
-        sourceBlacklist: ['Hashflow', 'Wombat'],
+        sourceBlacklist: this.getSourceLiquidityBlackList(),
         sourceWhitelist: whiteList ?? [],
         simulate: true,
         pathViz: true,
