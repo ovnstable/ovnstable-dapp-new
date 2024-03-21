@@ -73,6 +73,7 @@ const actions = {
       connect: {
         showSidebar: true,
         disableClose: false,
+        autoConnectLastWallet: true,
       },
       accountCenter: {
         desktop: {
@@ -106,6 +107,7 @@ const actions = {
 
     const wallet: any = connectedWallets[0];
 
+    console.log(connectedWallets, 'connectedWallets');
     if (!wallet) {
       localStorage.removeItem('walletName');
       console.error('Wallet not connected when init onboard.');
@@ -126,7 +128,6 @@ const actions = {
       });
     }
 
-    console.log(wallet, 'INIWEB3TRIG');
     await dispatch('web3/initWeb3', null, { root: true }).then(async () => {
       const userAddress = wallet?.accounts[0]?.address;
       commit('setWalletConnected', true);
