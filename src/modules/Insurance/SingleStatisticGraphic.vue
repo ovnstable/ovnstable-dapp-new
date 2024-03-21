@@ -479,6 +479,7 @@ export default {
   vertical-align: center;
   transition: background 0.3s ease, border 0.3s ease;
   svg {
+    overflow: auto;
     width: 24px;
     height: 24px;
     filter: grayscale(10);
@@ -498,7 +499,7 @@ export default {
   border: 1px solid var(--color-5);
   padding: 5px 10px;
   width: fit-content;
-  background-color: var(--color-5);
+  background-color: none;
   transition: background 0.3s ease, border 0.3s ease;
   [data-theme="dark"] & {
    border-color: var(--color-7);
@@ -506,6 +507,7 @@ export default {
   }
 }
 .insurance__icon-chain-bottom {
+   overflow: visible;
   flex-shrink: 0
 }
 
@@ -692,35 +694,18 @@ export default {
     padding: 15px 30px;
   }
 }
-@media (max-width: 576px) {
-  .insurance__graphic-value {
-    font-size: 14px;
-  }
-  .insurance__graphic-title {
-    font-size: 10px;
-  }
-  .insurance__graphics-buttons-interval > * {
-    font-size: 8px;
-  }
-  .insurance__graphic-date {
-    font-size: 8px;
-  }
-  .insurance__graphic{
-    padding: 10px 20px;
-  }
-}
 @media (max-width: 640px) {
   .insurance__chains-interval {
     flex-direction: column;
+  }
+  .insurance__chain-data {
+    width: 36px;
+    height: 36px;
   }
   .insurance__chain-data-container {
     margin: 0;
     justify-content: space-between;
     margin-bottom: 24px;
-  }
-  .insurance__chain-data {
-    padding: 5px 25px;
-    background-color: var(--color-5);
   }
   .insurance__chain-data-name {
     display: none;
@@ -752,6 +737,12 @@ export default {
   .insurance__data-under-graphic {
     margin-bottom: 0;
     margin-top: 6px;
+  }
+}
+
+@media (max-width: 340px) {
+  .insurance-cumulitives {
+    flex-wrap: wrap;
   }
 }
 

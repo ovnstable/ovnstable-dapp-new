@@ -555,19 +555,6 @@ export default {
   }
 }
 
-@media (max-width: 576px) {
-  .dashboard__token-data-num {
-    margin-top: 60px;
-  }
-  .dashboard__apy-data-chain {
-    margin: 0;
-  }
-  .dashboard__divider {
-    margin-left: 5px;
-    margin-right: 5px;
-  }
-}
-
 @media (max-width: 640px) {
   .dashboard__tokens-data-select {
     gap: 12px;

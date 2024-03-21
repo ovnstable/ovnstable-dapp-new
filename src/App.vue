@@ -74,6 +74,7 @@ export default {
     gap: 80px;
   }
   @media (max-width: 640px) {
+    margin-top: 60px;
     padding: 0;
   }
 }

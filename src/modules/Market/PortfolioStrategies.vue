@@ -222,14 +222,14 @@
               <p class="performance__portfolio-strategy-percent">% in portfolio</p>
             </div>
           </div>
+          <BaseIcon
+            v-if="type === 'strategies'"
+            class="performance__portfolio-dropdown-arrow"
+            :name="dropdownVisible === asset.fullName ? 'ArrowUp' : 'ArrowDown'"
+          />
 
         </div>
 
-        <BaseIcon
-          v-if="type === 'strategies'"
-          class="performance__portfolio-dropdown-arrow"
-          :name="dropdownVisible === asset.fullName ? 'ArrowUp' : 'ArrowDown'"
-        />
         <div
           v-if="(type !== 'strategies' || dropdownVisible !== asset.fullName) && (type !== 'portfolio' || assets.indexOf(asset) !== assets.length - 1)"
           class="performance__portfolio-strategies-divider"
@@ -905,7 +905,7 @@ export default {
   }
 }
 
-@media (max-width: 576px) {
+@media (max-width: 640px) {
   .performance__portfolio-strategy-token-name {
     max-width: 60px;
     margin-left: 4px;
@@ -949,10 +949,6 @@ export default {
   .performance__portfolio-total p:nth-child(2) {
     margin-left: 6px;
   }
-
-}
-
-@media (max-width: 640px) {
   .performance__portfolio-description {
     font-size: 14px;
   }
@@ -1042,8 +1038,7 @@ export default {
     margin-right: 10px;
   }
   .performance__portfolio-strategy-token-name.asset {
-    white-space: nowrap;
-    text-overflow: ellipsis;
+    flex-wrap: wrap;
     min-width: 0;
   }
 

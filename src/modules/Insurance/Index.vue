@@ -54,35 +54,35 @@
     >
       <div
         v-if="activeTab === 0"
-        class="insurance-usd-plus-wrap"
+        class="insurance"
       >
-        <div class="insurance">
-          <TokenDataInsurance
-            :tokenData="tokenData"
-            class="insurance__token-data"
-          />
-          <GraphicsInsurance
-            v-if="!insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem"
-            :payoutData="payoutData"
-            :loaded="loaded"
-            class="insurance__graphics"
-          />
-          <InsurancePremiums
-            v-if="!insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem"
-            :premiums-data="premiumsData"
-            class="insurance__premiums"
-          />
-        </div>
-        <div
-          v-if="!insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem"
-          class="insurance__payouts"
-        >
-          <InsurancePayouts
-            :payout-data="reversedPayoutData"
-            class="insurance__payout-inner"
-          />
-        </div>
-
+        <TokenDataInsurance
+          :tokenData="tokenData"
+          class="insurance__token-data"
+        />
+        <GraphicsInsurance
+          v-if="!insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem
+            && !insuranceIsMobileOvnDashboard"
+          :payoutData="payoutData"
+          :loaded="loaded"
+          class="insurance__graphics"
+        />
+        <InsurancePremiums
+          v-if="!insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem
+            && !insuranceIsMobileOvnDashboard"
+          :premiums-data="premiumsData"
+          class="insurance__premiums"
+        />
+      </div>
+      <div
+        v-if="!insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem
+          && !insuranceIsMobileOvnDashboard && activeTab === 0"
+        class="insurance__payouts"
+      >
+        <InsurancePayouts
+          :payout-data="reversedPayoutData"
+          class="insurance__payout-inner"
+        />
       </div>
       <div
         v-if="activeTab === 1"
@@ -256,8 +256,8 @@ export default {
   position: relative;
   display: flex;
   flex-direction: column;
+  margin-bottom: 50px;
   width: 100%;
-  min-height: 1500px;
   z-index: 1;
 }
 
@@ -306,44 +306,43 @@ export default {
 
 @media (max-width: 1024px) {
   .insurance,
-  .insurance__payouts,
   .insurance__payout-inner {
     width: 100%;
   }
+
   .insurance-wrapper {
-    height: auto;
-    margin-bottom: 150px;
+    overflow: visible;
+    margin-bottom: 70px;
+    position: relative;
   }
+
   .insurance {
     padding: 16px 20px;
     border: 1px solid var(--color-1);
     border-top: 0;
     border-bottom: 0;
     border-radius: 0 0 30px 30px;
+    position: relative;
+    z-index: 2;
   }
-  .dashboard-usd-plus-wrap {
-    padding: 16px 20px;
-    padding-top: 0;
+
+  .insurance__payouts {
+    margin-top: -10px;
+    border-radius: 0px 0px 30px 30px;
+    padding-bottom: 10px;
+    position: relative;
+    z-index: 1;
+    background: var(--color-8);
+    [data-theme="dark"] & {
+      background-color: var(--color-6);
+      color: var(--color-4);
+    }
   }
+
   .insurance__payout-inner {
     padding-left: 20px;
     padding-right: 20px;
     border-radius: 0;
-    margin-top: 20px;
-    order: 2;
-  }
-  .insurance__graphics {
-    padding: 0;
-    margin-top: 14px;
-    border: none;
-  }
-  .tabs-header,
-  .insurance-tabs {
-    width: 100%;
-  }
-  .insurance-usd-plus-wrap {
-    display: flex;
-    flex-direction: column;
   }
 }
 

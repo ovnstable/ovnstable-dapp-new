@@ -15,6 +15,7 @@
     <TransitionGroup
       name="list"
       tag="ul"
+      class="dashboard__payouts-transactions-ul"
     >
       <div
         v-for="(trx) in visibleTransactions"
@@ -81,6 +82,7 @@
     <TransitionGroup
       name="list"
       tag="ul"
+      class="dashboard__transactions-ul"
     >
       <div
         v-for="(trx) in visibleTransactions"
@@ -196,12 +198,15 @@ export default {
     },
     visibleTransactions() {
       const sortedTransactions = [...this.portfolioBalanceData as any]
-        .filter((trx) => !(trx.opening_balance === 0 && trx.change_balance === 0 && trx
-          .closing_balance === 0))
-        .sort((a, b) => (new Date(b.date) as any) - (new Date(a.date) as any))
-        .slice(0, this.visibleTransactionCount);
+        .filter((trx) => !(trx.opening_balance === 0 && trx.change_balance === 0
+          && trx.closing_balance === 0))
+        .sort((a, b) => (new Date(b.date) as any) - (new Date(a.date) as any));
+      if (!this.device.isMobile) {
+        return sortedTransactions.slice(0, this.visibleTransactionCount);
+      }
       return sortedTransactions;
     },
+
     hasMoreTransactions() {
       return this.portfolioBalanceData.length > this.visibleTransactionCount;
     },
@@ -426,6 +431,10 @@ export default {
 }
 
 @media (max-width: 640px) {
+  .dashboard__transactions-ul {
+    max-height: 340px;
+    overflow-y: scroll;
+  }
   .dashboard__transactions-titles,
   .dashboard__transactions-transaction {
     display: grid;
@@ -493,7 +502,7 @@ export default {
     }
   }
   .dashboard__transactions-button-show {
-    padding: 5px;
+    display: none;
   }
   .dashboard__transactions-button-show-text {
     [data-theme="dark"] & {

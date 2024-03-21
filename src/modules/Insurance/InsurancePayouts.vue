@@ -12,6 +12,7 @@
     <TransitionGroup
       name="list"
       tag="ul"
+      class="insurance__payouts-transactions-ul"
     >
       <div
         v-for="trx in visibleTransactions"
@@ -105,7 +106,10 @@ export default {
       return this.$store.state.network.insuranceExplorerURL;
     },
     visibleTransactions() {
-      return this.payoutData.slice(0, this.visibleTransactionCount);
+      if (!this.device.isMobile) {
+        return this.payoutData.slice(0, this.visibleTransactionCount);
+      }
+      return this.payoutData;
     },
     hasMoreTransactions() {
       return this.payoutData.length > this.visibleTransactionCount;
@@ -375,12 +379,19 @@ export default {
 }
 
 @media (max-width: 640px) {
+   .insurance__payouts-transactions-ul {
+    min-width: 500px;
+    max-height: 320px;
+    overflow-y: scroll;
+  }
+  .insurance__payouts-titles {
+    min-width: 500px;
+  }
+  .insurance__payouts {
+    overflow-x: scroll;
+  }
   .insurance__payouts-button-show {
-    margin-top: 0;
-    padding: 5px 120px;
-    svg {
-      overflow: visible;
-    }
+    display: none;
   }
   .insurance__button-payout {
     box-shadow: none !important;

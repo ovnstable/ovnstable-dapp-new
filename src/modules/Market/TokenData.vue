@@ -287,7 +287,9 @@ export default {
 }
 .performance__icon-chain {
   margin-left: 10px;
+
   svg {
+    overflow: visible;
     width: 24px;
     height: 24px;
   }
@@ -307,7 +309,7 @@ export default {
   flex-direction: row;
   align-items: center;
   border-radius: 30px;
-  border: 1px solid var(--color-6);
+  border: 1px solid var(--color-5);
   padding: 5px 10px;
   margin-top: 24px;
   width: fit-content;
@@ -325,10 +327,12 @@ export default {
 .selected {
   background: var(--color-4);
   color: var(--color-3);
-
+  border-color: var(--color-6);
   svg {
     opacity: 1;
     filter: unset;
+    border-radius: 50%;
+    overflow: visible;
   }
   [data-theme="dark"] & {
     background: var(--color-17);
@@ -364,6 +368,7 @@ export default {
 }
 
 .performance__icon-chain-bottom {
+  overflow: visible;
   flex-shrink: 0
 }
 
@@ -392,8 +397,6 @@ export default {
     flex-direction: row;
     align-items: center;
     border-radius: 30px;
-    border: 1px solid var(--color-6);
-    background: var(--color-5);
     padding: 2px 5px;
     margin-top: 24px;
   }
@@ -417,104 +420,6 @@ export default {
   .performance__divider {
     margin-left: 5px;
     margin-right: 5px;
-  }
-}
-
-@media (max-width: 576px) {
-  .performance__token-data-markets {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    margin-bottom: 24px;
-  }
-
-  .performance__token-data-markets-links {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    p {
-      font-size: 12px;
-      color: var(--color-1);
-      margin-left: 4px
-    }
-    svg {
-      border-radius: 50%;
-    }
-    .inactive-link {
-      opacity: 0.5;
-      filter: grayscale(10);
-    }
-  }
-  .performance__chain-data-name {
-    display: none;
-  }
-  .performance__token-data {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  .performance__divider {
-    width: 100%;
-  }
-  .performance__token-data-title--token {
-    margin-left: 20px;
-  }
-  .performance__token-data-title {
-    max-width: none;
-  }
-  .performance__token-data__description {
-    margin-top: 10px;
-    margin-bottom: 10px;
-  }
-  .performance__token-data-title {
-    margin-top: 10px;
-  }
-  .performance__token-data-num {
-    margin-top: 6px;
-  }
-  .performance__apy-data-chain {
-    margin: 0;
-  }
-  .performance__icon-chain {
-    margin-top: 10px;
-  }
-  .performance__divider {
-    margin-left: 5px;
-    margin-right: 5px;
-  }
-    .performance__payout-data,
-  .performance__apy-data,
-  .performance__apy-data-chain,
-  .performance__tvl-data {
-    justify-content: space-between;
-    flex-direction: row;
-    width: 100%;
-    p {
-      margin-top: 0;
-    }
-  }
-    .performance__divider {
-    margin-top: 12px;
-    margin-bottom: 12px;
-  }
-    .performance__token-data-header {
-    width: 100%;
-    margin-bottom: 6px;
-  }
-  .performance__token-data__description {
-    margin-left: 20px;
-  }
-  .performance__token-data-num  {
-    margin-left: auto;
-  }
-  .performance__token-data-h {
-    margin-left: 10px;
-  }
-  .performance__apy-data-chain {
-    svg {
-      margin-left: 10px;
-    }
   }
 }
 
@@ -589,6 +494,7 @@ export default {
   .performance__icon-chain {
     margin: 0;
   }
+
   .performance__chain-data-container {
     justify-content: space-between;
   }
@@ -641,6 +547,11 @@ export default {
       filter: grayscale(10);
     }
   }
+  .performance__chain-data {
+    width: 36px;
+    height: 36px;
+    align-items: center;
+  }
   .performance__chain-data-name {
     display: none;
   }
@@ -671,17 +582,15 @@ export default {
   .performance__apy-data-chain {
     margin: 0;
   }
-  .performance__icon-chain {
-    margin-top: 10px;
-  }
   .performance__divider {
     margin-left: 5px;
     margin-right: 5px;
   }
-    .performance__payout-data,
+  .performance__payout-data,
   .performance__apy-data,
   .performance__apy-data-chain,
   .performance__tvl-data {
+    min-height: 27px;
     justify-content: space-between;
     flex-direction: row;
     width: 100%;
@@ -710,6 +619,18 @@ export default {
     svg {
       margin-left: 10px;
     }
+  }
+
+}
+
+@media (max-width: 380px) {
+  .performance__chain-data {
+    min-width: 10px;
+    max-width: 18%;
+    flex: 0 0 20%;
+  }
+  .performance__chain-data-container > * {
+    margin-right: 7px;
   }
 
 }

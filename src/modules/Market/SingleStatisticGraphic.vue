@@ -524,21 +524,22 @@ export default {
       padding: 15px 30px;
   }
 }
-@media (max-width: 576px) {
+
+@media (max-width: 640px) {
   .performance__graphic-value {
-      font-size: 14px;
+    font-size: 14px;
   }
   .performance__graphic-title {
-      font-size: 10px;
+    font-size: 10px;
   }
   .performance__graphics-buttons-interval > * {
-      font-size: 8px;
+    font-size: 8px;
   }
   .performance__graphic-date {
-        font-size: 8px;
+    font-size: 8px;
   }
   .performance__graphic{
-      padding: 10px 20px;
+    padding: 10px 20px;
   }
   .performance__graphic-values p:first-child {
     font-size: 14px;
@@ -546,9 +547,6 @@ export default {
   .performance__graphic-values p:last-child {
     font-size: 12px;
   }
-}
-
-@media (max-width: 640px) {
   .performance__graphic-values {
     display: flex;
     flex-direction: row;

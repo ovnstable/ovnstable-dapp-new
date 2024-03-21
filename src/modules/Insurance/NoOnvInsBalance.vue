@@ -139,8 +139,8 @@ export default {
   border-radius: 10px;
   display: flex;
   flex-direction: column;
-  align-items: center; // This centers the flex children horizontally
-  justify-content: center; // This centers the flex children vertically, if needed
+  align-items: center;
+  justify-content: center;
   text-align: center;
   [data-theme="dark"] & {
     background-color: var(--color-7);
@@ -221,10 +221,7 @@ export default {
   gap: 5px;
 }
 
-@media (max-width: 400px) {
-  .ovn-dashboard__nobalance {
-    max-width: 360px;
-  }
+@media (max-width: 640px) {
   .ovn-dashboard__nobalance-buttons {
     margin-top: 20px;
     justify-content: space-between;
