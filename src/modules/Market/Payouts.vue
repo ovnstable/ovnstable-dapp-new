@@ -348,8 +348,15 @@ export default {
 
 @media (max-width: 640px) {
   .performance__payouts-transactions-ul {
+    min-width: 500px;
     max-height: 340px;
     overflow-y: scroll;
+  }
+  .performance__payouts-titles {
+    min-width: 500px;
+  }
+  .performance__payouts {
+    overflow-x: scroll;
   }
   .performance__payouts-date-transaction {
     display: inline-block;

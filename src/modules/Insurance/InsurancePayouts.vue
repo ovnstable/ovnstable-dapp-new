@@ -380,8 +380,15 @@ export default {
 
 @media (max-width: 640px) {
    .insurance__payouts-transactions-ul {
+    min-width: 500px;
     max-height: 320px;
     overflow-y: scroll;
+  }
+  .insurance__payouts-titles {
+    min-width: 500px;
+  }
+  .insurance__payouts {
+    overflow-x: scroll;
   }
   .insurance__payouts-button-show {
     display: none;
