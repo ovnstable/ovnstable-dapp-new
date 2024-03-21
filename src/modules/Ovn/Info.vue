@@ -513,7 +513,7 @@ export default {
   border: 1px solid var(--color-5);
   padding: 5px 10px;
   width: fit-content;
-  background-color: var(--color-5);
+  background-color: none;
   transition: background 0.3s ease, border 0.3s ease;
   [data-theme="dark"] & {
    border-color: var(--color-7);
@@ -682,6 +682,11 @@ export default {
   .ovn__overview-tvl,
   .ovn__overview-chain-data-container {
     justify-content: space-between;
+  }
+  .ovn__overview-chain-data {
+    padding: 2px 6px;
+    width: 36px;
+    height: 36px;
   }
 
   .ovn__overview-divider {

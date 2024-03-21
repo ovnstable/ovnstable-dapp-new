@@ -698,14 +698,14 @@ export default {
   .insurance__chains-interval {
     flex-direction: column;
   }
+  .insurance__chain-data {
+    width: 36px;
+    height: 36px;
+  }
   .insurance__chain-data-container {
     margin: 0;
     justify-content: space-between;
     margin-bottom: 24px;
-  }
-  .insurance__chain-data {
-    padding: 5px 25px;
-    background-color: none;
   }
   .insurance__chain-data-name {
     display: none;

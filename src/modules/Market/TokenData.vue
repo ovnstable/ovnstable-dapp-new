@@ -309,7 +309,7 @@ export default {
   flex-direction: row;
   align-items: center;
   border-radius: 30px;
-  border: 1px solid var(--color-6);
+  border: 1px solid var(--color-5);
   padding: 5px 10px;
   margin-top: 24px;
   width: fit-content;
@@ -327,7 +327,7 @@ export default {
 .selected {
   background: var(--color-4);
   color: var(--color-3);
-
+  border-color: var(--color-6);
   svg {
     opacity: 1;
     filter: unset;
@@ -397,8 +397,6 @@ export default {
     flex-direction: row;
     align-items: center;
     border-radius: 30px;
-    border: 1px solid var(--color-6);
-    background: var(--color-5);
     padding: 2px 5px;
     margin-top: 24px;
   }
@@ -496,6 +494,7 @@ export default {
   .performance__icon-chain {
     margin: 0;
   }
+
   .performance__chain-data-container {
     justify-content: space-between;
   }
@@ -547,6 +546,11 @@ export default {
       opacity: 0.5;
       filter: grayscale(10);
     }
+  }
+  .performance__chain-data {
+    width: 36px;
+    height: 36px;
+    align-items: center;
   }
   .performance__chain-data-name {
     display: none;

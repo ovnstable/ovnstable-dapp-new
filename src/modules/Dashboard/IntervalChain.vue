@@ -100,7 +100,7 @@ export default {
   text-align: center;
   cursor: pointer;
   transition: .2s ease color;
-  border: 1px solid var(--color-7);
+  border: 1px solid var(--color-5);
   border-radius: 50%;
 
   svg {
@@ -120,7 +120,7 @@ export default {
 
 .selected {
   color: var(--color-3);
-  border-color: var(--color-1);
+  border-color: var(--color-6);
 
   svg {
     opacity: 1;
