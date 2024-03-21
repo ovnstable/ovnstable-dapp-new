@@ -349,7 +349,7 @@ const actions = {
       // connectFirstChainId: true,
       requiredChains: [WALLETCONNECT_SUPPORTED_NETWORKS[0]], // get first chain
       optionalChains: SUPPORTED_NETWORKS, // chains optional to be supported by WC wallet 0xA4B1,
-      dappUrl: 'http://app.overnight.fi',
+      dappUrl: 'https://app.overnight.fi',
     });
 
     const coinbaseWalletSdk = coinbaseWalletModule({ darkMode: true });
