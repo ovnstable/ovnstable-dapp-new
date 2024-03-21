@@ -495,9 +495,9 @@ export const checkForSamePlatform = (address: string) => {
     return ['Beefy', 'Aerodrome'];
   }
 
-  if (address === '0xb34a7d1444a707349Bc7b981B7F2E1f20F81F013') {
-    return ['Curve', 'Convex'];
-  }
+  // if (address === '0xb34a7d1444a707349Bc7b981B7F2E1f20F81F013') {
+  //   return ['Curve', 'Convex'];
+  // }
 
   return null;
 };
