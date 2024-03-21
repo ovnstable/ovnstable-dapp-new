@@ -832,6 +832,14 @@ export default {
     },
 
     changeSwap() {
+      const arrowElement = this.$el.querySelector('.swap-form__body-arrow');
+
+      if (arrowElement) {
+        arrowElement.classList.remove('rotate-animation');
+        // eslint-disable-next-line no-void
+        void arrowElement.offsetWidth;
+        arrowElement.classList.add('rotate-animation');
+      }
       // Transform Input Tokens into Output format by adding temporary variable "tempOutputArray"
       const tempOutputArray = [];
       for (let i = 0; i < this.inputTokens.length; i++) {
@@ -1657,6 +1665,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@keyframes rotateArrow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(180deg);
+  }
+}
+.rotate-animation {
+  animation: rotateArrow 0.2s linear forwards;
+}
 .swap-form__body-block {
   overflow-x: auto;
   overflow-y: hidden;
