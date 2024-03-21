@@ -15,10 +15,18 @@
         <InputComponent
           :value="searchQuery"
           is-text
+          input-type="primary"
           placeholder="Search token by name or paste address"
           full-width
           @input="searchTokens"
-        />
+        >
+          <template #prefix>
+            <BaseIcon
+              class="search-icon"
+              name="SearchBasic"
+            />
+          </template>
+        </InputComponent>
       </div>
       <div
         v-for="token in (selectedTokensList as any)"
@@ -49,10 +57,18 @@
         <InputComponent
           :value="searchQuery"
           is-text
+          input-type="primary"
           placeholder="Search token by name or paste address"
           full-width
           @input="searchTokens"
-        />
+        >
+          <template #prefix>
+            <BaseIcon
+              class="search-icon"
+              name="SearchBasic"
+            />
+          </template>
+        </InputComponent>
       </div>
       <div class="search-tokens__list">
         <div
@@ -234,6 +250,11 @@ export default {
   max-height: 50vh;
   min-height: 50vh;
   overflow: auto;
+}
+
+.search-icon {
+  margin-left: 10px;
+  overflow: visible;
 }
 
 .search-tokens__clear {
