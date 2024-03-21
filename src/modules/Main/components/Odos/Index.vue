@@ -1702,13 +1702,14 @@ export default {
   white-space: nowrap;
   cursor: pointer;
   transition: color .1s ease;
+  color: var(--color-3);
 
   [data-theme="dark"] & {
     color: var(--color-18);
   }
 
   &:hover {
-    color: var(--color-3);
+    color: var(--color-6);
     [data-theme="dark"] & {
       color: var(--color-4);
     }

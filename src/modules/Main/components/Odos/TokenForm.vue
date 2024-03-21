@@ -79,6 +79,7 @@
             {{formatMoney(tokenInfo.selectedToken.balanceData.balance,
                           fixedByPrice(tokenInfo.selectedToken.price))}}
           </span>
+          <span> Max</span>
         </div>
         <div v-else>
           Balance: 0
@@ -299,5 +300,9 @@ export default {
     color: var(--color-3);
     transform: translateX(2px);
   }
+}
+
+.input-tokens__balance span:nth-child(2) {
+  color: var(--color-3);
 }
 </style>
