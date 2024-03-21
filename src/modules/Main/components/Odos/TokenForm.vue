@@ -11,7 +11,6 @@
         :disabled="disabled"
         @input="inputUpdate"
       />
-
       <div
         v-if="tokenInfo.selectedToken"
         @click="selectTokenFunc(isInputToken)"
