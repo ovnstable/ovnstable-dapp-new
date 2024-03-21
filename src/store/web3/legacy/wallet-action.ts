@@ -11,7 +11,7 @@ import { deviceType } from '@/utils/deviceType.ts';
 
 const SUPPORTED_NETWORKS = [137, 56, 10, 42161, 324, 8453, 59144, 81457];
 const WALLETCONNECT_SUPPORTED_NETWORKS = [10, 42161, 8453, 56, 59144, 137, 81457];
-const WC_PROJECT_ID = '7a088ae8cc40c1eb6925dc98cd5fe5e3';
+const WC_PROJECT_ID = '8565d0b304b449e6fa65029a229c6738';
 
 const state = {
   onboard: null,
