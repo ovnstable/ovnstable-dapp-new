@@ -276,7 +276,7 @@ export default {
   transition: background-color .1s ease;
 
   &:hover {
-    background-color: var(--color-6);
+    background-color: var(--color-16);
   }
 }
 
