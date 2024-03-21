@@ -56,37 +56,46 @@
       </div>
       <div class="search-tokens__list">
         <div
-          v-for="token in (queryTokens as any)"
+          v-for="(token, index) in (queryTokens as any[])"
           class="search-tokens__list-item"
-          :class="selectedTokensAddress.includes(token.address) ? 'search-tokens__list-item--selected' : ''"
           :key="token.id"
           @click="toggleToken(token)"
           @keydown="toggleToken(token)"
         >
-          <div class="search-tokens__list-item__left">
-            <img
-              :src="token.logoUrl"
-              :alt="token.symbol"
-            >
-            <div class="search-tokens__list-item__left-text">
-              <h3>
-                {{token.symbol}}
-              </h3>
-              <p>
-                {{token.name}}
-              </p>
+          <h1 v-if="index === 0">OVERNIGHT TOKENS</h1>
+          <div
+            class="search-tokens__list-item-info"
+            :class="selectedTokensAddress.includes(token.address) ? 'search-tokens__list-item--selected' : ''"
+          >
+            <div class="search-tokens__list-item__left">
+              <img
+                :src="token.logoUrl"
+                :alt="token.symbol"
+              >
+              <div class="search-tokens__list-item__left-text">
+                <h3>
+                  {{token.symbol}}
+                </h3>
+                <p>
+                  {{token.name}}
+                </p>
+              </div>
+            </div>
+            <div class="search-tokens__list-item__right">
+              <span class="token-balance">
+                {{token.balanceData.balance ? token.balanceData.balance : '0'}}
+              </span>
+              <span class="token-usd-balance">
+                ${{token.balanceData.balance ? formatMoney(token.balanceData.balanceInUsd ?? "0", 2) : '0'}}
+              </span>
             </div>
           </div>
-          <div class="search-tokens__list-item__right">
-            <span class="token-balance">
-              {{token.balanceData.balance ? token.balanceData.balance : '0'}}
-            </span>
-            <span class="token-usd-balance">
-              ${{token.balanceData.balance ? formatMoney(token.balanceData.balanceInUsd ?? "0", 2) : '0'}}
-            </span>
-          </div>
+          <div
+            v-if="index === lastOvnTokenIndex"
+            class="search-tokens__list-divider-plus-tokens"
+          />
+          <h1 v-if="index === lastOvnTokenIndex">OTHER TOKENS</h1>
         </div>
-
       </div>
     </div>
   </div>
@@ -192,6 +201,11 @@ export default {
 
       return arrList;
     },
+    lastOvnTokenIndex(): number {
+      return this.queryTokens.reduceRight((lastIndex: number, token: any, index: number) => (
+        lastIndex === -1 && OVN_TOKENS.includes(token.symbol) ? index : lastIndex), -1);
+    },
+
     isAvailableCountForSelect() {
       return this.selectedCount < this.maxTokenSelectCount;
     },
@@ -249,6 +263,17 @@ export default {
 
 .search-tokens__list-item {
   display: flex;
+  flex-direction: column;
+  h1 {
+    background-color: none;
+    margin: 0 30px;
+    margin-bottom: 10px;
+  }
+
+}
+
+.search-tokens__list-item-info {
+  display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 10px 30px;
@@ -258,7 +283,6 @@ export default {
   &:hover {
     background-color: var(--color-6);
   }
-
 }
 
 .search-tokens__list-item--selected {
@@ -352,6 +376,13 @@ export default {
 
 .selected-tokens__item:hover {
   cursor: pointer;
+}
+.search-tokens__list-divider-plus-tokens {
+  align-items: center;
+  border: 1px solid var(--color-2);
+  margin: 0 30px;
+  margin-bottom: 15px;
+  margin-top: 10px;
 }
 
 @media (max-width: 640px) {
