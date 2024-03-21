@@ -10,8 +10,9 @@
         :key="activeTab"
         @tab-change="changeTab"
       >
+
         <SwapForm
-          v-if="activeTab === 0"
+          v-if="activeTab === 0 && isAvailableOnNetwork"
           view-type="SWAP"
           @update-path-view="updatePathView"
           @update-is-loading-data="updateIsLoadingData"
@@ -37,6 +38,7 @@
       class="swap-module__mob-nav"
     >
       <div
+        v-if="isAvailableOnNetwork"
         class="swap-module__col"
         @click="showMobileSwap = !showMobileSwap"
         @keypress="showMobileSwap = !showMobileSwap"
@@ -119,20 +121,6 @@ export default {
   },
   data() {
     return {
-      tabsData: [
-        {
-          id: 0,
-          name: 'SWAP',
-        },
-        {
-          id: 1,
-          name: 'MINT/REDEEM',
-        },
-        {
-          id: 2,
-          name: 'BRIDGE',
-        },
-      ],
       activeTab: 0,
       pathViz: null as any,
       buttonDisabled: true,
@@ -164,9 +152,29 @@ export default {
   },
   computed: {
     ...mapGetters('network', ['networkName']),
+    ...mapGetters('odosData', ['isAvailableOnNetwork']),
     ...mapState('odosData', ['availableNetworksList']),
     deviceSize() {
       return deviceType();
+    },
+    tabsData() {
+      const tabs = [
+        {
+          id: 1,
+          name: 'MINT/REDEEM',
+        },
+        {
+          id: 2,
+          name: 'BRIDGE',
+        },
+      ];
+      if (this.isAvailableOnNetwork) {
+        tabs.unshift({
+          id: 0,
+          name: 'SWAP',
+        });
+      }
+      return tabs;
     },
   },
   methods: {
