@@ -690,6 +690,10 @@ export default {
     top: -60px;
     right: -35px;
   }
+  .pools-table__platform-row {
+    justify-content: center;
+    flex-direction: column;
+  }
 }
 @media (max-width: 640px) {
   .pools-table {

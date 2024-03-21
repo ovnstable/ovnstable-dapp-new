@@ -740,4 +740,10 @@ export default {
   }
 }
 
+@media (max-width: 340px) {
+  .insurance-cumulitives {
+    flex-wrap: wrap;
+  }
+}
+
 </style>
