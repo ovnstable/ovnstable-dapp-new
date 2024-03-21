@@ -224,11 +224,10 @@ const actions = {
         rpcUrl: 'https://mainnet.era.zksync.io',
       },
       // {
-      //     id: 280,  // = 280
-      //     // id: '0x118',  // = 280
-      //     token: 'ETH',
-      //     label: 'zkSync Goerli',
-      //     rpcUrl: 'https://zksync2-testnet.zksync.dev'
+      //   id: 81457,
+      //   token: 'ETH',
+      //   label: 'Blast',
+      //   rpcUrls: 'https://blast.gasswap.org',
       // },
       {
         id: 56, // = 56
