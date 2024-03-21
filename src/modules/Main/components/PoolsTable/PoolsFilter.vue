@@ -158,6 +158,10 @@ export default {
   @media (max-width: 1240px) {
     flex-wrap: wrap;
   }
+  @media (max-width: 1024px) {
+    position: sticky;
+    left: 0;
+  }
   @media (max-width: 640px) {
     position: sticky;
     left: 0;

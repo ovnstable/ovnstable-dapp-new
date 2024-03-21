@@ -656,6 +656,17 @@ export default {
     color: var(--color-3);
   }
 }
+@media (max-width: 1200px) {
+  .pools-table {
+    overflow: hidden;
+    overflow-x: auto
+  }
+  .pools-header,
+  .pools-table__content {
+    min-width: 1370px;
+    overflow-x: scroll;
+  }
+}
 @media (max-width: 1024px) {
   .pools-table__hot {
     top: -40px;
@@ -664,10 +675,6 @@ export default {
   .pools-table__hot-token-3  {
     top: -60px;
     right: -35px;
-  }
-  .pools-table__platform-row {
-    justify-content: center;
-    flex-direction: column;
   }
 }
 @media (max-width: 640px) {
@@ -694,8 +701,12 @@ export default {
   }
   .pools-header,
   .pools-table__content {
-    min-width: 650px;
+    min-width: 750px;
     overflow-x: scroll;
+  }
+  .pools-table__platform-row {
+    flex-direction: column;
+    align-items: start;
   }
   .pools-header__item {
     font-size: 12px;
