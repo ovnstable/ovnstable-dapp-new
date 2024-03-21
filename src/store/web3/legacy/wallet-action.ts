@@ -95,7 +95,7 @@ const actions = {
     });
 
     const walletName = localStorage.getItem('walletName');
-    // console.log("walletConnect onboard before connect wallet: ", walletName)
+    console.log(walletName, 'walletName');
     let connectedWallets;
 
     if (walletName !== undefined && walletName && walletName !== 'undefined' && walletName !== 'null') {
