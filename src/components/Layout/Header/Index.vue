@@ -78,7 +78,7 @@
             class="lineLoader"
           />
           <ButtonComponent
-            v-else-if="walletConnected && account"
+            v-else-if="walletConnected && account && !balancesLoading"
             class="app-header__content-account"
             btn-styles="secondary"
             @click="openAccountModal"
@@ -93,7 +93,7 @@
           </ButtonComponent>
 
           <ButtonComponent
-            v-else
+            v-else-if="!walletConnected"
             class="app-header__connect"
             @on-click="connectWallet"
           >
