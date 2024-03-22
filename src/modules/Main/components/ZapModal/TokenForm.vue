@@ -67,7 +67,7 @@
         </div>
       </div>
       <div
-        class="input-tokens__balance"
+        :class="{ 'input-tokens__balance': isInputToken }"
         @click="maxUpdate"
         @keypress="maxUpdate"
       >

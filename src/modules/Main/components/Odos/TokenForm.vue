@@ -68,20 +68,22 @@
       <div
         @click="clickOnBalance"
         @keypress="clickOnBalance"
-        class="input-tokens__balance"
+        :class="{ 'input-tokens__balance': isInputToken }"
       >
         <div
           v-if="balancesLoading"
           class="lineLoader lineLoader--balance"
         />
-        <div v-else-if="tokenInfo.selectedToken && tokenInfo.selectedToken?.balanceData?.balance">
+        <div
+          v-else-if="tokenInfo.selectedToken && tokenInfo.selectedToken?.balanceData?.balance"
+        >
           <span>
             {{formatMoney(tokenInfo.selectedToken.balanceData.balance,
                           fixedByPrice(tokenInfo.selectedToken.price))}}
           </span>
-          <span> Max</span>
+          <span v-if="isInputToken"> Max</span>
         </div>
-        <div v-else>
+        <div v-else-if="tokenInfo.selectedToken">
           Balance: 0
         </div>
       </div>

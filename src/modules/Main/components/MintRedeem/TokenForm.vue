@@ -55,14 +55,14 @@
           </div>
         </div>
         <div
-          class="input-tokens__balance"
+          :class="{ 'input-tokens__balance': isInputToken }"
           @click="maxUpdate"
           @keypress="maxUpdate"
         >
           <div class="select-token-balance-text">
             <div v-if="tokenInfo && tokenInfo.symbol">
               <span class="select-token-balance-text-enabled">
-                <span>Max</span> {{tokenBalance}}
+                <span v-if="isInputToken">Max</span> {{tokenBalance}}
               </span>
             </div>
           </div>
