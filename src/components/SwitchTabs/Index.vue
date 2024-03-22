@@ -183,9 +183,14 @@ export default {
 
 @media (max-width: 640px) {
   .switchtabs__inner {
+    border: none;
+    background: none;
     min-width: 100%;
     display: flex;
     justify-content: space-between;
+  }
+  .switchtabs__inner-text {
+    background: none;
   }
   .switchtabs__inner-text:hover {
     color: var(--color-1);
@@ -195,10 +200,15 @@ export default {
   }
   .switchtabs__inner-text.active {
     color: var(--color-1);
+    text-decoration: underline;
     font-weight: 600;
     [data-theme="dark"] & {
       color: var(--color-4);
     }
+  }
+  .switchtabs__inner-text::before {
+    background: none;
+    border: none;
   }
 }
 </style>

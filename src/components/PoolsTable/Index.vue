@@ -705,13 +705,13 @@ export default {
     overflow-x: scroll;
   }
   .pools-table__platform-row {
-    flex-direction: column;
-    align-items: start;
+    flex-wrap: wrap;
   }
   .pools-header__item {
     font-size: 12px;
   }
   .pools-table__row {
+    grid-template-columns: 0.5fr 2fr 2fr 1fr 1.35fr 0.9fr;
     button {
       font-size: 14px;
     }

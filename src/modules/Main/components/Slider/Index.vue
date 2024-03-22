@@ -308,6 +308,10 @@ export default {
   [data-theme="dark"] & {
     background-color: var(--color-17);
   }
+  @media (max-width: 1024px) {
+    width: 30%;
+  }
+
   @media (max-width: 768px) {
     width: 100%;
     margin: 30px auto;
