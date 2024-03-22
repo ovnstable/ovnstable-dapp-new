@@ -81,6 +81,9 @@
           </span>
           <span> Max</span>
         </div>
+        <div v-else>
+          Balance: 0
+        </div>
       </div>
     </div>
   </div>
