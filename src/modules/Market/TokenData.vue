@@ -270,6 +270,7 @@ export default {
 }
 
 .performance__token-data-num {
+  display: flex;
   margin-top: 20px;
   text-align: center;
   [data-theme="dark"] & {

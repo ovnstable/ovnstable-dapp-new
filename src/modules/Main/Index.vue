@@ -215,9 +215,6 @@ export default {
   [data-theme="dark"] & {
     background-color: var(--color-19);
   }
-  @media (max-width: 1200px) {
-    width: 80%;
-  }
   @media (max-width: 1024px) {
     width: 100%;
   }
