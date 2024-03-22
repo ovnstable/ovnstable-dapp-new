@@ -185,6 +185,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.tokens-modal {
+  min-width: 100%;
+}
 @media (max-width: 640px) {
   .tokens-modal__header {
     margin-top: 16px;

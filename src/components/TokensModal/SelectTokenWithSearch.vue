@@ -15,10 +15,18 @@
         <InputComponent
           :value="searchQuery"
           is-text
+          input-type="primary"
           placeholder="Search token by name or paste address"
           full-width
           @input="searchTokens"
-        />
+        >
+          <template #prefix>
+            <BaseIcon
+              class="search-icon"
+              name="SearchBasic"
+            />
+          </template>
+        </InputComponent>
       </div>
       <div
         v-for="token in (selectedTokensList as any)"
@@ -49,44 +57,69 @@
         <InputComponent
           :value="searchQuery"
           is-text
+          input-type="primary"
           placeholder="Search token by name or paste address"
           full-width
           @input="searchTokens"
-        />
+        >
+          <template #prefix>
+            <BaseIcon
+              class="search-icon"
+              name="SearchBasic"
+            />
+          </template>
+        </InputComponent>
       </div>
       <div class="search-tokens__list">
         <div
-          v-for="token in (queryTokens as any)"
+          v-for="(token, index) in (queryTokens as any[])"
           class="search-tokens__list-item"
-          :class="selectedTokensAddress.includes(token.address) ? 'search-tokens__list-item--selected' : ''"
           :key="token.id"
           @click="toggleToken(token)"
           @keydown="toggleToken(token)"
         >
-          <div class="search-tokens__list-item__left">
-            <img
-              :src="token.logoUrl"
-              :alt="token.symbol"
-            >
-            <div class="search-tokens__list-item__left-text">
-              <h3>
-                {{token.symbol}}
-              </h3>
-              <p>
-                {{token.name}}
-              </p>
+          <h1 v-if="index === 0">OVERNIGHT TOKENS</h1>
+          <div
+            v-if="index === firstZeroBalanceIndexOvnTokens"
+            class="search-tokens__list-divider-zero-balance"
+          />
+          <div
+            v-if="index === firstZeroBalanceIndexNonOvnTokens"
+            class="search-tokens__list-divider-zero-balance"
+          />
+          <div
+            class="search-tokens__list-item-info"
+            :class="selectedTokensAddress.includes(token.address) ? 'search-tokens__list-item--selected' : ''"
+          >
+            <div class="search-tokens__list-item__left">
+              <img
+                :src="token.logoUrl"
+                :alt="token.symbol"
+              >
+              <div class="search-tokens__list-item__left-text">
+                <h3>
+                  {{token.symbol}}
+                </h3>
+                <p>
+                  {{token.name}}
+                </p>
+              </div>
+            </div>
+            <div class="search-tokens__list-item__right">
+              <span class="token-balance">
+                {{token.balanceData.balance ? token.balanceData.balance : '0'}}
+              </span>
+              <span class="token-usd-balance">
+                ${{token.balanceData.balance ? formatMoney(token.balanceData.balanceInUsd ?? "0", 2) : '0'}}
+              </span>
             </div>
           </div>
-          <div class="search-tokens__list-item__right">
-            <span class="token-balance">
-              {{token.balanceData.balance ? token.balanceData.balance : '0'}}
-            </span>
-            <span class="token-usd-balance">
-              ${{token.balanceData.balance ? formatMoney(token.balanceData.balanceInUsd ?? "0", 2) : '0'}}
-            </span>
-          </div>
+          <div
+            v-if="index === lastOvnTokenIndex"
+            class="search-tokens__list-divider-plus-tokens"
+          />
+          <h1 v-if="index === lastOvnTokenIndex">OTHER TOKENS</h1>
         </div>
-
       </div>
     </div>
   </div>
@@ -171,12 +204,7 @@ export default {
           return 0;
         });
 
-      // input and output tokens have different sorting logic
-      if (!this.searchQuery && !this.isInputTokens) {
-        return arrList;
-      }
-
-      if (!this.searchQuery && this.isInputTokens) {
+      if (!this.searchQuery) {
         return arrList
           .sort((a: any, b: any) => {
             if (OVN_TOKENS.includes(a.symbol) && !OVN_TOKENS.includes(b.symbol)) {
@@ -191,6 +219,24 @@ export default {
       }
 
       return arrList;
+    },
+    lastOvnTokenIndex(): number {
+      return this.queryTokens.reduceRight((lastIndex: number, token: any, index: number) => (
+        lastIndex === -1 && OVN_TOKENS.includes(token.symbol) ? index : lastIndex), -1);
+    },
+    firstZeroBalanceIndexOvnTokens() {
+      const ovnTokens = this.queryTokens.filter((token: any) => OVN_TOKENS.includes(token.symbol));
+      return this.queryTokens.findIndex(
+        (token: any) => ovnTokens.includes(token)
+          && (token.balanceData.balance === '0.00'),
+      );
+    },
+    firstZeroBalanceIndexNonOvnTokens() {
+      const nonOvnTokens = this.queryTokens
+        .filter((token: any) => !OVN_TOKENS.includes(token.symbol));
+      return this.queryTokens.findIndex(
+        (token: any) => nonOvnTokens.includes(token) && token.balanceData.balance === '0.00',
+      );
     },
     isAvailableCountForSelect() {
       return this.selectedCount < this.maxTokenSelectCount;
@@ -227,6 +273,11 @@ export default {
   overflow: auto;
 }
 
+.search-icon {
+  margin-left: 10px;
+  overflow: visible;
+}
+
 .search-tokens__clear {
   position: absolute;
   right: 15px;
@@ -249,6 +300,17 @@ export default {
 
 .search-tokens__list-item {
   display: flex;
+  flex-direction: column;
+  h1 {
+    background-color: none;
+    margin: 0 30px;
+    margin-bottom: 10px;
+  }
+
+}
+
+.search-tokens__list-item-info {
+  display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 10px 30px;
@@ -256,9 +318,8 @@ export default {
   transition: background-color .1s ease;
 
   &:hover {
-    background-color: var(--color-6);
+    background-color: var(--color-5);
   }
-
 }
 
 .search-tokens__list-item--selected {
@@ -352,6 +413,18 @@ export default {
 
 .selected-tokens__item:hover {
   cursor: pointer;
+}
+.search-tokens__list-divider-plus-tokens,
+.search-tokens__list-divider-zero-balance {
+  align-items: center;
+  border: 1px solid var(--color-2);
+  margin: 0 30px;
+  margin-bottom: 15px;
+  margin-top: 10px;
+}
+.search-tokens__list-divider-zero-balance {
+  margin: 0 30px;
+  border-color: var(--color-17);
 }
 
 @media (max-width: 640px) {
