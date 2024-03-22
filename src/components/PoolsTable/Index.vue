@@ -674,17 +674,6 @@ export default {
     overflow: hidden;
     overflow-x: auto
   }
-  .pools-header,
-  .pools-table__content {
-    min-width: 850px;
-    overflow-x: scroll;
-  }
-}
-@media (max-width: 640px) {
-  .pools-table {
-    overflow: hidden;
-    overflow-x: auto
-  }
 
   .pools-table__footer {
     position: sticky;
