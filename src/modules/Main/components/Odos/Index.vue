@@ -56,7 +56,9 @@
                 >
                   Decrease Allowance
                 </div>
-
+                <!-- <p>{{ this.inputTokens.length }}</p>
+                <p>{{ this.inputTokens[0] }}</p> -->
+                <!-- <p>{{ token }}</p> -->
                 <TokenForm
                   :token-info="token"
                   :is-token-removable="isInputTokensRemovable"
@@ -310,8 +312,8 @@ export default {
     return {
       inputTokens: [] as any[],
       outputTokens: [] as any[],
-      maxInputTokens: 3,
-      maxOutputTokens: 3,
+      maxInputTokens: 4,
+      maxOutputTokens: 4,
 
       // input or output choosing
       selectModalTypeInput: true,
@@ -466,11 +468,35 @@ export default {
     },
 
     isInputTokensRemovable() {
-      return this.inputTokens.length > 1;
+      if (this.inputTokens.length > 1) {
+        return true;
+      }
+      if (this.inputTokens.length === 1) {
+        const token = this.inputTokens[0];
+        return !(
+          token.value === null
+          && token.usdValue === null
+          && token.contractValue === null
+          && token.selectedToken === null
+        );
+      }
+      return false;
     },
 
     isOutputTokensRemovable() {
-      return this.outputTokens.length > 1;
+      if (this.outputTokens.length > 1) {
+        return true;
+      }
+      if (this.outputTokens.length === 1) {
+        const token = this.outputTokens[0];
+        return !(
+          token.value === null
+          && token.usdValue === null
+          && token.contractValue === null
+          && token.selectedToken === null
+        );
+      }
+      return false;
     },
 
     isTokenWithoutSlider() {
@@ -479,14 +505,14 @@ export default {
 
     isInputTokensAddAvailable() {
       return (
-        this.inputTokens.length < this.maxInputTokens
+        (this.inputTokens.length + 1) < this.maxInputTokens
         && this.inputTokensWithoutSelectedTokensCount === 0
       );
     },
 
     isOutputTokensAddAvailable() {
       return (
-        this.outputTokens.length < this.maxOutputTokens
+        (this.outputTokens.length + 1) < this.maxOutputTokens
         && this.outputTokensWithoutSelectedTokensCount === 0
       );
     },
@@ -787,23 +813,33 @@ export default {
       this.removeToken(this.inputTokens, id);
     },
     removeToken(tokens: any, id: any) {
-      // removing by token.id or token.selectedToken.id
       const index = tokens.findIndex(
         (item: any) => item.id === id
-          || (item.selectedToken ? item.selectedToken.id === id : false),
+        || (item.selectedToken ? item.selectedToken.id === id : false),
       );
 
       if (index !== -1) {
-        if (tokens[index].selectedToken) {
-          tokens[index].selectedToken.selected = false;
+        if (tokens.length === 1) {
+          tokens[index] = getNewInputToken();
+        } else {
+          if (tokens[index].selectedToken) {
+            tokens[index].selectedToken.selected = false;
+          }
+          tokens.splice(index, 1);
         }
-
-        tokens.splice(index, 1);
       }
       this.updateQuotaInfo();
     },
 
     changeSwap() {
+      const arrowElement = this.$el.querySelector('.swap-form__body-arrow');
+
+      if (arrowElement) {
+        arrowElement.classList.remove('rotate-animation');
+        // eslint-disable-next-line no-void
+        void arrowElement.offsetWidth;
+        arrowElement.classList.add('rotate-animation');
+      }
       // Transform Input Tokens into Output format by adding temporary variable "tempOutputArray"
       const tempOutputArray = [];
       for (let i = 0; i < this.inputTokens.length; i++) {
@@ -1629,6 +1665,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@keyframes rotateArrow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(180deg);
+  }
+}
+.rotate-animation {
+  animation: rotateArrow 0.2s linear forwards;
+}
 .swap-form__body-block {
   overflow-x: auto;
   overflow-y: hidden;
@@ -1674,13 +1721,14 @@ export default {
   white-space: nowrap;
   cursor: pointer;
   transition: color .1s ease;
+  color: var(--color-3);
 
   [data-theme="dark"] & {
     color: var(--color-18);
   }
 
   &:hover {
-    color: var(--color-3);
+    color: var(--color-6);
     [data-theme="dark"] & {
       color: var(--color-4);
     }

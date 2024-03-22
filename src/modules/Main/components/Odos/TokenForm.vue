@@ -11,7 +11,6 @@
         :disabled="disabled"
         @input="inputUpdate"
       />
-
       <div
         v-if="tokenInfo.selectedToken"
         @click="selectTokenFunc(isInputToken)"
@@ -80,6 +79,7 @@
             {{formatMoney(tokenInfo.selectedToken.balanceData.balance,
                           fixedByPrice(tokenInfo.selectedToken.price))}}
           </span>
+          <span> Max</span>
         </div>
       </div>
     </div>
@@ -297,5 +297,9 @@ export default {
     color: var(--color-3);
     transform: translateX(2px);
   }
+}
+
+.input-tokens__balance span:nth-child(2) {
+  color: var(--color-3);
 }
 </style>
