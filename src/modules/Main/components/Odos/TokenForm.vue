@@ -47,7 +47,7 @@
       </div>
     </div>
     <div class="input-tokens__row">
-      <div class="input-tokens__balance">
+      <div class="input-tokens__balance-dollars">
         <div
           v-if="balancesLoading"
           class="lineLoader lineLoader--balance"
