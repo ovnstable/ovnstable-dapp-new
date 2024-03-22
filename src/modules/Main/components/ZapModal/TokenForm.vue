@@ -47,7 +47,7 @@
       </div>
     </div>
     <div class="input-tokens__row">
-      <div class="input-tokens__balance">
+      <div>
         <div
           v-if="balancesLoading"
           class="lineLoader lineLoader--balance"
@@ -67,7 +67,7 @@
         </div>
       </div>
       <div
-        class="input-tokens__balance"
+        :class="{ 'input-tokens__balance': isInputToken }"
         @click="maxUpdate"
         @keypress="maxUpdate"
       >
@@ -76,14 +76,17 @@
           class="lineLoader lineLoader--balance"
         />
         <div v-else-if="tokenInfo.selectedToken && tokenInfo.selectedToken?.balanceData?.balance">
-          <span>
-            {{formatMoney(tokenInfo.selectedToken.balanceData.balance,
-                          fixedByPrice(tokenInfo.selectedToken.price))}}
-          </span>
+          <div class="lineLoader--balance-max">
+            <p v-if="isInputToken">
+              Max&nbsp;
+            </p>
+            <span>
+              {{formatMoney(tokenInfo.selectedToken.balanceData.balance,
+                            fixedByPrice(tokenInfo.selectedToken.price))}}
+            </span>
+          </div>
+
         </div>
-        <span v-else>
-          Balance: 0
-        </span>
       </div>
     </div>
   </div>
@@ -301,6 +304,13 @@ export default {
   &:hover {
     color: var(--color-3);
     transform: translateX(2px);
+  }
+}
+.lineLoader--balance-max {
+  display: flex;
+  flex-direction: row;
+  p {
+    color: var(--color-3);
   }
 }
 </style>

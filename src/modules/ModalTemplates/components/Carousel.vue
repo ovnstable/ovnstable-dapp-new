@@ -129,6 +129,9 @@ export default {
       color: var(--color-4);
     }
   }
+  @media (max-width: 440px) {
+    min-width: 200px;
+  }
 }
 .list-items {
   font-size: 16px;

@@ -218,7 +218,6 @@ export default {
   border-radius: 20px;
   border: 1px solid var(--color-1);
   background: var(--color-4);
-  box-shadow: 0px 1px 0px 0px var(--color-1);
   padding-top: 40px;
   padding-left: 25px;
   padding-right: 25px;
@@ -227,7 +226,6 @@ export default {
   [data-theme="dark"] & {
     background: var(--color-17);
     border-color: var(--color-2);
-    box-shadow: 0px 1px 0px 0px var(--color-2);
   }
 }
 .insurance__token-data,
@@ -318,9 +316,8 @@ export default {
 
   .insurance {
     padding: 16px 20px;
-    border: 1px solid var(--color-1);
+    border: 2px solid var(--color-1);
     border-top: 0;
-    border-bottom: 0;
     border-radius: 0 0 30px 30px;
     position: relative;
     z-index: 2;
