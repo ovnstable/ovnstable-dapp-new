@@ -334,32 +334,14 @@ export default {
     };
   },
   watch: {
-    async isAllDataLoaded(newVal) {
-      if (newVal) {
-        await this.initData({
-          tokenSeparationScheme: this.tokenSeparationScheme,
-          listOfBuyTokensAddresses: this.listOfBuyTokensAddresses,
-        });
-      }
-    },
-    // on wallet connect
-    async allTokensList(val) {
-      if (val) this.clearForm('000');
-      if (!val) this.outputTokens = [getNewOutputToken()];
-    },
-    // for first render
-    async loadingWeb3(newVal) {
-      if (newVal) this.clearForm('0');
+    async isAllDataLoaded(val) {
+      if (val) this.clearForm('0');
     },
     async networkId(newVal) {
       if (newVal) {
         this.$store.commit('odosData/changeState', {
           field: 'isFirstBalanceLoaded',
           val: false,
-        });
-        this.$store.commit('odosData/changeState', {
-          field: 'isBalancesLoading',
-          val: true,
         });
         this.$store.commit('odosData/changeState', {
           field: 'quotaResponseInfo',
@@ -371,7 +353,6 @@ export default {
           listOfBuyTokensAddresses: this.listOfBuyTokensAddresses,
         });
         this.clearForm('1');
-        this.loadPricesInfo(newVal);
       }
     },
     outputTokensWithSelectedTokensCount(val, oldVal) {
@@ -690,7 +671,6 @@ export default {
         'getActualGasPrice',
         'initWalletTransaction',
         'initData',
-        'loadPricesInfo',
         'loadBalances',
       ],
     ),
@@ -751,6 +731,11 @@ export default {
       await this.loadChains();
       await this.loadTokens();
       await this.initContractData();
+
+      await this.initData({
+        tokenSeparationScheme: this.tokenSeparationScheme,
+        listOfBuyTokensAddresses: this.listOfBuyTokensAddresses,
+      });
 
       const bus = useEventBus('odos-transaction-finished');
       bus.on(() => {

@@ -458,6 +458,18 @@ export const loadPrices = async (chainId: number | string) => odosApiService
     console.error('Error load contract', e);
   });
 
+export const loadPriceTrigger = async (tokens: any[], chainId: number | string) => {
+  const tokenPricesMap = await loadPrices(chainId)
+    .catch((e) => {
+      console.error('Error when load prices info', e);
+    });
+
+  return tokens.map((data: any) => ({
+    ...data,
+    price: new BigNumber(tokenPricesMap[data.address] ?? 0).toFixed(20),
+  }));
+};
+
 export const sortedChainsByTVL = async (chains: any, showDeprecated: boolean) => {
   const tvl = await SliderApiService.loadTVL();
   const response = await odosApiService.loadPrices(10);
