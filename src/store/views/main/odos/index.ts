@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable comma-dangle */
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -7,6 +8,7 @@ import { useEventBus } from '@vueuse/core';
 import {
   getFilteredOvernightTokens,
   getFilteredPoolTokens,
+  loadPriceTrigger,
   loadPrices,
 } from '@/store/helpers/index.ts';
 import BigNumber from 'bignumber.js';
@@ -20,6 +22,7 @@ import { ERC20_ABI } from '@/assets/abi/index.ts';
 import { fixedByPrice } from '@/utils/numbers.ts';
 import { ZERO_ADDRESS } from '@/utils/const.ts';
 import { LINEA_TOKENS, BLAST_TOKENS } from '@/store/views/main/odos/mocks.ts';
+import _ from 'lodash';
 
 // const KEY = 'REFERRAL_CODE';
 
@@ -28,8 +31,7 @@ const ODOS_DURATION_CONFIRM_REQUEST = 60;
 export const stateData = {
   baseViewType: 'SWAP',
   isChainsLoading: false,
-  isPricesLoading: false,
-  isBalancesLoading: true,
+  isBalancesLoading: false,
   isFirstBalanceLoaded: false,
   isContractLoading: false,
   isTokenExternalDataLoading: false,
@@ -115,13 +117,12 @@ const getters = {
   },
 
   isAllDataLoaded(state: typeof stateData) {
-    return !state.isChainsLoading && !state.isTokensLoading;
+    return !state.isChainsLoading && !state.isTokensLoading && !state.isBalancesLoading;
   },
-  isShowDecreaseAllowance(state: typeof stateData, getters: any, rootState: any) {
+  isShowDecreaseAllowance(state: typeof stateData) {
     return (
       state.isShowDecreaseAllowanceButton
-      && rootState?.account === '0x4473D652fb0b40b36d549545e5fF6A363c9cd686'
-    ); // test front dev address
+    );
   },
   isAvailableOnNetwork(state: typeof stateData, getters: any, rootState: any) {
     return state.availableNetworksList.includes(rootState?.network?.networkName);
@@ -247,32 +248,46 @@ const actions = {
   async initPoolSwap({
     commit, state, dispatch, rootState,
   }: any) {
-    console.log('init pool swap data for network: ');
     const { networkId } = getNetworkParams(rootState.network.networkName);
 
-    await commit('changeState', {
+    const tokensList = getFilteredPoolTokens(
+      networkId,
+      false,
+      [],
+      true,
+      state,
+    );
+
+    const tokensWithPrices = await loadPriceTrigger(tokensList, networkId);
+
+    console.log(tokensWithPrices, '---tokensWithPrices');
+    commit('changeState', {
       field: 'tokens',
-      val: getFilteredPoolTokens(
-        networkId,
-        false,
-        [],
-        true,
-        state,
-      )
+      val: tokensWithPrices
     });
 
     commit('changeState', { field: 'isTokensLoadedAndFiltered', val: true });
-    await dispatch('loadPricesInfo', networkId);
     await dispatch('initAccountData');
   },
   async initOvernightSwap({
     commit, state, dispatch, rootState,
   }: any) {
     const { networkId } = getNetworkParams(rootState.network.networkName);
-    await commit('changeState', { field: 'tokens', val: await getFilteredOvernightTokens(state, networkId, false) });
+
+    const tokensList = getFilteredOvernightTokens(
+      state,
+      networkId,
+      false,
+    );
+
+    const tokensWithPrices = await loadPriceTrigger(tokensList, networkId);
+
+    commit('changeState', {
+      field: 'tokens',
+      val: tokensWithPrices
+    });
 
     commit('changeState', { field: 'isTokensLoadedAndFiltered', val: true });
-    await dispatch('loadPricesInfo', networkId);
     await dispatch('initAccountData');
   },
   async initAccountData({
@@ -316,16 +331,19 @@ const actions = {
   },
 
   async loadBalances({
-    commit, state, getters, rootState
+    commit, dispatch, state, getters, rootState
   }: any, providerInstance: any) {
     const provider = providerInstance || rootState.web3.evmProvider;
-
-    commit('changeState', { field: 'isBalancesLoading', val: true });
 
     if (!rootState.accountData.account || !provider) {
       commit('changeState', { field: 'isBalancesLoading', val: false });
       return;
     }
+
+    if (state.isBalancesLoading) return;
+    if (getters.allTokensList.length === 0) return;
+
+    commit('changeState', { field: 'isBalancesLoading', val: true });
 
     try {
       const multicaller = MulticallWrapper.wrap(provider);
@@ -431,28 +449,6 @@ const actions = {
         commit('changeState', { field: 'isContractLoading', val: false });
         throw e;
       });
-  },
-  async loadPricesInfo({
-    commit, state, getters, rootState
-  }: any, chainId: string | number) {
-    if (state.isPricesLoading) return;
-
-    commit('changeState', { field: 'isPricesLoading', val: true });
-    const networkId = chainId ?? rootState.network.networkId;
-
-    const tokenPricesMap = await loadPrices(networkId)
-      .catch((e) => {
-        console.error('Error when load prices info', e);
-        commit('changeState', { field: 'isPricesLoading', val: false });
-      });
-
-    const { tokens } = state;
-    for (let i = 0; i < tokens.length; i++) {
-      const token: any = tokens[i];
-      token.price = new BigNumber(tokenPricesMap[token.address] ?? 0).toFixed(20);
-    }
-
-    commit('changeState', { field: 'isPricesLoading', val: false });
   },
   clearInputData({
     commit
@@ -689,6 +685,15 @@ const mutations = {
     val: any
   }) {
     state[data.field] = data.val;
+  },
+  changePrices(state: any, tokensBalances: any[]) {
+    const balancesArr = state.tokens.map((_: any) => _.id);
+    tokensBalances.forEach((tok: any) => {
+      const index = balancesArr.indexOf(tok.id);
+      if (index === -1 || !state.tokens[index]) return;
+
+      state.tokens[index].price = tok.price;
+    });
   },
   changeBalances(state: any, tokensBalances: any[]) {
     const balancesArr = state.tokens.map((_: any) => _.id);
