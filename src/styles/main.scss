@@ -63,6 +63,7 @@ a {
 
 body {
   top: 0!important;
+  overflow: hidden;
 }
 
 
@@ -187,4 +188,5 @@ $avatar-offset: 52 + 16;
   /* MAGIC WALLET MODAL POSITIONING */
   --onboard-login-modal-z-index: 200000;
   --notify-onboard-z-index: 200000;
+  --wcm-z-index: 200000!important;
 }

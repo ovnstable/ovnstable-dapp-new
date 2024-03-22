@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable no-unused-vars */
 import { ethers } from 'ethers';
 import { markRaw } from 'vue';
@@ -43,6 +44,42 @@ const getters = {
   },
 };
 
+const _subscribeToProviderEvents = async (_client: any) => {
+  if (typeof _client === 'undefined') {
+    throw new Error('WalletConnect is not initialized');
+  }
+
+  _client.on('display_uri', async () => {
+    console.log('EVENT', 'QR Code Modal open');
+  });
+
+  // Subscribe to session ping
+  _client.on('session_ping', ({ id, topic }: { id: number; topic: string }) => {
+    console.log('EVENT', 'session_ping');
+    console.log(id, topic);
+  });
+
+  // Subscribe to session event
+  _client.on('session_event', ({ event, chainId }: { event: any; chainId: string }) => {
+    console.log('EVENT', 'session_event');
+    console.log(event, chainId);
+  });
+
+  // Subscribe to session update
+  _client.on(
+    'session_update',
+    () => {
+      console.log('EVENT', 'session_updated');
+    },
+  );
+
+  // Subscribe to session delete
+  _client.on('session_delete', ({ id, topic }: { id: number; topic: string }) => {
+    console.log('EVENT', 'session_deleted');
+    console.log(id, topic);
+  });
+};
+
 const actions = {
   initDefaultProvider({
     commit, dispatch, getters, rootState,
@@ -68,14 +105,15 @@ const actions = {
     const networkData = await evmProvider.getNetwork();
     dispatch('network/saveNetworkToLocalStore', networkData.chainId.toString(), { root: true });
 
+    // _subscribeToProviderEvents(evmProvider);
     commit('setIsProviderDefault', false);
     commit('setProvider', provider);
     commit('setEvmProvider', {
       provider: markRaw(evmProvider),
       signer: markRaw(signer),
     });
-    console.log('CONTRACTSINIT');
-    dispatch('contractAction/initContracts', signer, { root: true });
+    console.log(markRaw(signer), 'CONTRACTSINIT');
+    dispatch('contractAction/initContracts', markRaw(signer), { root: true });
   },
 
   async initWeb3({

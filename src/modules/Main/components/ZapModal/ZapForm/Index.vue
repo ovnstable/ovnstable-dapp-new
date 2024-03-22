@@ -797,11 +797,14 @@ export default {
       let newToken = null;
 
       if (isMaxBal) {
+        // bug with max balance sometimes, possible todo
+        // problem in getProportion formula
         newToken = updateTokenValue(
           tokenData,
           tokenData.value,
           this.checkApproveForToken,
-          tokenData.selectedToken.balanceData.originalBalance,
+          new BigNumber(tokenData.selectedToken.balanceData.originalBalance)
+            .minus(10).toString(),
         );
       } else {
         newToken = updateTokenValue(
@@ -820,6 +823,7 @@ export default {
       const arr = maxAll(
         this.inputTokens,
         this.checkApproveForToken,
+        true,
       );
       arr.forEach((_) => this.updateTokenState(_));
     },

@@ -83,9 +83,7 @@ const actions = {
   async refreshBalance({
     commit, dispatch, getters, rootState,
   }: any) {
-    if (getters.account === null || getters.account === undefined) {
-      return;
-    }
+    if (!getters.account) return;
 
     commit('setLoadingBalance', true);
     const { web3 } = rootState;

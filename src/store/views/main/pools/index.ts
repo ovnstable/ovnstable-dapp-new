@@ -101,13 +101,14 @@ const actions = {
               const moreThanOnePlatform = checkForSamePlatform(pool.id.address);
 
               // unique cases, different platforms, one pool
-              if (moreThanOnePlatform) pool.platform = moreThanOnePlatform;
+              // if (moreThanOnePlatform) pool.platform = moreThanOnePlatform;
 
               if (pool && pool?.tvl >= 0) {
                 pool = initAggregators(pool);
 
                 const newName = pool.id.name.toUpperCase();
 
+                // currently feature === hot
                 if (FEATURED_POOLS.includes(pool.id.address)) {
                   pool.feature = true;
                 } else {

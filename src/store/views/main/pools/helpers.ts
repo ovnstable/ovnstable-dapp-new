@@ -318,9 +318,6 @@ export const getSortedPools = (
   if (!filterByTvl) {
     poolsList = filteredPools
       .filter((pool) => {
-        // duplicate beefy/aerodrome, currently unique case
-        if (pool.address === '0x61366A4e6b1DB1b85DD701f2f4BFa275EF271197') return false;
-
         if (LOW_TVL_PROMOTE.includes(pool.address)) return true;
         if (pool.tvl >= MIN_AMOUNT) return true;
 
