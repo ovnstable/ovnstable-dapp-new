@@ -375,7 +375,6 @@ export default {
 .performance__chain-data-container {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
   flex-wrap: wrap;
 }
 
@@ -392,6 +391,9 @@ export default {
 }
 
 @media (max-width: 1024px) {
+  .performance__chain-data-container {
+    justify-content: space-between;
+  }
   .performance__chain-data {
     display: flex;
     flex-direction: row;
