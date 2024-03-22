@@ -218,7 +218,9 @@
 }
 
 .loader-container {
-  padding-top: 50px;
+  display: flex;
+  justify-content: center;
+  padding-top: 0;
   min-height: 400px;
   align-items: center;
 }
