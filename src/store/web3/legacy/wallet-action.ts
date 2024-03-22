@@ -11,7 +11,7 @@ import { deviceType } from '@/utils/deviceType.ts';
 
 const SUPPORTED_NETWORKS = [137, 56, 10, 42161, 324, 8453, 59144, 81457];
 const WALLETCONNECT_SUPPORTED_NETWORKS = [10, 42161, 8453, 56, 59144, 137, 81457];
-const WC_PROJECT_ID = '7a088ae8cc40c1eb6925dc98cd5fe5e3';
+const WC_PROJECT_ID = '8565d0b304b449e6fa65029a229c6738';
 
 const state = {
   onboard: null,
@@ -73,6 +73,7 @@ const actions = {
       connect: {
         showSidebar: true,
         disableClose: false,
+        autoConnectLastWallet: true,
       },
       accountCenter: {
         desktop: {
@@ -94,7 +95,7 @@ const actions = {
     });
 
     const walletName = localStorage.getItem('walletName');
-    // console.log("walletConnect onboard before connect wallet: ", walletName)
+    console.log(walletName, 'walletName');
     let connectedWallets;
 
     if (walletName !== undefined && walletName && walletName !== 'undefined' && walletName !== 'null') {
@@ -106,6 +107,7 @@ const actions = {
 
     const wallet: any = connectedWallets[0];
 
+    console.log(connectedWallets, 'connectedWallets');
     if (!wallet) {
       localStorage.removeItem('walletName');
       console.error('Wallet not connected when init onboard.');
@@ -126,7 +128,6 @@ const actions = {
       });
     }
 
-    console.log(wallet, 'INIWEB3TRIG');
     await dispatch('web3/initWeb3', null, { root: true }).then(async () => {
       const userAddress = wallet?.accounts[0]?.address;
       commit('setWalletConnected', true);
@@ -223,11 +224,10 @@ const actions = {
         rpcUrl: 'https://mainnet.era.zksync.io',
       },
       // {
-      //     id: 280,  // = 280
-      //     // id: '0x118',  // = 280
-      //     token: 'ETH',
-      //     label: 'zkSync Goerli',
-      //     rpcUrl: 'https://zksync2-testnet.zksync.dev'
+      //   id: 81457,
+      //   token: 'ETH',
+      //   label: 'Blast',
+      //   rpcUrls: 'https://blast.gasswap.org',
       // },
       {
         id: 56, // = 56
@@ -348,7 +348,7 @@ const actions = {
       // connectFirstChainId: true,
       requiredChains: [WALLETCONNECT_SUPPORTED_NETWORKS[0]], // get first chain
       optionalChains: SUPPORTED_NETWORKS, // chains optional to be supported by WC wallet 0xA4B1,
-      dappUrl: 'http://app.overnight.fi',
+      dappUrl: 'https://app.overnight.fi',
     });
 
     const coinbaseWalletSdk = coinbaseWalletModule({ darkMode: true });

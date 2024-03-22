@@ -5,6 +5,7 @@
 
 import { poolApiService } from '@/services/pool-api-service.ts';
 import {
+  checkForSamePlatform,
   getSortedPools,
   getSortedSecondPools,
   initAggregators,
@@ -42,11 +43,9 @@ const actions = {
       val: isShow,
     });
   },
-  openZapInWithInputOvn({ commit, state, dispatch }: any, pool: any) {
-    dispatch('openZapIn', pool);
-  },
 
   openZapIn({ commit }: any, pool: any) {
+    console.log(pool, 'openZapIn');
     commit('changeState', {
       field: 'currentZapPool',
       val: pool,
@@ -99,16 +98,17 @@ const actions = {
                 pool.zappable = true;
               }
 
-              // unique case
-              if (pool.id.address === '0x61366A4e6b1DB1b85DD701f2f4BFa275EF271197_Aerodrome') {
-                pool.platform = ['Beefy', 'Aerodrome'];
-              }
+              const moreThanOnePlatform = checkForSamePlatform(pool.id.address);
+
+              // unique cases, different platforms, one pool
+              // if (moreThanOnePlatform) pool.platform = moreThanOnePlatform;
 
               if (pool && pool?.tvl >= 0) {
                 pool = initAggregators(pool);
 
                 const newName = pool.id.name.toUpperCase();
 
+                // currently feature === hot
                 if (FEATURED_POOLS.includes(pool.id.address)) {
                   pool.feature = true;
                 } else {

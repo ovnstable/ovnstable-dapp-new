@@ -593,6 +593,7 @@ export default {
 .insurance__icon-chain {
   margin-top: 8px;
   svg {
+    overflow: visible;
     width: 24px;
     height: 24px;
   }
@@ -655,6 +656,7 @@ export default {
 }
 
 .insurance__icon-chain-bottom {
+  overflow: visible;
   flex-shrink: 0
 }
 

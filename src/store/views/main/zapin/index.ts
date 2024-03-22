@@ -44,6 +44,7 @@ const actions = {
       `/contracts/${state.zapPoolRoot.chainName}/${platformName}Zap.json`,
     );
 
+    console.log(abiFile, 'abiFileype');
     commit('changeState', {
       field: 'zapContract',
       val: buildEvmContract(
@@ -77,6 +78,8 @@ const actions = {
     const abiGaugeContractFile = await loadJSON(
       `/contracts/${state.zapPoolRoot.chainName}/${state?.currentZapPlatformContractType?.name}Gauge.json`,
     );
+
+    console.log(abiGaugeContractFile, '--abiGaugeContractFile');
 
     commit('changeState', {
       field: 'gaugeContract',

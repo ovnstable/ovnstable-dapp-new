@@ -177,7 +177,7 @@ export default {
   transition: .2s ease color;
   border: 1px solid var(--color-5);
   border-radius: 50%;
-
+  color: var(--color-2);
   svg {
     width: 24px;
     height: 24px;

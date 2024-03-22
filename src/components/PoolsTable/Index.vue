@@ -182,27 +182,6 @@
             >
               ZAP IN
             </ButtonComponent>
-          <!--          Hide on mobile          -->
-          <!-- <PoolTableDetails
-                :pool="pool"
-                :open-zap-in-func="openZapInFunc"
-                :is-show-only-zap="isShowOnlyZap"
-                :is-show-apr-limit="isShowAprLimit"
-                :toggle-details-func="toggleDetails"
-              /> -->
-
-          <!-- <div
-            v-if="!isShowOnlyZap && pools && pools.length"
-            @click="toggleDetails(pool)"
-            @keypress="toggleDetails(pool)"
-            class="toggle-icon-container"
-          >
-            <img
-              :src="require('@/assets/icon/pool/toggle-open-pool.svg')"
-              :style="pool.isOpened ? '' : 'transform: rotate(180deg);'"
-              alt="toggle-open-pool"
-            />
-          </div> -->
           </div>
         </template>
         <div
@@ -244,10 +223,6 @@ export default {
   props: {
     pools: {
       type: Array,
-      required: true,
-    },
-    openZapInFunc: {
-      type: Function,
       required: true,
     },
     orderType: {
@@ -689,6 +664,10 @@ export default {
   .pools-table__hot-token-3  {
     top: -60px;
     right: -35px;
+  }
+  .pools-table__platform-row {
+    justify-content: center;
+    flex-direction: column;
   }
 }
 @media (max-width: 640px) {

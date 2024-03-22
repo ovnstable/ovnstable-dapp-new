@@ -10,9 +10,8 @@
         :key="activeTab"
         @tab-change="changeTab"
       >
-
         <SwapForm
-          v-if="activeTab === 0 && isAvailableOnNetwork"
+          v-if="activeTab === 0"
           view-type="SWAP"
           @update-path-view="updatePathView"
           @update-is-loading-data="updateIsLoadingData"
@@ -37,31 +36,34 @@
       v-else
       class="swap-module__mob-nav"
     >
-      <div
-        v-if="isAvailableOnNetwork"
-        class="swap-module__col"
-        @click="showMobileSwap = !showMobileSwap"
-        @keypress="showMobileSwap = !showMobileSwap"
-      >
-        <BaseIcon name="swapMob" />
-        <span>Swap</span>
+      <UserBalances v-if="deviceSize.isMobile && walletConnected && account" />
+      <div class="swap-module__mob-nav-links">
+        <div
+          class="swap-module__col"
+          @click="showMobileSwap = !showMobileSwap"
+          @keypress="showMobileSwap = !showMobileSwap"
+        >
+          <BaseIcon name="swapMob" />
+          <span>Swap</span>
+        </div>
+        <div
+          class="swap-module__col"
+          @click="showMobileMintRedeem = !showMobileMintRedeem"
+          @keypress="showMobileMintRedeem = !showMobileMintRedeem"
+        >
+          <BaseIcon name="mintredeemMob" />
+          <span>Mint/Redeem</span>
+        </div>
+        <div
+          class="swap-module__col"
+          @click="showMobileBridge = !showMobileBridge"
+          @keypress="showMobileBridge = !showMobileBridge"
+        >
+          <BaseIcon name="bridgeMob" />
+          <span>Bridge</span>
+        </div>
       </div>
-      <div
-        class="swap-module__col"
-        @click="showMobileMintRedeem = !showMobileMintRedeem"
-        @keypress="showMobileMintRedeem = !showMobileMintRedeem"
-      >
-        <BaseIcon name="mintredeemMob" />
-        <span>Mint/Redeem</span>
-      </div>
-      <div
-        class="swap-module__col"
-        @click="showMobileBridge = !showMobileBridge"
-        @keypress="showMobileBridge = !showMobileBridge"
-      >
-        <BaseIcon name="bridgeMob" />
-        <span>Bridge</span>
-      </div>
+
     </div>
 
     <SliderComponent
@@ -102,6 +104,7 @@ import PathView from '@/modules/Main/components/PathView/Index.vue';
 import SwapMobile from '@/modules/Main/components/MobileModals/Swap.vue';
 import MobileMintRedeemMenu from '@/modules/Main/components/MobileModals/MintRedeem.vue';
 import BridgeMobile from '@/modules/Main/components/MobileModals/BridgeMobile.vue';
+import UserBalances from '@/components/Layout/Header/UserBalances.vue';
 import { useEventBus } from '@vueuse/core';
 import { deviceType } from '@/utils/deviceType.ts';
 
@@ -118,9 +121,24 @@ export default {
     PathView,
     MobileMintRedeemMenu,
     BridgeMobile,
+    UserBalances,
   },
   data() {
     return {
+      tabsData: [
+        {
+          id: 0,
+          name: 'SWAP',
+        },
+        {
+          id: 1,
+          name: 'MINT/REDEEM',
+        },
+        {
+          id: 2,
+          name: 'BRIDGE',
+        },
+      ],
       activeTab: 0,
       pathViz: null as any,
       buttonDisabled: true,
@@ -152,29 +170,11 @@ export default {
   },
   computed: {
     ...mapGetters('network', ['networkName']),
-    ...mapGetters('odosData', ['isAvailableOnNetwork']),
+    ...mapGetters('accountData', ['account']),
+    ...mapGetters('walletAction', ['walletConnected']),
     ...mapState('odosData', ['availableNetworksList']),
     deviceSize() {
       return deviceType();
-    },
-    tabsData() {
-      const tabs = [
-        {
-          id: 1,
-          name: 'MINT/REDEEM',
-        },
-        {
-          id: 2,
-          name: 'BRIDGE',
-        },
-      ];
-      if (this.isAvailableOnNetwork) {
-        tabs.unshift({
-          id: 0,
-          name: 'SWAP',
-        });
-      }
-      return tabs;
     },
   },
   methods: {
@@ -283,7 +283,15 @@ export default {
 .swap-module__mob-nav {
   width: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
+}
+.swap-module__mob-nav-links {
+  margin-top: 24px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
   justify-content: space-evenly;
+  align-items: center;
 }
 </style>

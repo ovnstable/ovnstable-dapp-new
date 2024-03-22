@@ -1788,6 +1788,7 @@ export default {
     margin-top: 50px;
     border-top: 2px solid var(--color-1);
     border-radius: 30px;
+    margin-bottom: 200px;
   }
 }
 .swap-form__body-block {

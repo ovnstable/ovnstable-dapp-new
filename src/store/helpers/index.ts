@@ -370,12 +370,19 @@ export const updateTokenValue = (
 export const maxAll = (
   selectedInputTokens: any[],
   checkApprove: (tokenData: any, val: string) => void,
-) => selectedInputTokens.map((item) => updateTokenValue(
-  item,
-  item.selectedToken.balanceData.balance,
-  checkApprove,
-  item.selectedToken.balanceData.originalBalance,
-));
+  isZap?: boolean,
+) => selectedInputTokens.map((item) => {
+  const maxContractBal = isZap
+    ? new BigNumber(item.selectedToken.balanceData.originalBalance).minus(1).toString()
+    : item.selectedToken.balanceData.originalBalance;
+
+  return updateTokenValue(
+    item,
+    item.selectedToken.balanceData.balance,
+    checkApprove,
+    maxContractBal,
+  );
+});
 
 export const loadBalance = async (
   rootState: any,

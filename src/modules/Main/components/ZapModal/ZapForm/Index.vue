@@ -424,9 +424,7 @@ export default {
     };
   },
   mounted() {
-    if (this.zapPool.chain !== this.networkId) {
-      return;
-    }
+    if (this.zapPool.chain !== this.networkId) return;
 
     this.firstInit();
   },
@@ -799,11 +797,14 @@ export default {
       let newToken = null;
 
       if (isMaxBal) {
+        // bug with max balance sometimes, possible todo
+        // problem in getProportion formula
         newToken = updateTokenValue(
           tokenData,
           tokenData.value,
           this.checkApproveForToken,
-          tokenData.selectedToken.balanceData.originalBalance,
+          new BigNumber(tokenData.selectedToken.balanceData.originalBalance)
+            .minus(10).toString(),
         );
       } else {
         newToken = updateTokenValue(
@@ -822,6 +823,7 @@ export default {
       const arr = maxAll(
         this.inputTokens,
         this.checkApproveForToken,
+        true,
       );
       arr.forEach((_) => this.updateTokenState(_));
     },
@@ -1189,6 +1191,7 @@ export default {
         referralCode: this.odosZapReferalCode ?? this.odosReferalCode,
       };
 
+      console.log(requestData, '---requestData');
       this.odosSwapRequest(requestData)
         .then(async (data: any) => {
           const assembleData = {
@@ -1645,6 +1648,7 @@ export default {
         gasPrice: this.gasPriceGwei,
       };
 
+      console.log(zapPool, '----zapPool');
       console.log(txData, 'ZAPIN');
       console.log(gaugeData, 'gaugeData');
       console.log(params, 'params');
@@ -1773,7 +1777,7 @@ export default {
         gasPrice: actualGas,
         userAddr: ethers.getAddress(this.account.toLowerCase()),
         slippageLimitPercent: this.getSlippagePercent(),
-        sourceBlacklist: ['Hashflow', 'Wombat'],
+        sourceBlacklist: this.getSourceLiquidityBlackList(),
         sourceWhitelist: whiteList ?? [],
         simulate: true,
         pathViz: true,

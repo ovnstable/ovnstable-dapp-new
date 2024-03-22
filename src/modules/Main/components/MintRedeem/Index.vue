@@ -320,6 +320,7 @@ export default {
       if (pairData) exchangeAddress = pairData.exchange;
       if (!exchangeAddress) return;
 
+      console.log(tokenContract, '---tokenContract');
       const tx = await approveToken(
         tokenContract,
         exchangeAddress,
@@ -646,6 +647,7 @@ export default {
 
         if (!method) return;
 
+        console.log(exchangeContract, 'exchangeContract1trigger');
         const txData = method.iterateArgs
           ? await exchangeContract[method.name](
             ...Object.values(method.params),

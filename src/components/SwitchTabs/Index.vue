@@ -186,13 +186,6 @@ export default {
     min-width: 100%;
     display: flex;
     justify-content: space-between;
-    background: none;
-    border: none;
-  }
-  .switchtabs__inner,
-  .switchtabs__inner-text {
-    background: none;
-    border: none;
   }
   .switchtabs__inner-text:hover {
     color: var(--color-1);
@@ -203,13 +196,8 @@ export default {
   .switchtabs__inner-text.active {
     color: var(--color-1);
     font-weight: 600;
-    text-decoration: underline;
     [data-theme="dark"] & {
       color: var(--color-4);
-    }
-    &::before {
-      background: none;
-      border: none;
     }
   }
 }

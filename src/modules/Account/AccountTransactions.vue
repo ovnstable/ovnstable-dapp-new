@@ -285,9 +285,4 @@ export default {
   }
 }
 
-@media (max-width: 400px) {
-  .ovn-trxs {
-    max-width: 360px;
-  }
-}
 </style>
