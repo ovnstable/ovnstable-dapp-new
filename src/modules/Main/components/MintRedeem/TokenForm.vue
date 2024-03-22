@@ -65,9 +65,6 @@
                 Balance: {{tokenBalance + " " + tokenInfo.symbol}}
               </span>
             </div>
-            <div v-else>
-              Balance: 0
-            </div>
           </div>
         </div>
       </div>

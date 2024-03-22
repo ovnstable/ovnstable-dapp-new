@@ -81,9 +81,6 @@
                           fixedByPrice(tokenInfo.selectedToken.price))}}
           </span>
         </div>
-        <div v-else>
-          Balance: 0
-        </div>
       </div>
     </div>
   </div>
