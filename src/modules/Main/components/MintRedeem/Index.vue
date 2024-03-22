@@ -320,6 +320,7 @@ export default {
       if (pairData) exchangeAddress = pairData.exchange;
       if (!exchangeAddress) return;
 
+      console.log(tokenContract, '---tokenContract');
       const tx = await approveToken(
         tokenContract,
         exchangeAddress,
