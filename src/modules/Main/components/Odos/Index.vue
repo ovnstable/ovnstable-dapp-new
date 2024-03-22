@@ -331,11 +331,16 @@ export default {
       tokensQuotaCheckerSec: 0,
 
       firstSwipeClickOnApprove: false,
+      isAllDataTrigger: false,
     };
   },
   watch: {
     async isAllDataLoaded(val) {
-      if (val) this.clearForm('0');
+      if (this.isAllDataTrigger) return;
+      if (val) {
+        this.isAllDataTrigger = true;
+        this.clearForm('0');
+      }
     },
     async networkId(newVal) {
       if (newVal) {
@@ -1094,15 +1099,10 @@ export default {
         field: 'quotaResponseInfo',
         val: null,
       });
-      this.$store.commit('odosData/changeState', {
-        field: 'swapResponseInfo',
-        val: null,
-      });
     },
     async simulateSwap() {
-      if (this.isSumulateSwapLoading) {
-        return;
-      }
+      console.log('SIMULATE');
+      if (this.isSumulateSwapLoading) return;
 
       if (
         this.inputTokensWithSelectedTokensCount < 1
