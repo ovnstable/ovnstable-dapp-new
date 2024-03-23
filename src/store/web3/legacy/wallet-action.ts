@@ -73,7 +73,6 @@ const actions = {
       connect: {
         showSidebar: true,
         disableClose: false,
-        autoConnectLastWallet: true,
       },
       accountCenter: {
         desktop: {
