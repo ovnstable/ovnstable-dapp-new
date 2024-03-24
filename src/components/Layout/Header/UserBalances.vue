@@ -74,25 +74,26 @@ export default {
 
     totalUserBalance() {
       if (isEmpty(this.allTokensList) && isEmpty(this.tokensMap)) return '0';
-      const total: BigNumber = this.originalBalance.reduce((acc: BigNumber, curr: any) => {
+      const total: BigNumber = this.originalBalance
+        .filter((_: any) => OVN_TOKENS.includes(_.symbol))
+        .reduce((acc: BigNumber, curr: any) => {
         // linea/blast doesnt have token from ODOS, so we using our schemas values
-        if (!OVN_TOKENS.includes(curr.symbol)) return acc;
-        const tokensForChain = !EMPTY_TOKENS_NETWORKS.includes(this.networkId)
-          ? this.allTokensList
-          : Object.values(this.tokensMap?.chainTokenMap[this.networkId]?.tokenMap ?? {});
-        const tokenData = tokensForChain.find((_: any) => _.symbol === curr.symbol);
+          const tokensForChain = !EMPTY_TOKENS_NETWORKS.includes(this.networkId)
+            ? this.allTokensList
+            : Object.values(this.tokensMap?.chainTokenMap[this.networkId]?.tokenMap ?? {});
+          const tokenData = tokensForChain.find((_: any) => _.symbol === curr.symbol);
 
-        // todo: load tokens prices if needed, linea/blast
-        const tokenPrice = [81457, 59144].includes(this.networkId) ? 1 : tokenData?.price;
+          // todo: load tokens prices if needed, linea/blast
+          const tokenPrice = [81457, 59144].includes(this.networkId) ? 1 : tokenData?.price;
 
-        if (!tokenData || !curr.isOvnToken || !tokenPrice) return acc;
+          if (!tokenData || !curr.isOvnToken || !tokenPrice) return acc;
 
-        const fixedBalance = new BigNumber(curr.balance)
-          .div(10 ** tokenData.decimals)
-          .times(tokenPrice);
+          const fixedBalance = new BigNumber(curr.balance)
+            .div(10 ** tokenData.decimals)
+            .times(tokenPrice);
 
-        return acc.plus(fixedBalance);
-      }, BigNumber(0));
+          return acc.plus(fixedBalance);
+        }, BigNumber(0));
 
       return total.toFixed(2);
     },
@@ -101,7 +102,8 @@ export default {
       if (this.originalBalance.length === 0) return [];
       if (isEmpty(this.allTokensList) && isEmpty(this.tokensMap)) return [];
       return this.originalBalance
-        .filter((_: any) => OVN_TOKENS.includes(_.symbol)).map((bal: any) => {
+        .filter((_: any) => OVN_TOKENS.includes(_.symbol))
+        .map((bal: any) => {
           const tokensForChain = !EMPTY_TOKENS_NETWORKS.includes(this.networkId)
             ? this.allTokensList
             : Object.values(this.tokensMap?.chainTokenMap[this.networkId]?.tokenMap ?? {});
