@@ -312,7 +312,7 @@ const actions = {
       [ProviderLabel.Safeheron]: 'unavailable',
       [ProviderLabel.Talisman]: 'unavailable',
       [ProviderLabel.Coinbase]: 'unavailable',
-      [ProviderLabel.Detected]: { mobile: true },
+      [ProviderLabel.Detected]: ['desktop'],
     };
   },
 
