@@ -319,6 +319,9 @@ export default {
     padding: 30px 20px;
     background-color: var(--color-8);
     border-radius: 30px;
+    [data-theme="dark"] & {
+      background-color: var(--color-6);
+    }
   }
 }
 

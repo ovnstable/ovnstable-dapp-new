@@ -733,6 +733,7 @@ export default {
   button {
     [data-theme="dark"] & {
       box-shadow: none;
+      border: none;
       background-color: var(--color-7);
       color: var(--color-18);
     }

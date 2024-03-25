@@ -462,6 +462,9 @@ export default {
     background-color: var(--color-4);
     padding: 5px;
     border-radius: 10px;
+    [data-theme="dark"] & {
+      background: none;
+    }
   }
 }
 

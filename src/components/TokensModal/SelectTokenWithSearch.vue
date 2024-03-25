@@ -54,6 +54,31 @@
         v-if="!deviceSize.isMobile"
         class="search-tokens__input"
       >
+        <div class="selected-tokens">
+          <p
+            class="selected-tokens-amount"
+          >{{ selectedCount }} / 3</p>
+          <div
+            v-for="token in (selectedTokensList as any)"
+            :key="token.id"
+            class="selected-tokens__item"
+            :class="token.selected ? 'token-container-selected' : ''"
+            @click="toggleToken(token)"
+            @keydown="toggleToken(token)"
+          >
+            <img
+              :src="token.logoUrl"
+              :alt="token.symbol"
+            >
+            <span>
+              {{token.symbol}}
+            </span>
+            <BaseIcon
+              name="SearchClose"
+            />
+          </div>
+        </div>
+
         <InputComponent
           :value="searchQuery"
           is-text
@@ -242,6 +267,9 @@ export default {
       return this.selectedCount < this.maxTokenSelectCount;
     },
     selectedCount() {
+      if (this.selectedTokensList.length === 0) {
+        return 0;
+      }
       return this.selectedTokens.length;
     },
   },
@@ -294,6 +322,7 @@ export default {
 .search-tokens__input {
   position: relative;
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
   margin: 0 20px 20px 30px;
 }
@@ -380,10 +409,11 @@ export default {
 
 .selected-tokens {
   display: flex;
+  flex-direction: row;
   flex-wrap: wrap;
   gap: 12px;
-  padding: 0 30px;
-  margin-bottom: 20px;
+  align-items: center;
+  padding: 10px;
 }
 
 .selected-tokens__item {
@@ -441,11 +471,20 @@ export default {
     flex-direction: column;
     padding: 0;
     gap: 10px;
+    margin-bottom: 20px;
+    margin-right: 30px;
+    margin-left: 30px;
     border: 2px solid var(--color-5);
     border-radius: 10px;
-    padding: 14px 16px;
+    padding: 11px;
+  }
+  .selected-tokens__item {
+    svg {
+      margin-left: auto;
+    }
   }
   .search-tokens__input {
+    width: 100%;
     margin: 0;
     background-color: var(--color-8);
     border-radius: 30px;
@@ -455,7 +494,7 @@ export default {
     margin: 10px 0;
   }
   .token-container-selected {
-    padding: 5px;
+
     width: 100%;
     span {
       font-size: 14px;

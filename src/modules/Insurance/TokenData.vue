@@ -559,6 +559,11 @@ export default {
 .insurance__divider--first-divider {
   margin-left: 0;
 }
+.insurance__payout-data {
+  svg {
+    overflow: visible;
+  }
+}
 
 .insurance__payout-data,
 .performance__apy-data,
@@ -671,6 +676,11 @@ export default {
 
 .insurance__token-image {
   overflow: visible;
+}
+@media (max-width: 1200px) {
+  .insurance__token-data-num {
+    margin-top: 10px
+  }
 }
 @media (max-width: 1024px) {
   .insurance__chain-data {
