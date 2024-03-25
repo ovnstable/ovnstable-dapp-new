@@ -305,9 +305,6 @@ export default {
   flex-direction: row;
   align-items: center;
   margin: 50px 40px 50px auto;
-  [data-theme="dark"] & {
-    background-color: var(--color-17);
-  }
   @media (max-width: 1200px) {
     width: 50%;
     margin: 20px 10px 20px auto;
