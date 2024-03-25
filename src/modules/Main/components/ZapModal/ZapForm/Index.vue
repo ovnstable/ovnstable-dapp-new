@@ -776,6 +776,7 @@ export default {
       'startSwapConfirmTimer',
       'stopSwapConfirmTimer',
     ]),
+    ...mapActions('accountData', ['refreshBalance']),
     ...mapActions('zapinData', ['loadZapContract']),
     ...mapActions('errorModal', ['showErrorModal', 'showErrorModalWithMsg']),
     ...mapActions('waitingModal', ['showWaitingModal', 'closeWaitingModal']),
@@ -991,6 +992,7 @@ export default {
     finishTransaction() {
       this.clearAndInitForm();
       this.closeWaitingModal();
+      this.refreshBalance();
     },
 
     clearAndInitForm() {

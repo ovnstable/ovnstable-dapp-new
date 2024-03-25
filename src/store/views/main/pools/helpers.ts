@@ -1,7 +1,10 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-unused-expressions */
 import { poolTypes } from '@/modules/Main/components/PoolsTable/types/index.ts';
-import { LOW_TVL_PROMOTE, MIN_AMOUNT } from './mocks.ts';
+import BigNumber from 'bignumber.js';
+import {
+  FIRST_MIN_AMOUNT, LOW_TVL_PROMOTE, SECOND_MIN_AMOUNT,
+} from './mocks.ts';
 
 const STABLE_TOKENS = ['USD+', 'DAI+', 'WUSD+', 'USDC+', 'USDT+'];
 
@@ -319,7 +322,7 @@ export const getSortedPools = (
     poolsList = filteredPools
       .filter((pool) => {
         if (LOW_TVL_PROMOTE.includes(pool.address)) return true;
-        if (pool.tvl >= MIN_AMOUNT) return true;
+        if (pool.tvl >= FIRST_MIN_AMOUNT) return true;
 
         return false;
       });
@@ -351,7 +354,9 @@ export const getSortedSecondPools = (
 
     // if its tvl higher than restrictions and its promotoed, its gonna duplicate
     if (LOW_TVL_PROMOTE.includes(pool.address)) return false;
-    if (pool.tvl > MIN_AMOUNT && pool.promoted) return false;
+    if (pool.promoted) return false;
+    if (new BigNumber(pool.tvl).gt(SECOND_MIN_AMOUNT)
+          && new BigNumber(pool.tvl).lt(FIRST_MIN_AMOUNT)) return true;
     if (pool.promoted !== false) return true;
 
     return false;

@@ -342,6 +342,10 @@ export default {
         this.clearForm('0');
       }
     },
+    async account(val) {
+      if (!this.isAllDataTrigger) return;
+      if (val) this.clearForm('0');
+    },
     async networkId(newVal) {
       if (newVal) {
         this.$store.commit('odosData/changeState', {
@@ -680,6 +684,7 @@ export default {
       ],
     ),
     ...mapActions('errorModal', ['showErrorModalWithMsg']),
+    ...mapActions('accountData', ['refreshBalance']),
     ...mapActions('waitingModal', ['showWaitingModal', 'closeWaitingModal']),
     ...mapActions('walletAction', ['connectWallet']),
 
@@ -900,6 +905,7 @@ export default {
     finishTransaction() {
       console.log('finishTransaction');
       this.clearForm('5');
+      this.refreshBalance();
     },
 
     clearForm(val: string) {

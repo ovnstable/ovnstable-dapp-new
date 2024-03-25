@@ -73,7 +73,6 @@ const actions = {
       connect: {
         showSidebar: true,
         disableClose: false,
-        autoConnectLastWallet: true,
       },
       accountCenter: {
         desktop: {
@@ -319,8 +318,6 @@ const actions = {
   async getMainWalletsConfig({
     commit, dispatch, getters, rootState,
   }: any) {
-    const deviceSize = deviceType();
-
     const injected = injectedModule({
       filter: await dispatch('getWalletsFilter'),
       sort: (wallets) => {
@@ -337,7 +334,6 @@ const actions = {
             .filter((wallet) => wallet)
         ) as any;
       },
-      displayUnavailable: !!deviceSize.isMobile,
       walletUnavailableMessage: (wallet) => `Oops ${wallet.label} is unavailable!`,
 
     });

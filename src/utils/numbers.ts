@@ -18,7 +18,7 @@ export const formatMoney = (number = 0, count = 6) => {
 export const fixedByPrice = (price: number) => {
   if (price == null) return 2;
   const orderOfMagnitude = Math.floor(Math.log10(price));
-  const num = Math.max(2, orderOfMagnitude > 0 ? orderOfMagnitude + 2 : orderOfMagnitude * -1 + 2);
+  const num = Math.max(2, orderOfMagnitude > 0 ? orderOfMagnitude + 3 : orderOfMagnitude * -1 + 3);
   return num > 8 ? 8 : num;
 };
 
