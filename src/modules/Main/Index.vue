@@ -222,6 +222,9 @@ export default {
     flex-wrap: wrap;
     background-color: transparent;
     border-radius: 0;
+    [data-theme="dark"] & {
+      background: none;
+    }
   }
 
   @media (max-width: 640px) {
@@ -279,6 +282,13 @@ export default {
 
   &:hover {
     background-color: var(--color-6);
+  }
+  [data-theme="dark"] & {
+    color: var(--color-18);
+    svg {
+      fill: var(--color-4);
+      stroke: var(--color-4);
+    }
   }
 }
 

@@ -75,7 +75,7 @@
 </template>
 
 <script lang="ts">
-import SelectTokenWithSearch from '@//components/TokensModal/SelectTokenWithSearch.vue';
+import SelectTokenWithSearch from '@/components/TokensModal/SelectTokenWithSearch.vue';
 import ModalComponent from '@/components/Modal/Index.vue';
 import Spinner from '@/components/Spinner/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';

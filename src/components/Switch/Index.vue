@@ -2,7 +2,7 @@
   <input
     type="checkbox"
     :id="`switch-${id}`"
-    :checked="isChecked"
+    :checked="isCurrentlyCheckedDarkTheme || isChecked"
     class="switch-checkbox"
     @change="switchTrigger"
   />
@@ -29,6 +29,12 @@ export default {
     return {
       id: uniqueId(),
     };
+  },
+  computed: {
+    isCurrentlyCheckedDarkTheme() {
+      const themeType = localStorage.getItem('theme-type');
+      return themeType === 'dark';
+    },
   },
   methods: {
     switchTrigger() {
@@ -60,7 +66,7 @@ export default {
 
     [data-theme="dark"] & {
       background: var(--1, #0F172A);
-      border: 1px solid var( --color-4);
+      border: 1px solid var( --color-2);
     }
 }
 
@@ -73,8 +79,8 @@ export default {
     transition: transform 0.15s;
 
     [data-theme="dark"] & {
-      border: 1px solid var( --color-4);
-      background:  var(--color-17);
+      border: 1px solid var( --color-18);
+      background: var(--color-7);
     }
 }
 
@@ -82,7 +88,7 @@ export default {
     background: var(--color-3);
 
     [data-theme="dark"] & {
-      background:  var(--color-5);
+      background:  var(--color-17);
     }
 }
 
@@ -91,7 +97,7 @@ export default {
     background: var(--color-4);
 
     [data-theme="dark"] & {
-      background:  var(--color-3);
+      background:  var(--color-7);
     }
 }
 

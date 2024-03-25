@@ -452,7 +452,6 @@ export default {
   width: fit-content;
   border-radius: 30px;
   [data-theme="dark"] & {
-    background-color: var(--color-7);
     border: none;
   }
 
@@ -463,6 +462,9 @@ export default {
     background-color: var(--color-4);
     padding: 5px;
     border-radius: 10px;
+    [data-theme="dark"] & {
+      background: none;
+    }
   }
 }
 
@@ -639,6 +641,10 @@ export default {
   height: 19px;
   padding: 0 4px;
   animation: pulse-animation-blue 3s infinite;
+  [data-theme="dark"] & {
+    color: var(--color-4);
+    background-color: var(--color-17);
+  }
 }
 .pools-table__hot {
   top: -12px;
@@ -669,10 +675,16 @@ export default {
     grid-template-columns: 0.5fr 2.2fr 2fr 1fr 1fr 1fr;
   }
 }
-@media (max-width: 640px) {
+@media (max-width: 1000px) {
   .pools-table {
     overflow: hidden;
     overflow-x: auto
+  }
+
+  .pools-table__footer {
+    position: sticky;
+    left: 0;
+    padding-bottom: 30px;
   }
   .pools-header,
   .pools-table__content {

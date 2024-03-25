@@ -241,7 +241,12 @@ export default {
     font-weight: 600;
     color: var(--color-1);
     margin-bottom: 20px;
+    @media (max-width: 450px) {
+      align-items: center;
+      text-align: center;
+    }
   }
+
 }
 
 .modal-content__icon {
