@@ -180,7 +180,7 @@ export default {
         .filter((_) => _.methodName[0] === mintRedeemTypes.WRAP);
 
       // FILTERING tokens from wrap/unwrap, based on tab
-      list = this.filterTokens(list, this.activeWrap, wrapUnwrapPairs);
+      if (list?.length > 0) list = this.filterTokens(list, this.activeWrap, wrapUnwrapPairs);
 
       // returning 1 token of pair or 2, based on tab
       if (list && this.isInputToken) {
