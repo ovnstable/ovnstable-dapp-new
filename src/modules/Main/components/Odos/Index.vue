@@ -342,6 +342,10 @@ export default {
         this.clearForm('0');
       }
     },
+    async account(val) {
+      if (!this.isAllDataTrigger) return;
+      if (val) this.clearForm('0');
+    },
     async networkId(newVal) {
       if (newVal) {
         this.$store.commit('odosData/changeState', {
