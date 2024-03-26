@@ -273,11 +273,13 @@ const actions = {
         const metaMask = wallets.find(({ label }) => label === ProviderLabel.MetaMask);
         const coinbase = wallets.find(({ label }) => label === ProviderLabel.Coinbase);
         const rabby = wallets.find(({ label }) => label === ProviderLabel.Rabby);
+        const detected = wallets.find(({ label }) => label === ProviderLabel.Detected);
         return (
           [
             metaMask,
             coinbase,
             rabby,
+            detected,
           ]
           // remove undefined values
             .filter((wallet) => wallet)
