@@ -98,7 +98,7 @@ const actions = {
                 pool.zappable = true;
               }
 
-              const moreThanOnePlatform = checkForSamePlatform(pool.id.address);
+              // const moreThanOnePlatform = checkForSamePlatform(pool.id.address);
 
               // unique cases, different platforms, one pool
               // if (moreThanOnePlatform) pool.platform = moreThanOnePlatform;
