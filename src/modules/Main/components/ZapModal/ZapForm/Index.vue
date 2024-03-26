@@ -461,7 +461,6 @@ export default {
     ]),
     ...mapGetters('network', ['getParams', 'networkId']),
     ...mapGetters('accountData', ['account']),
-    ...mapGetters('gasPrice', ['gasPriceGwei']),
 
     getOdosFee() {
       return new BigNumber(this.sumOfAllSelectedTokensInUsd)
@@ -1343,7 +1342,7 @@ export default {
             field: 'lastNftTokenId',
             val: tokenId,
           });
-          const params = { from: this.account, gasPrice: this.gasPriceGwei };
+          const params = { from: this.account };
           this.gaugeContract
             .approve(this.poolTokenContract.target, tokenId, params)
             .then(() => {
@@ -1418,7 +1417,6 @@ export default {
           this.poolTokenContract,
           this.account,
           this.routerContract,
-          this.gasPriceGwei,
         )
           .then(() => {
             this.$store.commit('odosData/changeState', {
@@ -1465,7 +1463,6 @@ export default {
         lastNftTokenId,
         this.currentZapPlatformContractType,
         this.gaugeContract,
-        this.gasPriceGwei,
         this.zapPoolRoot,
         this.poolTokenContract,
       )
@@ -1647,7 +1644,6 @@ export default {
 
       const params = {
         from: this.account,
-        gasPrice: this.gasPriceGwei,
       };
 
       console.log(zapPool, '----zapPool');
@@ -1855,7 +1851,6 @@ export default {
         this.zapContract.target,
         approveValue,
         this.account,
-        this.gasPriceGwei,
       )
         .catch((e) => {
           console.error('Error when approve token.', e);
