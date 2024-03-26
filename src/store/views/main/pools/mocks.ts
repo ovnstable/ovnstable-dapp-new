@@ -499,7 +499,7 @@ export const LOW_TVL_PROMOTE = [
 
   // PANCAKE
   '0x6a8fc7e8186ddc572e149dfaa49cfae1e571108b',
-  "0x714d48cb99b87f274b33a89fbb16ead191b40b6c",
+  '0x714d48cb99b87f274b33a89fbb16ead191b40b6c',
 
   // LYNEX
   '0x58aacbccaec30938cb2bb11653cad726e5c4194a',
