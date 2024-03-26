@@ -237,6 +237,9 @@ export default {
   align-items: center;
   width: 60%;
 
+  @media (max-width: 1200px) {
+    width: 70%;
+  }
   @media (max-width: 1024px) {
     width: 70%;
   }
