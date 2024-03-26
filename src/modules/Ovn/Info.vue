@@ -211,7 +211,7 @@
     :price="priceOvn"
     v-model="showModalOvnDashboard"
   />
-  <div v-if="insuranceIsMobileMintRedeem">
+  <div v-if="insuranceIsMobileMintRedeem && showModalOvnDashboard">
     <MintRedeemModal
       v-model="showModalMintRedeem"
     />

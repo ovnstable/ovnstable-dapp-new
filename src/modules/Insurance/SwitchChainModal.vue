@@ -45,7 +45,7 @@ export default {
   justify-content: center;
   padding: 40px 30px;
   min-height: 40vh;
-	margin: 40px 30px;
+  margin: 40px 30px;
   text-align: center;
   gap: 30px;
   margin-top: 20px;
