@@ -39,7 +39,7 @@
       </div>
     </div>
     <div
-      v-if="device.isMobile && !insuranceIsMobileOvnDashboard"
+      v-if="device.isMobile && !insuranceIsMobileOvnDashboard && !insuranceIsMobileMintRedeem"
       class="ovn__overview-links"
     >
       <BaseIcon
@@ -86,11 +86,11 @@
 
     </div>
     <div
-      v-if="!insuranceIsMobileOvnDashboard"
+      v-if="!insuranceIsMobileOvnDashboard && !insuranceIsMobileMintRedeem"
       class="ovn__overview-divider"
     />
     <div
-      v-if="!insuranceIsMobileOvnDashboard"
+      v-if="!insuranceIsMobileOvnDashboard && !insuranceIsMobileMintRedeem"
       class="ovn__overview-price"
     >
       <p class="ovn__overview-price-title">OVN Price</p>
@@ -100,11 +100,11 @@
       </div>
     </div>
     <div
-      v-if="!insuranceIsMobileOvnDashboard"
+      v-if="!insuranceIsMobileOvnDashboard && !insuranceIsMobileMintRedeem"
       class="ovn__overview-divider"
     />
     <div
-      v-if="!insuranceIsMobileOvnDashboard"
+      v-if="!insuranceIsMobileOvnDashboard && !insuranceIsMobileMintRedeem"
       class="ovn__overview-mc"
     >
       <p class="ovn__overview-mc-title">Market cap</p>
@@ -113,11 +113,11 @@
       </div>
     </div>
     <div
-      v-if="!insuranceIsMobileOvnDashboard"
+      v-if="!insuranceIsMobileOvnDashboard && !insuranceIsMobileMintRedeem"
       class="ovn__overview-divider"
     />
     <div
-      v-if="!insuranceIsMobileOvnDashboard"
+      v-if="!insuranceIsMobileOvnDashboard && !insuranceIsMobileMintRedeem"
       class="ovn__overview-tvl"
     >
       <p class="ovn__overview-tvl-title">OVN TVL</p>
@@ -136,7 +136,7 @@
       <p v-if="!device.isMobile">past 2 hours</p>
     </div>
     <div
-      v-if="!insuranceIsMobileOvnDashboard"
+      v-if="!insuranceIsMobileOvnDashboard && !insuranceIsMobileMintRedeem"
       class="ovn__overview-divider"
     />
     <div
@@ -187,7 +187,7 @@
 
   </div>
   <div
-    v-if="!insuranceIsMobileOvnDashboard"
+    v-if="!insuranceIsMobileOvnDashboard && !insuranceIsMobileMintRedeem"
     class="ovn__overview-chain-data-container"
   >
     <div
@@ -211,7 +211,7 @@
     :price="priceOvn"
     v-model="showModalOvnDashboard"
   />
-  <div v-if="insuranceIsMobileMintRedeem && showModalOvnDashboard">
+  <div v-if="insuranceIsMobileMintRedeem">
     <MintRedeemModal
       v-model="showModalMintRedeem"
     />
