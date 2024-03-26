@@ -9,7 +9,6 @@ import {
   getFilteredOvernightTokens,
   getFilteredPoolTokens,
   loadPriceTrigger,
-  loadPrices,
 } from '@/store/helpers/index.ts';
 import BigNumber from 'bignumber.js';
 import { getNetworkParams } from '@/store/web3/network.ts';
@@ -294,8 +293,7 @@ const actions = {
     commit, state, dispatch, rootState,
   }: any) {
     if (rootState.accountData.account) {
-      const ERC20 = await loadJSON('/contracts/ERC20.json');
-      await dispatch('loadContractsForTokens', ERC20);
+      await dispatch('loadContractsForTokens');
       await dispatch('loadBalances');
 
       commit('changeState', { field: 'isTokensLoadedAndFiltered', val: true });
@@ -311,7 +309,7 @@ const actions = {
     for (let i = 0; i < getters.allTokensList.length; i++) {
       const token: any = getters.allTokensList[i];
       tokensList[token.address] = buildEvmContract(
-        contractFile.abi,
+        ERC20_ABI,
         rootState.web3.evmSigner,
         token.address,
       );
