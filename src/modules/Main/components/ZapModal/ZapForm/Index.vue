@@ -1343,7 +1343,7 @@ export default {
             field: 'lastNftTokenId',
             val: tokenId,
           });
-          const params = { from: this.account, gasPrice: this.gasPriceGwei };
+          const params = { from: this.account };
           this.gaugeContract
             .approve(this.poolTokenContract.target, tokenId, params)
             .then(() => {
@@ -1647,7 +1647,6 @@ export default {
 
       const params = {
         from: this.account,
-        gasPrice: this.gasPriceGwei,
       };
 
       console.log(zapPool, '----zapPool');

@@ -251,7 +251,7 @@ export const depositAllAtGauge = async (
   zapPoolRoot: any,
   poolTokenContract: any,
 ) => {
-  const params = { from: account, gasPrice: gasPriceGwei };
+  const params = { from: account };
   console.log(
     account,
     lastPoolInfoData,
