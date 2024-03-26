@@ -89,7 +89,7 @@ export const stateData = {
 
   listOfBuyTokensAddresses: null, // for POOL_SWAP scheme
   odosReferalCode: 7777777, // test account or user acc
-  odosZapReferalCode: 3000000005 || 7777777, // test account
+  odosZapReferalCode: 7777777, // test account
 
   swapSessionId: null,
 };
