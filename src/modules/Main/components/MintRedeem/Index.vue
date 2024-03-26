@@ -326,7 +326,6 @@ export default {
         exchangeAddress,
         approveValue,
         this.account,
-        this.gasPriceGwei,
       )
         .catch((e) => {
           console.error('Error when approve token.', e);

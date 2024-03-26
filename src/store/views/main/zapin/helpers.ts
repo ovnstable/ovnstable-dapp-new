@@ -231,7 +231,6 @@ export const approveGaugeForStake = async (
       gaugeContract.target,
       approveValue,
       account,
-      gasPriceGwei,
     );
     await tx.wait();
     closeWaitingModal();

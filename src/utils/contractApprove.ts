@@ -15,10 +15,9 @@ export const approveToken = async (
   contractAddressForApprove: string,
   value: string,
   fromAcc: string,
-  gasPrice: string,
 ): Promise<ethers.TransactionResponse> => {
   const from = fromAcc;
-  const approveParams: any = { gasPrice, from };
+  const approveParams: any = { from };
   return contract.approve(contractAddressForApprove, value, approveParams);
 };
 
@@ -26,11 +25,10 @@ export const clearApproveToken = async (
   contract: any,
   contractAddressForDisapprove: string,
   fromAcc: string,
-  gasPrice: string,
 ): Promise<ethers.TransactionResponse> => {
   const from = fromAcc;
   const allowanceValue = await getAllowanceValue(contract, from, contractAddressForDisapprove);
-  const approveParams = { gasPrice, from };
+  const approveParams = { from };
   return contract
     .decreaseAllowance(contractAddressForDisapprove, allowanceValue, approveParams);
 };

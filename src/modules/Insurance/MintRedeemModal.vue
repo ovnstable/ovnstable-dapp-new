@@ -390,7 +390,6 @@ export default {
           this.contracts.insurance[`${this.networkName}_exchanger`].target,
           approveSum,
           this.evmSigner,
-          this.gasPriceGwei,
         );
 
         await tx.wait();
