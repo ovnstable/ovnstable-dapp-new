@@ -491,6 +491,7 @@ export const LOW_TVL_PROMOTE = [
   '0xb9c2d906f94b27bc403ab76b611d2c4490c2ae3f',
   '0x844D7d2fCa6786Be7De6721AabdfF6957ACE73a0',
   '0x721f37495cd70383b0a77bf1eb8f97eef29498bb',
+  '0x46e1B51e07851301f025ffeA506b140dB80a214A',
 
   // VELOCORE
   '0x1d0188c4b276a09366d05d6be06af61a73bc7535',
@@ -499,6 +500,7 @@ export const LOW_TVL_PROMOTE = [
   // PANCAKE
   '0x6a8fc7e8186ddc572e149dfaa49cfae1e571108b',
   "0x714d48cb99b87f274b33a89fbb16ead191b40b6c",
+
   // LYNEX
   '0x58aacbccaec30938cb2bb11653cad726e5c4194a',
   '0xc5f4c5c2077bbbac5a8381cf30ecdf18fde42a91',
