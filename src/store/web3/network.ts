@@ -198,6 +198,7 @@ const state = {
     LINEA_PARAMS,
     BSC_PARAMS,
     POLYGON_PARAMS,
+    BLAST_PARAMS,
   ],
 
   switchToOtherNetwork: false,

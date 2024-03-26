@@ -421,6 +421,7 @@ export default {
         // Alienbase: ["Alien Base", "Alien Base Stable"],
         // Convex: ["Curve Crypto Registry", "Curve Factory", "Curve Registry"]
       } as any,
+      odosZapReferalCode: 3000000005,
     };
   },
   mounted() {
@@ -443,7 +444,6 @@ export default {
       'lastNftTokenId',
       'swapResponseConfirmInfo',
       'routerContract',
-      'odosZapReferalCode',
       'odosReferalCode',
     ]),
 

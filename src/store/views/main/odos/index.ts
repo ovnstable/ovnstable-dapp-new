@@ -304,7 +304,7 @@ const actions = {
   },
   loadContractsForTokens({
     commit, state, getters, rootState,
-  }: any, contractFile: any) {
+  }: any) {
     const tokensList: any = {};
     for (let i = 0; i < getters.allTokensList.length; i++) {
       const token: any = getters.allTokensList[i];
