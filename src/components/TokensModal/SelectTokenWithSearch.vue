@@ -206,41 +206,44 @@ export default {
     queryTokens() {
       let arrList = this.tokens.slice();
 
-      if (this.removeNative) arrList = arrList.filter((_: any) => _.id !== NATIVE_ID);
+      if (this.removeNative) {
+        arrList = arrList.filter((_: any) => _.id !== NATIVE_ID);
+      }
 
-      arrList = arrList
-        .filter((token: any) => token.name.toLowerCase()
-          .includes(this.searchQuery?.toLowerCase())
-              || token.symbol.toLowerCase().includes(this.searchQuery.toLowerCase())
-              || token.address.toLowerCase().includes(this.searchQuery.toLowerCase()))
-        .sort((a: any, b: any) => {
-          if (new BigNumber(b.balanceData.balanceInUsd).lt(a.balanceData.balanceInUsd)) {
-            return -1;
-          } if (new BigNumber(b.balanceData.balanceInUsd).gt(a.balanceData.balanceInUsd)) {
-            return 1;
-          }
+      arrList = arrList.filter((token: any) => !this.selectedTokensAddress.includes(token
+        .address) && (
+        token.name.toLowerCase().includes(this.searchQuery?.toLowerCase())
+          || token.symbol.toLowerCase().includes(this.searchQuery.toLowerCase())
+          || token.address.toLowerCase().includes(this.searchQuery.toLowerCase())
+      ));
 
-          if (new BigNumber(b.balanceData.balance).lt(a.balanceData.balance)) {
-            return -1;
-          }
-          if (new BigNumber(b.balanceData.balance).gt(a.balanceData.balance)) {
-            return 1;
-          }
-          return 0;
-        });
+      arrList.sort((a: any, b: any) => {
+        if (new BigNumber(b.balanceData.balanceInUsd).lt(a.balanceData.balanceInUsd)) {
+          return -1;
+        } if (new BigNumber(b.balanceData.balanceInUsd).gt(a.balanceData.balanceInUsd)) {
+          return 1;
+        }
+
+        if (new BigNumber(b.balanceData.balance).lt(a.balanceData.balance)) {
+          return -1;
+        }
+        if (new BigNumber(b.balanceData.balance).gt(a.balanceData.balance)) {
+          return 1;
+        }
+        return 0;
+      });
 
       if (!this.searchQuery) {
-        return arrList
-          .sort((a: any, b: any) => {
-            if (OVN_TOKENS.includes(a.symbol) && !OVN_TOKENS.includes(b.symbol)) {
-              return -1;
-            }
-            if (!OVN_TOKENS.includes(a.symbol) && OVN_TOKENS.includes(b.symbol)) {
-              return 1;
-            }
+        arrList.sort((a: any, b: any) => {
+          if (OVN_TOKENS.includes(a.symbol) && !OVN_TOKENS.includes(b.symbol)) {
+            return -1;
+          }
+          if (!OVN_TOKENS.includes(a.symbol) && OVN_TOKENS.includes(b.symbol)) {
+            return 1;
+          }
 
-            return 0;
-          });
+          return 0;
+        });
       }
 
       return arrList;
