@@ -662,17 +662,20 @@ export default {
     color: var(--color-3);
   }
 }
-@media (max-width: 1350px) {
-  .pools-table__row {
-    grid-template-columns: 0.5fr 2fr 2fr 1fr 1.35fr 0.75fr;
+@media (max-width: 1320px) {
+  .pools-table {
+    overflow: hidden;
+    overflow-x: auto
   }
-}
-@media (max-width: 1200px) {
-  .pools-table__row {
-    grid-template-columns:  0.4fr 1.8fr 1.5fr 1fr 1fr 0.75fr;
+
+  .pools-table__footer {
+    position: sticky;
+    min-width: 1030px;
   }
-  .pools-header {
-    grid-template-columns: 0.5fr 2.2fr 2fr 1fr 1fr 1fr;
+  .pools-header,
+  .pools-table__content {
+    min-width: 1030px;
+    overflow-x: scroll;
   }
 }
 @media (max-width: 1000px) {
@@ -683,8 +686,6 @@ export default {
 
   .pools-table__footer {
     position: sticky;
-    left: 0;
-    padding-bottom: 30px;
   }
   .pools-header,
   .pools-table__content {

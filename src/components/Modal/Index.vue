@@ -234,7 +234,6 @@ export default {
   .modal__body {
     max-height: 90vh;
     padding-bottom: 100px;
-    padding-top: 100px;
   }
 }
 

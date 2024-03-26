@@ -155,8 +155,9 @@ export default {
     border-color: var(--color-2);
   }
 
-  @media (max-width: 1240px) {
-    flex-wrap: wrap;
+  @media (max-width: 1300px) {
+    position: sticky;
+    left: 0;
   }
   @media (max-width: 1024px) {
     position: sticky;
