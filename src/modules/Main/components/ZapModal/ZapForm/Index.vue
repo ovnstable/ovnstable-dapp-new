@@ -461,7 +461,6 @@ export default {
     ]),
     ...mapGetters('network', ['getParams', 'networkId']),
     ...mapGetters('accountData', ['account']),
-    ...mapGetters('gasPrice', ['gasPriceGwei']),
 
     getOdosFee() {
       return new BigNumber(this.sumOfAllSelectedTokensInUsd)
@@ -1418,7 +1417,6 @@ export default {
           this.poolTokenContract,
           this.account,
           this.routerContract,
-          this.gasPriceGwei,
         )
           .then(() => {
             this.$store.commit('odosData/changeState', {
@@ -1465,7 +1463,6 @@ export default {
         lastNftTokenId,
         this.currentZapPlatformContractType,
         this.gaugeContract,
-        this.gasPriceGwei,
         this.zapPoolRoot,
         this.poolTokenContract,
       )

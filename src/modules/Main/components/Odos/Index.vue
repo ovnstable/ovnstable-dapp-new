@@ -448,7 +448,6 @@ export default {
     ...mapGetters('web3', ['loadingWeb3']),
     ...mapGetters('accountData', ['account']),
     ...mapGetters('network', ['getParams', 'networkId', 'networkName']),
-    ...mapGetters('gasPrice', ['gasPrice', 'gasPriceGwei']),
 
     deviceSize() {
       return deviceType();

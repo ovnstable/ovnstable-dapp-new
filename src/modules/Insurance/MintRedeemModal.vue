@@ -283,11 +283,10 @@ export default {
   computed: {
     ...mapGetters('odosData', ['allTokensList']),
     ...mapGetters('network', ['networkName', 'networkId']),
-    ...mapGetters('gasPrice', ['gasPriceGwei']),
     ...mapGetters('insuranceData', ['insuranceRedemptionData']),
     ...mapGetters('accountData', ['account', 'originalBalance']),
     ...mapGetters('web3', ['contracts', 'evmProvider', 'evmSigner']),
-    ...mapGetters('gasPrice', ['gasPriceGwei', 'gasPrice', 'gasPriceStation']),
+    ...mapGetters('gasPrice', ['gasPrice', 'gasPriceStation']),
 
     insuranceIsMobileMintRedeem() {
       return this.$store.state.insuranceTokenData.isMobileMintRedeem.value;
@@ -352,7 +351,7 @@ export default {
       let result;
 
       try {
-        const estimateOptions = { from, gasPrice: this.gasPriceGwei };
+        const estimateOptions = { from };
         const params = {
           amount: sum,
         };
@@ -455,17 +454,9 @@ export default {
         try {
           await this.refreshGasPrice();
 
-          let gasParams;
-
-          if (!this.gas) {
-            gasParams = { from, gasPrice: this.gasPriceGwei };
-          } else {
-            gasParams = {
-              from,
-              gasPrice: this.gasPriceGwei,
-              gas: this.gas,
-            };
-          }
+          const gasParams = {
+            from,
+          };
 
           const params = {
             amount: sum,
@@ -571,7 +562,7 @@ export default {
       } else {
         this.redemptionRequestSent = true;
 
-        const requestParams = { from: this.account, gasPrice: this.gasPriceGwei };
+        const requestParams = { from: this.account };
 
         try {
           const tx = await this.contracts.insurance[
@@ -597,7 +588,6 @@ export default {
         ];
         const estimateOptions = {
           from: this.account,
-          gasPrice: this.gasPriceGwei,
         };
 
         const tx = await contract

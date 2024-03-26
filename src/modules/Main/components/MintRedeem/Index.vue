@@ -228,7 +228,6 @@ export default {
     ...mapGetters('network', ['networkId', 'networkName']),
     ...mapGetters('accountData', ['account', 'originalBalance']),
     ...mapGetters('web3', ['contracts', 'evmProvider', 'evmSigner']),
-    ...mapGetters('gasPrice', ['gasPriceGwei']),
     ...mapState('odosData', ['tokensContractMap']),
 
     isMintActive() {
@@ -514,7 +513,7 @@ export default {
       let result = 0;
 
       try {
-        const estimateOptions = { from, gasPrice: this.gasPriceGwei };
+        const estimateOptions = { from };
         blockNum = await this.evmProvider.getBlockNumber();
 
         const methodData = this.getContractMethodWithParams(
@@ -633,7 +632,6 @@ export default {
 
         const buyParams = {
           from: this.account,
-          gasPrice: this.gasPriceGwei,
           gas: gasValue,
         };
 
