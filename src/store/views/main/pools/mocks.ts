@@ -462,8 +462,8 @@ export const zapPlatformSupportList = [
 
 // POOLS WITH EARNINGS MORE THAN 500$ per month
 // https://docs.google.com/spreadsheets/d/1zyNA4mbpmyG30R1aIqkkRvbCJSjfyb7pV4hhCa7pohM/edit#gid=813615557
-// or promoted pools, which launched recently
 
+// FEATURED === HOT
 export const FEATURED_POOLS = [
   // AERODROME
   '0xe96c788e66a97cf455f46c5b27786191fd3bc50b',

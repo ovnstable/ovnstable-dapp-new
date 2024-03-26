@@ -64,6 +64,13 @@
             </h1>
           </router-link>
 
+          <ButtonComponent
+            v-if="networkId === 81457"
+            @click="claimBlastPoints"
+          >
+            BLAST POINTS
+          </ButtonComponent>
+
           <div
             v-if="account && (accountRenderLoading || balancesLoading) && !deviceSize.isMobile"
             class="lineLoader"
@@ -182,7 +189,7 @@ import SwitchComponent from '@/components/Switch/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import SpinnerComponent from '@/components/Spinner/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
-import { cutString } from '@/utils/strings.ts';
+import { cutString, getRandomString } from '@/utils/strings.ts';
 import { OVN_TOKENS, appNetworksData, getImageUrl } from '@/utils/const.ts';
 import BigNumber from 'bignumber.js';
 import { loadTokenImage } from '@/utils/tokenLogo.ts';
@@ -191,6 +198,13 @@ import AccountModal from '@/modules/Account/Index.vue';
 import { deviceType } from '@/utils/deviceType.ts';
 import UserBalances from './UserBalances.vue';
 import MobileMenu from './MobileMenu.vue';
+
+type TSignedMessage = {
+  pubKey: string;
+  signature: string;
+  message: string;
+  nonce: string;
+};
 
 interface Chain {
   chainName: string;
@@ -235,6 +249,7 @@ export default {
     ...mapGetters('accountData', ['originalBalance', 'account', 'isLoadingOvnBalances']),
     ...mapGetters('network', ['networkId', 'isShowDeprecated']),
     ...mapGetters('odosData', ['allTokensList']),
+    ...mapGetters('web3', ['evmProvider', 'provider']),
 
     balancesLoading() {
       if (this.originalBalance.length === 0 || this.isTokensLoading) return true;
@@ -269,6 +284,40 @@ export default {
   methods: {
     ...mapActions('network', ['setWalletNetwork', 'showDeprecated']),
     getImageUrl,
+    async signEvmMessage(
+      messageToSign: string,
+      nonce: string,
+    ): Promise<TSignedMessage | null> {
+      console.log(this.evmProvider, this.account, '--this.evmProvider');
+      const msg = `${Buffer.from(messageToSign, 'utf8').toString('hex')}`;
+      const params = [msg, this.account];
+
+      try {
+        const response = await this.provider.request({
+          method: 'personal_sign',
+          params,
+        });
+
+        return {
+          pubKey: this.account,
+          signature: response ?? '',
+          message: messageToSign,
+          nonce,
+        };
+      } catch (error) {
+        return null;
+      }
+    },
+    async claimBlastPoints() {
+      console.log('CLAIM');
+      const nonce = getRandomString(24);
+      const sign: TSignedMessage | null = await this.signEvmMessage(
+        `Claim blast points on Overnight.fi, nonce: ${nonce}`,
+        nonce,
+      );
+
+      console.log(sign, '---sign');
+    },
     openAccountModal() {
       this.showModalAccount = !this.showModalAccount;
     },
