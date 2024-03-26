@@ -1,7 +1,15 @@
 <template>
+  <ButtonComponent
+    class="change-network-close-modal"
+    @click="closeModal()"
+    @keydown.enter="closeModal()"
+  >
+    <BaseIcon
+      name='ArrowExitMobile'
+    />
+  </ButtonComponent>
   <div class="change-network">
     <BaseIcon name="change-network" />
-
     <div class="change-network__text">
       Please, switch to the chain the insurance is on.
     </div>
@@ -34,6 +42,9 @@ export default {
   },
   methods: {
     ...mapActions('network', ['setWalletNetwork']),
+    closeModal() {
+      this.$emit('closeModal');
+    },
   },
 };
 </script>
@@ -53,6 +64,29 @@ export default {
 
   svg {
     margin: 0 auto;
+  }
+  button {
+    [data-theme="dark"] & {
+      box-shadow: none;
+    }
+  }
+}
+.change-network__text {
+  [data-theme="dark"] & {
+    color: var(--color-18);
+  }
+}
+.change-network-close-modal {
+  border: none;
+  background: none;
+  box-shadow: none;
+  align-items: left;
+  justify-content: start;
+  [data-theme="dark"] & {
+    box-shadow: none;
+    svg {
+      fill: var(--color-4);
+    }
   }
 }
 @media (max-width: 640px) {

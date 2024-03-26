@@ -631,10 +631,12 @@ export default {
     min-width: 10px;
     max-width: 18%;
     flex: 0 0 20%;
+    padding: 0;
+    justify-content: center;
   }
   .performance__chain-data-container > * {
     margin-right: 7px;
   }
-
 }
+
 </style>

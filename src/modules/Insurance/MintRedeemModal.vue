@@ -116,7 +116,10 @@
     class="insurance__modal-mint-redeem"
     v-else-if="insuranceIsMobileMintRedeem"
   >
-    <SwitchChainInsurance v-if="!isAvailableChain" />
+    <SwitchChainInsurance
+      @closeModal="toggleModalMintRedeem"
+      v-if="!isAvailableChain"
+    />
     <div v-else>
       <div class="insurance__modal-mint-redeem-buttons">
         <ButtonComponent
