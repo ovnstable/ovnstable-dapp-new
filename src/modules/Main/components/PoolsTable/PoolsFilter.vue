@@ -106,7 +106,7 @@ export default {
           name: 'OVN',
         },
         {
-          id: poolTypes.FEATURED,
+          id: poolTypes.HOT,
           name: 'HOT',
         },
       ],

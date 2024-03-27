@@ -3,8 +3,12 @@
 import { poolTypes } from '@/modules/Main/components/PoolsTable/types/index.ts';
 import BigNumber from 'bignumber.js';
 import {
-  FEATURED_POOLS,
-  FIRST_MIN_AMOUNT, LOW_TVL_PROMOTE, SECOND_MIN_AMOUNT,
+  HOT_POOLS,
+  FIRST_MIN_AMOUNT,
+  LOW_TVL_PROMOTE,
+  NEW_POOLS,
+  POOL_TAG,
+  SECOND_MIN_AMOUNT,
 } from './mocks.ts';
 
 const STABLE_TOKENS = ['USD+', 'DAI+', 'WUSD+', 'USDC+', 'USDT+'];
@@ -298,8 +302,8 @@ const filterByPoolType = (
     });
   }
 
-  if (filterType === poolTypes.FEATURED) {
-    return poolsList.filter((_) => (!!_.feature));
+  if (filterType === poolTypes.HOT) {
+    return poolsList.filter((_) => _.poolTag !== POOL_TAG.HOT);
   }
 
   return poolsList;
@@ -326,7 +330,8 @@ export const getSortedPools = (
   if (!filterByTvl) {
     poolsList = filteredPools
       .filter((pool) => {
-        if (FEATURED_POOLS.includes(pool.address)) return true;
+        if (NEW_POOLS.includes(pool.address)) return true;
+        if (HOT_POOLS.includes(pool.address)) return true;
         if (LOW_TVL_PROMOTE.includes(pool.address)) return true;
         if (pool.tvl >= FIRST_MIN_AMOUNT) return true;
 
@@ -335,17 +340,6 @@ export const getSortedPools = (
   } else {
     poolsList = filteredPools;
   }
-
-  poolsList = poolsList.sort((a, b) => {
-    if (a.feature && !b.feature) {
-      return -1;
-    } if (!a.feature && b.feature) {
-      return 1;
-    } if (a.apr !== b.apr) {
-      return b.apr - a.apr;
-    }
-    return b.tvl - a.tvl;
-  });
 
   return filterByPoolType(poolsList, filterByType);
 };

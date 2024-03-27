@@ -88,6 +88,7 @@ import PoolsTable from '@/components/PoolsTable/Index.vue';
 import TableSkeleton from '@/components/TableSkeleton/Index.vue';
 import dayjs from 'dayjs';
 import type { PropType } from 'vue';
+import { POOL_TAG } from '@/store/views/main/pools/mocks.ts';
 
 dayjs.extend(utc);
 
@@ -149,33 +150,31 @@ export default {
       if (['APR', 'TVL'].includes(this.orderType)) return tabOrderedPools;
 
       if (this.orderType === 'APR_UP') {
-        // last step filter
         return tabOrderedPools
           .slice()
           .sort((a: any, b: any) => b.apr - a.apr);
       }
 
       if (this.orderType === 'APR_DOWN') {
-        // last step filter
         return tabOrderedPools
           .slice()
           .sort((a: any, b: any) => a.apr - b.apr);
       }
 
-      if (this.orderType === 'TVL') return tabOrderedPools;
+      if (this.orderType === 'TVL') return tabOrderedPools.slice().sort((a: any) => (a.poolTag === POOL_TAG.NEW ? -1 : 1));
 
       if (this.orderType === 'TVL_UP') {
-        // last step filter
         return tabOrderedPools
           .slice()
-          .sort((a: any, b: any) => b.tvl - a.tvl);
+          .sort((a: any, b: any) => (b.tvl - a.tvl))
+          .sort((a: any) => (a.poolTag === POOL_TAG.NEW ? -1 : 1));
       }
 
       if (this.orderType === 'TVL_DOWN') {
-        // last step filter
         return tabOrderedPools
           .slice()
-          .sort((a: any, b: any) => a.tvl - b.tvl);
+          .sort((a: any, b: any) => (a.tvl - b.tvl))
+          .sort((a: any) => (a.poolTag === POOL_TAG.NEW ? -1 : 1));
       }
 
       return [];

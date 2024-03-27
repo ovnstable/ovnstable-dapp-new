@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-shadow */
 /* eslint-disable import/prefer-default-export */
 import { chainContractsMap } from '@/utils/contractsMap.ts';
 
@@ -460,11 +462,23 @@ export const zapPlatformSupportList = [
   'Beefy',
 ];
 
+export enum POOL_TAG {
+  NEW = '0',
+  PROMO = '1',
+  HOT = '2'
+}
+
 // POOLS WITH EARNINGS MORE THAN 500$ per month
 // https://docs.google.com/spreadsheets/d/1zyNA4mbpmyG30R1aIqkkRvbCJSjfyb7pV4hhCa7pohM/edit#gid=813615557
 // or promoted pools, which launched recently
 
-export const FEATURED_POOLS = [
+export const NEW_POOLS = [
+  // BLAST
+  '0x49b6992dbacf7caa9cbf4dbc37234a0167b8edcd',
+  '0xb70ab4c4be5872fdd22f43c5907428198cdcb2d5',
+];
+
+export const HOT_POOLS = [
   // AERODROME
   '0xe96c788e66a97cf455f46c5b27786191fd3bc50b',
   '0x61366A4e6b1DB1b85DD701f2f4BFa275EF271197',
