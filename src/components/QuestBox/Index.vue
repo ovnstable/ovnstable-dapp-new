@@ -3,12 +3,27 @@
     class="box-wrap"
   >
     <div id="cube">
-      <div class="cube back absolute top-0 left-0" />
-      <div class="cube top absolute top-0 left-0" />
-      <div class="cube left absolute top-0 left-0" />
-      <div class="cube right absolute top-0 left-0" />
+      <div class="cube back" />
+      <div class="cube top" />
+      <div class="cube left" />
+      <div class="cube right" />
       <div class="powerup absolute" />
     </div>
+
+    <Transition name="slide-fade">
+      <div
+        v-if="isOpen"
+        class="box-wrap__modal"
+      >
+        <div clas="cube">
+          <div class="cube back" />
+          <div class="cube top" />
+          <div class="cube left" />
+          <div class="cube right" />
+          <div class="powerup absolute" />
+        </div>
+      </div>
+    </Transition>
   </div>
 </template>
 
@@ -134,11 +149,28 @@ export default {
   margin: 20px 0;
 }
 
+.box-wrap__modal {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 30px;
+  padding: 20px;
+  background-color: var(--color-5);
+  border: 1px solid var(--colo-6);
+  margin: 20px 0;
+}
+
 #cube {
   display: flex;
   justify-content: center;
   align-items: center;
 }
+
 #cube {
   animation: hover 1.5s ease-in-out infinite alternate;
   transition: transform 300ms;
@@ -146,10 +178,13 @@ export default {
 }
 
 .back {
+  position: absolute;
   background-image: url("https://res.cloudinary.com/dbrwtwlwl/image/upload/v1580369339/cube/mysteryBoxBackground_2x_b2espr.png");
   background-size: cover;
   background-position: center;
   z-index: -1;
+  width: 200px;
+  height: 200px;
 }
 .top {
   position: absolute;

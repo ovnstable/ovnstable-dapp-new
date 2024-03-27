@@ -2,6 +2,7 @@
   <ModalComponent
     type-modal="custom"
     v-model="showModal"
+    @close="closeModal"
   >
     <div class="blast-modal">
       <div class="blast-modal__header">
@@ -17,7 +18,7 @@
             DAILY BOX
           </h1>
           <p>To participate in this quest,
-            You need to provider liquidity to at least one of OVN pools on Blast,
+            You need to provide liquidity to any OVN pool on Blast,
             with least amount of 10$
           </p>
         </div>
@@ -28,21 +29,28 @@
 
           <ButtonComponent
             full
+            :disabled="!!dailyQuestCount"
             @on-click="triggerDailyQuest"
           >
-            CLAIM
+            {{ dailyQuestCount ? `WILL OPEN IN ${dailyQuestCount}h` : 'CLAIM' }}
           </ButtonComponent>
         </div>
       </div>
 
+      <div class="blast-modal__div" />
+
       <div class="blast-modal__row">
         <div class="blast-modal__item-col">
           <h1>
-            DAILY BOX
+            WEEKLY BOX
           </h1>
-          <p>To participate in this quest,
-            You need to provider liquidity to at least one of OVN pools on Blast,
-            with least amount of 10$
+          <p>
+            This quest is differ from previous one, it't harder to achieve,
+            but can bring more point to You!
+          </p>
+          <p>
+            Here, You can see 5 levels of chests, which You can unlock one by one,
+            by finishing certain amount of liquidity in OVN Blast pools
           </p>
         </div>
       </div>
@@ -59,7 +67,6 @@
           CLAIM
         </ButtonComponent>
       </div>
-      <div class="blast-modal__div" />
     </div>
   </ModalComponent>
 </template>
@@ -74,6 +81,7 @@ import { OVN_QUESTS_API } from '@/utils/const.ts';
 import axios from 'axios';
 import ButtonComponent from '@/components/Button/Index.vue';
 import QuestBox from '@/components/QuestBox/Index.vue';
+import BN from 'bignumber.js';
 
 type TSignedMessage = {
   pubKey: string;
@@ -105,16 +113,41 @@ export default {
     return {
       showModal: false,
       isDarkTheme: false,
+      userData: null as any,
     };
   },
   watch: {
     isShow(currVal: boolean) {
       this.showModal = currVal;
     },
+    async account(currVal: string) {
+      if (!currVal) return;
+      const resp = await axios.get(`${OVN_QUESTS_API}/blast/user/${currVal}`);
+      this.userData = resp.data;
+    },
   },
   computed: {
     ...mapGetters('web3', ['evmProvider', 'provider']),
     ...mapGetters('accountData', ['account']),
+
+    dailyQuestCount() {
+      const ONE_DAY_UNIX = 86400;
+      let lastClaim = null;
+      console.log(this.userData, 'DATA');
+      if (!this.userData) return null;
+      if (this.userData && this.userData.dailyQuest?.length > 0) {
+        const nowUnix = Math.floor(Date.now() / 1000);
+        // eslint-disable-next-line no-unsafe-optional-chaining
+        lastClaim = nowUnix - this.userData
+          .dailyQuest[this.userData.dailyQuest.length - 1]?.time;
+      }
+
+      if (lastClaim && lastClaim < ONE_DAY_UNIX) {
+        return new BN(ONE_DAY_UNIX).minus(lastClaim).div(3600).toFixed(2);
+      }
+
+      return null;
+    },
   },
   methods: {
     async signEvmMessage(
