@@ -722,12 +722,21 @@ export default {
 
   .pools-table__footer {
     position: sticky;
-    min-width: 1030px;
+    min-width: auto;
+    left: 0;
+    padding-bottom: 30px;
   }
   .pools-header,
   .pools-table__content {
-    min-width: 1030px;
+    min-width: 150%;
     overflow-x: scroll;
+  }
+}
+@media (max-width: 1024px) {
+  .pools-table__tag,
+  .pools-table__tag-token-3 {
+    top: -36px;
+    right: -35px;
   }
 }
 @media (max-width: 1000px) {
@@ -738,10 +747,13 @@ export default {
 
   .pools-table__footer {
     position: sticky;
+    min-width: auto;
+      left: 0;
+    padding-bottom: 30px;
   }
   .pools-header,
   .pools-table__content {
-    min-width: 850px;
+    min-width: 1000px;
     overflow-x: scroll;
   }
 }
