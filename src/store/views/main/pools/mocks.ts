@@ -1,175 +1,175 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-shadow */
 /* eslint-disable import/prefer-default-export */
-import { chainContractsMap } from "@/utils/contractsMap.ts";
+import { chainContractsMap } from '@/utils/contractsMap.ts';
 
 export const poolTokensForZapMap = {
   // Chronos
   // pool address
-  "0xb260163158311596ea88a700c5a30f101d072326": [
+  '0xb260163158311596ea88a700c5a30f101d072326': [
     {
-      name: "USD+",
-      address: "0xe80772Eaf6e2E18B651F160Bc9158b2A5caFCA65",
+      name: 'USD+',
+      address: '0xe80772Eaf6e2E18B651F160Bc9158b2A5caFCA65',
     },
     {
-      name: "DAI+",
-      address: "0xeb8E93A0c7504Bffd8A8fFa56CD754c63aAeBFe8",
+      name: 'DAI+',
+      address: '0xeb8E93A0c7504Bffd8A8fFa56CD754c63aAeBFe8',
     },
   ],
-  "0xbbd7ff1728963a5eb582d26ea90290f84e89bd66": [
+  '0xbbd7ff1728963a5eb582d26ea90290f84e89bd66': [
     {
-      name: "DOLA",
-      address: "0x6a7661795c374c0bfc635934efaddff3a7ee23b6",
+      name: 'DOLA',
+      address: '0x6a7661795c374c0bfc635934efaddff3a7ee23b6',
     },
     {
-      name: "USD+",
-      address: "0xe80772Eaf6e2E18B651F160Bc9158b2A5caFCA65",
+      name: 'USD+',
+      address: '0xe80772Eaf6e2E18B651F160Bc9158b2A5caFCA65',
     },
   ],
 
-  "0xcd78e225e36e724c9fb4bd8287296557d728cda7": [
+  '0xcd78e225e36e724c9fb4bd8287296557d728cda7': [
     {
-      name: "LUSD",
-      address: "0x93b346b6BC2548dA6A1E7d98E9a421B42541425b",
+      name: 'LUSD',
+      address: '0x93b346b6BC2548dA6A1E7d98E9a421B42541425b',
     },
     {
-      name: "USD+",
-      address: "0xe80772Eaf6e2E18B651F160Bc9158b2A5caFCA65",
+      name: 'USD+',
+      address: '0xe80772Eaf6e2E18B651F160Bc9158b2A5caFCA65',
     },
   ],
 
   // Thena
-  "0x1561d9618db2dcfe954f5d51f4381fa99c8e5689": [
+  '0x1561d9618db2dcfe954f5d51f4381fa99c8e5689': [
     {
-      name: "USDT+",
-      address: "0x5335E87930b410b8C5BB4D43c3360ACa15ec0C8C",
+      name: 'USDT+',
+      address: '0x5335E87930b410b8C5BB4D43c3360ACa15ec0C8C',
     },
     {
-      name: "USD+",
-      address: "0xe80772Eaf6e2E18B651F160Bc9158b2A5caFCA65",
+      name: 'USD+',
+      address: '0xe80772Eaf6e2E18B651F160Bc9158b2A5caFCA65',
     },
   ],
 
-  "0x1f3ca66c98d682fa1bec31264692dad4f17340bc": [
+  '0x1f3ca66c98d682fa1bec31264692dad4f17340bc': [
     {
-      name: "HAY",
-      address: "0x0782b6d8c4551B9760e74c0545a9bCD90bdc41E5",
+      name: 'HAY',
+      address: '0x0782b6d8c4551B9760e74c0545a9bCD90bdc41E5',
     },
     {
-      name: "USD+",
-      address: "0xe80772Eaf6e2E18B651F160Bc9158b2A5caFCA65",
+      name: 'USD+',
+      address: '0xe80772Eaf6e2E18B651F160Bc9158b2A5caFCA65',
     },
   ],
 
   // Velodrome
-  "0x0b28C2e41058EDc7D66c516c617b664Ea86eeC5d": [
+  '0x0b28C2e41058EDc7D66c516c617b664Ea86eeC5d': [
     {
-      name: "USD+",
-      address: "0x73cb180bf0521828d8849bc8cf2b920918e23032",
+      name: 'USD+',
+      address: '0x73cb180bf0521828d8849bc8cf2b920918e23032',
     },
     {
-      name: "DOLA",
-      address: "0x8ae125e8653821e851f12a49f7765db9a9ce7384",
-    },
-  ],
-
-  "0x667002F9DC61ebcBA8Ee1Cbeb2ad04060388f223": [
-    {
-      name: "USD+",
-      address: "0x73cb180bf0521828d8849bc8cf2b920918e23032",
-    },
-    {
-      name: "DAI+",
-      address: "0x970d50d09f3a656b43e11b0d45241a84e3a6e011",
+      name: 'DOLA',
+      address: '0x8ae125e8653821e851f12a49f7765db9a9ce7384',
     },
   ],
 
-  "0xD330841EF9527E3Bd0abc28a230C7cA8dec9423B": [
+  '0x667002F9DC61ebcBA8Ee1Cbeb2ad04060388f223': [
     {
-      name: "FRAX",
-      address: "0x2e3d870790dc77a83dd1d18184acc7439a53f475",
+      name: 'USD+',
+      address: '0x73cb180bf0521828d8849bc8cf2b920918e23032',
     },
     {
-      name: "USD+",
-      address: "0x73cb180bf0521828d8849bc8cf2b920918e23032",
-    },
-  ],
-
-  "0xd95E98fc33670dC033424E7Aa0578D742D00f9C7": [
-    {
-      name: "USD+",
-      address: "0x73cb180bf0521828d8849bc8cf2b920918e23032",
-    },
-    {
-      name: "USDC",
-      address: "0x7f5c764cbc14f9669b88837ca1490cca17c31607",
+      name: 'DAI+',
+      address: '0x970d50d09f3a656b43e11b0d45241a84e3a6e011',
     },
   ],
 
-  "0x37e7D30CC180A750C83D68ED0C2511dA10694d63": [
+  '0xD330841EF9527E3Bd0abc28a230C7cA8dec9423B': [
     {
-      name: "USD+",
-      address: "0x73cb180bf0521828d8849bc8cf2b920918e23032",
+      name: 'FRAX',
+      address: '0x2e3d870790dc77a83dd1d18184acc7439a53f475',
     },
     {
-      name: "LUSD",
-      address: "0xc40f949f8a4e094d1b49a23ea9241d289b7b2819",
+      name: 'USD+',
+      address: '0x73cb180bf0521828d8849bc8cf2b920918e23032',
     },
   ],
 
-  "0x844D7d2fCa6786Be7De6721AabdfF6957ACE73a0": [
+  '0xd95E98fc33670dC033424E7Aa0578D742D00f9C7': [
     {
-      name: "OVN",
-      address: "0x3b08fcd15280e7B5A6e404c4abb87F7C774D1B2e",
+      name: 'USD+',
+      address: '0x73cb180bf0521828d8849bc8cf2b920918e23032',
     },
     {
-      name: "USD+",
-      address: "0x73cb180bf0521828d8849bc8CF2B920918e23032",
+      name: 'USDC',
+      address: '0x7f5c764cbc14f9669b88837ca1490cca17c31607',
+    },
+  ],
+
+  '0x37e7D30CC180A750C83D68ED0C2511dA10694d63': [
+    {
+      name: 'USD+',
+      address: '0x73cb180bf0521828d8849bc8cf2b920918e23032',
+    },
+    {
+      name: 'LUSD',
+      address: '0xc40f949f8a4e094d1b49a23ea9241d289b7b2819',
+    },
+  ],
+
+  '0x844D7d2fCa6786Be7De6721AabdfF6957ACE73a0': [
+    {
+      name: 'OVN',
+      address: '0x3b08fcd15280e7B5A6e404c4abb87F7C774D1B2e',
+    },
+    {
+      name: 'USD+',
+      address: '0x73cb180bf0521828d8849bc8CF2B920918e23032',
     },
   ],
 
   // Arbidex
-  "0xeE5e74Dc56594d070E0827ec270F974A68EBAF22": [
+  '0xeE5e74Dc56594d070E0827ec270F974A68EBAF22': [
     {
-      name: "DAI",
-      address: "0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1",
+      name: 'DAI',
+      address: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
     },
     {
-      name: "DAI+",
-      address: "0xeb8E93A0c7504Bffd8A8fFa56CD754c63aAeBFe8",
-    },
-  ],
-
-  "0xE8C060d40D7Bc96fCd5b758Bd1437C8653400b0e": [
-    {
-      name: "USD+",
-      address: "0xe80772Eaf6e2E18B651F160Bc9158b2A5caFCA65",
-    },
-    {
-      name: "DAI+",
-      address: "0xeb8E93A0c7504Bffd8A8fFa56CD754c63aAeBFe8",
+      name: 'DAI+',
+      address: '0xeb8E93A0c7504Bffd8A8fFa56CD754c63aAeBFe8',
     },
   ],
 
-  "0xECe52B1fc32D2B4f22eb45238210b470a64bfDd5": [
+  '0xE8C060d40D7Bc96fCd5b758Bd1437C8653400b0e': [
     {
-      name: "USD+",
-      address: "0xe80772Eaf6e2E18B651F160Bc9158b2A5caFCA65",
+      name: 'USD+',
+      address: '0xe80772Eaf6e2E18B651F160Bc9158b2A5caFCA65',
     },
     {
-      name: "USDC.E",
-      address: "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
+      name: 'DAI+',
+      address: '0xeb8E93A0c7504Bffd8A8fFa56CD754c63aAeBFe8',
     },
   ],
 
-  "0xb0Fb1787238879171Edc30b9730968600D55762A": [
+  '0xECe52B1fc32D2B4f22eb45238210b470a64bfDd5': [
     {
-      name: "FRAX",
-      address: "0x17FC002b466eEc40DaE837Fc4bE5c67993ddBd6F",
+      name: 'USD+',
+      address: '0xe80772Eaf6e2E18B651F160Bc9158b2A5caFCA65',
     },
     {
-      name: "USD+",
-      address: "0xe80772Eaf6e2E18B651F160Bc9158b2A5caFCA65",
+      name: 'USDC.E',
+      address: '0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8',
+    },
+  ],
+
+  '0xb0Fb1787238879171Edc30b9730968600D55762A': [
+    {
+      name: 'FRAX',
+      address: '0x17FC002b466eEc40DaE837Fc4bE5c67993ddBd6F',
+    },
+    {
+      name: 'USD+',
+      address: '0xe80772Eaf6e2E18B651F160Bc9158b2A5caFCA65',
     },
   ],
 
@@ -178,14 +178,14 @@ export const poolTokensForZapMap = {
   //     {name: 'WETH', address: '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1'},
   // ],
 
-  "0x306132b6147751B85E608B4C1EC452E111531eA2": [
+  '0x306132b6147751B85E608B4C1EC452E111531eA2': [
     {
-      name: "FRAX",
-      address: "0x17FC002b466eEc40DaE837Fc4bE5c67993ddBd6F",
+      name: 'FRAX',
+      address: '0x17FC002b466eEc40DaE837Fc4bE5c67993ddBd6F',
     },
     {
-      name: "DAI+",
-      address: "0xeb8E93A0c7504Bffd8A8fFa56CD754c63aAeBFe8",
+      name: 'DAI+',
+      address: '0xeb8E93A0c7504Bffd8A8fFa56CD754c63aAeBFe8',
     },
   ],
 
@@ -196,232 +196,232 @@ export const poolTokensForZapMap = {
   // ],
 
   // Baseswap
-  "0x696b4d181Eb58cD4B54a59d2Ce834184Cf7Ac31A": [
+  '0x696b4d181Eb58cD4B54a59d2Ce834184Cf7Ac31A': [
     {
-      name: "USD+",
-      address: "0xb79dd08ea68a908a97220c76d19a6aa9cbde4376",
+      name: 'USD+',
+      address: '0xb79dd08ea68a908a97220c76d19a6aa9cbde4376',
     },
     {
-      name: "USDbC",
-      address: "0xd9aaec86b65d86f6a7b5b1b0c42ffa531710b6ca",
+      name: 'USDbC',
+      address: '0xd9aaec86b65d86f6a7b5b1b0c42ffa531710b6ca',
     },
   ],
 
-  "0x7Fb35b3967798cE8322cC50eF52553BC5Ee4c306": [
+  '0x7Fb35b3967798cE8322cC50eF52553BC5Ee4c306': [
     {
-      name: "DAI+",
-      address: "0x65a2508C429a6078a7BC2f7dF81aB575BD9D9275",
+      name: 'DAI+',
+      address: '0x65a2508C429a6078a7BC2f7dF81aB575BD9D9275',
     },
     {
-      name: "USD+",
-      address: "0xB79DD08EA68A908A97220C76d19A6aA9cBDE4376",
+      name: 'USD+',
+      address: '0xB79DD08EA68A908A97220C76d19A6aA9cBDE4376',
     },
   ],
 
   // Velocimeter
-  "0x298c9f812c470598c5f97e3da9261a9899b89d35": [
+  '0x298c9f812c470598c5f97e3da9261a9899b89d35': [
     // gauge 0x0daf00a383f8897553ac1d03f4445b15afa1dcb9
     {
-      name: "DAI+",
-      address: "0x65a2508C429a6078a7BC2f7dF81aB575BD9D9275",
+      name: 'DAI+',
+      address: '0x65a2508C429a6078a7BC2f7dF81aB575BD9D9275',
     },
     {
-      name: "USD+",
-      address: "0xB79DD08EA68A908A97220C76d19A6aA9cBDE4376",
+      name: 'USD+',
+      address: '0xB79DD08EA68A908A97220C76d19A6aA9cBDE4376',
     },
   ],
 
-  "0x653685aa9913c6ab13d659a4ea8f358ecec3d34f": [
+  '0x653685aa9913c6ab13d659a4ea8f358ecec3d34f': [
     // gauge 0xD9875fBe2A706f9Fed68F066D7420D63FDC5eD76
     {
-      name: "USD+",
-      address: "0xb79dd08ea68a908a97220c76d19a6aa9cbde4376",
+      name: 'USD+',
+      address: '0xb79dd08ea68a908a97220c76d19a6aa9cbde4376',
     },
     {
-      name: "USDbC",
-      address: "0xd9aaec86b65d86f6a7b5b1b0c42ffa531710b6ca",
+      name: 'USDbC',
+      address: '0xd9aaec86b65d86f6a7b5b1b0c42ffa531710b6ca',
     },
   ],
 
   // Alienbase
-  "0x553666081db0a8fdb337560009932852059d589a": [
+  '0x553666081db0a8fdb337560009932852059d589a': [
     // 7 pool
     {
-      name: "USD+",
-      address: "0xb79dd08ea68a908a97220c76d19a6aa9cbde4376",
+      name: 'USD+',
+      address: '0xb79dd08ea68a908a97220c76d19a6aa9cbde4376',
     },
     {
-      name: "USDbC",
-      address: "0xd9aaec86b65d86f6a7b5b1b0c42ffa531710b6ca",
+      name: 'USDbC',
+      address: '0xd9aaec86b65d86f6a7b5b1b0c42ffa531710b6ca',
     },
   ],
-  "0xd97a40434627D5c897790DE9a3d2E577Cba5F2E0": [
+  '0xd97a40434627D5c897790DE9a3d2E577Cba5F2E0': [
     // 8 pool
     {
-      name: "DAI+",
-      address: "0x65a2508C429a6078a7BC2f7dF81aB575BD9D9275",
+      name: 'DAI+',
+      address: '0x65a2508C429a6078a7BC2f7dF81aB575BD9D9275',
     },
     {
-      name: "USD+",
-      address: "0xB79DD08EA68A908A97220C76d19A6aA9cBDE4376",
+      name: 'USD+',
+      address: '0xB79DD08EA68A908A97220C76d19A6aA9cBDE4376',
     },
   ],
 
   // Swapbased
-  "0x282f9231e5294e7354744df36461c21e0e68061c": [
+  '0x282f9231e5294e7354744df36461c21e0e68061c': [
     {
-      name: "USD+",
-      address: "0xb79dd08ea68a908a97220c76d19a6aa9cbde4376",
+      name: 'USD+',
+      address: '0xb79dd08ea68a908a97220c76d19a6aa9cbde4376',
     },
     {
-      name: "USDbC",
-      address: "0xd9aaec86b65d86f6a7b5b1b0c42ffa531710b6ca",
+      name: 'USDbC',
+      address: '0xd9aaec86b65d86f6a7b5b1b0c42ffa531710b6ca',
     },
   ],
-  "0x164bc404c64fa426882d98dbce9b10d5df656eed": [
+  '0x164bc404c64fa426882d98dbce9b10d5df656eed': [
     {
-      name: "DAI+",
-      address: "0x65a2508C429a6078a7BC2f7dF81aB575BD9D9275",
+      name: 'DAI+',
+      address: '0x65a2508C429a6078a7BC2f7dF81aB575BD9D9275',
     },
     {
-      name: "USD+",
-      address: "0xB79DD08EA68A908A97220C76d19A6aA9cBDE4376",
+      name: 'USD+',
+      address: '0xB79DD08EA68A908A97220C76d19A6aA9cBDE4376',
     },
   ],
 
   // Aerodrome
-  "0x1b05e4e814b3431a48b8164c41eac834d9ce2da6": [
+  '0x1b05e4e814b3431a48b8164c41eac834d9ce2da6': [
     {
-      name: "DAI+",
-      address: "0x65a2508C429a6078a7BC2f7dF81aB575BD9D9275",
+      name: 'DAI+',
+      address: '0x65a2508C429a6078a7BC2f7dF81aB575BD9D9275',
     },
     {
-      name: "USD+",
-      address: "0xB79DD08EA68A908A97220C76d19A6aA9cBDE4376",
-    },
-  ],
-
-  "0x4a3636608d7bc5776cb19eb72caa36ebb9ea683b": [
-    {
-      name: "USD+",
-      address: "0xB79DD08EA68A908A97220C76d19A6aA9cBDE4376",
-    },
-    {
-      name: "USDbC",
-      address: "0xd9aaec86b65d86f6a7b5b1b0c42ffa531710b6ca",
+      name: 'USD+',
+      address: '0xB79DD08EA68A908A97220C76d19A6aA9cBDE4376',
     },
   ],
 
-  "0xdc0f1f6ecd03ec1c9ffc2a17bababd313477b20e": [
+  '0x4a3636608d7bc5776cb19eb72caa36ebb9ea683b': [
     {
-      name: "USD+",
-      address: "0xB79DD08EA68A908A97220C76d19A6aA9cBDE4376",
+      name: 'USD+',
+      address: '0xB79DD08EA68A908A97220C76d19A6aA9cBDE4376',
     },
     {
-      name: "USDbC",
-      address: "0xd9aaec86b65d86f6a7b5b1b0c42ffa531710b6ca",
-    },
-  ],
-
-  "0x8E9154AC849e839d60299E85156bcb589De2693A": [
-    {
-      name: "DOLA",
-      address: "0x4621b7a9c75199271f773ebd9a499dbd165c3191",
-    },
-    {
-      name: "USD+",
-      address: "0xb79dd08ea68a908a97220c76d19a6aa9cbde4376",
+      name: 'USDbC',
+      address: '0xd9aaec86b65d86f6a7b5b1b0c42ffa531710b6ca',
     },
   ],
 
-  "0x61366A4e6b1DB1b85DD701f2f4BFa275EF271197": [
+  '0xdc0f1f6ecd03ec1c9ffc2a17bababd313477b20e': [
     {
-      name: "OVN",
-      address: "0xA3d1a8DEB97B111454B294E2324EfAD13a9d8396",
+      name: 'USD+',
+      address: '0xB79DD08EA68A908A97220C76d19A6aA9cBDE4376',
     },
     {
-      name: "USD+",
-      address: "0xb79dd08ea68a908a97220c76d19a6aa9cbde4376",
+      name: 'USDbC',
+      address: '0xd9aaec86b65d86f6a7b5b1b0c42ffa531710b6ca',
+    },
+  ],
+
+  '0x8E9154AC849e839d60299E85156bcb589De2693A': [
+    {
+      name: 'DOLA',
+      address: '0x4621b7a9c75199271f773ebd9a499dbd165c3191',
+    },
+    {
+      name: 'USD+',
+      address: '0xb79dd08ea68a908a97220c76d19a6aa9cbde4376',
+    },
+  ],
+
+  '0x61366A4e6b1DB1b85DD701f2f4BFa275EF271197': [
+    {
+      name: 'OVN',
+      address: '0xA3d1a8DEB97B111454B294E2324EfAD13a9d8396',
+    },
+    {
+      name: 'USD+',
+      address: '0xb79dd08ea68a908a97220c76d19a6aa9cbde4376',
     },
   ],
 
   // Curve
-  "0xda3de145054ED30Ee937865D31B500505C4bDfe7": [
+  '0xda3de145054ED30Ee937865D31B500505C4bDfe7': [
     {
-      name: "USD+",
-      address: "0xb79dd08ea68a908a97220c76d19a6aa9cbde4376",
+      name: 'USD+',
+      address: '0xb79dd08ea68a908a97220c76d19a6aa9cbde4376',
     },
     {
-      name: "crvUSD",
-      address: "0x417Ac0e078398C154EdFadD9Ef675d30Be60Af93",
+      name: 'crvUSD',
+      address: '0x417Ac0e078398C154EdFadD9Ef675d30Be60Af93',
     },
   ],
-  "0xb34a7d1444a707349Bc7b981B7F2E1f20F81F013": [
+  '0xb34a7d1444a707349Bc7b981B7F2E1f20F81F013': [
     {
-      name: "USD+",
+      name: 'USD+',
       address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
     },
     {
-      name: "FRAX",
-      address: "0x17fc002b466eec40dae837fc4be5c67993ddbd6f",
+      name: 'FRAXBP-f',
+      address: '0xc9b8a3fdecb9d5b218d02555a8baf332e5b740d5',
     },
   ],
 
   // Beefy
-  "0x61366A4e6b1DB1b85DD701f2f4BFa275EF271197_Aerodrome": [
+  '0x61366A4e6b1DB1b85DD701f2f4BFa275EF271197_Aerodrome': [
     // Aerodrome
     {
-      name: "OVN",
-      address: "0xA3d1a8DEB97B111454B294E2324EfAD13a9d8396",
+      name: 'OVN',
+      address: '0xA3d1a8DEB97B111454B294E2324EfAD13a9d8396',
     },
     {
-      name: "USD+",
-      address: "0xb79dd08ea68a908a97220c76d19a6aa9cbde4376",
+      name: 'USD+',
+      address: '0xb79dd08ea68a908a97220c76d19a6aa9cbde4376',
     },
   ],
 
-  "0xe96c788e66a97cf455f46c5b27786191fd3bc50b": [
+  '0xe96c788e66a97cf455f46c5b27786191fd3bc50b': [
     // Aerodrome
     {
-      name: "USDC+",
+      name: 'USDC+',
       address: chainContractsMap.base.usdcPlus.tokenPlus,
     },
     {
-      name: "USD+",
+      name: 'USD+',
       address: chainContractsMap.base.usdPlus.tokenPlus,
     },
   ],
 
-  "0x844D7d2fCa6786Be7De6721AabdfF6957ACE73a0_Velodrome": [
+  '0x844D7d2fCa6786Be7De6721AabdfF6957ACE73a0_Velodrome': [
     // Velodrome
     {
-      name: "USDC+",
+      name: 'USDC+',
       address: chainContractsMap.base.usdcPlus.tokenPlus,
     },
     {
-      name: "USD+",
+      name: 'USD+',
       address: chainContractsMap.base.usdPlus.tokenPlus,
     },
   ],
 
   // PANCAKE ZAPS
-  "0x721f37495cd70383b0a77bf1eb8f97eef29498bb": [
+  '0x721f37495cd70383b0a77bf1eb8f97eef29498bb': [
     {
-      name: "USDC",
-      address: "0xff970a61a04b1ca14834a43f5de4533ebddb5cc8",
+      name: 'USDC',
+      address: '0xff970a61a04b1ca14834a43f5de4533ebddb5cc8',
     },
     {
-      name: "USD+",
+      name: 'USD+',
       address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
     },
   ],
-  "0x8a06339abd7499af755df585738ebf43d5d62b94": [
+  '0x8a06339abd7499af755df585738ebf43d5d62b94': [
     {
-      name: "USDT+",
+      name: 'USDT+',
       address: chainContractsMap.arbitrum.usdtPlus.tokenPlus,
     },
     {
-      name: "USD+",
+      name: 'USD+',
       address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
     },
   ],
@@ -429,46 +429,46 @@ export const poolTokensForZapMap = {
 
 export const poolsForOVN = {
   base: {
-    api: "https://api.basescan.org/",
-    pools: [{ address: "0x61366A4e6b1DB1b85DD701f2f4BFa275EF271197" }],
+    api: 'https://api.basescan.org/',
+    pools: [{ address: '0x61366A4e6b1DB1b85DD701f2f4BFa275EF271197' }],
   },
   optimism: {
-    api: "https://api-optimistic.etherscan.io/",
-    pools: [{ address: "0x844D7d2fCa6786Be7De6721AabdfF6957ACE73a0" }],
+    api: 'https://api-optimistic.etherscan.io/',
+    pools: [{ address: '0x844D7d2fCa6786Be7De6721AabdfF6957ACE73a0' }],
   },
   arbitrum: {
-    api: "https://api.arbiscan.io/",
+    api: 'https://api.arbiscan.io/',
     pools: [{}],
   },
   bsc: {
-    api: "https://api.bscscan.com/",
+    api: 'https://api.bscscan.com/',
     pools: [{}],
   },
 } as any;
 
 export const zapPlatformSupportList = [
   // 'Chronos',
-  "Thena",
-  "Velodrome",
-  "Aerodrome",
-  "Ramses",
-  "Arbidex",
-  "Sperax",
-  "Convex",
+  'Thena',
+  'Velodrome',
+  'Aerodrome',
+  'Ramses',
+  'Arbidex',
+  'Sperax',
+  'Convex',
   // 'Defiedge',
   // 'Baseswap',
-  "Velocimeter",
-  "Alienbase",
-  "Swapbased",
-  "Curve",
-  "Pancake",
-  "Beefy",
+  'Velocimeter',
+  'Alienbase',
+  'Swapbased',
+  'Curve',
+  'Pancake',
+  'Beefy',
 ];
 
 export enum POOL_TAG {
-  NEW = "0",
-  PROMO = "1",
-  HOT = "2",
+  NEW = '0',
+  PROMO = '1',
+  HOT = '2',
 }
 
 // POOLS WITH EARNINGS MORE THAN 500$ per month
@@ -477,62 +477,62 @@ export enum POOL_TAG {
 
 export const NEW_POOLS = [
   // BLAST
-  "0x49b6992dbacf7caa9cbf4dbc37234a0167b8edcd",
-  "0xb70ab4c4be5872fdd22f43c5907428198cdcb2d5",
-  "0x952388d73EA3E940eD6824DBd75ed6aD58e6B436",
-  "0x267d950110D9ED57999c3451b89C35a9D278C074",
+  '0x49b6992dbacf7caa9cbf4dbc37234a0167b8edcd',
+  '0xb70ab4c4be5872fdd22f43c5907428198cdcb2d5',
+  '0x952388d73EA3E940eD6824DBd75ed6aD58e6B436',
+  '0x267d950110D9ED57999c3451b89C35a9D278C074',
 ];
 
 export const HOT_POOLS = [
   // AERODROME
-  "0xe96c788e66a97cf455f46c5b27786191fd3bc50b",
-  "0x61366A4e6b1DB1b85DD701f2f4BFa275EF271197",
-  "0x61366A4e6b1DB1b85DD701f2f4BFa275EF271197_Aerodrome",
-  "0x4a3636608d7bc5776cb19eb72caa36ebb9ea683b",
+  '0xe96c788e66a97cf455f46c5b27786191fd3bc50b',
+  '0x61366A4e6b1DB1b85DD701f2f4BFa275EF271197',
+  '0x61366A4e6b1DB1b85DD701f2f4BFa275EF271197_Aerodrome',
+  '0x4a3636608d7bc5776cb19eb72caa36ebb9ea683b',
 
   // PANCAKE
-  "0x8a06339abd7499af755df585738ebf43d5d62b94",
-  "0x6a8fc7e8186ddc572e149dfaa49cfae1e571108b",
+  '0x8a06339abd7499af755df585738ebf43d5d62b94',
+  '0x6a8fc7e8186ddc572e149dfaa49cfae1e571108b',
 
   // SYNCSWAP
-  "0xA06f1cce2Bb89f59D244178C2134e4Fc17B07306",
+  '0xA06f1cce2Bb89f59D244178C2134e4Fc17B07306',
 
   // CURVE
-  "0x1446999B0b0E4f7aDA6Ee73f2Ae12a2cfdc5D9E7",
-  "0xb34a7d1444a707349Bc7b981B7F2E1f20F81F013",
+  '0x1446999B0b0E4f7aDA6Ee73f2Ae12a2cfdc5D9E7',
+  '0xb34a7d1444a707349Bc7b981B7F2E1f20F81F013',
 
   // SWAPBLAST
-  "0x49b6992dbacf7caa9cbf4dbc37234a0167b8edcd",
-  "0xb70ab4c4be5872fdd22f43c5907428198cdcb2d5",
+  '0x49b6992dbacf7caa9cbf4dbc37234a0167b8edcd',
+  '0xb70ab4c4be5872fdd22f43c5907428198cdcb2d5',
 ];
 
 export const FIRST_MIN_AMOUNT = 300000;
 export const SECOND_MIN_AMOUNT = 100000;
 
 export const LOW_TVL_PROMOTE = [
-  "0xd01075f7314a6436e8b74fc18069848229d0c555",
-  "0xb9c2d906f94b27bc403ab76b611d2c4490c2ae3f",
-  "0x844D7d2fCa6786Be7De6721AabdfF6957ACE73a0",
-  "0x721f37495cd70383b0a77bf1eb8f97eef29498bb",
-  "0x46e1B51e07851301f025ffeA506b140dB80a214A",
+  '0xd01075f7314a6436e8b74fc18069848229d0c555',
+  '0xb9c2d906f94b27bc403ab76b611d2c4490c2ae3f',
+  '0x844D7d2fCa6786Be7De6721AabdfF6957ACE73a0',
+  '0x721f37495cd70383b0a77bf1eb8f97eef29498bb',
+  '0x46e1B51e07851301f025ffeA506b140dB80a214A',
 
   // VELOCORE
-  "0x1d0188c4b276a09366d05d6be06af61a73bc7535",
-  "0xf5E67261CB357eDb6C7719fEFAFaaB280cB5E2A6",
+  '0x1d0188c4b276a09366d05d6be06af61a73bc7535',
+  '0xf5E67261CB357eDb6C7719fEFAFaaB280cB5E2A6',
 
   // PANCAKE
-  "0x6a8fc7e8186ddc572e149dfaa49cfae1e571108b",
-  "0x714d48cb99b87f274b33a89fbb16ead191b40b6c",
+  '0x6a8fc7e8186ddc572e149dfaa49cfae1e571108b',
+  '0x714d48cb99b87f274b33a89fbb16ead191b40b6c',
 
   // LYNEX
-  "0x58aacbccaec30938cb2bb11653cad726e5c4194a",
-  "0xc5f4c5c2077bbbac5a8381cf30ecdf18fde42a91",
+  '0x58aacbccaec30938cb2bb11653cad726e5c4194a',
+  '0xc5f4c5c2077bbbac5a8381cf30ecdf18fde42a91',
   // FRAX
-  "0x56390acF12bce9675ab3922060D8d955149BE286",
+  '0x56390acF12bce9675ab3922060D8d955149BE286',
   // SYNCSWAP
-  "0xA06f1cce2Bb89f59D244178C2134e4Fc17B07306",
+  '0xA06f1cce2Bb89f59D244178C2134e4Fc17B07306',
 
   // CURVE
-  "0x1446999B0b0E4f7aDA6Ee73f2Ae12a2cfdc5D9E7",
-  "0xb34a7d1444a707349Bc7b981B7F2E1f20F81F013",
+  '0x1446999B0b0E4f7aDA6Ee73f2Ae12a2cfdc5D9E7',
+  '0xb34a7d1444a707349Bc7b981B7F2E1f20F81F013',
 ];

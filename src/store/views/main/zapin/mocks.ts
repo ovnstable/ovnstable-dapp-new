@@ -225,7 +225,6 @@ export const poolsInfoMap: any = {
     approveType: 'TOKEN',
   },
 
-
   // Beefy
   '0x61366A4e6b1DB1b85DD701f2f4BFa275EF271197_Aerodrome': {
     // ovn/usd+ Aerodrome volatile
@@ -341,7 +340,7 @@ export const zapPlatformContractTypeMap: any = {
   },
   Curve: {
     name: 'Curve',
-    type: 'LP_STAKE_DIFF_STEPS',
+    type: 'LP_WITH_STAKE_IN_ONE_STEP',
     typeOfDepositConstructor: 'CONSTRUCTOR_WITH_TOKEN_ID',
   },
   Beefy: {
