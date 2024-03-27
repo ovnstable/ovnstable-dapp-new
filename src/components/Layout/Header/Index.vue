@@ -63,9 +63,8 @@
               OVERNIGHT
             </h1>
           </router-link>
-
           <div
-            v-if="account && (accountRenderLoading || balancesLoading) && !deviceSize.isMobile"
+            v-if="account && balancesLoading && !deviceSize.isMobile"
             class="lineLoader"
           />
           <UserBalances
@@ -74,11 +73,11 @@
           />
 
           <div
-            v-if="accountRenderLoading && deviceSize.isDesktop"
+            v-if="account && accountRenderLoading"
             class="lineLoader"
           />
           <ButtonComponent
-            v-else-if="walletConnected && account && !balancesLoading"
+            v-else-if="walletConnected && account && !accountRenderLoading"
             class="app-header__content-account"
             btn-styles="secondary"
             @click="openAccountModal"
