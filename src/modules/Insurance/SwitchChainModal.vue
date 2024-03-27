@@ -1,27 +1,75 @@
 <template>
-  <ButtonComponent
-    class="change-network-close-modal"
-    @click="closeModal()"
-    @keydown.enter="closeModal()"
-  >
-    <BaseIcon
-      name='ArrowExitMobile'
-    />
-  </ButtonComponent>
-  <div class="change-network">
-    <BaseIcon name="change-network" />
-    <div class="change-network__text">
-      Please, switch to the chain the insurance is on.
-    </div>
-
+  <div>
     <ButtonComponent
-      class="change-network__btn"
-      btn-size="large"
-      @click.stop="setWalletNetwork('arbitrum')"
+      v-if="device.isMobile"
+      class="change-network-close-modal"
+      @click="closeModal()"
+      @keydown.enter="closeModal()"
     >
-      SWITCH TO ARBITRUM
+      <BaseIcon
+        name='ArrowExitMobile'
+      />
     </ButtonComponent>
+    <div class="change-network">
+      <div class="insurance__modal-mint-redeem-buttons">
+        <ButtonComponent
+          :class="{
+            'insurance__modal-mint-redeem-button-selected': selectedAction === 'mint',
+            'insurance__modal-mint-redeem-button-first': true,
+            'insurance__modal-mint-redeem-button-overlap-first': selectedAction !== 'mint',
+          }"
+          @click="selectedAction = 'mint'"
+        >
+          <p>MINT</p>
+        </ButtonComponent>
+        <ButtonComponent
+          :class="{
+            'insurance__modal-mint-redeem-button-selected': selectedAction === 'redeem',
+            'insurance__modal-mint-redeem-button-last': true,
+            'insurance__modal-mint-redeem-button-overlap-last': selectedAction === 'redeem',
+          }"
+          @click="selectedAction = 'redeem'"
+        >
+          <p>REDEEM</p>
+        </ButtonComponent>
+      </div>
+      <div class="change-network-divider" />
+      <BaseIcon
+        class="change-network-warning"
+        name="CommonWarning"
+      />
+      <div class="change-network__text">
+        PLEASE, SWITCH TO OTHER CHAIN<br>
+        FOR {{selectedAction === 'mint' ? 'MINTING' : 'REDEEM'}} OVN.
+      </div>
+      <div class="change-network-divider" />
+      <p class="change-network__warning-text">The chains on which you can perform actions<br>
+        with OVN are presented below:</p>
+      <div class="change-network__chains">
+        <div
+          v-for="chain in availableChains"
+          :key="chain"
+        >
+          <ButtonComponent
+            class="change-network__btn"
+            btn-size="large"
+            @click="setWalletNetwork(chain.toLocaleLowerCase())"
+          >
+            {{ chain }}
+          </ButtonComponent>
+        </div>
+      </div>
+
+      <div class="change-network-divider" />
+      <p
+        class="change-network__switch-text"
+        btn-size="large"
+      >
+        SWITCH TO OTHER CHAIN
+      </p>
+    </div>
   </div>
+
 </template>
 
 <script lang="ts">
@@ -30,6 +78,8 @@ import {
 } from 'vuex';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import { chainContractsMap } from '@/utils/contractsMap.ts';
+import { deviceType } from '@/utils/deviceType.ts';
 
 export default {
   name: 'SwitchChainInsurance',
@@ -37,8 +87,27 @@ export default {
     ButtonComponent,
     BaseIcon,
   },
+  data() {
+    return {
+      selectedAction: 'mint',
+    };
+  },
   computed: {
     ...mapGetters('network', ['getParams', 'networkId']),
+    device() {
+      return deviceType();
+    },
+    availableChains() {
+      const availableNetworks = Object.entries(chainContractsMap)
+        .reduce((acc: string[], [network, contracts]: [string, any]) => {
+          if (contracts.token_insurance) {
+            acc.push(network.charAt(0).toUpperCase() + network.slice(1));
+          }
+          return acc;
+        }, []);
+
+      return availableNetworks;
+    },
   },
   methods: {
     ...mapActions('network', ['setWalletNetwork']),
@@ -53,13 +122,17 @@ export default {
 .change-network {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   padding: 40px 30px;
-  min-height: 40vh;
-  margin: 40px 30px;
   text-align: center;
   gap: 30px;
-  margin-top: 20px;
+  padding-top: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-bottom: 30px;
+  min-width: 600px;
+  min-height: 500px;
+  width: 100%;
   border-radius: 12px;
 
   svg {
@@ -76,6 +149,27 @@ export default {
     color: var(--color-18);
   }
 }
+.change-network__chains {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+}
+.change-network-divider {
+  border: 1px solid var(--color-7);
+}
+.change-network-warning {
+  scale: 150%;
+}
+.change-network__warning-text {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-1);
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
+}
 .change-network-close-modal {
   border: none;
   background: none;
@@ -89,10 +183,82 @@ export default {
     }
   }
 }
+.change-network__btn {
+  box-shadow: none;
+  border: none;
+  border-radius: 30px;
+  padding: 2px 20px;
+}
+.change-network__switch-text {
+  background-color: var(--color-5);
+  border-radius: 10px;
+  padding: 9px;
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--color-2);
+}
+.change-network__text {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--color-1);
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
+}
+.insurance__modal-mint-redeem-buttons {
+  display: flex;
+  flex-direction: row;
+  align-self: center;
+  position: relative;
+
+  button {
+    font-size: 14px;
+    background-color: var(--color-5);
+    color: var(--color-2);
+    border: 1px solid var(--color-6);
+    box-shadow: none;
+    margin-right: -10px;
+    position: relative;
+    z-index: 0;
+
+    &:first-child {
+      border-radius: 30px;
+    }
+
+    &:last-child {
+      border-radius: 0px 30px 30px 0px;
+      margin-right: 0
+    }
+    [data-theme="dark"] & {
+      color: var(--color-18);
+    }
+  }
+  .insurance__modal-mint-redeem-button-overlap-first {
+    border-radius: 30px 0px 0px 30px !important;
+    margin-left: 0
+  }
+  .insurance__modal-mint-redeem-button-overlap-last {
+    border-radius: 30px 30px 30px 30px !important;
+  }
+
+  .insurance__modal-mint-redeem-button-selected {
+    background-color: var(--color-6);
+    color: var(--color-1);
+    border-color: var(--color-1);
+    z-index: 1;
+    padding: 2px 26px;
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
+  }
+}
 @media (max-width: 640px) {
   .change-network__btn {
     font-size: 16px;
   }
+  .change-network {
+    min-width: 0;
+    min-height: 0;
+  }
 }
-
 </style>
