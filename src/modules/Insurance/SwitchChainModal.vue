@@ -143,6 +143,9 @@ export default {
       box-shadow: none;
     }
   }
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
+  }
 }
 .change-network__text {
   [data-theme="dark"] & {
@@ -158,6 +161,9 @@ export default {
 }
 .change-network-divider {
   border: 1px solid var(--color-7);
+  [data-theme="dark"] & {
+    border-color: var(--color-5);
+  }
 }
 .change-network-warning {
   scale: 150%;
@@ -188,6 +194,9 @@ export default {
   border: none;
   border-radius: 30px;
   padding: 2px 20px;
+  [data-theme="dark"] & {
+    background-color: var(--color-6);
+  }
 }
 .change-network__switch-text {
   background-color: var(--color-5);
@@ -196,6 +205,10 @@ export default {
   font-size: 17px;
   font-weight: 500;
   color: var(--color-2);
+  [data-theme="dark"] & {
+    background-color: var(--color-6);
+    color: var(--color-18);
+  }
 }
 .change-network__text {
   font-size: 24px;
