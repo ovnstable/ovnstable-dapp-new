@@ -3,7 +3,12 @@
     interactive
     placement="bottom-end"
   >
+    <div
+      class="lineLoaderMobile"
+      v-if="balancesLoading && !device.isDesktop"
+    />
     <ButtonComponent
+      v-else
       class="app-header__balance-account"
       btn-styles="secondary"
     >
@@ -50,6 +55,7 @@
 import { mapGetters, mapState } from 'vuex';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import { deviceType } from '@/utils/deviceType.ts';
 import { OVN_TOKENS, appNetworksData, EMPTY_TOKENS_NETWORKS } from '@/utils/const.ts';
 import { isEmpty } from 'lodash';
 import BigNumber from 'bignumber.js';
@@ -67,11 +73,20 @@ export default {
     };
   },
   computed: {
+    ...mapGetters('accountData', ['account', 'isLoadingOvnBalances']),
     ...mapGetters('network', ['networkId']),
     ...mapGetters('accountData', ['originalBalance']),
     ...mapGetters('odosData', ['allTokensList']),
     ...mapState('odosData', ['tokensMap', 'isBalancesLoading', 'isTokensLoading']),
 
+    device() {
+      return deviceType();
+    },
+    balancesLoading() {
+      if (this.isTokensLoading) return true;
+      if (this.isLoadingOvnBalances || this.isBalancesLoading) return true;
+      return false;
+    },
     totalUserBalance() {
       if (isEmpty(this.allTokensList) && isEmpty(this.tokensMap)) return '0';
       const total: BigNumber = this.originalBalance

@@ -65,13 +65,13 @@
           </router-link>
           <div
             v-if="account && balancesLoading && !deviceSize.isMobile"
-            class="lineLoader"
-          />
-          <UserBalances
-            class="app-header__balances"
-            v-else-if="!deviceSize.isMobile && walletConnected && account"
+            :class="['lineLoader', 'app-header__balance-loader']"
           />
 
+          <UserBalances
+            v-if="walletConnected"
+            class="app-header__balances"
+          />
           <div
             v-if="account && accountRenderLoading"
             class="lineLoader"
@@ -236,7 +236,7 @@ export default {
     ...mapGetters('odosData', ['allTokensList']),
 
     balancesLoading() {
-      if (this.originalBalance.length === 0 || this.isTokensLoading) return true;
+      if (this.isTokensLoading) return true;
       if (this.isLoadingOvnBalances || this.isBalancesLoading) return true;
       return false;
     },
@@ -296,17 +296,6 @@ export default {
     fill: var(--color-4);
   }
 }
-.app-header__balance-account {
-  min-width: 130px;
-  justify-content: space-between;
-  [data-theme="dark"] & {
-    background-color: var(--color-17);
-    box-shadow: none !important;
-  }
-  svg path {
-    fill: var(--color-3);
-  }
-}
 
 </style>
 
@@ -337,6 +326,16 @@ export default {
     position: fixed;
   }
 }
+
+.app-header__balance-loader {
+  @media (min-width: 1024px) {
+    display: none
+  }
+  @media (max-width: 768px) and (min-width: 640px) {
+    display: none;
+  }
+}
+
 .app-header-dapp {
   display: flex;
   flex-direction: row;
@@ -431,17 +430,6 @@ export default {
     flex-wrap: wrap;
   }
 }
-
-.app-header__balance-account {
-  min-width: 130px;
-  min-height: 31px;
-  justify-content: space-between;
-
-  svg path {
-    fill: var(--color-3);
-  }
-}
-
 .app-header__balance-row {
   display: flex;
   gap: 8px;
@@ -566,4 +554,5 @@ export default {
     order: 3;
   }
 }
+
 </style>
