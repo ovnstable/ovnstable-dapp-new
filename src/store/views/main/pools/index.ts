@@ -73,7 +73,6 @@ const actions = {
     const networkConfigList = [...rootState.network.allNetworkConfigs];
 
     for (const networkConfig of networkConfigList) {
-      console.log(networkConfig, '--networkConfig');
       await poolApiService
         .getAllPools(networkConfig.appApiUrl)
         .then((data: any) => {
