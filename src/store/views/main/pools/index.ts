@@ -11,7 +11,9 @@ import {
   initAggregators,
   initReversePools,
 } from '@/store/views/main/pools/helpers.ts';
-import { FEATURED_POOLS, poolTokensForZapMap, zapPlatformSupportList } from '@/store/views/main/pools/mocks.ts';
+import {
+  HOT_POOLS, NEW_POOLS, POOL_TAG, poolTokensForZapMap, zapPlatformSupportList,
+} from '@/store/views/main/pools/mocks.ts';
 import { loadTokenImage } from '@/utils/tokenLogo.ts';
 import { isArray } from 'lodash';
 
@@ -71,13 +73,13 @@ const actions = {
     const networkConfigList = [...rootState.network.allNetworkConfigs];
 
     for (const networkConfig of networkConfigList) {
-      console.log(networkConfig, '--networkConfig');
       await poolApiService
         .getAllPools(networkConfig.appApiUrl)
         .then((data: any) => {
           if (data) {
             const buildPools = data.map((pool: any) => {
               let tokenNames = pool.id.name.split('/');
+              let poolTag = null;
 
               if (pool?.id?.name === 'Convex USD+FRAXBP') {
                 tokenNames = ['USD+', 'FRAX'];
@@ -109,12 +111,10 @@ const actions = {
 
                 const newName = pool.id.name.toUpperCase();
 
-                // currently feature === hot
-                if (FEATURED_POOLS.includes(pool.id.address)) {
-                  pool.feature = true;
-                } else {
-                  pool.feature = false;
-                }
+                if (HOT_POOLS.includes(pool.id.address)) poolTag = POOL_TAG.HOT;
+
+                if (NEW_POOLS.includes(pool.id.address)) poolTag = POOL_TAG.NEW;
+                // if (LOW_TVL_PROMOTE.includes(pool.id.address)) poolTag = POOL_TAG.NEW;
 
                 return {
                   id: pool.id.name + pool.tvl + pool.platform,
@@ -129,9 +129,9 @@ const actions = {
                   platform: isArray(pool.platform) ? pool.platform : [pool.platform],
                   tvl: pool.tvl,
                   apr: pool.apr,
+                  poolTag,
                   skimEnabled: pool.skimEnabled,
                   explorerUrl: networkConfig.explorerUrl,
-                  feature: pool.feature,
                   zappable: pool.zappable,
                   cardOpened: false,
                   data: pool,
@@ -164,45 +164,6 @@ const actions = {
       for (let i = 0; i < state.allPools.length; i++) {
         const pool = state.allPools[i];
         initReversePools(pool, state.allPools);
-      }
-
-      // init top pool
-      const featuredPools = state.allPools.filter(
-        (pool: any) => pool.chain === rootState.network.networkId && pool.feature,
-      );
-      featuredPools.sort((a: any, b: any) => b.apr - a.apr);
-      if (featuredPools.length > 0) {
-        commit('changeState', {
-          field: 'topPool',
-          val: featuredPools[0],
-        });
-      } else {
-        const topByApr = state.allPools.filter(
-          (pool: any) => pool.chain === rootState.network.networkId
-            && (pool.tvl > 100000 || pool.promoted),
-        );
-        topByApr.sort((a: any, b: any) => b.apr - a.apr);
-
-        if (topByApr.length > 0) {
-          commit('changeState', {
-            field: 'topPool',
-            val: topByApr[0],
-          });
-        } else {
-          // any network
-          const randomFeaturedPools = state.allPools.filter(
-            (pool: any) => pool.feature,
-          );
-          randomFeaturedPools.sort((a: any, b: any) => b.apr - a.apr);
-          if (randomFeaturedPools.length > 0) {
-            commit('changeState', {
-              field: 'topPool',
-              val: randomFeaturedPools[
-                Math.floor(Math.random() * randomFeaturedPools.length)
-              ],
-            });
-          }
-        }
       }
 
       // top pool from all pools

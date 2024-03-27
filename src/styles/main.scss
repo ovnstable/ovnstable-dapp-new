@@ -171,6 +171,24 @@ $avatar-offset: 52 + 16;
   }
 }
 
+@keyframes pulse-animation-green {
+  0% {
+    box-shadow: 0 0 0 0 rgba(145, 184, 69, .3);
+  }
+  100% {
+    box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
+  }
+}
+
+@keyframes pulse-animation-red {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 107, 108, 0.3);
+  }
+  100% {
+    box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
+  }
+}
+
 @keyframes pulse-animation-blue {
   0% {
     box-shadow: 0 0 0 0 rgba(4, 151, 236, 0.4);
