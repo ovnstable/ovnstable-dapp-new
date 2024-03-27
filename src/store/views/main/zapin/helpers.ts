@@ -208,7 +208,6 @@ export const approveGaugeForStake = async (
   poolTokenContract: any,
   account: string,
   routerContract: any,
-  gasPriceGwei: any,
 ) => {
   const approveValue = new BigNumber(10).pow(24).toFixed();
   showWaitingModal('Approving gauge in process');
@@ -231,7 +230,6 @@ export const approveGaugeForStake = async (
       gaugeContract.target,
       approveValue,
       account,
-      gasPriceGwei,
     );
     await tx.wait();
     closeWaitingModal();
@@ -248,18 +246,16 @@ export const depositAllAtGauge = async (
   lastNftTokenId: string,
   currentZapPlatformContractType: any,
   gaugeContract: any,
-  gasPriceGwei: any,
   zapPoolRoot: any,
   poolTokenContract: any,
 ) => {
-  const params = { from: account, gasPrice: gasPriceGwei };
+  const params = { from: account };
   console.log(
     account,
     lastPoolInfoData,
     lastNftTokenId,
     currentZapPlatformContractType,
     gaugeContract,
-    gasPriceGwei,
     zapPoolRoot,
     poolTokenContract,
     'DEparamsP',

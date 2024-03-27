@@ -481,6 +481,10 @@ export const FEATURED_POOLS = [
   // CURVE
   '0x1446999B0b0E4f7aDA6Ee73f2Ae12a2cfdc5D9E7',
   '0xb34a7d1444a707349Bc7b981B7F2E1f20F81F013',
+
+  // SWAPBLAST
+  '0x49b6992dbacf7caa9cbf4dbc37234a0167b8edcd',
+  '0xb70ab4c4be5872fdd22f43c5907428198cdcb2d5',
 ];
 
 export const FIRST_MIN_AMOUNT = 300000;
@@ -491,6 +495,7 @@ export const LOW_TVL_PROMOTE = [
   '0xb9c2d906f94b27bc403ab76b611d2c4490c2ae3f',
   '0x844D7d2fCa6786Be7De6721AabdfF6957ACE73a0',
   '0x721f37495cd70383b0a77bf1eb8f97eef29498bb',
+  '0x46e1B51e07851301f025ffeA506b140dB80a214A',
 
   // VELOCORE
   '0x1d0188c4b276a09366d05d6be06af61a73bc7535',
@@ -498,6 +503,8 @@ export const LOW_TVL_PROMOTE = [
 
   // PANCAKE
   '0x6a8fc7e8186ddc572e149dfaa49cfae1e571108b',
+  '0x714d48cb99b87f274b33a89fbb16ead191b40b6c',
+
   // LYNEX
   '0x58aacbccaec30938cb2bb11653cad726e5c4194a',
   '0xc5f4c5c2077bbbac5a8381cf30ecdf18fde42a91',

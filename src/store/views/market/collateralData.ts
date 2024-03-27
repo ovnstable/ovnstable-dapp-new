@@ -1,6 +1,6 @@
 import MarketApiService from '@/services/market-api-service.ts';
 import { TOKENS } from '@/store/views/market/mock.ts';
-import { type Collateral } from '@/modules/Market/types';
+import { type Collateral } from '@/modules/Market/types/index.ts';
 
 const state = {
   collateralData: {},

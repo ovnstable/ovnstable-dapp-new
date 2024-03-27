@@ -3,6 +3,7 @@
 import { poolTypes } from '@/modules/Main/components/PoolsTable/types/index.ts';
 import BigNumber from 'bignumber.js';
 import {
+  FEATURED_POOLS,
   FIRST_MIN_AMOUNT, LOW_TVL_PROMOTE, SECOND_MIN_AMOUNT,
 } from './mocks.ts';
 
@@ -111,6 +112,9 @@ export const buildLink = (pool: any, poolPlatform: string) => {
     case 'Swapbased':
       url = 'https://swapbased.finance/#/farm';
       break;
+    case 'Swapblast':
+      url = 'https://swapblast.finance/#/farm';
+      break;
     case 'Curve':
       url = `https://curve.fi/#/arbitrum/pools?hideSmallPools=false&search=${pool.address}`;
       break;
@@ -153,6 +157,7 @@ export const buildLink = (pool: any, poolPlatform: string) => {
     || poolPlatform === 'Arbidex'
     || poolPlatform === 'Gnd'
     || poolPlatform === 'Baseswap'
+    || poolPlatform === 'Swapblast'
     || poolPlatform === 'Velocimeter'
     || poolPlatform === 'Swapbased'
     || poolPlatform === 'Maverick'
@@ -321,6 +326,7 @@ export const getSortedPools = (
   if (!filterByTvl) {
     poolsList = filteredPools
       .filter((pool) => {
+        if (FEATURED_POOLS.includes(pool.address)) return true;
         if (LOW_TVL_PROMOTE.includes(pool.address)) return true;
         if (pool.tvl >= FIRST_MIN_AMOUNT) return true;
 

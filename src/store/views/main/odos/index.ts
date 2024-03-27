@@ -9,7 +9,6 @@ import {
   getFilteredOvernightTokens,
   getFilteredPoolTokens,
   loadPriceTrigger,
-  loadPrices,
 } from '@/store/helpers/index.ts';
 import BigNumber from 'bignumber.js';
 import { getNetworkParams } from '@/store/web3/network.ts';
@@ -89,7 +88,7 @@ export const stateData = {
 
   listOfBuyTokensAddresses: null, // for POOL_SWAP scheme
   odosReferalCode: 7777777, // test account or user acc
-  odosZapReferalCode: 3000000005 || 7777777, // test account
+  odosZapReferalCode: 7777777, // test account
 
   swapSessionId: null,
 };
@@ -294,8 +293,7 @@ const actions = {
     commit, state, dispatch, rootState,
   }: any) {
     if (rootState.accountData.account) {
-      const ERC20 = await loadJSON('/contracts/ERC20.json');
-      await dispatch('loadContractsForTokens', ERC20);
+      await dispatch('loadContractsForTokens');
       await dispatch('loadBalances');
 
       commit('changeState', { field: 'isTokensLoadedAndFiltered', val: true });
@@ -306,12 +304,12 @@ const actions = {
   },
   loadContractsForTokens({
     commit, state, getters, rootState,
-  }: any, contractFile: any) {
+  }: any) {
     const tokensList: any = {};
     for (let i = 0; i < getters.allTokensList.length; i++) {
       const token: any = getters.allTokensList[i];
       tokensList[token.address] = buildEvmContract(
-        contractFile.abi,
+        ERC20_ABI,
         rootState.web3.evmSigner,
         token.address,
       );

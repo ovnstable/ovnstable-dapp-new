@@ -448,7 +448,6 @@ export default {
     ...mapGetters('web3', ['loadingWeb3']),
     ...mapGetters('accountData', ['account']),
     ...mapGetters('network', ['getParams', 'networkId', 'networkName']),
-    ...mapGetters('gasPrice', ['gasPrice', 'gasPriceGwei']),
 
     deviceSize() {
       return deviceType();
@@ -1233,7 +1232,6 @@ export default {
         tokenContract,
         this.routerContract.target,
         this.account,
-        this.gasPriceGwei,
       )
         .then(() => {
           this.checkApproveForToken(token);
@@ -1299,12 +1297,13 @@ export default {
         .times(100000)
         .toFixed(0);
 
+      console.log(tokenContract, '--tokenContract');
+      console.log(this.routerContract, '--this.routerContract');
       const tx = await approveToken(
         tokenContract,
         this.routerContract.target,
         approveValue,
         this.account,
-        this.gasPriceGwei,
       )
         .catch((e) => {
           console.error('Error when approve token.', e);
