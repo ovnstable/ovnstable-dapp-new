@@ -16,11 +16,11 @@
         :token-data="tokenData"
         :loaded="loaded"
       />
-      <OvnBenefits v-if="!insuranceIsMobileOvnDashboard" />
-      <OvnTokenomics v-if="!insuranceIsMobileOvnDashboard" />
+      <OvnBenefits v-if="!insuranceIsMobileOvnDashboard && !insuranceIsMobileMintRedeem" />
+      <OvnTokenomics v-if="!insuranceIsMobileOvnDashboard && !insuranceIsMobileMintRedeem" />
     </div>
     <div
-      v-if="!insuranceIsMobileOvnDashboard"
+      v-if="!insuranceIsMobileOvnDashboard && !insuranceIsMobileMintRedeem"
       class="ovn__pools"
     >
       <PoolsContainer
@@ -70,6 +70,9 @@ export default {
     },
   },
   computed: {
+    insuranceIsMobileMintRedeem() {
+      return this.$store.state.insuranceTokenData.isMobileMintRedeem.value;
+    },
     insuranceIsMobileOvnDashboard() {
       return this.$store.state.insuranceTokenData.isMobileOvnDashboard.value;
     },

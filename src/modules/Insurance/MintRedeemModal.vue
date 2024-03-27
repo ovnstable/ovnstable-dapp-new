@@ -5,8 +5,131 @@
     v-model="showModal"
     @close="closeModal"
   >
-    <div class="insurance__modal-mint-redeem">
+    <SwitchChainInsurance
+      v-if="!isAvailableChain"
+    />
+    <div v-else>
+      <div class="insurance__modal-mint-redeem">
+        <div class="insurance__modal-mint-redeem-buttons">
+          <ButtonComponent
+            :class="{
+              'insurance__modal-mint-redeem-button-selected': selectedAction === 'mint',
+              'insurance__modal-mint-redeem-button-first': true,
+              'insurance__modal-mint-redeem-button-overlap-first': selectedAction !== 'mint',
+            }"
+            @click="selectedAction = 'mint'"
+          >
+            <p>MINT</p>
+          </ButtonComponent>
+          <ButtonComponent
+            :class="{
+              'insurance__modal-mint-redeem-button-selected': selectedAction === 'redeem',
+              'insurance__modal-mint-redeem-button-last': true,
+              'insurance__modal-mint-redeem-button-overlap-last': selectedAction === 'redeem',
+            }"
+            @click="selectedAction = 'redeem'"
+          >
+            <p>REDEEM</p>
+          </ButtonComponent>
+        </div>
+        <p class="insurance__modal-mint-redeem-mint-text">You {{selectedAction === 'mint' ? "Mint" : "Redeem"}}</p>
+        <div class="insurance__modal-input-group">
+          <InputTokenInsurance
+            :is-mint="selectedAction === 'mint'"
+            :original-balance="originalBalance"
+            :token-val="fromValue"
+            @input-change="changeInput"
+          />
+          <InputTokenInsurance
+            :is-mint="selectedAction !== 'mint'"
+            :original-balance="originalBalance"
+            :token-val="toValue"
+            @input-change="changeInput"
+          />
+        </div>
+        <div class="insurance__modal-info">
+          <div class="insurance__modal-info-fee">
+            <p>Overight fee:</p>
+            <p>0.0%</p>
+          </div>
+          <div class="insurance__modal-info-mint">
+            <p>You mint:</p>
+            <p>{{ fromValueInUsd }}$</p>
+          </div>
+          <p>1 OVN = 1 OVN INS</p>
+        </div>
+        <InsuranceGasSettings />
+        <ButtonComponent
+          v-if="!fromValue"
+          btn-size="medium"
+          btn-styles="faded"
+          class="insurance__modal-mint-button"
+          disabled
+        >
+          {{ selectedAction === 'mint' ? 'ENTER AMOUNT TO MINT' : 'ENTER AMOUNT TO REDEEM' }}
+        </ButtonComponent>
+        <ButtonComponent
+          v-else-if="requestRequired"
+          btn-size="medium"
+          class="insurance__modal-mint-button"
+          @on-click="sendRedemptionRequest"
+        >
+          Send redeem request (72 hours)
+        </ButtonComponent>
+        <ButtonComponent
+          v-else-if="pendingRedemption"
+          btn-size="medium"
+          :btn-styles="redemptionDisabled ? 'faded' : 'primary'"
+          :disabled="redemptionDisabled"
+          class="insurance__modal-mint-button"
+          @on-click="sendRedemptionRequest"
+        >
+          Wait for redeem ({{ insuranceRedemptionData?.hours?.toFixed(2) }} hours)
+        </ButtonComponent>
+        <ButtonComponent
+          btn-styles="primary"
+          btn-size="medium"
+          v-else-if="!tokenApproved"
+          class="insurance__modal-mint-button"
+          @on-click="triggerApprove"
+        >
+          APPROVE
+        </ButtonComponent>
+        <ButtonComponent
+          btn-size="medium"
+          btn-styles="primary"
+          class="insurance__modal-mint-button"
+          v-else
+          @on-click="confirmSwapAction"
+        >
+          {{ selectedAction === 'mint' ? 'MINT' : 'REDEEM' }}
+        </ButtonComponent>
+      </div>
+      <StepsRow
+        class="insurance__modal-steps"
+        :current-stage="currentStage"
+      />
+    </div>
+
+  </ModalComponent>
+  <div
+    class="insurance__modal-mint-redeem"
+    v-else-if="insuranceIsMobileMintRedeem"
+  >
+    <SwitchChainInsurance
+      @closeModal="toggleModalMintRedeem"
+      v-if="!isAvailableChain"
+    />
+    <div v-else>
       <div class="insurance__modal-mint-redeem-buttons">
+        <ButtonComponent
+          @click="toggleModalMintRedeem()"
+          @keydown.enter="toggleModalMintRedeem()"
+        >
+          <BaseIcon
+            name='ArrowExitMobile'
+          />
+        </ButtonComponent>
         <ButtonComponent
           :class="{
             'insurance__modal-mint-redeem-button-selected': selectedAction === 'mint',
@@ -28,199 +151,86 @@
           <p>REDEEM</p>
         </ButtonComponent>
       </div>
-      <p class="insurance__modal-mint-redeem-mint-text">You {{selectedAction === 'mint' ? "Mint" : "Redeem"}}</p>
-      <div class="insurance__modal-input-group">
-        <InputTokenInsurance
-          :is-mint="selectedAction === 'mint'"
-          :original-balance="originalBalance"
-          :token-val="fromValue"
-          @input-change="changeInput"
-        />
-        <!-- <p class="insurance__modal-input-group-slider"> slider</p> -->
-        <InputTokenInsurance
-          :is-mint="selectedAction !== 'mint'"
-          :original-balance="originalBalance"
-          :token-val="toValue"
-          @input-change="changeInput"
-        />
-      </div>
-      <div class="insurance__modal-info">
-        <div class="insurance__modal-info-fee">
-          <p>Overight fee:</p>
-          <p>0.0%</p>
-        </div>
-        <div class="insurance__modal-info-mint">
-          <p>You mint:</p>
-          <p>{{ fromValueInUsd }}$</p>
-        </div>
-        <p>1 OVN = 1 OVN INS</p>
-      </div>
-      <InsuranceGasSettings />
-      <ButtonComponent
-        v-if="!fromValue"
-        btn-size="medium"
-        btn-styles="faded"
-        class="insurance__modal-mint-button"
-        disabled
-      >
-        {{ selectedAction === 'mint' ? 'ENTER AMOUNT TO MINT' : 'ENTER AMOUNT TO REDEEM' }}
-      </ButtonComponent>
-      <ButtonComponent
-        v-else-if="requestRequired"
-        btn-size="medium"
-        class="insurance__modal-mint-button"
-        @on-click="sendRedemptionRequest"
-      >
-        Send redeem request (72 hours)
-      </ButtonComponent>
-      <ButtonComponent
-        v-else-if="pendingRedemption"
-        btn-size="medium"
-        :btn-styles="redemptionDisabled ? 'faded' : 'primary'"
-        :disabled="redemptionDisabled"
-        class="insurance__modal-mint-button"
-        @on-click="sendRedemptionRequest"
-      >
-        Wait for redeem ({{ insuranceRedemptionData?.hours?.toFixed(2) }} hours)
-      </ButtonComponent>
-      <ButtonComponent
-        btn-styles="primary"
-        btn-size="medium"
-        v-else-if="!tokenApproved"
-        class="insurance__modal-mint-button"
-        @on-click="triggerApprove"
-      >
-        APPROVE
-      </ButtonComponent>
-      <ButtonComponent
-        btn-size="medium"
-        btn-styles="primary"
-        class="insurance__modal-mint-button"
-        v-else
-        @on-click="confirmSwapAction"
-      >
-        {{ selectedAction === 'mint' ? 'MINT' : 'REDEEM' }}
-      </ButtonComponent>
-    </div>
-    <StepsRow
-      class="insurance__modal-steps"
-      :current-stage="currentStage"
-    />
-  </ModalComponent>
-  <div
-    class="insurance__modal-mint-redeem"
-    v-else-if="insuranceIsMobileMintRedeem"
-  >
-    <div class="insurance__modal-mint-redeem-buttons">
-      <ButtonComponent
-        @click="toggleModalMintRedeem()"
-        @keydown.enter="toggleModalMintRedeem()"
-      >
-        <BaseIcon
-          name='ArrowExitMobile'
-        />
-      </ButtonComponent>
-      <ButtonComponent
-        :class="{
-          'insurance__modal-mint-redeem-button-selected': selectedAction === 'mint',
-          'insurance__modal-mint-redeem-button-first': true,
-          'insurance__modal-mint-redeem-button-overlap-first': selectedAction !== 'mint',
-        }"
-        @click="selectedAction = 'mint'"
-      >
-        <p>MINT</p>
-      </ButtonComponent>
-      <ButtonComponent
-        :class="{
-          'insurance__modal-mint-redeem-button-selected': selectedAction === 'redeem',
-          'insurance__modal-mint-redeem-button-last': true,
-          'insurance__modal-mint-redeem-button-overlap-last': selectedAction === 'redeem',
-        }"
-        @click="selectedAction = 'redeem'"
-      >
-        <p>REDEEM</p>
-      </ButtonComponent>
-    </div>
-    <StepsRow
-      class="insurance__modal-steps"
-      :current-stage="currentStage"
-    />
-    <div class="insurance__modal-mint-redeem">
+      <StepsRow
+        class="insurance__modal-steps"
+        :current-stage="currentStage"
+      />
+      <div class="insurance__modal-mint-redeem">
 
-      <p class="insurance__modal-mint-redeem-mint-text">You {{selectedAction === 'mint' ? "Mint" : "Redeem"}}</p>
-      <div class="insurance__modal-input-group">
-        <InputTokenInsurance
-          :is-mint="selectedAction === 'mint'"
-          :original-balance="originalBalance"
-          :token-val="fromValue"
-          @input-change="changeInput"
-        />
-        <InputTokenInsurance
-          :is-mint="selectedAction !== 'mint'"
-          :original-balance="originalBalance"
-          :token-val="toValue"
-          @input-change="changeInput"
-        />
-      </div>
-      <div class="insurance__modal-info">
-        <div class="insurance__modal-info-fee">
-          <p>Overight fee:</p>
-          <p>0.0%</p>
+        <p class="insurance__modal-mint-redeem-mint-text">You {{selectedAction === 'mint' ? "Mint" : "Redeem"}}</p>
+        <div class="insurance__modal-input-group">
+          <InputTokenInsurance
+            :is-mint="selectedAction === 'mint'"
+            :original-balance="originalBalance"
+            :token-val="fromValue"
+            @input-change="changeInput"
+          />
+          <InputTokenInsurance
+            :is-mint="selectedAction !== 'mint'"
+            :original-balance="originalBalance"
+            :token-val="toValue"
+            @input-change="changeInput"
+          />
         </div>
-        <div class="insurance__modal-info-mint">
-          <p>You mint:</p>
-          <p>{{ fromValueInUsd }}$</p>
+        <div class="insurance__modal-info">
+          <div class="insurance__modal-info-fee">
+            <p>Overight fee:</p>
+            <p>0.0%</p>
+          </div>
+          <div class="insurance__modal-info-mint">
+            <p>You mint:</p>
+            <p>{{ fromValueInUsd }}$</p>
+          </div>
+          <p>1 OVN = 1 OVN INS</p>
         </div>
-        <p>1 OVN = 1 OVN INS</p>
+        <InsuranceGasSettings />
+        <ButtonComponent
+          v-if="!fromValue"
+          btn-size="medium"
+          btn-styles="faded"
+          class="insurance__modal-mint-button"
+          disabled
+        >
+          {{ selectedAction === 'mint' ? 'ENTER AMOUNT TO MINT' : 'ENTER AMOUNT TO REDEEM' }}
+        </ButtonComponent>
+        <ButtonComponent
+          v-else-if="requestRequired"
+          btn-size="medium"
+          class="insurance__modal-mint-button"
+          @on-click="sendRedemptionRequest"
+        >
+          Send redeem request (72 hours)
+        </ButtonComponent>
+        <ButtonComponent
+          v-else-if="pendingRedemption"
+          btn-size="medium"
+          :btn-styles="redemptionDisabled ? 'faded' : 'primary'"
+          :disabled="redemptionDisabled"
+          class="insurance__modal-mint-button"
+          @on-click="sendRedemptionRequest"
+        >
+          Wait for redeem ({{ insuranceRedemptionData?.hours?.toFixed(2) }} hours)
+        </ButtonComponent>
+        <ButtonComponent
+          btn-styles="primary"
+          btn-size="medium"
+          v-else-if="!tokenApproved"
+          class="insurance__modal-mint-button"
+          @on-click="triggerApprove"
+        >
+          APPROVE
+        </ButtonComponent>
+        <ButtonComponent
+          btn-size="medium"
+          btn-styles="primary"
+          class="insurance__modal-mint-button"
+          v-else
+          @on-click="confirmSwapAction"
+        >
+          {{ selectedAction === 'mint' ? 'MINT' : 'REDEEM' }}
+        </ButtonComponent>
       </div>
-      <InsuranceGasSettings />
-      <ButtonComponent
-        v-if="!fromValue"
-        btn-size="medium"
-        btn-styles="faded"
-        class="insurance__modal-mint-button"
-        disabled
-      >
-        {{ selectedAction === 'mint' ? 'ENTER AMOUNT TO MINT' : 'ENTER AMOUNT TO REDEEM' }}
-      </ButtonComponent>
-      <ButtonComponent
-        v-else-if="requestRequired"
-        btn-size="medium"
-        class="insurance__modal-mint-button"
-        @on-click="sendRedemptionRequest"
-      >
-        Send redeem request (72 hours)
-      </ButtonComponent>
-      <ButtonComponent
-        v-else-if="pendingRedemption"
-        btn-size="medium"
-        :btn-styles="redemptionDisabled ? 'faded' : 'primary'"
-        :disabled="redemptionDisabled"
-        class="insurance__modal-mint-button"
-        @on-click="sendRedemptionRequest"
-      >
-        Wait for redeem ({{ insuranceRedemptionData?.hours?.toFixed(2) }} hours)
-      </ButtonComponent>
-      <ButtonComponent
-        btn-styles="primary"
-        btn-size="medium"
-        v-else-if="!tokenApproved"
-        class="insurance__modal-mint-button"
-        @on-click="triggerApprove"
-      >
-        APPROVE
-      </ButtonComponent>
-      <ButtonComponent
-        btn-size="medium"
-        btn-styles="primary"
-        class="insurance__modal-mint-button"
-        v-else
-        @on-click="confirmSwapAction"
-      >
-        {{ selectedAction === 'mint' ? 'MINT' : 'REDEEM' }}
-      </ButtonComponent>
     </div>
-
   </div>
 </template>
 
@@ -232,10 +242,12 @@ import ButtonComponent from '@/components/Button/Index.vue';
 import ModalComponent from '@/components/Modal/Index.vue';
 import InsuranceGasSettings from '@/modules/Insurance/InsuranceGasSettings.vue';
 import InputTokenInsurance from '@/modules/Insurance/InsuranceTokenForm.vue';
+import SwitchChainInsurance from '@/modules/Insurance/SwitchChainModal.vue';
 import BigNumber from 'bignumber.js';
 import { approveToken, getAllowanceValue } from '@/utils/contractApprove.ts';
 import { debounce } from 'lodash';
 import { deviceType } from '@/utils/deviceType.ts';
+import { chainContractsMap } from '@/utils/contractsMap.ts';
 import StepsRow, { mintRedeemStep } from '@/components/StepsRow/Index.vue';
 
 export default {
@@ -247,6 +259,7 @@ export default {
     ButtonComponent,
     StepsRow,
     InputTokenInsurance,
+    SwitchChainInsurance,
   },
   data() {
     return {
@@ -317,6 +330,19 @@ export default {
       if (this.insuranceRedemptionData.request === 'CAN_WITHDRAW') return false;
       if (this.selectedAction === 'redeem' && !this.redemptionRequestSent) return true;
       return false;
+    },
+    isAvailableChain() {
+      const availableNetworks = Object.entries(chainContractsMap)
+        .reduce((acc: string[], [network, contracts]: [string, any]) => {
+          if (contracts.token_insurance) {
+            acc.push(network.charAt(0).toUpperCase() + network.slice(1));
+          }
+          return acc;
+        }, []);
+
+      const currentNetworkFormatted = this.networkName.charAt(0)
+        .toUpperCase() + this.networkName.slice(1);
+      return availableNetworks.includes(currentNetworkFormatted);
     },
   },
   methods: {

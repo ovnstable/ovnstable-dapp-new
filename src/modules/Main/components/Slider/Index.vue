@@ -306,7 +306,7 @@ export default {
   align-items: center;
   margin: 50px 40px 50px auto;
   @media (max-width: 1200px) {
-    width: 50%;
+    width: 30%;
     margin: 20px 10px 20px auto;
   }
   @media (max-width: 1024px) {
@@ -330,6 +330,9 @@ export default {
   margin-right: 25px;
   display: flex;
   flex-direction: column;
+  @media (max-width: 1100px) and (min-width: 1024px) {
+    max-width: 180px;
+  }
 }
 
 .swiper-container {
@@ -342,6 +345,11 @@ export default {
   flex-direction: row;
   align-items: center;
   gap: 8px;
+  @media (max-width: 1100px) and (min-width: 1024px) {
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 .slider__token-title,
