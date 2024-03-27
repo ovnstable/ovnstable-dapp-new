@@ -40,13 +40,6 @@ export default {
         postfix: 'zap_to_allpools',
       },
       {
-        id: 4,
-        description: 'Explore TOP POOLS on the [Featured page]',
-        linkWord: 'Featured page',
-        link: 'https://app.overnight.fi/featured',
-        postfix: 'featured_page',
-      },
-      {
         id: 5,
         description: 'Audit your risks on the [Collateral page]',
         linkWord: 'Collateral page',

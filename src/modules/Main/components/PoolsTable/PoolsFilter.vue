@@ -106,7 +106,7 @@ export default {
           name: 'OVN',
         },
         {
-          id: poolTypes.FEATURED,
+          id: poolTypes.HOT,
           name: 'HOT',
         },
       ],
@@ -143,6 +143,7 @@ export default {
 <style lang="scss" scoped>
 .pools-wrap__filters {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 20px;
@@ -155,11 +156,13 @@ export default {
     border-color: var(--color-2);
   }
 
-  @media (max-width: 1240px) {
-    flex-wrap: wrap;
+  @media (max-width: 1300px) {
+    position: sticky;
+    left: 0;
   }
   @media (max-width: 1024px) {
     position: sticky;
+    flex-wrap: wrap;
     left: 0;
   }
   @media (max-width: 640px) {

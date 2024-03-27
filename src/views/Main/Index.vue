@@ -31,5 +31,8 @@ export default {
 .main-module {
   width: 100%;
   z-index: 1;
+  @media (max-width: 1320px) and (min-width: 1024px) {
+    width: 80%;
+  }
 }
 </style>

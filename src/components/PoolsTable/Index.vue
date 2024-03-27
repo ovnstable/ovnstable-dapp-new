@@ -73,11 +73,15 @@
                     {{ getTokenNames(pool)[1] }}
                   </span>
                   <div
-                    class="pools-table__hot"
-                    v-if="pool.feature && !pool.token2Icon"
+                    v-if="pool.poolTag && !pool.token2Icon"
+                    class="pools-table__tag"
+                    :class="{
+                      'pools-table--hot': pool.poolTag === POOL_TAG.HOT,
+                      'pools-table--new': pool.poolTag === POOL_TAG.NEW,
+                    }"
                   >
-                    <BaseIcon name="CommonHot" />
-                    HOT
+                    <BaseIcon :name="getIconName(pool.poolTag)" />
+                    {{ getTagName(pool.poolTag)}}
                   </div>
                 </div>
                 <div
@@ -92,11 +96,11 @@
                     {{ getTokenNames(pool)[2] }}
                   </span>
                   <div
-                    class="pools-table__hot-token-3"
-                    v-if="pool.feature && pool.token2Icon"
+                    class="pools-table__tag-token-3"
+                    v-if="pool.poolTag && pool.token2Icon"
                   >
-                    <BaseIcon name="CommonHot" />
-                    HOT
+                    <BaseIcon :name="getIconName(pool.poolTag)" />
+                    {{ getTagName(pool.poolTag)}}
                   </div>
                 </div>
                 <div
@@ -178,7 +182,7 @@
             <ButtonComponent
               v-if="pool.zappable"
               btnStyles="faded"
-              @click="openZapIn(pool, 'featured')"
+              @click="openZapIn(pool)"
             >
               ZAP IN
             </ButtonComponent>
@@ -212,6 +216,7 @@ import ButtonComponent from '@/components/Button/Index.vue';
 import { formatMoneyComma, formatNumberToMln, formatNumberToThousands } from '@/utils/numbers.ts';
 import ZapInComponent from '@/modules/Main/components/ZapModal/Index.vue';
 import { buildLink } from '@/store/views/main/pools/helpers.ts';
+import { POOL_TAG } from '@/store/views/main/pools/mocks.ts';
 
 export default {
   name: 'PoolsTable',
@@ -219,6 +224,11 @@ export default {
     BaseIcon,
     ZapInComponent,
     ButtonComponent,
+  },
+  data() {
+    return {
+      POOL_TAG,
+    };
   },
   props: {
     pools: {
@@ -244,6 +254,22 @@ export default {
     },
   },
   computed: {
+    getTagName() {
+      return (poolTag: string) => {
+        if (poolTag === POOL_TAG.HOT) return 'HOT';
+        if (poolTag === POOL_TAG.NEW) return 'NEW';
+        if (poolTag === POOL_TAG.PROMO) return 'PROMO';
+        return '';
+      };
+    },
+    getIconName() {
+      return (poolTag: string) => {
+        if (poolTag === POOL_TAG.HOT) return 'CommonHot';
+        if (poolTag === POOL_TAG.NEW) return 'CommonStar';
+        if (poolTag === POOL_TAG.PROMO) return 'CommonPromo';
+        return '';
+      };
+    },
     getTokenNames() {
       return (pool: any) => pool.name.split('/');
     },
@@ -626,31 +652,57 @@ export default {
   }
 }
 
-.pools-table__hot,
-.pools-table__hot-token-3 {
+.pools-table__tag,
+.pools-table__tag-token-3 {
   position: absolute;
   display: flex;
   align-items: center;
   gap: 6px;
   border-radius: 30px;
-  border: 1px solid var(--color-6);
-  color: var(--color-3);
-  background-color: var(--color-4);
   font-weight: 500;
   font-size: 10px;
   height: 19px;
   padding: 0 4px;
-  animation: pulse-animation-blue 3s infinite;
+  border: 1px solid var(--color-6);
+  background-color: var(--color-4);
+
   [data-theme="dark"] & {
-    color: var(--color-4);
     background-color: var(--color-17);
   }
 }
-.pools-table__hot {
+
+.pools-table--new {
+  color: var(--color-12);
+  animation: pulse-animation-green 3s infinite;
+
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
+}
+
+.pools-table--hot {
+  color: var(--color-10);
+  animation: pulse-animation-red 3s infinite;
+
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
+}
+
+.pools-table--promo {
+  color: var(--color-3);
+  animation: pulse-animation-blue 3s infinite;
+
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
+}
+
+.pools-table__tag {
   top: -12px;
   right: -25px;
 }
-.pools-table__hot-token-3  {
+.pools-table__tag-token-3  {
   top: -12px;
   right: -25px;
 }
@@ -662,17 +714,29 @@ export default {
     color: var(--color-3);
   }
 }
-@media (max-width: 1350px) {
-  .pools-table__row {
-    grid-template-columns: 0.5fr 2fr 2fr 1fr 1.35fr 0.75fr;
+@media (max-width: 1320px) {
+  .pools-table {
+    overflow: hidden;
+    overflow-x: auto
+  }
+
+  .pools-table__footer {
+    position: sticky;
+    min-width: auto;
+    left: 0;
+    padding-bottom: 30px;
+  }
+  .pools-header,
+  .pools-table__content {
+    min-width: 150%;
+    overflow-x: scroll;
   }
 }
-@media (max-width: 1200px) {
-  .pools-table__row {
-    grid-template-columns:  0.4fr 1.8fr 1.5fr 1fr 1fr 0.75fr;
-  }
-  .pools-header {
-    grid-template-columns: 0.5fr 2.2fr 2fr 1fr 1fr 1fr;
+@media (max-width: 1024px) {
+  .pools-table__tag,
+  .pools-table__tag-token-3 {
+    top: -36px;
+    right: -35px;
   }
 }
 @media (max-width: 1000px) {
@@ -683,12 +747,13 @@ export default {
 
   .pools-table__footer {
     position: sticky;
-    left: 0;
+    min-width: auto;
+      left: 0;
     padding-bottom: 30px;
   }
   .pools-header,
   .pools-table__content {
-    min-width: 850px;
+    min-width: 1000px;
     overflow-x: scroll;
   }
 }
@@ -720,11 +785,11 @@ export default {
       font-size: 14px;
     }
   }
-  .pools-table__hot {
+  .pools-table__tag {
     top: -40px;
     right: -31px;
   }
-  .pools-table__hot-token-3  {
+  .pools-table__tag-token-3  {
     top: -60px;
     right: -36px;
   }
