@@ -119,6 +119,7 @@ export function getNetworkParams(networkName: string | number | null) {
   switch (networkName) {
     case 'blast':
     case '81457':
+    case 81457:
       return BLAST_PARAMS;
     case 'polygon':
     case 'polygon_dev':
