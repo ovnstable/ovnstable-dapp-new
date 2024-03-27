@@ -68,8 +68,12 @@
             :class="['lineLoader', 'app-header__balance-loader']"
           />
 
+          <div
+            v-if="account && balancesLoading && deviceSize.isDesktop"
+            :class="['lineLoader']"
+          />
           <UserBalances
-            v-if="walletConnected"
+            v-else-if="walletConnected"
             class="app-header__balances"
           />
           <div
