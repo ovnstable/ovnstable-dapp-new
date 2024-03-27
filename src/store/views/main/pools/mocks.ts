@@ -476,6 +476,7 @@ export const NEW_POOLS = [
   // BLAST
   '0x49b6992dbacf7caa9cbf4dbc37234a0167b8edcd',
   '0xb70ab4c4be5872fdd22f43c5907428198cdcb2d5',
+  '0x952388d73EA3E940eD6824DBd75ed6aD58e6B436',
 ];
 
 export const HOT_POOLS = [
