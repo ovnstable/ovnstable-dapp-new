@@ -1161,6 +1161,8 @@ export default {
         proportion0: new BigNumber(reserves[0]).times(outputPrices[0]).div(sumReserves).toNumber(),
       });
 
+      console.log(proportions);
+
       proportions.outputTokens = proportions.outputTokens.filter(
         (item: any) => item.proportion > 0,
       );

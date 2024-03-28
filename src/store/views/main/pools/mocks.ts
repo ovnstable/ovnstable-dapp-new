@@ -356,6 +356,17 @@ export const poolTokensForZapMap = {
       address: '0x417Ac0e078398C154EdFadD9Ef675d30Be60Af93',
     },
   ],
+  '0xb34a7d1444a707349Bc7b981B7F2E1f20F81F013': [
+    {
+      name: 'USD+',
+      address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
+    },
+    {
+      name: 'FRAXBP-f',
+      address: '0xc9b8a3fdecb9d5b218d02555a8baf332e5b740d5',
+    },
+  ],
+
   // Beefy
   '0x61366A4e6b1DB1b85DD701f2f4BFa275EF271197_Aerodrome': [
     // Aerodrome
@@ -419,27 +430,19 @@ export const poolTokensForZapMap = {
 export const poolsForOVN = {
   base: {
     api: 'https://api.basescan.org/',
-    pools: [
-      { address: '0x61366A4e6b1DB1b85DD701f2f4BFa275EF271197' },
-    ],
+    pools: [{ address: '0x61366A4e6b1DB1b85DD701f2f4BFa275EF271197' }],
   },
   optimism: {
     api: 'https://api-optimistic.etherscan.io/',
-    pools: [
-      { address: '0x844D7d2fCa6786Be7De6721AabdfF6957ACE73a0' },
-    ],
+    pools: [{ address: '0x844D7d2fCa6786Be7De6721AabdfF6957ACE73a0' }],
   },
   arbitrum: {
     api: 'https://api.arbiscan.io/',
-    pools: [
-      { },
-    ],
+    pools: [{}],
   },
   bsc: {
     api: 'https://api.bscscan.com/',
-    pools: [
-      { },
-    ],
+    pools: [{}],
   },
 } as any;
 
@@ -465,7 +468,7 @@ export const zapPlatformSupportList = [
 export enum POOL_TAG {
   NEW = '0',
   PROMO = '1',
-  HOT = '2'
+  HOT = '2',
 }
 
 // POOLS WITH EARNINGS MORE THAN 500$ per month
