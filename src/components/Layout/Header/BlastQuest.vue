@@ -418,12 +418,12 @@ export default {
   max-width: 200px;
 }
 
-.progress-steps-scroll {
-  overflow-x: scroll;
-}
+// .progress-steps-scroll {
+//   overflow-x: scroll;
+// }
 
 .blast-modal__row--scroll {
   overflow-x: scroll;
-  min-width: 900px;
+  min-width: 800px;
 }
 </style>
