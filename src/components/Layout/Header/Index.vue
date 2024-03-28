@@ -63,22 +63,25 @@
               OVERNIGHT
             </h1>
           </router-link>
+          <div
+            v-if="account && balancesLoading && !deviceSize.isMobile"
+            :class="['lineLoader', 'app-header__balance-loader']"
+          />
 
           <div
-            v-if="account && (accountRenderLoading || balancesLoading) && !deviceSize.isMobile"
-            class="lineLoader"
+            v-if="account && balancesLoading && deviceSize.isDesktop"
+            :class="['lineLoader']"
           />
           <UserBalances
+            v-else-if="walletConnected && !deviceSize.isMobile"
             class="app-header__balances"
-            v-else-if="!deviceSize.isMobile && walletConnected && account"
           />
-
           <div
-            v-if="accountRenderLoading && deviceSize.isDesktop"
+            v-if="account && accountRenderLoading"
             class="lineLoader"
           />
           <ButtonComponent
-            v-else-if="walletConnected && account && !balancesLoading"
+            v-else-if="walletConnected && account && !accountRenderLoading"
             class="app-header__content-account"
             btn-styles="secondary"
             @click="openAccountModal"
@@ -237,7 +240,7 @@ export default {
     ...mapGetters('odosData', ['allTokensList']),
 
     balancesLoading() {
-      if (this.originalBalance.length === 0 || this.isTokensLoading) return true;
+      if (this.isTokensLoading) return true;
       if (this.isLoadingOvnBalances || this.isBalancesLoading) return true;
       return false;
     },
@@ -297,17 +300,6 @@ export default {
     fill: var(--color-4);
   }
 }
-.app-header__balance-account {
-  min-width: 130px;
-  justify-content: space-between;
-  [data-theme="dark"] & {
-    background-color: var(--color-17);
-    box-shadow: none !important;
-  }
-  svg path {
-    fill: var(--color-3);
-  }
-}
 
 </style>
 
@@ -338,6 +330,16 @@ export default {
     position: fixed;
   }
 }
+
+.app-header__balance-loader {
+  @media (min-width: 1024px) {
+    display: none
+  }
+  @media (min-width: 640px) and (max-width: 768px) {
+    display: none;
+  }
+}
+
 .app-header-dapp {
   display: flex;
   flex-direction: row;
@@ -432,17 +434,6 @@ export default {
     flex-wrap: wrap;
   }
 }
-
-.app-header__balance-account {
-  min-width: 130px;
-  min-height: 31px;
-  justify-content: space-between;
-
-  svg path {
-    fill: var(--color-3);
-  }
-}
-
 .app-header__balance-row {
   display: flex;
   gap: 8px;
@@ -567,4 +558,5 @@ export default {
     order: 3;
   }
 }
+
 </style>

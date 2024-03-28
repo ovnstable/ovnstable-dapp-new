@@ -156,7 +156,7 @@ export default {
     border-color: var(--color-2);
   }
 
-  @media (max-width: 1300px) {
+  @media (max-width: 1320px) {
     position: sticky;
     left: 0;
   }
