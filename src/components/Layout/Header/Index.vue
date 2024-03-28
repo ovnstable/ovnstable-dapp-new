@@ -73,7 +73,7 @@
             :class="['lineLoader']"
           />
           <UserBalances
-            v-else-if="walletConnected"
+            v-else-if="walletConnected && !deviceSize.isMobile"
             class="app-header__balances"
           />
           <div
