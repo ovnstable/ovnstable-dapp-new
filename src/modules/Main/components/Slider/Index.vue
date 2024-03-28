@@ -330,7 +330,7 @@ export default {
   margin-right: 25px;
   display: flex;
   flex-direction: column;
-  @media (max-width: 1100px) and (min-width: 1024px) {
+  @media (min-width: 1024px) and (max-width: 1100px) {
     max-width: 180px;
   }
 }
@@ -345,7 +345,7 @@ export default {
   flex-direction: row;
   align-items: center;
   gap: 8px;
-  @media (max-width: 1100px) and (min-width: 1024px) {
+  @media (min-width: 1024px) and (max-width: 1100px)  {
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;

@@ -335,7 +335,7 @@ export default {
   @media (min-width: 1024px) {
     display: none
   }
-  @media (max-width: 768px) and (min-width: 640px) {
+  @media (min-width: 640px) and (max-width: 768px) {
     display: none;
   }
 }

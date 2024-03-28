@@ -100,7 +100,7 @@ $avatar-offset: 52 + 16;
     box-shadow: none;
     border-color: var(--color-2);
   }
-  @media (max-width: 1024px) and (min-width: 768px) {
+  @media (min-width: 768px) and (max-width: 1024px) {
     order: 3;
   }
 }
@@ -121,10 +121,10 @@ $avatar-offset: 52 + 16;
     box-shadow: none;
     border-color: var(--color-2);
   }
-  @media (max-width: 1024px) and (min-width: 768px) {
+  @media (min-width: 768px) and (max-width: 1024px) {
     display: none;
   }
-  @media (max-width: 768px) and (min-width: 640px) {
+  @media (min-width: 640px) and (max-width: 768px) {
     margin-top: 0;
   }
 }
