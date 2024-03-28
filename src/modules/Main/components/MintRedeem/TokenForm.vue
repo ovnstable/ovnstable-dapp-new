@@ -407,6 +407,7 @@ export default {
   span {
     font-size: 14px;
     font-weight: 500;
+    white-space: nowrap;
   }
 
   &:hover {
