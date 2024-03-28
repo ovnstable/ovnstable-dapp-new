@@ -91,7 +91,7 @@
             </span>
             <div
               class="app-header__chain"
-              :style="{ backgroundColor: activeNetworkData.color }"
+              :style="{ backgroundColor: selectedProfileColorMounted }"
             />
           </ButtonComponent>
 
@@ -215,6 +215,7 @@ export default {
   },
   data() {
     return {
+      selectedProfileColor: localStorage.getItem('selectedProfileColor'),
       sortedChains: [] as Chain[],
       chainsLoading: false,
       networksData: appNetworksData,
@@ -239,6 +240,9 @@ export default {
     ...mapGetters('network', ['networkId', 'isShowDeprecated']),
     ...mapGetters('odosData', ['allTokensList']),
 
+    selectedProfileColorMounted(): any {
+      return localStorage.getItem('selectedProfileColor');
+    },
     balancesLoading() {
       if (this.isTokensLoading) return true;
       if (this.isLoadingOvnBalances || this.isBalancesLoading) return true;
@@ -287,6 +291,9 @@ export default {
     chooseNetwork(network: number, close: () => null) {
       this.setWalletNetwork(network);
       close();
+    },
+    selectColor(color: any) {
+      this.selectedProfileColor = color;
     },
     cutString,
   },
