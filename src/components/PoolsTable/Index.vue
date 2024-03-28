@@ -41,6 +41,7 @@
             v-for="(pool, key) in (pools as any)"
             :key="key"
             class="pools-table__row"
+            :class="{ 'pools-table__new': key === indexOfLastNewPool }"
             @click="toggleDetails(pool)"
             @keypress="toggleDetails(pool)"
           >
@@ -276,6 +277,16 @@ export default {
     getPlatformLink() {
       return (pool: any, platform: string) => buildLink(pool, platform) ?? '';
     },
+    indexOfLastNewPool() {
+      let lastNewPoolIndex = -1;
+      this.pools.forEach((pool: any, index) => {
+        if (pool.poolTag === '0') {
+          lastNewPoolIndex = index;
+        }
+      });
+
+      return lastNewPoolIndex;
+    },
 
     // getPoolType() {
     //   return (pool) => {
@@ -392,7 +403,8 @@ export default {
 .pools-table__content {
   padding: 20px;
 }
-.pools-table__row {
+.pools-table__row,
+.pools-table__new {
   display: grid;
   grid-template-columns: 0.5fr 2fr 2fr 1fr 1.35fr 0.65fr;
   justify-content: space-between;
@@ -412,6 +424,13 @@ export default {
 
   [data-theme="dark"] & {
     border-bottom-color: var(--color-7);
+  }
+}
+.pools-table__new {
+  border-bottom: 1px solid var(--color-2);
+  margin-bottom: 10px;
+  [data-theme="dark"] & {
+    border-color: var(--color-18);
   }
 }
 
