@@ -303,7 +303,7 @@ const filterByPoolType = (
   }
 
   if (filterType === poolTypes.HOT) {
-    return poolsList.filter((_) => _.poolTag !== POOL_TAG.HOT);
+    return poolsList.filter((_) => _.poolTag === POOL_TAG.HOT);
   }
 
   return poolsList;
