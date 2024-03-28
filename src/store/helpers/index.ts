@@ -34,6 +34,7 @@ export const WHITE_LIST_ODOS = {
     'Swaap V2',
     'Lighter V2',
     'Curve Stable NG',
+    'Curve Factory',
     'Wrapped Ether',
     'Overnight Wrapper',
   ],

@@ -218,6 +218,12 @@ export const poolsInfoMap: any = {
     poolId: 0,
     approveType: 'TOKEN',
   },
+  '0xb34a7d1444a707349Bc7b981B7F2E1f20F81F013': {
+    // usd+/frax
+    gauge: '0x4645e6476d3a5595be9efd39426cc10586a8393d',
+    poolId: 0,
+    approveType: 'TOKEN',
+  },
 
   // Beefy
   '0x61366A4e6b1DB1b85DD701f2f4BFa275EF271197_Aerodrome': {
@@ -330,6 +336,11 @@ export const zapPlatformContractTypeMap: any = {
   Convex: {
     name: 'Convex',
     type: 'LP_STAKE_DIFF_STEPS',
+    typeOfDepositConstructor: 'CONSTRUCTOR_WITH_TOKEN_ID',
+  },
+  Curve: {
+    name: 'Curve',
+    type: 'LP_WITH_STAKE_IN_ONE_STEP',
     typeOfDepositConstructor: 'CONSTRUCTOR_WITH_TOKEN_ID',
   },
   Beefy: {
