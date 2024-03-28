@@ -88,7 +88,7 @@
             <ButtonComponent
               full
               :disabled="!(getHighestLevel >= key)"
-              @on-click="triggerDailyQuest"
+              @on-click="triggerWeeklyQuest"
             >
               CLAIM
             </ButtonComponent>
@@ -212,6 +212,26 @@ export default {
       } catch (error) {
         return null;
       }
+    },
+    async triggerWeeklyQuest() {
+      console.log('CLAIM WEKK');
+      this.openDailyQuest = true;
+      console.log(this.openDailyQuest, 'CLAIM2');
+      const nonce = getRandomString(24);
+      const sign: TSignedMessage | null = await this.signEvmMessage(
+        `Claim blast points on Overnight.fi, nonce: ${nonce}`,
+        nonce,
+      );
+
+      const triggerClaim = await axios.post(`${OVN_QUESTS_API}/blast/claim`, {
+        address: this.account,
+        message: sign?.message,
+        sign: sign?.signature,
+        questType: TypeofQuest.LEVELQUEST,
+      });
+      console.log(triggerClaim, '---triggerClaim');
+      console.log(sign, '---sign');
+      console.log(sign, '---sign');
     },
     async triggerDailyQuest() {
       console.log('CLAIM');
