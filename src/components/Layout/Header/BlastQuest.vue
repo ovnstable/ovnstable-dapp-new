@@ -27,7 +27,7 @@
             class="blast-modal__box-wrap"
           >
             <QuestBox
-              prize-value="100"
+              :prize-value="dailyPrize"
               :open-box="openDailyQuest"
               @close="closeQuests"
             />
@@ -83,14 +83,18 @@
             class="blast-modal__box-wrap"
             :key="key"
           >
-            <QuestBox />
+            <QuestBox
+              :prize-value="weeklyPrize"
+              :open-box="key === activeLevel && openWeeklyQuest ? true : false"
+              @close="closeQuests"
+            />
 
             <ButtonComponent
               full
-              :disabled="!(getHighestLevel >= key)"
+              :disabled="!(getHighestLevel >= key) || !!weeklyQuestCount"
               @on-click="triggerWeeklyQuest"
             >
-              CLAIM
+              {{ getWeeklyBtn(key) }}
             </ButtonComponent>
           </div>
         </div>
@@ -105,7 +109,7 @@
 import { mapGetters } from 'vuex';
 import ModalComponent from '@/components/Modal/Index.vue';
 import { getRandomString } from '@/utils/strings.ts';
-import { OVN_QUESTS_API } from '@/utils/const.ts';
+import { OVN_QUESTS_API, awaitDelay } from '@/utils/const.ts';
 import axios from 'axios';
 import ButtonComponent from '@/components/Button/Index.vue';
 import QuestBox from '@/components/QuestBox/Index.vue';
@@ -142,7 +146,11 @@ export default {
       showModal: false,
       isDarkTheme: false,
       openDailyQuest: false,
+      openWeeklyQuest: false,
       userData: null as any,
+      activeLevel: 0,
+      dailyPrize: '',
+      weeklyPrize: '',
       levelQuestList: [5, 30, 50, 100, 250],
     };
   },
@@ -150,20 +158,45 @@ export default {
     isShow(currVal: boolean) {
       this.showModal = currVal;
     },
-    async account(currVal: string) {
+    account(currVal: string) {
       if (!currVal) return;
-      const resp = await axios.get(`${OVN_QUESTS_API}/blast/user/${currVal}`);
-      this.userData = resp.data;
+      this.updateUserQuestData(currVal);
     },
   },
   computed: {
     ...mapGetters('web3', ['evmProvider', 'provider']),
     ...mapGetters('accountData', ['account']),
 
+    getWeeklyBtn() {
+      return (level: number) => {
+        if (level < this.getHighestLevel) return 'Claimed';
+        return this.weeklyQuestCount ? `WILL OPEN IN ${this.weeklyQuestCount}h` : 'CLAIM';
+      };
+    },
     getHighestLevel() {
-      if (!this.userData) return 0;
+      if (!this.userData || this.userData?.levelQuestHistory?.length === 0) return 0;
 
+      console.log(this.userData, '---this.userData');
       return Math.max(this.userData?.levelQuestHistory.map((_: any) => _.level));
+    },
+
+    weeklyQuestCount() {
+      const ONE_DAY_UNIX = 86400;
+      let lastClaim = null;
+      console.log(this.userData, 'DATA');
+      if (!this.userData || this.userData?.levelQuestHistory?.length === 0) return null;
+      if (this.userData && this.userData.levelQuestHistory?.length > 0) {
+        const nowUnix = Math.floor(Date.now() / 1000);
+        // eslint-disable-next-line no-unsafe-optional-chaining
+        lastClaim = nowUnix - this.userData
+          .levelQuestHistory[this.userData.levelQuestHistory.length - 1]?.time;
+      }
+
+      if (lastClaim && lastClaim < ONE_DAY_UNIX * 7) {
+        return new BN(ONE_DAY_UNIX * 7).minus(lastClaim).div(3600).toFixed(0);
+      }
+
+      return null;
     },
 
     dailyQuestCount() {
@@ -186,8 +219,17 @@ export default {
     },
   },
   methods: {
+    async updateUserQuestData(acc: string) {
+      const resp = await axios.get(`${OVN_QUESTS_API}/blast/user/${acc}`);
+      console.log(resp, 're-sp');
+      this.userData = resp.data;
+    },
     closeQuests() {
       this.openDailyQuest = false;
+      this.openWeeklyQuest = false;
+      this.weeklyPrize = '';
+      this.dailyPrize = '';
+      this.activeLevel = 0;
     },
     async signEvmMessage(
       messageToSign: string,
@@ -215,8 +257,6 @@ export default {
     },
     async triggerWeeklyQuest() {
       console.log('CLAIM WEKK');
-      this.openDailyQuest = true;
-      console.log(this.openDailyQuest, 'CLAIM2');
       const nonce = getRandomString(24);
       const sign: TSignedMessage | null = await this.signEvmMessage(
         `Claim blast points on Overnight.fi, nonce: ${nonce}`,
@@ -229,14 +269,17 @@ export default {
         sign: sign?.signature,
         questType: TypeofQuest.LEVELQUEST,
       });
+
+      this.activeLevel = this.getHighestLevel;
+      this.openWeeklyQuest = true;
+      this.weeklyPrize = triggerClaim.data?.amount;
+
+      // waiting for animation
+      await awaitDelay(2000);
+      this.updateUserQuestData(this.account);
       console.log(triggerClaim, '---triggerClaim');
-      console.log(sign, '---sign');
-      console.log(sign, '---sign');
     },
     async triggerDailyQuest() {
-      console.log('CLAIM');
-      this.openDailyQuest = true;
-      console.log(this.openDailyQuest, 'CLAIM2');
       const nonce = getRandomString(24);
       const sign: TSignedMessage | null = await this.signEvmMessage(
         `Claim blast points on Overnight.fi, nonce: ${nonce}`,
@@ -249,8 +292,14 @@ export default {
         sign: sign?.signature,
         questType: TypeofQuest.DAILY,
       });
+
+      this.dailyPrize = triggerClaim.data?.amount;
+      this.openDailyQuest = true;
+
+      // waiting for animation
+      await awaitDelay(2000);
+      this.updateUserQuestData(this.account);
       console.log(triggerClaim, '---triggerClaim');
-      console.log(sign, '---sign');
       console.log(sign, '---sign');
     },
     toggleTheme() {

@@ -88,7 +88,7 @@ export default {
       this.isOpen = currVal;
 
       this.isShakeActive = true;
-      await awaitDelay(3000);
+      await awaitDelay(1200);
 
       this.isShakeActive = false;
 
@@ -211,7 +211,7 @@ export default {
   align-items: center;
   cursor: pointer;
   padding: 20px;
-  background-color: rgba(0, 0, 0, .5);
+  background-color: rgba(0, 0, 0, 0.5);
   z-index: 100;
 }
 
