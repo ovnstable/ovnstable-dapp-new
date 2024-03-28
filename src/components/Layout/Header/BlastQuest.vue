@@ -23,8 +23,14 @@
           </p>
         </div>
         <div>
-          <div class="blast-modal__box-wrap">
-            <QuestBox />
+          <div
+            class="blast-modal__box-wrap"
+          >
+            <QuestBox
+              prize-value="100"
+              :open-box="openDailyQuest"
+              @close="closeQuests"
+            />
           </div>
 
           <ButtonComponent
@@ -55,17 +61,39 @@
         </div>
       </div>
 
-      <div>
-        <div class="blast-modal__box-wrap">
-          <QuestBox />
+      <div class="progress-steps-scroll">
+        <div class="progress-steps-wrap">
+          <span>START</span>
+          <ul class="progress-steps">
+            <li
+              v-for="(item, key) in levelQuestList"
+              :key="key"
+              class="progress-steps__li"
+              :class="{ 'quest-completed': getHighestLevel > key ? true : false }"
+            >
+              <div class="progress-step-item" />
+              <span>{{ item }}$</span>
+            </li>
+          </ul>
+          <span>FINISH</span>
         </div>
+        <div class="blast-modal__row blast-modal__row--scroll">
+          <div
+            v-for="(item, key) in Array.from({ length: 5 })"
+            class="blast-modal__box-wrap"
+            :key="key"
+          >
+            <QuestBox />
 
-        <ButtonComponent
-          full
-          @on-click="triggerDailyQuest"
-        >
-          CLAIM
-        </ButtonComponent>
+            <ButtonComponent
+              full
+              :disabled="!(getHighestLevel >= key)"
+              @on-click="triggerDailyQuest"
+            >
+              CLAIM
+            </ButtonComponent>
+          </div>
+        </div>
       </div>
     </div>
   </ModalComponent>
@@ -101,7 +129,7 @@ export default {
     ButtonComponent,
     QuestBox,
   },
-  emits: ['close'],
+  emits: ['close-modal'],
   props: {
     isShow: {
       type: Boolean,
@@ -113,7 +141,9 @@ export default {
     return {
       showModal: false,
       isDarkTheme: false,
+      openDailyQuest: false,
       userData: null as any,
+      levelQuestList: [5, 30, 50, 100, 250],
     };
   },
   watch: {
@@ -130,6 +160,12 @@ export default {
     ...mapGetters('web3', ['evmProvider', 'provider']),
     ...mapGetters('accountData', ['account']),
 
+    getHighestLevel() {
+      if (!this.userData) return 0;
+
+      return Math.max(this.userData?.levelQuestHistory.map((_: any) => _.level));
+    },
+
     dailyQuestCount() {
       const ONE_DAY_UNIX = 86400;
       let lastClaim = null;
@@ -143,13 +179,16 @@ export default {
       }
 
       if (lastClaim && lastClaim < ONE_DAY_UNIX) {
-        return new BN(ONE_DAY_UNIX).minus(lastClaim).div(3600).toFixed(2);
+        return new BN(ONE_DAY_UNIX).minus(lastClaim).div(3600).toFixed(0);
       }
 
       return null;
     },
   },
   methods: {
+    closeQuests() {
+      this.openDailyQuest = false;
+    },
     async signEvmMessage(
       messageToSign: string,
       nonce: string,
@@ -176,6 +215,8 @@ export default {
     },
     async triggerDailyQuest() {
       console.log('CLAIM');
+      this.openDailyQuest = true;
+      console.log(this.openDailyQuest, 'CLAIM2');
       const nonce = getRandomString(24);
       const sign: TSignedMessage | null = await this.signEvmMessage(
         `Claim blast points on Overnight.fi, nonce: ${nonce}`,
@@ -198,7 +239,7 @@ export default {
     },
     closeModal() {
       console.log('closeModal');
-      this.$emit('close');
+      this.$emit('close-modal');
     },
   },
 };
@@ -209,6 +250,7 @@ export default {
   max-width: 860px;
   width: 100%;
   padding: 30px;
+  overflow-x: hidden;
 
   h1 {
     font-size: 16px;
@@ -238,5 +280,81 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+
+.progress-steps {
+  display: flex;
+  width: 100%;
+  margin: 10px 0;
+  height: 12px;
+  border-radius: 50px;
+  background-color: var(--color-5);
+}
+
+.progress-steps__li {
+  position: relative;
+  width: 100%;
+  height: 12px;
+
+  span {
+    font-size: 14px;
+    font-weight: 500;
+    position: absolute;
+    bottom: -15px;
+    right: -15px;
+  }
+
+  &:first-child {
+    span {
+      right: -5px;
+    }
+  }
+
+  &.quest-completed {
+    background-color: var(--color-3);
+    z-index: 2;
+
+    &:first-child {
+      border-radius: 30px 0 0 30px;
+    }
+
+    &:last-child {
+      border-radius: 0 30px 30px 0;
+    }
+  }
+}
+
+.progress-step-item {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 0;
+  border-radius: 50%;
+  width: 10px;
+  height: 10px;
+  background-color: var(--color-6);
+}
+
+.progress-steps-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin: 20px 0;
+}
+
+.blast-modal__box-wrap {
+  width: 100%;
+  height: 100%;
+  max-width: 200px;
+}
+
+.progress-steps-scroll {
+  overflow-x: scroll;
+}
+
+.blast-modal__row--scroll {
+  overflow-x: scroll;
+  min-width: 900px;
 }
 </style>
