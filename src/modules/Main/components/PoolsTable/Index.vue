@@ -147,37 +147,33 @@ export default {
         this.poolTabType,
       );
 
-      if (['APR', 'TVL'].includes(this.orderType)) return tabOrderedPools;
+      const sortByNewTagAndValue = (valueExtractor: any) => tabOrderedPools.slice().sort((a, b) => {
+        if (a.poolTag === POOL_TAG.NEW && b.poolTag !== POOL_TAG.NEW) {
+          return -1;
+        }
+        if (b.poolTag === POOL_TAG.NEW && a.poolTag !== POOL_TAG.NEW) {
+          return 1;
+        }
+        return valueExtractor(b) - valueExtractor(a);
+      });
 
       if (this.orderType === 'APR_UP') {
-        return tabOrderedPools
-          .slice()
-          .sort((a: any, b: any) => b.apr - a.apr);
+        return sortByNewTagAndValue((pool: any) => pool.apr);
       }
 
       if (this.orderType === 'APR_DOWN') {
-        return tabOrderedPools
-          .slice()
-          .sort((a: any, b: any) => a.apr - b.apr);
+        return sortByNewTagAndValue((pool: any) => -pool.apr);
       }
 
-      if (this.orderType === 'TVL') return tabOrderedPools.slice().sort((a: any) => (a.poolTag === POOL_TAG.NEW ? -1 : 1));
-
       if (this.orderType === 'TVL_UP') {
-        return tabOrderedPools
-          .slice()
-          .sort((a: any, b: any) => (b.tvl - a.tvl))
-          .sort((a: any) => (a.poolTag === POOL_TAG.NEW ? -1 : 1));
+        return sortByNewTagAndValue((pool: any) => pool.tvl);
       }
 
       if (this.orderType === 'TVL_DOWN') {
-        return tabOrderedPools
-          .slice()
-          .sort((a: any, b: any) => (a.tvl - b.tvl))
-          .sort((a: any) => (a.poolTag === POOL_TAG.NEW ? -1 : 1));
+        return sortByNewTagAndValue((pool: any) => -pool.tvl);
       }
 
-      return [];
+      return sortByNewTagAndValue(() => 0);
     },
 
     filteredPoolsForSecondTab() {

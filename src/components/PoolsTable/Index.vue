@@ -9,27 +9,19 @@
         <div class="pools-header__item">Staking platform</div>
         <div
           class="pools-header__item pools-header__item--hover"
-          :class="{
-            'pools-header__item--active-down': ['APR_UP'].includes(orderType),
-            'pools-header__item--active-up': ['APR_DOWN'].includes(orderType),
-          }"
           @click="toggleOrderType('APR')"
           @keypress="toggleOrderType('APR')"
         >
           APR
-          <BaseIcon name="ArrowsFilter" />
+          <BaseIcon :name="iconNameSort('APR')" />
         </div>
         <div
           class="pools-header__item pools-header__item--hover"
-          :class="{
-            'pools-header__item--active-down': ['TVL_UP'].includes(orderType),
-            'pools-header__item--active-up': ['TVL_DOWN'].includes(orderType),
-          }"
           @click="toggleOrderType('TVL')"
           @keypress="toggleOrderType('TVL')"
         >
           TVL
-          <BaseIcon name="ArrowsFilter" />
+          <BaseIcon :name="iconNameSort('TVL')" />
         </div>
         <div class="pools-header__item" />
       </div>
@@ -41,6 +33,7 @@
             v-for="(pool, key) in (pools as any)"
             :key="key"
             class="pools-table__row"
+            :class="{ 'pools-table__new': key === indexOfLastNewPool }"
             @click="toggleDetails(pool)"
             @keypress="toggleDetails(pool)"
           >
@@ -276,6 +269,16 @@ export default {
     getPlatformLink() {
       return (pool: any, platform: string) => buildLink(pool, platform) ?? '';
     },
+    indexOfLastNewPool() {
+      let lastNewPoolIndex = -1;
+      this.pools.forEach((pool: any, index) => {
+        if (pool.poolTag === '0') {
+          lastNewPoolIndex = index;
+        }
+      });
+
+      return lastNewPoolIndex;
+    },
 
     // getPoolType() {
     //   return (pool) => {
@@ -352,23 +355,27 @@ export default {
 
       console.error('Order type not found when toggle order.', type);
     },
+    iconNameSort(type: string) {
+      if (type === 'APR') {
+        if (['APR_UP'].includes(this.orderType)) {
+          return 'ArrowUpSort';
+        } if (['APR_DOWN'].includes(this.orderType)) {
+          return 'ArrowDownSort';
+        }
+      } else {
+        if (['TVL_UP'].includes(this.orderType)) {
+          return 'ArrowUpSort';
+        } if (['TVL_DOWN'].includes(this.orderType)) {
+          return 'ArrowDownSort';
+        }
+      }
+
+      return 'ArrowsFilter';
+    },
   },
 };
 </script>
 
-<style>
-.pools-header__item--active-up svg {
-  transform: translateY(4px) scale(1.1);
-}
-
-.pools-header__item--active-down svg {
-  transform: translateY(-4px) scale(1.1);
-}
-
-.pools-header__item--active-up svg path, .pools-header__item--active-down svg path {
-  fill: var(--color-3);
-}
-</style>
 <style lang="scss" scoped>
 .pools-table {
   position: relative;
@@ -392,7 +399,8 @@ export default {
 .pools-table__content {
   padding: 20px;
 }
-.pools-table__row {
+.pools-table__row,
+.pools-table__new {
   display: grid;
   grid-template-columns: 0.5fr 2fr 2fr 1fr 1.35fr 0.65fr;
   justify-content: space-between;
@@ -412,6 +420,13 @@ export default {
 
   [data-theme="dark"] & {
     border-bottom-color: var(--color-7);
+  }
+}
+.pools-table__new {
+  border-bottom: 1px solid var(--color-2);
+  margin-bottom: 10px;
+  [data-theme="dark"] & {
+    border-color: var(--color-18);
   }
 }
 
