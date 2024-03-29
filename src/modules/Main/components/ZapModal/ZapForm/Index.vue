@@ -160,7 +160,6 @@
             :selected-output-tokens="selectedOutputTokens"
           />
         </div>
-
         <div
           v-if="zapPool && zapPool.platform[0] === 'Swapbased'"
           class="slippage-info-container"
@@ -275,8 +274,10 @@
               class="swap-button"
             >
               {{ btnName }}
+
             </ButtonComponent>
           </div>
+
 
           <!-- <div class="label-container pt-3">
             <div
@@ -312,6 +313,11 @@
       @add-token-to-list="addSelectedTokenToList"
       @remove-token-from-list="removeSelectedTokenFromList"
     />
+    <ZapInStepsRow
+      class="zapin__modal-steps"
+      :current-stage="currentStage"
+    />
+
   </div>
 </template>
 <!-- eslint-disable no-restricted-syntax -->
@@ -351,6 +357,7 @@ import TokenForm from '@/modules/Main/components/ZapModal/TokenForm.vue';
 import PoolLabel from '@/modules/Main/components/ZapModal/PoolLabel.vue';
 import SelectTokensModal from '@/components/TokensModal/Index.vue';
 import SwapSlippageSettings from '@/modules/Main/components/Common/SwapSlippageSettings.vue';
+import ZapInStepsRow, { zapInStep } from '@/modules/Main/components/StepsRow/Index.vue';
 import { poolsInfoMap } from '@/store/views/main/zapin/mocks.ts';
 import BigNumber from 'bignumber.js';
 import { approveToken, getAllowanceValue } from '@/utils/contractApprove.ts';
@@ -370,6 +377,7 @@ export default {
     TokenForm,
     ChangeNetwork,
     Spinner,
+    ZapInStepsRow,
   },
   props: {
     zapPool: {
@@ -422,10 +430,11 @@ export default {
         // Convex: ["Curve Crypto Registry", "Curve Factory", "Curve Registry"]
       } as any,
       odosZapReferalCode: 3000000005,
+      currentStage: zapInStep.START,
     };
   },
   mounted() {
-    if (this.zapPool.chain !== this.networkId) return;
+    if (this.zapPool.chain !== this.networkId) this.currentStage = zapInStep.START;
 
     this.firstInit();
   },
@@ -1309,6 +1318,7 @@ export default {
       }
 
       this.stopSwapConfirmTimer();
+      this.currentStage = zapInStep.APPROVE_GAUGE;
 
       this.$store.commit('odosData/changeState', {
         field: 'additionalSwapStepType',
@@ -1352,6 +1362,7 @@ export default {
                 field: 'additionalSwapStepType',
                 val: 'DEPOSIT',
               });
+              this.currentStage = zapInStep.DEPOSIT;
               this.closeWaitingModal();
               this.depositGauge(
                 putIntoPoolEvent,
@@ -1381,6 +1392,7 @@ export default {
           field: 'additionalSwapStepType',
           val: 'DEPOSIT',
         });
+        this.currentStage = zapInStep.DEPOSIT;
         this.depositGauge(
           putIntoPoolEvent,
           returnedToUserEvent,
@@ -1425,7 +1437,7 @@ export default {
               field: 'additionalSwapStepType',
               val: 'DEPOSIT',
             });
-
+            this.currentStage = zapInStep.DEPOSIT;
             this.closeWaitingModal();
             this.depositGauge(
               putIntoPoolEvent,
@@ -1443,6 +1455,7 @@ export default {
           field: 'additionalSwapStepType',
           val: 'DEPOSIT',
         });
+        this.currentStage = zapInStep.DEPOSIT;
         this.depositGauge(
           putIntoPoolEvent,
           returnedToUserEvent,
@@ -1457,6 +1470,7 @@ export default {
       lastPoolInfoData: any,
       lastNftTokenId: any,
     ) {
+      this.currentStage = zapInStep.DEPOSIT;
       this.showWaitingModal('Stake LP in process');
 
       depositAllAtGauge(
@@ -1491,6 +1505,7 @@ export default {
             field: 'additionalSwapStepType',
             val: null,
           });
+          this.currentStage = zapInStep.DEPOSIT;
           this.clearZapData();
           this.$emit('close-form');
           this.loadBalances();
@@ -1498,6 +1513,7 @@ export default {
         .catch((e) => {
           console.log(e, '---e');
           this.closeWaitingModal();
+          this.currentStage = zapInStep.DEPOSIT;
           this.$store.commit('odosData/changeState', {
             field: 'additionalSwapStepType',
             val: 'DEPOSIT',
@@ -1800,6 +1816,7 @@ export default {
       return this.slippagePercent;
     },
     async checkApproveForToken(token: any, checkedAllowanceValue: any) {
+      this.currentStage = zapInStep.APPROVE_TOKENS;
       // checkedAllowanceValue in wei
       const { selectedToken } = token;
       if (
@@ -1826,7 +1843,6 @@ export default {
         selectedToken.approveData.approved = true;
         return;
       }
-
       selectedToken.approveData.approved = new BigNumber(selectedToken.approveData.allowanceValue)
         .isGreaterThanOrEqualTo(checkedAllowanceValue);
     },
@@ -1847,7 +1863,6 @@ export default {
         .pow(selectedToken.decimals)
         .times(1000000)
         .toFixed(0);
-
       const tx = await approveToken(
         tokenContract,
         this.zapContract.target,
@@ -1873,6 +1888,7 @@ export default {
 
       await tx.wait();
       finishTx();
+      this.currentStage = zapInStep.DEPOSIT;
     },
 
     getRequestInputTokens(ignoreNullable: boolean) {
