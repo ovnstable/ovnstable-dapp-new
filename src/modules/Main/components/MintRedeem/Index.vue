@@ -95,7 +95,7 @@
         disabled
         full
       >
-        Choose token
+        SELECT TOKEN
       </ButtonComponent>
       <ButtonComponent
         v-else-if="!isApprovedToken"
@@ -104,7 +104,7 @@
         full
         :loading="approveLoading"
       >
-        Approve Required
+        APPROVE REQUIRED
       </ButtonComponent>
       <ButtonComponent
         v-else

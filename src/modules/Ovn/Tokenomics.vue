@@ -1,23 +1,21 @@
 <template>
   <p class="ovn__overview-tokenomics-title">OVN Tokenomics</p>
   <div class="ovn__overview-tokenomic">
-    <div class="ovn__overview-tokenomic-diagram">
-      <div class="ovn__overview-distribution">
+    <div class="ovn__overview-distribution">
+      <div
+        class="ovn__overview-distribution-item"
+        v-for="benefit in benefits"
+        :key="`benefit-${benefit.name}`"
+      >
         <div
-          class="ovn__overview-distribution-item"
-          v-for="benefit in benefits"
-          :key="`benefit-${benefit.name}`"
-        >
-          <div
-            class="ovn__overview-item-icon"
-            :style="{ 'background-color': benefit.color }"
-          />
-          <p>{{ benefit.name }}:</p>
-          <p>{{ benefit.percent }}%</p>
-        </div>
+          class="ovn__overview-item-icon"
+          :style="{ 'background-color': benefit.color }"
+        />
+        <p>{{ benefit.name }}:</p>
+        <p>{{ benefit.percent }}%</p>
       </div>
-      <BaseIcon name="Tokenomic" />
     </div>
+    <BaseIcon name="Tokenomic" />
 
     <div class="ovn__overview-description">
       <p>The OVN token distribution is fixed at 1,000,000 tokens, with no plans for
@@ -130,9 +128,10 @@ export default {
 }
 .ovn__overview-description {
   max-width: 530px;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  align-items: right;
+  justify-content: space-between;
   gap: 20px;
   text-align: right;
   p {
