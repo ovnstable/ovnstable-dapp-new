@@ -134,7 +134,7 @@ export default {
 
 .ovn-dashboard__nobalance {
   width: 100%;
-  padding: 21px 0px;
+  padding: 21px 6px;
   background-color: var(--color-8);
   border-radius: 10px;
   display: flex;

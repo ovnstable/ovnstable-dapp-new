@@ -91,7 +91,7 @@
             </span>
             <div
               class="app-header__chain"
-              :style="{ backgroundColor: selectedProfileColorMounted }"
+              :style="{ backgroundColor: selectedProfileColor ? selectedProfileColor : '#0497EC' }"
             />
           </ButtonComponent>
 
@@ -192,6 +192,7 @@ import { loadTokenImage } from '@/utils/tokenLogo.ts';
 import { sortedChainsByTVL } from '@/store/helpers/index.ts';
 import AccountModal from '@/modules/Account/Index.vue';
 import { deviceType } from '@/utils/deviceType.ts';
+import { useEventBus } from '@vueuse/core';
 import UserBalances from './UserBalances.vue';
 import MobileMenu from './MobileMenu.vue';
 
@@ -225,6 +226,10 @@ export default {
   },
   async mounted() {
     this.sortedChains = await sortedChainsByTVL(this.networksData, this.isShowDeprecated);
+    const onTabChange = useEventBus<string>('change-profile-picture-request');
+    onTabChange.on((color) => {
+      this.selectedProfileColor = color;
+    });
   },
   watch: {
     async isShowDeprecated() {
@@ -240,9 +245,6 @@ export default {
     ...mapGetters('network', ['networkId', 'isShowDeprecated']),
     ...mapGetters('odosData', ['allTokensList']),
 
-    selectedProfileColorMounted(): any {
-      return localStorage.getItem('selectedProfileColor');
-    },
     balancesLoading() {
       if (this.isTokensLoading) return true;
       if (this.isLoadingOvnBalances || this.isBalancesLoading) return true;
