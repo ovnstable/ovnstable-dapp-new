@@ -117,6 +117,9 @@ const actions = {
 
     await commit('web3/setProvider', wallet.provider, { root: true });
 
+    // Setting to the default dapp network
+    await dispatch('network/setWalletNetwork', '10', { root: true });
+
     if (rootState.web3.provider) {
       rootState.web3.provider.on('accountsChanged', async (accounts: any) => {
         dispatch('accountChanged', accounts);
