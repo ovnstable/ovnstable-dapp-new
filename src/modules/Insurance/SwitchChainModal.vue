@@ -67,7 +67,12 @@
       >
         SWITCH TO OTHER CHAIN
       </p>
+      <img
+        alt="navbar"
+        :src="getImageUrl(`assets/icons/common/SlothUnavailable.png`)"
+      />
     </div>
+
   </div>
 
 </template>
@@ -79,6 +84,7 @@ import {
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { chainContractsMap } from '@/utils/contractsMap.ts';
+import { getImageUrl } from '@/utils/const.ts';
 import { deviceType } from '@/utils/deviceType.ts';
 
 export default {
@@ -111,6 +117,7 @@ export default {
   },
   methods: {
     ...mapActions('network', ['setWalletNetwork']),
+    getImageUrl,
     closeModal() {
       this.$emit('closeModal');
     },
@@ -119,6 +126,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
 .change-network {
   display: flex;
   flex-direction: column;
@@ -146,6 +154,21 @@ export default {
   [data-theme="dark"] & {
     background-color: var(--color-17);
   }
+  img {
+  max-width: 300px;
+  max-height: 160px;
+  display: block;
+  margin: 20px auto;
+  @media (max-width: 640px) {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 200px;
+    max-height: 100px;
+  }
+}
+
 }
 .change-network__text {
   [data-theme="dark"] & {
