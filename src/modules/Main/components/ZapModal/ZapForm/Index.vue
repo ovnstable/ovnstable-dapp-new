@@ -278,7 +278,6 @@
             </ButtonComponent>
           </div>
 
-
           <!-- <div class="label-container pt-3">
             <div
               v-if="selectedInputTokens.length > 0"
@@ -314,7 +313,9 @@
       @remove-token-from-list="removeSelectedTokenFromList"
     />
     <ZapInStepsRow
+      v-if="zapPool.chain === networkId"
       class="zapin__modal-steps"
+      :typeOfZapIn="zapInType"
       :current-stage="currentStage"
     />
 
@@ -723,6 +724,11 @@ export default {
 
       return true;
     },
+    zapInType() {
+      if (this.currentZapPlatformContractType?.type === 'LP_STAKE_DIFF_STEPS') {
+        return 'V3';
+      } return 'V2';
+    },
   },
   watch: {
     sumOfAllSelectedTokensInUsd() {
@@ -1040,6 +1046,9 @@ export default {
       this.selectedOutputTokens[0].value = 100;
     },
     async stakeTrigger() {
+      if (this.zapInType === 'V2') {
+        this.currentStage = zapInStep.STAKE_LP;
+      }
       if (!this.zapPool) return;
 
       this.$store.commit('odosData/changeState', {
@@ -1413,6 +1422,7 @@ export default {
       returnedToUserEvent: any,
       lastPoolInfoData: any,
     ) {
+      this.currentStage = zapInStep.APPROVE_GAUGE;
       const approveAmount = new BigNumber(10).pow(24).toFixed();
       const isGaugeApproved = await checkApproveForGauge(
         this.poolTokenContract,
@@ -1470,7 +1480,7 @@ export default {
       lastPoolInfoData: any,
       lastNftTokenId: any,
     ) {
-      this.currentStage = zapInStep.DEPOSIT;
+      this.currentStage = zapInStep.STAKE_LP;
       this.showWaitingModal('Stake LP in process');
 
       depositAllAtGauge(
@@ -1505,7 +1515,6 @@ export default {
             field: 'additionalSwapStepType',
             val: null,
           });
-          this.currentStage = zapInStep.DEPOSIT;
           this.clearZapData();
           this.$emit('close-form');
           this.loadBalances();
@@ -1513,7 +1522,6 @@ export default {
         .catch((e) => {
           console.log(e, '---e');
           this.closeWaitingModal();
-          this.currentStage = zapInStep.DEPOSIT;
           this.$store.commit('odosData/changeState', {
             field: 'additionalSwapStepType',
             val: 'DEPOSIT',
@@ -1845,6 +1853,11 @@ export default {
       }
       selectedToken.approveData.approved = new BigNumber(selectedToken.approveData.allowanceValue)
         .isGreaterThanOrEqualTo(checkedAllowanceValue);
+      if (this.zapInType === 'V2' && selectedToken.approveData.approved) {
+        this.currentStage = zapInStep.STAKE_LP;
+      } else if (selectedToken.approveData.approved) {
+        this.currentStage = zapInStep.DEPOSIT;
+      }
     },
 
     async approveTrigger(token: any) {

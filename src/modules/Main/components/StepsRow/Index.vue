@@ -19,6 +19,7 @@
     </p>
     <BaseIcon name="InsuranceModalArrowRight" />
     <p
+      v-if="typeOfZapIn === 'V3'"
       :class="{
         'active-stage': currentStage === zapInStep.DEPOSIT,
         'active-color': isActiveTab(zapInStep.DEPOSIT),
@@ -26,8 +27,12 @@
     >
       Deposit
     </p>
-    <BaseIcon name="InsuranceModalArrowRight" />
+    <BaseIcon
+      v-if="typeOfZapIn === 'V3'"
+      name="InsuranceModalArrowRight"
+    />
     <p
+      v-if="typeOfZapIn === 'V3'"
       :class="{
         'active-stage': currentStage === zapInStep.APPROVE_GAUGE,
         'active-color': isActiveTab(zapInStep.APPROVE_GAUGE),
@@ -35,7 +40,10 @@
     >
       Approve Gauge
     </p>
-    <BaseIcon name="InsuranceModalArrowRight" />
+    <BaseIcon
+      v-if="typeOfZapIn === 'V3'"
+      name="InsuranceModalArrowRight"
+    />
     <p
       :class="{
         'active-stage': currentStage === zapInStep.STAKE_LP,
@@ -66,6 +74,10 @@ export default {
     BaseIcon,
   },
   props: {
+    typeOfZapIn: {
+      type: String,
+      default: '1W',
+    },
     currentStage: {
       type: Number as PropType<zapInStep>,
       default: zapInStep.START,
