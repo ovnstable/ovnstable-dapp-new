@@ -366,6 +366,16 @@ export const poolTokensForZapMap = {
       address: '0xc9b8a3fdecb9d5b218d02555a8baf332e5b740d5',
     },
   ],
+  '0x1446999B0b0E4f7aDA6Ee73f2Ae12a2cfdc5D9E7': [
+    {
+      name: 'USD+',
+      address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
+    },
+    {
+      name: 'USDT+',
+      address: chainContractsMap.arbitrum.usdtPlus.tokenPlus,
+    },
+  ],
 
   // Beefy
   '0x61366A4e6b1DB1b85DD701f2f4BFa275EF271197_Aerodrome': [

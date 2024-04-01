@@ -224,6 +224,12 @@ export const poolsInfoMap: any = {
     poolId: 0,
     approveType: 'TOKEN',
   },
+  '0x1446999B0b0E4f7aDA6Ee73f2Ae12a2cfdc5D9E7': {
+    // usd+/usdt+
+    gauge: '0xd68089d9daa2da7888b7ef54158480e09ecc3580',
+    poolId: 0,
+    approveType: 'TOKEN',
+  },
 
   // Beefy
   '0x61366A4e6b1DB1b85DD701f2f4BFa275EF271197_Aerodrome': {
