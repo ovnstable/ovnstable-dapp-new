@@ -53,6 +53,9 @@ import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import { mapGetters } from 'vuex';
 import { cutString } from '@/utils/strings.ts';
+import { useEventBus } from '@vueuse/core';
+
+const emitProfileColorChange = useEventBus<string>('change-profile-picture-request');
 
 export default {
   name: 'ProfilePicture',
@@ -90,6 +93,7 @@ export default {
       this.selectedColor = color;
       this.showColorPicker = false;
       localStorage.setItem('selectedProfileColor', color);
+      emitProfileColorChange.emit(color);
     },
     loadSelectedColor() {
       const color = localStorage.getItem('selectedProfileColor');

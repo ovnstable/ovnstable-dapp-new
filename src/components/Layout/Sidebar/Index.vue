@@ -141,6 +141,13 @@ export default {
         { id: 2, title: 'RU', code: 'ru' },
         { id: 3, title: 'AR', code: 'ar' },
         { id: 4, title: 'ZH-CN', code: 'zh-CN' },
+        { id: 5, title: 'ZH-TW', code: 'zh-TW' },
+        { id: 6, title: 'KO', code: 'ko' },
+        { id: 7, title: 'TH', code: 'th' },
+        { id: 8, title: 'FR', code: 'fr' },
+        { id: 9, title: 'DE', code: 'de' },
+        { id: 10, title: 'TR', code: 'tr' },
+        { id: 11, title: 'HI', code: 'hi' },
       ],
       bottomLinks: [
         { name: 'Help Center', url: 'https://discord.com/channels/933003627444969552/967813123149033542/967813482684760135/' },
