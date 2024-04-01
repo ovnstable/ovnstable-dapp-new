@@ -313,7 +313,7 @@
       @remove-token-from-list="removeSelectedTokenFromList"
     />
     <ZapInStepsRow
-      v-if="zapPool.chain === networkId"
+      v-if="zapPool.chain === networkId && isTokensLoadedAndFiltered"
       class="zapin__modal-steps"
       :typeOfZapIn="zapInType"
       :current-stage="currentStage"
@@ -358,7 +358,7 @@ import TokenForm from '@/modules/Main/components/ZapModal/TokenForm.vue';
 import PoolLabel from '@/modules/Main/components/ZapModal/PoolLabel.vue';
 import SelectTokensModal from '@/components/TokensModal/Index.vue';
 import SwapSlippageSettings from '@/modules/Main/components/Common/SwapSlippageSettings.vue';
-import ZapInStepsRow, { zapInStep } from '@/modules/Main/components/StepsRow/Index.vue';
+import ZapInStepsRow, { zapInStep } from '@/components/StepsRow/ZapinRow.vue';
 import { poolsInfoMap } from '@/store/views/main/zapin/mocks.ts';
 import BigNumber from 'bignumber.js';
 import { approveToken, getAllowanceValue } from '@/utils/contractApprove.ts';
