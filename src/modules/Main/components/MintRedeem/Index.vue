@@ -95,7 +95,7 @@
         disabled
         full
       >
-        Choose token
+        SELECT TOKEN
       </ButtonComponent>
       <ButtonComponent
         v-else-if="!isApprovedToken"
@@ -104,7 +104,7 @@
         full
         :loading="approveLoading"
       >
-        Approve Required
+        APPROVE REQUIRED
       </ButtonComponent>
       <ButtonComponent
         v-else
@@ -577,13 +577,23 @@ export default {
         await this.refreshGasPrice();
         this.showWaitingModal('swaping in process');
         const networkId = this.networkId as keyof typeof MINTREDEEM_SCHEME;
+
         const pairData = MINTREDEEM_SCHEME[networkId]
           .find((_) => {
+            // todo: same for all chains
+            console.log(networkId, this.isReverseArray, 'CHECKREVERSE');
+            if (networkId === 81457 && !this.isReverseArray) {
+              const tokenAddress = _.token1.toLowerCase();
+
+              return tokenAddress === this.inputToken.address.toLowerCase();
+            }
+
             const tokenAddress = this.isReverseArray
               ? _.token1.toLowerCase() : _.token0.toLowerCase();
 
             return tokenAddress === this.outputToken.address.toLowerCase();
           });
+
         let exchangeContract = null;
 
         if (pairData) {
@@ -615,24 +625,8 @@ export default {
         const mainValue = new BigNumber(this.inputToken.originalVal).gt(0)
           ? this.inputToken.originalVal : swapSum;
 
-        const estimatedGasValue = await this.estimateGas(
-          this.account,
-          mainValue,
-          'test-product',
-          exchangeContract,
-          exchangeMethodName,
-          actionContract,
-        );
-
-        if (!estimatedGasValue) return;
-
-        const gasValue = new BigNumber(estimatedGasValue)
-          .multipliedBy(1.1)
-          .integerValue(BigNumber.ROUND_DOWN);
-
         const buyParams = {
           from: this.account,
-          gas: gasValue,
         };
 
         const method = this.getContractMethodWithParams(

@@ -174,7 +174,6 @@ export default {
     },
     tokensList() {
       let list = this.tokensListGetter[this.networkId];
-
       const networkId = this.networkId as keyof typeof MINTREDEEM_SCHEME;
       const wrapUnwrapPairs = MINTREDEEM_SCHEME[networkId]
         .filter((_) => _.methodName[0] === mintRedeemTypes.WRAP);
@@ -182,17 +181,21 @@ export default {
       // FILTERING tokens from wrap/unwrap, based on tab
       if (list?.length > 0) list = this.filterTokens(list, this.activeWrap, wrapUnwrapPairs);
 
-      // returning 1 token of pair or 2, based on tab
-      if (list && this.isInputToken) {
-        const inputList = list.map((_: any[]) => (this.reverseArray ? _[0] : _[1]));
+      if (list) {
+        let mappedList;
+        if (this.isInputToken) {
+          mappedList = list.map((_: any[]) => (this.reverseArray ? _[0] : _[1]));
+        } else {
+          mappedList = list.map((_: any[]) => (this.reverseArray ? _[1] : _[0]));
+        }
+        const uniqueTokens = new Set();
+        const filteredList = mappedList.filter((token: any) => {
+          const duplicate = uniqueTokens.has(token.symbol);
+          uniqueTokens.add(token.symbol);
+          return !duplicate;
+        });
 
-        const ids = inputList.map(({ symbol }: any) => symbol);
-        return inputList
-          .filter(({ symbol }: any, index: number) => !ids.includes(symbol, index + 1));
-      }
-
-      if (list && !this.isInputToken) {
-        return list.map((_: any[]) => (this.reverseArray ? _[1] : _[0]));
+        return filteredList;
       }
 
       return [];
@@ -404,6 +407,7 @@ export default {
   span {
     font-size: 14px;
     font-weight: 500;
+    white-space: nowrap;
   }
 
   &:hover {

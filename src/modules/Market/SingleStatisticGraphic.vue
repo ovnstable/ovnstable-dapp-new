@@ -201,7 +201,7 @@ export default {
               max: maxValue,
               ticks: {
                 font: {
-                  size: 10,
+                  size: 12,
                 },
                 stepSize: (maxValue - minValue) / 6,
                 color: isDarkTheme ? '#ffffff' : '#0f172a',

@@ -53,11 +53,16 @@
 
       </router-link>
     </div>
+    <img
+      alt="navbar"
+      :src="getImageUrl(`assets/icons/common/SlothUnavailable.png`)"
+    />
   </div>
 </template>
 
 <script lang="ts">
 import ButtonComponent from '@/components/Button/Index.vue';
+import { getImageUrl } from '@/utils/const.ts';
 import { mapGetters } from 'vuex';
 
 export default {
@@ -83,6 +88,7 @@ export default {
     ...mapGetters('accountData', ['originalBalance', 'account']),
   },
   methods: {
+    getImageUrl,
     connectWallet() {
       this.$store.dispatch('walletAction/connectWallet');
     },
@@ -102,6 +108,15 @@ export default {
   [data-theme="dark"] & {
     background-color: var(--color-7);
     color: var(--color-6);
+  }
+  img {
+    max-width: 300px;
+    max-height: 160px;
+    margin-top: 20px;
+    @media (max-width: 640px) {
+      max-width: 200px;
+      max-height: 100px;
+    }
   }
 }
 .dashboard__nographic-text {
