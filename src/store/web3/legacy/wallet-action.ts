@@ -114,8 +114,6 @@ const actions = {
     }
 
     console.debug('[Connect Wallet] initOnboard: ', wallet ? wallet.label : 'undefined');
-    console.log('here is wallet.provider');
-    console.log(wallet.provider.networkVersion);
     await commit('web3/setProvider', wallet.provider, { root: true });
 
     // Setting dapp network to the current wallet network
