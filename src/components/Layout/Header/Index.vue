@@ -68,12 +68,16 @@
             :class="['lineLoader', 'app-header__balance-loader']"
           />
 
-          <ButtonComponent
+          <router-link
             v-if="networkId === 81457"
-            @click="claimBlastPoints"
+            to="/blastquest"
+            class="app-header__dashboard"
+            active-class="active-link"
           >
-            BLAST POINTS
-          </ButtonComponent>
+            <p>
+              BLAST QUEST
+            </p>
+          </router-link>
 
           <div
             v-if="account && balancesLoading && deviceSize.isDesktop"
@@ -205,7 +209,6 @@ import BigNumber from 'bignumber.js';
 import { loadTokenImage } from '@/utils/tokenLogo.ts';
 import { sortedChainsByTVL } from '@/store/helpers/index.ts';
 import AccountModal from '@/modules/Account/Index.vue';
-import BlastQuestModal from '@/components/Layout/Header/BlastQuest.vue';
 import { deviceType } from '@/utils/deviceType.ts';
 import { useEventBus } from '@vueuse/core';
 import UserBalances from './UserBalances.vue';
@@ -224,7 +227,6 @@ export default {
     ButtonComponent,
     SwitchComponent,
     SpinnerComponent,
-    BlastQuestModal,
     UserBalances,
     MobileMenu,
     AccountModal,

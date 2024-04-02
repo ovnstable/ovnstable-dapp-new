@@ -1,113 +1,152 @@
 <template>
-  <ModalComponent
-    type-modal="custom"
-    v-model="showModal"
-    @close="closeModal"
+  <div
+    v-if="false"
+    class="spinner-wrap"
   >
-    <div class="blast-modal">
-      <div class="blast-modal__header">
+    <Spinner />
+  </div>
+  <div
+    v-else
+    class="page-wrap"
+  >
+    <div class="blast-wrap__jackpot">
+      <div class="blast-wrap__jackpot-main">
         <h1>
-          LOOT BOX EVENTS
+          BLAST POINTS JACKPOT:
         </h1>
+        <p>
+          {{ jackpotNum }}
+        </p>
       </div>
-      <div class="blast-modal__div" />
-
-      <div class="blast-modal__row">
-        <div class="blast-modal__item-col">
-          <h1>
-            DAILY BOX
-          </h1>
-          <p>To participate in this quest,
-            You need to provide liquidity to any OVN pool on Blast,
-            with least amount of 10$
-          </p>
-        </div>
-        <div>
-          <div
-            class="blast-modal__box-wrap"
-          >
-            <QuestBox
-              :prize-value="dailyPrize"
-              :open-box="openDailyQuest"
-              @close="closeQuests"
-            />
+      <div class="blast-wrap__jackpot-user">
+        <h1>
+          YOUR BLAST POINTS:
+        </h1>
+        <div class="blast-wrap__jackpot-user__data">
+          <div class="blast-wrap__jackpot-user__data-i">
+            <h3>
+              TOTAL CLAIMED
+            </h3>
+            <p>
+              000
+            </p>
           </div>
-
-          <ButtonComponent
-            full
-            :disabled="!!dailyQuestCount"
-            @on-click="triggerDailyQuest"
-          >
-            {{ dailyQuestCount ? `WILL OPEN IN ${dailyQuestCount}h` : 'CLAIM' }}
-          </ButtonComponent>
-        </div>
-      </div>
-
-      <div class="blast-modal__div" />
-
-      <div class="blast-modal__row">
-        <div class="blast-modal__item-col">
-          <h1>
-            WEEKLY BOX
-          </h1>
-          <p>
-            This quest is differ from previous one, it't harder to achieve,
-            but can bring more point to You!
-          </p>
-          <p>
-            Here, You can see 5 levels of chests, which You can unlock one by one,
-            by finishing certain amount of liquidity in OVN Blast pools
-          </p>
-        </div>
-      </div>
-
-      <div class="progress-steps-scroll">
-        <div class="progress-steps-wrap">
-          <span>START</span>
-          <ul class="progress-steps">
-            <li
-              v-for="(item, key) in levelQuestList"
-              :key="key"
-              class="progress-steps__li"
-              :class="{ 'quest-completed': getHighestLevel > key ? true : false }"
-            >
-              <div class="progress-step-item" />
-              <span>{{ item }}$</span>
-            </li>
-          </ul>
-          <span>FINISH</span>
-        </div>
-        <div class="blast-modal__row blast-modal__row--scroll">
-          <div
-            v-for="(item, key) in Array.from({ length: 5 })"
-            class="blast-modal__box-wrap"
-            :key="key"
-          >
-            <QuestBox
-              :prize-value="weeklyPrize"
-              :open-box="key === activeLevel && openWeeklyQuest ? true : false"
-              @close="closeQuests"
-            />
-
-            <ButtonComponent
-              full
-              :disabled="!(getHighestLevel >= key) || !!weeklyQuestCount"
-              @on-click="triggerWeeklyQuest"
-            >
-              {{ getWeeklyBtn(key) }}
-            </ButtonComponent>
+          <div class="blast-wrap__jackpot-user__data-i">
+            <h3>
+              TOTAL PENDING
+            </h3>
+            <p>
+              000
+            </p>
+          </div>
+          <div class="blast-wrap__jackpot-user__data-i">
+            <h3>
+              MONTLY FREE DROPS
+            </h3>
+            <p>
+              000
+            </p>
           </div>
         </div>
       </div>
     </div>
-  </ModalComponent>
+
+    <div
+      class="blast-wrap__content"
+    >
+      <div class="blast-wrap__item-col">
+        <h1>
+          DAILY BOX
+        </h1>
+        <p>
+          Complete daily tasks to get Blast loot boxes!
+          Each loot box contains a different amount of points that are guaranteed to drop out.
+        </p>
+      </div>
+      <div>
+        <div
+          class="blast-wrap__box-wrap"
+        >
+          <QuestBox
+            :prize-value="dailyPrize"
+            :open-box="openDailyQuest"
+            @close="closeQuests"
+          />
+        </div>
+
+        <ButtonComponent
+          full
+          :disabled="!!dailyQuestCount"
+          @on-click="triggerDailyQuest"
+        >
+          {{ dailyQuestCount ? `WILL OPEN IN ${dailyQuestCount}h` : 'CLAIM' }}
+        </ButtonComponent>
+      </div>
+    </div>
+
+    <div class="blast-wrap__div" />
+
+    <div class="blast-wrap__row">
+      <div class="blast-wrap__item-col">
+        <h1>
+          WEEKLY BOX
+        </h1>
+        <p>
+          This quest is differ from previous one, it't harder to achieve,
+          but can bring more point to You!
+        </p>
+        <p>
+          Here, You can see 5 levels of chests, which You can unlock one by one,
+          by finishing certain amount of liquidity in OVN Blast pools
+        </p>
+      </div>
+    </div>
+
+    <div class="progress-steps-scroll">
+      <div class="progress-steps-wrap">
+        <span>START</span>
+        <ul class="progress-steps">
+          <li
+            v-for="(item, key) in levelQuestList"
+            :key="key"
+            class="progress-steps__li"
+            :class="{ 'quest-completed': getHighestLevel > key ? true : false }"
+          >
+            <div class="progress-step-item" />
+            <span>{{ item }}$</span>
+          </li>
+        </ul>
+        <span>FINISH</span>
+      </div>
+      <div class="blast-wrap__row blast-wrap__row--scroll">
+        <div
+          v-for="(item, key) in Array.from({ length: 5 })"
+          class="blast-wrap__box-wrap"
+          :key="key"
+        >
+          <QuestBox
+            :prize-value="weeklyPrize"
+            :open-box="key === activeLevel && openWeeklyQuest ? true : false"
+            @close="closeQuests"
+          />
+
+          <ButtonComponent
+            full
+            :disabled="!(getHighestLevel >= key) || !!weeklyQuestCount"
+            @on-click="triggerWeeklyQuest"
+          >
+            {{ getWeeklyBtn(key) }}
+          </ButtonComponent>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <!-- eslint-disable no-unused-vars -->
 <!-- eslint-disable no-shadow -->
 <script lang="ts">
 import { mapGetters } from 'vuex';
-import ModalComponent from '@/components/Modal/Index.vue';
 import { getRandomString } from '@/utils/strings.ts';
 import { OVN_QUESTS_API, awaitDelay } from '@/utils/const.ts';
 import axios from 'axios';
@@ -127,9 +166,8 @@ enum TypeofQuest {
   DAILY,
 }
 export default {
-  name: 'BlastQuestModal',
+  name: 'BlastQuestModule',
   components: {
-    ModalComponent,
     ButtonComponent,
     QuestBox,
   },
@@ -149,6 +187,7 @@ export default {
       openWeeklyQuest: false,
       userData: null as any,
       activeLevel: 0,
+      jackpotNum: '0',
       dailyPrize: '',
       weeklyPrize: '',
       levelQuestList: [5, 30, 50, 100, 250],
@@ -162,6 +201,9 @@ export default {
       if (!currVal) return;
       this.updateUserQuestData(currVal);
     },
+  },
+  mounted() {
+    this.loadJackpotData();
   },
   computed: {
     ...mapGetters('web3', ['evmProvider', 'provider']),
@@ -219,6 +261,11 @@ export default {
     },
   },
   methods: {
+    async loadJackpotData() {
+      const resp = await axios.get(`${OVN_QUESTS_API}/blast/jackpot`);
+      console.log(resp, 'resploadJackpotData');
+      this.jackpotNum = resp.data?.amount;
+    },
     async updateUserQuestData(acc: string) {
       const resp = await axios.get(`${OVN_QUESTS_API}/blast/user/${acc}`);
       console.log(resp, 're-sp');
@@ -315,37 +362,107 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.blast-modal {
-  max-width: 860px;
+.page-wrap {
   width: 100%;
-  padding: 30px;
   overflow-x: hidden;
+  background-color: var(--color-4);
+  padding: 30px;
+  border-radius: 30px;
 
   h1 {
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 500;
+    color: var(--color-1);
   }
 
   p {
-    font-size: 15;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--color-1);
   }
 }
 
-.blast-modal__div {
+.blast-wrap__jackpot {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+}
+
+.blast-wrap__jackpot-main {
+  width: 35%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  background-color: var(--color-3);
+  font-weight: 700;
+  border-radius: 10px;
+  padding: 24px;
+
+  h1, p {
+    font-weight: 700;
+    color: var(--color-4);
+  }
+
+  h1 {
+    font-size: 17px
+  }
+
+  p {
+    font-size: 21px;
+  }
+}
+
+.blast-wrap__jackpot-user {
+  width: 75%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  font-size: 21px;
+  border-radius: 10px;
+  padding: 24px;
+  border: 1px solid var(--color-1);
+
+  h1 {
+    font-size: 17px;
+  }
+}
+
+.blast-wrap__jackpot-user__data {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.blast-wrap__jackpot-user__data-i {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: center;
+  width: 100%;
+
+  h3 {
+    font-weight: 500;
+    font-size: 15px;
+  }
+}
+
+.blast-wrap__div {
   height: 1px;
   width: 100%;
   margin: 20px 0;
   background-color: var(--color-7);
 }
 
-.blast-modal__row {
+.blast-wrap__row {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 50px;
 }
 
-.blast-modal__item-col {
+.blast-wrap__item-col {
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -412,7 +529,7 @@ export default {
   margin: 20px 0;
 }
 
-.blast-modal__box-wrap {
+.blast-wrap__box-wrap {
   width: 100%;
   height: 100%;
   max-width: 200px;
@@ -422,8 +539,14 @@ export default {
 //   overflow-x: scroll;
 // }
 
-.blast-modal__row--scroll {
+.blast-wrap__row--scroll {
   overflow-x: scroll;
   min-width: 800px;
+}
+
+.blast-wrap__content {
+  border-radius: 30px;
+  padding: 24px;
+  background-color: var(--color-8);
 }
 </style>
