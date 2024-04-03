@@ -761,6 +761,13 @@ export default {
   }
   .blast-wrap__quests-daily-tasks {
     flex-wrap: wrap;
+    align-items: center;
+  }
+  .blast-wrap__quests-diamond-box,
+  .blast-wrap__quests-diamond-box-wrapper {
+    padding: 12px 0;
+    width: 100%;
+    margin-left: auto;
   }
 }
 
