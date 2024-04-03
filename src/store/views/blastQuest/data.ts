@@ -15,10 +15,10 @@ const getters = {
 };
 
 const actions = {
-  async fetchJackpotData(commit: any) {
+  async fetchJackpotData({ commit }: any) {
     try {
       const jackpotData = await BlastQuestApiService.loadJackpot();
-      commit('setJackpotData', jackpotData);
+      commit('setJackpotData', jackpotData?.amount);
     } catch (error) {
       console.error('Failed to fetch token data:', error);
     }

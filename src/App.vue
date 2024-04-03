@@ -41,11 +41,21 @@ export default {
     await this.$store.dispatch('theme/initTheme');
     await this.$store.dispatch('web3/initWeb3');
     await this.$store.dispatch('walletAction/dappInitWalletConnect');
+    await this.fetchDataForBlastQuest();
 
     this.$store.dispatch('odosData/initUpdateBalancesInterval');
   },
   methods: {
     deviceType,
+    async fetchDataForBlastQuest() {
+      try {
+        await Promise.all([
+          this.$store.dispatch('jackpotData/fetchJackpotData'),
+        ]);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    },
   },
   computed: {
     ...mapGetters('waitingModal', { showWaitModal: 'show' }),
