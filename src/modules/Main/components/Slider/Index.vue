@@ -38,7 +38,7 @@
         >
           <div class="slider-info-blast">
             <div class="slider-info-blast-points">
-              <p>BLAST POINTS: <span>12345678</span></p>
+              <p>BLAST POINTS: <span>{{jackpotData}}</span></p>
             </div>
             <div class="slider-info-blast-lootbox">
               <p>BLAST LOOTBOX AIRDROP <br>
@@ -209,6 +209,7 @@ export default {
   },
   computed: {
     ...mapGetters('network', ['networkName']),
+    ...mapGetters('jackpotData', ['jackpotData']),
     deviceSize() {
       return deviceType();
     },

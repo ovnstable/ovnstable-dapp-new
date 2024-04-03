@@ -15,7 +15,7 @@
           BLAST POINTS JACKPOT:
         </h1>
         <p>
-          {{ jackpotNum }}
+          {{ jackpotData }}
         </p>
       </div>
       <div class="blast-wrap__jackpot-user">
@@ -291,7 +291,6 @@ export default {
       openWeeklyQuest: false,
       userData: null as any,
       activeLevel: 0,
-      jackpotNum: '0',
       dailyPrize: '',
       weeklyPrize: '',
       levelQuestList: [5, 30, 50, 100, 250],
@@ -307,12 +306,10 @@ export default {
       this.updateUserQuestData(currVal);
     },
   },
-  mounted() {
-    this.loadJackpotData();
-  },
   computed: {
     ...mapGetters('web3', ['evmProvider', 'provider']),
     ...mapGetters('accountData', ['account']),
+    ...mapGetters('jackpotData', ['jackpotData']),
 
     getWeeklyBtn() {
       return (level: number) => {
@@ -367,11 +364,6 @@ export default {
   },
   methods: {
     getImageUrl,
-    async loadJackpotData() {
-      const resp = await axios.get(`${OVN_QUESTS_API}/blast/jackpot`);
-      console.log(resp, 'resploadJackpotData');
-      this.jackpotNum = resp.data?.amount;
-    },
     async updateUserQuestData(acc: string) {
       const resp = await axios.get(`${OVN_QUESTS_API}/blast/user/${acc}`);
       console.log(resp, 're-sp');
