@@ -190,7 +190,10 @@ export default {
       if (this.isAnyNonStablecoinSelected) {
         const updatedValue: any = this.getSlippageSettingById(3);
         const auto: any = this.getSlippageSettingById(4);
-        auto.value = updatedValue.value;
+        this.currentSlippage = {
+          ...auto,
+          value: updatedValue.value,
+        };
         this.newSlippageSetting(auto);
         return;
       }
