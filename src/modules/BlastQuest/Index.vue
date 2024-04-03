@@ -192,7 +192,7 @@
           </ButtonComponent>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <div class="blast-wrap__quests">
       <div class="blast-wrap__row">
@@ -200,8 +200,8 @@
         <p>WEEKLY LOOT BOX WILL UPDATE IN: 23:59H</p>
       </div>
       <p class="blast-wrap__quests-jackpot-descr">
-      Complete 4 daily tasks 5 times a week to get the legendary Diamond bonus loot box.
-      The diamond loot box can contain both<br>
+        Complete 4 daily tasks 5 times a week to get the legendary Diamond bonus loot box.
+        The diamond loot box can contain both<br>
         the main prize and 3 regular boxes. Take part in a weekly quest and get a chance to win the
         <span>Jackpot!</span></p>
       <div class="blast-wrap__quests-daily-tasks blast-wrap__row">
@@ -231,14 +231,17 @@
               />
             </div>
 
-            <BaseIcon
-              name="diamondBox"
+            <QuestBox
+              :prize-value="dailyPrize"
+              :open-box="openDailyQuest"
+              :view-box="2"
+              @close="closeQuests"
             />
           </div>
           <p>DO TASKS TO GET LOOTBOX</p>
         </div>
       </div>
-    </div> -->
+    </div>
   </div>
 </template>
 
