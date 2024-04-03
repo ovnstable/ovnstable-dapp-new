@@ -226,7 +226,7 @@ export default {
   align-items: center;
   cursor: pointer;
   min-width: 200px;
-  min-height: 200px;
+  min-height: 110px;
   border-radius: 30px;
 }
 
@@ -274,7 +274,7 @@ export default {
   z-index: -1;
   width: 91px;
   height: 101px;
-  top: 44%;
+  top: 60%;
   transform: translateY(-50%);
 
   .box-wrap__modal-cube & {
@@ -285,7 +285,7 @@ export default {
 .cube--top {
   position: absolute;
   z-index: 1;
-  top: 33%;
+  top: 39%;
   transform: translateY(-50%);
 
   svg {
@@ -303,7 +303,7 @@ export default {
   position: absolute;
   z-index: 1;
   left: 48px;
-  top: 50%;
+  top: 70%;
   transform: translateY(-50%);
 
   svg {
@@ -320,7 +320,7 @@ export default {
   position: absolute;
   z-index: 1;
   right: 48px;
-  top: 50%;
+  top: 70%;
   transform: translateY(-50%);
 
   svg {
@@ -344,10 +344,10 @@ export default {
 
 @keyframes hover {
   from {
-    transform: translateY(-0.2rem);
+    transform: translateY(-0.1rem);
   }
   to {
-    transform: translateY(0.2rem);
+    transform: translateY(0.1rem);
   }
 }
 
