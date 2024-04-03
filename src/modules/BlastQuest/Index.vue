@@ -76,9 +76,72 @@
             <QuestBox
               :prize-value="dailyPrize"
               :open-box="openDailyQuest"
+              :view-box="0"
               @close="closeQuests"
             />
           </div>
+
+          <TasksData
+            :view-box="0"
+          />
+
+          <ButtonComponent
+            full
+            :disabled="!!dailyQuestCount"
+            @on-click="triggerDailyQuest"
+          >
+            {{ dailyQuestCount ? `WILL OPEN IN ${dailyQuestCount}h` : 'CLAIM' }}
+          </ButtonComponent>
+        </div>
+        <div
+          class="blast-wrap__boxes-col"
+        >
+          <div
+            class="blast-wrap__boxes-content"
+          >
+            <h1>
+              Silver box
+            </h1>
+            <QuestBox
+              :prize-value="dailyPrize"
+              :open-box="openDailyQuest"
+              :view-box="1"
+              @close="closeQuests"
+            />
+          </div>
+
+          <TasksData
+            :view-box="1"
+          />
+
+          <ButtonComponent
+            full
+            :disabled="!!dailyQuestCount"
+            @on-click="triggerDailyQuest"
+          >
+            {{ dailyQuestCount ? `WILL OPEN IN ${dailyQuestCount}h` : 'CLAIM' }}
+          </ButtonComponent>
+        </div>
+        <div
+          class="blast-wrap__boxes-col"
+        >
+          <div
+            class="blast-wrap__boxes-content"
+          >
+            <h1>
+              Gold box
+            </h1>
+            <QuestBox
+              :prize-value="dailyPrize"
+              :open-box="openDailyQuest"
+              :view-box="2"
+              @close="closeQuests"
+            />
+          </div>
+
+          <TasksData
+            :view-box="2"
+          />
 
           <ButtonComponent
             full
@@ -91,25 +154,7 @@
       </div>
     </div>
 
-    <div class="blast-wrap__div" />
-
-    <div class="blast-wrap__row">
-      <div class="blast-wrap__item-col">
-        <h1>
-          WEEKLY BOX
-        </h1>
-        <p>
-          This quest is differ from previous one, it't harder to achieve,
-          but can bring more point to You!
-        </p>
-        <p>
-          Here, You can see 5 levels of chests, which You can unlock one by one,
-          by finishing certain amount of liquidity in OVN Blast pools
-        </p>
-      </div>
-    </div>
-
-    <div class="progress-steps-scroll">
+    <!-- <div class="progress-steps-scroll">
       <div class="progress-steps-wrap">
         <span>START</span>
         <ul class="progress-steps">
@@ -134,6 +179,7 @@
           <QuestBox
             :prize-value="weeklyPrize"
             :open-box="key === activeLevel && openWeeklyQuest ? true : false"
+            :view-box="0"
             @close="closeQuests"
           />
 
@@ -153,7 +199,9 @@
         <h1>WEEKLY BONUS LOOT BOX QUEST</h1>
         <p>WEEKLY LOOT BOX WILL UPDATE IN: 23:59H</p>
       </div>
-      <p class="blast-wrap__quests-jackpot-descr">Complete 4 daily tasks 5 times a week to get the legendary Diamond bonus loot box. The diamond loot box can contain both<br>
+      <p class="blast-wrap__quests-jackpot-descr">
+      Complete 4 daily tasks 5 times a week to get the legendary Diamond bonus loot box.
+      The diamond loot box can contain both<br>
         the main prize and 3 regular boxes. Take part in a weekly quest and get a chance to win the
         <span>Jackpot!</span></p>
       <div class="blast-wrap__quests-daily-tasks blast-wrap__row">
@@ -190,7 +238,7 @@
           <p>DO TASKS TO GET LOOTBOX</p>
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -203,8 +251,8 @@ import { OVN_QUESTS_API, awaitDelay, getImageUrl } from '@/utils/const.ts';
 import axios from 'axios';
 import ButtonComponent from '@/components/Button/Index.vue';
 import QuestBox from '@/components/QuestBox/Index.vue';
-import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import BN from 'bignumber.js';
+import TasksData from './TasksData.vue';
 
 type TSignedMessage = {
   pubKey: string;
@@ -222,7 +270,7 @@ export default {
   components: {
     ButtonComponent,
     QuestBox,
-    BaseIcon,
+    TasksData,
   },
   emits: ['close-modal'],
   props: {
@@ -599,22 +647,25 @@ export default {
   display: flex;
   justify-content: space-between;
   margin-top: 20px;
+  gap: 16px;
 }
 
 .blast-wrap__boxes-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   text-align: center;
   width: 100%;
-  height: 100%;
 }
 
 .blast-wrap__boxes-content {
   text-align: center;
   width: 100%;
-  height: 100%;
   padding: 12px 0;
-  max-width: 200px;
   background-color: var(--color-4);
   margin-bottom: 20px;
+  border: 1px solid var(--color-6);
+  border-radius: 10px;
 }
 
 .blast-wrap__row--scroll {
