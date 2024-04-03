@@ -755,4 +755,13 @@ export default {
   }
 }
 
+@media screen and (max-width: 1024px) {
+  .page-wrap {
+    margin-bottom: 80px;
+  }
+  .blast-wrap__quests-daily-tasks {
+    flex-wrap: wrap;
+  }
+}
+
 </style>
