@@ -101,12 +101,16 @@
                 <p>{{ asset.lendingProtocolDepositedTo }}</p>
                 <p>See on Debank:</p>
                 <a
-                  :href="'https://debank.com/profile/' + asset.address"
+                  :href="'https://debank.com/profile/' + getAssetAddress(asset)"
                   target="_blank"
                   rel="noopener noreferrer"
                   class="link-ovn"
                 >
-                  <p>{{ formatTransactionID(asset.address) }}</p>
+                  <p>
+                    {{
+                      formatTransactionID(getAssetAddress(asset))
+                    }}
+                  </p>
                 </a>
               </div>
               <div class="performance__portfolio-dropdown performance__portfolio-dropdown--dep-asset">
@@ -255,18 +259,22 @@
             <p>{{ asset.lpFarmingPlatform }}</p>
           </div>
           <div class="performance__portfolio-dropdown performance__portfolio-dropdown--lp-pair">
-            <p>LP Pai:</p>
+            <p>LP Pair:</p>
             <p>{{ asset.lpPair }}</p>
           </div>
           <div class="performance__portfolio-dropdown performance__portfolio-dropdown--debank">
             <p>See on DeBank:</p>
             <a
-              :href="'https://debank.com/profile/' + asset.address"
+              :href="'https://debank.com/profile/' + getAssetAddress(asset)"
               target="_blank"
               rel="noopener noreferrer"
               class="link-ovn"
             >
-              <p>{{ formatTransactionID(asset.address) }}</p>
+              <p>
+                {{
+                  formatTransactionID(getAssetAddress(asset))
+                }}
+              </p>
             </a>
           </div>
           <div
@@ -339,6 +347,12 @@ export default {
   computed: {
     device() {
       return deviceType();
+    },
+    getAssetAddress() {
+      return (item: any) => {
+        if (item.explorerAddress) return item.explorerAddress;
+        return item.address;
+      };
     },
   },
   data() {
@@ -424,9 +438,7 @@ export default {
     },
 
     formatTransactionID(id: string): string {
-      if (id === undefined) {
-        return '';
-      }
+      if (id === undefined) return '';
       return `${id.substring(0, 5)}...${id.substring(id.length - 4)}`;
     },
   },

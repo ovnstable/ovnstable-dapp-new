@@ -10,10 +10,7 @@ class MarketApiService {
     return new Promise((resolve, reject) => {
       const url = `${API_URL}/${chain}/${token}/dapp/strategies`;
       apiService.get(url)
-        .then((response: any) => {
-          const strategies = response as Strategy[];
-          resolve(strategies as Strategy[]);
-        })
+        .then((response: any) => resolve(response as Strategy[]))
         .catch((e) => {
           reject(getErrorObject(e));
         });
