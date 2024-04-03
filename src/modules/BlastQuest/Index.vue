@@ -637,6 +637,12 @@ export default {
   margin-top: 20px;
   background-color: var(--color-8);
   border-radius: 30px;
+  [data-theme="dark"] & {
+    background-color: var(--color-7);
+    p {
+      color: var(--color-4);
+    }
+  }
 }
 .blast-wrap__quests-jackpot-descr {
   font-size: 14px;
@@ -656,6 +662,14 @@ export default {
   .completed {
     color: var(--color-2);
     text-decoration: line-through;
+    [data-theme="dark"] & {
+      color: var(--color-18);
+    }
+  }
+  .incomplete {
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
   }
 }
 
@@ -731,6 +745,10 @@ export default {
   background-color: var(--color-5);
   border: 1px solid var(--color-6);
   border-radius: 30px;
+  [data-theme="dark"] & {
+    color: var(--color-4);
+    background-color: var(--color-6);
+  }
 }
 
 .blast-wrap__quests-diamond-box {
@@ -744,6 +762,7 @@ export default {
     font-size: 16px;
     font-weight: 600;
   }
+
 }
 .blast-wrap__quests-diamond-box-tip {
   display: flex;
@@ -752,6 +771,7 @@ export default {
   svg {
     margin-left: 38px;
     overflow: visible;
+    cursor: pointer;
   }
 }
 
@@ -765,9 +785,7 @@ export default {
   }
   .blast-wrap__quests-diamond-box,
   .blast-wrap__quests-diamond-box-wrapper {
-    padding: 12px 0;
     width: 100%;
-    margin-left: auto;
   }
 }
 
