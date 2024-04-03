@@ -188,11 +188,6 @@
     v-model="showModalAccount"
     @close-modal="closeAccountModal"
   />
-
-  <BlastQuestModal
-    :is-show="showBlastModal"
-    @close-modal="showBlastModal = !showBlastModal"
-  />
 </template>
 
 <script lang="ts">

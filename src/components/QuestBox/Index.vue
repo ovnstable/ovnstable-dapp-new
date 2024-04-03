@@ -3,10 +3,22 @@
     class="box-wrap"
   >
     <div class="box-wrap__cube">
-      <div class="cube back" />
-      <div class="cube top" />
-      <div class="cube left" />
-      <div class="cube right" />
+      <div class="cube cube--back" />
+      <div class="cube cube--top">
+        <BaseIcon
+          :name="boxType(BOX_TYPES.TOP)"
+        />
+      </div>
+      <div class="cube cube--left">
+        <BaseIcon
+          :name="boxType(BOX_TYPES.LEFT)"
+        />
+      </div>
+      <div class="cube cube--right">
+        <BaseIcon
+          :name="boxType(BOX_TYPES.RIGHT)"
+        />
+      </div>
       <div class="powerup" />
     </div>
 
@@ -43,6 +55,7 @@
 import { uniqueId } from 'lodash';
 import { type PropType } from 'vue';
 import { awaitDelay } from '@/utils/const.ts';
+import BaseIcon from '@/components/Icon/BaseIcon.vue';
 
 // eslint-disable-next-line no-shadow
 export enum QUEST_TYPES {
@@ -53,6 +66,12 @@ export enum QUEST_TYPES {
   FIFTH
 }
 
+// eslint-disable-next-line no-shadow
+export enum BOX_TYPES {
+  LEFT,
+  TOP,
+  RIGHT,
+}
 export default {
   name: 'QuestCube',
   props: {
@@ -69,12 +88,16 @@ export default {
       default: '',
     },
   },
+  components: {
+    BaseIcon,
+  },
   emits: ['close'],
   data() {
     return {
       isOpen: false,
       isShakeActive: false,
       boxId: uniqueId(),
+      BOX_TYPES,
     };
   },
   watch: {
@@ -94,6 +117,17 @@ export default {
 
       await awaitDelay(10);
       if (currVal) this.triggerOpen();
+    },
+  },
+  computed: {
+    boxType() {
+      return (side: BOX_TYPES) => {
+        if (side === BOX_TYPES.LEFT) return 'box-left-1';
+        if (side === BOX_TYPES.TOP) return 'box-top-1';
+        if (side === BOX_TYPES.RIGHT) return 'box-right-1';
+
+        return '';
+      };
     },
   },
   methods: {
@@ -194,10 +228,6 @@ export default {
   min-width: 200px;
   min-height: 200px;
   border-radius: 30px;
-  padding: 20px;
-  background-color: var(--color-5);
-  border: 1px solid var(--colo-6);
-  margin: 20px 0;
 }
 
 .box-wrap__modal {
@@ -236,56 +266,67 @@ export default {
   animation-play-state: running;
 }
 
-.back {
+.cube--back {
   position: absolute;
   background-image: url("https://res.cloudinary.com/dbrwtwlwl/image/upload/v1580369339/cube/mysteryBoxBackground_2x_b2espr.png");
   background-size: cover;
   background-position: center;
   z-index: -1;
-  width: 100%;
-  height: 100%;
+  width: 91px;
+  height: 101px;
+  top: 44%;
+  transform: translateY(-50%);
 
   .box-wrap__modal-cube & {
     width: 100%;
     height: 100%;
   }
 }
-.top {
+.cube--top {
   position: absolute;
-  background-image: url("https://res.cloudinary.com/dbrwtwlwl/image/upload/v1580369339/cube/mysteryBoxTopFlap_2x_f9cb8g.png");
-  background-size: cover;
-  background-position: center;
   z-index: 1;
-  width: 100%;
-  height: 100%;
+  top: 33%;
+  transform: translateY(-50%);
+
+  svg {
+    width: 80px;
+    height: 80px;
+  }
 
   .box-wrap__modal-cube & {
     width: 100%;
     height: 100%;
   }
 }
-.left {
+
+.cube--left {
   position: absolute;
-  background-image: url("https://res.cloudinary.com/dbrwtwlwl/image/upload/v1580369339/cube/mysteryBoxLeftFlap_2x_y8u4gz.png");
-  background-size: cover;
-  background-position: center;
   z-index: 1;
-  width: 100%;
-  height: 100%;
+  left: 48px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  svg {
+    width: 64px;
+    height: 70px;
+  }
 
   .box-wrap__modal-cube & {
     width: 100%;
     height: 100%;
   }
 }
-.right {
+.cube--right {
   position: absolute;
-  background-image: url("https://res.cloudinary.com/dbrwtwlwl/image/upload/v1580369339/cube/mysteryBoxRightFlap_2x_abexhh.png");
-  background-size: cover;
-  background-position: center;
   z-index: 1;
-  width: 100%;
-  height: 100%;
+  right: 48px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  svg {
+    width: 64px;
+    height: 70px;
+  }
 
   .box-wrap__modal-cube & {
     width: 100%;

@@ -63,10 +63,13 @@
           Each loot box contains a different amount of points that are guaranteed to drop out.
         </p>
       </div>
-      <div>
+      <div class="blast-wrap__boxes">
         <div
           class="blast-wrap__box-wrap"
         >
+          <h1>
+            Bronze box
+          </h1>
           <QuestBox
             :prize-value="dailyPrize"
             :open-box="openDailyQuest"
@@ -529,10 +532,17 @@ export default {
   margin: 20px 0;
 }
 
+.blast-wrap__boxes {
+  margin-top: 20px;
+}
+
 .blast-wrap__box-wrap {
+  text-align: center;
   width: 100%;
   height: 100%;
   max-width: 200px;
+  background-color: var(--color-4);
+  padding: 12px 20px;
 }
 
 // .progress-steps-scroll {
@@ -548,5 +558,7 @@ export default {
   border-radius: 30px;
   padding: 24px;
   background-color: var(--color-8);
+  font-size: 16px;
+  font-weight: 600;
 }
 </style>
