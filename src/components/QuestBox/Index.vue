@@ -72,6 +72,7 @@ export enum BOX_VIEW {
   BRONZE,
   SILVER,
   GOLD,
+  DIAMOND,
 }
 
 export default {

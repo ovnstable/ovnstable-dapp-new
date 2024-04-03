@@ -234,7 +234,7 @@
             <QuestBox
               :prize-value="dailyPrize"
               :open-box="openDailyQuest"
-              :view-box="2"
+              :view-box="3"
               @close="closeQuests"
             />
           </div>
