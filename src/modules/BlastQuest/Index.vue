@@ -140,6 +140,50 @@
         </div>
       </div>
     </div>
+
+    <div class="blast-wrap__quests">
+      <div class="blast-wrap__row">
+        <h1>WEEKLY BONUS LOOT BOX QUEST</h1>
+        <p>WEEKLY LOOT BOX WILL UPDATE IN: 23:59H</p>
+      </div>
+      <p class="blast-wrap__quests-jackpot-descr">Complete 4 daily tasks 5 times a week to get the legendary Diamond bonus loot box. The diamond loot box can contain both<br>
+        the main prize and 3 regular boxes. Take part in a weekly quest and get a chance to win the
+        <span>Jackpot!</span></p>
+      <div class="blast-wrap__quests-daily-tasks blast-wrap__row">
+        <img
+          alt="navbar"
+          :src="getImageUrl(`assets/blastQuest/SlothBlastQuest.png`)"
+        />
+        <ul class="blast-wrap__quests-task-list">
+          <li
+            v-for="(task, index) in tasks"
+            :key="index"
+            :class="{ completed: task.completed, incomplete: !task.completed }"
+          >
+            <div class="blast-wrap__quests-task">
+              <span class="task-status-icon" />
+              <span class="task-description">{{ task.description }}</span>
+            </div>
+
+          </li>
+        </ul>
+        <div class="blast-wrap__quests-diamond-box-wrapper">
+          <div class="blast-wrap__quests-diamond-box">
+            <div class="blast-wrap__quests-diamond-box-tip">
+              <p>DIAMOND BOX</p>
+              <BaseIcon
+                name="tip"
+              />
+            </div>
+
+            <BaseIcon
+              name="diamondBox"
+            />
+          </div>
+          <p>DO TASKS TO GET LOOTBOX</p>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -148,10 +192,11 @@
 <script lang="ts">
 import { mapGetters } from 'vuex';
 import { getRandomString } from '@/utils/strings.ts';
-import { OVN_QUESTS_API, awaitDelay } from '@/utils/const.ts';
+import { OVN_QUESTS_API, awaitDelay, getImageUrl } from '@/utils/const.ts';
 import axios from 'axios';
 import ButtonComponent from '@/components/Button/Index.vue';
 import QuestBox from '@/components/QuestBox/Index.vue';
+import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import BN from 'bignumber.js';
 
 type TSignedMessage = {
@@ -170,6 +215,7 @@ export default {
   components: {
     ButtonComponent,
     QuestBox,
+    BaseIcon,
   },
   emits: ['close-modal'],
   props: {
@@ -191,6 +237,7 @@ export default {
       dailyPrize: '',
       weeklyPrize: '',
       levelQuestList: [5, 30, 50, 100, 250],
+      tasks: this.createTasks(5),
     };
   },
   watch: {
@@ -261,6 +308,7 @@ export default {
     },
   },
   methods: {
+    getImageUrl,
     async loadJackpotData() {
       const resp = await axios.get(`${OVN_QUESTS_API}/blast/jackpot`);
       console.log(resp, 'resploadJackpotData');
@@ -356,6 +404,17 @@ export default {
     closeModal() {
       console.log('closeModal');
       this.$emit('close-modal');
+    },
+    createTasks(numberOfDays: any) {
+      const tasks = [];
+      for (let day = 1; day <= numberOfDays; day++) {
+        tasks.push({
+          description: `Do 4 tasks from daily loot box quest ${day} day${day > 1 ? 's' : ''}`,
+          completed: false,
+        });
+      }
+      if (tasks.length) tasks[0].completed = true;
+      return tasks;
     },
   },
 };
@@ -549,4 +608,130 @@ export default {
   padding: 24px;
   background-color: var(--color-8);
 }
+
+.blast-wrap__quests {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  margin-top: 20px;
+  background-color: var(--color-8);
+  border-radius: 30px;
+}
+.blast-wrap__quests-jackpot-descr {
+  font-size: 14px;
+  margin-top: 24px;
+  margin-bottom: 24px;
+  span {
+    text-decoration: underline;
+  }
+}
+
+.blast-wrap__quests-task-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: var(--color-1);
+  font-size: 14px;
+  .completed {
+    color: var(--color-2);
+    text-decoration: line-through;
+  }
+}
+
+.blast-wrap__quests-task-list li {
+  margin-bottom: 18px;
+}
+
+.blast-wrap__quests-task-list li:last-child {
+  margin-bottom: 0;
+}
+
+.blast-wrap__quests-task {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.task-status-icon {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  margin-right: 10px;
+  position: relative;
+  background-color: var(--color-4);
+  border: 1px solid var(--color-6);
+}
+
+.completed .task-status-icon:before {
+  content: '';
+  position: absolute;
+  left: 40%;
+  top: 30%;
+  height: 11px;
+  width: 6px;
+  border-bottom: 2px solid var(--color-12);
+  border-right: 2px solid var(--color-12);
+  transform: translate(-50%, -50%) rotate(45deg);
+  transform-origin: left bottom;
+}
+
+.incomplete .task-status-icon:before,
+.incomplete .task-status-icon:after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  height: 14px;
+  width: 1px;
+  background-color: var(--color-2);
+}
+
+.incomplete .task-status-icon:before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.incomplete .task-status-icon:after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.blast-wrap__quests-diamond-box-wrapper
+.blast-wrap__quests-diamond-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.blast-wrap__quests-diamond-box-wrapper p:last-child {
+  text-align: center;
+  font-size: 14px;
+  color: var(--color-2);
+  font-weight: 500;
+  padding: 5px 30px;
+  background-color: var(--color-5);
+  border: 1px solid var(--color-6);
+  border-radius: 30px;
+}
+
+.blast-wrap__quests-diamond-box {
+  gap: 20px;
+  background-color: var(--color-4);
+  border: 1px solid var(--color-6);
+  border-radius: 10px;
+  margin-bottom: 12px;
+  padding: 12px 20px 22px;
+  p {
+    font-size: 16px;
+    font-weight: 600;
+  }
+}
+.blast-wrap__quests-diamond-box-tip {
+  display: flex;
+  flex-direction: row;
+  margin-left: 38px;
+  svg {
+    margin-left: 38px;
+    overflow: visible;
+  }
+}
+
 </style>
