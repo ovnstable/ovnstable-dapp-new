@@ -63,24 +63,31 @@
           Each loot box contains a different amount of points that are guaranteed to drop out.
         </p>
       </div>
-      <div>
+      <div class="blast-wrap__boxes">
         <div
-          class="blast-wrap__box-wrap"
+          class="blast-wrap__boxes-col"
         >
-          <QuestBox
-            :prize-value="dailyPrize"
-            :open-box="openDailyQuest"
-            @close="closeQuests"
-          />
-        </div>
+          <div
+            class="blast-wrap__boxes-content"
+          >
+            <h1>
+              Bronze box
+            </h1>
+            <QuestBox
+              :prize-value="dailyPrize"
+              :open-box="openDailyQuest"
+              @close="closeQuests"
+            />
+          </div>
 
-        <ButtonComponent
-          full
-          :disabled="!!dailyQuestCount"
-          @on-click="triggerDailyQuest"
-        >
-          {{ dailyQuestCount ? `WILL OPEN IN ${dailyQuestCount}h` : 'CLAIM' }}
-        </ButtonComponent>
+          <ButtonComponent
+            full
+            :disabled="!!dailyQuestCount"
+            @on-click="triggerDailyQuest"
+          >
+            {{ dailyQuestCount ? `WILL OPEN IN ${dailyQuestCount}h` : 'CLAIM' }}
+          </ButtonComponent>
+        </div>
       </div>
     </div>
 
@@ -121,7 +128,7 @@
       <div class="blast-wrap__row blast-wrap__row--scroll">
         <div
           v-for="(item, key) in Array.from({ length: 5 })"
-          class="blast-wrap__box-wrap"
+          class="blast-wrap__box-col"
           :key="key"
         >
           <QuestBox
@@ -588,15 +595,27 @@ export default {
   margin: 20px 0;
 }
 
-.blast-wrap__box-wrap {
-  width: 100%;
-  height: 100%;
-  max-width: 200px;
+.blast-wrap__boxes {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
 }
 
-// .progress-steps-scroll {
-//   overflow-x: scroll;
-// }
+.blast-wrap__boxes-col {
+  text-align: center;
+  width: 100%;
+  height: 100%;
+}
+
+.blast-wrap__boxes-content {
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  padding: 12px 0;
+  max-width: 200px;
+  background-color: var(--color-4);
+  margin-bottom: 20px;
+}
 
 .blast-wrap__row--scroll {
   overflow-x: scroll;
@@ -607,6 +626,8 @@ export default {
   border-radius: 30px;
   padding: 24px;
   background-color: var(--color-8);
+  font-size: 16px;
+  font-weight: 600;
 }
 
 .blast-wrap__quests {

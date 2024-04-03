@@ -1298,8 +1298,6 @@ export default {
         .times(100000)
         .toFixed(0);
 
-      console.log(tokenContract, '--tokenContract');
-      console.log(this.routerContract, '--this.routerContract');
       const tx = await approveToken(
         tokenContract,
         this.routerContract.target,
