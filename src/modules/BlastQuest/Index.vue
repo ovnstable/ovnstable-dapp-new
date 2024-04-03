@@ -15,7 +15,7 @@
           BLAST POINTS JACKPOT:
         </h1>
         <p>
-          {{ jackpotNum }}
+          {{ jackpotData }}
         </p>
       </div>
       <div class="blast-wrap__jackpot-user">
@@ -216,7 +216,9 @@
             :class="{ completed: task.completed, incomplete: !task.completed }"
           >
             <div class="blast-wrap__quests-task">
-              <span class="task-status-icon" />
+              <div class="tasks-col__item-icon">
+                <BaseIcon :name="task.completed ? 'CommonChecked' : 'CommonClose' " />
+              </div>
               <span class="task-description">{{ task.description }}</span>
             </div>
 
@@ -234,7 +236,7 @@
             <QuestBox
               :prize-value="dailyPrize"
               :open-box="openDailyQuest"
-              :view-box="2"
+              :view-box="3"
               @close="closeQuests"
             />
           </div>
@@ -255,6 +257,7 @@ import axios from 'axios';
 import ButtonComponent from '@/components/Button/Index.vue';
 import QuestBox from '@/components/QuestBox/Index.vue';
 import BN from 'bignumber.js';
+import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import TasksData from './TasksData.vue';
 
 type TSignedMessage = {
@@ -274,6 +277,7 @@ export default {
     ButtonComponent,
     QuestBox,
     TasksData,
+    BaseIcon,
   },
   emits: ['close-modal'],
   props: {
@@ -291,7 +295,6 @@ export default {
       openWeeklyQuest: false,
       userData: null as any,
       activeLevel: 0,
-      jackpotNum: '0',
       dailyPrize: '',
       weeklyPrize: '',
       levelQuestList: [5, 30, 50, 100, 250],
@@ -307,12 +310,10 @@ export default {
       this.updateUserQuestData(currVal);
     },
   },
-  mounted() {
-    this.loadJackpotData();
-  },
   computed: {
     ...mapGetters('web3', ['evmProvider', 'provider']),
     ...mapGetters('accountData', ['account']),
+    ...mapGetters('jackpotData', ['jackpotData']),
 
     getWeeklyBtn() {
       return (level: number) => {
@@ -367,11 +368,6 @@ export default {
   },
   methods: {
     getImageUrl,
-    async loadJackpotData() {
-      const resp = await axios.get(`${OVN_QUESTS_API}/blast/jackpot`);
-      console.log(resp, 'resploadJackpotData');
-      this.jackpotNum = resp.data?.amount;
-    },
     async updateUserQuestData(acc: string) {
       const resp = await axios.get(`${OVN_QUESTS_API}/blast/user/${acc}`);
       console.log(resp, 're-sp');
@@ -752,36 +748,18 @@ export default {
   border: 1px solid var(--color-6);
 }
 
-.completed .task-status-icon:before {
-  content: '';
-  position: absolute;
-  left: 40%;
-  top: 30%;
-  height: 11px;
-  width: 6px;
-  border-bottom: 2px solid var(--color-12);
-  border-right: 2px solid var(--color-12);
-  transform: translate(-50%, -50%) rotate(45deg);
-  transform-origin: left bottom;
-}
-
-.incomplete .task-status-icon:before,
-.incomplete .task-status-icon:after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  height: 14px;
-  width: 1px;
-  background-color: var(--color-2);
-}
-
-.incomplete .task-status-icon:before {
-  transform: translate(-50%, -50%) rotate(45deg);
-}
-
-.incomplete .task-status-icon:after {
-  transform: translate(-50%, -50%) rotate(-45deg);
+.tasks-col__item-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  min-width: 22px;
+  min-height: 22px;
+  border-radius: 50%;
+  background-color: var(--color-4);
+  border: 1px solid var(--color-3);
+  margin-right: 10px;
 }
 
 .blast-wrap__quests-diamond-box-wrapper
@@ -790,6 +768,7 @@ export default {
   flex-direction: column;
   align-items: center;
 }
+
 .blast-wrap__quests-diamond-box-wrapper p:last-child {
   text-align: center;
   font-size: 14px;
