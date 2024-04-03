@@ -155,9 +155,9 @@
 
         <div>
           <SwapSlippageSettings
-            :currentSlippageChanged="handleCurrentSlippageChanged"
             :selected-input-tokens="selectedInputTokens"
             :selected-output-tokens="selectedOutputTokens"
+            @change-slippage="handleCurrentSlippageChanged"
           />
         </div>
         <div
@@ -430,7 +430,7 @@ export default {
         // Alienbase: ["Alien Base", "Alien Base Stable"],
         // Convex: ["Curve Crypto Registry", "Curve Factory", "Curve Registry"]
       } as any,
-      odosZapReferalCode: 3000000005,
+      odosZapReferalCode: 7777777,
       currentStage: zapInStep.START,
     };
   },
