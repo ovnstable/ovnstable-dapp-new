@@ -99,6 +99,7 @@ export default {
 
 .tasks-col__item {
   display: flex;
+  align-items: center;
   gap: 6px;
   text-align: left;
 
