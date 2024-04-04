@@ -33,7 +33,7 @@
               TOTAL CLAIMED
             </h3>
             <p>
-              000
+              {{ userData ? userData.totallyEarned : 0 }}
             </p>
           </div>
           <div class="blast-wrap__jackpot-user__data-i">
@@ -41,7 +41,7 @@
               TOTAL PENDING
             </h3>
             <p>
-              000
+              {{ userData ? userData.totallyPending : 0 }}
             </p>
           </div>
           <div class="blast-wrap__jackpot-user__data-i">
@@ -49,7 +49,7 @@
               MONTLY FREE DROPS
             </h3>
             <p>
-              000
+              0
             </p>
           </div>
         </div>
@@ -88,15 +88,15 @@
 
           <TasksData
             :view-box="0"
+            :box-data="userData.bronzeBox"
           />
 
           <ButtonComponent
             full
-            :disabled="!!dailyQuestCount"
-            @on-click="triggerDailyQuest"
+            @on-click="triggerBoxQuest(typeofBox.BRONZE)"
             class="blast-wrap__boxes-col-btn"
           >
-            {{ dailyQuestCount ? `WILL OPEN IN ${dailyQuestCount}h` : 'CLAIM' }}
+            {{ !bronzeCount ? `WILL OPEN IN ${bronzeCount}h` : 'CLAIM' }}
           </ButtonComponent>
         </div>
         <div
@@ -112,21 +112,22 @@
               :prize-value="dailyPrize"
               :open-box="openDailyQuest"
               :view-box="1"
+              :quest-data="userData"
               @close="closeQuests"
             />
           </div>
 
           <TasksData
             :view-box="1"
+            :box-data="userData.silverBox"
           />
 
           <ButtonComponent
             full
-            :disabled="!!dailyQuestCount"
-            @on-click="triggerDailyQuest"
+            @on-click="triggerBoxQuest(typeofBox.SILVER)"
             class="blast-wrap__boxes-col-btn"
           >
-            {{ dailyQuestCount ? `WILL OPEN IN ${dailyQuestCount}h` : 'CLAIM' }}
+            {{ 'CLAIM' }}
           </ButtonComponent>
         </div>
         <div
@@ -148,15 +149,16 @@
 
           <TasksData
             :view-box="2"
+            :box-data="userData.goldBox"
           />
 
           <ButtonComponent
             full
-            :disabled="!!dailyQuestCount"
-            @on-click="triggerDailyQuest"
+            :disabled="!!bronzeCount"
+            @on-click="triggerBoxQuest(typeofBox.GOLD)"
             class="blast-wrap__boxes-col-btn"
           >
-            {{ dailyQuestCount ? `WILL OPEN IN ${dailyQuestCount}h` : 'CLAIM' }}
+            {{ 'CLAIM' }}
           </ButtonComponent>
         </div>
       </div>
@@ -291,8 +293,10 @@ type TSignedMessage = {
 };
 
 enum TypeofQuest {
-  LEVELQUEST,
-  DAILY,
+  BRONZE,
+  SILVER,
+  GOLD,
+  DIAMOND
 }
 export default {
   name: 'BlastQuestModule',
@@ -313,11 +317,18 @@ export default {
   },
   data() {
     return {
+      typeofBox: TypeofQuest,
       showModal: false,
       isDarkTheme: false,
       openDailyQuest: false,
       openWeeklyQuest: false,
-      userData: null as any,
+      userData: {
+        bronzeBox: [] as any,
+        silverBox: [] as any,
+        goldBox: [] as any,
+        totallyEarned: 0,
+        totallyPending: 0,
+      },
       activeLevel: 0,
       dailyPrize: '',
       weeklyPrize: '',
@@ -339,48 +350,16 @@ export default {
     ...mapGetters('accountData', ['account']),
     ...mapGetters('jackpotData', ['jackpotData', 'jackpotDataLoaded']),
 
-    getWeeklyBtn() {
-      return (level: number) => {
-        if (level < this.getHighestLevel) return 'Claimed';
-        return this.weeklyQuestCount ? `WILL OPEN IN ${this.weeklyQuestCount}h` : 'CLAIM';
-      };
-    },
-    getHighestLevel() {
-      if (!this.userData || this.userData?.levelQuestHistory?.length === 0) return 0;
-
-      console.log(this.userData, '---this.userData');
-      return Math.max(this.userData?.levelQuestHistory.map((_: any) => _.level));
-    },
-
-    weeklyQuestCount() {
-      const ONE_DAY_UNIX = 86400;
-      let lastClaim = null;
-      console.log(this.userData, 'DATA');
-      if (!this.userData || this.userData?.levelQuestHistory?.length === 0) return null;
-      if (this.userData && this.userData.levelQuestHistory?.length > 0) {
-        const nowUnix = Math.floor(Date.now() / 1000);
-        // eslint-disable-next-line no-unsafe-optional-chaining
-        lastClaim = nowUnix - this.userData
-          .levelQuestHistory[this.userData.levelQuestHistory.length - 1]?.time;
-      }
-
-      if (lastClaim && lastClaim < ONE_DAY_UNIX * 7) {
-        return new BN(ONE_DAY_UNIX * 7).minus(lastClaim).div(3600).toFixed(0);
-      }
-
-      return null;
-    },
-
-    dailyQuestCount() {
+    bronzeCount() {
       const ONE_DAY_UNIX = 86400;
       let lastClaim = null;
       console.log(this.userData, 'DATA');
       if (!this.userData) return null;
-      if (this.userData && this.userData.dailyQuest?.length > 0) {
+      if (this.userData && this.userData.bronzeBox?.length > 0) {
         const nowUnix = Math.floor(Date.now() / 1000);
         // eslint-disable-next-line no-unsafe-optional-chaining
         lastClaim = nowUnix - this.userData
-          .dailyQuest[this.userData.dailyQuest.length - 1]?.time;
+          .bronzeBox[this.userData.bronzeBox.length - 1]?.time;
       }
 
       if (lastClaim && lastClaim < ONE_DAY_UNIX) {
@@ -432,8 +411,7 @@ export default {
         return null;
       }
     },
-    async triggerWeeklyQuest() {
-      console.log('CLAIM WEKK');
+    async triggerBoxQuest(boxType: TypeofQuest) {
       const nonce = getRandomString(24);
       const sign: TSignedMessage | null = await this.signEvmMessage(
         `Claim blast points on Overnight.fi, nonce: ${nonce}`,
@@ -444,30 +422,7 @@ export default {
         address: this.account,
         message: sign?.message,
         sign: sign?.signature,
-        questType: TypeofQuest.LEVELQUEST,
-      });
-
-      this.activeLevel = this.getHighestLevel;
-      this.openWeeklyQuest = true;
-      this.weeklyPrize = triggerClaim.data?.amount;
-
-      // waiting for animation
-      await awaitDelay(2000);
-      this.updateUserQuestData(this.account);
-      console.log(triggerClaim, '---triggerClaim');
-    },
-    async triggerDailyQuest() {
-      const nonce = getRandomString(24);
-      const sign: TSignedMessage | null = await this.signEvmMessage(
-        `Claim blast points on Overnight.fi, nonce: ${nonce}`,
-        nonce,
-      );
-
-      const triggerClaim = await axios.post(`${OVN_QUESTS_API}/blast/claim`, {
-        address: this.account,
-        message: sign?.message,
-        sign: sign?.signature,
-        questType: TypeofQuest.DAILY,
+        questType: boxType,
       });
 
       this.dailyPrize = triggerClaim.data?.amount;

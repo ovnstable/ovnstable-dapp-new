@@ -23,17 +23,17 @@ import BaseIcon from '@/components/Icon/BaseIcon.vue';
 
 const BRONZE_QUESTS = [
   {
-    id: 1,
+    id: '0',
     text: 'Like and Retweet',
-    checked: true,
+    checked: false,
   },
   {
-    id: 2,
+    id: '1',
     text: 'Write a tweet about @Overnightfinance',
     checked: false,
   },
   {
-    id: 3,
+    id: '2',
     text: 'Write a tweet with the amount of points you get from Overnight',
     checked: false,
   },
@@ -41,17 +41,17 @@ const BRONZE_QUESTS = [
 
 const SILVER_QUESTS = [
   {
-    id: 1,
+    id: '0',
     text: 'Swap $10-20',
-    checked: true,
+    checked: false,
   },
   {
-    id: 2,
+    id: '1',
     text: 'Swap $20-50',
     checked: false,
   },
   {
-    id: 3,
+    id: '2',
     text: 'Swap $50',
     checked: false,
   },
@@ -59,21 +59,29 @@ const SILVER_QUESTS = [
 
 const GOLD_QUESTS = [
   {
-    id: 1,
+    id: '0',
     text: 'Add liquidity to any Blast OVN pool, $10-100',
     checked: false,
   },
   {
-    id: 2,
+    id: '1',
     text: 'Add liquidity to any Blast OVN pool, $100-500',
     checked: false,
   },
   {
-    id: 3,
+    id: '2',
     text: 'Add liquidity to any Blast OVN pool, $500 or more',
     checked: false,
   },
 ];
+
+// eslint-disable-next-line no-shadow
+export interface BOX_DATA {
+  batchId: string;
+  amount: string;
+  time: number;
+  questId: string;
+}
 
 export default {
   name: 'TasksData',
@@ -82,15 +90,37 @@ export default {
       type: Number as PropType<BOX_VIEW>,
       required: true,
     },
+    boxData: {
+      type: Array as PropType<BOX_DATA[]>,
+      required: true,
+    },
   },
   components: {
     BaseIcon,
   },
+  methods: {
+    filterByBoxData(questData: typeof GOLD_QUESTS) {
+      if (this.boxData.length === 0) return questData;
+
+      return questData.map((_) => {
+        const questComp = this.boxData.find((item) => item.questId === _.id);
+
+        if (questComp) {
+          return {
+            ..._,
+            checked: true,
+          };
+        }
+
+        return _;
+      });
+    },
+  },
   computed: {
     tasksDataInfo() {
-      if (this.viewBox === BOX_VIEW.BRONZE) return BRONZE_QUESTS;
-      if (this.viewBox === BOX_VIEW.SILVER) return SILVER_QUESTS;
-      if (this.viewBox === BOX_VIEW.GOLD) return GOLD_QUESTS;
+      if (this.viewBox === BOX_VIEW.BRONZE) return this.filterByBoxData(BRONZE_QUESTS);
+      if (this.viewBox === BOX_VIEW.SILVER) return this.filterByBoxData(SILVER_QUESTS);
+      if (this.viewBox === BOX_VIEW.GOLD) return this.filterByBoxData(GOLD_QUESTS);
 
       return [];
     },

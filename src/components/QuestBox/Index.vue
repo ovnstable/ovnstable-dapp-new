@@ -155,9 +155,7 @@ export default {
       const transitionTime = '750ms';
       let c = 0;
 
-      console.log(cube.style, '---cube');
-
-      if (!powerup) return;
+      if (!powerup || !cube) return;
       if (!ctop || !cleft || !cright) return;
 
       ctop.style.transition = `all ${transitionTime}`;
