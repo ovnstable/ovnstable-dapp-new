@@ -2,6 +2,7 @@ import BlastQuestApiService from '@/services/blast-quest-api-service.ts';
 
 const state = {
   jackpotData: {},
+  loadedJackpotData: false,
 };
 
 const getters = {
@@ -11,6 +12,9 @@ const getters = {
       return 0;
     }
     return data || 0;
+  },
+  jackpotDataLoaded(state: any) {
+    return state.loadedJackpotData;
   },
 };
 
@@ -28,6 +32,9 @@ const actions = {
 const mutations = {
   setJackpotData(state: any, value: any) {
     state.jackpotData = value;
+  },
+  setJackpotDataLoaded(state: any, value: any) {
+    state.loadedJackpotData = value;
   },
 };
 

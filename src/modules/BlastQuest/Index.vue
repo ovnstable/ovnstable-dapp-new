@@ -14,7 +14,12 @@
         <h1>
           BLAST POINTS JACKPOT:
         </h1>
-        <p>
+        <div
+          v-if="!jackpotDataLoaded"
+        >
+          <Spinner />
+        </div>
+        <p v-else>
           {{ jackpotData }}
         </p>
       </div>
@@ -269,6 +274,7 @@ import ButtonComponent from '@/components/Button/Index.vue';
 import QuestBox from '@/components/QuestBox/Index.vue';
 import BN from 'bignumber.js';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import Spinner from '@/components/Spinner/Index.vue';
 import TasksData from './TasksData.vue';
 
 type TSignedMessage = {
@@ -289,6 +295,7 @@ export default {
     QuestBox,
     TasksData,
     BaseIcon,
+    Spinner,
   },
   emits: ['close-modal'],
   props: {
@@ -324,7 +331,7 @@ export default {
   computed: {
     ...mapGetters('web3', ['evmProvider', 'provider']),
     ...mapGetters('accountData', ['account']),
-    ...mapGetters('jackpotData', ['jackpotData']),
+    ...mapGetters('jackpotData', ['jackpotData', 'jackpotDataLoaded']),
 
     getWeeklyBtn() {
       return (level: number) => {
@@ -530,6 +537,7 @@ export default {
   font-weight: 700;
   border-radius: 10px;
   padding: 24px;
+  max-height: 124px;
 
   h1, p {
     font-weight: 700;
