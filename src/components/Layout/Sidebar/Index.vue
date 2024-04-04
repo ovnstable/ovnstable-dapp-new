@@ -40,6 +40,24 @@
       >
         {{ link.name }}
       </router-link>
+      <div class="sidebar__divider-top" />
+      <p
+        class="sidebar__text-top sidebar__text-top--ovn"
+      >EVENTS</p>
+      <router-link
+        to="/blastquest"
+        class="sidebar__text-top"
+        active-class="active-link"
+      >
+        <div class="sidebar__text-top-blast">
+          <BaseIcon
+            name="blastSidebar"
+            class="sidebar__icon-social icon-twitter"
+          />
+          <p>Blast lootbox</p>
+        </div>
+
+      </router-link>
     </ul>
 
     <ul class="sidebar__bottom">
@@ -229,6 +247,7 @@ export default {
     margin-top: 10px;
   }
 }
+
 .active-link {
   text-decoration: underline;
 }
@@ -307,6 +326,19 @@ export default {
 
 .sidebar__button-switch-language:hover {
   cursor: pointer;
+}
+
+.sidebar__text-top-blast {
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+  align-items: center;
+  margin-top: 14px;
+  svg {
+    [data-theme="dark"] & {
+      stroke: var(--color-4);
+    }
+  }
 }
 
 </style>
