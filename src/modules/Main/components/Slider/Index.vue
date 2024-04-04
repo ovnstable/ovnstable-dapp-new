@@ -37,8 +37,19 @@
           v-if="networkName === 'blast'"
         >
           <div class="slider-info-blast">
-            <div class="slider-info-blast-points">
-              <p>BLAST POINTS: <span>{{jackpotData}}</span></p>
+            <div
+              class="slider-info-blast-loader"
+              v-if="!jackpotDataLoaded"
+            >
+              <Spinner />
+            </div>
+            <div
+              v-else
+              class="slider-info-blast-points"
+            >
+              <p>BLAST POINTS: <span>{{jackpotData}}</span>
+
+              </p>
             </div>
             <div class="slider-info-blast-lootbox">
               <p>BLAST LOOTBOX AIRDROP <br>
@@ -209,7 +220,7 @@ export default {
   },
   computed: {
     ...mapGetters('network', ['networkName']),
-    ...mapGetters('jackpotData', ['jackpotData']),
+    ...mapGetters('jackpotData', ['jackpotData', 'jackpotDataLoaded']),
     deviceSize() {
       return deviceType();
     },
@@ -555,6 +566,13 @@ export default {
   }
 }
 
+.slider-info-blast-loader {
+  max-height: 55px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+}
+
 .slider-info-blast-lootbox {
   background-image: url('src/assets/blastQuest/blastLootboxSlider.png');
   background-size: cover;
@@ -596,9 +614,8 @@ export default {
     right: 0;
   }
   img {
+    object-fit: contain;
     overflow: hidden;
-    height: 248px;
-    width: 250px;
   }
 }
 

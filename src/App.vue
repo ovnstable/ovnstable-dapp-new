@@ -49,9 +49,11 @@ export default {
     deviceType,
     async fetchDataForBlastQuest() {
       try {
+        this.$store.commit('jackpotData/setJackpotDataLoaded', false);
         await Promise.all([
           this.$store.dispatch('jackpotData/fetchJackpotData'),
         ]);
+        this.$store.commit('jackpotData/setJackpotDataLoaded', true);
       } catch (error) {
         console.error('Error fetching data:', error);
       }

@@ -14,7 +14,12 @@
         <h1>
           BLAST POINTS JACKPOT:
         </h1>
-        <p>
+        <div
+          v-if="!jackpotDataLoaded"
+        >
+          <Spinner />
+        </div>
+        <p v-else>
           {{ jackpotData }}
         </p>
       </div>
@@ -207,26 +212,33 @@
         The diamond loot box can contain both<br>
         the main prize and 3 regular boxes. Take part in a weekly quest and get a chance to win the
         <span>Jackpot!</span></p>
-      <div class="blast-wrap__quests-daily-tasks blast-wrap__row">
-        <img
-          alt="navbar"
-          :src="getImageUrl(`assets/blastQuest/SlothBlastQuest.png`)"
-        />
-        <ul class="blast-wrap__quests-task-list">
-          <li
-            v-for="(task, index) in tasks"
-            :key="index"
-            :class="{ completed: task.completed, incomplete: !task.completed }"
-          >
-            <div class="blast-wrap__quests-task">
-              <div class="tasks-col__item-icon">
-                <BaseIcon :name="task.completed ? 'CommonChecked' : 'CommonClose' " />
-              </div>
-              <span class="task-description">{{ task.description }}</span>
-            </div>
+      <div class="blast-wrap__quests-daily-tasks">
+        <div class="blast-wrap__quests-task-slider">
 
-          </li>
-        </ul>
+          <ul class="blast-wrap__quests-task-status">
+            <li
+              v-for="(task, index) in tasks"
+              :key="index"
+              :class="{ completed: task.completed, incomplete: !task.completed, 'first-incomplete': index === firstIncompleteIndex }"
+            >
+              <div class="task-status-container">
+                <div class="tasks-col__item-icon">
+                  <BaseIcon :name="task.completed ? 'CommonChecked' : 'CommonClose'" />
+                </div>
+              </div>
+            </li>
+          </ul>
+
+          <ul class="blast-wrap__quests-task-list">
+            <li
+              v-for="(task, index) in tasks"
+              :key="index"
+              :class="{ completed: task.completed, incomplete: !task.completed }"
+            >
+              <span>{{ task.description }}</span>
+            </li>
+          </ul>
+        </div>
         <div class="blast-wrap__quests-diamond-box-wrapper">
           <div class="blast-wrap__quests-diamond-box">
             <div class="blast-wrap__quests-diamond-box-tip">
@@ -245,6 +257,10 @@
           </div>
           <p>DO TASKS TO GET LOOTBOX</p>
         </div>
+        <img
+          alt="navbar"
+          :src="getImageUrl(`assets/blastQuest/SlothBlastQuest.png`)"
+        />
       </div>
     </div>
   </div>
@@ -261,6 +277,7 @@ import ButtonComponent from '@/components/Button/Index.vue';
 import QuestBox from '@/components/QuestBox/Index.vue';
 import BN from 'bignumber.js';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import Spinner from '@/components/Spinner/Index.vue';
 import TasksData from './TasksData.vue';
 
 type TSignedMessage = {
@@ -281,6 +298,7 @@ export default {
     QuestBox,
     TasksData,
     BaseIcon,
+    Spinner,
   },
   emits: ['close-modal'],
   props: {
@@ -316,13 +334,17 @@ export default {
   computed: {
     ...mapGetters('web3', ['evmProvider', 'provider']),
     ...mapGetters('accountData', ['account']),
-    ...mapGetters('jackpotData', ['jackpotData']),
+    ...mapGetters('jackpotData', ['jackpotData', 'jackpotDataLoaded']),
 
     getWeeklyBtn() {
       return (level: number) => {
         if (level < this.getHighestLevel) return 'Claimed';
         return this.weeklyQuestCount ? `WILL OPEN IN ${this.weeklyQuestCount}h` : 'CLAIM';
       };
+    },
+    firstIncompleteIndex() {
+      const completedTasks = this.tasks.findIndex((task: any) => !task.completed);
+      return completedTasks === -1 ? this.tasks.length : completedTasks;
     },
     getHighestLevel() {
       if (!this.userData || this.userData?.levelQuestHistory?.length === 0) return 0;
@@ -470,7 +492,10 @@ export default {
           completed: false,
         });
       }
-      if (tasks.length) tasks[0].completed = true;
+      if (tasks.length) {
+        tasks[0].completed = true;
+        tasks[1].completed = true;
+      }
       return tasks;
     },
   },
@@ -515,6 +540,7 @@ export default {
   font-weight: 700;
   border-radius: 10px;
   padding: 24px;
+  max-height: 124px;
 
   h1, p {
     font-weight: 700;
@@ -716,6 +742,8 @@ export default {
   justify-content: space-between;
   color: var(--color-1);
   font-size: 14px;
+  padding-top: 4px;
+  padding-bottom: 4px;
   .completed {
     color: var(--color-2);
     text-decoration: line-through;
@@ -728,14 +756,6 @@ export default {
       color: var(--color-4);
     }
   }
-}
-
-.blast-wrap__quests-task-list li {
-  margin-bottom: 18px;
-}
-
-.blast-wrap__quests-task-list li:last-child {
-  margin-bottom: 0;
 }
 
 .blast-wrap__quests-task {
@@ -766,7 +786,6 @@ export default {
   border-radius: 50%;
   background-color: var(--color-4);
   border: 1px solid var(--color-3);
-  margin-right: 10px;
 }
 
 .blast-wrap__quests-diamond-box-wrapper
@@ -815,6 +834,46 @@ export default {
   }
 }
 
+.blast-wrap__quests-task-slider {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+}
+
+.blast-wrap__quests-task-status {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  margin-right: 10px;
+  padding: 1px;
+  border-radius: 100px;
+  background-color: var(--color-5);
+  position: relative;
+
+  li {
+    position: relative;
+    z-index: 1;
+     &.completed ~ li.completed::before {
+      content: '';
+      position: absolute;
+      top: -140%;
+      border-radius: 100px;
+      width: 22px;
+      height: calc(100% + 26px);
+      background-color: var(--color-4);
+      z-index: -1;
+    }
+  }
+}
+
+.blast-wrap__quests-daily-tasks {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  img {
+    object-fit: contain;
+  }
+}
 @media screen and (max-width: 1024px) {
   .page-wrap {
     margin-bottom: 80px;
