@@ -38,17 +38,18 @@
         >
           <div class="slider-info-blast">
             <div
-              class="slider-info-blast-loader"
-              v-if="!jackpotDataLoaded"
-            >
-              <Spinner />
-            </div>
-            <div
-              v-else
               class="slider-info-blast-points"
             >
-              <p>BLAST POINTS: <span>{{jackpotData}}</span>
-
+              <p>BLAST POINTS:
+                <span
+                  v-if="!jackpotDataLoaded"
+                  class="spinner-container"
+                >
+                  <Spinner />
+                </span>
+                <span v-else>
+                  {{ jackpotData }}
+                </span>
               </p>
             </div>
             <div class="slider-info-blast-lootbox">
@@ -556,6 +557,7 @@ export default {
   padding: 20px 18px;
   border-radius: 10px;
   margin-bottom: 10px;
+  max-height: 55px;
   p,span {
     font-size: 15px;
     color: var(--color-4);
@@ -565,12 +567,11 @@ export default {
     justify-content: space-between;
   }
 }
-
-.slider-info-blast-loader {
-  max-height: 55px;
-  margin-bottom: 10px;
+.spinner-container {
   display: flex;
-  justify-content: center;
+  transform: scale(0.5);
+  margin-top: -24px;
+  margin-right: -20px;
 }
 
 .slider-info-blast-lootbox {
