@@ -6,7 +6,7 @@
       :key="item.id"
     >
       <div class="tasks-col__item-icon">
-        <BaseIcon name="CommonChecked" />
+        <BaseIcon :name="item.checked ? 'CommonChecked' : 'CommonClose' " />
       </div>
 
       <p>
@@ -25,14 +25,17 @@ const BRONZE_QUESTS = [
   {
     id: 1,
     text: 'Like and Retweet',
+    checked: true,
   },
   {
     id: 2,
     text: 'Write a tweet about @Overnightfinance',
+    checked: false,
   },
   {
     id: 3,
     text: 'Write a tweet with the amount of points you get from Overnight',
+    checked: false,
   },
 ];
 
@@ -40,14 +43,17 @@ const SILVER_QUESTS = [
   {
     id: 1,
     text: 'Swap $10-20',
+    checked: true,
   },
   {
     id: 2,
     text: 'Swap $20-50',
+    checked: false,
   },
   {
     id: 3,
     text: 'Swap $50',
+    checked: false,
   },
 ];
 
@@ -55,14 +61,17 @@ const GOLD_QUESTS = [
   {
     id: 1,
     text: 'Add liquidity to any Blast OVN pool, $10-100',
+    checked: false,
   },
   {
     id: 2,
     text: 'Add liquidity to any Blast OVN pool, $100-500',
+    checked: false,
   },
   {
     id: 3,
     text: 'Add liquidity to any Blast OVN pool, $500 or more',
+    checked: false,
   },
 ];
 
@@ -94,7 +103,7 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin: 20px 0;
+  margin-bottom: auto;
 }
 
 .tasks-col__item {

@@ -89,6 +89,7 @@
             full
             :disabled="!!dailyQuestCount"
             @on-click="triggerDailyQuest"
+            class="blast-wrap__boxes-col-btn"
           >
             {{ dailyQuestCount ? `WILL OPEN IN ${dailyQuestCount}h` : 'CLAIM' }}
           </ButtonComponent>
@@ -118,6 +119,7 @@
             full
             :disabled="!!dailyQuestCount"
             @on-click="triggerDailyQuest"
+            class="blast-wrap__boxes-col-btn"
           >
             {{ dailyQuestCount ? `WILL OPEN IN ${dailyQuestCount}h` : 'CLAIM' }}
           </ButtonComponent>
@@ -147,6 +149,7 @@
             full
             :disabled="!!dailyQuestCount"
             @on-click="triggerDailyQuest"
+            class="blast-wrap__boxes-col-btn"
           >
             {{ dailyQuestCount ? `WILL OPEN IN ${dailyQuestCount}h` : 'CLAIM' }}
           </ButtonComponent>
@@ -647,6 +650,10 @@ export default {
   justify-content: space-between;
   margin-top: 20px;
   gap: 16px;
+}
+
+.blast-wrap__boxes-col-btn {
+  margin-top: 20px;
 }
 
 .blast-wrap__boxes-col {
