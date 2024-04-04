@@ -596,9 +596,8 @@ export default {
     right: 0;
   }
   img {
+    object-fit: contain;
     overflow: hidden;
-    height: 248px;
-    width: 250px;
   }
 }
 
