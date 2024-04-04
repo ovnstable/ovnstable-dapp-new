@@ -484,6 +484,9 @@ export const NEW_POOLS = [
 
   // AERO
   '0xbB38EeBd670A9F3cafe6D3170862ccD930cB25f9',
+
+  // DYSON
+  '0xf63291375d3eb7014fbe658f256c79163dc308ab',
 ];
 
 export const HOT_POOLS = [
