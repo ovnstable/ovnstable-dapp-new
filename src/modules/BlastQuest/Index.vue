@@ -216,10 +216,13 @@
             <li
               v-for="(task, index) in tasks"
               :key="index"
-              :class="{ completed: task.completed, incomplete: !task.completed, 'first-incomplete': index === firstIncompleteIndex }"
+              :class="{ completed: task.completed, incomplete: !task.completed }"
             >
               <div class="task-status-container">
-                <div class="tasks-col__item-icon">
+                <div
+                  class="tasks-col__item-icon"
+                  :class="{ 'completed-task': task.completed && moreThanOneTaskCompleted }"
+                >
                   <BaseIcon :name="task.completed ? 'CommonChecked' : 'CommonClose'" />
                 </div>
               </div>
@@ -339,10 +342,6 @@ export default {
         return this.weeklyQuestCount ? `WILL OPEN IN ${this.weeklyQuestCount}h` : 'CLAIM';
       };
     },
-    firstIncompleteIndex() {
-      const completedTasks = this.tasks.findIndex((task: any) => !task.completed);
-      return completedTasks === -1 ? this.tasks.length : completedTasks;
-    },
     getHighestLevel() {
       if (!this.userData || this.userData?.levelQuestHistory?.length === 0) return 0;
 
@@ -386,6 +385,10 @@ export default {
       }
 
       return null;
+    },
+    moreThanOneTaskCompleted() {
+      const completedTasksCount = this.tasks.filter((task: any) => task.completed).length;
+      return completedTasksCount > 1;
     },
   },
   methods: {
@@ -781,6 +784,11 @@ export default {
   border: 1px solid var(--color-3);
 }
 
+.completed-task {
+  border: none;
+  border-radius: 50px 50px 0 0;
+}
+
 .blast-wrap__quests-diamond-box-wrapper
 .blast-wrap__quests-diamond-box {
   display: flex;
@@ -850,9 +858,9 @@ export default {
       content: '';
       position: absolute;
       top: -140%;
-      border-radius: 100px;
+      border-radius: 0 0 100px 100px;
       width: 22px;
-      height: calc(100% + 26px);
+      height: calc(100% + 40px);
       background-color: var(--color-4);
       z-index: -1;
     }
