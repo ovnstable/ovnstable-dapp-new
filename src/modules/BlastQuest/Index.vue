@@ -75,6 +75,9 @@
           <div
             class="blast-wrap__boxes-content"
           >
+            <BaseIcon
+              name="tip"
+            />
             <h1>
               Bronze box
             </h1>
@@ -110,6 +113,9 @@
           <div
             class="blast-wrap__boxes-content"
           >
+            <BaseIcon
+              name="tip"
+            />
             <h1>
               Silver box
             </h1>
@@ -146,6 +152,9 @@
           <div
             class="blast-wrap__boxes-content"
           >
+            <BaseIcon
+              name="tip"
+            />
             <h1>
               Gold box
             </h1>
@@ -684,12 +693,20 @@ export default {
   margin-bottom: 20px;
   border: 1px solid var(--color-6);
   border-radius: 10px;
+  position: relative;
 
   p {
     font-size: 12px;
     font-weight: 500;
     color: var(--color-2);
     margin-top: 5px;
+  }
+  svg {
+    position: absolute;
+    overflow: visible;
+    left: 90%;
+    top: 10%;
+    cursor: pointer;
   }
 }
 
@@ -820,23 +837,25 @@ export default {
   border-radius: 10px;
   margin-bottom: 12px;
   padding: 12px 20px 22px;
+  position: relative;
 
   p {
     font-size: 16px;
     font-weight: 600;
     margin-top: 5px;
   }
+  svg {
+    position: absolute;
+    overflow: visible;
+    left: 90%;
+    top: 10%;
+    cursor: pointer;
+  }
 
 }
 .blast-wrap__quests-diamond-box-tip {
   display: flex;
   flex-direction: row;
-  margin-left: 38px;
-  svg {
-    margin-left: 38px;
-    overflow: visible;
-    cursor: pointer;
-  }
 }
 
 .blast-wrap__quests-task-slider {
