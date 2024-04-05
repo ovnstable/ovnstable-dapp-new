@@ -1129,5 +1129,10 @@ export default {
   }
 }
 
+@media (max-width: 340px) {
+  .blast-wrap__quests-diamond-box {
+    width: 110%;
+  }
+}
 
 </style>
