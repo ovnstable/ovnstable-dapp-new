@@ -52,7 +52,6 @@
         <div class="sidebar__text-top-blast">
           <BaseIcon
             name="blastSidebar"
-            class="sidebar__icon-social icon-twitter"
           />
           <p>Blast lootbox</p>
         </div>

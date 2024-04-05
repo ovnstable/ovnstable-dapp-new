@@ -8,11 +8,13 @@
       @click="checkItem(item)"
       @keypress="checkItem(item)"
     >
-      <div class="tasks-col__item-icon">
+      <div
+        class="tasks-col__item-icon"
+      >
         <BaseIcon :name="item.checked ? 'CommonChecked' : 'CommonClose' " />
       </div>
 
-      <p>
+      <p :class="{ 'completed-task': item.checked }">
         {{ item.text }}
       </p>
       <div class="tasks-col__arr">
@@ -33,7 +35,7 @@ import { TypeofQuest } from './models.ts';
 const BRONZE_QUESTS = [
   {
     id: '0',
-    text: 'Like an Overnight post',
+    text: "Like and retweet today's Overnight post",
     checked: false,
     boxType: TypeofQuest.BRONZE,
   },
@@ -45,7 +47,7 @@ const BRONZE_QUESTS = [
   },
   {
     id: '2',
-    text: 'Add at least $20 to any USD+ pool on SwapBlast',
+    text: 'Add at least 20$ to any USD+ pool on SwapBlast',
     checked: false,
     boxType: TypeofQuest.BRONZE,
   },
@@ -55,7 +57,7 @@ const SILVER_QUESTS = [
   {
     id: '0',
     text: 'Mint at least 25 USD+ on Blast',
-    checked: false,
+    checked: true,
     boxType: TypeofQuest.SILVER,
   },
   {
@@ -167,6 +169,18 @@ export default {
 
   p {
     word-break: break-word;
+    color: var(--color-1);
+    font-size: 14px;
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
+  }
+  .completed-task {
+    color: var(--color-2);
+    text-decoration: line-through;
+    [data-theme="dark"] & {
+      color: var(--color-18);
+    }
   }
 
   &:hover {
@@ -200,6 +214,10 @@ export default {
   border-radius: 50%;
   background-color: var(--color-4);
   border: 1px solid var(--color-3);
+  [data-theme="dark"] & {
+    background-color: var(--color-7);
+    border-color: var(--color-2);
+  }
 }
 
 .tasks-col__arr {
@@ -209,5 +227,14 @@ export default {
   border-radius: 30px;
   margin-left: auto;
   transition: transform .2s ease;
+  [data-theme="dark"] & {
+    background-color: var(--color-7);
+    border-color: var(--color-2);
+  }
+  svg {
+    [data-theme="dark"] & {
+      fill: var(--color-18);
+    }
+  }
 }
 </style>

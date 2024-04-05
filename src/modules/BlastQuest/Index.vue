@@ -12,46 +12,66 @@
     <div class="blast-wrap__jackpot">
       <div class="blast-wrap__jackpot-main">
         <h1>
-          BLAST POINTS JACKPOT:
+          EVENT JACKPOT:
         </h1>
         <div
+          class="spinner-container"
           v-if="!jackpotDataLoaded"
         >
           <Spinner />
         </div>
-        <p v-else>
-          {{ jackpotData }}
-        </p>
+        <div
+          v-else
+          class="blast-wrap__jackpot-main-points"
+        >
+          <BaseIcon
+            name="blastSidebar"
+          />
+          <p>{{ jackpotData }}</p>
+          <BaseIcon
+            name="blastSidebar"
+          />
+        </div>
+
+        <p>Blast points</p>
       </div>
       <div class="blast-wrap__jackpot-user">
-        <h1>
-          YOUR BLAST POINTS:
-        </h1>
+        <div class="blast-wrap__jackpot-user-points">
+          <h1>
+            YOUR BLAST POINTS:
+          </h1>
+          <p>From 00 Jan ‘00</p>
+        </div>
+
         <div class="blast-wrap__jackpot-user__data">
+          <div class="blast-wrap__jackpot-user__data-divider" />
           <div class="blast-wrap__jackpot-user__data-i">
             <h3>
-              TOTAL CLAIMED
+              Total:
             </h3>
             <p>
               {{ userData ? userData.totallyEarned : 0 }}
             </p>
           </div>
+          <div class="blast-wrap__jackpot-user__data-divider" />
           <div class="blast-wrap__jackpot-user__data-i">
             <h3>
-              TOTAL PENDING
+              Pending:
             </h3>
             <p>
               {{ userData ? userData.totallyPending : 0 }}
             </p>
           </div>
+          <div class="blast-wrap__jackpot-user__data-divider" />
           <div class="blast-wrap__jackpot-user__data-i">
             <h3>
-              MONTLY FREE DROPS
+              Monthly free drops:
             </h3>
             <p>
               0
             </p>
           </div>
+          <div class="blast-wrap__jackpot-user__data-divider" />
         </div>
       </div>
     </div>
@@ -60,12 +80,17 @@
       class="blast-wrap__content"
     >
       <div class="blast-wrap__item-col">
-        <h1>
-          DAILY BOX
-        </h1>
+        <div class="blast-wrap__item-col-daily">
+          <h1>
+            DAILY LOOT BOX
+          </h1>
+          <p>DAILY LOOT BOX WILL UPDATE IN: 23:59H</p>
+        </div>
+
         <p>
-          Complete daily tasks to get Blast loot boxes!
-          Each loot box contains a different amount of points that are guaranteed to drop out.
+          Complete 3 daily tasks to get the Blast loot box! The boxes contain a random
+          amount of <span>Blast points</span> within
+          the range shown under the box. Good luck and have fun!
         </p>
       </div>
       <div class="blast-wrap__boxes">
@@ -75,11 +100,14 @@
           <div
             class="blast-wrap__boxes-content"
           >
+            <BaseIcon
+              name="tip"
+            />
             <h1>
               Bronze box
             </h1>
             <p>
-              random amount of {{ buildPointsRange(typeofBox.BRONZE) }} points
+              a random amount of {{ buildPointsRange(typeofBox.BRONZE) }} points
             </p>
             <QuestBox
               :prize-value="dailyPrize"
@@ -110,11 +138,14 @@
           <div
             class="blast-wrap__boxes-content"
           >
+            <BaseIcon
+              name="tip"
+            />
             <h1>
               Silver box
             </h1>
             <p>
-              random amount of {{ buildPointsRange(typeofBox.SILVER) }} points
+              a random amount of {{ buildPointsRange(typeofBox.SILVER) }} points
             </p>
             <QuestBox
               :prize-value="dailyPrize"
@@ -146,11 +177,14 @@
           <div
             class="blast-wrap__boxes-content"
           >
+            <BaseIcon
+              name="tip"
+            />
             <h1>
               Gold box
             </h1>
             <p>
-              random amount of {{ buildPointsRange(typeofBox.GOLD) }} points
+              a random amount of {{ buildPointsRange(typeofBox.GOLD) }} points
             </p>
             <QuestBox
               :prize-value="dailyPrize"
@@ -224,11 +258,44 @@
         <p>WEEKLY LOOT BOX WILL UPDATE IN: 23:59H</p>
       </div>
       <p class="blast-wrap__quests-jackpot-descr">
-        Complete 4 daily tasks 5 times a week to get the legendary Diamond bonus loot box.
-        The diamond loot box can contain both<br>
-        the main prize and 3 regular boxes. Take part in a weekly quest and get a chance to win the
+        Once a week you will be able to claim a Bonus Box.
+        To do so, you need to complete a total of 15 tasks in a week.
+        After that the Box will be yours to claim on Sunday.
+        Your Bonus box will contain a random amount of Blast points equal to 5-50% of
         <span>Jackpot!</span></p>
       <div class="blast-wrap__quests-daily-tasks">
+        <img
+          alt="navbar"
+          :src="getImageUrl(`assets/blastQuest/SlothBlastQuest.png`)"
+        />
+        <div class="blast-wrap__quests-diamond-box-wrapper">
+          <div class="blast-wrap__quests-diamond-box">
+            <div class="blast-wrap__quests-diamond-box-tip">
+              <h1>DIAMOND BOX</h1>
+              <BaseIcon
+                name="tip"
+              />
+            </div>
+            <p>
+              a random amount of {{ buildPointsRange(typeofBox.GOLD) }} points
+            </p>
+
+            <QuestBox
+              :prize-value="dailyPrize"
+              :open-box="false"
+              :view-box="3"
+              @close="closeQuests"
+            />
+          </div>
+          <ButtonComponent
+            full
+            @on-click="triggerBoxQuest(typeofBox.DIAMOND)"
+            :disabled="isDisabledBtn(typeofBox.DIAMOND)"
+            class="blast-wrap__boxes-col-btn"
+          >
+            {{ isDisabledBtn(typeofBox.DIAMOND) ? 'DO TASKS TO GET LOOTBOX' : `CLAIM (${userData.diamondBoxAvailable} box)` }}
+          </ButtonComponent>
+        </div>
         <div class="blast-wrap__quests-task-slider">
 
           <ul class="blast-wrap__quests-task-status">
@@ -537,12 +604,17 @@ export default {
     font-weight: 500;
     color: var(--color-1);
   }
+
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
+  }
 }
 
 .blast-wrap__jackpot {
   display: flex;
   gap: 20px;
   justify-content: space-between;
+  margin-bottom: 24px;
 }
 
 .blast-wrap__jackpot-main {
@@ -551,12 +623,14 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 20px;
+  gap: 10px;
   background-color: var(--color-3);
   font-weight: 700;
   border-radius: 10px;
   padding: 24px;
   max-height: 124px;
+  border: 1px solid var(--color-1);
+  box-shadow: 0px 1px 0px 0px var(--color-1);
 
   h1, p {
     font-weight: 700;
@@ -564,12 +638,25 @@ export default {
   }
 
   h1 {
-    font-size: 17px
+    font-weight: 500;
+    font-size: 17px;
+    margin-bottom: 10px;
   }
 
   p {
     font-size: 21px;
   }
+
+  [data-theme="dark"] & {
+    box-shadow: none;
+    border-color: var(--color-2);
+    background-color: var(--color-7);
+  }
+}
+
+.blast-wrap__jackpot-main p:last-child {
+  font-size: 15px;
+  font-weight: 500;
 }
 
 .blast-wrap__jackpot-user {
@@ -581,9 +668,26 @@ export default {
   border-radius: 10px;
   padding: 24px;
   border: 1px solid var(--color-1);
+  box-shadow: 0px 1px 0px 0px var(--color-1);
 
   h1 {
     font-size: 17px;
+  }
+  [data-theme="dark"] & {
+    box-shadow: none;
+    border-color: var(--color-2);
+  }
+}
+.blast-wrap__jackpot-user-points {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  p {
+    font-size: 14px;
+    color: var(--color-2);
+    [data-theme="dark"] & {
+      color: var(--color-18);
+    }
   }
 }
 
@@ -603,6 +707,14 @@ export default {
   h3 {
     font-weight: 500;
     font-size: 15px;
+    [data-theme="dark"] & {
+      color: var(--color-18);
+    }
+  }
+  p {
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
   }
 }
 
@@ -618,12 +730,41 @@ export default {
   align-items: flex-start;
   justify-content: space-between;
   gap: 50px;
+  p {
+    color: var(--color-2);
+  }
 }
 
 .blast-wrap__item-col {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 26px;
+  span {
+    text-decoration: underline;
+  }
+}
+
+.blast-wrap__item-col p:last-child {
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
+}
+
+.blast-wrap__item-col-daily {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  p {
+    color: var(--color-2);
+  }
+  [data-theme="dark"] & {
+    h1 {
+      color: var(--color-4);
+    }
+    p {
+      color: var(--color-18);
+    }
+  }
 }
 
 .progress-steps {
@@ -690,12 +831,17 @@ export default {
 .blast-wrap__boxes {
   display: flex;
   justify-content: space-between;
-  margin-top: 20px;
+  margin-top: 26px;
   gap: 16px;
 }
 
 .blast-wrap__boxes-col-btn {
   margin-top: 20px;
+  [data-theme="dark"] & {
+    box-shadow: none;
+    background-color: var(--color-17);
+    color: var(--color-18);
+  }
 }
 
 .blast-wrap__boxes-col {
@@ -714,13 +860,43 @@ export default {
   margin-bottom: 20px;
   border: 1px solid var(--color-6);
   border-radius: 10px;
+  position: relative;
 
   p {
     font-size: 12px;
     font-weight: 500;
     color: var(--color-2);
     margin-top: 5px;
+    [data-theme="dark"] & {
+      color: var(--color-18);
+    }
   }
+  svg {
+    position: absolute;
+    overflow: visible;
+    left: 90%;
+    top: 10%;
+    cursor: pointer;
+    [data-theme="dark"] & {
+      fill: var(--color-4);
+    }
+  }
+
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
+  }
+
+  h1 {
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
+  }
+}
+
+.spinner-container {
+  display: flex;
+  transform: scale(0.5);
+  margin-top: -20px;
 }
 
 .blast-wrap__row--scroll {
@@ -735,13 +911,16 @@ export default {
   font-size: 16px;
   font-weight: 600;
   margin-top: 20px;
+  [data-theme="dark"] & {
+    background-color: var(--color-7);
+  }
 }
 
 .blast-wrap__quests {
   display: flex;
   flex-direction: column;
   padding: 20px;
-  margin-top: 20px;
+  margin-top: 24px;
   background-color: var(--color-8);
   border-radius: 30px;
   [data-theme="dark"] & {
@@ -810,6 +989,10 @@ export default {
   border-radius: 50%;
   background-color: var(--color-4);
   border: 1px solid var(--color-3);
+  [data-theme="dark"] & {
+    background-color: var(--color-7);
+    border-color: var(--color-2);
+  }
 }
 
 .completed-task {
@@ -828,6 +1011,12 @@ export default {
     font-weight: 500;
     color: var(--color-2);
   }
+}
+
+.blast-wrap__quests-diamond-box-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .blast-wrap__quests-diamond-box-wrapper p:last-child {
@@ -851,35 +1040,48 @@ export default {
   border-radius: 10px;
   margin-bottom: 12px;
   padding: 12px 20px 22px;
+  position: relative;
 
   p {
     font-size: 16px;
     font-weight: 600;
     margin-top: 5px;
   }
+  svg {
+    position: absolute;
+    overflow: visible;
+    left: 90%;
+    top: 10%;
+    cursor: pointer;
+  }
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
+    h1 {
+      color: var(--color-4);
+    }
+    p {
+      color: var(--color-18);
+    }
+    svg {
+      fill: var(--color-4);
+    }
+  }
 
 }
 .blast-wrap__quests-diamond-box-tip {
   display: flex;
   flex-direction: row;
-  margin-left: 38px;
-  svg {
-    margin-left: 38px;
-    overflow: visible;
-    cursor: pointer;
-  }
 }
 
 .blast-wrap__quests-task-slider {
   display: flex;
   flex-direction: row;
-  height: 100%;
 }
 
 .blast-wrap__quests-task-status {
   display: flex;
   flex-direction: column;
-  gap: 26px;
+  gap: 31px;
   margin-right: 10px;
   padding: 1px;
   border-radius: 100px;
@@ -898,7 +1100,13 @@ export default {
       height: calc(100% + 40px);
       background-color: var(--color-4);
       z-index: -1;
+      [data-theme="dark"] & {
+        background-color: var(--color-7);
+      }
     }
+  }
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
   }
 }
 
@@ -910,17 +1118,76 @@ export default {
     object-fit: contain;
   }
 }
-@media screen and (max-width: 1024px) {
+
+.blast-wrap__jackpot-user__data-divider {
+  height: 100%;
+  border: 1px solid var(--color-2);
+  [data-theme="dark"] & {
+    color: var(--color-18);
+  }
+}
+
+.blast-wrap__jackpot-main-points {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  align-items: center;
+  svg {
+    fill: var(--color-4);
+    stroke: var(--color-4);
+  }
+}
+
+@media (max-width: 1024px) {
   .page-wrap {
     margin-bottom: 80px;
   }
-  .blast-wrap__quests-daily-tasks {
+  .blast-wrap__quests-daily-tasks,
+  .blast-wrap__boxes {
     flex-wrap: wrap;
     align-items: center;
   }
   .blast-wrap__quests-diamond-box,
   .blast-wrap__quests-diamond-box-wrapper {
     width: 100%;
+  }
+  .blast-wrap__quests-diamond-box-wrapper {
+    margin-top: 24px;
+    margin-bottom: 10px;
+  }
+}
+@media (max-width: 640px) {
+  .blast-wrap__jackpot {
+    flex-direction: column;
+  }
+  .blast-wrap__jackpot-user,
+  .blast-wrap__jackpot-main {
+    width: 100%;
+  }
+  .blast-wrap__jackpot-user__data-divider {
+    height: auto;
+  }
+}
+
+@media (max-width: 458px) {
+  .page-wrap {
+    margin-top: 40px;
+  }
+  .blast-wrap__jackpot-user__data {
+    flex-direction: column;
+  }
+  .blast-wrap__jackpot-user__data-i {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  .blast-wrap__quests-daily-tasks img {
+    transform: scale(0.9);
+  }
+}
+
+@media (max-width: 340px) {
+  .blast-wrap__quests-diamond-box {
+    width: 110%;
   }
 }
 
