@@ -29,10 +29,15 @@
           :class="{ 'shake-active': isShakeActive }"
         >
           <div class="hexagon" />
-          <div class="cube back" />
-          <div class="cube top" />
-          <div class="cube left" />
-          <div class="cube right" />
+          <div class="cube cube--top">
+            <BaseIcon :name="boxType(BOX_TYPES.TOP)" />
+          </div>
+          <div class="cube cube--left">
+            <BaseIcon :name="boxType(BOX_TYPES.LEFT)" />
+          </div>
+          <div class="cube cube--right">
+            <BaseIcon :name="boxType(BOX_TYPES.RIGHT)" />
+          </div>
           <div
             v-if="!isShakeActive"
             class="box-wrap__modal-prize"
@@ -146,10 +151,10 @@ export default {
     triggerOpen() {
       console.log('triggerOpen');
       const cube: any = document.querySelector(`#cube-open-${this.boxId}`);
-      const cback: any = document.querySelector(`#cube-open-${this.boxId} .back`);
-      const ctop: any = document.querySelector(`#cube-open-${this.boxId} .top`);
-      const cleft: any = document.querySelector(`#cube-open-${this.boxId} .left`);
-      const cright: any = document.querySelector(`#cube-open-${this.boxId} .right`);
+      // const cback: any = document.querySelector(`#cube-open-${this.boxId} .cube--back`);
+      const ctop: any = document.querySelector(`#cube-open-${this.boxId} .cube--top`);
+      const cleft: any = document.querySelector(`#cube-open-${this.boxId} .cube--left`);
+      const cright: any = document.querySelector(`#cube-open-${this.boxId} .cube--right`);
       const powerup: any = document.querySelector(`#cube-open-${this.boxId} .box-wrap__modal-prize`);
       const glow: any = document.querySelector(`#cube-open-${this.boxId} .hexagon`);
       const transitionTime = '750ms';
@@ -163,19 +168,19 @@ export default {
       cright.style.transition = `all ${transitionTime}`;
       cube.style.transition = `all ${transitionTime}`;
       powerup.style.transition = `all ${transitionTime}`;
-      cback.style.transition = `all ${transitionTime}`;
+      // cback.style.transition = `all ${transitionTime}`;
 
       function changeVar(glowVal: string) {
         document.documentElement.style.setProperty('--glow', glowVal);
       }
 
-      ctop.style.transform = 'translateY(-3rem)';
-      cleft.style.transform = 'translateX(-3rem)';
-      cright.style.transform = 'translateX(3rem)';
+      ctop.style.transform = 'translateY(-55%)';
+      cleft.style.transform = 'translateY(-50%) translateX(-20%)';
+      cright.style.transform = 'translateY(-50%) translateX(20%)';
       ctop.style.opacity = 0.1;
       cleft.style.opacity = 0.1;
       cright.style.opacity = 0.1;
-      cback.style.opacity = 0.1;
+      // cback.style.opacity = 0.1;
       powerup.style.opacity = 1;
       glow.style.opacity = 0.5;
       this.isOpen = true;
@@ -256,8 +261,9 @@ export default {
 
 .box-wrap__modal-cube {
   position: relative;
-  width: 50vw;
-  height: 50vh;
+  width: 50%;
+  height: 100%;
+  left: -6%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -289,6 +295,7 @@ export default {
   .box-wrap__modal-cube & {
     width: 100%;
     height: 100%;
+    top: 50%;
   }
 }
 .cube--top {
@@ -303,8 +310,14 @@ export default {
   }
 
   .box-wrap__modal-cube & {
-    width: 100%;
+    width: 149%;
     height: 100%;
+    left: -6%;
+
+    svg {
+      width: 64%;
+      height: 64%;
+    }
   }
 }
 
@@ -323,6 +336,13 @@ export default {
   .box-wrap__modal-cube & {
     width: 100%;
     height: 100%;
+    left: -7%;
+    top: 70%;
+
+    svg {
+      width: 64%;
+      height: 64%;
+    }
   }
 }
 .cube--right {
@@ -340,6 +360,13 @@ export default {
   .box-wrap__modal-cube & {
     width: 100%;
     height: 100%;
+    right: -42%;
+    top: 70%;
+
+    svg {
+      width: 64%;
+      height: 64%;
+    }
   }
 }
 
@@ -370,6 +397,7 @@ export default {
   z-index: 100;
   text-wrap: nowrap;
   color: var(--color-4);
+  left: 55%;
 
   span {
     position: absolute;

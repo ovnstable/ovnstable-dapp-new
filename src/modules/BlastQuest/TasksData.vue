@@ -4,6 +4,9 @@
       class="tasks-col__item"
       v-for="item in tasksDataInfo"
       :key="item.id"
+      :class="{ completed: item.checked }"
+      @click="checkItem(item)"
+      @keypress="checkItem(item)"
     >
       <div class="tasks-col__item-icon">
         <BaseIcon :name="item.checked ? 'CommonChecked' : 'CommonClose' " />
@@ -12,6 +15,11 @@
       <p>
         {{ item.text }}
       </p>
+      <div class="tasks-col__arr">
+        <BaseIcon
+          name="PayoutArrow"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -20,58 +28,68 @@
 import { BOX_VIEW } from '@/components/QuestBox/Index.vue';
 import { type PropType } from 'vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import { TypeofQuest } from './models.ts';
 
 const BRONZE_QUESTS = [
   {
     id: '0',
-    text: 'Like and Retweet',
+    text: 'Like an Overnight post',
     checked: false,
+    boxType: TypeofQuest.BRONZE,
   },
   {
     id: '1',
-    text: 'Write a tweet about @Overnightfinance',
+    text: 'Mint at least 10 USD+ on Blast',
     checked: false,
+    boxType: TypeofQuest.BRONZE,
   },
   {
     id: '2',
-    text: 'Write a tweet with the amount of points you get from Overnight',
+    text: 'Add at least $20 to any USD+ pool on SwapBlast',
     checked: false,
+    boxType: TypeofQuest.BRONZE,
   },
 ];
 
 const SILVER_QUESTS = [
   {
     id: '0',
-    text: 'Swap $10-20',
+    text: 'Mint at least 25 USD+ on Blast',
     checked: false,
+    boxType: TypeofQuest.SILVER,
   },
   {
     id: '1',
-    text: 'Swap $20-50',
+    text: 'Add at least $50 liquidity to any USD+ pool on Thruster ',
     checked: false,
+    boxType: TypeofQuest.SILVER,
   },
   {
     id: '2',
-    text: 'Swap $50',
+    text: 'Add at least $50 to any USD+ SwapBlast',
     checked: false,
+    boxType: TypeofQuest.SILVER,
   },
 ];
 
 const GOLD_QUESTS = [
   {
     id: '0',
-    text: 'Add liquidity to any Blast OVN pool, $10-100',
+    text: 'Mint at least 50 USD+ on Blast',
     checked: false,
+    boxType: TypeofQuest.GOLD,
   },
   {
     id: '1',
-    text: 'Add liquidity to any Blast OVN pool, $100-500',
+    text: 'Add at least $100 liquidity to any USD+ pool on Thruster',
     checked: false,
+    boxType: TypeofQuest.GOLD,
   },
   {
     id: '2',
-    text: 'Add liquidity to any Blast OVN pool, $500 or more',
+    text: 'Add at least $100 to any USD+ pool on SwapBlast',
     checked: false,
+    boxType: TypeofQuest.GOLD,
   },
 ];
 
@@ -115,6 +133,9 @@ export default {
         return _;
       });
     },
+    checkItem(item: typeof SILVER_QUESTS[0]) {
+      this.$emit('check-quest', item.id, item.boxType);
+    },
   },
   computed: {
     tasksDataInfo() {
@@ -134,6 +155,7 @@ export default {
   flex-direction: column;
   gap: 12px;
   margin-bottom: auto;
+  cursor: pointer;
 }
 
 .tasks-col__item {
@@ -141,10 +163,30 @@ export default {
   align-items: center;
   gap: 6px;
   text-align: left;
+  transition: color .1s ease;
 
   p {
     word-break: break-word;
   }
+
+  &:hover {
+    color: var(--color-3);
+
+    .tasks-col__arr {
+      transform: translate(2px, -2px);
+    }
+  }
+
+  &.checked {
+    &:hover {
+      color: initial;
+
+      .tasks-col__arr {
+        transform: initial;
+      }
+    }
+  }
+
 }
 
 .tasks-col__item-icon {
@@ -158,5 +200,14 @@ export default {
   border-radius: 50%;
   background-color: var(--color-4);
   border: 1px solid var(--color-3);
+}
+
+.tasks-col__arr {
+  border: 1px solid var(--color-6);
+  background-color: var(--color-4);
+  padding: 5px 10px;
+  border-radius: 30px;
+  margin-left: auto;
+  transition: transform .2s ease;
 }
 </style>

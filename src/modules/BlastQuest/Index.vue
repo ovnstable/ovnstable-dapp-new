@@ -78,9 +78,12 @@
             <h1>
               Bronze box
             </h1>
+            <p>
+              random amount of {{ buildPointsRange(typeofBox.BRONZE) }} points
+            </p>
             <QuestBox
               :prize-value="dailyPrize"
-              :open-box="openDailyQuest"
+              :open-box="openBronzeQuest"
               :view-box="0"
               @close="closeQuests"
             />
@@ -89,14 +92,16 @@
           <TasksData
             :view-box="0"
             :box-data="userData.bronzeBox"
+            @check-quest="checkQuest"
           />
 
           <ButtonComponent
             full
             @on-click="triggerBoxQuest(typeofBox.BRONZE)"
+            :disabled="isDisabledBtn(typeofBox.BRONZE)"
             class="blast-wrap__boxes-col-btn"
           >
-            {{ !bronzeCount ? `WILL OPEN IN ${bronzeCount}h` : 'CLAIM' }}
+            {{ isDisabledBtn(typeofBox.BRONZE) ? 'DO TASKS TO GET LOOTBOX' : `CLAIM (${userData.bronzeBoxAvailable} box)` }}
           </ButtonComponent>
         </div>
         <div
@@ -108,9 +113,12 @@
             <h1>
               Silver box
             </h1>
+            <p>
+              random amount of {{ buildPointsRange(typeofBox.SILVER) }} points
+            </p>
             <QuestBox
               :prize-value="dailyPrize"
-              :open-box="openDailyQuest"
+              :open-box="false"
               :view-box="1"
               :quest-data="userData"
               @close="closeQuests"
@@ -120,14 +128,16 @@
           <TasksData
             :view-box="1"
             :box-data="userData.silverBox"
+            @check-quest="checkQuest"
           />
 
           <ButtonComponent
             full
             @on-click="triggerBoxQuest(typeofBox.SILVER)"
+            :disabled="isDisabledBtn(typeofBox.SILVER)"
             class="blast-wrap__boxes-col-btn"
           >
-            {{ 'CLAIM' }}
+            {{ isDisabledBtn(typeofBox.SILVER) ? 'DO TASKS TO GET LOOTBOX' : `CLAIM (${userData.silverBoxAvailable} box)` }}
           </ButtonComponent>
         </div>
         <div
@@ -139,9 +149,12 @@
             <h1>
               Gold box
             </h1>
+            <p>
+              random amount of {{ buildPointsRange(typeofBox.GOLD) }} points
+            </p>
             <QuestBox
               :prize-value="dailyPrize"
-              :open-box="openDailyQuest"
+              :open-box="false"
               :view-box="2"
               @close="closeQuests"
             />
@@ -150,15 +163,16 @@
           <TasksData
             :view-box="2"
             :box-data="userData.goldBox"
+            @check-quest="checkQuest"
           />
 
           <ButtonComponent
             full
-            :disabled="!!bronzeCount"
             @on-click="triggerBoxQuest(typeofBox.GOLD)"
+            :disabled="isDisabledBtn(typeofBox.GOLD)"
             class="blast-wrap__boxes-col-btn"
           >
-            {{ 'CLAIM' }}
+            {{ isDisabledBtn(typeofBox.GOLD) ? 'DO TASKS TO GET LOOTBOX' : `CLAIM (${userData.goldBoxAvailable} box)` }}
           </ButtonComponent>
         </div>
       </div>
@@ -247,15 +261,18 @@
         <div class="blast-wrap__quests-diamond-box-wrapper">
           <div class="blast-wrap__quests-diamond-box">
             <div class="blast-wrap__quests-diamond-box-tip">
-              <p>DIAMOND BOX</p>
+              <h1>DIAMOND BOX</h1>
               <BaseIcon
                 name="tip"
               />
             </div>
+            <p>
+              random amount of {{ buildPointsRange(typeofBox.GOLD) }} points
+            </p>
 
             <QuestBox
               :prize-value="dailyPrize"
-              :open-box="openDailyQuest"
+              :open-box="false"
               :view-box="3"
               @close="closeQuests"
             />
@@ -271,8 +288,6 @@
   </div>
 </template>
 
-<!-- eslint-disable no-unused-vars -->
-<!-- eslint-disable no-shadow -->
 <script lang="ts">
 import { mapGetters } from 'vuex';
 import { getRandomString } from '@/utils/strings.ts';
@@ -284,20 +299,8 @@ import BN from 'bignumber.js';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import Spinner from '@/components/Spinner/Index.vue';
 import TasksData from './TasksData.vue';
+import { TypeofQuest, type TSignedMessage } from './models.ts';
 
-type TSignedMessage = {
-  pubKey: string;
-  signature: string;
-  message: string;
-  nonce: string;
-};
-
-enum TypeofQuest {
-  BRONZE,
-  SILVER,
-  GOLD,
-  DIAMOND
-}
 export default {
   name: 'BlastQuestModule',
   components: {
@@ -320,14 +323,17 @@ export default {
       typeofBox: TypeofQuest,
       showModal: false,
       isDarkTheme: false,
-      openDailyQuest: false,
-      openWeeklyQuest: false,
+      openBronzeQuest: false,
       userData: {
         bronzeBox: [] as any,
         silverBox: [] as any,
         goldBox: [] as any,
         totallyEarned: 0,
         totallyPending: 0,
+        bronzeBoxAvailable: 0,
+        silverBoxAvailable: 0,
+        goldBoxAvailable: 0,
+        diamondBoxAvailable: 0,
       },
       activeLevel: 0,
       dailyPrize: '',
@@ -349,6 +355,18 @@ export default {
     ...mapGetters('web3', ['evmProvider', 'provider']),
     ...mapGetters('accountData', ['account']),
     ...mapGetters('jackpotData', ['jackpotData', 'jackpotDataLoaded']),
+
+    buildPointsRange() {
+      return (questType: TypeofQuest) => '1-10';
+    },
+    isDisabledBtn() {
+      return (questType: TypeofQuest) => {
+        if (questType === TypeofQuest.BRONZE && this.userData.bronzeBoxAvailable > 0) return false;
+        if (questType === TypeofQuest.SILVER && this.userData.silverBoxAvailable > 0) return false;
+        if (questType === TypeofQuest.GOLD && this.userData.diamondBoxAvailable > 0) return false;
+        return true;
+      };
+    },
 
     bronzeCount() {
       const ONE_DAY_UNIX = 86400;
@@ -381,8 +399,7 @@ export default {
       this.userData = resp.data;
     },
     closeQuests() {
-      this.openDailyQuest = false;
-      this.openWeeklyQuest = false;
+      this.openBronzeQuest = false;
       this.weeklyPrize = '';
       this.dailyPrize = '';
       this.activeLevel = 0;
@@ -411,6 +428,16 @@ export default {
         return null;
       }
     },
+    async checkQuest(id: string, boxType: TypeofQuest) {
+      const triggerCheck = await axios.post(`${OVN_QUESTS_API}/blast/checkquest`, {
+        address: this.account,
+        questId: id,
+        boxId: boxType,
+      });
+
+      console.log(triggerCheck, '--triggerCheck');
+      this.updateUserQuestData(this.account);
+    },
     async triggerBoxQuest(boxType: TypeofQuest) {
       const nonce = getRandomString(24);
       const sign: TSignedMessage | null = await this.signEvmMessage(
@@ -426,7 +453,8 @@ export default {
       });
 
       this.dailyPrize = triggerClaim.data?.amount;
-      this.openDailyQuest = true;
+
+      if (boxType === TypeofQuest.BRONZE) this.openBronzeQuest = true;
 
       // waiting for animation
       await awaitDelay(2000);
@@ -656,6 +684,13 @@ export default {
   margin-bottom: 20px;
   border: 1px solid var(--color-6);
   border-radius: 10px;
+
+  p {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-2);
+    margin-top: 5px;
+  }
 }
 
 .blast-wrap__row--scroll {
@@ -756,6 +791,12 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  p {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-2);
+  }
 }
 
 .blast-wrap__quests-diamond-box-wrapper p:last-child {
@@ -774,15 +815,16 @@ export default {
 }
 
 .blast-wrap__quests-diamond-box {
-  gap: 20px;
   background-color: var(--color-4);
   border: 1px solid var(--color-6);
   border-radius: 10px;
   margin-bottom: 12px;
   padding: 12px 20px 22px;
+
   p {
     font-size: 16px;
     font-weight: 600;
+    margin-top: 5px;
   }
 
 }
