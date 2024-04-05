@@ -144,7 +144,7 @@ export const buildLink = (pool: any, poolPlatform: string) => {
       url = `https://syncswap.xyz/pool/${pool.address}`;
       break;
     case 'Dyson':
-      url = 'https://app.dyson.money/all';
+      url = 'https://app.dyson.money/all?id=dyson-base-aerodrome-ovn-usd';
       break;
 
     default:
