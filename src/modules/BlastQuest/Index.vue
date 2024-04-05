@@ -1082,11 +1082,12 @@ export default {
   }
 }
 
-@media screen and (max-width: 1024px) {
+@media (max-width: 1024px) {
   .page-wrap {
     margin-bottom: 80px;
   }
-  .blast-wrap__quests-daily-tasks {
+  .blast-wrap__quests-daily-tasks,
+  .blast-wrap__boxes {
     flex-wrap: wrap;
     align-items: center;
   }
@@ -1094,6 +1095,39 @@ export default {
   .blast-wrap__quests-diamond-box-wrapper {
     width: 100%;
   }
+  .blast-wrap__quests-diamond-box-wrapper {
+    margin-top: 24px;
+    margin-bottom: 10px;
+  }
 }
+@media (max-width: 640px) {
+  .blast-wrap__jackpot {
+    flex-direction: column;
+  }
+  .blast-wrap__jackpot-user,
+  .blast-wrap__jackpot-main {
+    width: 100%;
+  }
+  .blast-wrap__jackpot-user__data-divider {
+    height: auto;
+  }
+}
+
+@media (max-width: 458px) {
+  .page-wrap {
+    margin-top: 40px;
+  }
+  .blast-wrap__jackpot-user__data {
+    flex-direction: column;
+  }
+  .blast-wrap__jackpot-user__data-i {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  .blast-wrap__quests-daily-tasks img {
+    transform: scale(0.9);
+  }
+}
+
 
 </style>
