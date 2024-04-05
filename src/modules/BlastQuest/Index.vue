@@ -287,7 +287,14 @@
               @close="closeQuests"
             />
           </div>
-          <p>DO TASKS TO GET LOOTBOX</p>
+          <ButtonComponent
+            full
+            @on-click="triggerBoxQuest(typeofBox.DIAMOND)"
+            :disabled="isDisabledBtn(typeofBox.DIAMOND)"
+            class="blast-wrap__boxes-col-btn"
+          >
+            {{ isDisabledBtn(typeofBox.DIAMOND) ? 'DO TASKS TO GET LOOTBOX' : `CLAIM (${userData.diamondBoxAvailable} box)` }}
+          </ButtonComponent>
         </div>
         <div class="blast-wrap__quests-task-slider">
 
@@ -542,6 +549,10 @@ export default {
     font-weight: 500;
     color: var(--color-1);
   }
+
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
+  }
 }
 
 .blast-wrap__jackpot {
@@ -580,6 +591,12 @@ export default {
   p {
     font-size: 21px;
   }
+
+  [data-theme="dark"] & {
+    box-shadow: none;
+    border-color: var(--color-2);
+    background-color: var(--color-7);
+  }
 }
 
 .blast-wrap__jackpot-main p:last-child {
@@ -601,6 +618,10 @@ export default {
   h1 {
     font-size: 17px;
   }
+  [data-theme="dark"] & {
+    box-shadow: none;
+    border-color: var(--color-2);
+  }
 }
 .blast-wrap__jackpot-user-points {
   display: flex;
@@ -609,6 +630,9 @@ export default {
   p {
     font-size: 14px;
     color: var(--color-2);
+    [data-theme="dark"] & {
+      color: var(--color-18);
+    }
   }
 }
 
@@ -628,6 +652,14 @@ export default {
   h3 {
     font-weight: 500;
     font-size: 15px;
+    [data-theme="dark"] & {
+      color: var(--color-18);
+    }
+  }
+  p {
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
   }
 }
 
@@ -657,12 +689,26 @@ export default {
   }
 }
 
+.blast-wrap__item-col p:last-child {
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
+}
+
 .blast-wrap__item-col-daily {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   p {
     color: var(--color-2);
+  }
+  [data-theme="dark"] & {
+    h1 {
+      color: var(--color-4);
+    }
+    p {
+      color: var(--color-18);
+    }
   }
 }
 
@@ -736,6 +782,11 @@ export default {
 
 .blast-wrap__boxes-col-btn {
   margin-top: 20px;
+  [data-theme="dark"] & {
+    box-shadow: none;
+    background-color: var(--color-17);
+    color: var(--color-18);
+  }
 }
 
 .blast-wrap__boxes-col {
@@ -761,6 +812,9 @@ export default {
     font-weight: 500;
     color: var(--color-2);
     margin-top: 5px;
+    [data-theme="dark"] & {
+      color: var(--color-18);
+    }
   }
   svg {
     position: absolute;
@@ -768,6 +822,19 @@ export default {
     left: 90%;
     top: 10%;
     cursor: pointer;
+    [data-theme="dark"] & {
+      fill: var(--color-4);
+    }
+  }
+
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
+  }
+
+  h1 {
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
   }
 }
 
@@ -788,6 +855,9 @@ export default {
   background-color: var(--color-8);
   font-size: 16px;
   font-weight: 600;
+  [data-theme="dark"] & {
+    background-color: var(--color-7);
+  }
 }
 
 .blast-wrap__quests {
@@ -863,6 +933,10 @@ export default {
   border-radius: 50%;
   background-color: var(--color-4);
   border: 1px solid var(--color-3);
+  [data-theme="dark"] & {
+    background-color: var(--color-7);
+    border-color: var(--color-2);
+  }
 }
 
 .completed-task {
@@ -924,6 +998,18 @@ export default {
     top: 10%;
     cursor: pointer;
   }
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
+    h1 {
+      color: var(--color-4);
+    }
+    p {
+      color: var(--color-18);
+    }
+    svg {
+      fill: var(--color-4);
+    }
+  }
 
 }
 .blast-wrap__quests-diamond-box-tip {
@@ -939,7 +1025,7 @@ export default {
 .blast-wrap__quests-task-status {
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 31px;
   margin-right: 10px;
   padding: 1px;
   border-radius: 100px;
@@ -958,7 +1044,13 @@ export default {
       height: calc(100% + 40px);
       background-color: var(--color-4);
       z-index: -1;
+      [data-theme="dark"] & {
+        background-color: var(--color-7);
+      }
     }
+  }
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
   }
 }
 
@@ -974,6 +1066,9 @@ export default {
 .blast-wrap__jackpot-user__data-divider {
   height: 100%;
   border: 1px solid var(--color-2);
+  [data-theme="dark"] & {
+    color: var(--color-18);
+  }
 }
 
 .blast-wrap__jackpot-main-points {

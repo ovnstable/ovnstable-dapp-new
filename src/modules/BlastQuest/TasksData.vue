@@ -171,10 +171,16 @@ export default {
     word-break: break-word;
     color: var(--color-1);
     font-size: 14px;
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
   }
   .completed-task {
     color: var(--color-2);
     text-decoration: line-through;
+    [data-theme="dark"] & {
+      color: var(--color-18);
+    }
   }
 
   &:hover {
@@ -208,6 +214,10 @@ export default {
   border-radius: 50%;
   background-color: var(--color-4);
   border: 1px solid var(--color-3);
+  [data-theme="dark"] & {
+    background-color: var(--color-7);
+    border-color: var(--color-2);
+  }
 }
 
 .tasks-col__arr {
@@ -217,5 +227,14 @@ export default {
   border-radius: 30px;
   margin-left: auto;
   transition: transform .2s ease;
+  [data-theme="dark"] & {
+    background-color: var(--color-7);
+    border-color: var(--color-2);
+  }
+  svg {
+    [data-theme="dark"] & {
+      fill: var(--color-18);
+    }
+  }
 }
 </style>
