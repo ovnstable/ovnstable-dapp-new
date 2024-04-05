@@ -267,7 +267,7 @@
               />
             </div>
             <p>
-              random amount of {{ buildPointsRange(typeofBox.GOLD) }} points
+              random amount of {{ buildPointsRange(typeofBox.DIAMOND) }} points
             </p>
 
             <QuestBox
@@ -300,6 +300,29 @@ import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import Spinner from '@/components/Spinner/Index.vue';
 import TasksData from './TasksData.vue';
 import { TypeofQuest, type TSignedMessage } from './models.ts';
+
+const boxRanges = [
+  {
+    quest: TypeofQuest.BRONZE,
+    min: 0.00001,
+    max: 0.00009,
+  },
+  {
+    quest: TypeofQuest.SILVER,
+    min: 0.00003,
+    max: 0.0004,
+  },
+  {
+    quest: TypeofQuest.GOLD,
+    min: 0.0001,
+    max: 0.0006,
+  },
+  {
+    quest: TypeofQuest.DIAMOND,
+    min: 0.0001,
+    max: 0.5,
+  },
+];
 
 export default {
   name: 'BlastQuestModule',
@@ -357,7 +380,13 @@ export default {
     ...mapGetters('jackpotData', ['jackpotData', 'jackpotDataLoaded']),
 
     buildPointsRange() {
-      return (questType: TypeofQuest) => '1-10';
+      return (questType: TypeofQuest) => {
+        if (!this.jackpotData) return '0';
+        const data = boxRanges.find((_) => _.quest === questType);
+        if (!data) return '0';
+
+        return `${new BN(data?.min).times(this.jackpotData).toFixed(0)} - ${new BN(data?.max).times(this.jackpotData).toFixed(0)}`;
+      };
     },
     isDisabledBtn() {
       return (questType: TypeofQuest) => {
@@ -495,6 +524,7 @@ export default {
   background-color: var(--color-4);
   padding: 30px;
   border-radius: 30px;
+  margin-bottom: 40px;
 
   h1 {
     font-size: 16px;
@@ -704,6 +734,7 @@ export default {
   background-color: var(--color-8);
   font-size: 16px;
   font-weight: 600;
+  margin-top: 20px;
 }
 
 .blast-wrap__quests {

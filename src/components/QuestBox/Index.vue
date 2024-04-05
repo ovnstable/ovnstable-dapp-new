@@ -134,7 +134,6 @@ export default {
   computed: {
     boxType() {
       return (side: BOX_TYPES) => {
-        console.log(this.viewBox, 'this.viewBox');
         if (typeof this.viewBox === 'undefined') return '';
         if (side === BOX_TYPES.LEFT) return `box-left-${this.viewBox}`;
         if (side === BOX_TYPES.TOP) return `box-top-${this.viewBox}`;

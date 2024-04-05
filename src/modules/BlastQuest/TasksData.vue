@@ -153,7 +153,7 @@ export default {
 .tasks-col {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 20px;
   margin-bottom: auto;
   cursor: pointer;
 }
