@@ -13,7 +13,14 @@ const SECONDTOKEN_SECOND_DEFAULT_SYMBOL = 'DAI+';
 const SECONDTOKEN_DEFAULT_SYMBOL = 'USD+';
 
 export const WHITE_LIST_ODOS = {
-  59144: [],
+  59144: [
+    'Wrapped Ether',
+    'PancakeSwap V3',
+    'iZiSwap',
+    'NileV2',
+    'Lynex Fusion',
+    'Overnight Exchange',
+  ],
   56: [
     'Overnight Exchange',
     'PancakeSwap V3',
