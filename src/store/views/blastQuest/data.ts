@@ -21,6 +21,15 @@ const getters = {
 const actions = {
   async fetchJackpotData({ commit }: any) {
     try {
+      // const userData = await BlastQuestApiService.getUserName('VasilijPokrovs1');
+      // console.log('here is userData');
+      // console.log(userData);
+      // const lastTweet = await BlastQuestApiService.getLastTweetsOvernight(userData.user_id);
+      // console.log('here is last tweet');
+      // console.log(lastTweet.results[0].tweet_id);
+      // const likes = await BlastQuestApiService.checkLikes(userData.user_id);
+      // console.log('here are likes');
+      // console.log(likes);
       const jackpotData = await BlastQuestApiService.loadJackpot();
       commit('setJackpotData', jackpotData?.amount);
     } catch (error) {
