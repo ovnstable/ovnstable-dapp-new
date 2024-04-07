@@ -4,7 +4,7 @@
       class="tasks-col__item"
       v-for="item in tasksDataInfo"
       :key="item.id"
-      :class="{ completed: item.checked }"
+      :class="{ checked: item.checked }"
       @click="checkItem(item)"
       @keypress="checkItem(item)"
     >
@@ -27,10 +27,9 @@
 </template>
 
 <script lang="ts">
-import { BOX_VIEW } from '@/components/QuestBox/Index.vue';
+import { TypeofQuest } from '@/components/QuestBox/Index.vue';
 import { type PropType } from 'vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
-import { TypeofQuest } from './models.ts';
 
 const BRONZE_QUESTS = [
   {
@@ -41,13 +40,13 @@ const BRONZE_QUESTS = [
   },
   {
     id: '1',
-    text: 'Mint at least 10 USD+ on Blast',
+    text: 'Add at least $20 liquidity to any USD+ pool on Thruster',
     checked: false,
     boxType: TypeofQuest.BRONZE,
   },
   {
     id: '2',
-    text: 'Add at least 20$ to any USD+ pool on SwapBlast',
+    text: 'Add at least $20 to any USD+ pool on SwapBlast',
     checked: false,
     boxType: TypeofQuest.BRONZE,
   },
@@ -57,7 +56,7 @@ const SILVER_QUESTS = [
   {
     id: '0',
     text: 'Mint at least 25 USD+ on Blast',
-    checked: true,
+    checked: false,
     boxType: TypeofQuest.SILVER,
   },
   {
@@ -107,7 +106,7 @@ export default {
   name: 'TasksData',
   props: {
     viewBox: {
-      type: Number as PropType<BOX_VIEW>,
+      type: Number as PropType<TypeofQuest>,
       required: true,
     },
     boxData: {
@@ -120,7 +119,7 @@ export default {
   },
   methods: {
     filterByBoxData(questData: typeof GOLD_QUESTS) {
-      if (this.boxData.length === 0) return questData;
+      if (!this.boxData || this.boxData?.length === 0) return questData;
 
       return questData.map((_) => {
         const questComp = this.boxData.find((item) => item.questId === _.id);
@@ -136,14 +135,15 @@ export default {
       });
     },
     checkItem(item: typeof SILVER_QUESTS[0]) {
+      if (item.checked) return;
       this.$emit('check-quest', item.id, item.boxType);
     },
   },
   computed: {
     tasksDataInfo() {
-      if (this.viewBox === BOX_VIEW.BRONZE) return this.filterByBoxData(BRONZE_QUESTS);
-      if (this.viewBox === BOX_VIEW.SILVER) return this.filterByBoxData(SILVER_QUESTS);
-      if (this.viewBox === BOX_VIEW.GOLD) return this.filterByBoxData(GOLD_QUESTS);
+      if (this.viewBox === TypeofQuest.BRONZE) return this.filterByBoxData(BRONZE_QUESTS);
+      if (this.viewBox === TypeofQuest.SILVER) return this.filterByBoxData(SILVER_QUESTS);
+      if (this.viewBox === TypeofQuest.GOLD) return this.filterByBoxData(GOLD_QUESTS);
 
       return [];
     },
@@ -157,7 +157,6 @@ export default {
   flex-direction: column;
   gap: 20px;
   margin-bottom: auto;
-  cursor: pointer;
 }
 
 .tasks-col__item {
@@ -166,6 +165,7 @@ export default {
   gap: 6px;
   text-align: left;
   transition: color .1s ease;
+  cursor: pointer;
 
   p {
     word-break: break-word;
@@ -175,23 +175,33 @@ export default {
       color: var(--color-4);
     }
   }
+
+  &:hover {
+    p {
+      color: var(--color-3);
+    }
+
+    .tasks-col__arr {
+      transform: translate(2px, -2px);
+    }
+
+    .completed-task {
+      color: unset;
+    }
+  }
+
   .completed-task {
     color: var(--color-2);
     text-decoration: line-through;
+
     [data-theme="dark"] & {
       color: var(--color-18);
     }
   }
 
-  &:hover {
-    color: var(--color-3);
-
-    .tasks-col__arr {
-      transform: translate(2px, -2px);
-    }
-  }
-
   &.checked {
+    pointer-events: none;
+
     &:hover {
       color: initial;
 

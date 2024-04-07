@@ -6,10 +6,3 @@ export type TSignedMessage = {
   message: string;
   nonce: string;
 };
-
-export enum TypeofQuest {
-  BRONZE,
-  SILVER,
-  GOLD,
-  DIAMOND
-}

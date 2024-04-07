@@ -27,7 +27,7 @@
           <BaseIcon
             name="blastSidebar"
           />
-          <p>{{ jackpotData }}</p>
+          <p>{{ jackpotData?.amount }}</p>
           <BaseIcon
             name="blastSidebar"
           />
@@ -84,7 +84,7 @@
           <h1>
             DAILY LOOT BOX
           </h1>
-          <p>DAILY LOOT BOX WILL UPDATE IN: 23:59H</p>
+          <p>DAILY LOOT BOX WILL UPDATE IN: {{ timeToDailyUpdate }}</p>
         </div>
 
         <p>
@@ -106,15 +106,24 @@
             <h1>
               Bronze box
             </h1>
-            <p>
-              a random amount of {{ buildPointsRange(typeofBox.BRONZE) }} points
-            </p>
-            <QuestBox
-              :prize-value="dailyPrize"
-              :open-box="openBronzeQuest"
-              :view-box="0"
-              @close="closeQuests"
-            />
+
+            <div
+              class="spinner-box"
+              v-if="!jackpotDataLoaded"
+            >
+              <Spinner />
+            </div>
+            <template v-else>
+              <p>
+                a random amount of {{ buildPointsRange(typeofBox.BRONZE) }} points
+              </p>
+              <QuestBox
+                :prize-value="dailyPrize"
+                :open-box="openBronzeQuest"
+                :view-box="typeofBox.BRONZE"
+                @close="closeQuests"
+              />
+            </template>
           </div>
 
           <TasksData
@@ -144,16 +153,24 @@
             <h1>
               Silver box
             </h1>
-            <p>
-              a random amount of {{ buildPointsRange(typeofBox.SILVER) }} points
-            </p>
-            <QuestBox
-              :prize-value="dailyPrize"
-              :open-box="false"
-              :view-box="1"
-              :quest-data="userData"
-              @close="closeQuests"
-            />
+            <div
+              class="spinner-box"
+              v-if="!jackpotDataLoaded"
+            >
+              <Spinner />
+            </div>
+            <template v-else>
+              <p>
+                a random amount of {{ buildPointsRange(typeofBox.SILVER) }} points
+              </p>
+              <QuestBox
+                :prize-value="dailyPrize"
+                :open-box="openSilverQuest"
+                :view-box="typeofBox.SILVER"
+                :quest-data="userData"
+                @close="closeQuests"
+              />
+            </template>
           </div>
 
           <TasksData
@@ -183,15 +200,24 @@
             <h1>
               Gold box
             </h1>
-            <p>
-              a random amount of {{ buildPointsRange(typeofBox.GOLD) }} points
-            </p>
-            <QuestBox
-              :prize-value="dailyPrize"
-              :open-box="false"
-              :view-box="2"
-              @close="closeQuests"
-            />
+
+            <div
+              class="spinner-box"
+              v-if="!jackpotDataLoaded"
+            >
+              <Spinner />
+            </div>
+            <template v-else>
+              <p>
+                a random amount of {{ buildPointsRange(typeofBox.GOLD) }} points
+              </p>
+              <QuestBox
+                :prize-value="dailyPrize"
+                :open-box="openGoldQuest"
+                :view-box="typeofBox.GOLD"
+                @close="closeQuests"
+              />
+            </template>
           </div>
 
           <TasksData
@@ -212,50 +238,10 @@
       </div>
     </div>
 
-    <!-- <div class="progress-steps-scroll">
-      <div class="progress-steps-wrap">
-        <span>START</span>
-        <ul class="progress-steps">
-          <li
-            v-for="(item, key) in levelQuestList"
-            :key="key"
-            class="progress-steps__li"
-            :class="{ 'quest-completed': getHighestLevel > key ? true : false }"
-          >
-            <div class="progress-step-item" />
-            <span>{{ item }}$</span>
-          </li>
-        </ul>
-        <span>FINISH</span>
-      </div>
-      <div class="blast-wrap__row blast-wrap__row--scroll">
-        <div
-          v-for="(item, key) in Array.from({ length: 5 })"
-          class="blast-wrap__box-col"
-          :key="key"
-        >
-          <QuestBox
-            :prize-value="weeklyPrize"
-            :open-box="key === activeLevel && openWeeklyQuest ? true : false"
-            :view-box="0"
-            @close="closeQuests"
-          />
-
-          <ButtonComponent
-            full
-            :disabled="!(getHighestLevel >= key) || !!weeklyQuestCount"
-            @on-click="triggerWeeklyQuest"
-          >
-            {{ getWeeklyBtn(key) }}
-          </ButtonComponent>
-        </div>
-      </div>
-    </div> -->
-
     <div class="blast-wrap__quests">
       <div class="blast-wrap__row">
         <h1>WEEKLY BONUS LOOT BOX QUEST</h1>
-        <p>WEEKLY LOOT BOX WILL UPDATE IN: 23:59H</p>
+        <p>WEEKLY LOOT BOX WILL UPDATE IN: {{ timeToWeeklyUpdate }}</p>
       </div>
       <p class="blast-wrap__quests-jackpot-descr">
         Once a week you will be able to claim a Bonus Box.
@@ -276,16 +262,24 @@
                 name="tip"
               />
             </div>
-            <p>
-              a random amount of {{ buildPointsRange(typeofBox.GOLD) }} points
-            </p>
+            <div
+              class="spinner-box"
+              v-if="!jackpotDataLoaded"
+            >
+              <Spinner />
+            </div>
+            <template v-else>
+              <p>
+                random amount of {{ buildPointsRange(typeofBox.DIAMOND) }} points
+              </p>
 
-            <QuestBox
-              :prize-value="dailyPrize"
-              :open-box="false"
-              :view-box="3"
-              @close="closeQuests"
-            />
+              <QuestBox
+                :prize-value="dailyPrize"
+                :open-box="false"
+                :view-box="3"
+                @close="closeQuests"
+              />
+            </template>
           </div>
           <ButtonComponent
             full
@@ -300,14 +294,14 @@
 
           <ul class="blast-wrap__quests-task-status">
             <li
-              v-for="(task, index) in tasks"
+              v-for="(task, index) in tasksData"
               :key="index"
               :class="{ completed: task.completed, incomplete: !task.completed }"
             >
               <div class="task-status-container">
                 <div
                   class="tasks-col__item-icon"
-                  :class="{ 'completed-task': task.completed && moreThanOneTaskCompleted }"
+                  :class="{ 'completed-task': task.completed }"
                 >
                   <BaseIcon :name="task.completed ? 'CommonChecked' : 'CommonClose'" />
                 </div>
@@ -317,7 +311,7 @@
 
           <ul class="blast-wrap__quests-task-list">
             <li
-              v-for="(task, index) in tasks"
+              v-for="(task, index) in tasksData"
               :key="index"
               :class="{ completed: task.completed, incomplete: !task.completed }"
             >
@@ -325,31 +319,6 @@
             </li>
           </ul>
         </div>
-        <div class="blast-wrap__quests-diamond-box-wrapper">
-          <div class="blast-wrap__quests-diamond-box">
-            <div class="blast-wrap__quests-diamond-box-tip">
-              <h1>DIAMOND BOX</h1>
-              <BaseIcon
-                name="tip"
-              />
-            </div>
-            <p>
-              random amount of {{ buildPointsRange(typeofBox.DIAMOND) }} points
-            </p>
-
-            <QuestBox
-              :prize-value="dailyPrize"
-              :open-box="false"
-              :view-box="3"
-              @close="closeQuests"
-            />
-          </div>
-          <p>DO TASKS TO GET LOOTBOX</p>
-        </div>
-        <img
-          alt="navbar"
-          :src="getImageUrl(`assets/blastQuest/SlothBlastQuest.png`)"
-        />
       </div>
     </div>
   </div>
@@ -361,28 +330,29 @@ import { getRandomString } from '@/utils/strings.ts';
 import { OVN_QUESTS_API, awaitDelay, getImageUrl } from '@/utils/const.ts';
 import axios from 'axios';
 import ButtonComponent from '@/components/Button/Index.vue';
-import QuestBox from '@/components/QuestBox/Index.vue';
+import QuestBox, { TypeofQuest } from '@/components/QuestBox/Index.vue';
 import BN from 'bignumber.js';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import Spinner from '@/components/Spinner/Index.vue';
+import dayjs from 'dayjs';
 import TasksData from './TasksData.vue';
-import { TypeofQuest, type TSignedMessage } from './models.ts';
+import { type TSignedMessage } from './models.ts';
 
 const boxRanges = [
   {
     quest: TypeofQuest.BRONZE,
     min: 0.00001,
-    max: 0.00009,
+    max: 0.03,
   },
   {
     quest: TypeofQuest.SILVER,
     min: 0.00003,
-    max: 0.0004,
+    max: 0.075,
   },
   {
     quest: TypeofQuest.GOLD,
     min: 0.0001,
-    max: 0.0006,
+    max: 0.1,
   },
   {
     quest: TypeofQuest.DIAMOND,
@@ -414,6 +384,8 @@ export default {
       showModal: false,
       isDarkTheme: false,
       openBronzeQuest: false,
+      openSilverQuest: false,
+      openGoldQuest: false,
       userData: {
         bronzeBox: [] as any,
         silverBox: [] as any,
@@ -429,7 +401,7 @@ export default {
       dailyPrize: '',
       weeklyPrize: '',
       levelQuestList: [5, 30, 50, 100, 250],
-      tasks: this.createTasks(5),
+      tasksData: this.createTasks(5),
     };
   },
   watch: {
@@ -446,6 +418,33 @@ export default {
     ...mapGetters('accountData', ['account']),
     ...mapGetters('jackpotData', ['jackpotData', 'jackpotDataLoaded']),
 
+    timeToDailyUpdate() {
+      if (!this.jackpotData || !this.jackpotData?.questDuration) return '00:00';
+      const DAY_UNIX = 86400;
+      const now = dayjs().unix();
+      const nextUpdate = new BN(this.jackpotData?.questDuration?.dayStartUnix)
+        .plus(DAY_UNIX).toNumber();
+      const timeDifference = new BN(nextUpdate).minus(now).toNumber();
+
+      const hours = Math.floor(timeDifference / 3600);
+      const minutes = Math.floor((timeDifference % 3600) / 60);
+
+      return `${hours}:${minutes} h:m`;
+    },
+    timeToWeeklyUpdate() {
+      if (!this.jackpotData || !this.jackpotData?.questDuration) return '00:00';
+      const DAY_UNIX = 86400;
+      const now = dayjs().unix();
+      const nextUpdate = new BN(this.jackpotData?.questDuration?.dayStartUnix)
+        .plus(DAY_UNIX * 7).toNumber();
+      const timeDifference = new BN(nextUpdate).minus(now).toNumber();
+
+      const days = Math.floor(timeDifference / (3600 * 24));
+      const hours = Math.floor((timeDifference % (3600 * 24)) / 3600);
+      const minutes = Math.floor((timeDifference % 3600) / 60);
+
+      return `${days}:${hours}:${minutes} d:h:m`;
+    },
     buildPointsRange() {
       return (questType: TypeofQuest) => {
         if (!this.jackpotData) return '0';
@@ -459,7 +458,7 @@ export default {
       return (questType: TypeofQuest) => {
         if (questType === TypeofQuest.BRONZE && this.userData.bronzeBoxAvailable > 0) return false;
         if (questType === TypeofQuest.SILVER && this.userData.silverBoxAvailable > 0) return false;
-        if (questType === TypeofQuest.GOLD && this.userData.diamondBoxAvailable > 0) return false;
+        if (questType === TypeofQuest.GOLD && this.userData.goldBoxAvailable > 0) return false;
         return true;
       };
     },
@@ -482,10 +481,6 @@ export default {
 
       return null;
     },
-    moreThanOneTaskCompleted() {
-      const completedTasksCount = this.tasks.filter((task: any) => task.completed).length;
-      return completedTasksCount > 1;
-    },
   },
   methods: {
     getImageUrl,
@@ -493,9 +488,12 @@ export default {
       const resp = await axios.get(`${OVN_QUESTS_API}/blast/user/${acc}`);
       console.log(resp, 're-sp');
       this.userData = resp.data;
+      this.tasksData = this.createTasks(5, resp.data);
     },
     closeQuests() {
       this.openBronzeQuest = false;
+      this.openSilverQuest = false;
+      this.openGoldQuest = false;
       this.weeklyPrize = '';
       this.dailyPrize = '';
       this.activeLevel = 0;
@@ -535,6 +533,10 @@ export default {
       this.updateUserQuestData(this.account);
     },
     async triggerBoxQuest(boxType: TypeofQuest) {
+      // this.openSilverQuest = true;
+      // this.dailyPrize = '20';
+      // return;
+
       const nonce = getRandomString(24);
       const sign: TSignedMessage | null = await this.signEvmMessage(
         `Claim blast points on Overnight.fi, nonce: ${nonce}`,
@@ -551,6 +553,8 @@ export default {
       this.dailyPrize = triggerClaim.data?.amount;
 
       if (boxType === TypeofQuest.BRONZE) this.openBronzeQuest = true;
+      if (boxType === TypeofQuest.SILVER) this.openSilverQuest = true;
+      if (boxType === TypeofQuest.GOLD) this.openGoldQuest = true;
 
       // waiting for animation
       await awaitDelay(2000);
@@ -566,18 +570,14 @@ export default {
       console.log('closeModal');
       this.$emit('close-modal');
     },
-    createTasks(numberOfDays: any) {
-      const tasks = [];
-      for (let day = 1; day <= numberOfDays; day++) {
-        tasks.push({
-          description: `Do 4 tasks from daily loot box quest ${day} day${day > 1 ? 's' : ''}`,
-          completed: false,
-        });
-      }
-      if (tasks.length) {
-        tasks[0].completed = true;
-        tasks[1].completed = true;
-      }
+    createTasks(numberOfDays: number, userData: any) {
+      const streakNum = userData?.daysStreak?.streakNum;
+      const tasks = Array.from({ length: numberOfDays }).map((_, key) => ({
+        description: `Do 3 tasks from daily loot box quest ${key + 1} day${key + 1 > 1 ? 's' : ''}`,
+        completed: streakNum > key,
+      }));
+
+      console.log(tasks, '---tasks');
       return tasks;
     },
   },
@@ -897,6 +897,13 @@ export default {
   display: flex;
   transform: scale(0.5);
   margin-top: -20px;
+}
+
+.spinner-box {
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .blast-wrap__row--scroll {
