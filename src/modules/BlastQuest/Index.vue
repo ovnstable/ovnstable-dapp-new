@@ -40,7 +40,7 @@
           <h1>
             YOUR BLAST POINTS:
           </h1>
-          <p>From 00 Jan ‘00</p>
+          <!-- <p>From 00 Jan ‘00</p> -->
         </div>
 
         <div class="blast-wrap__jackpot-user__data">
