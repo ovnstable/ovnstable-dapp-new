@@ -68,17 +68,6 @@
             :class="['lineLoader', 'app-header__balance-loader']"
           />
 
-          <router-link
-            v-if="networkId === 81457"
-            to="/blastquest"
-            class="app-header__dashboard"
-            active-class="active-link"
-          >
-            <p>
-              BLAST QUEST
-            </p>
-          </router-link>
-
           <div
             v-if="account && balancesLoading && deviceSize.isDesktop"
             :class="['lineLoader']"
