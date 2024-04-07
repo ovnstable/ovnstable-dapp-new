@@ -247,7 +247,7 @@
         Once a week you will be able to claim a Bonus Box.
         To do so, you need to complete a total of 15 tasks in a week.
         After that the Box will be yours to claim on Sunday.
-        Your Bonus box will contain a random amount of Blast points equal to 5-50% of
+        Your Bonus box will contain a random amount of Blast points equal to 0.01-50% of
         <span>Jackpot!</span></p>
       <div class="blast-wrap__quests-daily-tasks">
         <img
