@@ -447,11 +447,13 @@ export default {
     },
     buildPointsRange() {
       return (questType: TypeofQuest) => {
-        if (!this.jackpotData) return '0';
+        if (!this.jackpotData?.amount) return '0';
         const data = boxRanges.find((_) => _.quest === questType);
         if (!data) return '0';
 
-        return `${new BN(data?.min).times(this.jackpotData).toFixed(0)} - ${new BN(data?.max).times(this.jackpotData).toFixed(0)}`;
+        return `${new BN(data?.min)
+          .times(this.jackpotData?.amount).toFixed(0)} - ${new BN(data?.max)
+          .times(this.jackpotData?.amount).toFixed(0)}`;
       };
     },
     isDisabledBtn() {
