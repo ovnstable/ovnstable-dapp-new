@@ -155,9 +155,9 @@
 
         <div>
           <SwapSlippageSettings
-            :currentSlippageChanged="handleCurrentSlippageChanged"
             :selected-input-tokens="selectedInputTokens"
             :selected-output-tokens="selectedOutputTokens"
+            @change-slippage="handleCurrentSlippageChanged"
           />
         </div>
         <div
@@ -1874,8 +1874,9 @@ export default {
       const tokenContract = this.tokensContractMap[selectedToken.address];
       const approveValue = new BigNumber(10)
         .pow(selectedToken.decimals)
-        .times(1000000)
+        .times(10 ** 18)
         .toFixed(0);
+
       const tx = await approveToken(
         tokenContract,
         this.zapContract.target,

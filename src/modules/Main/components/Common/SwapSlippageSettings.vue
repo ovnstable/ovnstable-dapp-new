@@ -121,10 +121,10 @@ export default {
       showList: false,
       slippageSettings: [
         {
-          id: 4, type: 'AUTO', name: 'Auto', value: 0.1, info: 'Automatic selection by current tokens',
+          id: 4, type: 'AUTO', name: 'Auto', value: 0.05, info: 'Automatic selection by current tokens',
         },
         {
-          id: 2, type: 'LOW', name: 'Low', value: 0.05, info: 'For stablecoins only',
+          id: 2, type: 'LOW', name: 'Low', value: 0.1, info: 'For stablecoins only',
         },
         {
           id: 3, type: 'MEDIUM', name: 'Medium', value: 0.5, info: 'For mix of stablecoins and volatile assets',
@@ -190,13 +190,19 @@ export default {
       if (this.isAnyNonStablecoinSelected) {
         const updatedValue: any = this.getSlippageSettingById(3);
         const auto: any = this.getSlippageSettingById(4);
-        auto.value = updatedValue.value;
+        this.currentSlippage = {
+          ...auto,
+          value: updatedValue.value,
+        };
         this.newSlippageSetting(auto);
         return;
       }
 
       const auto: any = this.getSlippageSettingById(4);
-      auto.value = 0.1;
+      this.currentSlippage = {
+        ...auto,
+        value: 0.1,
+      };
       this.newSlippageSetting(auto);
     },
     onLeaveList,

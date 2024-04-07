@@ -295,8 +295,9 @@ export default {
 
       const tokenData = this.inputToken;
       let tokenContract = this.tokensContractMap[tokenData.address];
-      const approveValue = new BigNumber(10 ** this.inputToken.decimals)
-        .times(1000000)
+      const approveValue = new BigNumber(10)
+        .pow(this.inputToken.decimals)
+        .times(10 ** 18)
         .toFixed(0);
 
       if (!tokenContract) {
