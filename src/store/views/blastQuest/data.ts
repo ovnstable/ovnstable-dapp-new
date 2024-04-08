@@ -3,6 +3,8 @@ import BlastQuestApiService from '@/services/blast-quest-api-service.ts';
 const state = {
   jackpotData: {},
   loadedJackpotData: false,
+  isLiked: null,
+  isRetweeted: null,
 };
 
 const getters = {
@@ -15,6 +17,12 @@ const getters = {
   },
   jackpotDataLoaded(state: any) {
     return state.loadedJackpotData;
+  },
+  likedQuest(state: any) {
+    return state.isLiked;
+  },
+  retweetedQuest(state: any) {
+    return state.isRetweeted;
   },
 };
 
@@ -35,6 +43,12 @@ const mutations = {
   },
   setJackpotDataLoaded(state: any, value: any) {
     state.loadedJackpotData = value;
+  },
+  setIsLikedQuest(state: any, value: any) {
+    state.isLiked = value;
+  },
+  setIsRetweetedQuest(state: any, value: any) {
+    state.isRetweeted = value;
   },
 };
 

@@ -17,82 +17,82 @@ class BlastQuestApiService {
     });
   }
 
-  async getUserLikes(username: any): Promise<any> {
-    const sleep = (ms: any) => new Promise((resolve) => { setTimeout(resolve, ms); });
-
-    const getUserDetails = async (user: any, attempt = 1): Promise<any> => {
-      const url = 'https://twitter154.p.rapidapi.com/user/details';
-      const params = { username: user };
-      const headers = {
-        'X-RapidAPI-Key': import.meta.env.VITE_APP_API_KEY_TWITTER_API,
-        'X-RapidAPI-Host': 'twitter154.p.rapidapi.com',
-      };
-
-      try {
-        const response = await axios.get(url, { params, headers });
-        return response.data;
-      } catch (error: any) {
-        if (error.response && error.response.status === 429 && attempt <= 10) {
-          console.log(`Request rate limited. Retrying getUserDetails in 1.1 seconds... Attempt ${attempt}/10`);
-          await sleep(1100);
-          return getUserDetails(user, attempt + 1);
-        }
-        throw error;
-      }
-    };
-
-    const getLikes = async (userId: any, attempt = 1): Promise<any> => {
-      const url = 'https://twitter-v24.p.rapidapi.com/user/likes';
-      const params = {
-        user_id: userId,
-        limit: '10',
-      };
-      const headers = {
-        'X-RapidAPI-Key': import.meta.env.VITE_APP_API_KEY_TWITTER_API,
-        'X-RapidAPI-Host': 'twitter-v24.p.rapidapi.com',
-      };
-
-      try {
-        const response = await axios.get(url, { params, headers });
-        return response.data;
-      } catch (error: any) {
-        if (error.response && error.response.status === 429 && attempt <= 10) {
-          console.log(`Request rate limited. Retrying getLikes in 1.1 seconds... Attempt ${attempt}/10`);
-          await sleep(3000);
-          return getLikes(userId, attempt + 1);
-        }
-        throw error;
-      }
-    };
-
-    try {
-      console.log('let username to getUserDetails', username);
-      const userDetails = await getUserDetails(username);
-      console.log('here are our userDetails');
-      console.log(userDetails);
-      if (userDetails) {
-        const userId = userDetails.user_id;
-        const likes = await getLikes(userId);
-        console.log('Likes:', likes);
-        return likes;
-      } console.error('User ID not found.');
-    } catch (error) {
-      console.error('Error in getUserLikes:', error);
-    }
-    return null;
-  }
-
-  async getLastTweetsOvernight(attempt = 1): Promise<any> {
-    const url = 'https://twitter154.p.rapidapi.com/user/tweets';
+  async checkIfLikes(userName: any, tweetId: any, attempt = 1): Promise<any> {
+    const url = 'https://twitter-api45.p.rapidapi.com/checklike.php';
     const params = {
-      username: 'overnight_fi',
-      limit: '1',
-      include_replies: 'false',
-      include_pinned: 'false',
+      screenname: userName,
+      tweet_id: tweetId,
     };
     const headers = {
       'X-RapidAPI-Key': import.meta.env.VITE_APP_API_KEY_TWITTER_API,
-      'X-RapidAPI-Host': 'twitter154.p.rapidapi.com',
+      'X-RapidAPI-Host': 'twitter-api45.p.rapidapi.com',
+    };
+
+    try {
+      const response = await axios.get(url, { params, headers });
+      return response.data;
+    } catch (error: any) {
+      if (error.response && error.response.status === 429 && attempt <= 10) {
+        console.log(`Request rate limited. Retrying in 1.1 seconds... Attempt ${attempt}/3`);
+        await this.sleep(1100);
+        return this.getLastTweetsOvernight(attempt + 1);
+      } throw error;
+    }
+  }
+
+  async checkIfRetweet(userName: any, tweetId: any, attempt = 1): Promise<any> {
+    const url = 'https://twitter-api45.p.rapidapi.com/checkretweet.php';
+    const params = {
+      screenname: userName,
+      tweet_id: tweetId,
+    };
+    const headers = {
+      'X-RapidAPI-Key': import.meta.env.VITE_APP_API_KEY_TWITTER_API,
+      'X-RapidAPI-Host': 'twitter-api45.p.rapidapi.com',
+    };
+
+    try {
+      const response = await axios.get(url, { params, headers });
+      return response.data;
+    } catch (error: any) {
+      if (error.response && error.response.status === 429 && attempt <= 10) {
+        console.log(`Request rate limited. Retrying in 1.1 seconds... Attempt ${attempt}/3`);
+        await this.sleep(1100);
+        return this.getLastTweetsOvernight(attempt + 1);
+      } throw error;
+    }
+  }
+
+  async getLastTweetsOvernight(attempt = 1): Promise<any> {
+    const url = 'https://twitter-api45.p.rapidapi.com/usermedia.php';
+    const params = {
+      screenname: 'overnight_fi',
+    };
+    const headers = {
+      'X-RapidAPI-Key': import.meta.env.VITE_APP_API_KEY_TWITTER_API,
+      'X-RapidAPI-Host': 'twitter-api45.p.rapidapi.com',
+    };
+
+    try {
+      const response = await axios.get(url, { params, headers });
+      return response.data;
+    } catch (error: any) {
+      if (error.response && error.response.status === 429 && attempt <= 10) {
+        console.log(`Request rate limited. Retrying in 1.1 seconds... Attempt ${attempt}/3`);
+        await this.sleep(1100);
+        return this.getLastTweetsOvernight(attempt + 1);
+      } throw error;
+    }
+  }
+
+  async checkTweetInfo(idTweet: any, attempt = 1): Promise<any> {
+    const url = 'https://twitter-api45.p.rapidapi.com/tweet.php';
+    const params = {
+      id: idTweet,
+    };
+    const headers = {
+      'X-RapidAPI-Key': import.meta.env.VITE_APP_API_KEY_TWITTER_API,
+      'X-RapidAPI-Host': 'twitter-api45.p.rapidapi.com',
     };
 
     try {

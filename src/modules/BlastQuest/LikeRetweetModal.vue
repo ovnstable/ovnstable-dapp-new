@@ -4,41 +4,63 @@
     v-model="showModal"
     @close="closeModal"
   >
-    <div>
-      <p>LIKE AND RETWEET TASK</p>
-      <p>Post</p>
-      <div>
+    <div
+      v-if="isLiked === null"
+      class='blast-quest-task'
+    >
+      <h1>LIKE AND RETWEET TASK</h1>
+      <h2>Post</h2>
+      <div
+        class='blast-quest-task-post'
+      >
         <p>Post you need to like and retweet to do task:</p>
         <a
+          v-if="!loadingTweet"
           :href="`https://twitter.com/overnight_fi/status/${lastTweetNumber}`"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="token-address"
         >{{`https://twitter.com/overnight_fi/status/${lastTweetNumber}`}}</a>
+        <div
+          v-else
+          class="blast-quest-task-post-spinner"
+        >
+          <Spinner size="20px" />
+        </div>
       </div>
-      <p>Your account</p>
-      <div>
-        <p>Post you need to like and retweet to do task:</p>
+
+      <h2>Your account</h2>
+      <div
+        class='blast-quest-task-account'
+      >
         <InputComponent
           :value="accountLink"
           is-text
           input-type="primary"
-          placeholder="Search token by name or paste address"
+          placeholder="Paste the link to your Twitter account here"
           full-width
           @input="inputAccount"
         />
       </div>
       <ButtonComponent
+        v-if="!checkingTweetLoading"
         @click="checkLikeFromAccount"
         @keydown.enter="checkLikeFromAccount"
-      />
+      >
+        <p>TASK COMPLETION CHECK</p>
+      </ButtonComponent>
+      <div
+        v-else
+        class="blast-quest-task-account-spinner"
+      >
+        <Spinner size="24px" />
+      </div>
     </div>
   </ModalComponent>
 </template>
 
 <script lang="ts">
-// import Spinner from '@/components/Spinner/Index.vue';
-// import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import Spinner from '@/components/Spinner/Index.vue';
 import InputComponent from '@/components/Input/Index.vue';
 import ModalComponent from '@/components/Modal/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
@@ -47,9 +69,7 @@ import BlastQuestApiService from '@/services/blast-quest-api-service.ts';
 export default {
   name: 'LikeRetweetModal',
   components: {
-    // TokensList,
-    // BaseIcon,
-    // Spinner,
+    Spinner,
     InputComponent,
     ModalComponent,
     ButtonComponent,
@@ -58,13 +78,19 @@ export default {
     return {
       lastTweetNumber: '',
       accountLink: '',
+      isLiked: null,
+      isRetweeted: null,
       showModal: false,
+      loadingTweet: true,
+      checkingTweetLoading: false,
     };
   },
-  // async mounted() {
-  //   const lastTweets = await BlastQuestApiService.getLastTweetsOvernight();
-  //   this.lastTweetNumber = lastTweets.results[0].tweet_id;
-  // },
+  async mounted() {
+    this.loadingTweet = true;
+    const lastTweets = await BlastQuestApiService.getLastTweetsOvernight();
+    this.lastTweetNumber = lastTweets.timeline[0].tweet_id;
+    this.loadingTweet = false;
+  },
 
   methods: {
     closeModal() {
@@ -73,30 +99,125 @@ export default {
     inputAccount(val: string) {
       this.accountLink = val;
     },
+    notLikedModalShow() {
+      return true;
+    },
     async checkLikeFromAccount() {
+      this.checkingTweetLoading = true;
       const account = this.accountLink.split('/').pop();
-      console.log('here is the account', account);
-      console.log(this.lastTweetNumber);
-      const userLikes = await BlastQuestApiService.getUserLikes(account);
-      const likesFormatted = userLikes.user.result.timeline_v2.timeline.instructions[0].entries;
-      console.log('here are our likesFormatted');
-      console.log(likesFormatted);
-      return 1;
+      const liked = await this.retryCheck(BlastQuestApiService
+        .checkIfLikes, account, this.lastTweetNumber);
+      const retweeted = await this.retryCheck(BlastQuestApiService
+        .checkIfRetweet, account, this.lastTweetNumber);
+
+      this.isLiked = liked.is_liked;
+      this.isRetweeted = retweeted.is_retweeted;
+
+      this.$store.commit('jackpotData/setIsLikedQuest', this.isLiked);
+      this.$store.commit('jackpotData/setIsRetweetedQuest', this.isRetweeted);
+
+      this.checkingTweetLoading = false;
+    },
+
+    async retryCheck(checkFunction: any, account: any, tweetNumber: any, attempts = 0):
+      Promise<any> {
+      const result = await checkFunction(account, tweetNumber);
+      if (result.is_liked || result.is_retweeted || attempts >= 2) {
+        return result;
+      } return this.retryCheck(checkFunction, account, tweetNumber, attempts + 1);
     },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.tokens-select {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 200;
-  background-color: var(--color-4);
-  border-radius: 10px;
+.blast-quest-task {
+  display: flex;
+  flex-direction: column;
+  padding: 30px;
+  min-width: 840px;
+  h1 {
+    margin-bottom: 40px;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--color-1);
+  }
+
+  h2 {
+    margin-bottom: 6px;
+  }
+  button {
+    border-radius: 30px;
+    box-shadow: none;
+    border: none;
+    font-size: 14px;
+    font-weight: 600;
+    max-width: 300px;
+    align-self: center;
+  }
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
+    h2,h1 {
+      color: var(--color-4);
+    }
+    button {
+      box-shadow: none;
+      background-color: var(--color-7);
+    }
+  }
+}
+.blast-quest-task-post-spinner {
+  margin-left: auto;
+}
+.blast-quest-task-account-spinner {
+  align-self: center
 }
 
+.blast-quest-task-post {
+  display: flex;
+  flex-direction: row;
+  padding: 14px 10px;
+  gap: 50px;
+  [data-theme="dark"] & {
+    background-color: var(--color-7);
+    p,a {
+      color: var(--color-4);
+    }
+  }
+}
+
+.blast-quest-task-post {
+  background-color: var(--color-5);
+  border-radius: 10px;
+  margin-bottom: 30px;
+}
+
+.blast-quest-task-account {
+  border-radius: 10px;
+  margin-bottom: 40px;
+  background-color: var(--color-8);
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
+  }
+}
+
+@media (max-width: 1024px) {
+  .blast-quest-task {
+    min-width: 640px;
+    width: auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .blast-quest-task {
+    min-width: 0;
+  }
+  .blast-quest-task-post {
+    gap: 20px;
+    flex-wrap: wrap;
+    a {
+      word-break: break-all;
+    }
+  }
+}
 </style>

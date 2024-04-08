@@ -35,16 +35,30 @@
     </div>
   </div>
   <LikeRetweetModal
+    v-if="likedQuest == null || retweetedQuest == null"
     v-model="showModalLikeRetweet"
+  />
+  <LikedModal
+    v-if="likedQuest && retweetedQuest"
+    v-model="showModalLikeRetweet"
+    @close-modal="closeModalLikeRetweet"
+  />
+  <NotLikedModal
+    v-if="likedQuest == false || retweetedQuest == false"
+    v-model="showModalLikeRetweet"
+    @close-modal="closeModalLikeRetweet"
   />
 </template>
 
 <script lang="ts">
 import { TypeofQuest } from '@/components/QuestBox/Index.vue';
 import { type PropType } from 'vue';
+import { mapGetters } from 'vuex';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import LikeRetweetModal from '@/modules/BlastQuest/LikeRetweetModal.vue';
+import LikedModal from '@/modules/BlastQuest/LikedModal.vue';
+import NotLikedModal from '@/modules/BlastQuest/NotLikedModal.vue';
 
 const BRONZE_QUESTS = [
   {
@@ -139,6 +153,8 @@ export default {
     BaseIcon,
     ButtonComponent,
     LikeRetweetModal,
+    LikedModal,
+    NotLikedModal,
   },
   methods: {
     filterByBoxData(questData: typeof GOLD_QUESTS) {
@@ -164,8 +180,12 @@ export default {
     toggleModalLikeRetweet() {
       this.showModalLikeRetweet = !this.showModalLikeRetweet;
     },
+    closeModalLikeRetweet() {
+      this.showModalLikeRetweet = false;
+    },
   },
   computed: {
+    ...mapGetters('jackpotData', ['likedQuest', 'retweetedQuest']),
     tasksDataInfo() {
       if (this.viewBox === TypeofQuest.BRONZE) return this.filterByBoxData(BRONZE_QUESTS);
       if (this.viewBox === TypeofQuest.SILVER) return this.filterByBoxData(SILVER_QUESTS);
