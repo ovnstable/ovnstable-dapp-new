@@ -18,18 +18,33 @@
         {{ item.text }}
       </p>
       <div class="tasks-col__arr">
+        <ButtonComponent
+          v-if="!item.checked && item.id === '0' && item.boxType === 0"
+          @click="toggleModalLikeRetweet"
+          @keydown.enter="toggleModalLikeRetweet"
+        >
+          <BaseIcon
+            name='PayoutArrow'
+          />
+        </ButtonComponent>
         <BaseIcon
+          v-else
           name="PayoutArrow"
         />
       </div>
     </div>
   </div>
+  <LikeRetweetModal
+    v-model="showModalLikeRetweet"
+  />
 </template>
 
 <script lang="ts">
 import { BOX_VIEW } from '@/components/QuestBox/Index.vue';
 import { type PropType } from 'vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import ButtonComponent from '@/components/Button/Index.vue';
+import LikeRetweetModal from '@/modules/BlastQuest/LikeRetweetModal.vue';
 import { TypeofQuest } from './models.ts';
 
 const BRONZE_QUESTS = [
@@ -105,6 +120,11 @@ export interface BOX_DATA {
 
 export default {
   name: 'TasksData',
+  data() {
+    return {
+      showModalLikeRetweet: false,
+    };
+  },
   props: {
     viewBox: {
       type: Number as PropType<BOX_VIEW>,
@@ -117,6 +137,8 @@ export default {
   },
   components: {
     BaseIcon,
+    ButtonComponent,
+    LikeRetweetModal,
   },
   methods: {
     filterByBoxData(questData: typeof GOLD_QUESTS) {
@@ -137,6 +159,9 @@ export default {
     },
     checkItem(item: typeof SILVER_QUESTS[0]) {
       this.$emit('check-quest', item.id, item.boxType);
+    },
+    toggleModalLikeRetweet() {
+      this.showModalLikeRetweet = !this.showModalLikeRetweet;
     },
   },
   computed: {
@@ -235,6 +260,12 @@ export default {
     [data-theme="dark"] & {
       fill: var(--color-18);
     }
+  }
+  button {
+    background: none;
+    box-shadow: none;
+    border: none;
+    padding: 0;
   }
 }
 </style>

@@ -325,31 +325,6 @@
             </li>
           </ul>
         </div>
-        <div class="blast-wrap__quests-diamond-box-wrapper">
-          <div class="blast-wrap__quests-diamond-box">
-            <div class="blast-wrap__quests-diamond-box-tip">
-              <h1>DIAMOND BOX</h1>
-              <BaseIcon
-                name="tip"
-              />
-            </div>
-            <p>
-              random amount of {{ buildPointsRange(typeofBox.DIAMOND) }} points
-            </p>
-
-            <QuestBox
-              :prize-value="dailyPrize"
-              :open-box="false"
-              :view-box="3"
-              @close="closeQuests"
-            />
-          </div>
-          <p>DO TASKS TO GET LOOTBOX</p>
-        </div>
-        <img
-          alt="navbar"
-          :src="getImageUrl(`assets/blastQuest/SlothBlastQuest.png`)"
-        />
       </div>
     </div>
   </div>
