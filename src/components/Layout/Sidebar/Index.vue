@@ -55,9 +55,13 @@
           />
           <div class="glitch-wrapper">
             <div
-              class="glitch"
-              data-glitch="Blast lootbox"
-            >Blast lootbox</div>
+              class="stack"
+              style="--stacks: 3;"
+            >
+              <span style="--index: 0;">Blastbox</span>
+              <span style="--index: 1;">Blastbox</span>
+              <span style="--index: 2;">Blastbox</span>
+            </div>
           </div>
         </div>
 
@@ -351,108 +355,56 @@ export default {
   }
 }
 
-.glitch-wrapper {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  background-color: var(--color-5);
-  [data-theme="dark"] & {
-    background-color: var(--color-7);
-  }
+.stack {
+  display: grid;
+  grid-template-columns: 1fr;
 }
 
-.glitch {
-  position: relative;
+.stack span {
+  font-weight: bold;
+  grid-row-start: 1;
+  grid-column-start: 1;
   font-size: 17px;
-  font-weight: 600;
-  color: var(--color-1);
-  z-index: 1;
-  [data-theme="dark"] & {
-    color: var(--color-4);
-  }
+  font-weight: 500;
+  --stack-height: calc(100% / var(--stacks) - 1px);
+  --inverse-index: calc(calc(var(--stacks) - 1) - var(--index));
+  --clip-top: calc(var(--stack-height) * var(--index));
+  --clip-bottom: calc(var(--stack-height) * var(--inverse-index));
+  clip-path: inset(var(--clip-top) 0 var(--clip-bottom) 0);
+  animation: stack .3s cubic-bezier(.46,.29,0,1.24) 1 backwards calc(var(--index) * 150ms), glitch 4s ease infinite 2s alternate-reverse;
 }
 
-.glitch:before,
-.glitch:after {
-  display: block;
-  content: attr(data-glitch);
-  position: absolute;
-  top: 0;
-  left: 0;
-  opacity: 0.8;
-}
+.stack span:nth-child(odd) { --glitch-translate: 2px; }
+.stack span:nth-child(even) { --glitch-translate: -2px; }
 
-.glitch:before {
-  animation: glitch-color 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
-  color: #007acc;;
-  z-index: -1;
-  [data-theme="dark"] & {
-    animation: glitch-color-dark 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
-    color: #5f4361;
-  }
-}
-
-.glitch:after {
- animation: glitch-color 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) reverse both infinite;
- color: #e06c75;
-  z-index: -2;
-  [data-theme="dark"] & {
-    animation: glitch-color-dark 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) reverse both infinite;
-    color: #b93db9;
-  }
-}
-
-@keyframes glitch-color {
+@keyframes stack {
   0% {
-    transform: translate(0);
-  }
-
-  20% {
-    transform: translate(-0.6px, 0.6px);
-  }
-
-  40% {
-    transform: translate(-0.6px, -0.6px);
-  }
-
+    opacity: 0;
+    transform: translateX(-50%);
+    text-shadow: -1px 3px 0 rgba(255, 0, 0, 0.405), 1px -2px 0 rgba(0, 0, 255, 0.405);
+  };
   60% {
-    transform: translate(0.6px, 0.6px);
+    opacity: 0.5;
+    transform: translateX(50%);
   }
-
   80% {
-    transform: translate(0.6px, -0.6px);
+    transform: none;
+    opacity: 1;
+    text-shadow: 1px -1px 0 rgba(255, 0, 0, 0.405), -1px 2px 0 rgba(0, 0, 255, 0.405);
   }
-
-  to {
-    transform: translate(0);
+  100% {
+    text-shadow: none;
   }
 }
-@keyframes glitch-color-dark {
+
+@keyframes glitch {
   0% {
-    transform: translate(0);
+    text-shadow: -1px 1px 0 rgba(255, 0, 0, 0.405), 1px -2px 0 rgba(0, 0, 255, 0.405);
+    transform: translate(var(--glitch-translate));
   }
-
-  20% {
-    transform: translate(-1px, 1px);
+  2% {
+    text-shadow: 1px -1px 0 rgba(255, 0, 0, 0.405)red, -2px 1px 0 rgba(0, 0, 255, 0.405);
   }
-
-  40% {
-    transform: translate(-1px, -1px);
-  }
-
-  60% {
-    transform: translate(1px, 1px);
-  }
-
-  80% {
-    transform: translate(1px, -1px);
-  }
-
-  to {
-    transform: translate(0);
-  }
+  4%, 100% {  text-shadow: none; transform: none; }
 }
 </style>
