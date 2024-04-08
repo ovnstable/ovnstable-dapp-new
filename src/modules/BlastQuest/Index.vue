@@ -130,6 +130,7 @@
             :view-box="0"
             :box-data="userData.bronzeBox"
             @check-quest="checkQuest"
+            @check-twitter="checkTwitter"
           />
 
           <ButtonComponent
@@ -321,6 +322,22 @@
         </div>
       </div>
     </div>
+
+    <LikeRetweetModal
+      v-if="likedQuest == null || retweetedQuest == null"
+      v-model="showModalLikeRetweet"
+      @twitter-submit="twitterSubmit"
+    />
+    <LikedModal
+      v-if="likedQuest && retweetedQuest"
+      v-model="showModalLikeRetweet"
+      @close-modal="closeModalLikeRetweet"
+    />
+    <NotLikedModal
+      v-if="likedQuest == false || retweetedQuest == false"
+      v-model="showModalLikeRetweet"
+      @close-modal="closeModalLikeRetweet"
+    />
   </div>
 </template>
 
@@ -336,8 +353,11 @@ import BN from 'bignumber.js';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import Spinner from '@/components/Spinner/Index.vue';
 import dayjs from 'dayjs';
-import TasksData from './TasksData.vue';
+import LikeRetweetModal from '@/modules/BlastQuest/LikeRetweetModal.vue';
+import LikedModal from '@/modules/BlastQuest/LikedModal.vue';
+import NotLikedModal from '@/modules/BlastQuest/NotLikedModal.vue';
 import { type TSignedMessage } from './models.ts';
+import TasksData from './TasksData.vue';
 
 const boxRanges = [
   {
@@ -370,6 +390,9 @@ export default {
     TasksData,
     BaseIcon,
     Spinner,
+    LikeRetweetModal,
+    LikedModal,
+    NotLikedModal,
   },
   emits: ['close-modal'],
   props: {
@@ -387,6 +410,7 @@ export default {
       openBronzeQuest: false,
       openSilverQuest: false,
       openGoldQuest: false,
+      showModalLikeRetweet: false,
       userData: {
         bronzeBox: [] as any,
         silverBox: [] as any,
@@ -417,7 +441,7 @@ export default {
   computed: {
     ...mapGetters('web3', ['evmProvider', 'provider']),
     ...mapGetters('accountData', ['account']),
-    ...mapGetters('jackpotData', ['jackpotData', 'jackpotDataLoaded']),
+    ...mapGetters('jackpotData', ['jackpotData', 'jackpotDataLoaded', 'likedQuest', 'retweetedQuest']),
 
     timeToDailyUpdate() {
       if (!this.jackpotData || !this.jackpotData?.questDuration) return '00:00';
@@ -487,6 +511,12 @@ export default {
   },
   methods: {
     getImageUrl,
+    toggleModalLikeRetweet() {
+      this.showModalLikeRetweet = !this.showModalLikeRetweet;
+    },
+    closeModalLikeRetweet() {
+      this.showModalLikeRetweet = false;
+    },
     async updateUserQuestData(acc: string) {
       const resp = await axios.get(`${OVN_QUESTS_API}/blast/user/${acc}`);
       console.log(resp, 're-sp');
@@ -524,6 +554,29 @@ export default {
       } catch (error) {
         return null;
       }
+    },
+    async checkTwitter() {
+      this.toggleModalLikeRetweet();
+    },
+    async twitterSubmit(id: string) {
+      console.log(id, 'id__twitterSubmit');
+      const triggerCheck = await axios.post(`${OVN_QUESTS_API}/blast/checkquest`, {
+        address: this.account,
+        questId: '0',
+        boxId: TypeofQuest.BRONZE,
+        twitterId: id,
+      });
+
+      if (!triggerCheck?.data?.isChecked) {
+        notifyInst({
+          title: 'Task status',
+          text: 'Error: task not passed',
+          type: 'error',
+        });
+      }
+
+      console.log(triggerCheck, '--triggerCheck');
+      this.updateUserQuestData(this.account);
     },
     async checkQuest(id: string, boxType: TypeofQuest) {
       const triggerCheck = await axios.post(`${OVN_QUESTS_API}/blast/checkquest`, {

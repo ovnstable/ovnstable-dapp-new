@@ -48,7 +48,7 @@
                   <Spinner />
                 </span>
                 <span v-else>
-                  {{ jackpotData }}
+                  {{ jackpotData?.amount }}
                 </span>
               </p>
             </div>

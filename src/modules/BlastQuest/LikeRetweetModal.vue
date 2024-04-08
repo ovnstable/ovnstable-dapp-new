@@ -5,7 +5,6 @@
     @close="closeModal"
   >
     <div
-      v-if="isLiked === null"
       class='blast-quest-task'
     >
       <h1>LIKE AND RETWEET TASK</h1>
@@ -74,12 +73,13 @@ export default {
     ModalComponent,
     ButtonComponent,
   },
+  emits: ['twitter-submit'],
   data() {
     return {
       lastTweetNumber: '',
       accountLink: '',
-      isLiked: null,
-      isRetweeted: null,
+      isLiked: false,
+      isRetweeted: false,
       showModal: false,
       loadingTweet: true,
       checkingTweetLoading: false,
@@ -104,17 +104,10 @@ export default {
     },
     async checkLikeFromAccount() {
       this.checkingTweetLoading = true;
+
       const account = this.accountLink.split('/').pop();
-      const liked = await this.retryCheck(BlastQuestApiService
-        .checkIfLikes, account, this.lastTweetNumber);
-      const retweeted = await this.retryCheck(BlastQuestApiService
-        .checkIfRetweet, account, this.lastTweetNumber);
 
-      this.isLiked = liked.is_liked;
-      this.isRetweeted = retweeted.is_retweeted;
-
-      this.$store.commit('jackpotData/setIsLikedQuest', this.isLiked);
-      this.$store.commit('jackpotData/setIsRetweetedQuest', this.isRetweeted);
+      this.$emit('twitter-submit', account);
 
       this.checkingTweetLoading = false;
     },

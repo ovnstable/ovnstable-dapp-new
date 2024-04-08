@@ -24,20 +24,6 @@
       </div>
     </div>
   </div>
-  <LikeRetweetModal
-    v-if="likedQuest == null || retweetedQuest == null"
-    v-model="showModalLikeRetweet"
-  />
-  <LikedModal
-    v-if="likedQuest && retweetedQuest"
-    v-model="showModalLikeRetweet"
-    @close-modal="closeModalLikeRetweet"
-  />
-  <NotLikedModal
-    v-if="likedQuest == false || retweetedQuest == false"
-    v-model="showModalLikeRetweet"
-    @close-modal="closeModalLikeRetweet"
-  />
 </template>
 
 <script lang="ts">
@@ -45,9 +31,6 @@ import { TypeofQuest } from '@/components/QuestBox/Index.vue';
 import { type PropType } from 'vue';
 import { mapGetters } from 'vuex';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
-import LikeRetweetModal from '@/modules/BlastQuest/LikeRetweetModal.vue';
-import LikedModal from '@/modules/BlastQuest/LikedModal.vue';
-import NotLikedModal from '@/modules/BlastQuest/NotLikedModal.vue';
 
 const BRONZE_QUESTS = [
   {
@@ -122,7 +105,7 @@ export interface BOX_DATA {
 
 export default {
   name: 'TasksData',
-  emits: ['check-quest'],
+  emits: ['check-quest', 'check-twitter'],
   data() {
     return {
       showModalLikeRetweet: false,
@@ -140,9 +123,6 @@ export default {
   },
   components: {
     BaseIcon,
-    LikeRetweetModal,
-    LikedModal,
-    NotLikedModal,
   },
   methods: {
     filterByBoxData(questData: typeof GOLD_QUESTS) {
@@ -163,16 +143,11 @@ export default {
     },
     checkItem(item: typeof SILVER_QUESTS[0]) {
       if (!item.checked && item.id === '0' && item.boxType === 0) {
-        this.toggleModalLikeRetweet();
+        this.$emit('check-twitter');
+        return;
       }
       if (item.checked) return;
       this.$emit('check-quest', item.id, item.boxType);
-    },
-    toggleModalLikeRetweet() {
-      this.showModalLikeRetweet = !this.showModalLikeRetweet;
-    },
-    closeModalLikeRetweet() {
-      this.showModalLikeRetweet = false;
     },
   },
   computed: {
