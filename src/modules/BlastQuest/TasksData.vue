@@ -119,6 +119,7 @@ export interface BOX_DATA {
 
 export default {
   name: 'TasksData',
+  emits: ['check-quest'],
   data() {
     return {
       showModalLikeRetweet: false,

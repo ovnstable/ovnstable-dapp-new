@@ -236,3 +236,21 @@ $avatar-offset: 52 + 16;
   --notify-onboard-z-index: 200000;
   --wcm-z-index: 200000!important;
 }
+
+.vue-notification-group {
+  margin: 10px 5px 0 0!important;
+  font-family: "Red Hat Display", sans-serif!important;
+
+  .notification-title {
+    font-size: 16px!important;
+  }
+
+  .notification-title {
+    font-size: 16px!important;
+  }
+
+  .notification-content {
+    font-size: 14px!important;
+    margin-top: 5px;
+  }
+}
