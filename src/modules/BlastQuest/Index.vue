@@ -573,6 +573,9 @@ export default {
           text: 'Error: task not passed',
           type: 'error',
         });
+      } else {
+        this.$store.commit('jackpotData/setIsLikedQuest', true);
+        this.$store.commit('jackpotData/setIsRetweetedQuest', true);
       }
 
       console.log(triggerCheck, '--triggerCheck');
