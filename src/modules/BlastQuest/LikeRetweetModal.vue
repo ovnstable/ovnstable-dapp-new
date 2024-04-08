@@ -155,6 +155,16 @@ export default {
     max-width: 300px;
     align-self: center;
   }
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
+    h2,h1 {
+      color: var(--color-4);
+    }
+    button {
+      box-shadow: none;
+      background-color: var(--color-7);
+    }
+  }
 }
 .blast-quest-task-post-spinner {
   margin-left: auto;
@@ -168,6 +178,12 @@ export default {
   flex-direction: row;
   padding: 14px 10px;
   gap: 50px;
+  [data-theme="dark"] & {
+    background-color: var(--color-7);
+    p,a {
+      color: var(--color-4);
+    }
+  }
 }
 
 .blast-quest-task-post {
@@ -180,8 +196,8 @@ export default {
   border-radius: 10px;
   margin-bottom: 40px;
   background-color: var(--color-8);
-  input {
-    border-radius: 10px;
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
   }
 }
 

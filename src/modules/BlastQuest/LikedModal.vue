@@ -81,13 +81,26 @@ export default {
   }
   align-items: center;
   padding: 30px;
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
+    h2,h1 {
+      color: var(--color-4);
+    }
+    button {
+      box-shadow: none;
+      background-color: var(--color-7);
+    }
+  }
 }
 .blast-quest-task-success-like-divider,
 .blast-quest-task-success-like-divider-last {
   border: 1px solid var(--color-7);
   width: 100%;
   margin-bottom: 22px;
-  margin-top: 22px
+  margin-top: 22px;
+  [data-theme="dark"] & {
+    background-color: var(--color-18);
+  }
 }
 
 .blast-quest-task-success-like-divider-last {

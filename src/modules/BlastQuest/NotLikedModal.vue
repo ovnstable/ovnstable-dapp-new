@@ -5,10 +5,10 @@
     @close="closeModal"
   >
     <div
-      class='blast-quest-task-success-like'
+      class='blast-quest-task-not-success-like'
     >
       <h2>LIKE AND RETWEET TASK</h2>
-      <div class='blast-quest-task-success-like-divider' />
+      <div class='blast-quest-task-not-success-like-divider' />
       <BaseIcon
         name="CommonErrorCircle"
       />
@@ -21,7 +21,7 @@
       >
         <p>OKAY!</p>
       </ButtonComponent>
-      <div class='blast-quest-task-success-like-divider-last' />
+      <div class='blast-quest-task-not-success-like-divider-last' />
     </div>
   </ModalComponent>
 </template>
@@ -55,7 +55,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.blast-quest-task-success-like {
+.blast-quest-task-not-success-like {
   display: flex;
   flex-direction: column;
   min-width: 730px;
@@ -89,28 +89,41 @@ export default {
   }
   align-items: center;
   padding: 30px;
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
+    h2,h1 {
+      color: var(--color-4);
+    }
+    button {
+      box-shadow: none;
+      background-color: var(--color-7);
+    }
+  }
 }
-.blast-quest-task-success-like-divider,
-.blast-quest-task-success-like-divider-last {
+.blast-quest-task-not-success-like-divider,
+.blast-quest-task-not-success-like-divider-last {
   border: 1px solid var(--color-7);
   width: 100%;
   margin-bottom: 22px;
-  margin-top: 22px
+  margin-top: 22px;
+  [data-theme="dark"] & {
+    background-color: var(--color-18);
+  }
 }
 
-.blast-quest-task-success-like-divider-last {
+.blast-quest-task-not-success-like-divider-last {
   margin-bottom: 0;
 }
 
 @media (max-width: 1024px) {
-  .blast-quest-task-success-like {
+  .blast-quest-task-not-success-like {
     min-width: 640px;
     width: auto;
   }
 }
 
 @media (max-width: 640px) {
-  .blast-quest-task-success-like {
+  .blast-quest-task-not-success-like {
     min-width: 0;
   }
 }
