@@ -416,7 +416,7 @@ export default {
   computed: {
     ...mapGetters('web3', ['evmProvider', 'provider']),
     ...mapGetters('accountData', ['account']),
-    ...mapGetters('jackpotData', ['jackpotData', 'jackpotDataLoaded']),
+    ...mapGetters('jackpotData', ['jackpotData', 'jackpotDataLoaded', 'likedQuest']),
 
     timeToDailyUpdate() {
       if (!this.jackpotData || !this.jackpotData?.questDuration) return '00:00';
