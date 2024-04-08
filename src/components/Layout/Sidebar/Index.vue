@@ -58,9 +58,9 @@
               class="stack"
               style="--stacks: 3;"
             >
-              <span style="--index: 0;">Blastbox</span>
-              <span style="--index: 1;">Blastbox</span>
-              <span style="--index: 2;">Blastbox</span>
+              <span style="--index: 0;">Blast lootbox</span>
+              <span style="--index: 1;">Blast lootbox</span>
+              <span style="--index: 2;">Blast lootbox</span>
             </div>
           </div>
         </div>
