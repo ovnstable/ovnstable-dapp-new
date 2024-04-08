@@ -1155,6 +1155,12 @@ export default {
   }
 }
 
+@media (max-width: 1200px) {
+  .blast-wrap__boxes {
+    flex-wrap: wrap;
+  }
+}
+
 @media (max-width: 1024px) {
   .page-wrap {
     margin-bottom: 80px;
