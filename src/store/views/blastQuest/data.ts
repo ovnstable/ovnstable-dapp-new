@@ -4,6 +4,7 @@ const state = {
   jackpotData: {},
   loadedJackpotData: false,
   isLiked: null,
+  isRetweeted: null,
 };
 
 const getters = {
@@ -19,6 +20,9 @@ const getters = {
   },
   likedQuest(state: any) {
     return state.isLiked;
+  },
+  retweetedQuest(state: any) {
+    return state.isRetweeted;
   },
 };
 
@@ -42,6 +46,9 @@ const mutations = {
   },
   setIsLikedQuest(state: any, value: any) {
     state.isLiked = value;
+  },
+  setIsRetweetedQuest(state: any, value: any) {
+    state.isRetweeted = value;
   },
 };
 

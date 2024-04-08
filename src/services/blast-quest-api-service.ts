@@ -40,6 +40,29 @@ class BlastQuestApiService {
     }
   }
 
+  async checkIfRetweet(userName: any, tweetId: any, attempt = 1): Promise<any> {
+    const url = 'https://twitter-api45.p.rapidapi.com/checkretweet.php';
+    const params = {
+      screenname: userName,
+      tweet_id: tweetId,
+    };
+    const headers = {
+      'X-RapidAPI-Key': import.meta.env.VITE_APP_API_KEY_TWITTER_API,
+      'X-RapidAPI-Host': 'twitter-api45.p.rapidapi.com',
+    };
+
+    try {
+      const response = await axios.get(url, { params, headers });
+      return response.data;
+    } catch (error: any) {
+      if (error.response && error.response.status === 429 && attempt <= 10) {
+        console.log(`Request rate limited. Retrying in 1.1 seconds... Attempt ${attempt}/3`);
+        await this.sleep(1100);
+        return this.getLastTweetsOvernight(attempt + 1);
+      } throw error;
+    }
+  }
+
   async getLastTweetsOvernight(attempt = 1): Promise<any> {
     const url = 'https://twitter-api45.p.rapidapi.com/usermedia.php';
     const params = {

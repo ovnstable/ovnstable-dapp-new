@@ -79,6 +79,7 @@ export default {
       lastTweetNumber: '',
       accountLink: '',
       isLiked: null,
+      isRetweeted: null,
       showModal: false,
       loadingTweet: true,
       checkingTweetLoading: false,
@@ -104,12 +105,26 @@ export default {
     async checkLikeFromAccount() {
       this.checkingTweetLoading = true;
       const account = this.accountLink.split('/').pop();
-      const liked = await BlastQuestApiService.checkIfLikes(account, this.lastTweetNumber);
+      const liked = await this.retryCheck(BlastQuestApiService
+        .checkIfLikes, account, this.lastTweetNumber);
+      const retweeted = await this.retryCheck(BlastQuestApiService
+        .checkIfRetweet, account, this.lastTweetNumber);
+
       this.isLiked = liked.is_liked;
-      console.log('lets set setIsLikedQuest');
-      console.log(this.isLiked);
+      this.isRetweeted = retweeted.is_retweeted;
+
       this.$store.commit('jackpotData/setIsLikedQuest', this.isLiked);
+      this.$store.commit('jackpotData/setIsRetweetedQuest', this.isRetweeted);
+
       this.checkingTweetLoading = false;
+    },
+
+    async retryCheck(checkFunction: any, account: any, tweetNumber: any, attempts = 0):
+      Promise<any> {
+      const result = await checkFunction(account, tweetNumber);
+      if (result.is_liked || result.is_retweeted || attempts >= 2) {
+        return result;
+      } return this.retryCheck(checkFunction, account, tweetNumber, attempts + 1);
     },
   },
 };

@@ -46,6 +46,7 @@ export default {
   methods: {
     closeModal() {
       this.$store.commit('jackpotData/setIsLikedQuest', true);
+      this.$store.commit('jackpotData/setIsRetweetedQuest', true);
       this.$emit('close-modal');
     },
   },

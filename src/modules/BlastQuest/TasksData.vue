@@ -34,18 +34,17 @@
       </div>
     </div>
   </div>
-  <p>isLiked {{ likedQuest }}</p>
   <LikeRetweetModal
-    v-if="likedQuest == null"
+    v-if="likedQuest == null || retweetedQuest == null"
     v-model="showModalLikeRetweet"
   />
   <LikedModal
-    v-if="likedQuest"
+    v-if="likedQuest && retweetedQuest"
     v-model="showModalLikeRetweet"
     @close-modal="closeModalLikeRetweet"
   />
   <NotLikedModal
-    v-if="likedQuest == false"
+    v-if="likedQuest == false || retweetedQuest == false"
     v-model="showModalLikeRetweet"
     @close-modal="closeModalLikeRetweet"
   />
@@ -185,7 +184,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters('jackpotData', ['likedQuest']),
+    ...mapGetters('jackpotData', ['likedQuest', 'retweetedQuest']),
     tasksDataInfo() {
       if (this.viewBox === TypeofQuest.BRONZE) return this.filterByBoxData(BRONZE_QUESTS);
       if (this.viewBox === TypeofQuest.SILVER) return this.filterByBoxData(SILVER_QUESTS);
