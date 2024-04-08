@@ -32,6 +32,48 @@
         ref="mySwiper"
       >
         <swiper-slide
+          :ref="slideRef"
+          :swiper-ref="swiperInstance"
+          v-if="networkName === 'blast'"
+        >
+          <div class="slider-info-blast">
+            <div
+              class="slider-info-blast-points"
+            >
+              <p>BLAST POINTS:
+                <span
+                  v-if="!jackpotDataLoaded"
+                  class="spinner-container"
+                >
+                  <Spinner />
+                </span>
+                <span v-else>
+                  {{ jackpotData }}
+                </span>
+              </p>
+            </div>
+            <div class="slider-info-blast-lootbox">
+              <p>BLAST LOOTBOX AIRDROP <br>
+                Do daily tasks and win lootbox!</p>
+              <div class="slider-info-blast-lootbox-start">
+                <img
+                  alt="SlothBlastQuest"
+                  :src="getImageUrl(`assets/blastQuest/SlothBlastQuest.png`)"
+                />
+                <router-link
+                  to="/blastquest"
+                >
+                  <ButtonComponent>
+                    START
+                  </ButtonComponent>
+
+                </router-link>
+              </div>
+
+            </div>
+          </div>
+        </swiper-slide>
+        <swiper-slide
           v-for="(slide, index) in sliderData"
           :ref="slideRef"
           :swiper-ref="swiperInstance"
@@ -132,7 +174,9 @@ import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import { Swiper as SwiperClass } from 'swiper/core';
 import { deviceType } from '@/utils/deviceType.ts';
+import { mapGetters } from 'vuex';
 import Spinner from '@/components/Spinner/Index.vue';
+import ButtonComponent from '@/components/Button/Index.vue';
 import SliderApiService from '@/services/slider-api-service.ts';
 import 'swiper/swiper.min.css';
 import { getImageUrl } from '@/utils/const.ts';
@@ -159,6 +203,7 @@ export default {
     Swiper,
     SwiperSlide,
     Spinner,
+    ButtonComponent,
   },
   data() {
     return {
@@ -175,11 +220,14 @@ export default {
     this.sliderLoaded = true;
   },
   computed: {
+    ...mapGetters('network', ['networkName']),
+    ...mapGetters('jackpotData', ['jackpotData', 'jackpotDataLoaded']),
     deviceSize() {
       return deviceType();
     },
   },
   methods: {
+    getImageUrl,
     async loadDataSlider() {
       try {
         const nameApyData = await SliderApiService.loadApyName();
@@ -276,6 +324,9 @@ export default {
       const iconName = numberOfToken === 1 ? this
         .formatFirstTokenIconName(tokenName) : this.formatSecondTokenIconName(tokenName);
       return getImageUrl(`assets/icons/currencies/main/${iconName}.svg`);
+    },
+    getImageUrlSlider(addr: string) {
+      return getImageUrl(addr);
     },
   },
 };
@@ -491,6 +542,81 @@ export default {
   @media (max-width: 768px) {
     width: 100%;
     margin: 40px 0;
+  }
+}
+
+.slider-info-blast {
+  width: 100%;
+  height: 100%;
+}
+.slider-info-blast-points {
+  background-image: url('src/assets/blastQuest/blastPointsSlider.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  padding: 20px 18px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  max-height: 55px;
+  p,span {
+    font-size: 15px;
+    color: var(--color-4);
+  }
+  p {
+    display: flex;
+    justify-content: space-between;
+  }
+}
+.spinner-container {
+  display: flex;
+  transform: scale(0.5);
+  margin-top: -24px;
+  margin-right: -20px;
+}
+
+.slider-info-blast-lootbox {
+  background-image: url('src/assets/blastQuest/blastLootboxSlider.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: 10px;
+  padding: 12px 4px;
+  padding-bottom: 0;
+  p {
+    color: var(--color-4);
+  }
+}
+
+.slider-info-blast-lootbox p:first-child {
+  margin-bottom: 18px;
+  line-height: 20px;
+  margin-left: 12px;
+}
+
+.slider-info-blast-lootbox {
+  display: flex;
+  flex-direction: column;
+}
+.slider-info-blast-lootbox-start {
+  margin-top: auto;
+  display: flex;
+  flex-direction: row;
+  align-items: end;
+  button {
+    font-size: 15px;
+    padding: 4px 17px;
+    box-shadow: none;
+    border: none;
+    background-color: var(--color-1);
+    margin-bottom: 14px;
+    margin-right: 18px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+  }
+  img {
+    object-fit: contain;
+    overflow: hidden;
   }
 }
 

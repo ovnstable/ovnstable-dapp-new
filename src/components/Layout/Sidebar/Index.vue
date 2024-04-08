@@ -40,6 +40,28 @@
       >
         {{ link.name }}
       </router-link>
+      <div class="sidebar__divider-top" />
+      <p
+        class="sidebar__text-top sidebar__text-top--ovn"
+      >EVENTS</p>
+      <router-link
+        to="/blastquest"
+        class="sidebar__text-top"
+        active-class="active-link"
+      >
+        <div class="sidebar__text-top-blast">
+          <BaseIcon
+            name="blastSidebar"
+          />
+          <div class="glitch-wrapper">
+            <div
+              class="glitch"
+              data-glitch="Blast lootbox"
+            >Blast lootbox</div>
+          </div>
+        </div>
+
+      </router-link>
     </ul>
 
     <ul class="sidebar__bottom">
@@ -213,6 +235,12 @@ export default {
   }
 }
 
+@media (max-height: 880px) {
+  .sidebar__top {
+    margin-bottom: 24px;
+  }
+}
+
 .sidebar__bottom li {
   margin-top: 10px;
 }
@@ -229,6 +257,7 @@ export default {
     margin-top: 10px;
   }
 }
+
 .active-link {
   text-decoration: underline;
 }
@@ -273,7 +302,7 @@ export default {
 
 .sidebar__divider-top {
   margin-top: 20px;
-  border: 1px solid var(--color-1);
+  border: 0.6px solid var(--color-1);
   [data-theme="dark"] & {
     border-color: var(--color-2);
   }
@@ -309,4 +338,121 @@ export default {
   cursor: pointer;
 }
 
+.sidebar__text-top-blast {
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+  align-items: center;
+  margin-top: 14px;
+  svg {
+    [data-theme="dark"] & {
+      stroke: var(--color-4);
+    }
+  }
+}
+
+.glitch-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-color: var(--color-5);
+  [data-theme="dark"] & {
+    background-color: var(--color-7);
+  }
+}
+
+.glitch {
+  position: relative;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--color-1);
+  z-index: 1;
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
+}
+
+.glitch:before,
+.glitch:after {
+  display: block;
+  content: attr(data-glitch);
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0.8;
+}
+
+.glitch:before {
+  animation: glitch-color 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
+  color: #007acc;;
+  z-index: -1;
+  [data-theme="dark"] & {
+    animation: glitch-color-dark 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
+    color: #5f4361;
+  }
+}
+
+.glitch:after {
+ animation: glitch-color 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) reverse both infinite;
+ color: #e06c75;
+  z-index: -2;
+  [data-theme="dark"] & {
+    animation: glitch-color-dark 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) reverse both infinite;
+    color: #b93db9;
+  }
+}
+
+@keyframes glitch-color {
+  0% {
+    transform: translate(0);
+  }
+
+  20% {
+    transform: translate(-0.6px, 0.6px);
+  }
+
+  40% {
+    transform: translate(-0.6px, -0.6px);
+  }
+
+  60% {
+    transform: translate(0.6px, 0.6px);
+  }
+
+  80% {
+    transform: translate(0.6px, -0.6px);
+  }
+
+  to {
+    transform: translate(0);
+  }
+}
+@keyframes glitch-color-dark {
+  0% {
+    transform: translate(0);
+  }
+
+  20% {
+    transform: translate(-1px, 1px);
+  }
+
+  40% {
+    transform: translate(-1px, -1px);
+  }
+
+  60% {
+    transform: translate(1px, 1px);
+  }
+
+  80% {
+    transform: translate(1px, -1px);
+  }
+
+  to {
+    transform: translate(0);
+  }
+}
 </style>

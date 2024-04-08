@@ -186,7 +186,9 @@ import ButtonComponent from '@/components/Button/Index.vue';
 import SpinnerComponent from '@/components/Spinner/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { cutString } from '@/utils/strings.ts';
-import { OVN_TOKENS, appNetworksData, getImageUrl } from '@/utils/const.ts';
+import {
+  OVN_TOKENS, appNetworksData, getImageUrl,
+} from '@/utils/const.ts';
 import BigNumber from 'bignumber.js';
 import { loadTokenImage } from '@/utils/tokenLogo.ts';
 import { sortedChainsByTVL } from '@/store/helpers/index.ts';
@@ -222,6 +224,7 @@ export default {
       networksData: appNetworksData,
       showModalAccount: false,
       showMobMenu: false,
+      showBlastModal: false,
     };
   },
   async mounted() {
@@ -244,6 +247,7 @@ export default {
     ...mapGetters('accountData', ['originalBalance', 'account', 'isLoadingOvnBalances']),
     ...mapGetters('network', ['networkId', 'isShowDeprecated']),
     ...mapGetters('odosData', ['allTokensList']),
+    ...mapGetters('web3', ['evmProvider', 'provider']),
 
     balancesLoading() {
       if (this.isTokensLoading) return true;
@@ -278,6 +282,9 @@ export default {
   methods: {
     ...mapActions('network', ['setWalletNetwork', 'showDeprecated']),
     getImageUrl,
+    async claimBlastPoints() {
+      this.showBlastModal = true;
+    },
     openAccountModal() {
       this.showModalAccount = !this.showModalAccount;
     },
