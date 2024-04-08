@@ -18,17 +18,7 @@
         {{ item.text }}
       </p>
       <div class="tasks-col__arr">
-        <ButtonComponent
-          v-if="!item.checked && item.id === '0' && item.boxType === 0"
-          @click="toggleModalLikeRetweet"
-          @keydown.enter="toggleModalLikeRetweet"
-        >
-          <BaseIcon
-            name='PayoutArrow'
-          />
-        </ButtonComponent>
         <BaseIcon
-          v-else
           name="PayoutArrow"
         />
       </div>
@@ -55,7 +45,6 @@ import { TypeofQuest } from '@/components/QuestBox/Index.vue';
 import { type PropType } from 'vue';
 import { mapGetters } from 'vuex';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
-import ButtonComponent from '@/components/Button/Index.vue';
 import LikeRetweetModal from '@/modules/BlastQuest/LikeRetweetModal.vue';
 import LikedModal from '@/modules/BlastQuest/LikedModal.vue';
 import NotLikedModal from '@/modules/BlastQuest/NotLikedModal.vue';
@@ -151,7 +140,6 @@ export default {
   },
   components: {
     BaseIcon,
-    ButtonComponent,
     LikeRetweetModal,
     LikedModal,
     NotLikedModal,
@@ -174,6 +162,9 @@ export default {
       });
     },
     checkItem(item: typeof SILVER_QUESTS[0]) {
+      if (!item.checked && item.id === '0' && item.boxType === 0) {
+        this.toggleModalLikeRetweet();
+      }
       if (item.checked) return;
       this.$emit('check-quest', item.id, item.boxType);
     },
@@ -291,12 +282,6 @@ export default {
     [data-theme="dark"] & {
       fill: var(--color-18);
     }
-  }
-  button {
-    background: none;
-    box-shadow: none;
-    border: none;
-    padding: 0;
   }
 }
 </style>
