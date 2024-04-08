@@ -215,6 +215,9 @@ export default {
   .blast-quest-task-post {
     gap: 20px;
     flex-wrap: wrap;
+    a {
+      word-break: break-all;
+    }
   }
 }
 </style>
