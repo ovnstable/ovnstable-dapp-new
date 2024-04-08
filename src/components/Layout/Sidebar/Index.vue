@@ -235,6 +235,12 @@ export default {
   }
 }
 
+@media (max-height: 880px) {
+  .sidebar__top {
+    margin-bottom: 24px;
+  }
+}
+
 .sidebar__bottom li {
   margin-top: 10px;
 }
