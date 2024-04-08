@@ -12,6 +12,7 @@
     <WaitingModal :show-modal="showWaitModal" />
     <ErrorModal :show-modal="showErrorModal" />
     <SuccessModal :show-modal="showSuccessModal" />
+    <notifications />
   </div>
 </template>
 

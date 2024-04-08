@@ -326,6 +326,7 @@
 
 <script lang="ts">
 import { mapGetters } from 'vuex';
+import { notify as notifyInst } from '@kyvg/vue3-notification';
 import { getRandomString } from '@/utils/strings.ts';
 import { OVN_QUESTS_API, awaitDelay, getImageUrl } from '@/utils/const.ts';
 import axios from 'axios';
@@ -531,6 +532,14 @@ export default {
         boxId: boxType,
       });
 
+      if (!triggerCheck?.data?.isChecked) {
+        notifyInst({
+          title: 'Task status',
+          text: 'Error: task not passed',
+          type: 'error',
+        });
+      }
+
       console.log(triggerCheck, '--triggerCheck');
       this.updateUserQuestData(this.account);
     },
@@ -630,7 +639,6 @@ export default {
   font-weight: 700;
   border-radius: 10px;
   padding: 24px;
-  max-height: 124px;
   border: 1px solid var(--color-1);
   box-shadow: 0px 1px 0px 0px var(--color-1);
 
