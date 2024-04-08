@@ -1295,7 +1295,7 @@ export default {
       const tokenContract = this.tokensContractMap[selectedToken.address];
       const approveValue = new BigNumber(10)
         .pow(selectedToken.decimals)
-        .times(100000)
+        .times(10 ** 18)
         .toFixed(0);
 
       const tx = await approveToken(

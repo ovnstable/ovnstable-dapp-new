@@ -13,14 +13,13 @@ import {
 import BigNumber from 'bignumber.js';
 import { getNetworkParams } from '@/store/web3/network.ts';
 import { buildEvmContract } from '@/utils/contractsMap.ts';
-import { loadJSON } from '@/utils/httpUtils.ts';
 // import { awaitDelay } from '@/utils/const.ts';
 import { MulticallWrapper } from 'ethers-multicall-provider';
 import { ethers } from 'ethers';
 import { ERC20_ABI } from '@/assets/abi/index.ts';
 import { fixedByPrice } from '@/utils/numbers.ts';
 import { ZERO_ADDRESS } from '@/utils/const.ts';
-import { LINEA_TOKENS, BLAST_TOKENS } from '@/store/views/main/odos/mocks.ts';
+import { BLAST_TOKENS } from '@/store/views/main/odos/mocks.ts';
 import _ from 'lodash';
 
 // const KEY = 'REFERRAL_CODE';
@@ -57,6 +56,7 @@ export const stateData = {
     'arbitrum',
     'zksync',
     'base',
+    'linea'
   ],
   swapResponseInfo: null,
   quotaResponseInfo: null,
@@ -206,7 +206,6 @@ const actions = {
       val: {
         chainTokenMap: {
           ...odosTokens.chainTokenMap,
-          ...LINEA_TOKENS,
           ...BLAST_TOKENS
         },
       }

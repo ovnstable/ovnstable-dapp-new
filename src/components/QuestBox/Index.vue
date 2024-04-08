@@ -57,15 +57,6 @@ import { awaitDelay } from '@/utils/const.ts';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 
 // eslint-disable-next-line no-shadow
-export enum QUEST_TYPES {
-  FIRST,
-  SECOND,
-  THIRD,
-  FOURTH,
-  FIFTH
-}
-
-// eslint-disable-next-line no-shadow
 export enum BOX_TYPES {
   LEFT,
   TOP,
@@ -73,22 +64,18 @@ export enum BOX_TYPES {
 }
 
 // eslint-disable-next-line no-shadow
-export enum BOX_VIEW {
+export enum TypeofQuest {
   BRONZE,
   SILVER,
   GOLD,
-  DIAMOND,
+  DIAMOND
 }
 
 export default {
   name: 'QuestCube',
   props: {
-    questType: {
-      type: Number as PropType<QUEST_TYPES>,
-      default: QUEST_TYPES.FIRST,
-    },
     viewBox: {
-      type: Number as PropType<BOX_VIEW>,
+      type: Number as PropType<TypeofQuest>,
       required: true,
     },
     openBox: {
@@ -123,7 +110,7 @@ export default {
       this.isOpen = currVal;
 
       this.isShakeActive = true;
-      await awaitDelay(1200);
+      await awaitDelay(600);
 
       this.isShakeActive = false;
 
@@ -210,6 +197,8 @@ export default {
   height: 30vh;
   background-color: var(--glow);
   margin: 46.19px 0;
+  transform: translateX(-50%);
+  left: 50%;
   filter: blur(50px);
 }
 .hexagon:before,
@@ -235,7 +224,6 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  cursor: pointer;
   margin: 0 auto;
   width: 100%;
   max-width: 200px;
@@ -309,13 +297,12 @@ export default {
   }
 
   .box-wrap__modal-cube & {
-    width: 149%;
-    height: 100%;
-    left: -6%;
+    left: 49%;
+    top: 36%;
 
     svg {
-      width: 64%;
-      height: 64%;
+      width: 287px;
+      height: 287px;
     }
   }
 }
@@ -333,17 +320,16 @@ export default {
   }
 
   .box-wrap__modal-cube & {
-    width: 100%;
-    height: 100%;
-    left: -7%;
-    top: 70%;
+    left: 40%;
+    top: 50%;
 
     svg {
-      width: 64%;
-      height: 64%;
+      width: 250px;
+      height: 250px;
     }
   }
 }
+
 .cube--right {
   position: absolute;
   z-index: 1;
@@ -357,14 +343,12 @@ export default {
   }
 
   .box-wrap__modal-cube & {
-    width: 100%;
-    height: 100%;
-    right: -42%;
-    top: 70%;
+    top: 50%;
+    right: -5%;
 
     svg {
-      width: 64%;
-      height: 64%;
+      width: 250px;
+      height: 250px;
     }
   }
 }
