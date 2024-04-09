@@ -322,7 +322,6 @@
         </div>
       </div>
     </div>
-
     <LikeRetweetModal
       v-if="likedQuest == null || retweetedQuest == null"
       v-model="showModalLikeRetweet"

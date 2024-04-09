@@ -108,16 +108,16 @@ export default {
       const account = this.accountLink.split('/').pop();
 
       this.$emit('twitter-submit', account);
+      const liked = await BlastQuestApiService.checkIfLikes(account, this.lastTweetNumber);
+      const retweeted = await BlastQuestApiService.checkIfRetweet(account, this.lastTweetNumber);
+
+      this.isLiked = liked.is_liked;
+      this.isRetweeted = retweeted.is_retweeted;
+
+      this.$store.commit('jackpotData/setIsLikedQuest', this.isLiked);
+      this.$store.commit('jackpotData/setIsRetweetedQuest', this.isRetweeted);
 
       this.checkingTweetLoading = false;
-    },
-
-    async retryCheck(checkFunction: any, account: any, tweetNumber: any, attempts = 0):
-      Promise<any> {
-      const result = await checkFunction(account, tweetNumber);
-      if (result.is_liked || result.is_retweeted || attempts >= 2) {
-        return result;
-      } return this.retryCheck(checkFunction, account, tweetNumber, attempts + 1);
     },
   },
 };
