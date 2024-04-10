@@ -532,3 +532,8 @@ export const LOW_TVL_PROMOTE = [
   '0x1446999B0b0E4f7aDA6Ee73f2Ae12a2cfdc5D9E7',
   '0xb34a7d1444a707349Bc7b981B7F2E1f20F81F013',
 ];
+
+export const APY_POOLS = [
+  'Dyson',
+  'Beefy',
+];
