@@ -365,31 +365,8 @@ import LikeRetweetModal from '@/modules/BlastQuest/LikeRetweetModal.vue';
 import LikedModal from '@/modules/BlastQuest/LikedModal.vue';
 import FAQModal from '@/modules/BlastQuest/FAQModal.vue';
 import NotLikedModal from '@/modules/BlastQuest/NotLikedModal.vue';
-import { type TSignedMessage } from './models.ts';
+import { type TSignedMessage, BOX_RANGES } from './models.ts';
 import TasksData from './TasksData.vue';
-
-const boxRanges = [
-  {
-    quest: TypeofQuest.BRONZE,
-    min: 0.00001,
-    max: 0.03,
-  },
-  {
-    quest: TypeofQuest.SILVER,
-    min: 0.00003,
-    max: 0.075,
-  },
-  {
-    quest: TypeofQuest.GOLD,
-    min: 0.0001,
-    max: 0.1,
-  },
-  {
-    quest: TypeofQuest.DIAMOND,
-    min: 0.0001,
-    max: 0.5,
-  },
-];
 
 export default {
   name: 'BlastQuestModule',
@@ -485,11 +462,10 @@ export default {
     buildPointsRange() {
       return (questType: TypeofQuest) => {
         if (!this.jackpotData?.amount) return '0';
-        const data = boxRanges.find((_) => _.quest === questType);
+        const data = BOX_RANGES.find((_) => _.quest === questType);
         if (!data) return '0';
 
-        return `${new BN(data?.min)
-          .times(this.jackpotData?.amount).toFixed(0)} - ${new BN(data?.max)
+        return `${data?.minAmount} - ${new BN(data?.max)
           .times(this.jackpotData?.amount).toFixed(0)}`;
       };
     },
