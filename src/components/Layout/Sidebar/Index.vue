@@ -371,7 +371,7 @@ export default {
   --clip-top: calc(var(--stack-height) * var(--index));
   --clip-bottom: calc(var(--stack-height) * var(--inverse-index));
   clip-path: inset(var(--clip-top) 0 var(--clip-bottom) 0);
-  animation: stack .3s cubic-bezier(.46,.29,0,1.24) 1 backwards calc(var(--index) * 150ms), glitch 4s ease infinite 2s alternate-reverse;
+  animation: stack .5s cubic-bezier(.46,.29,0,1.24) 1 backwards calc(var(--index) * .2s), glitch 3s ease infinite alternate-reverse;
 }
 
 .stack span:nth-child(odd) { --glitch-translate: 2px; }
@@ -381,7 +381,7 @@ export default {
   0% {
     opacity: 0;
     transform: translateX(-50%);
-    text-shadow: -1px 3px 0 rgba(255, 0, 0, 0.405), 1px -2px 0 rgba(0, 0, 255, 0.405);
+    text-shadow: -1px 1px 0 rgba(255, 0, 0, 0.405), 1px -2px 0 rgba(0, 0, 255, 0.405);
   };
   60% {
     opacity: 0.5;
@@ -390,7 +390,7 @@ export default {
   80% {
     transform: none;
     opacity: 1;
-    text-shadow: 1px -1px 0 rgba(255, 0, 0, 0.405), -1px 2px 0 rgba(0, 0, 255, 0.405);
+    text-shadow: 1px -1px 0 rgba(255, 0, 0, 0.405), -1px 1px 0 rgba(0, 0, 255, 0.405);
   }
   100% {
     text-shadow: none;
@@ -399,12 +399,17 @@ export default {
 
 @keyframes glitch {
   0% {
-    text-shadow: -1px 1px 0 rgba(255, 0, 0, 0.405), 1px -2px 0 rgba(0, 0, 255, 0.405);
+    text-shadow: -1px 1px 0 rgba(255, 0, 0, 0.205), 1px -1px 0 rgba(0, 0, 255, 0.205);
     transform: translate(var(--glitch-translate));
   }
-  2% {
-    text-shadow: 1px -1px 0 rgba(255, 0, 0, 0.405)red, -2px 1px 0 rgba(0, 0, 255, 0.405);
+  3% {
+    text-shadow: 1px -1px 0 rgba(255, 0, 0, 0.205)red, -1px 1px 0 rgba(0, 0, 255, 0.205);
+    transform: translate(-1px);
   }
-  4%, 100% {  text-shadow: none; transform: none; }
+  7% {
+    text-shadow: -1px 1px 0 rgba(255, 0, 0, 0.205), 1px -1px 0 rgba(0, 0, 255, 0.205);
+    transform: translate(var(--glitch-translate));
+  }
+  8%, 100% {  text-shadow: none; transform: none; }
 }
 </style>

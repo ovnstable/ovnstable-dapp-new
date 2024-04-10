@@ -102,6 +102,7 @@
           >
             <BaseIcon
               name="tip"
+              @click="showFaqModalTrigger(typeofBox.BRONZE)"
             />
             <h1>
               Bronze box
@@ -150,6 +151,7 @@
           >
             <BaseIcon
               name="tip"
+              @click="showFaqModalTrigger(typeofBox.SILVER)"
             />
             <h1>
               Silver box
@@ -197,6 +199,7 @@
           >
             <BaseIcon
               name="tip"
+              @click="showFaqModalTrigger(typeofBox.GOLD)"
             />
             <h1>
               Gold box
@@ -261,6 +264,7 @@
               <h1>DIAMOND BOX</h1>
               <BaseIcon
                 name="tip"
+                @click="showFaqModalTrigger(typeofBox.DIAMOND)"
               />
             </div>
             <div
@@ -337,6 +341,11 @@
       v-model="showModalLikeRetweet"
       @close-modal="closeModalLikeRetweet"
     />
+    <FAQModal
+      v-model="showFaqModal"
+      :view-box="showFaqModalBoxType"
+      @close-modal="showFaqModal = false"
+    />
   </div>
 </template>
 
@@ -354,6 +363,7 @@ import Spinner from '@/components/Spinner/Index.vue';
 import dayjs from 'dayjs';
 import LikeRetweetModal from '@/modules/BlastQuest/LikeRetweetModal.vue';
 import LikedModal from '@/modules/BlastQuest/LikedModal.vue';
+import FAQModal from '@/modules/BlastQuest/FAQModal.vue';
 import NotLikedModal from '@/modules/BlastQuest/NotLikedModal.vue';
 import { type TSignedMessage } from './models.ts';
 import TasksData from './TasksData.vue';
@@ -391,6 +401,7 @@ export default {
     Spinner,
     LikeRetweetModal,
     LikedModal,
+    FAQModal,
     NotLikedModal,
   },
   emits: ['close-modal'],
@@ -405,6 +416,8 @@ export default {
     return {
       typeofBox: TypeofQuest,
       showModal: false,
+      showFaqModal: false,
+      showFaqModalBoxType: TypeofQuest.BRONZE,
       isDarkTheme: false,
       openBronzeQuest: false,
       openSilverQuest: false,
@@ -510,6 +523,10 @@ export default {
   },
   methods: {
     getImageUrl,
+    showFaqModalTrigger(type: TypeofQuest) {
+      this.showFaqModal = true;
+      this.showFaqModalBoxType = type;
+    },
     toggleModalLikeRetweet() {
       this.showModalLikeRetweet = !this.showModalLikeRetweet;
     },

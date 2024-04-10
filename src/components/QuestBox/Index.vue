@@ -3,7 +3,7 @@
     class="box-wrap"
   >
     <div class="box-wrap__cube">
-      <div class="cube cube--back" />
+      <!-- <div class="cube cube--back" /> -->
       <div class="cube cube--top">
         <BaseIcon :name="boxType(BOX_TYPES.TOP)" />
       </div>
