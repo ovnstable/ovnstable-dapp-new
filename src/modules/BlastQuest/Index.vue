@@ -648,6 +648,7 @@ export default {
   padding: 30px;
   border-radius: 30px;
   margin-bottom: 40px;
+  border: 1px solid var(--color-1);
 
   h1 {
     font-size: 16px;
@@ -1222,6 +1223,7 @@ export default {
   .blast-wrap__quests-diamond-box-wrapper {
     margin-top: 24px;
     margin-bottom: 10px;
+    margin-right: 0;
   }
 }
 

@@ -164,6 +164,10 @@ export default {
   flex-direction: row;
   padding: 14px 10px;
   gap: 50px;
+  p,a {
+    color: var(--color-1);
+    font-weight: 600;
+  }
   [data-theme="dark"] & {
     background-color: var(--color-7);
     p,a {
