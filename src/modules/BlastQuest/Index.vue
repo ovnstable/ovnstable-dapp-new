@@ -344,6 +344,7 @@
     <FAQModal
       v-model="showFaqModal"
       :view-box="showFaqModalBoxType"
+      :range-box="buildPointsRange(showFaqModalBoxType)"
       @close-modal="showFaqModal = false"
     />
   </div>
