@@ -3,7 +3,6 @@
     class="box-wrap"
   >
     <div class="box-wrap__cube">
-      <!-- <div class="cube cube--back" /> -->
       <div class="cube cube--top">
         <BaseIcon :name="boxType(BOX_TYPES.TOP)" />
       </div>
@@ -29,6 +28,7 @@
           :class="{ 'shake-active': isShakeActive }"
         >
           <div class="hexagon" />
+          <div class="cube cube--back" />
           <div class="cube cube--top">
             <BaseIcon :name="boxType(BOX_TYPES.TOP)" />
           </div>
@@ -117,6 +117,17 @@ export default {
       await awaitDelay(10);
       if (currVal) this.triggerOpen();
     },
+  },
+  async mounted() {
+    this.isOpen = this.viewBox === TypeofQuest.BRONZE;
+
+    this.isShakeActive = true;
+    await awaitDelay(600);
+
+    this.isShakeActive = false;
+
+    await awaitDelay(10);
+    // this.triggerOpen();
   },
   computed: {
     boxType() {
@@ -248,9 +259,8 @@ export default {
 
 .box-wrap__modal-cube {
   position: relative;
-  width: 50%;
+  width: 500px;
   height: 100%;
-  left: -6%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -280,9 +290,10 @@ export default {
   transform: translateY(-50%);
 
   .box-wrap__modal-cube & {
-    width: 100%;
-    height: 100%;
-    top: 50%;
+    width: 350px;
+    height: 355px;
+    top: 47%;
+    left: 122px;
   }
 }
 .cube--top {
@@ -297,12 +308,15 @@ export default {
   }
 
   .box-wrap__modal-cube & {
-    left: 49%;
-    top: 36%;
+    left: 155px;
+    top: 50vh;
+    bottom: 100px;
 
     svg {
+      position: relative;
+      top: -128px;
       width: 287px;
-      height: 287px;
+      height: 100%;
     }
   }
 }
@@ -320,8 +334,8 @@ export default {
   }
 
   .box-wrap__modal-cube & {
-    left: 40%;
-    top: 50%;
+    top: 50vh;
+    left: 100px;
 
     svg {
       width: 250px;
@@ -343,8 +357,8 @@ export default {
   }
 
   .box-wrap__modal-cube & {
-    top: 50%;
-    right: -5%;
+    top: 50vh;
+    right: 0;
 
     svg {
       width: 250px;
