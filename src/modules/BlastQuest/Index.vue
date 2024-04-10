@@ -326,7 +326,6 @@
         </div>
       </div>
     </div>
-    <h1>TOP</h1>
     <LikeRetweetModal
       v-if="likedQuest == null || retweetedQuest == null"
       v-model="showModalLikeRetweet"
@@ -679,13 +678,6 @@ export default {
   [data-theme="dark"] & {
     background-color: var(--color-17);
   }
-}
-
-.page-wrap h1:last-child {
-  margin-top: 24px;
-  margin-left: 20px;
-  font-size: 17px;
-  font-weight: 600;
 }
 
 .blast-wrap__jackpot {
