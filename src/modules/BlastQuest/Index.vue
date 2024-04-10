@@ -453,7 +453,7 @@ export default {
       const hours = Math.floor(timeDifference / 3600);
       const minutes = Math.floor((timeDifference % 3600) / 60);
 
-      return `${hours}:${minutes} h:m`;
+      return `${hours > 10 ? hours : `0${hours}`}:${minutes > 10 ? minutes : `0${minutes}`} h:m`;
     },
     timeToWeeklyUpdate() {
       if (!this.jackpotData || !this.jackpotData?.questDuration) return '00:00';
@@ -467,7 +467,7 @@ export default {
       const hours = Math.floor((timeDifference % (3600 * 24)) / 3600);
       const minutes = Math.floor((timeDifference % 3600) / 60);
 
-      return `${days}:${hours}:${minutes} d:h:m`;
+      return `${days}:${hours > 10 ? hours : `0${hours}`}:${minutes > 10 ? minutes : `0${minutes}`} d:h:m`;
     },
     buildPointsRange() {
       return (questType: TypeofQuest) => {
@@ -519,7 +519,8 @@ export default {
     async updateUserQuestData(acc: string) {
       const resp = await axios.get(`${OVN_QUESTS_API}/blast/user/${acc}`);
       console.log(resp, 're-sp');
-      this.userData = resp.data;
+
+      if (resp.data) this.userData = resp.data;
       this.tasksData = this.createTasks(5, resp.data);
     },
     closeQuests() {
@@ -577,7 +578,6 @@ export default {
         this.$store.commit('jackpotData/setIsRetweetedQuest', true);
       }
 
-      console.log(triggerCheck, '--triggerCheck');
       this.updateUserQuestData(this.account);
     },
     async checkQuest(id: string, boxType: TypeofQuest) {
@@ -595,7 +595,6 @@ export default {
         });
       }
 
-      console.log(triggerCheck, '--triggerCheck');
       this.updateUserQuestData(this.account);
     },
     async triggerBoxQuest(boxType: TypeofQuest) {
@@ -629,21 +628,18 @@ export default {
       console.log(sign, '---sign');
     },
     toggleTheme() {
-      console.log('CHANGE2');
       this.$store.dispatch('theme/switchTheme');
     },
     closeModal() {
-      console.log('closeModal');
       this.$emit('close-modal');
     },
     createTasks(numberOfDays: number, userData: any) {
-      const streakNum = userData?.daysStreak?.streakNum;
+      const streakNum = userData?.daysStreak?.streakNum ?? 0;
       const tasks = Array.from({ length: numberOfDays }).map((_, key) => ({
         description: `Do 3 tasks from daily loot box quest ${key + 1} day${key + 1 > 1 ? 's' : ''}`,
         completed: streakNum > key,
       }));
 
-      console.log(tasks, '---tasks');
       return tasks;
     },
   },

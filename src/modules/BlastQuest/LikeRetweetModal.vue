@@ -87,8 +87,10 @@ export default {
   },
   async mounted() {
     this.loadingTweet = true;
-    const lastTweets = await BlastQuestApiService.getLastTweetsOvernight();
-    this.lastTweetNumber = lastTweets.timeline[0].tweet_id;
+    console.log('LOAD___');
+    const resp = await BlastQuestApiService.loadTwitterData();
+    console.log(resp, '____resp');
+    this.lastTweetNumber = resp?.id;
     this.loadingTweet = false;
   },
 
@@ -106,16 +108,7 @@ export default {
       this.checkingTweetLoading = true;
 
       const account = this.accountLink.split('/').pop();
-
       this.$emit('twitter-submit', account);
-      const liked = await BlastQuestApiService.checkIfLikes(account, this.lastTweetNumber);
-      const retweeted = await BlastQuestApiService.checkIfRetweet(account, this.lastTweetNumber);
-
-      this.isLiked = liked.is_liked;
-      this.isRetweeted = retweeted.is_retweeted;
-
-      this.$store.commit('jackpotData/setIsLikedQuest', this.isLiked);
-      this.$store.commit('jackpotData/setIsRetweetedQuest', this.isRetweeted);
 
       this.checkingTweetLoading = false;
     },
