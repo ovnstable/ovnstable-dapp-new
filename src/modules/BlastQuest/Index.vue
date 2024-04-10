@@ -565,10 +565,15 @@ export default {
       if (!triggerCheck?.data?.isChecked) {
         notifyInst({
           title: 'Task status',
-          text: 'Error: task not passed',
+          text: 'Error: task not passed, or limit exceeded, please wait for 1 minute',
           type: 'error',
         });
       } else {
+        notifyInst({
+          title: 'Task status',
+          text: 'Success - Like and Retweet counted!',
+          type: 'success',
+        });
         this.$store.commit('jackpotData/setIsLikedQuest', true);
         this.$store.commit('jackpotData/setIsRetweetedQuest', true);
       }
@@ -587,6 +592,14 @@ export default {
           title: 'Task status',
           text: 'Error: task not passed',
           type: 'error',
+        });
+      }
+
+      if (triggerCheck?.data?.isChecked) {
+        notifyInst({
+          title: 'Task status',
+          text: 'Success - quest passed!',
+          type: 'success',
         });
       }
 
