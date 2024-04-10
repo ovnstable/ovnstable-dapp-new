@@ -141,7 +141,7 @@
                 class="card-label text-center"
               >
                 {{ formatMoneyComma(pool.apr, 2) }}%<sup
-                  v-if="pool.platform.includes['Beefy']"
+                  v-if="APY_POOLS.includes(pool.platform[0])"
                 >(apy)</sup>
               </div>
               <div
@@ -209,7 +209,7 @@ import ButtonComponent from '@/components/Button/Index.vue';
 import { formatMoneyComma, formatNumberToMln, formatNumberToThousands } from '@/utils/numbers.ts';
 import ZapInComponent from '@/modules/Main/components/ZapModal/Index.vue';
 import { buildLink } from '@/store/views/main/pools/helpers.ts';
-import { POOL_TAG } from '@/store/views/main/pools/mocks.ts';
+import { POOL_TAG, APY_POOLS } from '@/store/views/main/pools/mocks.ts';
 
 export default {
   name: 'PoolsTable',
@@ -221,6 +221,7 @@ export default {
   data() {
     return {
       POOL_TAG,
+      APY_POOLS,
     };
   },
   props: {
