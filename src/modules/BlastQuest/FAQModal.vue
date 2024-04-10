@@ -24,7 +24,7 @@
           v-for="(item, key) in getUlData"
           :key="key"
         >
-          {{ item }}
+          <template v-if="key === 0">{{ `${item} ${rangeBox}` }}</template><template v-else>{{ item }}</template>
 
           <div
             v-if="key + 1 === getUlData.length"
@@ -74,7 +74,7 @@ export default {
       showModal: false,
       faqData: {
         bronze: [
-          `Bronze Box contains a random amount of Blast points ${this.rangeBox}`,
+          'Bronze Box contains a random amount of Blast points',
           'The box can be claimed once a day after completing all 3 tasks.',
           'If you did all 3 tasks but forgot to claim the Box, don’t worry! You can claim it any other day.',
           'In the “Like and retweet today\'s Overnight post” task you will see a link to a post you need to retweet and a field for your nickname on Twitter. Click on the Arrow icon, retweet the post, leave us your nickname and that\'s it!',
@@ -101,7 +101,7 @@ export default {
           },
         ],
         silver: [
-          `Silver Box contains a random amount of points ${this.rangeBox}`,
+          'Silver Box contains a random amount of points',
           'The box can be claimed once a day after completing all 3 tasks.',
           'If you did all 3 tasks but forgot to claim the Box, don’t worry! You can claim it any other day.',
           'Task “Mint at least 25 USD+ on Blast” indicates the smallest token amount to be invested the task to complete the task ($25). The task is considered completed if you mint USD+ during the time the task is active (24 hours).',
@@ -127,7 +127,7 @@ export default {
           },
         ],
         gold: [
-          `Gold Box contains a random amount of Blast points ${this.rangeBox}`,
+          'Gold Box contains a random amount of Blast points',
           'The box can be claimed once a day after completing all 3 tasks.',
           'If you did all 3 tasks but forgot to claim the Box, don’t worry! You can claim it any other day.',
           'Task “Mint at least 50 USD+ on Blast” indicates the smallest token amount to be invested to complete the task ($50). The task is considered completed if you mint USD+ during the time the task is active (24 hours).',
@@ -181,8 +181,6 @@ export default {
   },
   methods: {
     closeModal() {
-      this.$store.commit('jackpotData/setIsLikedQuest', true);
-      this.$store.commit('jackpotData/setIsRetweetedQuest', true);
       this.$emit('close-modal');
     },
   },
