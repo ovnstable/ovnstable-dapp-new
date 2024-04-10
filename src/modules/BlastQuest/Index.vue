@@ -1244,6 +1244,9 @@ export default {
   .blast-wrap__jackpot-user__data-divider {
     height: auto;
   }
+  .blast-wrap__quests-diamond-box-wrapper {
+    min-width: 0;
+  }
 }
 
 @media (max-width: 458px) {
