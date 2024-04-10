@@ -235,7 +235,7 @@ export default {
   min-height: 22px;
   border-radius: 50%;
   background-color: var(--color-4);
-  border: 1px solid var(--color-3);
+  border: 1px solid var(--color-6);
   [data-theme="dark"] & {
     background-color: var(--color-7);
     border-color: var(--color-2);
@@ -254,6 +254,7 @@ export default {
     border-color: var(--color-2);
   }
   svg {
+    fill: var(--color-2);
     [data-theme="dark"] & {
       fill: var(--color-18);
     }

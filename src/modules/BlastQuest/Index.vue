@@ -326,6 +326,7 @@
         </div>
       </div>
     </div>
+    <h1>TOP</h1>
     <LikeRetweetModal
       v-if="likedQuest == null || retweetedQuest == null"
       v-model="showModalLikeRetweet"
@@ -648,6 +649,7 @@ export default {
   padding: 30px;
   border-radius: 30px;
   margin-bottom: 40px;
+  border: 1px solid var(--color-1);
 
   h1 {
     font-size: 16px;
@@ -664,6 +666,13 @@ export default {
   [data-theme="dark"] & {
     background-color: var(--color-17);
   }
+}
+
+.page-wrap h1:last-child {
+  margin-top: 24px;
+  margin-left: 20px;
+  font-size: 17px;
+  font-weight: 600;
 }
 
 .blast-wrap__jackpot {
@@ -1050,7 +1059,7 @@ export default {
   min-height: 22px;
   border-radius: 50%;
   background-color: var(--color-4);
-  border: 1px solid var(--color-3);
+  border: 1px solid var(--color-6);
   [data-theme="dark"] & {
     background-color: var(--color-7);
     border-color: var(--color-2);
@@ -1079,6 +1088,8 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  min-width: 320px;
+  margin-right: 30px;
 }
 
 .blast-wrap__quests-diamond-box-wrapper p:last-child {
@@ -1201,15 +1212,6 @@ export default {
 }
 
 @media (max-width: 1200px) {
-  .blast-wrap__boxes {
-    flex-wrap: wrap;
-  }
-}
-
-@media (max-width: 1024px) {
-  .page-wrap {
-    margin-bottom: 80px;
-  }
   .blast-wrap__quests-daily-tasks,
   .blast-wrap__boxes {
     flex-wrap: wrap;
@@ -1222,8 +1224,16 @@ export default {
   .blast-wrap__quests-diamond-box-wrapper {
     margin-top: 24px;
     margin-bottom: 10px;
+    margin-right: 0;
   }
 }
+
+@media (max-width: 1024px) {
+  .page-wrap {
+    margin-bottom: 80px;
+  }
+}
+
 @media (max-width: 640px) {
   .blast-wrap__jackpot {
     flex-direction: column;
@@ -1234,6 +1244,9 @@ export default {
   }
   .blast-wrap__jackpot-user__data-divider {
     height: auto;
+  }
+  .blast-wrap__quests-diamond-box-wrapper {
+    min-width: 0;
   }
 }
 
