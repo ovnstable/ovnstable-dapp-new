@@ -79,6 +79,10 @@ export const chainContractsMap = {
       portfolioManager: '0xA970de9a2ADB8653708E06F76666CF00d63fe67B',
       decimals: 6,
     },
+    usdtPlus: {
+      tokenPlus: '0xBb8D60008A08b1828E02120F1a952D295036eF3d',
+      decimals: 6,
+    },
     usdc: '0x3355df6d4c9c3035724fd0e3914de96a5a83aaf4',
   },
   linea: {
