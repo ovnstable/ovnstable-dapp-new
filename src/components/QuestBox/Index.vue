@@ -118,17 +118,17 @@ export default {
       if (currVal) this.triggerOpen();
     },
   },
-  async mounted() {
-    this.isOpen = this.viewBox === TypeofQuest.BRONZE;
+  // async mounted() {
+  //   this.isOpen = this.viewBox === TypeofQuest.BRONZE;
 
-    this.isShakeActive = true;
-    await awaitDelay(600);
+  //   this.isShakeActive = true;
+  //   await awaitDelay(600);
 
-    this.isShakeActive = false;
+  //   this.isShakeActive = false;
 
-    await awaitDelay(10);
-    // this.triggerOpen();
-  },
+  //   await awaitDelay(10);
+  //   // this.triggerOpen();
+  // },
   computed: {
     boxType() {
       return (side: BOX_TYPES) => {
