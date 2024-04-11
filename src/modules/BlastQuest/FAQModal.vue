@@ -92,11 +92,11 @@ export default {
             text: 'USD+/USDC+ on SwapBlast',
           },
           {
-            link: 'https://app.thruster.finance/add?token1=0x4300000000000000000000000000000000000003&token2=0x4fEE793d435c6D2c10C135983BB9d6D4fC7B9BBd&poolVersion=V3&fee=0.05',
+            link: 'https://app.thruster.finance/add?token1=0x4300000000000000000000000000000000000003&token2=0x4fEE793d435c6D2c10C135983BB9d6D4fC7B9BBd&poolVersion=V3&fee=0.0005',
             text: 'USD+/USDB on Thruster',
           },
           {
-            link: 'https://app.thruster.finance/add?token1=0x4300000000000000000000000000000000000004&token2=0x4fEE793d435c6D2c10C135983BB9d6D4fC7B9BBd&poolVersion=V3&fee=0.05',
+            link: 'https://app.thruster.finance/add?token1=0x4300000000000000000000000000000000000004&token2=0x4fEE793d435c6D2c10C135983BB9d6D4fC7B9BBd&poolVersion=V3&fee=0.0005',
             text: 'USD+/wETH on Thruster',
           },
         ],
@@ -118,11 +118,11 @@ export default {
             text: 'USD+/USDC+ on SwapBlast',
           },
           {
-            link: 'https://app.thruster.finance/add?token1=0x4300000000000000000000000000000000000003&token2=0x4fEE793d435c6D2c10C135983BB9d6D4fC7B9BBd&poolVersion=V3&fee=0.05',
+            link: 'https://app.thruster.finance/add?token1=0x4300000000000000000000000000000000000003&token2=0x4fEE793d435c6D2c10C135983BB9d6D4fC7B9BBd&poolVersion=V3&fee=0.0005',
             text: 'USD+/USDB on Thruster',
           },
           {
-            link: 'https://app.thruster.finance/add?token1=0x4300000000000000000000000000000000000004&token2=0x4fEE793d435c6D2c10C135983BB9d6D4fC7B9BBd&poolVersion=V3&fee=0.05',
+            link: 'https://app.thruster.finance/add?token1=0x4300000000000000000000000000000000000004&token2=0x4fEE793d435c6D2c10C135983BB9d6D4fC7B9BBd&poolVersion=V3&fee=0.0005',
             text: 'USD+/wETH on Thruster',
           },
         ],
