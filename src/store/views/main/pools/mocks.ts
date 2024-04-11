@@ -475,8 +475,7 @@ export enum POOL_TAG {
 // https://docs.google.com/spreadsheets/d/1zyNA4mbpmyG30R1aIqkkRvbCJSjfyb7pV4hhCa7pohM/edit#gid=813615557
 // or promoted pools, which launched recently
 
-export const NEW_POOLS = [
-];
+export const NEW_POOLS: string[] = [];
 
 export const HOT_POOLS = [
   // AERODROME
