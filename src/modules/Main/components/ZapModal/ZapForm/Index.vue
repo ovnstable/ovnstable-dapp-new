@@ -430,7 +430,7 @@ export default {
         // Alienbase: ["Alien Base", "Alien Base Stable"],
         // Convex: ["Curve Crypto Registry", "Curve Factory", "Curve Registry"]
       } as any,
-      odosZapReferalCode: 3000000005,
+      odosZapReferalCode: 7777777,
       currentStage: zapInStep.START,
     };
   },
