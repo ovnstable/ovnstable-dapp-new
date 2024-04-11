@@ -394,7 +394,7 @@ export default {
   z-index: 100;
   text-wrap: nowrap;
   color: var(--color-4);
-  left: 55%;
+  left: 41%;
 
   span {
     position: absolute;
