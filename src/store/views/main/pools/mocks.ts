@@ -474,9 +474,9 @@ export enum POOL_TAG {
 // POOLS WITH EARNINGS MORE THAN 500$ per month
 // https://docs.google.com/spreadsheets/d/1zyNA4mbpmyG30R1aIqkkRvbCJSjfyb7pV4hhCa7pohM/edit#gid=813615557
 
-export const NEW_POOLS = [
-  // DYSON
-  '0xf63291375d3eb7014fbe658f256c79163dc308ab',
+export const NEW_POOLS: string[] = [
+  '0xf2d0a6699fea86fff3eb5b64cdc53878e1d19d6f',
+  '0x21f25b792d2e14378f93a4c3260a53f4a889e68d',
 ];
 
 export const HOT_POOLS = [
