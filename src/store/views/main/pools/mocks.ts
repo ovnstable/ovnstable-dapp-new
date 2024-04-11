@@ -476,8 +476,6 @@ export enum POOL_TAG {
 // or promoted pools, which launched recently
 
 export const NEW_POOLS = [
-  // DYSON
-  '0xf63291375d3eb7014fbe658f256c79163dc308ab',
 ];
 
 export const HOT_POOLS = [
