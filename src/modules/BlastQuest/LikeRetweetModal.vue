@@ -41,19 +41,18 @@
           @input="inputAccount"
         />
       </div>
+      <Spinner
+        class="spinner-wrap"
+        v-if="verifyTweet"
+        size="24px"
+      />
       <ButtonComponent
-        v-if="!checkingTweetLoading"
+        v-else
         @click="checkLikeFromAccount"
         @keydown.enter="checkLikeFromAccount"
       >
         <p>TASK COMPLETION CHECK</p>
       </ButtonComponent>
-      <div
-        v-else
-        class="blast-quest-task-account-spinner"
-      >
-        <Spinner size="24px" />
-      </div>
     </div>
   </ModalComponent>
 </template>
@@ -74,26 +73,37 @@ export default {
     ButtonComponent,
   },
   emits: ['twitter-submit'],
+  props: {
+    verifyTweet: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    isShow: {
+      type: Boolean,
+      required: false,
+    },
+  },
   data() {
     return {
       lastTweetNumber: '',
       accountLink: '',
       isLiked: false,
       isRetweeted: false,
-      showModal: false,
       loadingTweet: true,
-      checkingTweetLoading: false,
+      showModal: false,
     };
   },
   async mounted() {
-    this.loadingTweet = true;
-    console.log('LOAD___');
     const resp = await BlastQuestApiService.loadTwitterData();
-    console.log(resp, '____resp');
-    this.lastTweetNumber = resp?.id;
     this.loadingTweet = false;
+    this.lastTweetNumber = resp?.id;
   },
-
+  watch: {
+    isShow(currVal: boolean) {
+      this.showModal = currVal;
+    },
+  },
   methods: {
     closeModal() {
       this.showModal = false;
@@ -101,22 +111,19 @@ export default {
     inputAccount(val: string) {
       this.accountLink = val;
     },
-    notLikedModalShow() {
-      return true;
-    },
     async checkLikeFromAccount() {
-      this.checkingTweetLoading = true;
-
       const account = this.accountLink.split('/').pop();
       this.$emit('twitter-submit', account);
-
-      this.checkingTweetLoading = false;
     },
   },
 };
 </script>
 
 <style lang="scss" scoped>
+.spinner-wrap {
+  margin: 0 auto;
+}
+
 .blast-quest-task {
   display: flex;
   flex-direction: column;
@@ -155,10 +162,6 @@ export default {
 .blast-quest-task-post-spinner {
   margin-left: auto;
 }
-.blast-quest-task-account-spinner {
-  align-self: center
-}
-
 .blast-quest-task-post {
   display: flex;
   flex-direction: row;

@@ -337,7 +337,8 @@
     </div>
     <LikeRetweetModal
       v-if="likedQuest == null || retweetedQuest == null"
-      v-model="showModalLikeRetweet"
+      :is-show="showModalLikeRetweet"
+      :verify-tweet="tweetLoading"
       @twitter-submit="twitterSubmit"
     />
     <LikedModal
@@ -410,6 +411,7 @@ export default {
       openSilverQuest: false,
       openGoldQuest: false,
       showModalLikeRetweet: false,
+      tweetLoading: false,
       userData: {
         bronzeBox: [] as any,
         silverBox: [] as any,
@@ -450,6 +452,8 @@ export default {
         .plus(DAY_UNIX).toNumber();
       const timeDifference = new BN(nextUpdate).minus(now).toNumber();
 
+      if (timeDifference < 0) return '00:00 h:m';
+
       const hours = Math.floor(timeDifference / 3600);
       const minutes = Math.floor((timeDifference % 3600) / 60);
 
@@ -457,10 +461,8 @@ export default {
     },
     timeToWeeklyUpdate() {
       if (!this.jackpotData || !this.jackpotData?.questDuration) return '00:00';
-      const DAY_UNIX = 86400;
       const now = dayjs().unix();
-      const nextUpdate = new BN(this.jackpotData?.questDuration?.dayStartUnix)
-        .plus(DAY_UNIX * 7).toNumber();
+      const nextUpdate = new BN(this.jackpotData?.questDuration?.weekStartUnix).toNumber();
       const timeDifference = new BN(nextUpdate).minus(now).toNumber();
 
       const days = Math.floor(timeDifference / (3600 * 24));
@@ -562,6 +564,7 @@ export default {
       this.toggleModalLikeRetweet();
     },
     async twitterSubmit(id: string) {
+      this.tweetLoading = true;
       const triggerCheck = await axios.post(`${OVN_QUESTS_API}/blast/checkquest`, {
         address: this.account,
         questId: '0',
@@ -586,6 +589,7 @@ export default {
       }
 
       this.updateUserQuestData(this.account);
+      this.tweetLoading = false;
     },
     async checkQuest(id: string, boxType: TypeofQuest) {
       const triggerCheck = await axios.post(`${OVN_QUESTS_API}/blast/checkquest`, {
