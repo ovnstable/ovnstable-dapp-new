@@ -497,7 +497,7 @@ export default {
     bronzeCount() {
       const ONE_DAY_UNIX = 86400;
       let lastClaim = null;
-      console.log(this.userData, 'DATA');
+
       if (!this.userData) return null;
       if (this.userData && this.userData.bronzeBox?.length > 0) {
         const nowUnix = Math.floor(Date.now() / 1000);
@@ -527,7 +527,6 @@ export default {
     },
     async updateUserQuestData(acc: string) {
       const resp = await axios.get(`${OVN_QUESTS_API}/blast/user/${acc}`);
-      console.log(resp, 're-sp');
 
       if (resp.data) this.userData = resp.data;
       this.tasksData = this.createTasks(5, resp.data);
@@ -544,7 +543,6 @@ export default {
       messageToSign: string,
       nonce: string,
     ): Promise<TSignedMessage | null> {
-      console.log(this.evmProvider, this.account, '--this.evmProvider');
       const msg = `${Buffer.from(messageToSign, 'utf8').toString('hex')}`;
       const params = [msg, this.account];
 
@@ -621,10 +619,6 @@ export default {
       this.updateUserQuestData(this.account);
     },
     async triggerBoxQuest(boxType: TypeofQuest) {
-      // this.openSilverQuest = true;
-      // this.dailyPrize = '20';
-      // return;
-
       const nonce = getRandomString(24);
       const sign: TSignedMessage | null = await this.signEvmMessage(
         `Claim blast points on Overnight.fi, nonce: ${nonce}`,
@@ -638,6 +632,15 @@ export default {
         questType: boxType,
       });
 
+      if (triggerClaim?.data?.error) {
+        notifyInst({
+          title: 'Claim error',
+          text: triggerClaim?.data.error,
+          type: 'error',
+        });
+        return;
+      }
+
       this.dailyPrize = triggerClaim.data?.amount;
 
       if (boxType === TypeofQuest.BRONZE) this.openBronzeQuest = true;
@@ -647,8 +650,6 @@ export default {
       // waiting for animation
       await awaitDelay(2000);
       this.updateUserQuestData(this.account);
-      console.log(triggerClaim, '---triggerClaim');
-      console.log(sign, '---sign');
     },
     toggleTheme() {
       this.$store.dispatch('theme/switchTheme');
