@@ -553,7 +553,6 @@ export default {
       this.toggleModalLikeRetweet();
     },
     async twitterSubmit(id: string) {
-      console.log(id, 'id__twitterSubmit');
       const triggerCheck = await axios.post(`${OVN_QUESTS_API}/blast/checkquest`, {
         address: this.account,
         questId: '0',
@@ -564,7 +563,7 @@ export default {
       if (!triggerCheck?.data?.isChecked) {
         notifyInst({
           title: 'Task status',
-          text: 'Error: task not passed, or limit exceeded, please wait for 1 minute',
+          text: triggerCheck?.data?.error ?? 'Error: task not passed, or limit exceeded, please wait for 1 minute',
           type: 'error',
         });
       } else {
@@ -589,7 +588,7 @@ export default {
       if (!triggerCheck?.data?.isChecked) {
         notifyInst({
           title: 'Task status',
-          text: 'Error: task not passed',
+          text: triggerCheck?.data?.error ?? 'Error: task not passed',
           type: 'error',
         });
       }
