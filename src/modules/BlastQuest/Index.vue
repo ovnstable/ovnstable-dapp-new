@@ -462,8 +462,12 @@ export default {
     timeToWeeklyUpdate() {
       if (!this.jackpotData || !this.jackpotData?.questDuration) return '00:00';
       const now = dayjs().unix();
-      const nextUpdate = new BN(this.jackpotData?.questDuration?.weekStartUnix).toNumber();
+      const ONE_DAY_UNIX = 86400;
+      const nextUpdate = new BN(this.jackpotData?.questDuration?.weekStartUnix)
+        .plus(ONE_DAY_UNIX * 7).toNumber();
       const timeDifference = new BN(nextUpdate).minus(now).toNumber();
+
+      if (timeDifference < 0) return '00:00 h:m';
 
       const days = Math.floor(timeDifference / (3600 * 24));
       const hours = Math.floor((timeDifference % (3600 * 24)) / 3600);
