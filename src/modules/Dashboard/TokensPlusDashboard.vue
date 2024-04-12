@@ -154,6 +154,7 @@ export default {
         daiPlus: { name: 'DAI+', iconName: 'DAI+_market' },
         usdtPlus: { name: 'USDT+', iconName: 'USDT_market' },
         ethPlus: { name: 'ETH+', iconName: 'DashboardETH+Tokens' },
+        usdcPlus: { name: 'USDC+', iconName: 'USDC+dashboard' },
       },
     };
   },
@@ -464,7 +465,7 @@ export default {
     display: flex;
     max-width: 30px;
     text-align: center;
-    margin-right: 6px;
+    margin-right: 12px;
     color: var(--color-3);
     [data-theme="dark"] & {
       background: none;
