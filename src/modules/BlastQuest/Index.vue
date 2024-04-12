@@ -457,7 +457,7 @@ export default {
       const hours = Math.floor(timeDifference / 3600);
       const minutes = Math.floor((timeDifference % 3600) / 60);
 
-      return `${hours > 11 ? hours : `0${hours}`}:${minutes > 10 ? minutes : `0${minutes}`} h:m`;
+      return `${hours > 10 ? hours : `0${hours}`}:${minutes > 10 ? minutes : `0${minutes}`} h:m`;
     },
     timeToWeeklyUpdate() {
       if (!this.jackpotData || !this.jackpotData?.questDuration) return '00:00';
@@ -473,7 +473,7 @@ export default {
       const hours = Math.floor((timeDifference % (3600 * 24)) / 3600);
       const minutes = Math.floor((timeDifference % 3600) / 60);
 
-      return `${days}:${hours > 11 ? hours : `0${hours}`}:${minutes > 10 ? minutes : `0${minutes}`} d:h:m`;
+      return `${days}:${hours > 10 ? hours : `0${hours}`}:${minutes > 10 ? minutes : `0${minutes}`} d:h:m`;
     },
     buildPointsRange() {
       return (questType: TypeofQuest) => {
