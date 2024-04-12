@@ -131,6 +131,7 @@ export default {
   color: var(--color-2);
   margin-top: 20px;
   padding: 0 20px;
+  padding-top: 15px;
   [data-theme="dark"] & {
     background-color: none;
     color: var(--color-18);
