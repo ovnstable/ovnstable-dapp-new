@@ -452,7 +452,6 @@ export default {
       'lastReturnedToUserEvent',
       'isBalancesLoading',
       'lastNftTokenId',
-      'swapResponseConfirmInfo',
       'routerContract',
       'odosReferalCode',
     ]),
@@ -639,7 +638,6 @@ export default {
       return (
         this.inputTokensWithSelectedTokensCount === 0
         || this.outputTokensWithSelectedTokensCount === 0
-        || this.swapResponseConfirmInfo.waitingConformation
         || !this.isAvailableOnNetwork
         || !this.isAnyTokensBalanceIsInsufficient
         || !this.isAmountEntered
@@ -677,14 +675,6 @@ export default {
 
       if (this.isOvnValueOverflow) {
         return 'OVN VALUE IS OVERFLOW';
-      }
-
-      if (this.swapResponseConfirmInfo.waitingConformation) {
-        return (
-          `Confirm in your wallet (${
-            this.swapResponseConfirmInfo.duration
-          } sec)`
-        );
       }
 
       return null;
