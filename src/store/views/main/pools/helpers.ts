@@ -177,6 +177,14 @@ export const buildLink = (pool: any, poolPlatform: string) => {
     return url;
   }
 
+  // THRUSTER
+  if (pool.address === '0xf2d0a6699fea86fff3eb5b64cdc53878e1d19d6f') {
+    return 'https://app.thruster.finance/add?token1=0x4300000000000000000000000000000000000003&token2=0x4fEE793d435c6D2c10C135983BB9d6D4fC7B9BBd&poolVersion=V3&fee=0.0005';
+  }
+  if (pool.address === '0x21f25b792d2e14378f93a4c3260a53f4a889e68d') {
+    return 'https://app.thruster.finance/add?token1=0x4300000000000000000000000000000000000004&token2=0x4fEE793d435c6D2c10C135983BB9d6D4fC7B9BBd&poolVersion=V3&fee=0.0005';
+  }
+
   // promoting / exceptions
   if (
     poolPlatform === 'Defiedge'
