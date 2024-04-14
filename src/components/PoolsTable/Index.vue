@@ -437,6 +437,7 @@ export default {
   color: var(--color-2);
   margin-top: 20px;
   padding: 0 20px;
+  overflow-y: hidden;
   [data-theme="dark"] & {
     background-color: none;
     color: var(--color-18);

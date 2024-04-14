@@ -287,7 +287,7 @@
 
                 <QuestBox
                   :prize-value="dailyPrize"
-                  :open-box="false"
+                  :open-box="openDiamondQuest"
                   :view-box="3"
                   @close="closeQuests"
                 />
@@ -418,6 +418,7 @@ export default {
       openBronzeQuest: false,
       openSilverQuest: false,
       openGoldQuest: false,
+      openDiamondQuest: false,
       showModalLikeRetweet: false,
       tweetLoading: false,
       userData: {
@@ -499,6 +500,9 @@ export default {
         if (questType === TypeofQuest.BRONZE && this.userData.bronzeBoxAvailable > 0) return false;
         if (questType === TypeofQuest.SILVER && this.userData.silverBoxAvailable > 0) return false;
         if (questType === TypeofQuest.GOLD && this.userData.goldBoxAvailable > 0) return false;
+        if (questType === TypeofQuest.DIAMOND && this.userData.diamondBoxAvailable > 0) {
+          return false;
+        }
         return true;
       };
     },
@@ -555,6 +559,7 @@ export default {
       this.openBronzeQuest = false;
       this.openSilverQuest = false;
       this.openGoldQuest = false;
+      this.openDiamondQuest = false;
       this.weeklyPrize = '';
       this.dailyPrize = '';
       this.activeLevel = 0;
@@ -666,6 +671,7 @@ export default {
       if (boxType === TypeofQuest.BRONZE) this.openBronzeQuest = true;
       if (boxType === TypeofQuest.SILVER) this.openSilverQuest = true;
       if (boxType === TypeofQuest.GOLD) this.openGoldQuest = true;
+      if (boxType === TypeofQuest.DIAMOND) this.openDiamondQuest = true;
 
       // waiting for animation
       await awaitDelay(2000);

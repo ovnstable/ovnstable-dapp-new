@@ -132,6 +132,7 @@ export default {
   margin-top: 20px;
   padding: 0 20px;
   padding-top: 15px;
+  overflow-y: hidden;
   [data-theme="dark"] & {
     background-color: none;
     color: var(--color-18);
