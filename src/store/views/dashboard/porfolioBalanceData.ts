@@ -19,10 +19,9 @@ function availableChains(tokenName: string) {
 
   return availableNetworks;
 }
-
-function getTokenPrices(apiResponse: any, contractsMap: any) {
+function getTokenPrices(apiResponse: any, contractsMap: any, chainToCheck: any) {
   const prices = {};
-  const contracts = contractsMap.arbitrum;
+  const contracts = contractsMap[chainToCheck];
 
   Object.keys(contracts).forEach((token) => {
     if (token.endsWith('Plus')) {
@@ -43,8 +42,12 @@ const actions = {
       let dataETHPlus = [];
       let dataDAIPlus = [];
       let dataUSDTPlus = [];
+      let dataUSDCPlus = [];
       const pricesResponse = await OdosApiService.loadPrices(42161);
-      const prices = getTokenPrices(pricesResponse, chainContractsMap);
+      const pricesResponseForUSDC = await OdosApiService.loadPrices(8453);
+      const pricesWithoutUSDC = getTokenPrices(pricesResponse, chainContractsMap, 'arbitrum');
+      const pricesWithUSDC = getTokenPrices(pricesResponseForUSDC, chainContractsMap, 'base');
+      const prices = { ...pricesWithoutUSDC, ...pricesWithUSDC };
       if (availableChains('usd+').includes(networkName)) {
         dataUSDPlus = await DashboardApiService.loadBalanceChange(networkName, 'usd+', account);
       }
@@ -57,11 +60,15 @@ const actions = {
       if (availableChains('usdt+').includes(networkName)) {
         dataUSDTPlus = await DashboardApiService.loadBalanceChange(networkName, 'usdt+', account, 'USDT');
       }
+      if (availableChains('usdc+').includes(networkName)) {
+        dataUSDCPlus = await DashboardApiService.loadBalanceChange(networkName, 'usdc+', account, 'USDC');
+      }
       const combinedData = {
         dataUSDPlus,
         dataETHPlus,
         dataDAIPlus,
         dataUSDTPlus,
+        dataUSDCPlus,
         prices,
       };
       commit('setPorfolioBalanceData', { combinedData });
