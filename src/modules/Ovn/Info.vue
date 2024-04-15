@@ -309,7 +309,7 @@ export default {
       return tokenOvn;
     },
     formatNumber(value: any) {
-      return new Intl.NumberFormat('de-DE', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value);
+      return new Intl.NumberFormat('en-EN', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value);
     },
   },
 };

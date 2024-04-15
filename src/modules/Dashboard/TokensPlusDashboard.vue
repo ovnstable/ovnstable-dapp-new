@@ -258,7 +258,7 @@ export default {
 
       const valueInUSD = balance * price;
 
-      const formattedValueInUSD = new Intl.NumberFormat('de-DE', {
+      const formattedValueInUSD = new Intl.NumberFormat('en-EN', {
         style: 'currency',
         currency: 'USD',
         minimumFractionDigits: 2,
@@ -304,7 +304,7 @@ export default {
         })
         .reduce((acc: number, curr: any) => acc + curr.change_balance, 0);
 
-      return new Intl.NumberFormat('de-DE', {
+      return new Intl.NumberFormat('en-EN', {
         style: 'currency',
         currency: 'USD',
         minimumFractionDigits: 4,
@@ -322,7 +322,7 @@ export default {
         }
       });
 
-      return new Intl.NumberFormat('de-DE', {
+      return new Intl.NumberFormat('en-EN', {
         style: 'currency',
         currency: 'USD',
         minimumFractionDigits: 4,
@@ -344,7 +344,7 @@ export default {
         }
       });
 
-      return new Intl.NumberFormat('de-DE', {
+      return new Intl.NumberFormat('en-EN', {
         style: 'currency',
         currency: 'USD',
         minimumFractionDigits: 2,
