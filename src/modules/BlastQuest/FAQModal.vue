@@ -24,7 +24,7 @@
           v-for="(item, key) in getUlData"
           :key="key"
         >
-          <template v-if="key === 0">{{ `${item} ${rangeBox}` }}</template><template v-else>{{ item }}</template>
+          <template v-if="key === 0">{{ `${item} ${rangeBox}` }}</template><template v-else><p v-html="item" /></template>
 
           <div
             v-if="key + 1 === getUlData.length"
@@ -79,7 +79,8 @@ export default {
           'If you did all 3 tasks but forgot to claim the Box, don’t worry! You can claim it any other day.',
           'In the “Like and retweet today\'s Overnight post” task you will see a link to a post you need to retweet and a field for your nickname on Twitter. Click on the Arrow icon, retweet the post, leave us your nickname and that\'s it!',
           'Task “Mint at least 500 USD+ on Blast” indicates the smallest token amount to be invested to complete the task (500 USD). The task is considered completed if you mint USD+ during the time the task is active (24 hours). You can invest by following the link indicated next to the task.',
-          'Task “Add at least $1000 to any USD+ pool on Blast” indicates the smallest token amount that must be invested to complete the task ($20). The task is considered completed if you have invested in the pool during the time the task is active (24 hours).',
+          'Task “Add at least $1000 to any USD+ pool on Blast” indicates the smallest token amount that must be invested to complete the task ($1000). The task is considered completed if you have invested in the pool during the time the task is active (24 hours).',
+          'Also, you can get additional points by depositing Thruster LP in Hyperlock’s USD+/USDB and USD+/wETH pools. By doing this you will get <b>~22 points/$1K</b> for USD+/wETH and <b>~39 points/$1K</b> for USD+/USDB pool. The amount of points per $1K changes depending on different factors.',
           'You can invest in one of the following pools:',
         ],
         bronzePools: [
@@ -98,6 +99,10 @@ export default {
           {
             link: 'https://app.thruster.finance/add?token1=0x4300000000000000000000000000000000000004&token2=0x4fEE793d435c6D2c10C135983BB9d6D4fC7B9BBd&poolVersion=V3&fee=0.0005',
             text: 'USD+/wETH on Thruster',
+          },
+          {
+            link: 'https://app.hyperlock.finance/#/',
+            text: 'Hyperlock Link',
           },
         ],
         silver: [
@@ -125,6 +130,10 @@ export default {
             link: 'https://app.thruster.finance/add?token1=0x4300000000000000000000000000000000000004&token2=0x4fEE793d435c6D2c10C135983BB9d6D4fC7B9BBd&poolVersion=V3&fee=0.0005',
             text: 'USD+/wETH on Thruster',
           },
+          {
+            link: 'https://app.hyperlock.finance/#/',
+            text: 'Hyperlock Link',
+          },
         ],
         gold: [
           'Gold Box contains a random amount of Blast points up to',
@@ -151,6 +160,10 @@ export default {
           {
             link: 'https://app.thruster.finance/add?token1=0x4300000000000000000000000000000000000004&token2=0x4fEE793d435c6D2c10C135983BB9d6D4fC7B9BBd&poolVersion=V3&fee=0.0005',
             text: 'USD+/wETH on Thruster',
+          },
+          {
+            link: 'https://app.hyperlock.finance/#/',
+            text: 'Hyperlock Link',
           },
         ],
         diamond: [
@@ -192,6 +205,10 @@ export default {
   width: 100%;
   max-width: 730px;
   padding: 20px;
+
+  b {
+    font-weight: 600;
+  }
 }
 
 .faq-content__main-desc {
@@ -212,5 +229,9 @@ export default {
   flex-direction: column;
   margin-top: 12px;
   gap: 8px;
+
+  a:last-child {
+    margin-top: 10px;
+  }
 }
 </style>
