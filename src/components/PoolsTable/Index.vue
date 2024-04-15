@@ -179,7 +179,7 @@
               v-if="pool.platform[0] === 'Thruster'"
               btnStyles="faded"
               class='pools-table__blast-pool'
-              data-tooltip="Points/$1k 22 / $1k"
+              data-tooltip="~Points / $1k 25 / $1k"
             >
               <BaseIcon
                 name="blastSidebar"
@@ -844,6 +844,7 @@ export default {
   content: replace(attr(data-tooltip), ' | ', '\A ');
   white-space: pre-wrap;
   display: block;
+  width: 80%;
 }
 
 @media (max-width: 1320px) {
