@@ -154,7 +154,6 @@ export default {
     width: 100vw;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.1);
-    user-select: none;
 
     .modal__wrap-stop {
         position: relative;
@@ -162,7 +161,6 @@ export default {
         background-color: var(--color-4);
         box-shadow: 0px 1px 0px 0px #0F172A;
         border-radius: 5px;
-        pointer-events: auto;
         padding: 30px 40px;
         border: 2px solid var(--color-1);
         [data-theme="dark"] & {

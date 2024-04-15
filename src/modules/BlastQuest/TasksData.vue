@@ -35,7 +35,7 @@ import BaseIcon from '@/components/Icon/BaseIcon.vue';
 const BRONZE_QUESTS = [
   {
     id: '0',
-    text: "Like and retweet today's Overnight post",
+    text: 'Like&Retweet',
     checked: false,
     boxType: TypeofQuest.BRONZE,
   },
@@ -56,13 +56,13 @@ const BRONZE_QUESTS = [
 const SILVER_QUESTS = [
   {
     id: '0',
-    text: 'Mint at least 1000 USD+ on Blast',
+    text: 'Mint at least 1000 USD+ on Blast during the daily quest',
     checked: false,
     boxType: TypeofQuest.SILVER,
   },
   {
     id: '1',
-    text: 'Add at least $2000 liquidity to any USD+ pool on Thruster ',
+    text: 'Add at least $2000 liquidity to any USD+ pool on Thruster',
     checked: false,
     boxType: TypeofQuest.SILVER,
   },
