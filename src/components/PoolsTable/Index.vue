@@ -33,7 +33,10 @@
             v-for="(pool, key) in (pools as any)"
             :key="key"
             class="pools-table__row"
-            :class="{ 'pools-table__new': key === indexOfLastNewPool }"
+            :class="{
+              'pools-table__new': key === indexOfLastNewPool,
+              'pools-table__blast': pool.platform[0] === 'Thruster',
+            }"
             @click="toggleDetails(pool)"
             @keypress="toggleDetails(pool)"
           >
@@ -417,7 +420,8 @@ export default {
   padding: 20px;
 }
 .pools-table__row,
-.pools-table__new {
+.pools-table__new,
+.pools-table__blast {
   display: grid;
   grid-template-columns: 0.5fr 2fr 2fr 1fr 1.35fr 0.65fr;
   justify-content: space-between;
@@ -444,6 +448,30 @@ export default {
   margin-bottom: 10px;
   [data-theme="dark"] & {
     border-color: var(--color-18);
+  }
+}
+.pools-table__blast {
+  grid-template-columns: 0.5fr 2fr 2fr 1fr 1fr 0.45fr;
+  @media (max-width: 1320px) {
+    grid-template-columns: 0.5fr 2fr 2fr 1fr 1.29fr 0.65fr;
+  }
+  @media (max-width: 1280px) {
+    grid-template-columns: 0.5fr 2fr 2fr 1fr 1.2fr 0.45fr;
+  }
+  @media (max-width: 1200px) {
+    grid-template-columns: 0.5fr 2fr 2fr 1fr 1.15fr 0.45fr;
+  }
+  @media (max-width: 1100px) {
+    grid-template-columns: 0.5fr 2fr 2fr 1fr 1.1fr 0.45fr;
+  }
+  @media (max-width: 1050px) {
+    grid-template-columns: 0.5fr 2fr 2fr 1fr 1.05fr 0.45fr;
+  }
+  @media (max-width: 1024px) {
+    grid-template-columns: 0.5fr 2fr 2fr 1fr 1.25fr 0.45fr;
+  }
+  @media (max-width: 1000px) {
+    grid-template-columns: 0.5fr 2fr 2fr 1fr 0.95fr 0.45fr;
   }
 }
 
@@ -858,6 +886,9 @@ export default {
   .pools-table__tag-token-3  {
     top: -60px;
     right: -36px;
+  }
+  .pools-table__blast {
+    grid-template-columns: 0.5fr 2fr 2fr 1fr 0.8fr 0.9fr;
   }
 }
 
