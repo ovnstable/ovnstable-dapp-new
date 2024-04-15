@@ -79,7 +79,7 @@ export default {
           'If you did all 3 tasks but forgot to claim the Box, don’t worry! You can claim it any other day.',
           'In the “Like and retweet today\'s Overnight post” task you will see a link to a post you need to retweet and a field for your nickname on Twitter. Click on the Arrow icon, retweet the post, leave us your nickname and that\'s it!',
           'Task “Mint at least 500 USD+ on Blast” indicates the smallest token amount to be invested to complete the task (500 USD). The task is considered completed if you mint USD+ during the time the task is active (24 hours). You can invest by following the link indicated next to the task.',
-          'Task “Add at least $1000 to any USD+ pool on Blast” indicates the smallest token amount that must be invested to complete the task ($20). The task is considered completed if you have invested in the pool during the time the task is active (24 hours).',
+          'Task “Add at least $1000 to any USD+ pool on Blast” indicates the smallest token amount that must be invested to complete the task ($1000). The task is considered completed if you have invested in the pool during the time the task is active (24 hours).',
           'You can invest in one of the following pools:',
         ],
         bronzePools: [
