@@ -41,13 +41,13 @@ const BRONZE_QUESTS = [
   },
   {
     id: '1',
-    text: 'Add at least $20 liquidity to any USD+ pool on Thruster',
+    text: 'Add at least $1000 liquidity to any USD+ pool on Thruster',
     checked: false,
     boxType: TypeofQuest.BRONZE,
   },
   {
     id: '2',
-    text: 'Add at least $20 to any USD+ pool on SwapBlast',
+    text: 'Add at least $1000 to any USD+ pool on SwapBlast',
     checked: false,
     boxType: TypeofQuest.BRONZE,
   },
@@ -56,19 +56,19 @@ const BRONZE_QUESTS = [
 const SILVER_QUESTS = [
   {
     id: '0',
-    text: 'Mint at least 25 USD+ on Blast',
+    text: 'Mint at least 1000 USD+ on Blast',
     checked: false,
     boxType: TypeofQuest.SILVER,
   },
   {
     id: '1',
-    text: 'Add at least $50 liquidity to any USD+ pool on Thruster ',
+    text: 'Add at least $2000 liquidity to any USD+ pool on Thruster ',
     checked: false,
     boxType: TypeofQuest.SILVER,
   },
   {
     id: '2',
-    text: 'Add at least $50 to any USD+ SwapBlast',
+    text: 'Add at least $2000 to any USD+ SwapBlast',
     checked: false,
     boxType: TypeofQuest.SILVER,
   },
@@ -77,19 +77,19 @@ const SILVER_QUESTS = [
 const GOLD_QUESTS = [
   {
     id: '0',
-    text: 'Mint at least 50 USD+ on Blast',
+    text: 'Mint at least 2500 USD+ on Blast',
     checked: false,
     boxType: TypeofQuest.GOLD,
   },
   {
     id: '1',
-    text: 'Add at least $100 liquidity to any USD+ pool on Thruster',
+    text: 'Add at least $5000 liquidity to any USD+ pool on Thruster',
     checked: false,
     boxType: TypeofQuest.GOLD,
   },
   {
     id: '2',
-    text: 'Add at least $100 to any USD+ pool on SwapBlast',
+    text: 'Add at least $5000 to any USD+ pool on SwapBlast',
     checked: false,
     boxType: TypeofQuest.GOLD,
   },

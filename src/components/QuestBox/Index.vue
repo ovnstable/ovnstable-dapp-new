@@ -4,13 +4,22 @@
   >
     <div class="box-wrap__cube">
       <div class="cube cube--top">
-        <BaseIcon :name="boxType(BOX_TYPES.TOP)" />
+        <img
+          alt="side"
+          :src="boxType(BOX_TYPES.TOP)"
+        />
       </div>
       <div class="cube cube--left">
-        <BaseIcon :name="boxType(BOX_TYPES.LEFT)" />
+        <img
+          alt="side"
+          :src="boxType(BOX_TYPES.LEFT)"
+        />
       </div>
       <div class="cube cube--right">
-        <BaseIcon :name="boxType(BOX_TYPES.RIGHT)" />
+        <img
+          alt="side"
+          :src="boxType(BOX_TYPES.RIGHT)"
+        />
       </div>
       <div class="powerup" />
     </div>
@@ -53,7 +62,7 @@
 <script lang="ts">
 import { uniqueId } from 'lodash';
 import { type PropType } from 'vue';
-import { awaitDelay } from '@/utils/const.ts';
+import { awaitDelay, getImageUrl } from '@/utils/const.ts';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 
 // eslint-disable-next-line no-shadow
@@ -133,9 +142,15 @@ export default {
     boxType() {
       return (side: BOX_TYPES) => {
         if (typeof this.viewBox === 'undefined') return '';
-        if (side === BOX_TYPES.LEFT) return `box-left-${this.viewBox}`;
-        if (side === BOX_TYPES.TOP) return `box-top-${this.viewBox}`;
-        if (side === BOX_TYPES.RIGHT) return `box-right-${this.viewBox}`;
+        if (side === BOX_TYPES.TOP) {
+          return getImageUrl(`assets/icons/blastQuest/box-top-${this.viewBox}.svg`);
+        }
+        if (side === BOX_TYPES.LEFT) {
+          return getImageUrl(`assets/icons/blastQuest/box-left-${this.viewBox}.svg`);
+        }
+        if (side === BOX_TYPES.RIGHT) {
+          return getImageUrl(`assets/icons/blastQuest/box-right-${this.viewBox}.svg`);
+        }
 
         return '';
       };
@@ -302,7 +317,7 @@ export default {
   top: 39%;
   transform: translateY(-50%);
 
-  svg {
+  svg, img {
     width: 80px;
     height: 80px;
   }
@@ -312,7 +327,7 @@ export default {
     top: 50vh;
     bottom: 100px;
 
-    svg {
+    svg, img {
       position: relative;
       top: -128px;
       width: 287px;
@@ -328,7 +343,7 @@ export default {
   top: 70%;
   transform: translateY(-50%);
 
-  svg {
+  svg, img {
     width: 64px;
     height: 70px;
   }
@@ -337,7 +352,7 @@ export default {
     top: 50vh;
     left: 100px;
 
-    svg {
+    svg, img {
       width: 250px;
       height: 250px;
     }
@@ -351,7 +366,7 @@ export default {
   top: 70%;
   transform: translateY(-50%);
 
-  svg {
+  svg, img {
     width: 64px;
     height: 70px;
   }
@@ -360,7 +375,7 @@ export default {
     top: 50vh;
     right: 0;
 
-    svg {
+    svg, img {
       width: 250px;
       height: 250px;
     }

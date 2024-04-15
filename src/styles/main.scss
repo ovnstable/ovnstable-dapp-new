@@ -255,7 +255,7 @@ $avatar-offset: 52 + 16;
   }
 }
 
-// GLITS ANIMATION
+// GLITCH ANIMATION
 
 .stack {
   display: grid;
@@ -273,11 +273,11 @@ $avatar-offset: 52 + 16;
   --clip-top: calc(var(--stack-height) * var(--index));
   --clip-bottom: calc(var(--stack-height) * var(--inverse-index));
   clip-path: inset(var(--clip-top) 0 var(--clip-bottom) 0);
-  animation: stack .5s cubic-bezier(.46,.29,0,1.24) 1 backwards calc(var(--index) * .2s), glitch 3s ease infinite alternate-reverse;
+  animation: stack 340ms cubic-bezier(.46,.29,0,1.24) 1 backwards calc(var(--index) * 120ms), glitch 3s ease infinite alternate-reverse;
 }
 
-.stack span:nth-child(odd) { --glitch-translate: 2px; }
-.stack span:nth-child(even) { --glitch-translate: -2px; }
+.stack span:nth-child(odd) { --glitch-translate: 4px; }
+.stack span:nth-child(even) { --glitch-translate: -4px; }
 
 .glitch-wrapper--title {
   .stack span {
@@ -292,7 +292,7 @@ $avatar-offset: 52 + 16;
   0% {
     opacity: 0;
     transform: translateX(-50%);
-    text-shadow: -1px 1px 0 rgba(255, 0, 0, 0.405), 1px -2px 0 rgba(0, 0, 255, 0.405);
+    text-shadow: -2px 3px 0 red, 2px -3px 0 blue;
   };
   60% {
     opacity: 0.5;
@@ -301,7 +301,7 @@ $avatar-offset: 52 + 16;
   80% {
     transform: none;
     opacity: 1;
-    text-shadow: 1px -1px 0 rgba(255, 0, 0, 0.405), -1px 1px 0 rgba(0, 0, 255, 0.405);
+    text-shadow: 2px -3px 0 red, -2px 3px 0 blue;
   }
   100% {
     text-shadow: none;

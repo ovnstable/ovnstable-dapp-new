@@ -53,15 +53,13 @@
           <BaseIcon
             name="blastSidebar"
           />
-          <div class="glitch-wrapper">
-            <div
-              class="stack"
-              style="--stacks: 3;"
-            >
-              <span style="--index: 0;">Blast lootbox</span>
-              <span style="--index: 1;">Blast lootbox</span>
-              <span style="--index: 2;">Blast lootbox</span>
-            </div>
+          <div
+            class="stack"
+            style="--stacks: 3;"
+          >
+            <span style="--index: 0;">Blast lootbox</span>
+            <span style="--index: 1;">Blast lootbox</span>
+            <span style="--index: 2;">Blast lootbox</span>
           </div>
         </div>
 
@@ -353,5 +351,65 @@ export default {
       stroke: var(--color-4);
     }
   }
+}
+
+// GLITCH ANIMATION
+
+.stack {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.stack span {
+  font-weight: bold;
+  grid-row-start: 1;
+  grid-column-start: 1;
+  font-size: 17px;
+  font-weight: 500;
+  --stack-height: calc(100% / var(--stacks) - 1px);
+  --inverse-index: calc(calc(var(--stacks) - 1) - var(--index));
+  --clip-top: calc(var(--stack-height) * var(--index));
+  --clip-bottom: calc(var(--stack-height) * var(--inverse-index));
+  clip-path: inset(var(--clip-top) 0 var(--clip-bottom) 0);
+  animation: stack 340ms cubic-bezier(.46,.29,0,1.24) 1 backwards calc(var(--index) * 120ms), glitch 4s ease infinite 2s alternate-reverse;
+}
+
+.stack span:nth-child(odd) { --glitch-translate: 2px; }
+.stack span:nth-child(even) { --glitch-translate: -2px; }
+
+@keyframes stack {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%);
+    text-shadow: -2px 3px 0 red, 2px -3px 0 blue;
+  };
+  60% {
+    opacity: 0.5;
+    transform: translateX(50%);
+  }
+  80% {
+    transform: none;
+    opacity: 1;
+    text-shadow: 2px -3px 0 red, -2px 3px 0 blue;
+  }
+  100% {
+    text-shadow: none;
+  }
+}
+
+@keyframes glitch {
+  0% {
+    text-shadow: -1px 1px 0 rgba(255, 0, 0, 0.205), 1px -1px 0 rgba(0, 0, 255, 0.205);
+    transform: translate(var(--glitch-translate));
+  }
+  3% {
+    text-shadow: 1px -1px 0 rgba(255, 0, 0, 0.205)red, -1px 1px 0 rgba(0, 0, 255, 0.205);
+    transform: translate(-1px);
+  }
+  7% {
+    text-shadow: -1px 1px 0 rgba(255, 0, 0, 0.205), 1px -1px 0 rgba(0, 0, 255, 0.205);
+    transform: translate(var(--glitch-translate));
+  }
+  8%, 100% {  text-shadow: none; transform: none; }
 }
 </style>

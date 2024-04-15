@@ -123,7 +123,7 @@
               </div>
               <template v-else>
                 <p>
-                  a random amount of {{ buildPointsRange(typeofBox.BRONZE) }} points
+                  Up to {{ buildPointsRange(typeofBox.BRONZE) }} points
                 </p>
                 <QuestBox
                   :prize-value="dailyPrize"
@@ -171,7 +171,7 @@
               </div>
               <template v-else>
                 <p>
-                  a random amount of {{ buildPointsRange(typeofBox.SILVER) }} points
+                  Up to {{ buildPointsRange(typeofBox.SILVER) }} points
                 </p>
                 <QuestBox
                   :prize-value="dailyPrize"
@@ -220,7 +220,7 @@
               </div>
               <template v-else>
                 <p>
-                  a random amount of {{ buildPointsRange(typeofBox.GOLD) }} points
+                  Up to {{ buildPointsRange(typeofBox.GOLD) }} points
                 </p>
                 <QuestBox
                   :prize-value="dailyPrize"
@@ -282,7 +282,7 @@
               </div>
               <template v-else>
                 <p>
-                  random amount of {{ buildPointsRange(typeofBox.DIAMOND) }} points
+                  Up to {{ buildPointsRange(typeofBox.DIAMOND) }} points
                 </p>
 
                 <QuestBox
@@ -491,8 +491,7 @@ export default {
         const data = BOX_RANGES.find((_) => _.quest === questType);
         if (!data) return '0';
 
-        return `${data?.minAmount} - ${new BN(data?.max)
-          .times(this.jackpotData?.amount).toFixed(0)}`;
+        return `${new BN(data?.max).times(this.jackpotData?.amount).toFixed(0)}`;
       };
     },
     isDisabledBtn() {
