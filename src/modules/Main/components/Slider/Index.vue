@@ -58,7 +58,7 @@
               <div class="slider-info-blast-lootbox-start">
                 <img
                   alt="SlothBlastQuest"
-                  :src="getImageUrl(`assets/blastQuest/SlothBlastQuest.png`)"
+                  src="/blastQuest/SlothBlastQuest.png"
                 />
                 <router-link
                   to="/blastquest"
@@ -550,7 +550,7 @@ export default {
   height: 100%;
 }
 .slider-info-blast-points {
-  background-image: url('src/assets/blastQuest/blastPointsSlider.png');
+  background-image: url('/blastQuest/blastPointsSlider.png');
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
@@ -575,7 +575,7 @@ export default {
 }
 
 .slider-info-blast-lootbox {
-  background-image: url('src/assets/blastQuest/blastLootboxSlider.png');
+  background-image: url('/blastQuest/blastLootboxSlider.png');
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;

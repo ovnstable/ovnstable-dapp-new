@@ -263,7 +263,7 @@
         <div class="blast-wrap__quests-daily-tasks">
           <img
             alt="navbar"
-            :src="getImageUrl(`assets/blastQuest/SlothBlastQuest.png`)"
+            src="/blastQuest/SlothBlastQuest.png"
           />
           <div class="blast-wrap__quests-diamond-box-wrapper">
             <div class="blast-wrap__quests-diamond-box">
