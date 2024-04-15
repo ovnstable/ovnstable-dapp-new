@@ -179,7 +179,7 @@
               v-if="pool.platform[0] === 'Thruster'"
               btnStyles="faded"
               class='pools-table__blast-pool'
-              data-tooltip="~Points / $1k 25 / $1k"
+              data-tooltip="Points / $1k ~25 / $1k"
             >
               <BaseIcon
                 name="blastSidebar"
