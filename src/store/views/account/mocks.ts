@@ -143,6 +143,7 @@ export const USER_BALANCES_SCHEME = {
   ],
   59144: [
     ...chains_56_59144_42161,
+    wUsdToken,
     {
       symbol: 'USDT+',
       contractName: 'usdtPlus',

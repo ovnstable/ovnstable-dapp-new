@@ -120,6 +120,12 @@ export const MINTREDEEM_SCHEME = {
       exchange: chainContractsMap.linea.usdtPlus.exchange,
       methodName: [mintRedeemTypes.MINT, mintRedeemTypes.REDEEM],
     },
+    {
+      token0: chainContractsMap.linea.usdPlus.tokenPlus,
+      token1: chainContractsMap.linea.usdPlus.wUsdPlus,
+      exchange: chainContractsMap.linea.market,
+      methodName: [mintRedeemTypes.WRAP, mintRedeemTypes.UNWRAP],
+    },
   ],
   // bsc
   56: [
