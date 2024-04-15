@@ -533,7 +533,7 @@ export default {
     async loadDashboard() {
       const resp = await axios.get(`${OVN_QUESTS_API}/blast/dashboard`);
 
-      const filterData = resp.data((_: any) => new BN(_?.claimed).gt(0));
+      const filterData = resp.data.filter((_: any) => new BN(_?.claimed).gt(0));
 
       const sorted = filterData
         .sort((a: any, b: any) => (new BN(a?.claimed).gt(b?.claimed) ? -1 : 1));
