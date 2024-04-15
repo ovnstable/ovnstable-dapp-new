@@ -111,6 +111,7 @@ export default {
           'If you did all 3 tasks but forgot to claim the Box, don’t worry! You can claim it any other day.',
           'Task “Mint at least 1000 USD+ on Blast” indicates the smallest token amount to be invested the task to complete the task ($1000). The task is considered completed if you mint USD+ during the time the task is active (24 hours).',
           'Task “Add at least $2000 liquidity to any USD+ pool on Thruster” indicates the smallest token amount that must be invested to complete the task ($2000). The task is considered completed if you have invested in the pool during the time the task is active (24 hours).',
+          'Also, you can get additional points by depositing Thruster LP in Hyperlock’s USD+/USDB and USD+/wETH pools. By doing this you will get <b>~22 points/$1K</b> for USD+/wETH and <b>~39 points/$1K</b> for USD+/USDB pool. The amount of points per $1K changes depending on different factors.',
           'You can invest in one of the following pools:',
         ],
         silverPools: [
@@ -142,6 +143,7 @@ export default {
           'Task “Mint at least 2500 USD+ on Blast” indicates the smallest token amount to be invested to complete the task ($2500). The task is considered completed if you mint USD+ during the time the task is active (24 hours).',
           'Task “Add at least $5000 liquidity to any USD+ pool on Thruster” indicates the smallest token amount that must be invested to complete the task ($5000). The task is considered completed if you have invested in the pool during the time the task is active (24 hours).',
           'Task “Add at least $5000 to any USD+ SwapBlast” indicates the smallest token amount that must be invested to complete the task ($5000). The task is considered completed if you have invested in the pool during the time the task is active (24 hours).',
+          'Also, you can get additional points by depositing Thruster LP in Hyperlock’s USD+/USDB and USD+/wETH pools. By doing this you will get <b>~22 points/$1K</b> for USD+/wETH and <b>~39 points/$1K</b> for USD+/USDB pool. The amount of points per $1K changes depending on different factors.',
           'You can invest in one of the following pools:',
         ],
         goldPools: [
