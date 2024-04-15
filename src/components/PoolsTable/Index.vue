@@ -179,6 +179,7 @@
               v-if="pool.platform[0] === 'Thruster'"
               btnStyles="faded"
               class='pools-table__blast-pool'
+              data-tooltip="Points/$1k 22 / $1k"
             >
               <BaseIcon
                 name="blastSidebar"
@@ -789,6 +790,7 @@ export default {
 }
 
 .pools-table__blast-pool:hover {
+
   background-color: var(--color-1);
   a {
     color: var(--color-18);
@@ -797,7 +799,6 @@ export default {
     fill: var(--color-18);
   }
   [data-theme="dark"] & {
-    border: none;
     background-color: var(--color-17);
     a {
      color: var(--color-20);
@@ -806,6 +807,43 @@ export default {
       fill: var(--color-20);
     }
   }
+}
+.pools-table__blast-pool {
+  position: relative;
+}
+
+.pools-table__blast-pool:hover::after {
+  content: attr(data-tooltip);
+  white-space: pre;
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--color-3);
+  color: var(--color-4);
+  padding: 5px 10px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  white-space: nowrap;
+  z-index: 1000;
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s, opacity 0.2s ease;
+  [data-theme="dark"] & {
+    color: var(--color-1);
+    background-color: var(--color-17);
+  }
+}
+
+.pools-table__blast-pool:hover::after {
+  visibility: visible;
+  opacity: 1;
+}
+.pools-table__blast-pool:hover::after {
+  content: attr(data-tooltip);
+  content: replace(attr(data-tooltip), ' | ', '\A ');
+  white-space: pre-wrap;
+  display: block;
 }
 
 @media (max-width: 1320px) {
