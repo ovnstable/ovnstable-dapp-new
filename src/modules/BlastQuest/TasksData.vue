@@ -41,13 +41,13 @@ const BRONZE_QUESTS = [
   },
   {
     id: '1',
-    text: 'Mint at least 500 USD+ on Blast during the daily quest',
+    text: 'Add at least $1000 liquidity to any USD+ pool on Thruster',
     checked: false,
     boxType: TypeofQuest.BRONZE,
   },
   {
     id: '2',
-    text: 'Add at least $1000 to any USD+ pool on Blast',
+    text: 'Add at least $1000 to any USD+ pool on SwapBlast',
     checked: false,
     boxType: TypeofQuest.BRONZE,
   },
@@ -62,7 +62,7 @@ const SILVER_QUESTS = [
   },
   {
     id: '1',
-    text: 'Add at least $2000 liquidity to any USD+ pool on Thruster ',
+    text: 'Add at least $2000 liquidity to any USD+ pool on Thruster',
     checked: false,
     boxType: TypeofQuest.SILVER,
   },
