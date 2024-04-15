@@ -2,6 +2,7 @@ import '@/styles/main.scss';
 
 import { createApp } from 'vue';
 import Popper from 'vue3-popper';
+import Notifications from '@kyvg/vue3-notification';
 
 import router from '@/router/index.ts';
 import store from '@/store/index.ts';
@@ -12,6 +13,7 @@ const app = createApp(App);
 app.config.globalProperties.$store = store;
 app.use(router);
 app.use(store);
+app.use(Notifications);
 app.component('PopperComponent', Popper);
 
 async function initNetwork() {

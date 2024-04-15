@@ -473,7 +473,6 @@ export enum POOL_TAG {
 
 // POOLS WITH EARNINGS MORE THAN 500$ per month
 // https://docs.google.com/spreadsheets/d/1zyNA4mbpmyG30R1aIqkkRvbCJSjfyb7pV4hhCa7pohM/edit#gid=813615557
-// or promoted pools, which launched recently
 
 export const NEW_POOLS: string[] = [
   '0xf2d0a6699fea86fff3eb5b64cdc53878e1d19d6f',

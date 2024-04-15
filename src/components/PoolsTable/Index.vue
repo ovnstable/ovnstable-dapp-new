@@ -33,7 +33,10 @@
             v-for="(pool, key) in (pools as any)"
             :key="key"
             class="pools-table__row"
-            :class="{ 'pools-table__new': key === indexOfLastNewPool }"
+            :class="{
+              'pools-table__new': key === indexOfLastNewPool,
+              'pools-table__blast': pool.platform[0] === 'Thruster',
+            }"
             @click="toggleDetails(pool)"
             @keypress="toggleDetails(pool)"
           >
@@ -173,6 +176,24 @@
               </div>
             </div>
             <ButtonComponent
+              v-if="pool.platform[0] === 'Thruster'"
+              btnStyles="faded"
+              class='pools-table__blast-pool'
+              data-tooltip="~Points / $1k 25 / $1k"
+            >
+              <BaseIcon
+                name="blastSidebar"
+              />
+              <a
+                v-if="pool.platform[0] === 'Thruster'"
+                href="https://app.hyperlock.finance/#/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                BLAST POINTS
+              </a>
+            </ButtonComponent>
+            <ButtonComponent
               v-if="pool.zappable"
               btnStyles="faded"
               @click="openZapIn(pool)"
@@ -280,7 +301,6 @@ export default {
 
       return lastNewPoolIndex;
     },
-
     // getPoolType() {
     //   return (pool) => {
     //     if (pool.address === '0x4b9f00860d7f42870addeb687fa4e47062df71d9') {
@@ -401,7 +421,8 @@ export default {
   padding: 20px;
 }
 .pools-table__row,
-.pools-table__new {
+.pools-table__new,
+.pools-table__blast {
   display: grid;
   grid-template-columns: 0.5fr 2fr 2fr 1fr 1.35fr 0.65fr;
   justify-content: space-between;
@@ -430,6 +451,30 @@ export default {
     border-color: var(--color-18);
   }
 }
+.pools-table__blast {
+  grid-template-columns: 0.5fr 2fr 2fr 1fr 1fr 0.45fr;
+  @media (max-width: 1320px) {
+    grid-template-columns: 0.5fr 2fr 2fr 1fr 1.29fr 0.65fr;
+  }
+  @media (max-width: 1280px) {
+    grid-template-columns: 0.5fr 2fr 2fr 1fr 1.2fr 0.45fr;
+  }
+  @media (max-width: 1200px) {
+    grid-template-columns: 0.5fr 2fr 2fr 1fr 1.15fr 0.45fr;
+  }
+  @media (max-width: 1100px) {
+    grid-template-columns: 0.5fr 2fr 2fr 1fr 1.1fr 0.45fr;
+  }
+  @media (max-width: 1050px) {
+    grid-template-columns: 0.5fr 2fr 2fr 1fr 1.05fr 0.45fr;
+  }
+  @media (max-width: 1024px) {
+    grid-template-columns: 0.5fr 2fr 2fr 1fr 1.25fr 0.45fr;
+  }
+  @media (max-width: 1000px) {
+    grid-template-columns: 0.5fr 2fr 2fr 1fr 0.95fr 0.45fr;
+  }
+}
 
 .pools-header {
   display: grid;
@@ -438,6 +483,7 @@ export default {
   color: var(--color-2);
   margin-top: 20px;
   padding: 0 20px;
+  overflow-y: hidden;
   [data-theme="dark"] & {
     background-color: none;
     color: var(--color-18);
@@ -730,6 +776,77 @@ export default {
     color: var(--color-3);
   }
 }
+.pools-table__blast-pool {
+  padding: 5px 10px;
+  svg {
+    margin-right: 4px;
+    fill: var(--color-2);
+  }
+  [data-theme="dark"] & {
+    svg {
+      fill: var(--color-18)
+    }
+  }
+}
+
+.pools-table__blast-pool:hover {
+
+  background-color: var(--color-1);
+  a {
+    color: var(--color-18);
+  }
+  svg {
+    fill: var(--color-18);
+  }
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
+    a {
+     color: var(--color-20);
+    }
+    svg {
+      fill: var(--color-20);
+    }
+  }
+}
+.pools-table__blast-pool {
+  position: relative;
+}
+
+.pools-table__blast-pool:hover::after {
+  content: attr(data-tooltip);
+  white-space: pre;
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--color-3);
+  color: var(--color-4);
+  padding: 5px 10px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  white-space: nowrap;
+  z-index: 1000;
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s, opacity 0.2s ease;
+  [data-theme="dark"] & {
+    color: var(--color-1);
+    background-color: var(--color-17);
+  }
+}
+
+.pools-table__blast-pool:hover::after {
+  visibility: visible;
+  opacity: 1;
+}
+.pools-table__blast-pool:hover::after {
+  content: attr(data-tooltip);
+  content: replace(attr(data-tooltip), ' | ', '\A ');
+  white-space: pre-wrap;
+  display: block;
+  width: 80%;
+}
+
 @media (max-width: 1320px) {
   .pools-table {
     overflow: hidden;
@@ -808,6 +925,9 @@ export default {
   .pools-table__tag-token-3  {
     top: -60px;
     right: -36px;
+  }
+  .pools-table__blast {
+    grid-template-columns: 0.5fr 2fr 2fr 1fr 0.8fr 0.9fr;
   }
 }
 

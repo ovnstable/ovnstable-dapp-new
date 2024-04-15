@@ -18,15 +18,8 @@
   --color-15: #ffde76;
   --color-16: #e3f2fd;
   --color-17: #D2D7E0;
+  --color-18: #FCFC03;
   --section-gap: 160px;
-  a:hover,
-  router-link:hover {
-    color: var(--color-2);
-    transition: color 0.15s ease;
-  }
-  .link-ovn {
-    text-decoration: underline;
-  }
 }
 
 [data-theme="dark"] {
@@ -49,16 +42,8 @@
   --color-17: #0f172a;
   --color-18: #adbacd;
   --color-19: rgba(42, 50, 69, 0.5);
+  --color-20: #FCFC03;
   --section-gap: 160px;
-  a:hover,
-  router-link:hover {
-    color: var(--color-2);
-    transition: color 0.15s ease;
-  }
-  .link-ovn {
-    text-decoration: underline;
-    text-decoration-color: var(--color-2);
-  }
 }
 
 html, body, div, span, applet, object, iframe,
@@ -147,4 +132,20 @@ body {
 
 svg, svg path {
   transition: all .1s ease;
+}
+
+a:hover,
+router-link:hover {
+  color: var(--color-2);
+  transition: color 0.15s ease;
+}
+
+.link-ovn {
+  text-decoration: underline;
+  text-decoration-color: var(--color-2);
+
+  &:hover {
+    color: var(--color-3);
+    transition: color 0.15s ease;
+  }
 }

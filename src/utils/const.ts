@@ -79,3 +79,4 @@ export const OVN_TOKENS = ['USD+', 'DAI+', 'USDT+', 'USDC+', 'ETH+', 'OVN', 'wET
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
 export const DEFAULT_CHAIN = 8453;
+export const OVN_QUESTS_API = process.env.NODE_ENV === 'development' ? 'http://localhost:9091' : 'https://api.overnight.fi/root/admin';

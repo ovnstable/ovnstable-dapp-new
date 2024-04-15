@@ -12,6 +12,7 @@
     <WaitingModal :show-modal="showWaitModal" />
     <ErrorModal :show-modal="showErrorModal" />
     <SuccessModal :show-modal="showSuccessModal" />
+    <notifications />
   </div>
 </template>
 
@@ -41,11 +42,23 @@ export default {
     await this.$store.dispatch('theme/initTheme');
     await this.$store.dispatch('web3/initWeb3');
     await this.$store.dispatch('walletAction/dappInitWalletConnect');
+    await this.fetchDataForBlastQuest();
 
     this.$store.dispatch('odosData/initUpdateBalancesInterval');
   },
   methods: {
     deviceType,
+    async fetchDataForBlastQuest() {
+      try {
+        this.$store.commit('jackpotData/setJackpotDataLoaded', false);
+        await Promise.all([
+          this.$store.dispatch('jackpotData/fetchJackpotData'),
+        ]);
+        this.$store.commit('jackpotData/setJackpotDataLoaded', true);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    },
   },
   computed: {
     ...mapGetters('waitingModal', { showWaitModal: 'show' }),
