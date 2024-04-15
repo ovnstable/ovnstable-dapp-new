@@ -116,7 +116,8 @@ export default {
     userBalancesList() {
       if (this.originalBalance.length === 0) return [];
       if (isEmpty(this.allTokensList) && isEmpty(this.tokensMap)) return [];
-      return this.originalBalance
+
+      const balances = this.originalBalance
         .filter((_: any) => OVN_TOKENS.includes(_.symbol))
         .map((bal: any) => {
           const tokensForChain = !EMPTY_TOKENS_NETWORKS.includes(this.networkId)
@@ -129,7 +130,17 @@ export default {
             symbol: tokenData?.symbol,
           };
         });
+
+      const uniqueBalances = balances.reduce(
+        (acc: any, current: any) => ({
+          ...acc,
+          [current.symbol]: current,
+        }),
+        {},
+      );
+      return Object.values(uniqueBalances);
     },
+
   },
 };
 </script>

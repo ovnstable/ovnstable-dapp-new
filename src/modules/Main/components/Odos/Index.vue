@@ -441,7 +441,6 @@ export default {
     ...mapGetters('odosData', [
       'allTokensList',
       'isAvailableOnNetwork',
-      'swapResponseConfirmGetter',
       'isAllLoaded',
       'isAllDataLoaded',
     ]),
@@ -592,7 +591,6 @@ export default {
       return (
         this.inputTokensWithSelectedTokensCount === 0
         || this.outputTokensWithSelectedTokensCount === 0
-        || this.swapResponseConfirmGetter.waitingConformation
         || !this.isAvailableOnNetwork
         || !this.isAnyTokensBalanceIsInsufficient
         || !this.isAmountEntered
@@ -618,14 +616,6 @@ export default {
 
       if (!this.isAnyTokensBalanceIsInsufficient) {
         return 'BALANCE IS INSUFFICIENT';
-      }
-
-      if (this.swapResponseConfirmGetter.waitingConformation) {
-        return (
-          `Confirm in your wallet (${
-            this.swapResponseConfirmGetter.duration
-          } sec)`
-        );
       }
 
       if (this.isSwapLoading) {

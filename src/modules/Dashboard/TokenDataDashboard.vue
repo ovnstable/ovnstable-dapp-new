@@ -104,7 +104,7 @@ export default {
       const payoutTransactions = this.portfolioBalanceData.filter((transaction: any) => transaction.type === 'PAYOUT');
       if (payoutTransactions.length > 0) {
         const balance = payoutTransactions[0].closing_balance;
-        return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(balance);
+        return new Intl.NumberFormat('en-EN', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(balance);
       }
       return '$0,00';
     },
@@ -189,7 +189,7 @@ export default {
         })
         .reduce((acc: number, curr: any) => acc + curr.change_balance, 0);
 
-      return new Intl.NumberFormat('de-DE', {
+      return new Intl.NumberFormat('en-EN', {
         style: 'currency',
         currency: 'USD',
         minimumFractionDigits: 4,

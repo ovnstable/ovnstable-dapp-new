@@ -171,12 +171,19 @@ export default {
         change_balance: trx.change_balance * this.portfolioBalanceData.prices.daiPlus,
         closing_balance: trx.closing_balance * this.portfolioBalanceData.prices.daiPlus,
       }));
+      const convertedUsdcTransactions = this.portfolioBalanceData.dataUSDCPlus.map((trx: any) => ({
+        ...trx,
+        opening_balance: trx.opening_balance * this.portfolioBalanceData.prices.usdcPlus,
+        change_balance: trx.change_balance * this.portfolioBalanceData.prices.usdcPlus,
+        closing_balance: trx.closing_balance * this.portfolioBalanceData.prices.usdcPlus,
+      }));
 
       return [
         ...convertedUsdTransactions,
         ...convertedEthTransactions,
         ...convertedUsdtTransactions,
         ...convertedDaiTransactions,
+        ...convertedUsdcTransactions,
       ];
     },
   },

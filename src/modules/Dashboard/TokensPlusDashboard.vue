@@ -154,6 +154,7 @@ export default {
         daiPlus: { name: 'DAI+', iconName: 'DAI+_market' },
         usdtPlus: { name: 'USDT+', iconName: 'USDT_market' },
         ethPlus: { name: 'ETH+', iconName: 'DashboardETH+Tokens' },
+        usdcPlus: { name: 'USDC+', iconName: 'USDC+dashboard' },
       },
     };
   },
@@ -257,7 +258,7 @@ export default {
 
       const valueInUSD = balance * price;
 
-      const formattedValueInUSD = new Intl.NumberFormat('de-DE', {
+      const formattedValueInUSD = new Intl.NumberFormat('en-EN', {
         style: 'currency',
         currency: 'USD',
         minimumFractionDigits: 2,
@@ -303,7 +304,7 @@ export default {
         })
         .reduce((acc: number, curr: any) => acc + curr.change_balance, 0);
 
-      return new Intl.NumberFormat('de-DE', {
+      return new Intl.NumberFormat('en-EN', {
         style: 'currency',
         currency: 'USD',
         minimumFractionDigits: 4,
@@ -321,7 +322,7 @@ export default {
         }
       });
 
-      return new Intl.NumberFormat('de-DE', {
+      return new Intl.NumberFormat('en-EN', {
         style: 'currency',
         currency: 'USD',
         minimumFractionDigits: 4,
@@ -343,7 +344,7 @@ export default {
         }
       });
 
-      return new Intl.NumberFormat('de-DE', {
+      return new Intl.NumberFormat('en-EN', {
         style: 'currency',
         currency: 'USD',
         minimumFractionDigits: 2,
@@ -464,7 +465,7 @@ export default {
     display: flex;
     max-width: 30px;
     text-align: center;
-    margin-right: 6px;
+    margin-right: 12px;
     color: var(--color-3);
     [data-theme="dark"] & {
       background: none;
