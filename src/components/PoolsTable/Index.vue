@@ -173,6 +173,23 @@
               </div>
             </div>
             <ButtonComponent
+              v-if="pool.platform[0] === 'Thruster'"
+              btnStyles="faded"
+              class='pools-table__blast-pool'
+            >
+              <BaseIcon
+                name="blastSidebar"
+              />
+              <a
+                v-if="pool.platform[0] === 'Thruster'"
+                href="https://app.hyperlock.finance/#/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                BLAST POINTS
+              </a>
+            </ButtonComponent>
+            <ButtonComponent
               v-if="pool.zappable"
               btnStyles="faded"
               @click="openZapIn(pool)"
@@ -730,6 +747,39 @@ export default {
     color: var(--color-3);
   }
 }
+.pools-table__blast-pool {
+  padding: 5px 10px;
+  svg {
+    margin-right: 4px;
+    fill: var(--color-2);
+  }
+  [data-theme="dark"] & {
+    svg {
+      fill: var(--color-18)
+    }
+  }
+}
+
+.pools-table__blast-pool:hover {
+  background-color: var(--color-1);
+  a {
+    color: var(--color-18);
+  }
+  svg {
+    fill: var(--color-18);
+  }
+  [data-theme="dark"] & {
+    border: none;
+    background-color: var(--color-17);
+    a {
+     color: var(--color-20);
+    }
+    svg {
+      fill: var(--color-20);
+    }
+  }
+}
+
 @media (max-width: 1320px) {
   .pools-table {
     overflow: hidden;
