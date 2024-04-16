@@ -95,7 +95,7 @@
           </div>
 
           <p>
-            Complete 3 daily tasks to get the Blast loot box! The boxes contain a random
+            Complete 1 daily tasks to get the Blast loot box! The boxes contain a random
             amount of <span>Blast points</span> within
             the range shown under the box. Good luck and have fun!
           </p>
