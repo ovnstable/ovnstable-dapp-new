@@ -277,7 +277,7 @@ export default {
 
   &:first-child {
     span {
-      color: var(--color-18);
+      color: var(--color-3);
     }
   }
 
