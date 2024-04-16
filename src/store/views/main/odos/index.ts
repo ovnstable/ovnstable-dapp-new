@@ -19,7 +19,7 @@ import { ethers } from 'ethers';
 import { ERC20_ABI } from '@/assets/abi/index.ts';
 import { fixedByPrice } from '@/utils/numbers.ts';
 import { ZERO_ADDRESS } from '@/utils/const.ts';
-import { BLAST_TOKENS } from '@/store/views/main/odos/mocks.ts';
+import { BLAST_TOKENS, LINEA_TOKENS } from '@/store/views/main/odos/mocks.ts';
 import _ from 'lodash';
 
 // const KEY = 'REFERRAL_CODE';
@@ -201,12 +201,19 @@ const actions = {
         commit('changeState', { field: 'isTokensLoading', val: false });
       });
 
+    console.log(odosTokens.chainTokenMap, '___odosTokens.chainTokenMap');
     await commit('changeState', {
       field: 'tokensMap',
       val: {
         chainTokenMap: {
           ...odosTokens.chainTokenMap,
-          ...BLAST_TOKENS
+          ...BLAST_TOKENS,
+          59144: {
+            tokenMap: {
+              ...odosTokens.chainTokenMap[59144]?.tokenMap,
+              ...LINEA_TOKENS[59144].tokenMap
+            }
+          }
         },
       }
     });

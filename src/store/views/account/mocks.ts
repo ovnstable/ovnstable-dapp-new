@@ -145,6 +145,11 @@ export const USER_BALANCES_SCHEME = {
     ...chains_56_59144_42161,
     wUsdToken,
     {
+      symbol: 'USD+',
+      contractName: 'usdPlus',
+      isOvnToken: true,
+    },
+    {
       symbol: 'USDT+',
       contractName: 'usdtPlus',
       isOvnToken: true,
