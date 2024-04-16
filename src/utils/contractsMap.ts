@@ -91,6 +91,7 @@ export const chainContractsMap = {
       exchange: '0x7cb1B38591021309C64f451859d79312d8Ca2789',
       mark2market: '0x1F4947Cd5A5c058DD5EA6Fd1CCd5c311aDa9E6Fb',
       portfolioManager: '0x27B12F3282F1d02682D7D1AD30E45e818B78f7B8',
+      wUsdPlus: '0x65D97BdFD4c1076cD1F95Cbe3B56954277d0956F',
       decimals: 6,
     },
     usdtPlus: {
@@ -100,6 +101,7 @@ export const chainContractsMap = {
       portfolioManager: '0x0932BB4c7e4bdD9cd717331b86d999046f8420E0',
       decimals: 6,
     },
+    market: '0x8De5410692C0bc722695F17CA4DD55C9506052c6',
     usdc: '0x176211869cA2b568f2A7D4EE941E073a821EE1ff',
     usdt: '0xA219439258ca9da29E9Cc4cE5596924745e12B93',
   },
