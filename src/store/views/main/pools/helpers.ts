@@ -185,6 +185,14 @@ export const buildLink = (pool: any, poolPlatform: string) => {
     return 'https://app.thruster.finance/add?token1=0x4300000000000000000000000000000000000004&token2=0x4fEE793d435c6D2c10C135983BB9d6D4fC7B9BBd&poolVersion=V3&fee=0.0005';
   }
 
+  // AMBIENT
+  if (pool.address === '0xaAaaaAAAFfe404EE9433EEf0094b6382D81fb958_eth') {
+    return 'https://ambient.finance/trade/pool/chain=0x13e31&tokenA=0x4fee793d435c6d2c10c135983bb9d6d4fc7b9bbd&tokenB=0x0000000000000000000000000000000000000000';
+  }
+  if (pool.address === '0xaAaaaAAAFfe404EE9433EEf0094b6382D81fb958_usdb') {
+    return 'https://ambient.finance/trade/pool/chain=0x13e31&tokenA=0x4fee793d435c6d2c10c135983bb9d6d4fc7b9bbd&tokenB=0x4300000000000000000000000000000000000003';
+  }
+
   // promoting / exceptions
   if (
     poolPlatform === 'Defiedge'
