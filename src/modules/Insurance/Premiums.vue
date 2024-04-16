@@ -554,7 +554,7 @@ export default {
   }
 
   .insurance__premiums-asset-share p {
-    color: var(--color-18);
+    color: var(--color-1);
     text-align: right;
   }
   .insurance__premiums-asset-icon {
@@ -601,7 +601,7 @@ export default {
   .insurance__premiums-asset-nav-mobile p:last-child,
   .insurance__premiums-asset-liq-val-mobile p:last-child,
   .insurance__premiums-asset-percent {
-    color: var(--color-18);
+    color: var(--color-1);
   }
   .insurance__premiums-asset-token-name.asset {
     white-space: nowrap;

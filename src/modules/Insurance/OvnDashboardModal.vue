@@ -585,7 +585,7 @@ export default {
     gap: 10px;
     align-items: center;
     p {
-      color: var(--color-18);
+      color: var(--color-1);
       font-size: 12px;
     }
   }
