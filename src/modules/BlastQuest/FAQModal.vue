@@ -137,7 +137,7 @@ export default {
           },
         ],
         gold: [
-          'Gold Box contains a random amount of Blast points up to',
+          'Gold Box contains a random amount of Blast gold up to',
           'The box can be claimed once a day after completing all 3 tasks.',
           'If you did all 3 tasks but forgot to claim the Box, don’t worry! You can claim it any other day.',
           'Task “Mint at least 2500 USD+ on Blast” indicates the smallest token amount to be invested to complete the task ($2500). The task is considered completed if you mint USD+ during the time the task is active (24 hours).',

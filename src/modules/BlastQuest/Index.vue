@@ -30,9 +30,9 @@
                 class="stack"
                 style="--stacks: 3;"
               >
-                <span style="--index: 0;">{{ jackpotData?.amount }}</span>
-                <span style="--index: 1;">{{ jackpotData?.amount }}</span>
-                <span style="--index: 2;">{{ jackpotData?.amount }}</span>
+                <span style="--index: 0;">{{ jackpotData?.goldBlast }}</span>
+                <span style="--index: 1;">{{ jackpotData?.goldBlast }}</span>
+                <span style="--index: 2;">{{ jackpotData?.goldBlast }}</span>
               </div>
             </div>
             <BaseIcon
@@ -40,7 +40,7 @@
             />
           </div>
 
-          <p>Blast points</p>
+          <p>Blast GOLD</p>
         </div>
         <div class="blast-wrap__jackpot-user">
           <div class="blast-wrap__jackpot-user-points">
@@ -282,7 +282,7 @@
               </div>
               <template v-else>
                 <p>
-                  Up to {{ buildPointsRange(typeofBox.DIAMOND) }} points
+                  Up to {{ buildPointsRange(typeofBox.DIAMOND) }} GOLD BLAST
                 </p>
 
                 <QuestBox
@@ -490,6 +490,10 @@ export default {
         if (!this.jackpotData?.amount) return '0';
         const data = BOX_RANGES.find((_) => _.quest === questType);
         if (!data) return '0';
+
+        if (questType === TypeofQuest.DIAMOND) {
+          return `${new BN(data?.max).times(this.jackpotData?.goldBlast).toFixed(0)}`;
+        }
 
         return `${new BN(data?.max).times(this.jackpotData?.amount).toFixed(0)}`;
       };

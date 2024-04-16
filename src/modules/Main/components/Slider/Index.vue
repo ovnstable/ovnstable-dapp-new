@@ -40,7 +40,7 @@
             <div
               class="slider-info-blast-points"
             >
-              <p>BLAST POINTS:
+              <p>BLAST GOLD:
                 <span
                   v-if="!jackpotDataLoaded"
                   class="spinner-container"
@@ -48,7 +48,7 @@
                   <Spinner />
                 </span>
                 <span v-else>
-                  {{ jackpotData?.amount }}
+                  {{ jackpotData?.goldBlast }}
                 </span>
               </p>
             </div>

@@ -51,7 +51,9 @@
             v-if="!isShakeActive"
             class="box-wrap__modal-prize"
           >
-            {{ prizeValue }} POINTS <span class="point" /></div>
+            {{ prizeValue }}
+            {{ viewBox === questType.DIAMOND ? 'GOLD' : 'POINTS' }} <span class="point" />
+          </div>
         </div>
       </div>
     </Transition>
@@ -106,6 +108,7 @@ export default {
       isShakeActive: false,
       boxId: uniqueId(),
       BOX_TYPES,
+      questType: TypeofQuest,
     };
   },
   watch: {
