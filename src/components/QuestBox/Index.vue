@@ -6,19 +6,19 @@
       <div class="cube cube--top">
         <img
           alt="side"
-          :src="boxType(BOX_TYPES.TOP)"
+          :src="boxType(BOX_TYPES.TOP, false)"
         />
       </div>
       <div class="cube cube--left">
         <img
           alt="side"
-          :src="boxType(BOX_TYPES.LEFT)"
+          :src="boxType(BOX_TYPES.LEFT, false)"
         />
       </div>
       <div class="cube cube--right">
         <img
           alt="side"
-          :src="boxType(BOX_TYPES.RIGHT)"
+          :src="boxType(BOX_TYPES.RIGHT, false)"
         />
       </div>
       <div class="powerup" />
@@ -39,13 +39,13 @@
           <div class="hexagon" />
           <div class="cube cube--back" />
           <div class="cube cube--top">
-            <BaseIcon :name="boxType(BOX_TYPES.TOP)" />
+            <BaseIcon :name="boxType(BOX_TYPES.TOP, true)" />
           </div>
           <div class="cube cube--left">
-            <BaseIcon :name="boxType(BOX_TYPES.LEFT)" />
+            <BaseIcon :name="boxType(BOX_TYPES.LEFT, true)" />
           </div>
           <div class="cube cube--right">
-            <BaseIcon :name="boxType(BOX_TYPES.RIGHT)" />
+            <BaseIcon :name="boxType(BOX_TYPES.RIGHT, true)" />
           </div>
           <div
             v-if="!isShakeActive"
@@ -143,8 +143,12 @@ export default {
   // },
   computed: {
     boxType() {
-      return (side: BOX_TYPES) => {
+      return (side: BOX_TYPES, svg: boolean) => {
         if (typeof this.viewBox === 'undefined') return '';
+        if (svg && side === BOX_TYPES.LEFT) return `box-left-${this.viewBox}`;
+        if (svg && side === BOX_TYPES.TOP) return `box-top-${this.viewBox}`;
+        if (svg && side === BOX_TYPES.RIGHT) return `box-right-${this.viewBox}`;
+
         if (side === BOX_TYPES.TOP) {
           return getImageUrl(`assets/icons/blastQuest/box-top-${this.viewBox}.svg`);
         }
