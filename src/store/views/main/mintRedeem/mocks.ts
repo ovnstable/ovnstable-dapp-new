@@ -115,16 +115,16 @@ export const MINTREDEEM_SCHEME = {
       methodName: [mintRedeemTypes.MINT, mintRedeemTypes.REDEEM],
     },
     {
-      token0: chainContractsMap.linea.usdt,
-      token1: chainContractsMap.linea.usdtPlus.tokenPlus,
-      exchange: chainContractsMap.linea.usdtPlus.exchange,
-      methodName: [mintRedeemTypes.MINT, mintRedeemTypes.REDEEM],
-    },
-    {
       token0: chainContractsMap.linea.usdPlus.tokenPlus,
       token1: chainContractsMap.linea.usdPlus.wUsdPlus,
       exchange: chainContractsMap.linea.market,
       methodName: [mintRedeemTypes.WRAP, mintRedeemTypes.UNWRAP],
+    },
+    {
+      token0: chainContractsMap.linea.usdt,
+      token1: chainContractsMap.linea.usdtPlus.tokenPlus,
+      exchange: chainContractsMap.linea.usdtPlus.exchange,
+      methodName: [mintRedeemTypes.MINT, mintRedeemTypes.REDEEM],
     },
   ],
   // bsc
