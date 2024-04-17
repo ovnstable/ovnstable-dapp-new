@@ -41,7 +41,7 @@
               />
             </div>
 
-            <p>Blast GOLD</p>
+            <p>Blast Gold</p>
           </div>
           <div class="blast-wrap__jackpot-main-wrapper-divider" />
           <div class="blast-wrap__jackpot-main">

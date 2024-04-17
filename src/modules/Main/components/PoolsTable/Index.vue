@@ -399,6 +399,9 @@ export default {
     text-transform: uppercase;
     margin: 0 10px;
     transition: color .2s ease;
+    [data-theme="dark"] & {
+      color: var(--color-21);
+    }
   }
 
   &:hover {

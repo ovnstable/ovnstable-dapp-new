@@ -186,10 +186,6 @@ export default {
     fill: var(--color-3);
   }
 
-  @media (max-width: 640px) {
-    margin-top: 20px;
-  }
-
   @media (max-width: 768px) {
     width: calc(100vw - 40px);
     min-height: 50px;
@@ -200,6 +196,10 @@ export default {
     &:hover {
       background: var(--color-8);
     }
+  }
+  @media (max-width: 640px) {
+    margin-top: 20px;
+    background-color: var(--color-17);
   }
 }
 
