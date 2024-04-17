@@ -63,9 +63,9 @@
                   class="stack"
                   style="--stacks: 3;"
                 >
-                  <span style="--index: 0;">{{ jackpotData?.goldBlast }}</span>
-                  <span style="--index: 1;">{{ jackpotData?.goldBlast }}</span>
-                  <span style="--index: 2;">{{ jackpotData?.goldBlast }}</span>
+                  <span style="--index: 0;">{{ jackpotData?.amount }}</span>
+                  <span style="--index: 1;">{{ jackpotData?.amount }}</span>
+                  <span style="--index: 2;">{{ jackpotData?.amount }}</span>
                 </div>
               </div>
             </div>
