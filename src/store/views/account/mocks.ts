@@ -155,6 +155,10 @@ export const USER_BALANCES_SCHEME = {
       isOvnToken: true,
     },
     {
+      symbol: 'USDC.e',
+      contractName: 'usdcBridged',
+    },
+    {
       symbol: 'USDC',
       contractName: 'asset',
       isOvnToken: false,
