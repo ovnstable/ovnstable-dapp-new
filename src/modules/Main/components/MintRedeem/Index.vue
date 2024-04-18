@@ -198,6 +198,7 @@ export default {
   watch: {
     inputToken() {
       this.checkApprove(this);
+      this.previewUnwrap(this);
     },
     activeWrapTab() {
       if (this.inputToken?.symbol) {
@@ -618,11 +619,9 @@ export default {
         // if mint active, using 1st method, else 2nd
         const exchangeMethodName = this.isReverseArray
           ? pairData?.methodName[0] : pairData?.methodName[1];
-
         const swapSum = new BigNumber(this.inputToken.value)
           .times(10 ** this.inputToken.decimals)
           .toFixed(0);
-
         const mainValue = new BigNumber(this.inputToken.originalVal).gt(0)
           ? this.inputToken.originalVal : swapSum;
 
@@ -674,6 +673,43 @@ export default {
         this.closeWaitingModal();
         this.showErrorModalWithMsg({ errorType: 'approve', errorMsg: e });
       }
+    },
+    async previewUnwrap(self: any) {
+      if (mintRedeemTypes.WRAP && self.isWrapActive) {
+        const networkId = self.networkId as keyof typeof MINTREDEEM_SCHEME;
+        const pairData = MINTREDEEM_SCHEME[networkId]
+          .find((_) => {
+            const tokenAddress = self.isReverseArray
+              ? _.token1.toLowerCase() : _.token0.toLowerCase();
+            return tokenAddress === self.outputToken.address.toLowerCase();
+          });
+        let exchangeAddress = null;
+        if (pairData) exchangeAddress = pairData.exchange;
+        if (!exchangeAddress || pairData === undefined) return;
+        const exchangeContract = buildEvmContract(
+          ABI_Market,
+          self.evmSigner,
+          exchangeAddress,
+        );
+        const exchangeMethodName = this.isReverseArray
+          ? pairData?.methodName[0] : pairData?.methodName[1];
+        const methodName = exchangeMethodName === 'wrap' ? 'previewWrap' : 'previewUnwrap';
+
+        const wrapSum = new BigNumber(self.inputToken.value)
+          .times(10 ** self.inputToken.decimals)
+          .toFixed(0);
+        const rawValue = await exchangeContract[methodName](pairData.token0, wrapSum);
+        const adjustedValue = this.adjustScale(rawValue, self.inputToken.decimals);
+        this.outputToken.value = adjustedValue;
+      }
+    },
+    adjustScale(rawValue: any, decimals = 6) {
+      let valueStr = rawValue.toString();
+      while (valueStr.length <= decimals) {
+        valueStr = `0${valueStr}`;
+      }
+      const index = valueStr.length - decimals;
+      return `${valueStr.slice(0, index)}.${valueStr.slice(index)}`;
     },
   },
 };
