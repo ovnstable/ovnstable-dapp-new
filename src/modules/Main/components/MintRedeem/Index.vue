@@ -69,7 +69,7 @@
       </div>
       <div class="mintredeem-form__row-item">
         <h1>You {{ swapMsg }}</h1>
-        <span>${{ estimateResult }}</span>
+        <span>${{ estimateResultDisplay }}</span>
       </div>
       <div class="mintredeem-form__row-item">
         <h2>{{ inputToken?.symbol ? `1 ${inputToken.symbol} = 1 ${outputToken.symbol}` : 'Exchange rates'}}</h2>
@@ -171,6 +171,7 @@ export default {
       approveLoading: false,
       isApprovedToken: false,
       isLoading: false,
+      updatingWrapUnwrapAmount: false,
       currentStage: mintRedeemStep.START,
 
       mintTabs: [
@@ -198,7 +199,12 @@ export default {
   watch: {
     inputToken() {
       this.checkApprove(this);
-      this.previewUnwrap(this);
+    },
+    'inputToken.value': {
+      async handler() {
+        await this.previewUnwrap(this);
+        this.updatingWrapUnwrapAmount = false;
+      },
     },
     activeWrapTab() {
       if (this.inputToken?.symbol) {
@@ -242,10 +248,16 @@ export default {
     },
 
     estimateResult() {
-      if (!this.inputToken.symbol || !this.inputToken.value) return '0.00';
+      if ((!this.updatingWrapUnwrapAmount && this.activeWrapTab > 0)
+        || !this.inputToken.symbol
+        || !this.inputToken.value) return '0.00';
       return new BigNumber(this.inputToken.value).times(0.9996).toFixed(6);
     },
-
+    estimateResultDisplay() {
+      if (!this.inputToken.symbol
+        || !this.inputToken.value) return '0.00';
+      return new BigNumber(this.inputToken.value).times(0.9996).toFixed(6);
+    },
     swapMsg() {
       if (this.activeMintTab === mintWrapStatus.MINT) return 'mint';
       if (this.activeMintTab === mintWrapStatus.REDEEM) return 'redeem';
@@ -701,7 +713,9 @@ export default {
         const rawValue = await exchangeContract[methodName](pairData.token0, wrapSum);
         const adjustedValue = self.adjustScale(rawValue, self.inputToken.decimals);
         self.outputToken.value = adjustedValue;
+        self.updatingWrapUnwrapAmount = true;
       }
+      self.updatingWrapUnwrapAmount = true;
     },
     adjustScale(rawValue: any, decimals = 6) {
       let valueStr = rawValue.toString();
