@@ -675,7 +675,7 @@ export default {
       }
     },
     async previewUnwrap(self: any) {
-      if (mintRedeemTypes.WRAP && self.isWrapActive) {
+      if (mintRedeemTypes.WRAP && self.activeWrapTab > 0) {
         const networkId = self.networkId as keyof typeof MINTREDEEM_SCHEME;
         const pairData = MINTREDEEM_SCHEME[networkId]
           .find((_) => {
