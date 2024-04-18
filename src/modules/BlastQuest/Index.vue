@@ -8,39 +8,71 @@
   <div v-else>
     <div class="page-wrap">
       <div class="blast-wrap__jackpot">
-        <div class="blast-wrap__jackpot-main">
-          <h1>
-            EVENT JACKPOT:
-          </h1>
-          <div
-            class="spinner-container"
-            v-if="!jackpotDataLoaded"
-          >
-            <Spinner />
+        <div class="blast-wrap__jackpot-main-wrapper">
+          <div class="blast-wrap__jackpot-main">
+            <h1>
+              EVENT JACKPOT VAULT:
+            </h1>
+            <div
+              class="spinner-container"
+              v-if="!jackpotDataLoaded"
+            >
+              <Spinner />
+            </div>
+            <div
+              v-else
+              class="blast-wrap__jackpot-main-points"
+            >
+              <BaseIcon
+                name="blastSidebar"
+              />
+              <div class="glitch-wrapper glitch-wrapper--title">
+                <div
+                  class="stack"
+                  style="--stacks: 3;"
+                >
+                  <span style="--index: 0;">{{ jackpotData?.goldBlast }}</span>
+                  <span style="--index: 1;">{{ jackpotData?.goldBlast }}</span>
+                  <span style="--index: 2;">{{ jackpotData?.goldBlast }}</span>
+                </div>
+              </div>
+              <BaseIcon
+                name="blastSidebar"
+              />
+            </div>
+
+            <p>Blast Gold</p>
           </div>
-          <div
-            v-else
-            class="blast-wrap__jackpot-main-points"
-          >
-            <BaseIcon
-              name="blastSidebar"
-            />
-            <div class="glitch-wrapper glitch-wrapper--title">
-              <div
-                class="stack"
-                style="--stacks: 3;"
-              >
-                <span style="--index: 0;">{{ jackpotData?.goldBlast }}</span>
-                <span style="--index: 1;">{{ jackpotData?.goldBlast }}</span>
-                <span style="--index: 2;">{{ jackpotData?.goldBlast }}</span>
+          <div class="blast-wrap__jackpot-main-wrapper-divider" />
+          <div class="blast-wrap__jackpot-main">
+            <h1>
+              DAILY LOOT BOXES VAULT:
+            </h1>
+            <div
+              class="spinner-container"
+              v-if="!jackpotDataLoaded"
+            >
+              <Spinner />
+            </div>
+            <div
+              v-else
+              class="blast-wrap__jackpot-main-points"
+            >
+              <div class="glitch-wrapper glitch-wrapper--title">
+                <div
+                  class="stack"
+                  style="--stacks: 3;"
+                >
+                  <span style="--index: 0;">{{ jackpotData?.amount }}</span>
+                  <span style="--index: 1;">{{ jackpotData?.amount }}</span>
+                  <span style="--index: 2;">{{ jackpotData?.amount }}</span>
+                </div>
               </div>
             </div>
-            <BaseIcon
-              name="blastSidebar"
-            />
+
+            <p>Blast Points</p>
           </div>
 
-          <p>Blast GOLD</p>
         </div>
         <div class="blast-wrap__jackpot-user">
           <div class="blast-wrap__jackpot-user-points">
@@ -255,11 +287,13 @@
           <p>WEEKLY LOOT BOX WILL UPDATE IN: {{ timeToWeeklyUpdate }}</p>
         </div>
         <p class="blast-wrap__quests-jackpot-descr">
-          Once a week you will be able to claim a Bonus Box.
-          To do so, you need to complete a total of 15 tasks in a week.
-          After that the Box will be yours to claim on Sunday.
-          Your Bonus box will contain a random amount of Blast points equal to 0.01-50% of
-          <span>Jackpot!</span></p>
+          Once a week you will be able to claim a Diamond Box.
+          Having received Diamond Box you can try your luck and win the
+          <span>Blast Gold Jackpot.</span>
+          To do so, you need to complete a total of 15 tasks in a week but no more than 3 per day.
+          Progress through completing 15 tasks of weekly quest and you will receive a
+          Diamond Box that opens on Sunday,
+          it will contain a random amount of Blast Gold of Jackpot!</p>
         <div class="blast-wrap__quests-daily-tasks">
           <img
             alt="navbar"
@@ -734,20 +768,37 @@ export default {
   justify-content: space-between;
   margin-bottom: 24px;
 }
-
-.blast-wrap__jackpot-main {
-  width: 35%;
+.blast-wrap__jackpot-main-wrapper-divider {
+  height: 100%;
+  border: 1px solid var(--color-4);
+}
+.blast-wrap__jackpot-main-wrapper {
+  width: 70%;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  flex-direction: row;
+  justify-content: space-between;
   align-items: center;
   gap: 10px;
   background-color: var(--color-3);
   font-weight: 700;
   border-radius: 10px;
-  padding: 24px;
+  padding: 22px 12px;
   border: 1px solid var(--color-1);
   box-shadow: 0px 1px 0px 0px var(--color-1);
+  [data-theme="dark"] & {
+    background-color: var(--color-7);
+  }
+}
+
+.blast-wrap__jackpot-main {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  border-radius: 10px;
 
   h1, p {
     font-weight: 700;
@@ -1284,6 +1335,13 @@ export default {
 @media (max-width: 1024px) {
   .page-wrap {
     margin-bottom: 80px;
+  }
+  .blast-wrap__jackpot {
+    flex-direction: column;
+  }
+  .blast-wrap__jackpot-main-wrapper,
+  .blast-wrap__jackpot-user {
+    width: auto;
   }
 }
 

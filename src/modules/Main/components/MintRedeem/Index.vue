@@ -72,7 +72,7 @@
         <span>${{ estimateResultDisplay }}</span>
       </div>
       <div class="mintredeem-form__row-item">
-        <h2>{{ inputToken?.symbol ? `1 ${inputToken.symbol} = 1 ${outputToken.symbol}` : 'Exchange rates'}}</h2>
+        <h2>{{ inputToken?.symbol ? `${inputIndex} ${inputToken.symbol} = ${outputIndex} ${outputToken.symbol}` : 'Exchange rates'}}</h2>
       </div>
     </div>
 
@@ -237,6 +237,12 @@ export default {
     ...mapGetters('web3', ['contracts', 'evmProvider', 'evmSigner']),
     ...mapState('odosData', ['tokensContractMap']),
 
+    inputIndex() {
+      return '1';
+    },
+    outputIndex() {
+      return '1';
+    },
     isMintActive() {
       return this.activeMintTab === mintWrapStatus.MINT;
     },

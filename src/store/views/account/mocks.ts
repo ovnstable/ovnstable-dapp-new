@@ -41,6 +41,7 @@ const chains_56_324_137 = [
   {
     symbol: 'USDC',
     contractName: 'usdcBridged',
+    isOvnToken: false,
   },
 ];
 
@@ -153,6 +154,11 @@ export const USER_BALANCES_SCHEME = {
       symbol: 'USDT+',
       contractName: 'usdtPlus',
       isOvnToken: true,
+    },
+    {
+      symbol: 'USDC.e',
+      contractName: 'usdcBridged',
+      isOvnToken: false,
     },
     {
       symbol: 'USDC',
