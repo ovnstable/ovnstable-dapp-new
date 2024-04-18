@@ -171,6 +171,7 @@ export default {
       approveLoading: false,
       isApprovedToken: false,
       isLoading: false,
+      wrapVal: 1,
       updatingWrapUnwrapAmount: false,
       currentStage: mintRedeemStep.START,
 
@@ -199,6 +200,8 @@ export default {
   watch: {
     inputToken() {
       this.checkApprove(this);
+
+      if (this.activeWrapTab > 0) this.previewUnwrap(this);
     },
     'inputToken.value': {
       async handler() {
@@ -241,6 +244,7 @@ export default {
       return '1';
     },
     outputIndex() {
+      if (this.activeWrapTab > 0) return this.wrapVal;
       return '1';
     },
     isMintActive() {
@@ -693,13 +697,13 @@ export default {
       }
     },
     async previewUnwrap(self: any) {
-      if (mintRedeemTypes.WRAP && self.activeWrapTab > 0) {
+      if (self.activeWrapTab > 0) {
         const networkId = self.networkId as keyof typeof MINTREDEEM_SCHEME;
         const pairData = MINTREDEEM_SCHEME[networkId]
           .find((_) => {
             const tokenAddress = self.isReverseArray
               ? _.token1.toLowerCase() : _.token0.toLowerCase();
-            return tokenAddress === self.outputToken.address.toLowerCase();
+            return tokenAddress === self.outputToken?.address?.toLowerCase();
           });
         let exchangeAddress = null;
         if (pairData) exchangeAddress = pairData.exchange;
@@ -713,10 +717,20 @@ export default {
           ? pairData?.methodName[0] : pairData?.methodName[1];
         const methodName = exchangeMethodName === 'wrap' ? 'previewWrap' : 'previewUnwrap';
 
+        const wrapSumPerUsd = new BigNumber(1)
+          .times(10 ** 2)
+          .toFixed(0);
+        const rawValuePerUsd = await exchangeContract[methodName](pairData.token0, wrapSumPerUsd);
+
+        self.wrapVal = new BigNumber(rawValuePerUsd).div(100).toFixed(2);
+
+        if (!self.inputToken?.value) return;
+
         const wrapSum = new BigNumber(self.inputToken.value)
           .times(10 ** self.inputToken.decimals)
           .toFixed(0);
         const rawValue = await exchangeContract[methodName](pairData.token0, wrapSum);
+
         const adjustedValue = self.adjustScale(rawValue, self.inputToken.decimals);
         self.outputToken.value = adjustedValue;
         self.updatingWrapUnwrapAmount = true;
