@@ -69,7 +69,7 @@
       </div>
       <div class="mintredeem-form__row-item">
         <h1>You {{ swapMsg }}</h1>
-        <span>${{ estimateResult }}</span>
+        <span>${{ estimateResultDisplay }}</span>
       </div>
       <div class="mintredeem-form__row-item">
         <h2>{{ inputToken?.symbol ? `${inputIndex} ${inputToken.symbol} = ${outputIndex} ${outputToken.symbol}` : 'Exchange rates'}}</h2>
@@ -171,6 +171,7 @@ export default {
       approveLoading: false,
       isApprovedToken: false,
       isLoading: false,
+      updatingWrapUnwrapAmount: false,
       currentStage: mintRedeemStep.START,
 
       mintTabs: [
@@ -198,6 +199,12 @@ export default {
   watch: {
     inputToken() {
       this.checkApprove(this);
+    },
+    'inputToken.value': {
+      async handler() {
+        await this.previewUnwrap(this);
+        this.updatingWrapUnwrapAmount = false;
+      },
     },
     activeWrapTab() {
       if (this.inputToken?.symbol) {
@@ -247,10 +254,16 @@ export default {
     },
 
     estimateResult() {
-      if (!this.inputToken.symbol || !this.inputToken.value) return '0.00';
+      if ((!this.updatingWrapUnwrapAmount && this.activeWrapTab > 0)
+        || !this.inputToken.symbol
+        || !this.inputToken.value) return '0.00';
       return new BigNumber(this.inputToken.value).times(0.9996).toFixed(6);
     },
-
+    estimateResultDisplay() {
+      if (!this.inputToken.symbol
+        || !this.inputToken.value) return '0.00';
+      return new BigNumber(this.inputToken.value).times(0.9996).toFixed(6);
+    },
     swapMsg() {
       if (this.activeMintTab === mintWrapStatus.MINT) return 'mint';
       if (this.activeMintTab === mintWrapStatus.REDEEM) return 'redeem';
@@ -624,11 +637,9 @@ export default {
         // if mint active, using 1st method, else 2nd
         const exchangeMethodName = this.isReverseArray
           ? pairData?.methodName[0] : pairData?.methodName[1];
-
         const swapSum = new BigNumber(this.inputToken.value)
           .times(10 ** this.inputToken.decimals)
           .toFixed(0);
-
         const mainValue = new BigNumber(this.inputToken.originalVal).gt(0)
           ? this.inputToken.originalVal : swapSum;
 
@@ -680,6 +691,45 @@ export default {
         this.closeWaitingModal();
         this.showErrorModalWithMsg({ errorType: 'approve', errorMsg: e });
       }
+    },
+    async previewUnwrap(self: any) {
+      if (mintRedeemTypes.WRAP && self.activeWrapTab > 0) {
+        const networkId = self.networkId as keyof typeof MINTREDEEM_SCHEME;
+        const pairData = MINTREDEEM_SCHEME[networkId]
+          .find((_) => {
+            const tokenAddress = self.isReverseArray
+              ? _.token1.toLowerCase() : _.token0.toLowerCase();
+            return tokenAddress === self.outputToken.address.toLowerCase();
+          });
+        let exchangeAddress = null;
+        if (pairData) exchangeAddress = pairData.exchange;
+        if (!exchangeAddress || pairData === undefined) return;
+        const exchangeContract = buildEvmContract(
+          ABI_Market,
+          self.evmSigner,
+          exchangeAddress,
+        );
+        const exchangeMethodName = self.isReverseArray
+          ? pairData?.methodName[0] : pairData?.methodName[1];
+        const methodName = exchangeMethodName === 'wrap' ? 'previewWrap' : 'previewUnwrap';
+
+        const wrapSum = new BigNumber(self.inputToken.value)
+          .times(10 ** self.inputToken.decimals)
+          .toFixed(0);
+        const rawValue = await exchangeContract[methodName](pairData.token0, wrapSum);
+        const adjustedValue = self.adjustScale(rawValue, self.inputToken.decimals);
+        self.outputToken.value = adjustedValue;
+        self.updatingWrapUnwrapAmount = true;
+      }
+      self.updatingWrapUnwrapAmount = true;
+    },
+    adjustScale(rawValue: any, decimals = 6) {
+      let valueStr = rawValue.toString();
+      while (valueStr.length <= decimals) {
+        valueStr = `0${valueStr}`;
+      }
+      const index = valueStr.length - decimals;
+      return `${valueStr.slice(0, index)}.${valueStr.slice(index)}`;
     },
   },
 };
