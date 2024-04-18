@@ -691,7 +691,7 @@ export default {
           self.evmSigner,
           exchangeAddress,
         );
-        const exchangeMethodName = this.isReverseArray
+        const exchangeMethodName = self.isReverseArray
           ? pairData?.methodName[0] : pairData?.methodName[1];
         const methodName = exchangeMethodName === 'wrap' ? 'previewWrap' : 'previewUnwrap';
 
@@ -699,8 +699,8 @@ export default {
           .times(10 ** self.inputToken.decimals)
           .toFixed(0);
         const rawValue = await exchangeContract[methodName](pairData.token0, wrapSum);
-        const adjustedValue = this.adjustScale(rawValue, self.inputToken.decimals);
-        this.outputToken.value = adjustedValue;
+        const adjustedValue = self.adjustScale(rawValue, self.inputToken.decimals);
+        self.outputToken.value = adjustedValue;
       }
     },
     adjustScale(rawValue: any, decimals = 6) {
