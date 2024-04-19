@@ -81,7 +81,7 @@
             v-if="!deviceSize.isDesktop && (!walletConnected || !account)"
             class="app-header__gear"
             alt="navbar"
-            :src="getImageUrl(`assets/icons/common/CommonGear.svg`)"
+            :src="getImageUrl(`assets/icons/common/${light ? 'CommonGearDark.svg' : 'CommonGear.svg'}`)"
             @click="showMobMenu = !showMobMenu"
             @keypress="showMobMenu = !showMobMenu"
           />
@@ -112,7 +112,7 @@
           <ButtonComponent
             v-else-if="!walletConnected"
             class="app-header__connect"
-            :style="{ 'margin-left': (!walletConnected || !account) ? '' : 'auto' }"
+            :style="{ 'margin-left': (!walletConnected || !account) ? '0' : 'auto' }"
             @on-click="connectWallet"
           >
             CONNECT
@@ -126,7 +126,7 @@
               v-if="!deviceSize.isDesktop"
               class="app-header__gear"
               alt="navbar"
-              :src="getImageUrl(`assets/icons/common/CommonGear.svg`)"
+              :src="getImageUrl(`assets/icons/common/${!light ? 'CommonGearDark.svg' : 'CommonGear.svg'}`)"
               @click="showMobMenu = !showMobMenu"
               @keypress="showMobMenu = !showMobMenu"
             />
@@ -562,8 +562,6 @@ export default {
   [data-theme="dark"] & {
     color: var(--color-4);
   }
-  fill: var(--color-17);
-  stroke: var(--color-17);
 }
 
 .app-header__connect {
