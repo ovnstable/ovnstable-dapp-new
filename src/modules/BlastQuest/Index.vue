@@ -102,12 +102,16 @@
               </p>
             </div>
             <div class="blast-wrap__jackpot-user__data-divider" />
-            <div class="blast-wrap__jackpot-user__data-i">
+            <div class="blast-wrap__jackpot-user__data-i min-width">
               <h3>
-                Monthly free drops:
+                Airdrops:
               </h3>
-              <p>
-                0
+              <p
+                :class="{
+                  gold: userData?.totallyAirdropGolds !== 0,
+                }"
+              >
+                {{ userData ? userData?.totallyAirdropGolds : 0 }} golds
               </p>
             </div>
             <div class="blast-wrap__jackpot-user__data-divider" />
@@ -465,6 +469,7 @@ export default {
         silverBoxAvailable: 0,
         goldBoxAvailable: 0,
         diamondBoxAvailable: 0,
+        totallyAirdropGolds: 0,
       },
       activeLevel: 0,
       dailyPrize: '',
@@ -868,9 +873,13 @@ export default {
 .blast-wrap__jackpot-user__data-i {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
   text-align: center;
   width: 100%;
+
+  &.min-width {
+    min-width: 150px;
+  }
 
   h3 {
     font-weight: 500;
@@ -1390,4 +1399,21 @@ export default {
   color: var(--color-1);
 }
 
+.gold {
+  position: relative;
+  width: fit-content;
+  margin: 0 auto;
+
+  &::after {
+    content: "";
+    right: -10px;
+    top: -8px;
+    background-color: #fcfc06;
+    width: 8px;
+    height: 8px;
+    border: 1px solid black;
+    border-radius: 50%;
+    position: absolute;
+  }
+}
 </style>
