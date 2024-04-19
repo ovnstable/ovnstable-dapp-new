@@ -52,6 +52,7 @@
           <router-link
             to="/"
             class="app-header__content__logo"
+            :style="{ 'margin-right': (!walletConnected || !account) ? 'auto' : '' }"
             v-if="!account && !deviceSize.isDesktop"
           >
             <BaseIcon
@@ -76,10 +77,23 @@
             v-else-if="walletConnected && !deviceSize.isMobile"
             class="app-header__balances"
           />
+          <img
+            v-if="!deviceSize.isDesktop && (!walletConnected || !account)"
+            class="app-header__gear"
+            alt="navbar"
+            :src="getImageUrl(`assets/icons/common/${light ? 'CommonGearDark.svg' : 'CommonGear.svg'}`)"
+            @click="showMobMenu = !showMobMenu"
+            @keypress="showMobMenu = !showMobMenu"
+          />
+          <MobileMenu
+            :is-show="showMobMenu"
+            @close="showMobMenu = false"
+          />
           <div
             v-if="account && accountRenderLoading"
             class="lineLoader"
           />
+
           <ButtonComponent
             v-else-if="walletConnected && account && !accountRenderLoading"
             class="app-header__content-account"
@@ -98,10 +112,12 @@
           <ButtonComponent
             v-else-if="!walletConnected"
             class="app-header__connect"
+            :style="{ 'margin-left': (!walletConnected || !account) ? '0' : 'auto' }"
             @on-click="connectWallet"
           >
             CONNECT
           </ButtonComponent>
+
           <div
             v-if="walletConnected && account"
             class="app-header__network-wrap"
@@ -110,7 +126,7 @@
               v-if="!deviceSize.isDesktop"
               class="app-header__gear"
               alt="navbar"
-              :src="getImageUrl(`assets/icons/common/CommonGear.svg`)"
+              :src="getImageUrl(`assets/icons/common/${!light ? 'CommonGearDark.svg' : 'CommonGear.svg'}`)"
               @click="showMobMenu = !showMobMenu"
               @keypress="showMobMenu = !showMobMenu"
             />
@@ -248,6 +264,7 @@ export default {
     ...mapGetters('network', ['networkId', 'isShowDeprecated']),
     ...mapGetters('odosData', ['allTokensList']),
     ...mapGetters('web3', ['evmProvider', 'provider']),
+    ...mapGetters('theme', ['light']),
 
     balancesLoading() {
       if (this.isTokensLoading) return true;
@@ -541,6 +558,9 @@ export default {
 
   &:hover {
     opacity: .8;
+  }
+  [data-theme="dark"] & {
+    color: var(--color-4);
   }
 }
 

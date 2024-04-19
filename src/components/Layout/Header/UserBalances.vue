@@ -185,6 +185,9 @@ export default {
   svg path {
     fill: var(--color-3);
   }
+  [data-theme="dark"] & {
+    background-color: var(--color-17) !important;
+  }
 
   @media (max-width: 768px) {
     width: calc(100vw - 40px);
@@ -199,7 +202,11 @@ export default {
   }
   @media (max-width: 640px) {
     margin-top: 20px;
-    background-color: var(--color-17);
+    background-color: var(--color-4);
+    [data-theme="dark"] & {
+      background-color: var(--color-17);
+    }
+
   }
 }
 
