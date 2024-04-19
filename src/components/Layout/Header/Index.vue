@@ -110,7 +110,7 @@
               v-if="!deviceSize.isDesktop"
               class="app-header__gear"
               alt="navbar"
-              :src="getImageUrl(`assets/icons/common/CommonGear.svg`)"
+              :src="getImageUrl(`assets/icons/common/${!light ? 'CommonGear.svg' : 'CommonGearDark.svg'}`)"
               @click="showMobMenu = !showMobMenu"
               @keypress="showMobMenu = !showMobMenu"
             />
@@ -248,6 +248,7 @@ export default {
     ...mapGetters('network', ['networkId', 'isShowDeprecated']),
     ...mapGetters('odosData', ['allTokensList']),
     ...mapGetters('web3', ['evmProvider', 'provider']),
+    ...mapGetters('theme', ['light']),
 
     balancesLoading() {
       if (this.isTokensLoading) return true;
@@ -541,6 +542,9 @@ export default {
 
   &:hover {
     opacity: .8;
+  }
+  [data-theme="dark"] & {
+    color: var(--color-4);
   }
 }
 
