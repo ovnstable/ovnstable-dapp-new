@@ -290,7 +290,7 @@ export default {
     color: var(--color-18);
     svg {
       fill: var(--color-4);
-      stroke: var(--color-4);
+      // stroke: var(--color-4);
     }
   }
 }
