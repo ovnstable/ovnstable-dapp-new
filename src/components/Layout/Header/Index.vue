@@ -52,6 +52,7 @@
           <router-link
             to="/"
             class="app-header__content__logo"
+            :style="{ 'margin-right': (!walletConnected || !account) ? 'auto' : '' }"
             v-if="!account && !deviceSize.isDesktop"
           >
             <BaseIcon
@@ -76,10 +77,23 @@
             v-else-if="walletConnected && !deviceSize.isMobile"
             class="app-header__balances"
           />
+          <img
+            v-if="!deviceSize.isDesktop && (!walletConnected || !account)"
+            class="app-header__gear"
+            alt="navbar"
+            :src="getImageUrl(`assets/icons/common/CommonGear.svg`)"
+            @click="showMobMenu = !showMobMenu"
+            @keypress="showMobMenu = !showMobMenu"
+          />
+          <MobileMenu
+            :is-show="showMobMenu"
+            @close="showMobMenu = false"
+          />
           <div
             v-if="account && accountRenderLoading"
             class="lineLoader"
           />
+
           <ButtonComponent
             v-else-if="walletConnected && account && !accountRenderLoading"
             class="app-header__content-account"
@@ -98,10 +112,12 @@
           <ButtonComponent
             v-else-if="!walletConnected"
             class="app-header__connect"
+            :style="{ 'margin-left': (!walletConnected || !account) ? '' : 'auto' }"
             @on-click="connectWallet"
           >
             CONNECT
           </ButtonComponent>
+
           <div
             v-if="walletConnected && account"
             class="app-header__network-wrap"
@@ -110,7 +126,7 @@
               v-if="!deviceSize.isDesktop"
               class="app-header__gear"
               alt="navbar"
-              :src="getImageUrl(`assets/icons/common/${!light ? 'CommonGear.svg' : 'CommonGearDark.svg'}`)"
+              :src="getImageUrl(`assets/icons/common/CommonGear.svg`)"
               @click="showMobMenu = !showMobMenu"
               @keypress="showMobMenu = !showMobMenu"
             />
@@ -546,6 +562,8 @@ export default {
   [data-theme="dark"] & {
     color: var(--color-4);
   }
+  fill: var(--color-17);
+  stroke: var(--color-17);
 }
 
 .app-header__connect {
