@@ -8,9 +8,13 @@
       :key="item.icon"
       :to="item.link"
     >
-      <BaseIcon
-        :name="item.icon"
-      />
+      <div class="footer-mobile-descr">
+        <BaseIcon
+          :name="item.icon"
+        />
+        <p>{{item.descr}}</p>
+      </div>
+
     </router-link>
   </div>
 </template>
@@ -29,22 +33,27 @@ export default {
         {
           icon: 'FooterNotify',
           link: '/notify',
+          descr: 'NOTIFICATIONS',
         },
         {
           icon: 'FooterOvn',
           link: '/insurance',
+          descr: 'OVN & INS',
         },
         {
           icon: 'FooterHome',
           link: '/',
+          descr: 'HOMEPAGE',
         },
         {
           icon: 'FooterPlus',
           link: '/market/usd',
+          descr: 'MONEY MARKETS',
         },
         {
           icon: 'FooterSettings',
           link: '/dashboard',
+          descr: 'DASHBOARD',
         },
       ],
     };
@@ -86,6 +95,9 @@ export default {
   }
 
   &.active-link {
+    p {
+      color: var(--color-3);
+    }
     svg {
       width: 25px;
       height: 25px;
@@ -94,6 +106,10 @@ export default {
     svg * {
       fill: var(--color-3);
       stroke: var(--color-3);
+      [data-theme="dark"] & {
+        fill: var(--color-17);
+        stroke: var(--color-17);
+      }
     }
 
     &:nth-child(2) {
@@ -122,6 +138,20 @@ export default {
     svg * {
       fill: var(--color-3);
       stroke: var(--color-3);
+    }
+  }
+}
+
+.footer-mobile-descr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  p {
+    font-size: 8px;
+    color: var(--color-7);
+    [data-theme="dark"] & {
+      color: var(--color-18);
     }
   }
 }

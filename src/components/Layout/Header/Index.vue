@@ -542,10 +542,6 @@ export default {
   &:hover {
     opacity: .8;
   }
-  // [data-theme="dark"] & {
-  //   fill: var(--color-4);
-  //   stroke: var(--color-4);
-  // }
 }
 
 .app-header__connect {
