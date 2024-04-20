@@ -181,6 +181,7 @@
               full
               :disabled="isDisabledBtn(typeofBox.BRONZE)"
               v-if="isDisabledBtn(typeofBox.BRONZE)"
+              class="blast-wrap__boxes-col-btn"
             >
               DO TASKS TO GET LOOTBOX
             </ButtonComponent>
@@ -196,6 +197,7 @@
             <ButtonComponent
               v-else
               loading
+              class="blast-wrap__boxes-col-btn"
             >
               Loading
             </ButtonComponent>
@@ -241,6 +243,7 @@
 
             <ButtonComponent
               full
+              class="blast-wrap__boxes-col-btn"
               :disabled="isDisabledBtn(typeofBox.SILVER)"
               v-if="isDisabledBtn(typeofBox.SILVER)"
             >
@@ -258,6 +261,7 @@
             <ButtonComponent
               v-else
               loading
+              class="blast-wrap__boxes-col-btn"
             >
               Loading
             </ButtonComponent>
@@ -305,6 +309,7 @@
               full
               :disabled="isDisabledBtn(typeofBox.GOLD)"
               v-if="isDisabledBtn(typeofBox.GOLD)"
+              class="blast-wrap__boxes-col-btn"
             >
               DO TASKS TO GET LOOTBOX
             </ButtonComponent>
@@ -320,6 +325,7 @@
             <ButtonComponent
               v-else
               loading
+              class="blast-wrap__boxes-col-btn"
             >
               Loading
             </ButtonComponent>
@@ -377,6 +383,7 @@
               full
               :disabled="isDisabledBtn(typeofBox.DIAMOND)"
               v-if="isDisabledBtn(typeofBox.DIAMOND)"
+              class="blast-wrap__boxes-col-btn"
             >
               DO TASKS TO GET LOOTBOX
             </ButtonComponent>
@@ -390,6 +397,7 @@
             <ButtonComponent
               v-else
               loading
+              class="blast-wrap__boxes-col-btn"
             >
               Loading
             </ButtonComponent>
