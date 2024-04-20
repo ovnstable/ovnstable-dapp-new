@@ -5,6 +5,7 @@
         <div class="pools-header__item">Place</div>
         <div class="pools-header__item">Address</div>
         <div class="pools-header__item">Blast Points</div>
+        <div class="pools-header__item">Blast Gold</div>
         <div class="pools-header__item">Amount of Jackpot, %</div>
       </div>
 
@@ -23,6 +24,9 @@
             </div>
             <div>
               {{ user.claimed }}
+            </div>
+            <div>
+              {{ user.claimedGolds }}
             </div>
             <div>
               {{ getUserPart(user.claimed) }} %
