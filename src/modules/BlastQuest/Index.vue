@@ -179,11 +179,25 @@
 
             <ButtonComponent
               full
+              :disabled="isDisabledBtn(typeofBox.BRONZE)"
+              v-if="isDisabledBtn(typeofBox.BRONZE)"
+            >
+              DO TASKS TO GET LOOTBOX
+            </ButtonComponent>
+            <ButtonComponent
+              full
               @on-click="triggerBoxQuest(typeofBox.BRONZE)"
               :disabled="isDisabledBtn(typeofBox.BRONZE)"
               class="blast-wrap__boxes-col-btn"
+              v-else-if="!claimLoading || isDisabledBtn(typeofBox.BRONZE)"
             >
               {{ isDisabledBtn(typeofBox.BRONZE) ? 'DO TASKS TO GET LOOTBOX' : `CLAIM (${userData.bronzeBoxAvailable} box)` }}
+            </ButtonComponent>
+            <ButtonComponent
+              v-else
+              loading
+            >
+              Loading
             </ButtonComponent>
           </div>
           <div
@@ -227,11 +241,25 @@
 
             <ButtonComponent
               full
+              :disabled="isDisabledBtn(typeofBox.SILVER)"
+              v-if="isDisabledBtn(typeofBox.SILVER)"
+            >
+              DO TASKS TO GET LOOTBOX
+            </ButtonComponent>
+            <ButtonComponent
+              full
               @on-click="triggerBoxQuest(typeofBox.SILVER)"
               :disabled="isDisabledBtn(typeofBox.SILVER)"
               class="blast-wrap__boxes-col-btn"
+              v-else-if="!claimLoading"
             >
               {{ isDisabledBtn(typeofBox.SILVER) ? 'DO TASKS TO GET LOOTBOX' : `CLAIM (${userData.silverBoxAvailable} box)` }}
+            </ButtonComponent>
+            <ButtonComponent
+              v-else
+              loading
+            >
+              Loading
             </ButtonComponent>
           </div>
           <div
@@ -275,11 +303,25 @@
 
             <ButtonComponent
               full
+              :disabled="isDisabledBtn(typeofBox.GOLD)"
+              v-if="isDisabledBtn(typeofBox.GOLD)"
+            >
+              DO TASKS TO GET LOOTBOX
+            </ButtonComponent>
+            <ButtonComponent
+              full
               @on-click="triggerBoxQuest(typeofBox.GOLD)"
               :disabled="isDisabledBtn(typeofBox.GOLD)"
               class="blast-wrap__boxes-col-btn"
+              v-else-if="!claimLoading"
             >
               {{ isDisabledBtn(typeofBox.GOLD) ? 'DO TASKS TO GET LOOTBOX' : `CLAIM (${userData.goldBoxAvailable} box)` }}
+            </ButtonComponent>
+            <ButtonComponent
+              v-else
+              loading
+            >
+              Loading
             </ButtonComponent>
           </div>
         </div>
@@ -333,11 +375,23 @@
             </div>
             <ButtonComponent
               full
-              @on-click="triggerBoxQuest(typeofBox.DIAMOND)"
               :disabled="isDisabledBtn(typeofBox.DIAMOND)"
-              class="blast-wrap__boxes-col-btn"
+              v-if="isDisabledBtn(typeofBox.DIAMOND)"
             >
-              {{ isDisabledBtn(typeofBox.DIAMOND) ? 'DO TASKS TO GET LOOTBOX' : `CLAIM (${userData.diamondBoxAvailable} box)` }}
+              DO TASKS TO GET LOOTBOX
+            </ButtonComponent>
+            <ButtonComponent
+              @on-click="triggerBoxQuest(typeofBox.DIAMOND)"
+              class="blast-wrap__boxes-col-btn"
+              v-else-if="!claimLoading"
+            >
+              {{ `CLAIM (${userData.diamondBoxAvailable} box)` }}
+            </ButtonComponent>
+            <ButtonComponent
+              v-else
+              loading
+            >
+              Loading
             </ButtonComponent>
           </div>
           <div class="blast-wrap__quests-task-slider">
@@ -477,6 +531,7 @@ export default {
       levelQuestList: [5, 30, 50, 100, 250],
       tasksData: this.createTasks(5),
       usersDashboardList: [],
+      claimLoading: false,
     };
   },
   watch: {
@@ -688,38 +743,46 @@ export default {
       this.updateUserQuestData(this.account);
     },
     async triggerBoxQuest(boxType: TypeofQuest) {
-      const nonce = getRandomString(24);
-      const sign: TSignedMessage | null = await this.signEvmMessage(
-        `Claim blast points on Overnight.fi, nonce: ${nonce}`,
-        nonce,
-      );
+      try {
+        const nonce = getRandomString(24);
+        this.claimLoading = true;
 
-      const triggerClaim = await axios.post(`${OVN_QUESTS_API}/blast/claim`, {
-        address: this.account,
-        message: sign?.message,
-        sign: sign?.signature,
-        questType: boxType,
-      });
+        const sign: TSignedMessage | null = await this.signEvmMessage(
+          `Claim blast points on Overnight.fi, nonce: ${nonce}`,
+          nonce,
+        );
 
-      if (triggerClaim?.data?.error) {
-        notifyInst({
-          title: 'Claim error',
-          text: triggerClaim?.data.error,
-          type: 'error',
+        const triggerClaim = await axios.post(`${OVN_QUESTS_API}/blast/claim`, {
+          address: this.account,
+          message: sign?.message,
+          sign: sign?.signature,
+          questType: boxType,
         });
-        return;
+
+        if (triggerClaim?.data?.error) {
+          notifyInst({
+            title: 'Claim error',
+            text: triggerClaim?.data.error,
+            type: 'error',
+          });
+          return;
+        }
+
+        this.dailyPrize = triggerClaim.data?.amount;
+
+        if (boxType === TypeofQuest.BRONZE) this.openBronzeQuest = true;
+        if (boxType === TypeofQuest.SILVER) this.openSilverQuest = true;
+        if (boxType === TypeofQuest.GOLD) this.openGoldQuest = true;
+        if (boxType === TypeofQuest.DIAMOND) this.openDiamondQuest = true;
+
+        // waiting for animation
+        await awaitDelay(2000);
+        this.updateUserQuestData(this.account);
+        this.claimLoading = false;
+      } catch (e) {
+        console.log(e);
+        this.claimLoading = false;
       }
-
-      this.dailyPrize = triggerClaim.data?.amount;
-
-      if (boxType === TypeofQuest.BRONZE) this.openBronzeQuest = true;
-      if (boxType === TypeofQuest.SILVER) this.openSilverQuest = true;
-      if (boxType === TypeofQuest.GOLD) this.openGoldQuest = true;
-      if (boxType === TypeofQuest.DIAMOND) this.openDiamondQuest = true;
-
-      // waiting for animation
-      await awaitDelay(2000);
-      this.updateUserQuestData(this.account);
     },
     toggleTheme() {
       this.$store.dispatch('theme/switchTheme');
