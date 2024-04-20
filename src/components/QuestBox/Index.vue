@@ -39,13 +39,22 @@
           <div class="hexagon" />
           <div class="cube cube--back" />
           <div class="cube cube--top">
-            <BaseIcon :name="boxType(BOX_TYPES.TOP, true)" />
+            <img
+              alt="side"
+              :src="boxType(BOX_TYPES.TOP, false)"
+            />
           </div>
           <div class="cube cube--left">
-            <BaseIcon :name="boxType(BOX_TYPES.LEFT, true)" />
+            <img
+              alt="side"
+              :src="boxType(BOX_TYPES.LEFT, false)"
+            />
           </div>
           <div class="cube cube--right">
-            <BaseIcon :name="boxType(BOX_TYPES.RIGHT, true)" />
+            <img
+              alt="side"
+              :src="boxType(BOX_TYPES.RIGHT, false)"
+            />
           </div>
           <div
             v-if="!isShakeActive"
@@ -65,7 +74,6 @@
 import { uniqueId } from 'lodash';
 import { type PropType } from 'vue';
 import { awaitDelay, getImageUrl } from '@/utils/const.ts';
-import BaseIcon from '@/components/Icon/BaseIcon.vue';
 
 // eslint-disable-next-line no-shadow
 export enum BOX_TYPES {
@@ -97,9 +105,6 @@ export default {
       type: String,
       default: '',
     },
-  },
-  components: {
-    BaseIcon,
   },
   emits: ['close'],
   data() {
@@ -139,7 +144,7 @@ export default {
   //   this.isShakeActive = false;
 
   //   await awaitDelay(10);
-  //   // this.triggerOpen();
+  //   this.triggerOpen();
   // },
   computed: {
     boxType() {
