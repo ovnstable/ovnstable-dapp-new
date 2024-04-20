@@ -551,7 +551,7 @@ export default {
     padding: 5px;
     border-radius: 10px;
     [data-theme="dark"] & {
-      background: none;
+      background-color: var(--color-17);
     }
   }
 }
