@@ -100,7 +100,7 @@ export default {
 .pools-table__row,
 .pools-table__new {
   display: grid;
-  grid-template-columns: 1fr 3fr 1fr 1fr;
+  grid-template-columns: 1fr 3fr 1fr 1fr 1fr;
   justify-content: space-between;
   width: 100%;
   padding: 15px 0;
@@ -130,7 +130,7 @@ export default {
 
 .pools-header {
   display: grid;
-  grid-template-columns: 1fr 3fr 1fr 1fr;
+  grid-template-columns: 1fr 3fr 1fr 1fr 1fr;
   width: 100%;
   color: var(--color-2);
   margin-top: 20px;
@@ -495,7 +495,7 @@ export default {
     font-size: 12px;
   }
   .pools-table__row {
-    grid-template-columns: 1fr 3fr 1fr 1fr;
+    grid-template-columns: 1fr 3fr 1fr 1fr 1fr;
     button {
       font-size: 14px;
     }
