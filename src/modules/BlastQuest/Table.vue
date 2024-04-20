@@ -29,7 +29,7 @@
               {{ user.claimedGolds }}
             </div>
             <div>
-              {{ getUserPart(user.claimed) }} %
+              {{ user.jackpotShare }} %
             </div>
           </div>
         </template>
@@ -46,7 +46,6 @@
 
 <!-- eslint-disable no-param-reassign -->
 <script lang="ts">
-import BN from 'bignumber.js';
 
 export default {
   name: 'DashboardTable',
@@ -56,18 +55,9 @@ export default {
       required: true,
     },
     jackpot: {
-      type: Number,
+      type: String,
       required: false,
-      default: 0,
-    },
-  },
-  computed: {
-    getUserPart() {
-      return (part: string) => {
-        if (new BN(part).eq(0) || this.jackpot === 0) return '0';
-
-        return new BN(part).div(this.jackpot).toFixed(4);
-      };
+      default: '0',
     },
   },
 };

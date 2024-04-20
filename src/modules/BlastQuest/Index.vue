@@ -637,12 +637,30 @@ export default {
   methods: {
     getImageUrl,
     async loadDashboard() {
+      // 16k points per 1 gold
+      const SINGLE_GOLD = 16000;
+
       const resp = await axios.get(`${OVN_QUESTS_API}/blast/dashboard`);
 
       const filterData = resp.data.filter((_: any) => new BN(_?.claimed).gt(0));
+      const mappedData = filterData.map((_: any) => {
+        const goldPart = new BN(_.claimedGolds).times(SINGLE_GOLD);
+        let partTotal = new BN(_.claimed).plus(goldPart);
 
-      const sorted = filterData
-        .sort((a: any, b: any) => (new BN(a?.claimed).gt(b?.claimed) ? -1 : 1));
+        if (partTotal.eq(0) || this.jackpotData.amount === 0) partTotal = new BN(0);
+        const totalJackpot = new BN(this.jackpotData.amount)
+          .plus(new BN(this.jackpotData.goldBlast).times(SINGLE_GOLD));
+
+        partTotal = new BN(partTotal).div(totalJackpot);
+
+        return {
+          ..._,
+          jackpotShare: partTotal.gt(0.000001) ? partTotal.toFixed(6) : '0.000001',
+        };
+      });
+
+      const sorted = mappedData
+        .sort((a: any, b: any) => (new BN(a?.jackpotShare).gt(b?.jackpotShare) ? -1 : 1));
 
       this.usersDashboardList = sorted.slice(0, 50);
     },
