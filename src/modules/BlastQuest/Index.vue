@@ -550,6 +550,11 @@ export default {
       if (!currVal) return;
       this.updateUserQuestData(currVal);
     },
+    jackpotData(currVal: any) {
+      if (!currVal?.amount) return;
+
+      this.loadDashboard();
+    },
   },
   computed: {
     ...mapGetters('web3', ['evmProvider', 'provider']),
@@ -630,9 +635,6 @@ export default {
 
       return null;
     },
-  },
-  mounted() {
-    this.loadDashboard();
   },
   methods: {
     getImageUrl,
