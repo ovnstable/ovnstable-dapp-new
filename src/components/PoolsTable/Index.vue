@@ -27,7 +27,6 @@
       </div>
 
       <div class="pools-table__content">
-
         <template v-if="pools.length > 0">
           <div
             v-for="(pool, key) in (pools as any)"
