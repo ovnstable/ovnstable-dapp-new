@@ -2,7 +2,7 @@
   <div class="tasks-col">
     <div
       class="tasks-col__item"
-      v-for="item in tasksDataInfo"
+      v-for="(item, index) in tasksDataInfo"
       :key="item.id"
       :class="{ checked: item.checked }"
       @click="checkItem(item)"
@@ -14,9 +14,17 @@
         <BaseIcon :name="item.checked ? 'CommonChecked' : 'CommonClose' " />
       </div>
 
-      <p :class="{ 'completed-task': item.checked }">
-        {{ item.text }}
-      </p>
+      <div class="tasks-col__item__text">
+        <p :class="{ 'completed-task': item.checked }">
+          {{ item.text }}
+        </p>
+        <p
+          class="see-more"
+          v-if="index > 0"
+        >
+          See all details in (?)
+        </p>
+      </div>
       <div class="tasks-col__arr">
         <BaseIcon
           name="PayoutArrow"
@@ -41,13 +49,13 @@ const BRONZE_QUESTS = [
   },
   {
     id: '1',
-    text: 'Add at least $1000 liquidity to selected pool on Thruster (See (?) details for more info)',
+    text: 'Add at least $1000 liquidity to selected pool on Thruster',
     checked: false,
     boxType: TypeofQuest.BRONZE,
   },
   {
     id: '2',
-    text: 'Add at least $1000 liquidity to selected pool on SwapBlast (See (?) details for more info)',
+    text: 'Add at least $1000 liquidity to selected pool on SwapBlast',
     checked: false,
     boxType: TypeofQuest.BRONZE,
   },
@@ -62,13 +70,13 @@ const SILVER_QUESTS = [
   },
   {
     id: '1',
-    text: 'Add at least $2000 liquidity to selected pool on Thruster (See (?) details for more info)',
+    text: 'Add at least $2000 liquidity to selected pool on Thruster',
     checked: false,
     boxType: TypeofQuest.SILVER,
   },
   {
     id: '2',
-    text: 'Add at least $2000 liquidity to selected pool on SwapBlast (See (?) details for more info)',
+    text: 'Add at least $2000 liquidity to selected pool on SwapBlast',
     checked: false,
     boxType: TypeofQuest.SILVER,
   },
@@ -83,13 +91,13 @@ const GOLD_QUESTS = [
   },
   {
     id: '1',
-    text: 'Add at least $5000 liquidity to selected pool on Thruster (See (?) details for more info)',
+    text: 'Add at least $5000 liquidity to selected pool on Thruster',
     checked: false,
     boxType: TypeofQuest.GOLD,
   },
   {
     id: '2',
-    text: 'Add at least $5000 liquidity to selected pool on SwapBlast (See (?) details for more info)',
+    text: 'Add at least $5000 liquidity to selected pool on SwapBlast',
     checked: false,
     boxType: TypeofQuest.GOLD,
   },
@@ -259,5 +267,17 @@ export default {
       fill: var(--color-18);
     }
   }
+}
+
+.tasks-col__item__text {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+p.see-more {
+  width: fit-content;
+  font-size: 12px;
+  color: var(--color-3);
 }
 </style>
