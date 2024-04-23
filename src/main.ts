@@ -1,6 +1,7 @@
 import '@/styles/main.scss';
 
 import { createApp } from 'vue';
+import { createAuth0 } from "@auth0/auth0-vue";
 import Popper from 'vue3-popper';
 import Notifications from '@kyvg/vue3-notification';
 
@@ -14,6 +15,15 @@ app.config.globalProperties.$store = store;
 app.use(router);
 app.use(store);
 app.use(Notifications);
+app.use(
+  createAuth0({
+    domain: import.meta.env.VITE_APP_AUTH_TWITTER_DOMAIN,
+    clientId: import.meta.env.VITE_APP_AUTH_TWITTER_CLIENTID,
+    authorizationParams: {
+      redirect_uri: window.location.origin,
+    },
+  }),
+);
 app.component('PopperComponent', Popper);
 
 async function initNetwork() {

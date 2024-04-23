@@ -12,6 +12,7 @@
     "lint": "eslint . --ext .vue,.js,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
   },
   "dependencies": {
+    "@auth0/auth0-vue": "^2.3.3",
     "@kyvg/vue3-notification": "^3.2.1",
     "@vitejs/plugin-vue": "^4.5.2",
     "@vueuse/core": "^10.7.1",

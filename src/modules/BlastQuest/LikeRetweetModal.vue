@@ -5,10 +5,26 @@
     @close="closeModal"
   >
     <div
+      v-if="!user?.nickname"
+      class='blast-quest-task-not-logged'
+    >
+      <p>LOGIN TO TWITTER BEFORE COMPLETE THIS TASK</p>
+      <ButtonComponent
+
+        btn-styles="secondary"
+        class='blast-quest-task'
+        @click="loginTwitter"
+      >
+        LOGIN TWITTER
+      </ButtonComponent>
+    </div>
+    <div
+      v-else
       class='blast-quest-task'
     >
       <h1>LIKE AND RETWEET TASK</h1>
       <h2>Post</h2>
+
       <div
         class='blast-quest-task-post'
       >
@@ -92,6 +108,7 @@ export default {
       isRetweeted: false,
       loadingTweet: true,
       showModal: false,
+      user: this.$auth0.user,
     };
   },
   async mounted() {
@@ -115,6 +132,9 @@ export default {
       const account = this.accountLink.split('/').pop();
       this.$emit('twitter-submit', account);
     },
+    loginTwitter() {
+      this.$auth0.loginWithRedirect();
+    },
   },
 };
 </script>
@@ -124,7 +144,8 @@ export default {
   margin: 0 auto;
 }
 
-.blast-quest-task {
+.blast-quest-task,
+.blast-quest-task-not-logged {
   display: flex;
   flex-direction: column;
   padding: 30px;
@@ -159,6 +180,25 @@ export default {
     }
   }
 }
+.blast-quest-task-not-logged {
+  button {
+    border-radius: 10px;
+    box-shadow: none;
+    border: none;
+    font-size: 14px;
+    font-weight: 600;
+    align-self: center;
+    margin-top: 20px;
+  }
+  button:hover {
+    background-color: var(--color-8);
+  }
+  p {
+    color: var(--color-1);
+    font-weight: 600;
+  }
+}
+
 .blast-quest-task-post-spinner {
   margin-left: auto;
 }
@@ -195,15 +235,23 @@ export default {
 }
 
 @media (max-width: 1024px) {
-  .blast-quest-task {
+  .blast-quest-task,
+  .blast-quest-task-not-logged {
     min-width: 640px;
     width: auto;
+  }
+  .blast-quest-task-not-logged {
+    padding: 10px;
   }
 }
 
 @media (max-width: 640px) {
-  .blast-quest-task {
+  .blast-quest-task,
+  .blast-quest-task-not-logged {
     min-width: 0;
+  }
+  .blast-quest-task-not-logged {
+    padding: 5px;
   }
   .blast-quest-task-post {
     gap: 20px;
