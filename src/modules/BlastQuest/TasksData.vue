@@ -39,23 +39,30 @@ import { TypeofQuest } from '@/components/QuestBox/Index.vue';
 import { type PropType } from 'vue';
 import { mapGetters } from 'vuex';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import { IQuestId } from './models.ts';
 
 const BRONZE_QUESTS = [
   {
-    id: '0',
+    id: IQuestId.FIRST,
     text: 'Like&Retweet',
     checked: false,
     boxType: TypeofQuest.BRONZE,
   },
   {
-    id: '1',
+    id: IQuestId.SECOND,
     text: 'Add at least $1000 liquidity to selected pool on Thruster',
     checked: false,
     boxType: TypeofQuest.BRONZE,
   },
   {
-    id: '2',
+    id: IQuestId.THIRD,
     text: 'Add at least $1000 liquidity to selected pool on SwapBlast',
+    checked: false,
+    boxType: TypeofQuest.BRONZE,
+  },
+  {
+    id: IQuestId.FOURTH,
+    text: 'Hold at least 1 share of OVN at Districtone.io',
     checked: false,
     boxType: TypeofQuest.BRONZE,
   },
@@ -63,19 +70,19 @@ const BRONZE_QUESTS = [
 
 const SILVER_QUESTS = [
   {
-    id: '0',
+    id: IQuestId.FIRST,
     text: 'Mint at least 1000 USD+ on Blast during the daily quest',
     checked: false,
     boxType: TypeofQuest.SILVER,
   },
   {
-    id: '1',
+    id: IQuestId.SECOND,
     text: 'Add at least $2000 liquidity to selected pool on Thruster',
     checked: false,
     boxType: TypeofQuest.SILVER,
   },
   {
-    id: '2',
+    id: IQuestId.THIRD,
     text: 'Add at least $2000 liquidity to selected pool on SwapBlast',
     checked: false,
     boxType: TypeofQuest.SILVER,
@@ -84,19 +91,19 @@ const SILVER_QUESTS = [
 
 const GOLD_QUESTS = [
   {
-    id: '0',
+    id: IQuestId.FIRST,
     text: 'Mint at least 2500 USD+ on Blast',
     checked: false,
     boxType: TypeofQuest.GOLD,
   },
   {
-    id: '1',
+    id: IQuestId.SECOND,
     text: 'Add at least $5000 liquidity to selected pool on Thruster',
     checked: false,
     boxType: TypeofQuest.GOLD,
   },
   {
-    id: '2',
+    id: IQuestId.THIRD,
     text: 'Add at least $5000 liquidity to selected pool on SwapBlast',
     checked: false,
     boxType: TypeofQuest.GOLD,
