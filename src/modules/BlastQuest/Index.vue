@@ -342,7 +342,7 @@
           Once a week you will be able to claim a Diamond Box.
           Having received Diamond Box you can try your luck and win the
           <span>Blast Gold Jackpot.</span>
-          To do so, you need to complete a total of 15 tasks in a week but no more than 3 per day.
+          To do so, you need to complete a total of 15 tasks in a week, at least 3 tasks per day.
           Progress through completing 15 tasks of weekly quest and you will receive a
           Diamond Box that opens on Sunday,
           it will contain a random amount of Blast Gold of Jackpot!</p>
