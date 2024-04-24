@@ -168,8 +168,10 @@ export default {
       immediate: true,
     },
     accountLink: {
-      handler() {
-        this.$router.push({ name: 'blastquest' });
+      handler(newVal) {
+        if (newVal) {
+          this.$router.push({ name: 'blastquest' });
+        }
       },
       immediate: true,
     },
