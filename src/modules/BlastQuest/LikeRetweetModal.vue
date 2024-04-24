@@ -138,6 +138,9 @@ export default {
       }
       const urlParts = this.directAccountLink.split('/');
       const twitterUsername = urlParts[urlParts.length - 1];
+      if (!twitterUsername) {
+        return;
+      }
       this.$emit('twitter-submit', twitterUsername);
     },
     loginTwitter() {
