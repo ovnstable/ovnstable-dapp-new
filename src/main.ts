@@ -1,7 +1,7 @@
 import '@/styles/main.scss';
 
 import { createApp } from 'vue';
-import { createAuth0 } from "@auth0/auth0-vue";
+import { createAuth0 } from '@auth0/auth0-vue';
 import Popper from 'vue3-popper';
 import Notifications from '@kyvg/vue3-notification';
 
