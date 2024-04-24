@@ -63,19 +63,6 @@
         <p>TASK COMPLETION CHECK</p>
       </ButtonComponent>
     </div>
-    <div
-      v-if="showError"
-      class="blast-quest-error-popup"
-    >
-      <p>{{ errorMessage }}</p>
-      <ButtonComponent
-        @click="closeErrorPopup"
-        @keydown.enter="closeErrorPopup"
-      >
-        <p>Close</p>
-      </ButtonComponent>
-    </div>
-
   </ModalComponent>
 </template>
 
@@ -84,6 +71,7 @@ import Spinner from '@/components/Spinner/Index.vue';
 import ModalComponent from '@/components/Modal/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BlastQuestApiService from '@/services/blast-quest-api-service.ts';
+import { notify as notifyInst } from '@kyvg/vue3-notification';
 import { mapGetters } from 'vuex';
 
 export default {
@@ -113,8 +101,6 @@ export default {
       loadingTweet: true,
       showModal: false,
       user: this.$auth0.user,
-      showError: false,
-      errorMessage: '',
     };
   },
   async mounted() {
@@ -154,19 +140,17 @@ export default {
       const urlParts = this.directAccountLink.split('/');
       const twitterUsername = urlParts[urlParts.length - 1];
       if (!twitterUsername) {
-        console.error('twitter username not found');
-        this.errorMessage = 'User nickname not found';
-        this.showError = true;
+        notifyInst({
+          title: 'Twitter quest',
+          text: 'User nickname not found',
+          type: 'error',
+        });
         return;
       }
       this.$emit('twitter-submit', twitterUsername);
     },
     loginTwitter() {
       this.$auth0.loginWithRedirect();
-    },
-    closeErrorPopup() {
-      this.showError = false;
-      this.errorMessage = '';
     },
   },
 };
