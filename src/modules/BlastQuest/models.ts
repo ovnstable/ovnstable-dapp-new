@@ -43,3 +43,10 @@ export const BOX_RANGES = [
     maxTest: 0.000011,
   },
 ];
+
+export enum IQuestId {
+  FIRST = '0',
+  SECOND = '1',
+  THIRD = '2',
+  FOURTH = '3',
+}
