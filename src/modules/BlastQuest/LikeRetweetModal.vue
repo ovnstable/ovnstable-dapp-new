@@ -63,6 +63,19 @@
         <p>TASK COMPLETION CHECK</p>
       </ButtonComponent>
     </div>
+    <div
+      v-if="showError"
+      class="blast-quest-error-popup"
+    >
+      <p>{{ errorMessage }}</p>
+      <ButtonComponent
+        @click="closeErrorPopup"
+        @keydown.enter="closeErrorPopup"
+      >
+        <p>Close</p>
+      </ButtonComponent>
+    </div>
+
   </ModalComponent>
 </template>
 
@@ -100,6 +113,8 @@ export default {
       loadingTweet: true,
       showModal: false,
       user: this.$auth0.user,
+      showError: false,
+      errorMessage: '',
     };
   },
   async mounted() {
@@ -139,12 +154,19 @@ export default {
       const urlParts = this.directAccountLink.split('/');
       const twitterUsername = urlParts[urlParts.length - 1];
       if (!twitterUsername) {
+        console.error('twitter username not found');
+        this.errorMessage = 'User nickname not found';
+        this.showError = true;
         return;
       }
       this.$emit('twitter-submit', twitterUsername);
     },
     loginTwitter() {
       this.$auth0.loginWithRedirect();
+    },
+    closeErrorPopup() {
+      this.showError = false;
+      this.errorMessage = '';
     },
   },
 };
@@ -243,6 +265,42 @@ export default {
   background-color: var(--color-8);
   [data-theme="dark"] & {
     background-color: var(--color-17);
+  }
+}
+
+.blast-quest-error-popup {
+  position: fixed;
+  top: 45%;
+  left: 52%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  background-color: var(--color-4);
+  border: 1px solid var(--color-1);
+  z-index: 100;
+  p {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-1);
+  }
+  gap: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  button {
+    box-shadow: none;
+    border: none;
+    p {
+      font-weight: 400;
+    }
+  }
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
+    button {
+      border-color: var(--color-4);
+      box-shadow: none;
+      background-color: var(--color-7);
+    }
   }
 }
 
