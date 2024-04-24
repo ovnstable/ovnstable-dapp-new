@@ -425,6 +425,16 @@ export const poolTokensForZapMap = {
       address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
     },
   ],
+  '0x952388d73EA3E940eD6824DBd75ed6aD58e6B436': [
+    {
+      name: 'DOLA',
+      address: '0x4621b7A9c75199271F773Ebd9A499dbd165c3191',
+    },
+    {
+      name: 'USD+',
+      address: chainContractsMap.base.usdPlus.tokenPlus,
+    },
+  ],
 } as any;
 
 export const poolsForOVN = {

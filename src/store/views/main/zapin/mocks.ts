@@ -270,6 +270,12 @@ export const poolsInfoMap: any = {
     // pool token differ from pool address
     poolTokenType: 'DIFFERENT',
   },
+  '0x952388d73EA3E940eD6824DBd75ed6aD58e6B436': {
+    // dola/usd+ Aerodrome
+    gauge: '0x969c70383A95704C6a35497d8C77BF38dc152e63',
+    poolId: 0,
+    approveType: 'TOKEN',
+  },
 };
 
 export const zapPlatformContractTypeMap: any = {
