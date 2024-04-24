@@ -254,9 +254,9 @@ export const poolsInfoMap: any = {
   },
 
   // PANCAKE
-  '0x721f37495cd70383b0a77bf1eb8f97eef29498bb': {
+  '0x7e928afb59f5dE9D2f4d162f754C6eB40c88aA8E': {
     // usdc/usd+
-    gauge: '0x721f37495cd70383b0a77bf1eb8f97eef29498bb',
+    gauge: '0x7e928afb59f5dE9D2f4d162f754C6eB40c88aA8E',
     gaugeForLP: '0x46A15B0b27311cedF172AB29E4f4766fbE7F4364',
     approveType: 'NFT',
     // pool token differ from pool address
@@ -348,7 +348,7 @@ export const zapPlatformContractTypeMap: any = {
     type: 'LP_STAKE_DIFF_STEPS',
     typeOfDepositConstructor: 'BASE_CONSTRUCTOR',
   },
-  '0x721f37495cd70383b0a77bf1eb8f97eef29498bb': {
+  '0x7e928afb59f5dE9D2f4d162f754C6eB40c88aA8E': {
     name: 'Pancake8020',
     type: 'LP_STAKE_DIFF_STEPS',
     typeOfDepositConstructor: 'CONSTRUCTOR_WITH_NFT_ID',
