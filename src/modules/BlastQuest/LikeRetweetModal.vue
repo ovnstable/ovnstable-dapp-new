@@ -5,7 +5,7 @@
     @close="closeModal"
   >
     <div
-      v-if="!user?.nickname"
+      v-if="!user?.nickname || !accountLink"
       class='blast-quest-task-not-logged'
     >
       <p>LOGIN TO TWITTER BEFORE COMPLETE THIS TASK</p>
@@ -108,6 +108,9 @@ export default {
       const twitterId = this.user.sub.split('|')[1];
       nick = await BlastQuestApiService.loadNicknameById(twitterId);
       localStorage.setItem('directLink', `https://twitter.com/${nick.profile}`);
+      if (nick) {
+        this.$store.commit('jackpotData/setAccountLink', `https://twitter.com/${nick.profile}`);
+      }
     }
     const resp = await BlastQuestApiService.loadTwitterData();
     this.loadingTweet = false;

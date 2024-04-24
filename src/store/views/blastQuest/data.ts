@@ -55,11 +55,7 @@ const mutations = {
     state.isRetweeted = value;
   },
   setAccountLink(state: any, value: any) {
-    console.log('account link set was called');
-    console.log('here is the value', value);
     state.accountLink = value;
-    console.log('here is state');
-    console.log(state.accountLink);
   },
 };
 
