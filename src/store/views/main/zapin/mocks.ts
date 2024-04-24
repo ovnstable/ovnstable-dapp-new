@@ -282,6 +282,12 @@ export const poolsInfoMap: any = {
     poolId: 0,
     approveType: 'TOKEN',
   },
+  '0x4704f9Cf735b58ea442E387ACca6717311597322': {
+    // aero/ovn Aerodrome
+    gauge: '0x365f5413BBC783D1fff1cAe9D3Bd9A16eA698D19',
+    poolId: 0,
+    approveType: 'TOKEN',
+  },
 };
 
 export const zapPlatformContractTypeMap: any = {
