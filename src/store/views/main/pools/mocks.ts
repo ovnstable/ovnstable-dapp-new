@@ -405,16 +405,6 @@ export const poolTokensForZapMap = {
   ],
 
   // PANCAKE ZAPS
-  '0x721f37495cd70383b0a77bf1eb8f97eef29498bb': [
-    {
-      name: 'USDC',
-      address: '0xff970a61a04b1ca14834a43f5de4533ebddb5cc8',
-    },
-    {
-      name: 'USD+',
-      address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
-    },
-  ],
   '0x8a06339abd7499af755df585738ebf43d5d62b94': [
     {
       name: 'USDT+',
@@ -512,7 +502,6 @@ export const LOW_TVL_PROMOTE = [
   '0xd01075f7314a6436e8b74fc18069848229d0c555',
   '0xb9c2d906f94b27bc403ab76b611d2c4490c2ae3f',
   '0x844D7d2fCa6786Be7De6721AabdfF6957ACE73a0',
-  '0x721f37495cd70383b0a77bf1eb8f97eef29498bb',
   '0x46e1B51e07851301f025ffeA506b140dB80a214A',
 
   // VELOCORE
