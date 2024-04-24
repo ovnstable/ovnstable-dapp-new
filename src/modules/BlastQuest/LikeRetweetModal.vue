@@ -48,14 +48,7 @@
       <div
         class='blast-quest-task-account'
       >
-        <InputComponent
-          :value="accountLink"
-          is-text
-          input-type="primary"
-          placeholder="Paste the link to your Twitter account here"
-          full-width
-          @input="inputAccount"
-        />
+        <p>{{directAccountLink}}</p>
       </div>
       <Spinner
         class="spinner-wrap"
@@ -75,16 +68,15 @@
 
 <script lang="ts">
 import Spinner from '@/components/Spinner/Index.vue';
-import InputComponent from '@/components/Input/Index.vue';
 import ModalComponent from '@/components/Modal/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BlastQuestApiService from '@/services/blast-quest-api-service.ts';
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'LikeRetweetModal',
   components: {
     Spinner,
-    InputComponent,
     ModalComponent,
     ButtonComponent,
   },
@@ -103,7 +95,6 @@ export default {
   data() {
     return {
       lastTweetNumber: '',
-      accountLink: '',
       isLiked: false,
       isRetweeted: false,
       loadingTweet: true,
@@ -112,6 +103,12 @@ export default {
     };
   },
   async mounted() {
+    let nick: any = null;
+    if (this.user && this.user.sub) {
+      const twitterId = this.user.sub.split('|')[1];
+      nick = await BlastQuestApiService.loadNicknameById(twitterId);
+      localStorage.setItem('directLink', `https://twitter.com/${nick.profile}`);
+    }
     const resp = await BlastQuestApiService.loadTwitterData();
     this.loadingTweet = false;
     this.lastTweetNumber = resp?.id;
@@ -121,16 +118,24 @@ export default {
       this.showModal = currVal;
     },
   },
+  computed: {
+    ...mapGetters('jackpotData', ['accountLink']),
+    directAccountLink() {
+      return localStorage.getItem('directLink');
+    },
+  },
   methods: {
     closeModal() {
       this.showModal = false;
     },
-    inputAccount(val: string) {
-      this.accountLink = val;
-    },
     async checkLikeFromAccount() {
-      const account = this.accountLink.split('/').pop();
-      this.$emit('twitter-submit', account);
+      if (!this.directAccountLink) {
+        console.error('directAccountLink is not set. Please try again.');
+        return;
+      }
+      const urlParts = this.directAccountLink.split('/');
+      const twitterUsername = urlParts[urlParts.length - 1];
+      this.$emit('twitter-submit', twitterUsername);
     },
     loginTwitter() {
       this.$auth0.loginWithRedirect();
@@ -228,6 +233,7 @@ export default {
 .blast-quest-task-account {
   border-radius: 10px;
   margin-bottom: 40px;
+  padding: 10px;
   background-color: var(--color-8);
   [data-theme="dark"] & {
     background-color: var(--color-17);

@@ -5,6 +5,7 @@ const state = {
   loadedJackpotData: false,
   isLiked: null,
   isRetweeted: null,
+  accountLink: null,
 };
 
 const getters = {
@@ -23,6 +24,9 @@ const getters = {
   },
   retweetedQuest(state: any) {
     return state.isRetweeted;
+  },
+  accountLink(state: any) {
+    return state.accountLink;
   },
 };
 
@@ -49,6 +53,13 @@ const mutations = {
   },
   setIsRetweetedQuest(state: any, value: any) {
     state.isRetweeted = value;
+  },
+  setAccountLink(state: any, value: any) {
+    console.log('account link set was called');
+    console.log('here is the value', value);
+    state.accountLink = value;
+    console.log('here is state');
+    console.log(state.accountLink);
   },
 };
 
