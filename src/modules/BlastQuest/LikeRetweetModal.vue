@@ -71,6 +71,7 @@ import Spinner from '@/components/Spinner/Index.vue';
 import ModalComponent from '@/components/Modal/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BlastQuestApiService from '@/services/blast-quest-api-service.ts';
+import { notify as notifyInst } from '@kyvg/vue3-notification';
 import { mapGetters } from 'vuex';
 
 export default {
@@ -138,6 +139,14 @@ export default {
       }
       const urlParts = this.directAccountLink.split('/');
       const twitterUsername = urlParts[urlParts.length - 1];
+      if (!twitterUsername) {
+        notifyInst({
+          title: 'Twitter quest',
+          text: 'User nickname not found',
+          type: 'error',
+        });
+        return;
+      }
       this.$emit('twitter-submit', twitterUsername);
     },
     loginTwitter() {
@@ -240,6 +249,42 @@ export default {
   background-color: var(--color-8);
   [data-theme="dark"] & {
     background-color: var(--color-17);
+  }
+}
+
+.blast-quest-error-popup {
+  position: fixed;
+  top: 45%;
+  left: 52%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  background-color: var(--color-4);
+  border: 1px solid var(--color-1);
+  z-index: 100;
+  p {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-1);
+  }
+  gap: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  button {
+    box-shadow: none;
+    border: none;
+    p {
+      font-weight: 400;
+    }
+  }
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
+    button {
+      border-color: var(--color-4);
+      box-shadow: none;
+      background-color: var(--color-7);
+    }
   }
 }
 
