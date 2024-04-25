@@ -415,6 +415,46 @@ export const poolTokensForZapMap = {
       address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
     },
   ],
+  '0x952388d73EA3E940eD6824DBd75ed6aD58e6B436': [
+    {
+      name: 'DOLA',
+      address: '0x4621b7A9c75199271F773Ebd9A499dbd165c3191',
+    },
+    {
+      name: 'USD+',
+      address: chainContractsMap.base.usdPlus.tokenPlus,
+    },
+  ],
+  '0x418457Ca08fA5EC77f811B105F2c585cd051Ac10': [
+    {
+      name: 'USDC',
+      address: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
+    },
+    {
+      name: 'USD+',
+      address: chainContractsMap.base.usdPlus.tokenPlus,
+    },
+  ],
+  '0x4704f9Cf735b58ea442E387ACca6717311597322': [
+    {
+      name: 'AERO',
+      address: '0x940181a94A35A4569E4529A3CDfB74e38FD98631',
+    },
+    {
+      name: 'OVN',
+      address: '0xA3d1a8DEB97B111454B294E2324EfAD13a9d8396',
+    },
+  ],
+  // '0xbB38EeBd670A9F3cafe6D3170862ccD930cB25f9': [
+  //   {
+  //     name: 'USD+',
+  //     address: '0x940181a94A35A4569E4529A3CDfB74e38FD98631',
+  //   },
+  //   {
+  //     name: 'sfrax',
+  //     address: '0xe4796cCB6bB5DE2290C417Ac337F2b66CA2E770E',
+  //   },
+  // ],
 } as any;
 
 export const poolsForOVN = {

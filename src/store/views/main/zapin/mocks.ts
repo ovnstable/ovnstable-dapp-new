@@ -262,6 +262,30 @@ export const poolsInfoMap: any = {
     // pool token differ from pool address
     poolTokenType: 'DIFFERENT',
   },
+  '0x952388d73EA3E940eD6824DBd75ed6aD58e6B436': {
+    // dola/usd+ Aerodrome
+    gauge: '0x969c70383A95704C6a35497d8C77BF38dc152e63',
+    poolId: 0,
+    approveType: 'TOKEN',
+  },
+  '0x418457Ca08fA5EC77f811B105F2c585cd051Ac10': {
+    // usdc/usd+ Aerodrome
+    gauge: '0x9701A079C6e80D91CE4c464C4a996237A27FE537',
+    poolId: 0,
+    approveType: 'TOKEN',
+  },
+  '0x4704f9Cf735b58ea442E387ACca6717311597322': {
+    // aero/ovn Aerodrome
+    gauge: '0x365f5413BBC783D1fff1cAe9D3Bd9A16eA698D19',
+    poolId: 0,
+    approveType: 'TOKEN',
+  },
+  // '0xbB38EeBd670A9F3cafe6D3170862ccD930cB25f9': {
+  //   // sfrax/usd+ Aerodrome
+  //   gauge: '0xEc4288995734ca01eAfC97588658F37515823502',
+  //   poolId: 0,
+  //   approveType: 'TOKEN',
+  // },
 };
 
 export const zapPlatformContractTypeMap: any = {
