@@ -53,6 +53,18 @@ class OdosApiService {
     });
   }
 
+  loadPriceOfToken(chainId: any, tokenAddr: any) {
+    return new Promise((resolve, reject) => {
+      apiService.get(`${API_URL}/pricing/token/${chainId}/${tokenAddr}`)
+        .then((data) => {
+          resolve(data);
+        })
+        .catch((e) => {
+          reject(getErrorObject(e));
+        });
+    });
+  }
+
   getActualGasPrice(chainId: any) {
     return new Promise((resolve, reject) => {
       apiService.get(`${API_URL}/gas/price/${chainId}`)
