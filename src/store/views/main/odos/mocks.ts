@@ -46,3 +46,19 @@ export const LINEA_TOKENS = {
     },
   },
 };
+
+export const SFRAX_TOKEN = {
+  8453: {
+    tokenMap: {
+      '0xe4796cCB6bB5DE2290C417Ac337F2b66CA2E770E': {
+        assetId: 'sfrax',
+        assetType: 'sfrax',
+        decimals: 18,
+        isRebasing: false,
+        name: 'Staked FRAX',
+        protocolId: 'frax',
+        symbol: 'sFRAX',
+      },
+    },
+  },
+};

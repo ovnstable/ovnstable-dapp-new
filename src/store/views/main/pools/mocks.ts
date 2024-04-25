@@ -445,16 +445,16 @@ export const poolTokensForZapMap = {
       address: '0xA3d1a8DEB97B111454B294E2324EfAD13a9d8396',
     },
   ],
-  // '0xbB38EeBd670A9F3cafe6D3170862ccD930cB25f9': [
-  //   {
-  //     name: 'USD+',
-  //     address: '0x940181a94A35A4569E4529A3CDfB74e38FD98631',
-  //   },
-  //   {
-  //     name: 'sfrax',
-  //     address: '0xe4796cCB6bB5DE2290C417Ac337F2b66CA2E770E',
-  //   },
-  // ],
+  '0xbB38EeBd670A9F3cafe6D3170862ccD930cB25f9': [
+    {
+      name: 'USD+',
+      address: chainContractsMap.base.usdPlus.tokenPlus,
+    },
+    {
+      name: 'sFRAX',
+      address: '0xe4796cCB6bB5DE2290C417Ac337F2b66CA2E770E',
+    },
+  ],
 } as any;
 
 export const poolsForOVN = {
@@ -510,6 +510,7 @@ export const NEW_POOLS: string[] = [
   '0xaAaaaAAAFfe404EE9433EEf0094b6382D81fb958_eth',
   '0xaAaaaAAAFfe404EE9433EEf0094b6382D81fb958_usdb',
   '0x8041e2A135D2da7A8E21E4B14113D8245EC532e1',
+  '0xf15B30a0a823f588B523fD794A43939F0B1dC582',
 ];
 
 export const HOT_POOLS = [

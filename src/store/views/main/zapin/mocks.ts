@@ -280,12 +280,13 @@ export const poolsInfoMap: any = {
     poolId: 0,
     approveType: 'TOKEN',
   },
-  // '0xbB38EeBd670A9F3cafe6D3170862ccD930cB25f9': {
-  //   // sfrax/usd+ Aerodrome
-  //   gauge: '0xEc4288995734ca01eAfC97588658F37515823502',
-  //   poolId: 0,
-  //   approveType: 'TOKEN',
-  // },
+  '0xbB38EeBd670A9F3cafe6D3170862ccD930cB25f9': {
+    // sfrax/usd+ Aerodrome
+    gauge: '0xEc4288995734ca01eAfC97588658F37515823502',
+    poolId: 0,
+    approveType: 'TOKEN',
+  },
+
 };
 
 export const zapPlatformContractTypeMap: any = {

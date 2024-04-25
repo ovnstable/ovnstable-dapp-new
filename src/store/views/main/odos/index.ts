@@ -19,7 +19,7 @@ import { ethers } from 'ethers';
 import { ERC20_ABI } from '@/assets/abi/index.ts';
 import { fixedByPrice } from '@/utils/numbers.ts';
 import { ZERO_ADDRESS } from '@/utils/const.ts';
-import { BLAST_TOKENS, LINEA_TOKENS } from '@/store/views/main/odos/mocks.ts';
+import { BLAST_TOKENS, LINEA_TOKENS, SFRAX_TOKEN } from '@/store/views/main/odos/mocks.ts';
 import _ from 'lodash';
 
 // const KEY = 'REFERRAL_CODE';
@@ -213,6 +213,12 @@ const actions = {
               ...odosTokens.chainTokenMap[59144]?.tokenMap,
               ...LINEA_TOKENS[59144].tokenMap
             }
+          },
+          8453: {
+            tokenMap: {
+              ...odosTokens.chainTokenMap[8453]?.tokenMap,
+              ...SFRAX_TOKEN[8453].tokenMap
+            }
           }
         },
       }
@@ -254,7 +260,6 @@ const actions = {
     commit, state, dispatch, rootState,
   }: any) {
     const { networkId } = getNetworkParams(rootState.network.networkName);
-
     const tokensList = getFilteredPoolTokens(
       networkId,
       false,
@@ -264,7 +269,6 @@ const actions = {
     );
 
     const tokensWithPrices = await loadPriceTrigger(tokensList, networkId);
-
     console.log(tokensWithPrices, '---tokensWithPrices');
     commit('changeState', {
       field: 'tokens',
@@ -286,7 +290,6 @@ const actions = {
     );
 
     const tokensWithPrices = await loadPriceTrigger(tokensList, networkId);
-
     commit('changeState', {
       field: 'tokens',
       val: tokensWithPrices
