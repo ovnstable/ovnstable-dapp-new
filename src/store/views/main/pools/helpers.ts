@@ -16,10 +16,19 @@ const STABLE_TOKENS = ['USD+', 'DAI+', 'WUSD+', 'USDC+', 'USDT+'];
 export const buildLink = (pool: any, poolPlatform: string) => {
   let url;
 
+  // eusd/usd+
   if (poolPlatform === 'Aerodrome'
     && pool.address === '0x8041e2A135D2da7A8E21E4B14113D8245EC532e1'
   ) {
     url = 'https://aerodrome.finance/liquidity/?query=usd%2B%2Feusd&filter=all';
+    return url;
+  }
+
+  // wsteth/usd+
+  if (poolPlatform === 'Aerodrome'
+    && pool.address === '0xf15B30a0a823f588B523fD794A43939F0B1dC582'
+  ) {
+    url = 'https://aerodrome.finance/liquidity/?query=usd%2B%2Fwsteth&filter=all';
     return url;
   }
 
