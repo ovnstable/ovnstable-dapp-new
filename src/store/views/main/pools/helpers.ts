@@ -16,6 +16,13 @@ const STABLE_TOKENS = ['USD+', 'DAI+', 'WUSD+', 'USDC+', 'USDT+'];
 export const buildLink = (pool: any, poolPlatform: string) => {
   let url;
 
+  if (poolPlatform === 'Aerodrome'
+    && pool.address === '0x8041e2A135D2da7A8E21E4B14113D8245EC532e1'
+  ) {
+    url = 'https://aerodrome.finance/liquidity/?query=usd%2B%2Feusd&filter=all';
+    return url;
+  }
+
   switch (poolPlatform) {
     case 'Dystopia':
       url = 'https://www.dystopia.exchange/liquidity/';
