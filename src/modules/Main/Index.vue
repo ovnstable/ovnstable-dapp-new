@@ -167,11 +167,21 @@ export default {
       },
       immediate: true,
     },
+    accountLink: {
+      handler(newVal) {
+        if (newVal) {
+          this.$router.push({ name: 'blastquest' });
+        }
+      },
+      immediate: true,
+    },
+
   },
   computed: {
     ...mapGetters('network', ['networkName']),
     ...mapGetters('accountData', ['account']),
     ...mapGetters('walletAction', ['walletConnected']),
+    ...mapGetters('jackpotData', ['accountLink']),
     ...mapState('odosData', ['availableNetworksList']),
     deviceSize() {
       return deviceType();

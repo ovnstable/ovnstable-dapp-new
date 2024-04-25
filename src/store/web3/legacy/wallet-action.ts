@@ -186,6 +186,7 @@ const actions = {
   async disconnectWallet({
     commit, dispatch, getters, rootState,
   }: any) {
+    await commit('jackpotData/setAccountLink', '', { root: true });
     await commit('web3/setProvider', null, { root: true });
 
     if (getters.onboard) {
@@ -360,6 +361,7 @@ const actions = {
   async accountChanged({
     commit, dispatch, getters, rootState,
   }: any, accounts: any) {
+    await commit('jackpotData/setAccountLink', '', { root: true });
     try {
       dispatch('checkAccount', accounts[0]);
       dispatch('setNetwork', rootState.network.networkId);

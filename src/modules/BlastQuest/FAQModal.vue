@@ -80,6 +80,7 @@ export default {
           'In the “Like and retweet today\'s Overnight post” task you will see a link to a post you need to retweet and a field for your nickname on Twitter. Click on the Arrow icon, retweet the post, leave us your nickname and that\'s it!',
           'Task “Mint at least 500 USD+ on Blast” indicates the smallest token amount to be invested to complete the task (500 USD). The task is considered completed if you mint USD+ during the time the task is active (24 hours). You can invest by following the link indicated next to the task.',
           'Task “Add at least $1000 to any USD+ pool on Blast” indicates the smallest token amount that must be invested to complete the task ($1000). The task is considered completed if you have invested in the pool during the time the task is active (24 hours).',
+          'Task "Hold at least 1 share of OVN at Districtone.io", indicates you need to buy/hold OVN share, which you can buy at Districtone.io',
           'Also, you can get additional points by depositing Thruster LP in Hyperlock’s USD+/USDB and USD+/wETH pools. By doing this you will get <b>~22 points/$1K</b> for USD+/wETH and <b>~39 points/$1K</b> for USD+/USDB pool. The amount of points per $1K changes depending on different factors.',
           'You can invest in one of the following pools:',
         ],
