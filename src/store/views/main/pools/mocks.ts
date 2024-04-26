@@ -455,6 +455,16 @@ export const poolTokensForZapMap = {
       address: '0xe4796cCB6bB5DE2290C417Ac337F2b66CA2E770E',
     },
   ],
+  '0x8041e2A135D2da7A8E21E4B14113D8245EC532e1': [
+    {
+      name: 'USD+',
+      address: chainContractsMap.base.usdPlus.tokenPlus,
+    },
+    {
+      name: 'eUSD',
+      address: '0xCfA3Ef56d303AE4fAabA0592388F19d7C3399FB4',
+    },
+  ],
 } as any;
 
 export const poolsForOVN = {
