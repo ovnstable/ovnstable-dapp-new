@@ -286,7 +286,18 @@ export const poolsInfoMap: any = {
     poolId: 0,
     approveType: 'TOKEN',
   },
-
+  '0x8041e2A135D2da7A8E21E4B14113D8245EC532e1': {
+    // usd+/eusd Aerodrome
+    gauge: '0xf09B1177d10775791d5806544AB51F1990Cb7c9A',
+    poolId: 0,
+    approveType: 'TOKEN',
+  },
+  '0xf15B30a0a823f588B523fD794A43939F0B1dC582': {
+    // usd+/wsteth Aerodrome
+    gauge: '0xcC5931E3f7ce8967Dcdc4BC5C7cfd5bF3d7Cf1FE',
+    poolId: 0,
+    approveType: 'TOKEN',
+  },
 };
 
 export const zapPlatformContractTypeMap: any = {
