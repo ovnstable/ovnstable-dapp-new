@@ -1082,7 +1082,6 @@ export default {
       const formulaInputTokens = [];
       let formulaOutputTokens = [];
 
-      console.log(userInputTokens, '----userInputTokens');
       for (let i = 0; i < userInputTokens.length; i++) {
         const inputToken = userInputTokens[i];
         const userInputToken = inputToken.selectedToken;
@@ -1186,7 +1185,7 @@ export default {
         slippageLimitPercent: this.getSlippagePercent(),
       };
 
-      const referralCode = totalInUsd.gt(10000) ? this.odosZapReferalCode : this.odosReferalCode;
+      const referralCode = totalInUsd.gt(3000) ? this.odosZapReferalCode : this.odosReferalCode;
       const whiteList = WHITE_LIST_ODOS[request.chainId as keyof typeof WHITE_LIST_ODOS];
       const requestData = {
         chainId: request.chainId,

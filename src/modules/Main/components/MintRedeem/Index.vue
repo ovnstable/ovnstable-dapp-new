@@ -604,7 +604,6 @@ export default {
         const pairData = MINTREDEEM_SCHEME[networkId]
           .find((_) => {
             // todo: same for all chains
-            console.log(networkId, this.isReverseArray, 'CHECKREVERSE');
             if (networkId === 81457 && !this.isReverseArray) {
               const tokenAddress = _.token1.toLowerCase();
 
@@ -659,7 +658,6 @@ export default {
 
         if (!method) return;
 
-        console.log(exchangeContract, 'exchangeContract1trigger');
         const txData = method.iterateArgs
           ? await exchangeContract[method.name](
             ...Object.values(method.params),

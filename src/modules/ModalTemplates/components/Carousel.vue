@@ -91,11 +91,6 @@ export default {
     formatDescription(description: any, linkWord: any, link: any) {
       return description.replace(`[${linkWord}]`, `<a class="modal-link" href="${link}" target="_blank">${linkWord}</a>`);
     },
-
-    trackLinkClick(item: any) {
-      const action = `carousel_link_clicked_${item.postfix}`;
-      console.log('Action:', action);
-    },
   },
 };
 </script>

@@ -891,7 +891,6 @@ export default {
     },
 
     finishTransaction() {
-      console.log('finishTransaction');
       this.clearForm('5');
       this.refreshBalance();
     },
@@ -943,7 +942,6 @@ export default {
       return odosApiService
         .quoteRequest(requestData)
         .then((data) => {
-          console.log('Response data for odos swap request: ', data);
           this.$store.commit('odosData/changeState', {
             field: 'swapResponseInfo',
             val: data,
@@ -951,7 +949,6 @@ export default {
           return data;
         })
         .catch((e) => {
-          console.log('Swap request error: ', e);
           this.closeWaitingModal();
           if (e && e.message && e.message.includes('path')) {
             this.showErrorModalWithMsg({ errorType: 'odos-path', errorMsg: e });
@@ -976,15 +973,8 @@ export default {
         });
     },
     async swapTrigger() {
-      if (this.isSwapLoading) {
-        console.log({
-          message: 'Swap method not available, prev swap in process.',
-          swapSession: this.swapSessionId,
-        });
-        return;
-      }
+      if (this.isSwapLoading) return;
 
-      console.log('sWAPP2');
       if (
         this.inputTokensWithSelectedTokensCount < 1
         || this.outputTokensWithSelectedTokensCount < 1
@@ -1095,7 +1085,6 @@ export default {
       });
     },
     async simulateSwap() {
-      console.log('SIMULATE');
       if (this.isSumulateSwapLoading) return;
 
       if (
@@ -1158,7 +1147,6 @@ export default {
     // function get data.outTokens and data.outAmounts and find matches in selectedOutputTokens
     // and update selectedOutputTokens with new values
     updateSelectedOutputTokens(data: any) {
-      console.log(data, 'updateSelectedOutputTokens');
       if (!data || !data.outTokens || !data.outAmounts) {
         return;
       }
@@ -1186,8 +1174,6 @@ export default {
         ] = token;
       }
 
-      console.log(outTokensCount, 'selectedOutputTokensCount');
-      console.log(selectedOutputTokensMap, 'selectedOutputTokensMap');
       for (let i = 0; i < outTokensCount; i++) {
         const tokenAddress = outTokens[i];
         const tokenAmount = outAmounts[i];
@@ -1338,10 +1324,7 @@ export default {
       for (let i = 0; i < this.selectedOutputTokens.length; i++) {
         const token: any = this.selectedOutputTokens[i];
         const { selectedToken } = token;
-        if (!ignoreNullable && !token.value) {
-          console.log('output token value is 0: ', token);
-          continue;
-        }
+        if (!ignoreNullable && !token.value) continue;
 
         outputTokens.push({
           tokenAddress: selectedToken.address,

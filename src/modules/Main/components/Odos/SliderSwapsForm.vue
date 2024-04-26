@@ -91,7 +91,6 @@ const setCSSProgress = (progress: any) => {
   if (!slider.value) return;
   if (tokenInfo.locked) return;
 
-  console.log('setCSSProgress: ', progress);
   slider.value.style.setProperty('--ProgressPercent', `${progress}%`);
 };
 
@@ -109,7 +108,6 @@ const updateSlider = () => {
       slider.value.max,
     );
 
-    console.log('progress: ', progress);
     // define extrawidth to ensure that the end of progress is always under the slider thumb.
     let extraWidth = (100 - progress) / 10;
     extraWidth = 0; // not need

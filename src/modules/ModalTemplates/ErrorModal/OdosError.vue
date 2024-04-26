@@ -84,18 +84,12 @@ export default {
   methods: {
     copyErrorToClipboard(copyTooltip: any, errorMsg: any) {
       if (typeof this.copyError === 'function') {
-        this.copyError(copyTooltip, errorMsg); // Pass the error message as an argument
+        this.copyError(copyTooltip, errorMsg);
 
-        // Set isCopied to true when the icon is clicked
         this.isCopied = true;
-
-        // Log the value of isCopied to the console
-        console.log(this.isCopied);
-
-        // Use a setTimeout to reset isCopied after a certain time (e.g., 2 seconds)
         setTimeout(() => {
           this.isCopied = false;
-        }, 2000); // 2000 milliseconds (2 seconds)
+        }, 2000);
       }
     },
   },

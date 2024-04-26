@@ -393,29 +393,12 @@ export default {
       return null;
     },
     getUniquePools(branch: any) {
-      // selectedKey is index
-      // Set to store unique strings
       const uniqueSet = new Set();
-      //
-      // // Iterate over the list of objects
-      // let keys = Array.from(this.root.keys());
       for (let i = 0; i < branch.length; i++) {
-        //     if (i !== selectedKey) {
-        //         continue;
-        //     }
         const token = branch[i];
-        //     let key = keys[i];
-        //     let obj = this.root[key];
-        //     console.log("Key object root: ", key, keys, obj, this.root)
-        //
-        //     // Access the field containing the string
         const stringValue = token.poolLabel;
-        //
-        //     // Add the string to the set
         uniqueSet.add(stringValue);
       }
-      //
-      // // Convert the set back to an array
       return Array.from(uniqueSet);
     },
   },

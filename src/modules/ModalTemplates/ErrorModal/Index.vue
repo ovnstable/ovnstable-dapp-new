@@ -179,9 +179,6 @@ export default {
       }
 
       if (this.errorMsg.code === 4001) {
-        // user cancel transaction
-        console.log('User cancel transaction');
-        // this.closeErrorModal();
         return;
       }
 
