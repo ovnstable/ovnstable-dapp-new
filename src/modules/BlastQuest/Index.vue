@@ -559,6 +559,7 @@ export default {
   mounted() {
     if (!this.account) return;
     this.updateUserQuestData(this.account);
+    this.loadDashboard();
   },
   computed: {
     ...mapGetters('web3', ['evmProvider', 'provider']),
