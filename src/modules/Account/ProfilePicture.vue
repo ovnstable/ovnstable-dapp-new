@@ -81,8 +81,6 @@ export default {
     copyAccount() {
       if (this.account) {
         navigator.clipboard.writeText(this.account).then(() => {
-        }).catch((err) => {
-          console.error('Could not copy text: ', err);
         });
       }
     },

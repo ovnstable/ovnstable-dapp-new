@@ -488,10 +488,6 @@ export default {
             amount: sum,
           };
 
-          console.debug(
-            `Insurance blockchain. Sum: ${sum} usdSum: ${sum}. Account: ${this.account}`,
-          );
-
           if (this.selectedAction === 'mint') {
             const tx = await contracts.insurance[`${this.networkName}_exchanger`].mint(params, gasParams);
 

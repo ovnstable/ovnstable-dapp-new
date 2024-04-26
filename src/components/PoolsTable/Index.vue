@@ -369,11 +369,8 @@ export default {
 
         if (this.orderType === 'TVL_DOWN') {
           this.setOrderTypeFunc('TVL');
-          return;
         }
       }
-
-      console.error('Order type not found when toggle order.', type);
     },
     iconNameSort(type: string) {
       if (type === 'APR') {

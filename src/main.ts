@@ -32,7 +32,6 @@ async function initNetwork() {
     const chainId = Number(window.ethereum.chainId)?.toString();
     store.dispatch('theme/initTheme');
     store.dispatch('network/saveNetworkToLocalStore', chainId, { root: true });
-    console.log('main created networkId: ', chainId);
   } catch (e) {
     console.log('Error when init network:', e);
     // ignore

@@ -134,7 +134,6 @@ export default {
     },
     async checkLikeFromAccount() {
       if (!this.directAccountLink) {
-        console.error('directAccountLink is not set. Please try again.');
         return;
       }
       const urlParts = this.directAccountLink.split('/');

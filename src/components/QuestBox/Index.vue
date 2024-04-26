@@ -173,7 +173,6 @@ export default {
       this.$emit('close');
     },
     triggerOpen() {
-      console.log('triggerOpen');
       const cube: any = document.querySelector(`#cube-open-${this.boxId}`);
       // const cback: any = document.querySelector(`#cube-open-${this.boxId} .cube--back`);
       const ctop: any = document.querySelector(`#cube-open-${this.boxId} .cube--top`);

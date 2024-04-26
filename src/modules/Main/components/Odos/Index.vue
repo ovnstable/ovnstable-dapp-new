@@ -411,7 +411,6 @@ export default {
     });
 
     if (this.inputTokens.length === 0 && this.outputTokens.length === 0) {
-      console.log('MOUNTED');
       this.clearForm('4');
     }
 
@@ -873,7 +872,6 @@ export default {
       }
 
       if (this.swapMethod === 'SELL') {
-        console.log('SELF___');
         this.setSwapMethod('BUY');
         this.addTokensEmptyIsNeeded();
         this.resetOutputs();
