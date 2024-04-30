@@ -5,8 +5,6 @@
       <span
         class="list-items"
         v-html="formatDescription(currentItem.description, currentItem.linkWord, currentItem.link)"
-        @click="trackLinkClick(currentItem)"
-        @keypress="trackLinkClick(currentItem)"
       />
     </div>
   </div>
