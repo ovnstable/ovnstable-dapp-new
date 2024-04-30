@@ -218,6 +218,12 @@ export const poolsInfoMap: any = {
     poolId: 0,
     approveType: 'TOKEN',
   },
+  '0xb34a7d1444a707349Bc7b981B7F2E1f20F81F013': {
+    // usd+/crvUSD
+    gauge: '0x4645e6476d3a5595be9efd39426cc10586a8393d',
+    poolId: 0,
+    approveType: 'TOKEN',
+  },
   '0x1446999B0b0E4f7aDA6Ee73f2Ae12a2cfdc5D9E7': {
     // usd+/usdt+
     gauge: '0xd68089d9daa2da7888b7ef54158480e09ecc3580',
