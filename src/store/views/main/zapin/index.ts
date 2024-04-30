@@ -26,8 +26,8 @@ const actions = {
 
     commit('changeState', {
       field: 'currentZapPlatformContractType',
-      val: zapPlatformContractTypeMap[state.zapPoolRoot.platform[0]]
-      ?? zapPlatformContractTypeMap[state.zapPoolRoot.address],
+      val: zapPlatformContractTypeMap[state.zapPoolRoot.address]
+        ?? zapPlatformContractTypeMap[state.zapPoolRoot.platform[0]],
     });
 
     if (!state.currentZapPlatformContractType) {

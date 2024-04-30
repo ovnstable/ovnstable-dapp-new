@@ -202,6 +202,9 @@ export default {
   computed: {
     ...mapGetters('network', ['getParams']),
     openPositionOnPool() {
+      if (this.successData.pool.platform[0] === 'Lynex') {
+        return `https://app.lynex.fi/liquidity/manage/${this.successData.pool.address}`;
+      }
       if (this.successData.pool.platform[0] === 'Chronos') {
         return `https://app.chronos.exchange/liquidity/${this.successData.pool.address}`;
       }

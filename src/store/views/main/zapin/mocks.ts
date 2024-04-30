@@ -218,9 +218,22 @@ export const poolsInfoMap: any = {
     poolId: 0,
     approveType: 'TOKEN',
   },
-  '0xb34a7d1444a707349Bc7b981B7F2E1f20F81F013': {
-    // usd+/frax
-    gauge: '0x4645e6476d3a5595be9efd39426cc10586a8393d',
+  '0x1446999B0b0E4f7aDA6Ee73f2Ae12a2cfdc5D9E7': {
+    // usd+/usdt+
+    gauge: '0xd68089d9daa2da7888b7ef54158480e09ecc3580',
+    poolId: 0,
+    approveType: 'TOKEN',
+  },
+
+  // LYNEX
+  '0xc5f4c5c2077bbbac5a8381cf30ecdf18fde42a91': {
+    gauge: '0x58AC068Eef3F49E019A88C7ecc9Ac2Fdd63fA755',
+    poolId: 0,
+    approveType: 'TOKEN',
+  },
+
+  '0x58aacbccaec30938cb2bb11653cad726e5c4194a': {
+    gauge: '0xEaf988C649f44c4DDFd7FDe1a8cB290569B66253',
     poolId: 0,
     approveType: 'TOKEN',
   },
@@ -368,6 +381,16 @@ export const zapPlatformContractTypeMap: any = {
   },
   Curve: {
     name: 'Curve',
+    type: 'LP_WITH_STAKE_IN_ONE_STEP',
+    typeOfDepositConstructor: 'CONSTRUCTOR_WITH_TOKEN_ID',
+  },
+  '0x1446999B0b0E4f7aDA6Ee73f2Ae12a2cfdc5D9E7': {
+    name: 'CurveNG',
+    type: 'LP_WITH_STAKE_IN_ONE_STEP',
+    typeOfDepositConstructor: 'CONSTRUCTOR_WITH_TOKEN_ID',
+  },
+  Lynex: {
+    name: 'Lynex',
     type: 'LP_WITH_STAKE_IN_ONE_STEP',
     typeOfDepositConstructor: 'CONSTRUCTOR_WITH_TOKEN_ID',
   },

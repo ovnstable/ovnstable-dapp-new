@@ -5,7 +5,6 @@
 
 import { poolApiService } from '@/services/pool-api-service.ts';
 import {
-  checkForSamePlatform,
   getSortedPools,
   getSortedSecondPools,
   initAggregators,
