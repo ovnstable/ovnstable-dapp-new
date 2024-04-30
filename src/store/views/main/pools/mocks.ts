@@ -592,6 +592,9 @@ export const LOW_TVL_PROMOTE = [
 
   // THRUSTER
   '0xf2d0a6699fea86fff3eb5b64cdc53878e1d19d6f',
+
+  // Dyson
+  '0xf63291375d3eb7014fbe658f256c79163dc308ab',
 ];
 
 export const APY_POOLS = [
