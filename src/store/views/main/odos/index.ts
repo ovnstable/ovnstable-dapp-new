@@ -361,7 +361,6 @@ const actions = {
           multicaller,
         ).balanceOf(rootState.accountData.account).catch(() => '0'));
 
-      console.log(getters.allTokensList, '___getters.allTokensList');
       if (!MulticallWrapper.isMulticallProvider(provider)) return;
 
       const balancesData = await Promise.all(requests);
@@ -392,7 +391,6 @@ const actions = {
           };
         })
       );
-      console.log(newBalances, '___balancesData');
 
       // console.log(newBalances, 'newBalances');
       const bus = useEventBus('odos-tokens-loaded');
