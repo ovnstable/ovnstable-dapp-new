@@ -230,22 +230,16 @@ export default {
         });
 
         root.set(link.source, branch);
-        // root.delete(link.source);
-        // console.log("Root: ", root);
       }
 
-      // console.log("Inited root: ", root);
-      // return root;
       const mergedRoot = this.getMergedBranches(root);
-      // return mergedRoot;
       return this.getDuplicateClearedRoot(mergedRoot);
-      // return this.getFilteredRoot(mergedRoot, inputTokens, outputTokens);
     },
 
     getDuplicateClearedRoot(root: any) {
       if (!root) return root;
 
-      const existsPathMap = new Map(); // write full path by queue of symbol
+      const existsPathMap = new Map();
 
       const newRoot = new Map();
       const branches = Array.from(root.values());

@@ -201,7 +201,6 @@ export default {
       immediate: true,
       handler: function handleNetworkNameChange(newVal, oldVal) {
         if (newVal !== oldVal) {
-          console.log('changed ovn network');
           this.fetchDataForOVN(this.$store.state.network.ovnNetwork);
         }
       },

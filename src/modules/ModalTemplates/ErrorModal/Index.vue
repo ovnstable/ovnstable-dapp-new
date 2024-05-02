@@ -187,10 +187,7 @@ export default {
         return;
       }
 
-      if (!this.errorMsg.message) {
-        console.log('Error type not found.');
-        return;
-      }
+      if (!this.errorMsg.message) return;
 
       if (this.errorMsg.message.includes('Out of Gas')) {
         this.errorViewType = 'gas';

@@ -430,7 +430,7 @@ export default {
         // Alienbase: ["Alien Base", "Alien Base Stable"],
         // Convex: ["Curve Crypto Registry", "Curve Factory", "Curve Registry"]
       } as any,
-      odosZapReferalCode: 3000000005,
+      odosZapReferalCode: 3111111111,
       currentStage: zapInStep.START,
     };
   },
@@ -963,7 +963,6 @@ export default {
           return data;
         })
         .catch((e) => {
-          console.log('Swap request error: ', e);
           this.closeWaitingModal();
           if (e && e.message && e.message.includes('path')) {
             this.showErrorModalWithMsg({ errorType: 'odos-path', errorMsg: e });

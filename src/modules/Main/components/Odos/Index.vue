@@ -1018,13 +1018,6 @@ export default {
 
           this.odosAssembleRequest(assembleData)
             .then(async (responseAssembleData: any) => {
-              console.log({
-                message: 'Odos Assemble response data',
-                swapSession: this.swapSessionId,
-                data: responseAssembleData,
-                actualGas,
-              });
-
               if (
                 responseAssembleData.simulation
                 && !responseAssembleData.simulation.isSuccess
@@ -1305,10 +1298,7 @@ export default {
       for (let i = 0; i < this.selectedInputTokens.length; i++) {
         const token: any = this.selectedInputTokens[i];
         const { selectedToken } = token;
-        if (!ignoreNullable && !token.value) {
-          console.log('token value is 0: ', token);
-          continue;
-        }
+        if (!ignoreNullable && !token.value) continue;
 
         if (token.value > 0) {
           inputTokens.push({
@@ -1335,10 +1325,7 @@ export default {
     },
 
     lockProportion(isLock: any, token: any) {
-      if (this.outputTokensWithSelectedTokensCount <= 1 && !isLock) {
-        console.log("It's the first token, unlock is disabled");
-        return;
-      }
+      if (this.outputTokensWithSelectedTokensCount <= 1 && !isLock) return;
 
       token.locked = isLock;
       this.recalculateOutputTokensSum();
@@ -1534,7 +1521,7 @@ export default {
 
         sliders.push(token);
       }
-      console.log('Sliders array in getActiveTokens: ', sliders);
+
       return sliders;
     },
 
@@ -1567,7 +1554,6 @@ export default {
         this.tokensQuotaCheckerSec++;
 
         if (this.tokensQuotaCheckerSec >= 3) {
-          console.log('INTERVAL STARTED > 3');
           if (this.tokensQuotaCounterId === intervalId) {
             this.tokensQuotaCheckerSec = 0;
             try {

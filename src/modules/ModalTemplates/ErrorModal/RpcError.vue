@@ -110,7 +110,6 @@ export default {
         this.copyError(copyTooltip, errorMsg);
 
         this.isCopied = true;
-        console.log(this.isCopied);
 
         setTimeout(() => {
           this.isCopied = false;
