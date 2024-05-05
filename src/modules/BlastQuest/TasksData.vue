@@ -62,7 +62,7 @@ const BRONZE_QUESTS = [
   },
   {
     id: IQuestId.FOURTH,
-    text: 'Hold at least 1 share of OVN at Districtone.io',
+    text: 'Hold at least 2 share of OVN at Districtone.io',
     checked: false,
     boxType: TypeofQuest.BRONZE,
   },
