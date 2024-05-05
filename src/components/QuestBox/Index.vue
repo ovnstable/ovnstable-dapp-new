@@ -61,7 +61,7 @@
             class="box-wrap__modal-prize"
           >
             {{ prizeValue }}
-            {{ viewBox === questType.DIAMOND ? 'GOLD' : 'POINTS' }} <span class="point" />
+            GOLD <span class="point" />
           </div>
         </div>
       </div>
