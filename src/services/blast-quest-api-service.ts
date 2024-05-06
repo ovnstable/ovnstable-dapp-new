@@ -38,7 +38,7 @@ class BlastQuestApiService {
         rest_id: id,
       };
       const headers = {
-        'X-RapidAPI-Key': '5b5921e2f5mshac0bc8983d564cfp1fdd4cjsn1746ed92ffa1',
+        'X-RapidAPI-Key': '0a7e70375cmsh69a32d96a5cdceep1e941ajsn0210ecb9a62c',
         'X-RapidAPI-Host': 'twitter-api45.p.rapidapi.com',
       };
 
