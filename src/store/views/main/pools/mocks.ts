@@ -379,16 +379,16 @@ export const poolTokensForZapMap = {
   ],
 
   // LYNEX
-  '0xc5f4c5c2077bbbac5a8381cf30ecdf18fde42a91': [
-    {
-      name: 'USDT+',
-      address: chainContractsMap.linea.usdtPlus.tokenPlus,
-    },
-    {
-      name: 'USD+',
-      address: chainContractsMap.linea.usdPlus.tokenPlus,
-    },
-  ],
+  // '0xc5f4c5c2077bbbac5a8381cf30ecdf18fde42a91': [
+  //   {
+  //     name: 'USDT+',
+  //     address: chainContractsMap.linea.usdtPlus.tokenPlus,
+  //   },
+  //   {
+  //     name: 'USD+',
+  //     address: chainContractsMap.linea.usdPlus.tokenPlus,
+  //   },
+  // ],
   // '0x58aacbccaec30938cb2bb11653cad726e5c4194a': [
   //   {
   //     name: 'USDC',

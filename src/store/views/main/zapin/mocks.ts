@@ -232,11 +232,11 @@ export const poolsInfoMap: any = {
   },
 
   // LYNEX
-  '0xc5f4c5c2077bbbac5a8381cf30ecdf18fde42a91': {
-    gauge: '0x58AC068Eef3F49E019A88C7ecc9Ac2Fdd63fA755',
-    poolId: 0,
-    approveType: 'TOKEN',
-  },
+  // '0xc5f4c5c2077bbbac5a8381cf30ecdf18fde42a91': {
+  //   gauge: '0x58AC068Eef3F49E019A88C7ecc9Ac2Fdd63fA755',
+  //   poolId: 0,
+  //   approveType: 'TOKEN',
+  // },
 
   // '0x58aacbccaec30938cb2bb11653cad726e5c4194a': {
   //   gauge: '0xEaf988C649f44c4DDFd7FDe1a8cB290569B66253',
