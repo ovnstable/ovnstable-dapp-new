@@ -389,16 +389,16 @@ export const poolTokensForZapMap = {
       address: chainContractsMap.linea.usdPlus.tokenPlus,
     },
   ],
-  '0x58aacbccaec30938cb2bb11653cad726e5c4194a': [
-    {
-      name: 'USDC',
-      address: chainContractsMap.linea.usdc,
-    },
-    {
-      name: 'USD+',
-      address: chainContractsMap.linea.usdPlus.tokenPlus,
-    },
-  ],
+  // '0x58aacbccaec30938cb2bb11653cad726e5c4194a': [
+  //   {
+  //     name: 'USDC',
+  //     address: chainContractsMap.linea.usdc,
+  //   },
+  //   {
+  //     name: 'USD+',
+  //     address: chainContractsMap.linea.usdPlus.tokenPlus,
+  //   },
+  // ],
 
   // Beefy
   '0x61366A4e6b1DB1b85DD701f2f4BFa275EF271197_Aerodrome': [
