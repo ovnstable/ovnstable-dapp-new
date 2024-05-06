@@ -6,6 +6,7 @@
         <div class="pools-header__item">Address</div>
         <div class="pools-header__item">Blast Points</div>
         <div class="pools-header__item">Blast Gold</div>
+        <div class="pools-header__item">Airdrop Gold</div>
         <div class="pools-header__item">Amount of Jackpot, %</div>
       </div>
 
@@ -27,6 +28,9 @@
             </div>
             <div>
               {{ user.claimedGolds }}
+            </div>
+            <div>
+              {{ user.airdrop }}
             </div>
             <div>
               {{ user.jackpotShare }} %
@@ -90,7 +94,7 @@ export default {
 .pools-table__row,
 .pools-table__new {
   display: grid;
-  grid-template-columns: 1fr 3fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 3fr 1fr 1fr 1fr 1fr;
   justify-content: space-between;
   width: 100%;
   padding: 15px 0;
@@ -120,7 +124,7 @@ export default {
 
 .pools-header {
   display: grid;
-  grid-template-columns: 1fr 3fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 3fr 1fr 1fr 1fr 1fr;
   width: 100%;
   color: var(--color-2);
   margin-top: 20px;
@@ -485,7 +489,7 @@ export default {
     font-size: 12px;
   }
   .pools-table__row {
-    grid-template-columns: 1fr 3fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 3fr 1fr 1fr 1fr 1fr;
     button {
       font-size: 14px;
     }
