@@ -99,7 +99,8 @@ export default {
     ...mapGetters('theme', ['light']),
 
     activeNetworkData() {
-      const network = this.$store.state.network.marketNetwork;
+      const marketUrlNetwork = this.$route.query.chain;
+      const network = marketUrlNetwork || this.$store.state.network.marketNetwork;
       const data = appNetworksData.find((_) => _.name.toLowerCase() === network.toLowerCase());
       return data || appNetworksData[0];
     },

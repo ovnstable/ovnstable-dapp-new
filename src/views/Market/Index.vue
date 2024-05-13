@@ -64,7 +64,9 @@ export default {
       if (!marketId || marketId === this.previousId) return;
 
       const tokenKey = `${marketId.toLowerCase()}Plus`;
-      const currentNetworkName = this.$store.state.network.marketNetwork.toLowerCase();
+      const marketUrlNetwork = this.$route.query.chain as string;
+      const currentNetworkName = marketUrlNetwork
+        ? marketUrlNetwork?.toLowerCase() : this.$store.state.network.marketNetwork?.toLowerCase();
 
       const chainContractsAny: any = chainContractsMap;
 
@@ -92,9 +94,10 @@ export default {
 
     handleNetworkChange() {
       const marketId = this.$route.params.id;
-      if (marketId) {
-        this.fetchDataForMarketId(marketId, this.$store.state.network.marketNetwork);
-      }
+      const marketUrlNetwork = this.$route.query.chain;
+      const marketNetwork = marketUrlNetwork || this.$store.state.network.marketNetwork;
+
+      if (marketId) this.fetchDataForMarketId(marketId, marketNetwork);
     },
     async fetchDataForMarketId(marketId: any, networkName: string) {
       this.loaded = false;
