@@ -40,8 +40,8 @@
       >
         {{ link.name }}
       </router-link>
-      <div class="sidebar__divider-top" />
-      <p
+      <!-- <div class="sidebar__divider-top" /> -->
+      <!-- <p
         class="sidebar__text-top sidebar__text-top--ovn"
       >EVENTS</p>
       <router-link
@@ -63,7 +63,7 @@
           </div>
         </div>
 
-      </router-link>
+      </router-link> -->
     </ul>
 
     <ul class="sidebar__bottom">
