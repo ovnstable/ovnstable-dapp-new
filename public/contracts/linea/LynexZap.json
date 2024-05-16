@@ -328,6 +328,13 @@
     },
     {
       "inputs": [],
+      "name": "hotFix",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
       "name": "initialize",
       "outputs": [],
       "stateMutability": "nonpayable",
@@ -572,9 +579,9 @@
       "type": "receive"
     }
   ],
-  "numDeployments": 4,
-  "solcInputHash": "43c0cb2559a8a524ba8f1d433c12da21",
-  "implementation": "0x2aeFD094f64592C7Bde820A2102d2aFEDF02BE7f",
+  "numDeployments": 14,
+  "solcInputHash": "ba6897d8c37cb5d8392651c05070e573",
+  "implementation": "0x7d6B2417856b6492880253B46281C9e393224f82",
   "devdoc": {
     "kind": "dev",
     "methods": {
@@ -618,7 +625,7 @@
   "storageLayout": {
     "storage": [
       {
-        "astId": 782,
+        "astId": 915,
         "contract": "contracts/zap/LynexZap.sol:LynexZap",
         "label": "_initialized",
         "offset": 0,
@@ -626,7 +633,7 @@
         "type": "t_uint8"
       },
       {
-        "astId": 785,
+        "astId": 918,
         "contract": "contracts/zap/LynexZap.sol:LynexZap",
         "label": "_initializing",
         "offset": 1,
@@ -634,7 +641,7 @@
         "type": "t_bool"
       },
       {
-        "astId": 1461,
+        "astId": 2807,
         "contract": "contracts/zap/LynexZap.sol:LynexZap",
         "label": "__gap",
         "offset": 0,
@@ -642,7 +649,7 @@
         "type": "t_array(t_uint256)50_storage"
       },
       {
-        "astId": 1845,
+        "astId": 3191,
         "contract": "contracts/zap/LynexZap.sol:LynexZap",
         "label": "__gap",
         "offset": 0,
@@ -666,7 +673,7 @@
         "type": "t_array(t_uint256)49_storage"
       },
       {
-        "astId": 764,
+        "astId": 897,
         "contract": "contracts/zap/LynexZap.sol:LynexZap",
         "label": "__gap",
         "offset": 0,
@@ -674,7 +681,7 @@
         "type": "t_array(t_uint256)50_storage"
       },
       {
-        "astId": 1080,
+        "astId": 1213,
         "contract": "contracts/zap/LynexZap.sol:LynexZap",
         "label": "__gap",
         "offset": 0,
@@ -682,7 +689,7 @@
         "type": "t_array(t_uint256)50_storage"
       },
       {
-        "astId": 4423,
+        "astId": 43351,
         "contract": "contracts/zap/LynexZap.sol:LynexZap",
         "label": "stakeSlippageBP",
         "offset": 0,
@@ -690,7 +697,7 @@
         "type": "t_uint256"
       },
       {
-        "astId": 4425,
+        "astId": 43353,
         "contract": "contracts/zap/LynexZap.sol:LynexZap",
         "label": "odosRouter",
         "offset": 0,
@@ -698,12 +705,12 @@
         "type": "t_address"
       },
       {
-        "astId": 3702,
+        "astId": 42737,
         "contract": "contracts/zap/LynexZap.sol:LynexZap",
         "label": "lynexRouter",
         "offset": 0,
         "slot": "253",
-        "type": "t_contract(IRouterV2)3693"
+        "type": "t_contract(IRouterV2)16840"
       }
     ],
     "types": {
@@ -734,7 +741,7 @@
         "label": "bytes32",
         "numberOfBytes": "32"
       },
-      "t_contract(IRouterV2)3693": {
+      "t_contract(IRouterV2)16840": {
         "encoding": "inplace",
         "label": "contract IRouterV2",
         "numberOfBytes": "20"

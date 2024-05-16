@@ -232,17 +232,17 @@ export const poolsInfoMap: any = {
   },
 
   // LYNEX
-  // '0xc5f4c5c2077bbbac5a8381cf30ecdf18fde42a91': {
-  //   gauge: '0x58AC068Eef3F49E019A88C7ecc9Ac2Fdd63fA755',
-  //   poolId: 0,
-  //   approveType: 'TOKEN',
-  // },
+  '0xc5f4c5c2077bbbac5a8381cf30ecdf18fde42a91': {
+    gauge: '0x58AC068Eef3F49E019A88C7ecc9Ac2Fdd63fA755',
+    poolId: 0,
+    approveType: 'TOKEN',
+  },
 
-  // '0x58aacbccaec30938cb2bb11653cad726e5c4194a': {
-  //   gauge: '0xEaf988C649f44c4DDFd7FDe1a8cB290569B66253',
-  //   poolId: 0,
-  //   approveType: 'TOKEN',
-  // },
+  '0x58aacbccaec30938cb2bb11653cad726e5c4194a': {
+    gauge: '0xEaf988C649f44c4DDFd7FDe1a8cB290569B66253',
+    poolId: 0,
+    approveType: 'TOKEN',
+  },
 
   // Beefy
   '0x61366A4e6b1DB1b85DD701f2f4BFa275EF271197_Aerodrome': {
@@ -397,8 +397,8 @@ export const zapPlatformContractTypeMap: any = {
   },
   Lynex: {
     name: 'Lynex',
-    type: 'LP_WITH_STAKE_IN_ONE_STEP',
-    typeOfDepositConstructor: 'CONSTRUCTOR_WITH_TOKEN_ID',
+    type: 'LP_STAKE_DIFF_STEPS',
+    typeOfDepositConstructor: 'CONSTRUCTOR_WITHOUT_TOKEN_ID',
   },
   Beefy: {
     name: 'Beefy',
