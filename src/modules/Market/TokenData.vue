@@ -152,9 +152,7 @@ export default {
       this.$store.dispatch('network/changeMarketNetwork', chain.toLowerCase());
     },
     generateHref(tokenName:string, networkName:string) {
-      if (!tokenName) {
-        return '';
-      }
+      if (!tokenName) return '';
 
       const tokenKey = `${tokenName.toLowerCase()?.slice(0, -1)}Plus`;
       if (!tokenKey) return '';

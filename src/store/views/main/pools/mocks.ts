@@ -367,39 +367,6 @@ export const poolTokensForZapMap = {
     },
   ],
 
-  '0x1446999B0b0E4f7aDA6Ee73f2Ae12a2cfdc5D9E7': [
-    {
-      name: 'USD+',
-      address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
-    },
-    {
-      name: 'USDT+',
-      address: chainContractsMap.arbitrum.usdtPlus.tokenPlus,
-    },
-  ],
-
-  // LYNEX
-  '0xc5f4c5c2077bbbac5a8381cf30ecdf18fde42a91': [
-    {
-      name: 'USDT+',
-      address: chainContractsMap.linea.usdtPlus.tokenPlus,
-    },
-    {
-      name: 'USD+',
-      address: chainContractsMap.linea.usdPlus.tokenPlus,
-    },
-  ],
-  '0x58aacbccaec30938cb2bb11653cad726e5c4194a': [
-    {
-      name: 'USDC',
-      address: chainContractsMap.linea.usdc,
-    },
-    {
-      name: 'USD+',
-      address: chainContractsMap.linea.usdPlus.tokenPlus,
-    },
-  ],
-
   // Beefy
   '0x61366A4e6b1DB1b85DD701f2f4BFa275EF271197_Aerodrome': [
     // Aerodrome
@@ -438,6 +405,16 @@ export const poolTokensForZapMap = {
   ],
 
   // PANCAKE ZAPS
+  '0x721f37495cd70383b0a77bf1eb8f97eef29498bb': [
+    {
+      name: 'USDC',
+      address: '0xff970a61a04b1ca14834a43f5de4533ebddb5cc8',
+    },
+    {
+      name: 'USD+',
+      address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
+    },
+  ],
   '0x8a06339abd7499af755df585738ebf43d5d62b94': [
     {
       name: 'USDT+',
@@ -446,66 +423,6 @@ export const poolTokensForZapMap = {
     {
       name: 'USD+',
       address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
-    },
-  ],
-  '0x952388d73EA3E940eD6824DBd75ed6aD58e6B436': [
-    {
-      name: 'DOLA',
-      address: '0x4621b7A9c75199271F773Ebd9A499dbd165c3191',
-    },
-    {
-      name: 'USD+',
-      address: chainContractsMap.base.usdPlus.tokenPlus,
-    },
-  ],
-  '0x418457Ca08fA5EC77f811B105F2c585cd051Ac10': [
-    {
-      name: 'USDC',
-      address: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
-    },
-    {
-      name: 'USD+',
-      address: chainContractsMap.base.usdPlus.tokenPlus,
-    },
-  ],
-  '0x4704f9Cf735b58ea442E387ACca6717311597322': [
-    {
-      name: 'AERO',
-      address: '0x940181a94A35A4569E4529A3CDfB74e38FD98631',
-    },
-    {
-      name: 'OVN',
-      address: '0xA3d1a8DEB97B111454B294E2324EfAD13a9d8396',
-    },
-  ],
-  '0xbB38EeBd670A9F3cafe6D3170862ccD930cB25f9': [
-    {
-      name: 'USD+',
-      address: chainContractsMap.base.usdPlus.tokenPlus,
-    },
-    {
-      name: 'sFRAX',
-      address: '0xe4796cCB6bB5DE2290C417Ac337F2b66CA2E770E',
-    },
-  ],
-  '0x8041e2A135D2da7A8E21E4B14113D8245EC532e1': [
-    {
-      name: 'USD+',
-      address: chainContractsMap.base.usdPlus.tokenPlus,
-    },
-    {
-      name: 'eUSD',
-      address: '0xCfA3Ef56d303AE4fAabA0592388F19d7C3399FB4',
-    },
-  ],
-  '0xf15B30a0a823f588B523fD794A43939F0B1dC582': [
-    {
-      name: 'USD+',
-      address: chainContractsMap.base.usdPlus.tokenPlus,
-    },
-    {
-      name: 'wstETH',
-      address: '0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452',
     },
   ],
 } as any;
@@ -530,6 +447,7 @@ export const poolsForOVN = {
 } as any;
 
 export const zapPlatformSupportList = [
+  // 'Chronos',
   'Thena',
   'Velodrome',
   'Aerodrome',
@@ -537,7 +455,8 @@ export const zapPlatformSupportList = [
   'Arbidex',
   'Sperax',
   'Convex',
-  'Lynex',
+  // 'Defiedge',
+  // 'Baseswap',
   'Velocimeter',
   'Alienbase',
   'Swapbased',
@@ -556,8 +475,8 @@ export enum POOL_TAG {
 // https://docs.google.com/spreadsheets/d/1zyNA4mbpmyG30R1aIqkkRvbCJSjfyb7pV4hhCa7pohM/edit#gid=813615557
 
 export const NEW_POOLS: string[] = [
-  '0x8041e2A135D2da7A8E21E4B14113D8245EC532e1',
-  '0xf15B30a0a823f588B523fD794A43939F0B1dC582',
+  '0xf2d0a6699fea86fff3eb5b64cdc53878e1d19d6f',
+  '0x21f25b792d2e14378f93a4c3260a53f4a889e68d',
 ];
 
 export const HOT_POOLS = [
@@ -590,6 +509,7 @@ export const LOW_TVL_PROMOTE = [
   '0xd01075f7314a6436e8b74fc18069848229d0c555',
   '0xb9c2d906f94b27bc403ab76b611d2c4490c2ae3f',
   '0x844D7d2fCa6786Be7De6721AabdfF6957ACE73a0',
+  '0x721f37495cd70383b0a77bf1eb8f97eef29498bb',
   '0x46e1B51e07851301f025ffeA506b140dB80a214A',
 
   // VELOCORE
@@ -609,15 +529,9 @@ export const LOW_TVL_PROMOTE = [
   // SYNCSWAP
   '0xA06f1cce2Bb89f59D244178C2134e4Fc17B07306',
 
-  // SWAPBLAST
-  '0x49b6992dbacf7caa9cbf4dbc37234a0167b8edcd',
-  '0xb70ab4c4be5872fdd22f43c5907428198cdcb2d5',
-
-  // THRUSTER
-  '0xf2d0a6699fea86fff3eb5b64cdc53878e1d19d6f',
-
-  // Dyson
-  '0xf63291375d3eb7014fbe658f256c79163dc308ab',
+  // CURVE
+  '0x1446999B0b0E4f7aDA6Ee73f2Ae12a2cfdc5D9E7',
+  '0xb34a7d1444a707349Bc7b981B7F2E1f20F81F013',
 ];
 
 export const APY_POOLS = [
