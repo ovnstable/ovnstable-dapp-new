@@ -50,7 +50,7 @@ import SuccessModal from '@/modules/ModalTemplates/SuccessModal/Index.vue';
 import DeprecatedModal from '@/modules/ModalTemplates/DeprecatedModal/Index.vue';
 import { deviceType } from '@/utils/deviceType.ts';
 import ButtonComponent from '@/components/Button/Index.vue';
-import { DEPRECATED_NETWORKS } from './utils/const';
+import { DEPRECATED_NETWORKS } from './utils/const.ts';
 
 export default {
   name: 'AppView',
@@ -127,6 +127,10 @@ export default {
 
   b {
     text-decoration: underline;
+  }
+
+  @media (min-width: 640px) {
+    margin: 0 15px 0 15px;
   }
 }
 
