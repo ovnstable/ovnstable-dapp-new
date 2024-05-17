@@ -556,10 +556,6 @@ export enum POOL_TAG {
 // https://docs.google.com/spreadsheets/d/1zyNA4mbpmyG30R1aIqkkRvbCJSjfyb7pV4hhCa7pohM/edit#gid=813615557
 
 export const NEW_POOLS: string[] = [
-  '0xf2d0a6699fea86fff3eb5b64cdc53878e1d19d6f',
-  '0x21f25b792d2e14378f93a4c3260a53f4a889e68d',
-  '0xaAaaaAAAFfe404EE9433EEf0094b6382D81fb958_eth',
-  '0xaAaaaAAAFfe404EE9433EEf0094b6382D81fb958_usdb',
   '0x8041e2A135D2da7A8E21E4B14113D8245EC532e1',
   '0xf15B30a0a823f588B523fD794A43939F0B1dC582',
 ];
