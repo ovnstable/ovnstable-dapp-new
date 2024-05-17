@@ -36,8 +36,6 @@ const actions = {
       rootState.odosData,
     ));
 
-    console.log(list, '___list');
-
     commit('changeState', {
       [networkId]: list,
     });

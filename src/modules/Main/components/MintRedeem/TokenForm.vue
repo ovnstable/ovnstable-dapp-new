@@ -173,7 +173,6 @@ export default {
       return formatMoney(formattedBalance, fixedByPrice(formattedBalance));
     },
     tokensList() {
-      console.log(this.tokensListGetter, '___this.tokensListGetter');
       let list = this.tokensListGetter[this.networkId];
       const networkId = this.networkId as keyof typeof MINTREDEEM_SCHEME;
       const wrapUnwrapPairs = MINTREDEEM_SCHEME[networkId]
@@ -192,7 +191,6 @@ export default {
         }
         const uniqueTokens = new Set();
 
-        console.log(mappedList, '__mappedList');
         const filteredList = mappedList.filter((token: any) => {
           const duplicate = uniqueTokens.has(token.symbol);
           uniqueTokens.add(token.symbol);
