@@ -334,8 +334,17 @@ export default {
       const networkId = this.networkId as keyof typeof MINTREDEEM_SCHEME;
       const pairData = MINTREDEEM_SCHEME[networkId]
         .find((_) => {
-          const tokenAddress = this.isReverseArray
+          let tokenAddress = this.isReverseArray
             ? _.token1.toLowerCase() : _.token0.toLowerCase();
+
+          // some chains have duplicates of tokens in input, some in output
+          if (networkId === 8453) {
+            tokenAddress = this.isReverseArray
+              ? _.token0.toLowerCase() : _.token1.toLowerCase();
+
+            return tokenAddress === this.inputToken.address.toLowerCase();
+          }
+
           return tokenAddress === this.outputToken.address.toLowerCase();
         });
       let exchangeAddress = null;
@@ -376,11 +385,21 @@ export default {
       const networkId = self.networkId as keyof typeof MINTREDEEM_SCHEME;
       const exchangeContract = MINTREDEEM_SCHEME[networkId]
         .find((_) => {
-          const tokenAddress = self.isReverseArray
+          let tokenAddress = self.isReverseArray
             ? _.token1.toLowerCase() : _.token0.toLowerCase();
+
+          // some chains have duplicates of tokens in input, some in output
+          if (networkId === 8453) {
+            tokenAddress = self.isReverseArray
+              ? _.token0.toLowerCase() : _.token1.toLowerCase();
+
+            return tokenAddress === self.inputToken.address.toLowerCase();
+          }
+
           return tokenAddress === self.outputToken.address.toLowerCase();
         });
 
+      console.log(exchangeContract, '___exchangeContract');
       const tokenСontract = Object.values(self.contracts)
         .find((cData: any) => (
           cData ? cData.target.toLowerCase() === self.inputToken.address.toLowerCase() : false
@@ -603,15 +622,16 @@ export default {
 
         const pairData = MINTREDEEM_SCHEME[networkId]
           .find((_) => {
-            // todo: same for all chains
-            if (networkId === 81457 && !this.isReverseArray) {
-              const tokenAddress = _.token1.toLowerCase();
+            let tokenAddress = this.isReverseArray
+              ? _.token1.toLowerCase() : _.token0.toLowerCase();
+
+            // some chains have duplicates of tokens in input, some in output
+            if (networkId === 8453) {
+              tokenAddress = this.isReverseArray
+                ? _.token0.toLowerCase() : _.token1.toLowerCase();
 
               return tokenAddress === this.inputToken.address.toLowerCase();
             }
-
-            const tokenAddress = this.isReverseArray
-              ? _.token1.toLowerCase() : _.token0.toLowerCase();
 
             return tokenAddress === this.outputToken.address.toLowerCase();
           });
