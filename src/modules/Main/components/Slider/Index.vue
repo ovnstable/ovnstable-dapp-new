@@ -32,48 +32,6 @@
         ref="mySwiper"
       >
         <swiper-slide
-          :ref="slideRef"
-          :swiper-ref="swiperInstance"
-          v-if="networkName === 'blast'"
-        >
-          <div class="slider-info-blast">
-            <div
-              class="slider-info-blast-points"
-            >
-              <p>BLAST GOLD:
-                <span
-                  v-if="!jackpotDataLoaded"
-                  class="spinner-container"
-                >
-                  <Spinner />
-                </span>
-                <span v-else>
-                  {{ jackpotData?.goldBlast }}
-                </span>
-              </p>
-            </div>
-            <div class="slider-info-blast-lootbox">
-              <p>BLAST LOOTBOX AIRDROP <br>
-                Do daily tasks and win lootbox!</p>
-              <div class="slider-info-blast-lootbox-start">
-                <img
-                  alt="SlothBlastQuest"
-                  src="/blastQuest/SlothBlastQuest.png"
-                />
-                <router-link
-                  to="/blastquest"
-                >
-                  <ButtonComponent>
-                    START
-                  </ButtonComponent>
-
-                </router-link>
-              </div>
-
-            </div>
-          </div>
-        </swiper-slide>
-        <swiper-slide
           v-for="(slide, index) in sliderData"
           :ref="slideRef"
           :swiper-ref="swiperInstance"
@@ -176,7 +134,6 @@ import { Swiper as SwiperClass } from 'swiper/core';
 import { deviceType } from '@/utils/deviceType.ts';
 import { mapGetters } from 'vuex';
 import Spinner from '@/components/Spinner/Index.vue';
-import ButtonComponent from '@/components/Button/Index.vue';
 import SliderApiService from '@/services/slider-api-service.ts';
 import 'swiper/swiper.min.css';
 import { getImageUrl } from '@/utils/const.ts';
@@ -203,7 +160,6 @@ export default {
     Swiper,
     SwiperSlide,
     Spinner,
-    ButtonComponent,
   },
   data() {
     return {
