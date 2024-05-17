@@ -140,6 +140,7 @@ export const getFilteredPoolTokens = (
   let leftListTokensAddresses = listTokensAddresses;
   const keys = Object.keys(tokenMap);
 
+  console.log(tokenMap, '___tokenMap');
   for (let i = 0; i < keys.length; i++) {
     const key = keys[i];
     const item = tokenMap[key];
@@ -168,6 +169,8 @@ export const getFilteredPoolTokens = (
     }
   }
 
+  console.log(listTokensAddresses, '___listTokensAddresses');
+  console.log(tokens, '___tokens');
   // order tokens like as list addresses.
   if (isIncludeInListAddresses) {
     if (listTokensAddresses.length === tokens.length) {

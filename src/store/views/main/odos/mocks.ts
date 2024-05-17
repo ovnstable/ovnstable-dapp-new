@@ -47,6 +47,21 @@ export const LINEA_TOKENS = {
   },
 };
 
+export const OP_TOKENS = {
+  10: {
+    tokenMap: {
+      [chainContractsMap.optimism.usdPlus.tokenPlus]: {
+        assetId: 'usdPlus',
+        assetType: 'usdPlus',
+        decimals: 6,
+        isRebasing: false,
+        name: 'USD+',
+        symbol: 'USD+',
+      },
+    },
+  },
+};
+
 export const SFRAX_TOKEN = {
   8453: {
     tokenMap: {
