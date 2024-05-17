@@ -555,10 +555,7 @@ export enum POOL_TAG {
 // POOLS WITH EARNINGS MORE THAN 500$ per month
 // https://docs.google.com/spreadsheets/d/1zyNA4mbpmyG30R1aIqkkRvbCJSjfyb7pV4hhCa7pohM/edit#gid=813615557
 
-export const NEW_POOLS: string[] = [
-  '0xaAaaaAAAFfe404EE9433EEf0094b6382D81fb958_eth',
-  '0xaAaaaAAAFfe404EE9433EEf0094b6382D81fb958_usdb',
-];
+export const NEW_POOLS: string[] = [];
 
 export const HOT_POOLS = [
   // AERODROME
@@ -618,6 +615,10 @@ export const LOW_TVL_PROMOTE = [
 
   // Dyson
   '0xf63291375d3eb7014fbe658f256c79163dc308ab',
+
+  // AMBIENT
+  '0xaAaaaAAAFfe404EE9433EEf0094b6382D81fb958_eth',
+  '0xaAaaaAAAFfe404EE9433EEf0094b6382D81fb958_usdb',
 ];
 
 export const APY_POOLS = [

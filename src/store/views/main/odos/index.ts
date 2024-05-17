@@ -201,7 +201,6 @@ const actions = {
         commit('changeState', { field: 'isTokensLoading', val: false });
       });
 
-    console.log(odosTokens.chainTokenMap, '___odosTokens.chainTokenMap');
     await commit('changeState', {
       field: 'tokensMap',
       val: {
