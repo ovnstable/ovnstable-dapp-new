@@ -129,7 +129,7 @@ export default {
     text-decoration: underline;
   }
 
-  @media (min-width: 640px) {
+  @media (max-width: 640px) {
     margin: 0 15px 0 15px;
   }
 }
