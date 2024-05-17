@@ -392,8 +392,12 @@ export default {
           let tokenAddress = self.isReverseArray
             ? _.token1.toLowerCase() : _.token0.toLowerCase();
 
+          if (networkId === 81457 && !self.isReverseArray) {
+            return _.token1.toLowerCase() === self.inputToken.address.toLowerCase();
+          }
+
           // some chains have duplicates of tokens in input, some in output
-          if ([8453, 81457].includes(networkId)) {
+          if ([8453].includes(networkId)) {
             tokenAddress = self.isReverseArray
               ? _.token0.toLowerCase() : _.token1.toLowerCase();
 
