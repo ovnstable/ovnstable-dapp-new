@@ -7,6 +7,7 @@
         <div class="pools-header__item">Chain</div>
         <div class="pools-header__item">Pool tokens</div>
         <div class="pools-header__item">Staking platform</div>
+        <div class="pools-header__item">Version</div>
         <div
           class="pools-header__item pools-header__item--hover"
           @click="toggleOrderType('APR')"
@@ -137,6 +138,9 @@
               </a>
             </div>
 
+            <div class="pools-table__version">
+              {{ pool.poolVersion }}
+            </div>
             <div class="pools-table__apy">
               <div
                 v-if="pool.apr"
@@ -420,7 +424,7 @@ export default {
 .pools-table__new,
 .pools-table__blast {
   display: grid;
-  grid-template-columns: 0.5fr 2fr 2fr 1fr 1.35fr 0.65fr;
+  grid-template-columns: minmax(70px, 0.5fr) minmax(200px, 3fr) minmax(200px, 2fr) minmax(140px, 1fr) minmax(140px, 1fr) minmax(140px, 1fr) minmax(140px, 1fr);
   justify-content: space-between;
   width: 100%;
   padding: 15px 0;
@@ -448,33 +452,12 @@ export default {
   }
 }
 .pools-table__blast {
-  grid-template-columns: 0.5fr 2fr 2fr 1fr 1fr 0.45fr;
-  @media (max-width: 1320px) {
-    grid-template-columns: 0.5fr 2fr 2fr 1fr 1.29fr 0.65fr;
-  }
-  @media (max-width: 1280px) {
-    grid-template-columns: 0.5fr 2fr 2fr 1fr 1.2fr 0.45fr;
-  }
-  @media (max-width: 1200px) {
-    grid-template-columns: 0.5fr 2fr 2fr 1fr 1.15fr 0.45fr;
-  }
-  @media (max-width: 1100px) {
-    grid-template-columns: 0.5fr 2fr 2fr 1fr 1.1fr 0.45fr;
-  }
-  @media (max-width: 1050px) {
-    grid-template-columns: 0.5fr 2fr 2fr 1fr 1.05fr 0.45fr;
-  }
-  @media (max-width: 1024px) {
-    grid-template-columns: 0.5fr 2fr 2fr 1fr 1.25fr 0.45fr;
-  }
-  @media (max-width: 1000px) {
-    grid-template-columns: 0.5fr 2fr 2fr 1fr 0.95fr 0.45fr;
-  }
+  grid-template-columns: minmax(70px, 0.5fr) minmax(200px, 3fr) minmax(200px, 2fr) minmax(140px, 1fr) minmax(140px, 1fr) minmax(140px, 1fr) minmax(140px, 1fr);
 }
 
 .pools-header {
   display: grid;
-  grid-template-columns: 0.5fr 2fr 2fr 1fr 1fr 1fr;
+  grid-template-columns: minmax(70px, 0.5fr) minmax(200px, 3fr) minmax(200px, 2fr) minmax(140px, 1fr) minmax(140px, 1fr) minmax(140px, 1fr) minmax(140px, 1fr);
   width: 100%;
   color: var(--color-2);
   margin-top: 20px;
@@ -651,6 +634,11 @@ export default {
 }
 
 .pools-table__tvl {
+  display: flex;
+  align-items: center;
+}
+
+.pools-table__version {
   display: flex;
   align-items: center;
 }
@@ -909,7 +897,7 @@ export default {
     font-size: 12px;
   }
   .pools-table__row {
-    grid-template-columns: 0.5fr 2fr 2fr 1fr 1.35fr 0.9fr;
+    grid-template-columns: 0.5fr 2fr 2fr 2fr 1fr 1.35fr 0.9fr;
     button {
       font-size: 14px;
     }
@@ -923,7 +911,7 @@ export default {
     right: -36px;
   }
   .pools-table__blast {
-    grid-template-columns: 0.5fr 2fr 2fr 1fr 0.8fr 0.9fr;
+    grid-template-columns: 0.5fr 2fr 2fr 2fr 1fr 0.8fr 0.9fr;
   }
 }
 
