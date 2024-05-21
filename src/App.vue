@@ -74,7 +74,7 @@ export default {
     await this.$store.dispatch('theme/initTheme');
     await this.$store.dispatch('web3/initWeb3');
     await this.$store.dispatch('walletAction/dappInitWalletConnect');
-    await this.fetchDataForBlastQuest();
+    // await this.fetchDataForBlastQuest();
 
     this.$store.dispatch('odosData/initUpdateBalancesInterval');
   },
