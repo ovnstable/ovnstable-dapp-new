@@ -21,264 +21,254 @@
       </div>
 
       <template v-else>
-        <div class="swap-body">
-          <div>
-            <div class="mb-4 mt-1">
-              <PoolLabel :pool="zapPool" />
-            </div>
+        <div class="zapin-block">
+          <div class="zapin-block__header">
+            ZAP IN {{ zapPool?.poolVersion?.toUpperCase() }}
+          </div>
+          <div class="zapin-block__row">
+            <div class="zapin-block__content">
+              <div>
+                <div class="mb-4 mt-1">
+                  <PoolLabel :pool="zapPool" />
+                </div>
 
-            <div class="input-swap-container">
-              <div class="swap-form__body-block">
-                <div class="swap-form__body-block__title">
-                  <h3>
-                    You send
-                  </h3>
-                  <div
-                    v-if="inputTokensWithSelectedTokensCount"
-                    class="swap-form__body-block__inputs-max"
-                    @click="maxAllMethod"
-                    @keypress="maxAllMethod"
-                  >
-                    Max all
+                <div class="input-swap-container">
+                  <div class="swap-form__body-block">
+                    <div class="swap-form__body-block__title">
+                      <h3>
+                        You send
+                      </h3>
+                      <div
+                        v-if="inputTokensWithSelectedTokensCount"
+                        class="swap-form__body-block__inputs-max"
+                        @click="maxAllMethod"
+                        @keypress="maxAllMethod"
+                      >
+                        Max all
+                      </div>
+                    </div>
+                    <TransitionGroup
+                      name="staggered-fade"
+                      tag="div"
+                      :class="{ 'swap-form__body-block__inputs': true, 'block-inputs--scroll': outputTokens?.length > 3 }"
+                      :css="false"
+                      @before-enter="beforeEnterList"
+                      @enter="onEnterList"
+                      @onLeave="onLeaveList"
+                    >
+                      <div
+                        v-for="token in inputTokens"
+                        :key="token.id"
+                        :data-index="token.id"
+                        class="swap-form__body-block__inputs-item"
+                      >
+                        <TokenForm
+                          :token-info="token"
+                          :is-token-removable="isInputTokensRemovable"
+                          :is-input-token="true"
+                          :disabled="false"
+                          :balances-loading="isBalancesLoading"
+                          @select-token="selectFormToken"
+                          @remove-token="removeInputToken"
+                          @update-token="updateTokenValueMethod"
+                        />
+                      </div>
+                      <div
+                        v-if="isInputTokensAddAvailable"
+                        class="swap-form__body-block__inputs-add"
+                        @click="addNewInputToken"
+                        @keypress="addNewInputToken"
+                      >
+                        +
+                      </div>
+                    </TransitionGroup>
                   </div>
                 </div>
-                <TransitionGroup
-                  name="staggered-fade"
-                  tag="div"
-                  :class="{ 'swap-form__body-block__inputs': true, 'block-inputs--scroll': outputTokens?.length > 3 }"
-                  :css="false"
-                  @before-enter="beforeEnterList"
-                  @enter="onEnterList"
-                  @onLeave="onLeaveList"
+
+                <div
+                  class="swap-form__body-arrow"
                 >
+                  <BaseIcon
+                    name="ArrowDown"
+                  />
+                </div>
+
+                <div class="out-swap-container pt-5">
                   <div
-                    v-for="token in inputTokens"
+                    v-for="token in (outputTokens as any)"
                     :key="token.id"
-                    :data-index="token.id"
-                    class="swap-form__body-block__inputs-item"
+                    class="input-component-container"
                   >
                     <TokenForm
                       :token-info="token"
-                      :is-token-removable="isInputTokensRemovable"
-                      :is-input-token="true"
-                      :disabled="false"
+                      :is-token-removable="isOutputTokensRemovable"
+                      :is-input-token="false"
+                      :disabled="true"
                       :balances-loading="isBalancesLoading"
-                      @select-token="selectFormToken"
-                      @remove-token="removeInputToken"
-                      @update-token="updateTokenValueMethod"
+                      @select-token="selectOutputToken"
+                      @remove-token="removeOutputToken"
                     />
                   </div>
-                  <div
-                    v-if="isInputTokensAddAvailable"
-                    class="swap-form__body-block__inputs-add"
-                    @click="addNewInputToken"
-                    @keypress="addNewInputToken"
-                  >
-                    +
-                  </div>
-                </TransitionGroup>
-              </div>
-            </div>
-
-            <div
-              class="swap-form__body-arrow"
-            >
-              <BaseIcon
-                name="ArrowDown"
-              />
-            </div>
-
-            <div class="out-swap-container pt-5">
-              <div
-                v-for="token in (outputTokens as any)"
-                :key="token.id"
-                class="input-component-container"
-              >
-                <TokenForm
-                  :token-info="token"
-                  :is-token-removable="isOutputTokensRemovable"
-                  :is-input-token="false"
-                  :disabled="true"
-                  :balances-loading="isBalancesLoading"
-                  @select-token="selectOutputToken"
-                  @remove-token="removeOutputToken"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div v-if="sumOfAllSelectedTokensInUsd && ifMoreThanOneSelectedTokensAdded">
-          <div class="transaction-info-container">
-            <div class="transaction-info-body">
-              <div
-                class="zap-row"
-              >
-                <div class="transaction-info-title">Slippage</div>
-                <div class="transaction-info">
-                  {{ slippagePercent * 1 }}%
-                  <span class="transaction-info-additional">
-                    ({{ formatMoney(getSlippageAmount, 3) }})$
-                  </span>
                 </div>
               </div>
 
-              <div
-                class="zap-row"
-              >
-                <div class="transaction-info-title">Multi-swap Odos fee</div>
-                <div>
-                  <!-- <Tooltip
+              <div v-if="sumOfAllSelectedTokensInUsd && ifMoreThanOneSelectedTokensAdded">
+                <div class="transaction-info-container">
+                  <div class="transaction-info-body">
+                    <div
+                      class="zap-row"
+                    >
+                      <div class="transaction-info-title">Slippage</div>
+                      <div class="transaction-info">
+                        {{ slippagePercent * 1 }}%
+                        <span class="transaction-info-additional">
+                          ({{ formatMoney(getSlippageAmount, 3) }})$
+                        </span>
+                      </div>
+                    </div>
+
+                    <div
+                      class="zap-row"
+                    >
+                      <div class="transaction-info-title">Multi-swap Odos fee</div>
+                      <div>
+                      <!-- <Tooltip
                       text="This fee is charged by Odos for using multi-input/multi-output"
                     /> -->
-                </div>
-                <div class="transaction-info">
-                  {{ multiSwapOdosFeePercent * 1 }}%
-                  <span class="transaction-info-additional">
-                    ({{ formatMoney(getOdosFee, 3) }})$
-                  </span>
+                      </div>
+                      <div class="transaction-info">
+                        {{ multiSwapOdosFeePercent * 1 }}%
+                        <span class="transaction-info-additional">
+                          ({{ formatMoney(getOdosFee, 3) }})$
+                        </span>
+                      </div>
+                    </div>
+
+                    <div class="zap-row">
+                      <div class="transaction-info-title">Single-swap Odos fee</div>
+                      <div>
+                      <!-- <Tooltip text="Single-input/output swaps are free" /> -->
+                      </div>
+                      <div class="transaction-info">
+                        0.00% <span class="transaction-info-additional">(0)$</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div class="zap-row">
-                <div class="transaction-info-title">Single-swap Odos fee</div>
-                <div>
-                  <!-- <Tooltip text="Single-input/output swaps are free" /> -->
-                </div>
-                <div class="transaction-info">
-                  0.00% <span class="transaction-info-additional">(0)$</span>
+              <div>
+                <SwapSlippageSettings
+                  :selected-input-tokens="selectedInputTokens"
+                  :selected-output-tokens="selectedOutputTokens"
+                  @change-slippage="handleCurrentSlippageChanged"
+                />
+              </div>
+              <div
+                v-if="zapPool && zapPool.platform[0] === 'Swapbased'"
+                class="slippage-info-container"
+              >
+                <div class="slippage-info-title">
+                  <BaseIcon name="swapWarn" />
+                  By joining this pool, you are being notified that SwapBased takes a
+                  1% deposit fee.
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
 
-        <div>
-          <SwapSlippageSettings
-            :selected-input-tokens="selectedInputTokens"
-            :selected-output-tokens="selectedOutputTokens"
-            @change-slippage="handleCurrentSlippageChanged"
-          />
-        </div>
-        <div
-          v-if="zapPool && zapPool.platform[0] === 'Swapbased'"
-          class="slippage-info-container"
-        >
-          <div class="slippage-info-title">
-            <BaseIcon name="swapWarn" />
-            By joining this pool, you are being notified that SwapBased takes a
-            1% deposit fee.
-          </div>
-        </div>
+              <div class="swap-footer pt-5">
+                <div
+                  v-if="!account"
+                  class="swap-button-container"
+                >
+                  <div
+                    class="swap-button"
+                    @click="connectWallet"
+                    @keypress="connectWallet"
+                  >
+                    <div class="swap-button-title">
+                      <div>CONNECT WALLET</div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  v-else
+                  class="swap-button-container"
+                >
+                  <ButtonComponent
+                    btn-size="large"
+                    full
+                    v-if="isDisableButton"
+                    btn-styles="primary"
+                    disabled
+                  >
+                    {{ disableButtonMessage }}
+                  </ButtonComponent>
+                  <ButtonComponent
+                    btn-size="large"
+                    full
+                    v-else-if="isAnyInputsNeedApprove"
+                    class="swap-button"
+                    :loading="approvingPending"
+                    @click="approveTrigger(firstInputInQueueForToApprove)"
+                    @keypress="approveTrigger(firstInputInQueueForToApprove)"
+                  >
+                    APPROVE
+                    {{ firstInputInQueueForToApprove.selectedToken?.symbol }}
+                  </ButtonComponent>
+                  <ButtonComponent
+                    btn-size="large"
+                    full
+                    v-else-if="additionalSwapStepType === 'APPROVE'"
+                    class="swap-button"
+                    :loading="approvingPending"
+                    @click="
+                      toApproveAndDepositSteps(lastZapResponseData, lastPoolInfoData)
+                    "
+                    @keypress="
+                      toApproveAndDepositSteps(lastZapResponseData, lastPoolInfoData)
+                    "
+                  >
+                    APPROVE GAUGE
+                  </ButtonComponent>
+                  <ButtonComponent
+                    btn-size="large"
+                    full
+                    v-else-if="additionalSwapStepType === 'DEPOSIT'"
+                    :loading="isSwapLoading"
+                    @click="
+                      depositGauge(
+                        lastPutIntoPoolEvent,
+                        lastReturnedToUserEvent,
+                        lastPoolInfoData,
+                        lastNftTokenId,
+                      )
+                    "
+                    @keypress="
+                      depositGauge(
+                        lastPutIntoPoolEvent,
+                        lastReturnedToUserEvent,
+                        lastPoolInfoData,
+                        lastNftTokenId,
+                      )
+                    "
+                    class="swap-button"
+                  >
+                    STAKE LP
+                  </ButtonComponent>
+                  <ButtonComponent
+                    btn-size="large"
+                    full
+                    v-else
+                    @click="stakeTrigger"
+                    @keypress="stakeTrigger"
+                    class="swap-button"
+                  >
+                    {{ btnName }}
 
-        <!-- <div
-          class="odos-fees-container mt-5"
-          v-if="ifMoreThanOneSelectedTokensAdded"
-        >
-          <div>
-            circle
-          </div>
-          <div>
-            <div class="odos-fees-title">
-              Odos collects 0.01% fee for multi-input/multi-output swaps.
-            </div>
-          </div>
-        </div> -->
+                  </ButtonComponent>
+                </div>
 
-        <div class="swap-footer pt-5">
-          <div
-            v-if="!account"
-            class="swap-button-container"
-          >
-            <div
-              class="swap-button"
-              @click="connectWallet"
-              @keypress="connectWallet"
-            >
-              <div class="swap-button-title">
-                <div>CONNECT WALLET</div>
-              </div>
-            </div>
-          </div>
-          <div
-            v-else
-            class="swap-button-container"
-          >
-            <ButtonComponent
-              btn-size="large"
-              full
-              v-if="isDisableButton"
-              btn-styles="primary"
-              disabled
-            >
-              {{ disableButtonMessage }}
-            </ButtonComponent>
-            <ButtonComponent
-              btn-size="large"
-              full
-              v-else-if="isAnyInputsNeedApprove"
-              class="swap-button"
-              :loading="approvingPending"
-              @click="approveTrigger(firstInputInQueueForToApprove)"
-              @keypress="approveTrigger(firstInputInQueueForToApprove)"
-            >
-              APPROVE
-              {{ firstInputInQueueForToApprove.selectedToken?.symbol }}
-            </ButtonComponent>
-            <ButtonComponent
-              btn-size="large"
-              full
-              v-else-if="additionalSwapStepType === 'APPROVE'"
-              class="swap-button"
-              :loading="approvingPending"
-              @click="
-                toApproveAndDepositSteps(lastZapResponseData, lastPoolInfoData)
-              "
-              @keypress="
-                toApproveAndDepositSteps(lastZapResponseData, lastPoolInfoData)
-              "
-            >
-              APPROVE GAUGE
-            </ButtonComponent>
-            <ButtonComponent
-              btn-size="large"
-              full
-              v-else-if="additionalSwapStepType === 'DEPOSIT'"
-              :loading="isSwapLoading"
-              @click="
-                depositGauge(
-                  lastPutIntoPoolEvent,
-                  lastReturnedToUserEvent,
-                  lastPoolInfoData,
-                  lastNftTokenId,
-                )
-              "
-              @keypress="
-                depositGauge(
-                  lastPutIntoPoolEvent,
-                  lastReturnedToUserEvent,
-                  lastPoolInfoData,
-                  lastNftTokenId,
-                )
-              "
-              class="swap-button"
-            >
-              STAKE LP
-            </ButtonComponent>
-            <ButtonComponent
-              btn-size="large"
-              full
-              v-else
-              @click="stakeTrigger"
-              @keypress="stakeTrigger"
-              class="swap-button"
-            >
-              {{ btnName }}
-
-            </ButtonComponent>
-          </div>
-
-          <!-- <div class="label-container pt-3">
+              <!-- <div class="label-container pt-3">
             <div
               v-if="selectedInputTokens.length > 0"
               class="row"
@@ -295,6 +285,13 @@
               </div>
             </div>
           </div> -->
+              </div>
+            </div>
+            <ZapinV3
+              v-if="zapPool?.poolVersion === 'v3'"
+              :zap-pool="zapPool"
+            />
+          </div>
         </div>
       </template>
     </div>
@@ -359,18 +356,18 @@ import PoolLabel from '@/modules/Main/components/ZapModal/PoolLabel.vue';
 import SelectTokensModal from '@/components/TokensModal/Index.vue';
 import SwapSlippageSettings from '@/modules/Main/components/Common/SwapSlippageSettings.vue';
 import ZapInStepsRow, { zapInStep } from '@/components/StepsRow/ZapinRow.vue';
+import ZapinV3 from '@/modules/Main/components/ZapModal/ZapForm/ZapinV3.vue';
 import { poolsInfoMap, poolTokensForZapMap } from '@/store/views/main/zapin/mocks.ts';
 import BigNumber from 'bignumber.js';
 import { approveToken, getAllowanceValue } from '@/utils/contractApprove.ts';
 import { onLeaveList, onEnterList, beforeEnterList } from '@/utils/animations.ts';
-// import ZapSteps from '@/components/zap/ZapSteps.vue';
-// import ZapChangeNetwork from '@/components/zap/ZapChangeNetwork.vue';
 
 export default {
   name: 'ZapForm',
   components: {
     PoolLabel,
     BaseIcon,
+    ZapinV3,
     ButtonComponent,
     SwapSlippageSettings,
     SelectTokensModal,

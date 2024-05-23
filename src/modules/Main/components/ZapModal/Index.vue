@@ -5,7 +5,7 @@
       v-model="showModal"
       @close="closeModal"
     >
-      <div class="modal-content">
+      <div :class="['modal-content', { v3: zapPool?.poolVersion === 'v3' }]">
         <ZapForm
           :zap-pool="zapPool"
           @close-form="closeModal"
@@ -75,12 +75,25 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .modal-content {
   padding: 24px;
   min-width: 600px;
   max-width: 600px;
+
+  &.v3 {
+    width: 100vw;
+    max-width: 1200px;
+    margin: 0 40px;
+  }
+
+  @media (max-width: 1240px) {
+    &.v3 {
+      width: 80vw;
+    }
+  }
 }
+
 @media (max-width: 640px) {
   .modal-content {
     min-width: 0;
