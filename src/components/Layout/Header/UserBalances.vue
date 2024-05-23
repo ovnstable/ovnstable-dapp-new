@@ -185,9 +185,8 @@ export default {
   svg path {
     fill: var(--color-3);
   }
-
-  @media (max-width: 640px) {
-    margin-top: 20px;
+  [data-theme="dark"] & {
+    background-color: var(--color-17) !important;
   }
 
   @media (max-width: 768px) {
@@ -200,6 +199,14 @@ export default {
     &:hover {
       background: var(--color-8);
     }
+  }
+  @media (max-width: 640px) {
+    margin-top: 20px;
+    background-color: var(--color-4);
+    [data-theme="dark"] & {
+      background-color: var(--color-17);
+    }
+
   }
 }
 

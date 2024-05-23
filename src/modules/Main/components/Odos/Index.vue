@@ -411,7 +411,6 @@ export default {
     });
 
     if (this.inputTokens.length === 0 && this.outputTokens.length === 0) {
-      console.log('MOUNTED');
       this.clearForm('4');
     }
 
@@ -873,7 +872,6 @@ export default {
       }
 
       if (this.swapMethod === 'SELL') {
-        console.log('SELF___');
         this.setSwapMethod('BUY');
         this.addTokensEmptyIsNeeded();
         this.resetOutputs();
@@ -893,7 +891,6 @@ export default {
     },
 
     finishTransaction() {
-      console.log('finishTransaction');
       this.clearForm('5');
       this.refreshBalance();
     },
@@ -945,7 +942,6 @@ export default {
       return odosApiService
         .quoteRequest(requestData)
         .then((data) => {
-          console.log('Response data for odos swap request: ', data);
           this.$store.commit('odosData/changeState', {
             field: 'swapResponseInfo',
             val: data,
@@ -953,7 +949,6 @@ export default {
           return data;
         })
         .catch((e) => {
-          console.log('Swap request error: ', e);
           this.closeWaitingModal();
           if (e && e.message && e.message.includes('path')) {
             this.showErrorModalWithMsg({ errorType: 'odos-path', errorMsg: e });
@@ -978,15 +973,8 @@ export default {
         });
     },
     async swapTrigger() {
-      if (this.isSwapLoading) {
-        console.log({
-          message: 'Swap method not available, prev swap in process.',
-          swapSession: this.swapSessionId,
-        });
-        return;
-      }
+      if (this.isSwapLoading) return;
 
-      console.log('sWAPP2');
       if (
         this.inputTokensWithSelectedTokensCount < 1
         || this.outputTokensWithSelectedTokensCount < 1
@@ -1030,13 +1018,6 @@ export default {
 
           this.odosAssembleRequest(assembleData)
             .then(async (responseAssembleData: any) => {
-              console.log({
-                message: 'Odos Assemble response data',
-                swapSession: this.swapSessionId,
-                data: responseAssembleData,
-                actualGas,
-              });
-
               if (
                 responseAssembleData.simulation
                 && !responseAssembleData.simulation.isSuccess
@@ -1097,7 +1078,6 @@ export default {
       });
     },
     async simulateSwap() {
-      console.log('SIMULATE');
       if (this.isSumulateSwapLoading) return;
 
       if (
@@ -1160,7 +1140,6 @@ export default {
     // function get data.outTokens and data.outAmounts and find matches in selectedOutputTokens
     // and update selectedOutputTokens with new values
     updateSelectedOutputTokens(data: any) {
-      console.log(data, 'updateSelectedOutputTokens');
       if (!data || !data.outTokens || !data.outAmounts) {
         return;
       }
@@ -1188,8 +1167,6 @@ export default {
         ] = token;
       }
 
-      console.log(outTokensCount, 'selectedOutputTokensCount');
-      console.log(selectedOutputTokensMap, 'selectedOutputTokensMap');
       for (let i = 0; i < outTokensCount; i++) {
         const tokenAddress = outTokens[i];
         const tokenAmount = outAmounts[i];
@@ -1321,10 +1298,7 @@ export default {
       for (let i = 0; i < this.selectedInputTokens.length; i++) {
         const token: any = this.selectedInputTokens[i];
         const { selectedToken } = token;
-        if (!ignoreNullable && !token.value) {
-          console.log('token value is 0: ', token);
-          continue;
-        }
+        if (!ignoreNullable && !token.value) continue;
 
         if (token.value > 0) {
           inputTokens.push({
@@ -1340,10 +1314,7 @@ export default {
       for (let i = 0; i < this.selectedOutputTokens.length; i++) {
         const token: any = this.selectedOutputTokens[i];
         const { selectedToken } = token;
-        if (!ignoreNullable && !token.value) {
-          console.log('output token value is 0: ', token);
-          continue;
-        }
+        if (!ignoreNullable && !token.value) continue;
 
         outputTokens.push({
           tokenAddress: selectedToken.address,
@@ -1354,10 +1325,7 @@ export default {
     },
 
     lockProportion(isLock: any, token: any) {
-      if (this.outputTokensWithSelectedTokensCount <= 1 && !isLock) {
-        console.log("It's the first token, unlock is disabled");
-        return;
-      }
+      if (this.outputTokensWithSelectedTokensCount <= 1 && !isLock) return;
 
       token.locked = isLock;
       this.recalculateOutputTokensSum();
@@ -1553,7 +1521,7 @@ export default {
 
         sliders.push(token);
       }
-      console.log('Sliders array in getActiveTokens: ', sliders);
+
       return sliders;
     },
 
@@ -1586,7 +1554,6 @@ export default {
         this.tokensQuotaCheckerSec++;
 
         if (this.tokensQuotaCheckerSec >= 3) {
-          console.log('INTERVAL STARTED > 3');
           if (this.tokensQuotaCounterId === intervalId) {
             this.tokensQuotaCheckerSec = 0;
             try {

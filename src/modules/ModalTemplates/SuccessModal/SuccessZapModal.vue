@@ -202,6 +202,9 @@ export default {
   computed: {
     ...mapGetters('network', ['getParams']),
     openPositionOnPool() {
+      if (this.successData.pool.platform[0] === 'Lynex') {
+        return `https://app.lynex.fi/liquidity/manage/${this.successData.pool.address}`;
+      }
       if (this.successData.pool.platform[0] === 'Chronos') {
         return `https://app.chronos.exchange/liquidity/${this.successData.pool.address}`;
       }
@@ -250,7 +253,15 @@ export default {
         return `https://app.defiedge.io/s/optimism/${this.successData.pool.address}`;
       }
 
-      if (this.successData.pool.platform[0] === 'Curve') {
+      if (this.successData.pool.address === '0xb34a7d1444a707349Bc7b981B7F2E1f20F81F013') {
+        return 'https://curve.fi/#/arbitrum/pools/factory-v2-117';
+      }
+
+      if (this.successData.pool.address === '0x1446999B0b0E4f7aDA6Ee73f2Ae12a2cfdc5D9E7') {
+        return 'https://curve.fi/#/arbitrum/pools/factory-stable-ng-15';
+      }
+
+      if (this.successData.pool.address === 'Curve') {
         return 'https://curve.fi/#/base/pools/factory-v2-2/deposit';
       }
 
@@ -391,7 +402,7 @@ export default {
 
   &:first-child {
     span {
-      color: var(--color-18);
+      color: var(--color-1);
     }
   }
 

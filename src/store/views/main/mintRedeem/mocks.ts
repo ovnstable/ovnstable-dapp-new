@@ -61,7 +61,7 @@ export const MINTREDEEM_SCHEME = {
   // base
   8453: [
     {
-      token0: chainContractsMap.base.usdc,
+      token0: chainContractsMap.base.usdcNative,
       token1: chainContractsMap.base.usdPlus.tokenPlus,
       exchange: chainContractsMap.base.usdPlus.exchange,
       methodName: [mintRedeemTypes.MINT, mintRedeemTypes.REDEEM],
@@ -119,6 +119,12 @@ export const MINTREDEEM_SCHEME = {
       token1: chainContractsMap.linea.usdtPlus.tokenPlus,
       exchange: chainContractsMap.linea.usdtPlus.exchange,
       methodName: [mintRedeemTypes.MINT, mintRedeemTypes.REDEEM],
+    },
+    {
+      token0: chainContractsMap.linea.usdPlus.tokenPlus,
+      token1: chainContractsMap.linea.usdPlus.wUsdPlus,
+      exchange: chainContractsMap.linea.market,
+      methodName: [mintRedeemTypes.WRAP, mintRedeemTypes.UNWRAP],
     },
   ],
   // bsc

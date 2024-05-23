@@ -29,11 +29,11 @@ const router = createRouter({
       name: 'dashboard',
       component: () => import('@/views/Dashboard/Index.vue'),
     },
-    {
-      path: '/blastquest',
-      name: 'blastquest',
-      component: () => import('@/views/BlastQuest/Index.vue'),
-    },
+    // {
+    //   path: '/blastquest',
+    //   name: 'blastquest',
+    //   component: () => import('@/views/BlastQuest/Index.vue'),
+    // },
     {
       path: '/:pathMatch(.*)*',
       redirect: '/',

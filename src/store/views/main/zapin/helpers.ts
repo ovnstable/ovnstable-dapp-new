@@ -271,6 +271,15 @@ export const depositAllAtGauge = async (
 
   if (
     currentZapPlatformContractType.typeOfDepositConstructor
+    === 'CONSTRUCTOR_WITHOUT_TOKEN_ID'
+  ) {
+    const balance = await poolTokenContract.balanceOf(account);
+    console.log(balance, '___balance');
+    return gaugeContract.deposit(balance, params);
+  }
+
+  if (
+    currentZapPlatformContractType.typeOfDepositConstructor
     === 'BASE_CONSTRUCTOR'
   ) {
     console.log('2');

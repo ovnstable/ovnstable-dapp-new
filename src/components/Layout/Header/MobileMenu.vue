@@ -167,11 +167,9 @@ export default {
   },
   methods: {
     toggleTheme() {
-      console.log('CHANGE2');
       this.$store.dispatch('theme/switchTheme');
     },
     closeModal() {
-      console.log('closeModal');
       this.$emit('close');
     },
     setCookie(key: string, value: string) {

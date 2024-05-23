@@ -6,19 +6,19 @@
       <div class="cube cube--top">
         <img
           alt="side"
-          :src="boxType(BOX_TYPES.TOP)"
+          :src="boxType(BOX_TYPES.TOP, false)"
         />
       </div>
       <div class="cube cube--left">
         <img
           alt="side"
-          :src="boxType(BOX_TYPES.LEFT)"
+          :src="boxType(BOX_TYPES.LEFT, false)"
         />
       </div>
       <div class="cube cube--right">
         <img
           alt="side"
-          :src="boxType(BOX_TYPES.RIGHT)"
+          :src="boxType(BOX_TYPES.RIGHT, false)"
         />
       </div>
       <div class="powerup" />
@@ -39,19 +39,30 @@
           <div class="hexagon" />
           <div class="cube cube--back" />
           <div class="cube cube--top">
-            <BaseIcon :name="boxType(BOX_TYPES.TOP)" />
+            <img
+              alt="side"
+              :src="boxType(BOX_TYPES.TOP, false)"
+            />
           </div>
           <div class="cube cube--left">
-            <BaseIcon :name="boxType(BOX_TYPES.LEFT)" />
+            <img
+              alt="side"
+              :src="boxType(BOX_TYPES.LEFT, false)"
+            />
           </div>
           <div class="cube cube--right">
-            <BaseIcon :name="boxType(BOX_TYPES.RIGHT)" />
+            <img
+              alt="side"
+              :src="boxType(BOX_TYPES.RIGHT, false)"
+            />
           </div>
           <div
             v-if="!isShakeActive"
             class="box-wrap__modal-prize"
           >
-            {{ prizeValue }} POINTS <span class="point" /></div>
+            {{ prizeValue }}
+            GOLD <span class="point" />
+          </div>
         </div>
       </div>
     </Transition>
@@ -63,7 +74,6 @@
 import { uniqueId } from 'lodash';
 import { type PropType } from 'vue';
 import { awaitDelay, getImageUrl } from '@/utils/const.ts';
-import BaseIcon from '@/components/Icon/BaseIcon.vue';
 
 // eslint-disable-next-line no-shadow
 export enum BOX_TYPES {
@@ -96,9 +106,6 @@ export default {
       default: '',
     },
   },
-  components: {
-    BaseIcon,
-  },
   emits: ['close'],
   data() {
     return {
@@ -106,6 +113,7 @@ export default {
       isShakeActive: false,
       boxId: uniqueId(),
       BOX_TYPES,
+      questType: TypeofQuest,
     };
   },
   watch: {
@@ -136,12 +144,16 @@ export default {
   //   this.isShakeActive = false;
 
   //   await awaitDelay(10);
-  //   // this.triggerOpen();
+  //   this.triggerOpen();
   // },
   computed: {
     boxType() {
-      return (side: BOX_TYPES) => {
+      return (side: BOX_TYPES, svg: boolean) => {
         if (typeof this.viewBox === 'undefined') return '';
+        if (svg && side === BOX_TYPES.LEFT) return `box-left-${this.viewBox}`;
+        if (svg && side === BOX_TYPES.TOP) return `box-top-${this.viewBox}`;
+        if (svg && side === BOX_TYPES.RIGHT) return `box-right-${this.viewBox}`;
+
         if (side === BOX_TYPES.TOP) {
           return getImageUrl(`assets/icons/blastQuest/box-top-${this.viewBox}.svg`);
         }
@@ -161,7 +173,6 @@ export default {
       this.$emit('close');
     },
     triggerOpen() {
-      console.log('triggerOpen');
       const cube: any = document.querySelector(`#cube-open-${this.boxId}`);
       // const cback: any = document.querySelector(`#cube-open-${this.boxId} .cube--back`);
       const ctop: any = document.querySelector(`#cube-open-${this.boxId} .cube--top`);

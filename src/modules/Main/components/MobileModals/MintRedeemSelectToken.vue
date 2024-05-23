@@ -140,7 +140,6 @@ export default {
     removeToken(token: any) {
       // eslint-disable-next-line no-param-reassign
       token.selected = false;
-      console.log('Token remove: ', token, this.isInputToken);
       this.$emit('remove-token', {
         ...token,
         selected: true,

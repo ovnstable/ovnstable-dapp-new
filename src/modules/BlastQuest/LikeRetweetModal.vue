@@ -5,10 +5,26 @@
     @close="closeModal"
   >
     <div
+      v-if="!user?.nickname || !accountLink"
+      class='blast-quest-task-not-logged'
+    >
+      <p>LOGIN TO TWITTER BEFORE COMPLETE THIS TASK</p>
+      <ButtonComponent
+
+        btn-styles="secondary"
+        class='blast-quest-task'
+        @click="loginTwitter"
+      >
+        LOGIN TWITTER
+      </ButtonComponent>
+    </div>
+    <div
+      v-else
       class='blast-quest-task'
     >
       <h1>LIKE AND RETWEET TASK</h1>
       <h2>Post</h2>
+
       <div
         class='blast-quest-task-post'
       >
@@ -32,14 +48,7 @@
       <div
         class='blast-quest-task-account'
       >
-        <InputComponent
-          :value="accountLink"
-          is-text
-          input-type="primary"
-          placeholder="Paste the link to your Twitter account here"
-          full-width
-          @input="inputAccount"
-        />
+        <p>{{directAccountLink}}</p>
       </div>
       <Spinner
         class="spinner-wrap"
@@ -59,16 +68,16 @@
 
 <script lang="ts">
 import Spinner from '@/components/Spinner/Index.vue';
-import InputComponent from '@/components/Input/Index.vue';
 import ModalComponent from '@/components/Modal/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BlastQuestApiService from '@/services/blast-quest-api-service.ts';
+import { notify as notifyInst } from '@kyvg/vue3-notification';
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'LikeRetweetModal',
   components: {
     Spinner,
-    InputComponent,
     ModalComponent,
     ButtonComponent,
   },
@@ -87,14 +96,23 @@ export default {
   data() {
     return {
       lastTweetNumber: '',
-      accountLink: '',
       isLiked: false,
       isRetweeted: false,
       loadingTweet: true,
       showModal: false,
+      user: this.$auth0.user,
     };
   },
   async mounted() {
+    let nick: any = null;
+    if (this.user && this.user.sub) {
+      const twitterId = this.user.sub.split('|')[1];
+      nick = await BlastQuestApiService.loadNicknameById(twitterId);
+      localStorage.setItem('directLink', `https://twitter.com/${nick.profile}`);
+      if (nick) {
+        this.$store.commit('jackpotData/setAccountLink', `https://twitter.com/${nick.profile}`);
+      }
+    }
     const resp = await BlastQuestApiService.loadTwitterData();
     this.loadingTweet = false;
     this.lastTweetNumber = resp?.id;
@@ -104,16 +122,34 @@ export default {
       this.showModal = currVal;
     },
   },
+  computed: {
+    ...mapGetters('jackpotData', ['accountLink']),
+    directAccountLink() {
+      return localStorage.getItem('directLink');
+    },
+  },
   methods: {
     closeModal() {
       this.showModal = false;
     },
-    inputAccount(val: string) {
-      this.accountLink = val;
-    },
     async checkLikeFromAccount() {
-      const account = this.accountLink.split('/').pop();
-      this.$emit('twitter-submit', account);
+      if (!this.directAccountLink) {
+        return;
+      }
+      const urlParts = this.directAccountLink.split('/');
+      const twitterUsername = urlParts[urlParts.length - 1];
+      if (!twitterUsername) {
+        notifyInst({
+          title: 'Twitter quest',
+          text: 'User nickname not found',
+          type: 'error',
+        });
+        return;
+      }
+      this.$emit('twitter-submit', twitterUsername);
+    },
+    loginTwitter() {
+      this.$auth0.loginWithRedirect();
     },
   },
 };
@@ -124,7 +160,8 @@ export default {
   margin: 0 auto;
 }
 
-.blast-quest-task {
+.blast-quest-task,
+.blast-quest-task-not-logged {
   display: flex;
   flex-direction: column;
   padding: 30px;
@@ -159,6 +196,25 @@ export default {
     }
   }
 }
+.blast-quest-task-not-logged {
+  button {
+    border-radius: 10px;
+    box-shadow: none;
+    border: none;
+    font-size: 14px;
+    font-weight: 600;
+    align-self: center;
+    margin-top: 20px;
+  }
+  button:hover {
+    background-color: var(--color-8);
+  }
+  p {
+    color: var(--color-1);
+    font-weight: 600;
+  }
+}
+
 .blast-quest-task-post-spinner {
   margin-left: auto;
 }
@@ -188,22 +244,67 @@ export default {
 .blast-quest-task-account {
   border-radius: 10px;
   margin-bottom: 40px;
+  padding: 10px;
   background-color: var(--color-8);
   [data-theme="dark"] & {
     background-color: var(--color-17);
   }
 }
 
+.blast-quest-error-popup {
+  position: fixed;
+  top: 45%;
+  left: 52%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  background-color: var(--color-4);
+  border: 1px solid var(--color-1);
+  z-index: 100;
+  p {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-1);
+  }
+  gap: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  button {
+    box-shadow: none;
+    border: none;
+    p {
+      font-weight: 400;
+    }
+  }
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
+    button {
+      border-color: var(--color-4);
+      box-shadow: none;
+      background-color: var(--color-7);
+    }
+  }
+}
+
 @media (max-width: 1024px) {
-  .blast-quest-task {
+  .blast-quest-task,
+  .blast-quest-task-not-logged {
     min-width: 640px;
     width: auto;
+  }
+  .blast-quest-task-not-logged {
+    padding: 10px;
   }
 }
 
 @media (max-width: 640px) {
-  .blast-quest-task {
+  .blast-quest-task,
+  .blast-quest-task-not-logged {
     min-width: 0;
+  }
+  .blast-quest-task-not-logged {
+    padding: 5px;
   }
   .blast-quest-task-post {
     gap: 20px;

@@ -35,15 +35,22 @@ export const BLAST_TOKENS = {
 export const LINEA_TOKENS = {
   59144: {
     tokenMap: {
-      [chainContractsMap.linea.usdc]: {
-        assetId: 'USDC',
-        assetType: 'USDC',
+      [chainContractsMap.linea.usdPlus.wUsdPlus]: {
+        assetId: 'wUSD',
+        assetType: 'wUSD',
         decimals: 6,
         isRebasing: false,
-        name: 'USDC',
-        symbol: 'USDC',
+        name: 'wUSD+',
+        symbol: 'wUSD+',
       },
-      [chainContractsMap.linea.usdPlus.tokenPlus]: {
+    },
+  },
+};
+
+export const OP_TOKENS = {
+  10: {
+    tokenMap: {
+      [chainContractsMap.optimism.usdPlus.tokenPlus]: {
         assetId: 'usdPlus',
         assetType: 'usdPlus',
         decimals: 6,
@@ -51,21 +58,21 @@ export const LINEA_TOKENS = {
         name: 'USD+',
         symbol: 'USD+',
       },
-      [chainContractsMap.linea.usdt]: {
-        assetId: 'USDT',
-        assetType: 'USDT',
-        decimals: 6,
+    },
+  },
+};
+
+export const SFRAX_TOKEN = {
+  8453: {
+    tokenMap: {
+      '0xe4796cCB6bB5DE2290C417Ac337F2b66CA2E770E': {
+        assetId: 'sfrax',
+        assetType: 'sfrax',
+        decimals: 18,
         isRebasing: false,
-        name: 'USDT',
-        symbol: 'USDT',
-      },
-      [chainContractsMap.linea.usdtPlus.tokenPlus]: {
-        assetId: 'usdtPlus',
-        assetType: 'usdtPlus',
-        decimals: 6,
-        isRebasing: false,
-        name: 'USDT+',
-        symbol: 'USDT+',
+        name: 'Staked FRAX',
+        protocolId: 'frax',
+        symbol: 'sFRAX',
       },
     },
   },

@@ -219,8 +219,27 @@ export const poolsInfoMap: any = {
     approveType: 'TOKEN',
   },
   '0xb34a7d1444a707349Bc7b981B7F2E1f20F81F013': {
-    // usd+/frax
+    // usd+/crvUSD
     gauge: '0x4645e6476d3a5595be9efd39426cc10586a8393d',
+    poolId: 0,
+    approveType: 'TOKEN',
+  },
+  '0x1446999B0b0E4f7aDA6Ee73f2Ae12a2cfdc5D9E7': {
+    // usd+/usdt+
+    gauge: '0xd68089d9daa2da7888b7ef54158480e09ecc3580',
+    poolId: 0,
+    approveType: 'TOKEN',
+  },
+
+  // LYNEX
+  '0xc5f4c5c2077bbbac5a8381cf30ecdf18fde42a91': {
+    gauge: '0x58AC068Eef3F49E019A88C7ecc9Ac2Fdd63fA755',
+    poolId: 0,
+    approveType: 'TOKEN',
+  },
+
+  '0x58aacbccaec30938cb2bb11653cad726e5c4194a': {
+    gauge: '0xEaf988C649f44c4DDFd7FDe1a8cB290569B66253',
     poolId: 0,
     approveType: 'TOKEN',
   },
@@ -254,14 +273,6 @@ export const poolsInfoMap: any = {
   },
 
   // PANCAKE
-  '0x721f37495cd70383b0a77bf1eb8f97eef29498bb': {
-    // usdc/usd+
-    gauge: '0x721f37495cd70383b0a77bf1eb8f97eef29498bb',
-    gaugeForLP: '0x46A15B0b27311cedF172AB29E4f4766fbE7F4364',
-    approveType: 'NFT',
-    // pool token differ from pool address
-    poolTokenType: 'DIFFERENT',
-  },
   '0x8a06339abd7499af755df585738ebf43d5d62b94': {
     // usdt+/usd+
     gauge: '0x8a06339abd7499af755df585738ebf43d5d62b94',
@@ -269,6 +280,42 @@ export const poolsInfoMap: any = {
     approveType: 'NFT',
     // pool token differ from pool address
     poolTokenType: 'DIFFERENT',
+  },
+  '0x952388d73EA3E940eD6824DBd75ed6aD58e6B436': {
+    // dola/usd+ Aerodrome
+    gauge: '0x969c70383A95704C6a35497d8C77BF38dc152e63',
+    poolId: 0,
+    approveType: 'TOKEN',
+  },
+  '0x418457Ca08fA5EC77f811B105F2c585cd051Ac10': {
+    // usdc/usd+ Aerodrome
+    gauge: '0x9701A079C6e80D91CE4c464C4a996237A27FE537',
+    poolId: 0,
+    approveType: 'TOKEN',
+  },
+  '0x4704f9Cf735b58ea442E387ACca6717311597322': {
+    // aero/ovn Aerodrome
+    gauge: '0x365f5413BBC783D1fff1cAe9D3Bd9A16eA698D19',
+    poolId: 0,
+    approveType: 'TOKEN',
+  },
+  '0xbB38EeBd670A9F3cafe6D3170862ccD930cB25f9': {
+    // sfrax/usd+ Aerodrome
+    gauge: '0xEc4288995734ca01eAfC97588658F37515823502',
+    poolId: 0,
+    approveType: 'TOKEN',
+  },
+  '0x8041e2A135D2da7A8E21E4B14113D8245EC532e1': {
+    // usd+/eusd Aerodrome
+    gauge: '0xf09B1177d10775791d5806544AB51F1990Cb7c9A',
+    poolId: 0,
+    approveType: 'TOKEN',
+  },
+  '0xf15B30a0a823f588B523fD794A43939F0B1dC582': {
+    // usd+/wsteth Aerodrome
+    gauge: '0xcC5931E3f7ce8967Dcdc4BC5C7cfd5bF3d7Cf1FE',
+    poolId: 0,
+    approveType: 'TOKEN',
   },
 };
 
@@ -343,15 +390,20 @@ export const zapPlatformContractTypeMap: any = {
     type: 'LP_WITH_STAKE_IN_ONE_STEP',
     typeOfDepositConstructor: 'CONSTRUCTOR_WITH_TOKEN_ID',
   },
+  '0x1446999B0b0E4f7aDA6Ee73f2Ae12a2cfdc5D9E7': {
+    name: 'CurveNG',
+    type: 'LP_WITH_STAKE_IN_ONE_STEP',
+    typeOfDepositConstructor: 'CONSTRUCTOR_WITH_TOKEN_ID',
+  },
+  Lynex: {
+    name: 'Lynex',
+    type: 'LP_STAKE_DIFF_STEPS',
+    typeOfDepositConstructor: 'CONSTRUCTOR_WITHOUT_TOKEN_ID',
+  },
   Beefy: {
     name: 'Beefy',
     type: 'LP_STAKE_DIFF_STEPS',
     typeOfDepositConstructor: 'BASE_CONSTRUCTOR',
-  },
-  '0x721f37495cd70383b0a77bf1eb8f97eef29498bb': {
-    name: 'Pancake8020',
-    type: 'LP_STAKE_DIFF_STEPS',
-    typeOfDepositConstructor: 'CONSTRUCTOR_WITH_NFT_ID',
   },
   '0x8a06339abd7499af755df585738ebf43d5d62b94': {
     name: 'PancakeEqual',

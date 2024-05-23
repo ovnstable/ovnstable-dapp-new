@@ -7,7 +7,6 @@ import injectedModule, { ProviderLabel } from '@web3-onboard/injected-wallets';
 import Onboard from '@web3-onboard/core';
 import walletConnectModule from '@web3-onboard/walletconnect';
 import coinbaseWalletModule from '@web3-onboard/coinbase';
-import { deviceType } from '@/utils/deviceType.ts';
 
 const SUPPORTED_NETWORKS = [137, 56, 10, 42161, 324, 8453, 59144, 81457];
 const WALLETCONNECT_SUPPORTED_NETWORKS = [10, 42161, 8453, 56, 59144, 137, 81457];
@@ -186,6 +185,7 @@ const actions = {
   async disconnectWallet({
     commit, dispatch, getters, rootState,
   }: any) {
+    await commit('jackpotData/setAccountLink', '', { root: true });
     await commit('web3/setProvider', null, { root: true });
 
     if (getters.onboard) {
@@ -360,6 +360,7 @@ const actions = {
   async accountChanged({
     commit, dispatch, getters, rootState,
   }: any, accounts: any) {
+    await commit('jackpotData/setAccountLink', '', { root: true });
     try {
       dispatch('checkAccount', accounts[0]);
       dispatch('setNetwork', rootState.network.networkId);

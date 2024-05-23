@@ -5,8 +5,6 @@
       <span
         class="list-items"
         v-html="formatDescription(currentItem.description, currentItem.linkWord, currentItem.link)"
-        @click="trackLinkClick(currentItem)"
-        @keypress="trackLinkClick(currentItem)"
       />
     </div>
   </div>
@@ -90,11 +88,6 @@ export default {
 
     formatDescription(description: any, linkWord: any, link: any) {
       return description.replace(`[${linkWord}]`, `<a class="modal-link" href="${link}" target="_blank">${linkWord}</a>`);
-    },
-
-    trackLinkClick(item: any) {
-      const action = `carousel_link_clicked_${item.postfix}`;
-      console.log('Action:', action);
     },
   },
 };

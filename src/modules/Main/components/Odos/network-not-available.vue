@@ -55,11 +55,9 @@ export default {
   methods: {
     ...mapActions('swapModal', ['showSwapModal', 'showMintView']),
     changeTab(tabIndex: number) {
-      console.log('we are in change tab in network not available');
       emitTabChange.emit(tabIndex);
     },
     mintAction() {
-      console.log('mint actions was called from no linead');
       this.showMintView();
       this.showSwapModal();
     },

@@ -5,7 +5,6 @@
 
 import { poolApiService } from '@/services/pool-api-service.ts';
 import {
-  checkForSamePlatform,
   getSortedPools,
   getSortedSecondPools,
   initAggregators,
@@ -123,6 +122,7 @@ const actions = {
                   token1Icon,
                   token2Icon,
                   token3Icon,
+                  poolVersion: pool.pool_version,
                   chain: networkConfig.networkId,
                   chainName: networkConfig.networkName,
                   address: pool.id.address,

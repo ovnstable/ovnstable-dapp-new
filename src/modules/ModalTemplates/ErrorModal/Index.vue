@@ -179,9 +179,6 @@ export default {
       }
 
       if (this.errorMsg.code === 4001) {
-        // user cancel transaction
-        console.log('User cancel transaction');
-        // this.closeErrorModal();
         return;
       }
 
@@ -190,10 +187,7 @@ export default {
         return;
       }
 
-      if (!this.errorMsg.message) {
-        console.log('Error type not found.');
-        return;
-      }
+      if (!this.errorMsg.message) return;
 
       if (this.errorMsg.message.includes('Out of Gas')) {
         this.errorViewType = 'gas';

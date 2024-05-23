@@ -7,6 +7,7 @@ import { loadTokenImage, loadOvernightTokenImage } from '@/utils/tokenLogo.ts';
 import odosApiService from '@/services/odos-api-service.ts';
 import SliderApiService from '@/services/slider-api-service.ts';
 import { DEPRECATED_NETWORKS } from '@/utils/const.ts';
+import { SFRAX_TOKEN } from '@/store/views/main/odos/mocks.ts';
 import type { stateData } from '@/store/views/main/odos/index';
 
 const SECONDTOKEN_SECOND_DEFAULT_SYMBOL = 'DAI+';
@@ -471,6 +472,10 @@ export const loadPriceTrigger = async (tokens: any[], chainId: number | string) 
     .catch((e) => {
       console.error('Error when load prices info', e);
     });
+  const sFRAXAddress = Object.keys(SFRAX_TOKEN[8453].tokenMap)[0];
+  const priceToken: any = await odosApiService.loadPriceOfToken(8453, sFRAXAddress);
+
+  tokenPricesMap[sFRAXAddress] = priceToken.price;
 
   return tokens.map((data: any) => ({
     ...data,

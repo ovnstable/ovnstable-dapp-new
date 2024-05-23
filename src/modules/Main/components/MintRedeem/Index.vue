@@ -69,10 +69,10 @@
       </div>
       <div class="mintredeem-form__row-item">
         <h1>You {{ swapMsg }}</h1>
-        <span>${{ estimateResult }}</span>
+        <span>${{ estimateResultDisplay }}</span>
       </div>
       <div class="mintredeem-form__row-item">
-        <h2>{{ inputToken?.symbol ? `1 ${inputToken.symbol} = 1 ${outputToken.symbol}` : 'Exchange rates'}}</h2>
+        <h2>{{ inputToken?.symbol ? `${inputIndex} ${inputToken.symbol} = ${outputIndex} ${outputToken.symbol}` : 'Exchange rates'}}</h2>
       </div>
     </div>
 
@@ -171,6 +171,8 @@ export default {
       approveLoading: false,
       isApprovedToken: false,
       isLoading: false,
+      wrapVal: 1,
+      updatingWrapUnwrapAmount: false,
       currentStage: mintRedeemStep.START,
 
       mintTabs: [
@@ -198,6 +200,14 @@ export default {
   watch: {
     inputToken() {
       this.checkApprove(this);
+
+      if (this.activeWrapTab > 0) this.previewUnwrap(this);
+    },
+    'inputToken.value': {
+      async handler() {
+        await this.previewUnwrap(this);
+        this.updatingWrapUnwrapAmount = false;
+      },
     },
     activeWrapTab() {
       if (this.inputToken?.symbol) {
@@ -230,6 +240,13 @@ export default {
     ...mapGetters('web3', ['contracts', 'evmProvider', 'evmSigner']),
     ...mapState('odosData', ['tokensContractMap']),
 
+    inputIndex() {
+      return '1';
+    },
+    outputIndex() {
+      if (this.activeWrapTab > 0) return this.wrapVal;
+      return '1';
+    },
     isMintActive() {
       return this.activeMintTab === mintWrapStatus.MINT;
     },
@@ -241,10 +258,16 @@ export default {
     },
 
     estimateResult() {
-      if (!this.inputToken.symbol || !this.inputToken.value) return '0.00';
+      if ((!this.updatingWrapUnwrapAmount && this.activeWrapTab > 0)
+        || !this.inputToken.symbol
+        || !this.inputToken.value) return '0.00';
       return new BigNumber(this.inputToken.value).times(0.9996).toFixed(6);
     },
-
+    estimateResultDisplay() {
+      if (!this.inputToken.symbol
+        || !this.inputToken.value) return '0.00';
+      return new BigNumber(this.inputToken.value).times(0.9996).toFixed(6);
+    },
     swapMsg() {
       if (this.activeMintTab === mintWrapStatus.MINT) return 'mint';
       if (this.activeMintTab === mintWrapStatus.REDEEM) return 'redeem';
@@ -311,8 +334,21 @@ export default {
       const networkId = this.networkId as keyof typeof MINTREDEEM_SCHEME;
       const pairData = MINTREDEEM_SCHEME[networkId]
         .find((_) => {
-          const tokenAddress = this.isReverseArray
+          let tokenAddress = this.isReverseArray
             ? _.token1.toLowerCase() : _.token0.toLowerCase();
+
+          if (networkId === 81457 && !this.isReverseArray) {
+            return _.token1.toLowerCase() === this.inputToken.address.toLowerCase();
+          }
+
+          // some chains have duplicates of tokens in input, some in output
+          if ([8453].includes(networkId)) {
+            tokenAddress = this.isReverseArray
+              ? _.token0.toLowerCase() : _.token1.toLowerCase();
+
+            return tokenAddress === this.inputToken.address.toLowerCase();
+          }
+
           return tokenAddress === this.outputToken.address.toLowerCase();
         });
       let exchangeAddress = null;
@@ -320,7 +356,6 @@ export default {
       if (pairData) exchangeAddress = pairData.exchange;
       if (!exchangeAddress) return;
 
-      console.log(tokenContract, '---tokenContract');
       const tx = await approveToken(
         tokenContract,
         exchangeAddress,
@@ -354,8 +389,21 @@ export default {
       const networkId = self.networkId as keyof typeof MINTREDEEM_SCHEME;
       const exchangeContract = MINTREDEEM_SCHEME[networkId]
         .find((_) => {
-          const tokenAddress = self.isReverseArray
+          let tokenAddress = self.isReverseArray
             ? _.token1.toLowerCase() : _.token0.toLowerCase();
+
+          if (networkId === 81457 && !self.isReverseArray) {
+            return _.token1.toLowerCase() === self.inputToken.address.toLowerCase();
+          }
+
+          // some chains have duplicates of tokens in input, some in output
+          if ([8453].includes(networkId)) {
+            tokenAddress = self.isReverseArray
+              ? _.token0.toLowerCase() : _.token1.toLowerCase();
+
+            return tokenAddress === self.inputToken.address.toLowerCase();
+          }
+
           return tokenAddress === self.outputToken.address.toLowerCase();
         });
 
@@ -581,16 +629,20 @@ export default {
 
         const pairData = MINTREDEEM_SCHEME[networkId]
           .find((_) => {
-            // todo: same for all chains
-            console.log(networkId, this.isReverseArray, 'CHECKREVERSE');
+            let tokenAddress = this.isReverseArray
+              ? _.token1.toLowerCase() : _.token0.toLowerCase();
+
             if (networkId === 81457 && !this.isReverseArray) {
-              const tokenAddress = _.token1.toLowerCase();
+              return _.token1.toLowerCase() === this.inputToken.address.toLowerCase();
+            }
+
+            // some chains have duplicates of tokens in input, some in output
+            if ([8453].includes(networkId)) {
+              tokenAddress = this.isReverseArray
+                ? _.token0.toLowerCase() : _.token1.toLowerCase();
 
               return tokenAddress === this.inputToken.address.toLowerCase();
             }
-
-            const tokenAddress = this.isReverseArray
-              ? _.token1.toLowerCase() : _.token0.toLowerCase();
 
             return tokenAddress === this.outputToken.address.toLowerCase();
           });
@@ -618,11 +670,9 @@ export default {
         // if mint active, using 1st method, else 2nd
         const exchangeMethodName = this.isReverseArray
           ? pairData?.methodName[0] : pairData?.methodName[1];
-
         const swapSum = new BigNumber(this.inputToken.value)
           .times(10 ** this.inputToken.decimals)
           .toFixed(0);
-
         const mainValue = new BigNumber(this.inputToken.originalVal).gt(0)
           ? this.inputToken.originalVal : swapSum;
 
@@ -639,7 +689,6 @@ export default {
 
         if (!method) return;
 
-        console.log(exchangeContract, 'exchangeContract1trigger');
         const txData = method.iterateArgs
           ? await exchangeContract[method.name](
             ...Object.values(method.params),
@@ -674,6 +723,55 @@ export default {
         this.closeWaitingModal();
         this.showErrorModalWithMsg({ errorType: 'approve', errorMsg: e });
       }
+    },
+    async previewUnwrap(self: any) {
+      if (self.activeWrapTab > 0) {
+        const networkId = self.networkId as keyof typeof MINTREDEEM_SCHEME;
+        const pairData = MINTREDEEM_SCHEME[networkId]
+          .find((_) => {
+            const tokenAddress = self.isReverseArray
+              ? _.token1.toLowerCase() : _.token0.toLowerCase();
+            return tokenAddress === self.outputToken?.address?.toLowerCase();
+          });
+        let exchangeAddress = null;
+        if (pairData) exchangeAddress = pairData.exchange;
+        if (!exchangeAddress || pairData === undefined) return;
+        const exchangeContract = buildEvmContract(
+          ABI_Market,
+          self.evmSigner,
+          exchangeAddress,
+        );
+        const exchangeMethodName = self.isReverseArray
+          ? pairData?.methodName[0] : pairData?.methodName[1];
+        const methodName = exchangeMethodName === 'wrap' ? 'previewWrap' : 'previewUnwrap';
+
+        const wrapSumPerUsd = new BigNumber(1)
+          .times(10 ** 2)
+          .toFixed(0);
+        const rawValuePerUsd = await exchangeContract[methodName](pairData.token0, wrapSumPerUsd);
+
+        self.wrapVal = new BigNumber(rawValuePerUsd).div(100).toFixed(2);
+
+        if (!self.inputToken?.value) return;
+
+        const wrapSum = new BigNumber(self.inputToken.value)
+          .times(10 ** self.inputToken.decimals)
+          .toFixed(0);
+        const rawValue = await exchangeContract[methodName](pairData.token0, wrapSum);
+
+        const adjustedValue = self.adjustScale(rawValue, self.inputToken.decimals);
+        self.outputToken.value = adjustedValue;
+        self.updatingWrapUnwrapAmount = true;
+      }
+      self.updatingWrapUnwrapAmount = true;
+    },
+    adjustScale(rawValue: any, decimals = 6) {
+      let valueStr = rawValue.toString();
+      while (valueStr.length <= decimals) {
+        valueStr = `0${valueStr}`;
+      }
+      const index = valueStr.length - decimals;
+      return `${valueStr.slice(0, index)}.${valueStr.slice(index)}`;
     },
   },
 };

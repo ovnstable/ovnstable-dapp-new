@@ -8,39 +8,71 @@
   <div v-else>
     <div class="page-wrap">
       <div class="blast-wrap__jackpot">
-        <div class="blast-wrap__jackpot-main">
-          <h1>
-            EVENT JACKPOT:
-          </h1>
-          <div
-            class="spinner-container"
-            v-if="!jackpotDataLoaded"
-          >
-            <Spinner />
+        <div class="blast-wrap__jackpot-main-wrapper">
+          <div class="blast-wrap__jackpot-main">
+            <h1>
+              EVENT JACKPOT VAULT:
+            </h1>
+            <div
+              class="spinner-container"
+              v-if="!jackpotDataLoaded"
+            >
+              <Spinner />
+            </div>
+            <div
+              v-else
+              class="blast-wrap__jackpot-main-points"
+            >
+              <BaseIcon
+                name="blastSidebar"
+              />
+              <div class="glitch-wrapper glitch-wrapper--title">
+                <div
+                  class="stack"
+                  style="--stacks: 3;"
+                >
+                  <span style="--index: 0;">{{ jackpotData?.goldBlast }}</span>
+                  <span style="--index: 1;">{{ jackpotData?.goldBlast }}</span>
+                  <span style="--index: 2;">{{ jackpotData?.goldBlast }}</span>
+                </div>
+              </div>
+              <BaseIcon
+                name="blastSidebar"
+              />
+            </div>
+
+            <p>Blast Gold</p>
           </div>
-          <div
-            v-else
-            class="blast-wrap__jackpot-main-points"
-          >
-            <BaseIcon
-              name="blastSidebar"
-            />
-            <div class="glitch-wrapper glitch-wrapper--title">
-              <div
-                class="stack"
-                style="--stacks: 3;"
-              >
-                <span style="--index: 0;">{{ jackpotData?.amount }}</span>
-                <span style="--index: 1;">{{ jackpotData?.amount }}</span>
-                <span style="--index: 2;">{{ jackpotData?.amount }}</span>
+          <div class="blast-wrap__jackpot-main-wrapper-divider" />
+          <div class="blast-wrap__jackpot-main">
+            <h1>
+              DAILY LOOT BOXES VAULT:
+            </h1>
+            <div
+              class="spinner-container"
+              v-if="!jackpotDataLoaded"
+            >
+              <Spinner />
+            </div>
+            <div
+              v-else
+              class="blast-wrap__jackpot-main-points"
+            >
+              <div class="glitch-wrapper glitch-wrapper--title">
+                <div
+                  class="stack"
+                  style="--stacks: 3;"
+                >
+                  <span style="--index: 0;">{{ jackpotData?.amount }}</span>
+                  <span style="--index: 1;">{{ jackpotData?.amount }}</span>
+                  <span style="--index: 2;">{{ jackpotData?.amount }}</span>
+                </div>
               </div>
             </div>
-            <BaseIcon
-              name="blastSidebar"
-            />
+
+            <p>Blast Points</p>
           </div>
 
-          <p>Blast points</p>
         </div>
         <div class="blast-wrap__jackpot-user">
           <div class="blast-wrap__jackpot-user-points">
@@ -70,12 +102,16 @@
               </p>
             </div>
             <div class="blast-wrap__jackpot-user__data-divider" />
-            <div class="blast-wrap__jackpot-user__data-i">
+            <div class="blast-wrap__jackpot-user__data-i min-width">
               <h3>
-                Monthly free drops:
+                Airdrops:
               </h3>
-              <p>
-                0
+              <p
+                :class="{
+                  gold: userData?.totallyAirdropGolds !== 0,
+                }"
+              >
+                {{ userData ? userData?.totallyAirdropGolds : 0 }} golds
               </p>
             </div>
             <div class="blast-wrap__jackpot-user__data-divider" />
@@ -95,7 +131,7 @@
           </div>
 
           <p>
-            Complete 3 daily tasks to get the Blast loot box! The boxes contain a random
+            Complete 1 daily tasks to get the Blast loot box! The boxes contain a random
             amount of <span>Blast points</span> within
             the range shown under the box. Good luck and have fun!
           </p>
@@ -123,7 +159,7 @@
               </div>
               <template v-else>
                 <p>
-                  Up to {{ buildPointsRange(typeofBox.BRONZE) }} points
+                  Up to {{ buildPointsRange(typeofBox.BRONZE) }} golds
                 </p>
                 <QuestBox
                   :prize-value="dailyPrize"
@@ -143,11 +179,27 @@
 
             <ButtonComponent
               full
+              :disabled="isDisabledBtn(typeofBox.BRONZE)"
+              v-if="isDisabledBtn(typeofBox.BRONZE)"
+              class="blast-wrap__boxes-col-btn"
+            >
+              DO TASKS TO GET LOOTBOX
+            </ButtonComponent>
+            <ButtonComponent
+              full
               @on-click="triggerBoxQuest(typeofBox.BRONZE)"
               :disabled="isDisabledBtn(typeofBox.BRONZE)"
               class="blast-wrap__boxes-col-btn"
+              v-else-if="!claimLoading || isDisabledBtn(typeofBox.BRONZE)"
             >
               {{ isDisabledBtn(typeofBox.BRONZE) ? 'DO TASKS TO GET LOOTBOX' : `CLAIM (${userData.bronzeBoxAvailable} box)` }}
+            </ButtonComponent>
+            <ButtonComponent
+              v-else
+              loading
+              class="blast-wrap__boxes-col-btn"
+            >
+              Loading
             </ButtonComponent>
           </div>
           <div
@@ -171,7 +223,7 @@
               </div>
               <template v-else>
                 <p>
-                  Up to {{ buildPointsRange(typeofBox.SILVER) }} points
+                  Up to {{ buildPointsRange(typeofBox.SILVER) }} golds
                 </p>
                 <QuestBox
                   :prize-value="dailyPrize"
@@ -191,11 +243,27 @@
 
             <ButtonComponent
               full
+              class="blast-wrap__boxes-col-btn"
+              :disabled="isDisabledBtn(typeofBox.SILVER)"
+              v-if="isDisabledBtn(typeofBox.SILVER)"
+            >
+              DO TASKS TO GET LOOTBOX
+            </ButtonComponent>
+            <ButtonComponent
+              full
               @on-click="triggerBoxQuest(typeofBox.SILVER)"
               :disabled="isDisabledBtn(typeofBox.SILVER)"
               class="blast-wrap__boxes-col-btn"
+              v-else-if="!claimLoading"
             >
               {{ isDisabledBtn(typeofBox.SILVER) ? 'DO TASKS TO GET LOOTBOX' : `CLAIM (${userData.silverBoxAvailable} box)` }}
+            </ButtonComponent>
+            <ButtonComponent
+              v-else
+              loading
+              class="blast-wrap__boxes-col-btn"
+            >
+              Loading
             </ButtonComponent>
           </div>
           <div
@@ -220,7 +288,7 @@
               </div>
               <template v-else>
                 <p>
-                  Up to {{ buildPointsRange(typeofBox.GOLD) }} points
+                  Up to {{ buildPointsRange(typeofBox.GOLD) }} golds
                 </p>
                 <QuestBox
                   :prize-value="dailyPrize"
@@ -239,11 +307,27 @@
 
             <ButtonComponent
               full
+              :disabled="isDisabledBtn(typeofBox.GOLD)"
+              v-if="isDisabledBtn(typeofBox.GOLD)"
+              class="blast-wrap__boxes-col-btn"
+            >
+              DO TASKS TO GET LOOTBOX
+            </ButtonComponent>
+            <ButtonComponent
+              full
               @on-click="triggerBoxQuest(typeofBox.GOLD)"
               :disabled="isDisabledBtn(typeofBox.GOLD)"
               class="blast-wrap__boxes-col-btn"
+              v-else-if="!claimLoading"
             >
               {{ isDisabledBtn(typeofBox.GOLD) ? 'DO TASKS TO GET LOOTBOX' : `CLAIM (${userData.goldBoxAvailable} box)` }}
+            </ButtonComponent>
+            <ButtonComponent
+              v-else
+              loading
+              class="blast-wrap__boxes-col-btn"
+            >
+              Loading
             </ButtonComponent>
           </div>
         </div>
@@ -255,15 +339,17 @@
           <p>WEEKLY LOOT BOX WILL UPDATE IN: {{ timeToWeeklyUpdate }}</p>
         </div>
         <p class="blast-wrap__quests-jackpot-descr">
-          Once a week you will be able to claim a Bonus Box.
-          To do so, you need to complete a total of 15 tasks in a week.
-          After that the Box will be yours to claim on Sunday.
-          Your Bonus box will contain a random amount of Blast points equal to 0.01-50% of
-          <span>Jackpot!</span></p>
+          Once a week you will be able to claim a Diamond Box.
+          Having received Diamond Box you can try your luck and win the
+          <span>Blast Gold Jackpot.</span>
+          To do so, you need to complete a total of 15 tasks in a week, at least 3 tasks per day.
+          Progress through completing 15 tasks of weekly quest and you will receive a
+          Diamond Box that opens on Sunday,
+          it will contain a random amount of Blast Gold of Jackpot!</p>
         <div class="blast-wrap__quests-daily-tasks">
           <img
             alt="navbar"
-            :src="getImageUrl(`assets/blastQuest/SlothBlastQuest.png`)"
+            src="/blastQuest/SlothBlastQuest.png"
           />
           <div class="blast-wrap__quests-diamond-box-wrapper">
             <div class="blast-wrap__quests-diamond-box">
@@ -282,7 +368,7 @@
               </div>
               <template v-else>
                 <p>
-                  Up to {{ buildPointsRange(typeofBox.DIAMOND) }} points
+                  Up to {{ buildPointsRange(typeofBox.DIAMOND) }} golds
                 </p>
 
                 <QuestBox
@@ -295,11 +381,25 @@
             </div>
             <ButtonComponent
               full
-              @on-click="triggerBoxQuest(typeofBox.DIAMOND)"
               :disabled="isDisabledBtn(typeofBox.DIAMOND)"
+              v-if="isDisabledBtn(typeofBox.DIAMOND)"
               class="blast-wrap__boxes-col-btn"
             >
-              {{ isDisabledBtn(typeofBox.DIAMOND) ? 'DO TASKS TO GET LOOTBOX' : `CLAIM (${userData.diamondBoxAvailable} box)` }}
+              DO TASKS TO GET LOOTBOX
+            </ButtonComponent>
+            <ButtonComponent
+              @on-click="triggerBoxQuest(typeofBox.DIAMOND)"
+              class="blast-wrap__boxes-col-btn"
+              v-else-if="!claimLoading"
+            >
+              {{ `CLAIM (${userData.diamondBoxAvailable} box)` }}
+            </ButtonComponent>
+            <ButtonComponent
+              v-else
+              loading
+              class="blast-wrap__boxes-col-btn"
+            >
+              Loading
             </ButtonComponent>
           </div>
           <div class="blast-wrap__quests-task-slider">
@@ -431,6 +531,7 @@ export default {
         silverBoxAvailable: 0,
         goldBoxAvailable: 0,
         diamondBoxAvailable: 0,
+        totallyAirdropGolds: 0,
       },
       activeLevel: 0,
       dailyPrize: '',
@@ -438,6 +539,7 @@ export default {
       levelQuestList: [5, 30, 50, 100, 250],
       tasksData: this.createTasks(5),
       usersDashboardList: [],
+      claimLoading: false,
     };
   },
   watch: {
@@ -448,6 +550,16 @@ export default {
       if (!currVal) return;
       this.updateUserQuestData(currVal);
     },
+    jackpotData(currVal: any) {
+      if (!currVal?.amount) return;
+
+      this.loadDashboard();
+    },
+  },
+  mounted() {
+    if (!this.account) return;
+    this.updateUserQuestData(this.account);
+    this.loadDashboard();
   },
   computed: {
     ...mapGetters('web3', ['evmProvider', 'provider']),
@@ -491,7 +603,7 @@ export default {
         const data = BOX_RANGES.find((_) => _.quest === questType);
         if (!data) return '0';
 
-        return `${new BN(data?.max).times(this.jackpotData?.amount).toFixed(0)}`;
+        return `${new BN(data?.max).times(this.jackpotData?.goldBlast).toFixed(0)}`;
       };
     },
     isDisabledBtn() {
@@ -525,16 +637,33 @@ export default {
       return null;
     },
   },
-  mounted() {
-    this.loadDashboard();
-  },
   methods: {
     getImageUrl,
     async loadDashboard() {
+      // 16k points per 1 gold
+      const SINGLE_GOLD = 16000;
+
       const resp = await axios.get(`${OVN_QUESTS_API}/blast/dashboard`);
 
-      const sorted = resp.data
-        .sort((a: any, b: any) => (new BN(a?.claimed).gt(b?.claimed) ? -1 : 1));
+      const filterData = resp.data.filter((_: any) => new BN(_?.claimed).gt(0));
+      const mappedData = filterData.map((_: any) => {
+        const goldPart = new BN(_.claimedGolds).times(SINGLE_GOLD);
+        let partTotal = new BN(_.claimed).plus(goldPart);
+
+        if (partTotal.eq(0) || this.jackpotData.amount === 0) partTotal = new BN(0);
+        const totalJackpot = new BN(this.jackpotData.amount)
+          .plus(new BN(this.jackpotData.goldBlast).times(SINGLE_GOLD));
+
+        partTotal = new BN(partTotal).div(totalJackpot);
+
+        return {
+          ..._,
+          jackpotShare: partTotal.gt(0.000001) ? partTotal.toFixed(6) : '0.000001',
+        };
+      });
+
+      const sorted = mappedData
+        .sort((a: any, b: any) => (new BN(a?.jackpotShare).gt(b?.jackpotShare) ? -1 : 1));
 
       this.usersDashboardList = sorted.slice(0, 50);
     },
@@ -643,38 +772,46 @@ export default {
       this.updateUserQuestData(this.account);
     },
     async triggerBoxQuest(boxType: TypeofQuest) {
-      const nonce = getRandomString(24);
-      const sign: TSignedMessage | null = await this.signEvmMessage(
-        `Claim blast points on Overnight.fi, nonce: ${nonce}`,
-        nonce,
-      );
+      try {
+        const nonce = getRandomString(24);
+        this.claimLoading = true;
 
-      const triggerClaim = await axios.post(`${OVN_QUESTS_API}/blast/claim`, {
-        address: this.account,
-        message: sign?.message,
-        sign: sign?.signature,
-        questType: boxType,
-      });
+        const sign: TSignedMessage | null = await this.signEvmMessage(
+          `Claim blast points on Overnight.fi, nonce: ${nonce}`,
+          nonce,
+        );
 
-      if (triggerClaim?.data?.error) {
-        notifyInst({
-          title: 'Claim error',
-          text: triggerClaim?.data.error,
-          type: 'error',
+        const triggerClaim = await axios.post(`${OVN_QUESTS_API}/blast/claim`, {
+          address: this.account,
+          message: sign?.message,
+          sign: sign?.signature,
+          questType: boxType,
         });
-        return;
+
+        if (triggerClaim?.data?.error) {
+          notifyInst({
+            title: 'Claim error',
+            text: triggerClaim?.data.error,
+            type: 'error',
+          });
+          return;
+        }
+
+        this.dailyPrize = triggerClaim.data?.amount;
+
+        if (boxType === TypeofQuest.BRONZE) this.openBronzeQuest = true;
+        if (boxType === TypeofQuest.SILVER) this.openSilverQuest = true;
+        if (boxType === TypeofQuest.GOLD) this.openGoldQuest = true;
+        if (boxType === TypeofQuest.DIAMOND) this.openDiamondQuest = true;
+
+        // waiting for animation
+        await awaitDelay(2000);
+        this.updateUserQuestData(this.account);
+        this.claimLoading = false;
+      } catch (e) {
+        console.log(e);
+        this.claimLoading = false;
       }
-
-      this.dailyPrize = triggerClaim.data?.amount;
-
-      if (boxType === TypeofQuest.BRONZE) this.openBronzeQuest = true;
-      if (boxType === TypeofQuest.SILVER) this.openSilverQuest = true;
-      if (boxType === TypeofQuest.GOLD) this.openGoldQuest = true;
-      if (boxType === TypeofQuest.DIAMOND) this.openDiamondQuest = true;
-
-      // waiting for animation
-      await awaitDelay(2000);
-      this.updateUserQuestData(this.account);
     },
     toggleTheme() {
       this.$store.dispatch('theme/switchTheme');
@@ -728,20 +865,37 @@ export default {
   justify-content: space-between;
   margin-bottom: 24px;
 }
-
-.blast-wrap__jackpot-main {
-  width: 35%;
+.blast-wrap__jackpot-main-wrapper-divider {
+  height: 100%;
+  border: 1px solid var(--color-4);
+}
+.blast-wrap__jackpot-main-wrapper {
+  width: 70%;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  flex-direction: row;
+  justify-content: space-between;
   align-items: center;
   gap: 10px;
   background-color: var(--color-3);
   font-weight: 700;
   border-radius: 10px;
-  padding: 24px;
+  padding: 22px 12px;
   border: 1px solid var(--color-1);
   box-shadow: 0px 1px 0px 0px var(--color-1);
+  [data-theme="dark"] & {
+    background-color: var(--color-7);
+  }
+}
+
+.blast-wrap__jackpot-main {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  border-radius: 10px;
 
   h1, p {
     font-weight: 700;
@@ -811,9 +965,13 @@ export default {
 .blast-wrap__jackpot-user__data-i {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
   text-align: center;
   width: 100%;
+
+  &.min-width {
+    min-width: 150px;
+  }
 
   h3 {
     font-weight: 500;
@@ -1279,6 +1437,13 @@ export default {
   .page-wrap {
     margin-bottom: 80px;
   }
+  .blast-wrap__jackpot {
+    flex-direction: column;
+  }
+  .blast-wrap__jackpot-main-wrapper,
+  .blast-wrap__jackpot-user {
+    width: auto;
+  }
 }
 
 @media (max-width: 640px) {
@@ -1326,4 +1491,21 @@ export default {
   color: var(--color-1);
 }
 
+.gold {
+  position: relative;
+  width: fit-content;
+  margin: 0 auto;
+
+  &::after {
+    content: "";
+    right: -10px;
+    top: -8px;
+    background-color: #fcfc06;
+    width: 8px;
+    height: 8px;
+    border: 1px solid black;
+    border-radius: 50%;
+    position: absolute;
+  }
+}
 </style>

@@ -6,7 +6,7 @@
     <router-link
       v-for="link in linksData"
       :key="link.name"
-      :to="link.to"
+      :to="{ path: link.to, query: { chain: link.name } }"
       class="sidebar__text-market"
       active-class="active-link"
     >
@@ -126,7 +126,8 @@ export default {
       return deviceType();
     },
     networkName() {
-      return this.$store.state.network.marketNetwork;
+      const marketUrlNetwork = this.$route.query.chain;
+      return marketUrlNetwork || this.$store.state.network.marketNetwork;
     },
     networkScan() {
       return this.$store.state.network.marketExplorerURL;
@@ -147,12 +148,11 @@ export default {
   },
   methods: {
     saveNetworkToLocalStore(chain:string) {
+      this.$router.replace({ query: undefined });
       this.$store.dispatch('network/changeMarketNetwork', chain.toLowerCase());
     },
     generateHref(tokenName:string, networkName:string) {
-      if (!tokenName) {
-        return '';
-      }
+      if (!tokenName) return '';
 
       const tokenKey = `${tokenName.toLowerCase()?.slice(0, -1)}Plus`;
       if (!tokenKey) return '';

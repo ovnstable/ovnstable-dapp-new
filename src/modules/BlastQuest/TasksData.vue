@@ -2,7 +2,7 @@
   <div class="tasks-col">
     <div
       class="tasks-col__item"
-      v-for="item in tasksDataInfo"
+      v-for="(item, index) in tasksDataInfo"
       :key="item.id"
       :class="{ checked: item.checked }"
       @click="checkItem(item)"
@@ -14,9 +14,17 @@
         <BaseIcon :name="item.checked ? 'CommonChecked' : 'CommonClose' " />
       </div>
 
-      <p :class="{ 'completed-task': item.checked }">
-        {{ item.text }}
-      </p>
+      <div class="tasks-col__item__text">
+        <p :class="{ 'completed-task': item.checked }">
+          {{ item.text }}
+        </p>
+        <p
+          class="see-more"
+          v-if="index > 0"
+        >
+          See all details in (?)
+        </p>
+      </div>
       <div class="tasks-col__arr">
         <BaseIcon
           name="PayoutArrow"
@@ -31,23 +39,30 @@ import { TypeofQuest } from '@/components/QuestBox/Index.vue';
 import { type PropType } from 'vue';
 import { mapGetters } from 'vuex';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import { IQuestId } from './models.ts';
 
 const BRONZE_QUESTS = [
   {
-    id: '0',
+    id: IQuestId.FIRST,
     text: 'Like&Retweet',
     checked: false,
     boxType: TypeofQuest.BRONZE,
   },
   {
-    id: '1',
-    text: 'Add at least $1000 liquidity to any USD+ pool on Thruster',
+    id: IQuestId.SECOND,
+    text: 'Add at least $1000 liquidity to selected pool on Thruster',
     checked: false,
     boxType: TypeofQuest.BRONZE,
   },
   {
-    id: '2',
-    text: 'Add at least $1000 to any USD+ pool on SwapBlast',
+    id: IQuestId.THIRD,
+    text: 'Add at least $1000 liquidity to selected pool on SwapBlast',
+    checked: false,
+    boxType: TypeofQuest.BRONZE,
+  },
+  {
+    id: IQuestId.FOURTH,
+    text: 'Hold at least 2 share of OVN at Districtone.io',
     checked: false,
     boxType: TypeofQuest.BRONZE,
   },
@@ -55,20 +70,20 @@ const BRONZE_QUESTS = [
 
 const SILVER_QUESTS = [
   {
-    id: '0',
+    id: IQuestId.FIRST,
     text: 'Mint at least 1000 USD+ on Blast during the daily quest',
     checked: false,
     boxType: TypeofQuest.SILVER,
   },
   {
-    id: '1',
-    text: 'Add at least $2000 liquidity to any USD+ pool on Thruster',
+    id: IQuestId.SECOND,
+    text: 'Add at least $2000 liquidity to selected pool on Thruster',
     checked: false,
     boxType: TypeofQuest.SILVER,
   },
   {
-    id: '2',
-    text: 'Add at least $2000 to any USD+ SwapBlast',
+    id: IQuestId.THIRD,
+    text: 'Add at least $2000 liquidity to selected pool on SwapBlast',
     checked: false,
     boxType: TypeofQuest.SILVER,
   },
@@ -76,20 +91,20 @@ const SILVER_QUESTS = [
 
 const GOLD_QUESTS = [
   {
-    id: '0',
+    id: IQuestId.FIRST,
     text: 'Mint at least 2500 USD+ on Blast',
     checked: false,
     boxType: TypeofQuest.GOLD,
   },
   {
-    id: '1',
-    text: 'Add at least $5000 liquidity to any USD+ pool on Thruster',
+    id: IQuestId.SECOND,
+    text: 'Add at least $5000 liquidity to selected pool on Thruster',
     checked: false,
     boxType: TypeofQuest.GOLD,
   },
   {
-    id: '2',
-    text: 'Add at least $5000 to any USD+ pool on SwapBlast',
+    id: IQuestId.THIRD,
+    text: 'Add at least $5000 liquidity to selected pool on SwapBlast',
     checked: false,
     boxType: TypeofQuest.GOLD,
   },
@@ -259,5 +274,17 @@ export default {
       fill: var(--color-18);
     }
   }
+}
+
+.tasks-col__item__text {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+p.see-more {
+  width: fit-content;
+  font-size: 12px;
+  color: var(--color-3);
 }
 </style>

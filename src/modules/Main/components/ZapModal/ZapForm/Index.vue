@@ -430,7 +430,7 @@ export default {
         // Alienbase: ["Alien Base", "Alien Base Stable"],
         // Convex: ["Curve Crypto Registry", "Curve Factory", "Curve Registry"]
       } as any,
-      odosZapReferalCode: 7777777,
+      odosZapReferalCode: 3111111111,
       currentStage: zapInStep.START,
     };
   },
@@ -963,7 +963,6 @@ export default {
           return data;
         })
         .catch((e) => {
-          console.log('Swap request error: ', e);
           this.closeWaitingModal();
           if (e && e.message && e.message.includes('path')) {
             this.showErrorModalWithMsg({ errorType: 'odos-path', errorMsg: e });
@@ -1040,6 +1039,8 @@ export default {
         this.currentStage = zapInStep.STAKE_LP;
       }
       if (!this.zapPool) return;
+      const totalInUsd: BigNumber = this.inputTokens
+        .reduce((acc, curr) => acc.plus(curr.usdValue), new BigNumber(0));
 
       this.$store.commit('odosData/changeState', {
         field: 'lastPoolInfoData',
@@ -1080,7 +1081,6 @@ export default {
       const formulaInputTokens = [];
       let formulaOutputTokens = [];
 
-      console.log(userInputTokens, '----userInputTokens');
       for (let i = 0; i < userInputTokens.length; i++) {
         const inputToken = userInputTokens[i];
         const userInputToken = inputToken.selectedToken;
@@ -1184,6 +1184,7 @@ export default {
         slippageLimitPercent: this.getSlippagePercent(),
       };
 
+      const referralCode = totalInUsd.gt(3000) ? this.odosZapReferalCode : this.odosReferalCode;
       const whiteList = WHITE_LIST_ODOS[request.chainId as keyof typeof WHITE_LIST_ODOS];
       const requestData = {
         chainId: request.chainId,
@@ -1199,7 +1200,7 @@ export default {
         simulate: false,
         pathViz: false,
         disableRFQs: false,
-        referralCode: this.odosZapReferalCode ?? this.odosReferalCode,
+        referralCode,
       };
 
       console.log(requestData, '---requestData');
