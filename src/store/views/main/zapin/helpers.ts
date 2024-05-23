@@ -274,7 +274,6 @@ export const depositAllAtGauge = async (
     === 'CONSTRUCTOR_WITHOUT_TOKEN_ID'
   ) {
     const balance = await poolTokenContract.balanceOf(account);
-    console.log(balance, '___balance');
     return gaugeContract.deposit(balance, params);
   }
 
@@ -282,7 +281,6 @@ export const depositAllAtGauge = async (
     currentZapPlatformContractType.typeOfDepositConstructor
     === 'BASE_CONSTRUCTOR'
   ) {
-    console.log('2');
     return gaugeContract.depositAll(params);
   }
 
@@ -291,7 +289,6 @@ export const depositAllAtGauge = async (
     === 'CONSTRUCTOR_WITH_POOL_ID_AND_TOKEN_AMOUNT'
   ) {
     const balance = await poolTokenContract.balanceOf(account);
-    console.log(balance, '3');
     return gaugeContract.deposit(lastPoolInfoData.poolId, balance, params);
   }
 
@@ -306,7 +303,6 @@ export const depositAllAtGauge = async (
       _data:
         '0x0000000000000000000000000000000000000000000000000000000000000000',
     };
-    console.log(data, 'transfer');
     return gaugeContract.safeTransferFrom(data.from, data.to, data.tokenId, data._data, params);
   }
 
@@ -315,13 +311,6 @@ export const depositAllAtGauge = async (
     === 'CONSTRUCTOR_STAKE_METHOD_AND_TOKEN_AMOUNT'
   ) {
     const balance = await poolTokenContract.balanceOf(account);
-    console.log(balance, '4');
     return gaugeContract.stake(balance, params);
   }
-
-  console.error(
-    'Type contracts for deposit in gauge not found: ',
-    currentZapPlatformContractType,
-    account,
-  );
 };
