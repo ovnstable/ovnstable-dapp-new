@@ -1635,7 +1635,8 @@ export default {
         data: responseData.transaction.data,
       };
 
-      let gaugeData;
+      let gaugeData: any;
+
       if (zapPool.platform[0] === 'Pancake') {
         gaugeData = {
           amountsOut: [
@@ -1662,16 +1663,16 @@ export default {
       this.showWaitingModal('Staking in process');
 
       const params = {
+
         from: this.account,
       };
 
       console.log(zapPool, '----zapPool');
-      console.log(txData, 'ZAPIN');
-      console.log(gaugeData, 'gaugeData');
-      console.log(params, 'params');
       console.log(this.zapContract, '-this.zapContract');
 
-      console.log(JSON.stringify(txData, gaugeData, params), 'LOOOGS');
+      console.log(txData, 'swapdata');
+      console.log(gaugeData, 'gaugeData');
+      console.log(params, 'params');
       try {
         const tx = await this.zapContract.zapIn(txData, gaugeData, params);
         const receipt = await tx.wait();
