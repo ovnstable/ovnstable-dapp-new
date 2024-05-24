@@ -629,6 +629,12 @@ export default {
       return this.allInputsWithNotApproved.length > 0;
     },
     allInputsWithNotApproved() {
+      if (this.zapPool.poolVersion === 'v3') {
+        return this.selectedOutputTokens.filter(
+          (token: any) => !token.selectedToken.approveData.approved,
+        );
+      }
+
       return this.selectedInputTokens.filter(
         (token: any) => !token.selectedToken.approveData.approved,
       );
@@ -1043,9 +1049,8 @@ export default {
       this.selectedOutputTokens[0].value = 100;
     },
     async stakeTrigger() {
-      if (this.zapInType === 'V2') {
-        this.currentStage = zapInStep.STAKE_LP;
-      }
+      console.log(this.zapContract.target, '___thiszapContracttarget');
+      if (this.zapInType === 'V2') this.currentStage = zapInStep.STAKE_LP;
       if (!this.zapPool) return;
       const totalInUsd: BigNumber = this.inputTokens
         .reduce((acc, curr) => acc.plus(curr.usdValue), new BigNumber(0));
@@ -1631,27 +1636,7 @@ export default {
       };
 
       let gaugeData;
-      if (
-        zapPool.platform[0] === 'Arbidex'
-        || zapPool.platform[0] === 'Baseswap'
-        || zapPool.platform[0] === 'Alienbase'
-      ) {
-        gaugeData = {
-          gauge: gaugeAddress,
-          amountsOut: [
-            proportions.amountToken0Out,
-            proportions.amountToken1Out,
-          ],
-          poolId: poolInfo.poolId,
-        };
-      } else if (zapPool.platform[0] === 'Defiedge') {
-        gaugeData = {
-          chef: this.lastPoolInfoData.chef,
-          pid: this.lastPoolInfoData.poolId,
-          gauge: gaugeAddress,
-          amountsOut: [proportions.amountToken0Out, proportions.amountToken1Out],
-        };
-      } else if (zapPool.platform[0] === 'Pancake') {
+      if (zapPool.platform[0] === 'Pancake') {
         gaugeData = {
           amountsOut: [
             proportions.amountToken0Out,
@@ -1662,6 +1647,14 @@ export default {
       } else {
         gaugeData = {
           gauge: gaugeAddress,
+          amountsOut: [proportions.amountToken0Out, proportions.amountToken1Out],
+        };
+      }
+
+      if (this.zapPool.poolVersion === 'v3') {
+        gaugeData = {
+          pair: this.zapPool.address,
+          priceRange: this.v3Range,
           amountsOut: [proportions.amountToken0Out, proportions.amountToken1Out],
         };
       }
@@ -1678,6 +1671,7 @@ export default {
       console.log(params, 'params');
       console.log(this.zapContract, '-this.zapContract');
 
+      console.log(JSON.stringify(txData, gaugeData, params), 'LOOOGS');
       try {
         const tx = await this.zapContract.zapIn(txData, gaugeData, params);
         const receipt = await tx.wait();
@@ -1869,18 +1863,20 @@ export default {
       this.showWaitingModal('Approving in process');
 
       this.approvingPending = true;
-      await this.checkApproveForToken(token, token.contractValue);
       const { selectedToken } = token;
+
+      const approveValue = new BigNumber(10)
+        .pow(selectedToken.decimals)
+        .times(10 ** 18)
+        .toFixed(0);
+
+      await this.checkApproveForToken(token, (Number(approveValue) * 0.5).toFixed(0));
       if (selectedToken.approveData.approved) {
         this.closeWaitingModal();
         return;
       }
 
       const tokenContract = this.tokensContractMap[selectedToken.address];
-      const approveValue = new BigNumber(10)
-        .pow(selectedToken.decimals)
-        .times(10 ** 18)
-        .toFixed(0);
 
       const tx = await approveToken(
         tokenContract,

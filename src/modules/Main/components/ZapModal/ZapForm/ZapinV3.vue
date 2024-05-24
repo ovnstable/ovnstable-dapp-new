@@ -5,8 +5,8 @@
     </h2>
 
     <div class="zapin-v3__chart">
-      <h3>
-        Current Price:  1.000  USDC per USD+
+      <h3 v-if='pairSymbols'>
+        Current Price:  1.000  {{ pairSymbols[0] }} per {{ pairSymbols[1] }}
       </h3>
 
       <div
@@ -41,8 +41,8 @@
           is-center
           @input="setMaxPrice"
         />
-        <p>
-          USDC per USD+
+        <p v-if="pairSymbols">
+          {{ pairSymbols[0] }} per {{ pairSymbols[1] }}
         </p>
       </div>
       <div class="zapin-v3__row-block">
@@ -57,8 +57,8 @@
           is-center
           @input="setMinPrice"
         />
-        <p>
-          USDC per USD+
+        <p v-if="pairSymbols">
+          {{ pairSymbols[0] }} per {{ pairSymbols[1] }}
         </p>
       </div>
     </div>
@@ -104,6 +104,7 @@ export default {
       minPrice: '0',
       maxPrice: '0',
       currentRange: 20,
+      pairSymbols: [],
       rangePresets: [
         {
           id: 0, value: 10,
@@ -213,6 +214,9 @@ export default {
     },
   },
   async mounted() {
+    console.log(this.zapContract, '__zapContract1');
+    console.log(this.zapPool, 'zapPool11');
+    this.pairSymbols = this.zapPool.name.split('/');
     const currPrice = await this.zapContract.getCurrentPrice(this.zapPool.address);
 
     let buildData: any = [];
@@ -233,7 +237,7 @@ export default {
       this.minPrice = minPrice.div(10 ** 18).toFixed(6);
       this.maxPrice = maxPrice.div(10 ** 18).toFixed(6);
 
-      this.$emit('set-range', [minPrice.toFixed(0), maxPrice.toFixed(0)]);
+      this.$emit('set-range', [minPrice.div(10 ** 12).toFixed(0), maxPrice.div(10 ** 12).toFixed(0)]);
       this.optionsChart.chart.selection.xaxis = {
         min: Number(this.minPrice),
         max: Number(this.maxPrice),
@@ -290,8 +294,6 @@ export default {
       const currPrice = await this.zapContract.getCurrentPrice(this.zapPool.address);
       const center = Number(new BN(currPrice).div(10 ** 18).toFixed(4));
 
-      // (this.$refs as any)?.zapinChart?.toggleDataPointSelection(0, center * 1.5);
-      console.log(this.$refs, '___REFS');
       const minPrice = center * (1 - val / 2 / 100);
       const maxPrice = center * (1 + val / 2 / 100);
 
@@ -312,16 +314,10 @@ export default {
         false,
         true,
       );
+
       (this.$refs?.zapinChart as any).updateSeries([{
         data: this.optionsChart.series[0].data,
       }], false, true);
-      // const context = document.querySelector('#graph').getContext('2d');
-      // const chart = new Chart(context).Line(data);
-
-      // $('#btn1').on('click', () => {
-      //   chart.data.datasets[0].data = [140, 100, 50];
-      //   chart.update();
-      // });
 
       this.currentRange = val;
     },
