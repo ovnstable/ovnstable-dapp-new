@@ -371,7 +371,7 @@ export const poolsInfoMap: any = {
 
   // CL AERODROME
   '0x0c1A09d5D0445047DA3Ab4994262b22404288A3B': {
-    gauge: '0xb782048B029FDA6Db78b1D9DeaDFc7fF2D6EDe93',
+    gauge: '0xeA22A3AAdA580bD75Fb6caC35034e09046cbFf72',
     poolId: 0,
     version: 3,
     approveType: 'TOKEN',

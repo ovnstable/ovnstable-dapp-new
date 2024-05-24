@@ -287,8 +287,14 @@
           </div> -->
               </div>
             </div>
+            <div
+              v-if="zapPool?.poolVersion === 'v3' && !zapContract && !zapContract"
+              class="zapin-block__v3-spin"
+            >
+              <Spinner />
+            </div>
             <ZapinV3
-              v-if="zapPool?.poolVersion === 'v3'"
+              v-if="zapPool?.poolVersion === 'v3' && zapContract && zapContract"
               :zap-pool="zapPool"
               :zap-contract="zapContract"
               @set-range="setRangeV3"
@@ -1747,6 +1753,10 @@ export default {
         this.zapContract,
         this.v3Range,
       );
+
+      console.log(reserves[0].toString(), '___reserves');
+      console.log(reserves[1].toString(), '___reserves');
+      console.log(reserves[2].toString(), '___reserves');
 
       const outputToken0Price = this.selectedOutputTokens[0].selectedToken.price;
       const outputToken1Price = this.selectedOutputTokens[1].selectedToken.price;

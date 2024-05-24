@@ -23,15 +23,10 @@ export const getProportion = (
 
   const { gauge } = poolInfo;
 
-  console.log(gauge, '___gauge');
-  console.log(range, '___range');
-  console.log(zapPool, '___zapPool');
+  console.log(JSON.stringify(`${zapPool.address}, ${range}`), '___zapPool.address, range');
   if (zapPool.poolVersion === 'v3' && range && range?.length > 1) {
-    const newRange = [Number([range[0]]), Number([range[1]])];
-
-    console.log(newRange, '___newRange');
     return zapContract
-      .getProportion(gauge, newRange)
+      .getProportion(zapPool.address, range)
       .then((data: any) => data)
       .catch((e: any) => {
         console.error('Error get proportion for V3', e);
