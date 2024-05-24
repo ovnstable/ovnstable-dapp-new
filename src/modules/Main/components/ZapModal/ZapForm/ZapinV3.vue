@@ -215,13 +215,13 @@ export default {
       console.log('setMaxPrice');
     },
     setRange(val: number) {
-      const context = document.querySelector('#graph').getContext('2d');
-      const chart = new Chart(context).Line(data);
+      // const context = document.querySelector('#graph').getContext('2d');
+      // const chart = new Chart(context).Line(data);
 
-      $('#btn1').on('click', () => {
-        chart.data.datasets[0].data = [140, 100, 50];
-        chart.update();
-      });
+      // $('#btn1').on('click', () => {
+      //   chart.data.datasets[0].data = [140, 100, 50];
+      //   chart.update();
+      // });
 
       this.currentRange = val;
     },
