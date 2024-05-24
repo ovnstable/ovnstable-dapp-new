@@ -6,7 +6,12 @@ import { poolsInfoMap } from '@/store/views/main/zapin/mocks.ts';
 import { approveToken, getAllowanceValue } from '@/utils/contractApprove.ts';
 import BigNumber from 'bignumber.js';
 
-export const getProportion = (poolAddress: string, zapPool: any, zapContract: any) => {
+export const getProportion = (
+  poolAddress: string,
+  zapPool: any,
+  zapContract: any,
+  range?: string[],
+) => {
   const poolInfo = poolsInfoMap[poolAddress];
   if (!poolInfo) {
     console.log(
@@ -18,12 +23,22 @@ export const getProportion = (poolAddress: string, zapPool: any, zapContract: an
 
   const { gauge } = poolInfo;
 
-  // todo 4: get type from configuration
-  if (
-    zapPool.data.platform[0] === 'Arbidex'
-    || zapPool.data.platform[0] === 'Baseswap'
-    || zapPool.data.platform[0] === 'Alienbase'
-  ) {
+  console.log(gauge, '___gauge');
+  console.log(range, '___range');
+  console.log(zapPool, '___zapPool');
+  if (zapPool.poolVersion === 'v3' && range && range?.length > 1) {
+    const newRange = [Number([range[0]]), Number([range[1]])];
+
+    console.log(newRange, '___newRange');
+    return zapContract
+      .getProportion(gauge, newRange)
+      .then((data: any) => data)
+      .catch((e: any) => {
+        console.error('Error get proportion for V3', e);
+      });
+  }
+
+  if (zapPool.data.platform[0] === 'Baseswap') {
     return zapContract
       .getProportion(gauge, poolInfo.poolId.toString())
       .then((data: any) => data)

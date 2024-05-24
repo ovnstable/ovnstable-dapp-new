@@ -40,9 +40,21 @@ const actions = {
 
     const platformName = state.currentZapPlatformContractType.name;
 
-    const abiFile = await loadJSON(
-      `/contracts/${state.zapPoolRoot.chainName}/${platformName}Zap.json`,
-    );
+    let abiFile = null;
+
+    if (state.zapPoolRoot?.poolVersion === 'v2') {
+      abiFile = await loadJSON(
+        `/contracts/${state.zapPoolRoot.chainName}/${platformName}Zap.json`,
+      );
+    }
+
+    if (state.zapPoolRoot?.poolVersion === 'v3') {
+      abiFile = await loadJSON(
+        `/contracts/${state.zapPoolRoot.chainName}/${platformName}V3Zap.json`,
+      );
+    }
+
+    console.log(state.zapPoolRoot, '___statezapPoolRoot');
 
     console.log(abiFile, 'abiFileype');
     commit('changeState', {

@@ -84,7 +84,6 @@ export default {
   &.v3 {
     width: 100vw;
     max-width: 1200px;
-    margin: 0 40px;
   }
 
   @media (max-width: 1240px) {

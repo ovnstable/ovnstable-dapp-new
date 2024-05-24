@@ -290,6 +290,8 @@
             <ZapinV3
               v-if="zapPool?.poolVersion === 'v3'"
               :zap-pool="zapPool"
+              :zap-contract="zapContract"
+              @set-range="setRangeV3"
             />
           </div>
         </div>
@@ -396,6 +398,7 @@ export default {
       outputTokens: [] as any[],
       maxInputTokens: 6,
       maxOutputTokens: 6,
+      v3Range: [] as string[],
       isShowSelectTokensModal: false,
       swapMethod: 'BUY', // BUY (secondTokens) / SELL (secondTokens)
       selectTokenType: 'OVERNIGHT', // OVERNIGHT / ALL
@@ -788,6 +791,9 @@ export default {
     onEnterList,
     formatMoney,
 
+    setRangeV3(range: string[]) {
+      this.v3Range = range;
+    },
     updateTokenState(newToken: any) {
       const indexOf = this.inputTokens.map((_) => _.id).indexOf(newToken.id);
       this.inputTokens[indexOf] = newToken;
@@ -1064,6 +1070,7 @@ export default {
         this.zapPool.address,
         this.zapPool,
         this.zapContract,
+        this.v3Range,
       );
       const sumReserves = (
         new BigNumber(reserves.token0Amount).times(outputToken0Price)
@@ -1738,6 +1745,7 @@ export default {
         this.zapPool.address,
         this.zapPool,
         this.zapContract,
+        this.v3Range,
       );
 
       const outputToken0Price = this.selectedOutputTokens[0].selectedToken.price;

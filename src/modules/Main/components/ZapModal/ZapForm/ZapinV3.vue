@@ -8,9 +8,21 @@
       <h3>
         Current Price:  1.000  USDC per USD+
       </h3>
+
+      <div
+        class="zapin-v3__loader"
+        v-if="isLoading"
+      >
+        <Spinner
+          size="48px"
+        />
+      </div>
       <apexchart
-        width="500"
+        v-else
+        ref="zapinChart"
+        class="zapin-v3__chart-range"
         type="area"
+        height="100%"
         :options="optionsChart"
         :series="optionsChart.series"
       />
@@ -75,50 +87,38 @@
 import InputComponent from '@/components/Input/Index.vue';
 // import ButtonComponent from '@/components/Button/Index.vue';
 // import BaseIcon from '@/components/Icon/BaseIcon.vue';
-
-const dataRender = [
-  [9, 0],
-  [9.1, 0],
-  [9.2, 0],
-  [9.3, 2],
-  [9.5, 4],
-  [9.6, 2],
-  [9.7, 0],
-  [9.8, 0],
-  [9.9, 0],
-  [10, 0],
-];
-
-console.log(dataRender, '___dataRender');
+import Spinner from '@/components/Spinner/Index.vue';
+import BN from 'bignumber.js';
 
 export default {
   name: 'ZapinV3',
   components: {
     InputComponent,
+    Spinner,
   },
+  emits: ['set-range'],
   data() {
     return {
+      dataToRender: [],
+      isLoading: true,
       minPrice: '0',
       maxPrice: '0',
-      currentRange: null as null | number,
+      currentRange: 20,
       rangePresets: [
         {
-          id: 0, value: 0.1,
+          id: 0, value: 10,
         },
         {
-          id: 1, value: 0.5,
+          id: 1, value: 20,
         },
         {
-          id: 2, value: 1,
+          id: 2, value: 30,
         },
         {
-          id: 3, value: 2,
+          id: 3, value: 50,
         },
         {
-          id: 4, value: 4,
-        },
-        {
-          id: 5, value: 100,
+          id: 4, value: 100,
         },
       ],
       optionsChart: {
@@ -137,7 +137,8 @@ export default {
         },
         chart: {
           id: 'chart1',
-          height: 130,
+          width: '100%',
+          height: '50px',
           type: 'bar',
           foreColor: '#ccc',
           brush: {
@@ -159,8 +160,8 @@ export default {
               opacity: 1,
             },
             xaxis: {
-              min: 9.4,
-              max: 9.6,
+              min: 0,
+              max: 0,
             },
           },
         },
@@ -171,7 +172,7 @@ export default {
         colors: ['#FF008044'],
         series: [
           {
-            data: dataRender,
+            data: [],
           },
         ],
         stroke: {
@@ -206,6 +207,68 @@ export default {
       type: Object,
       required: true,
     },
+    zapContract: {
+      type: Object,
+      required: true,
+    },
+  },
+  async mounted() {
+    const currPrice = await this.zapContract.getCurrentPrice(this.zapPool.address);
+
+    let buildData: any = [];
+
+    // if stablepool
+    if (true) {
+      buildData = Array.from({ length: 22 }).map((_, key) => [key / 10, 0]);
+      this.optionsChart.series = [
+        {
+          data: buildData,
+        },
+      ];
+
+      const center = Number(new BN(currPrice));
+
+      const minPrice = new BN(currPrice).times(0.9);
+      const maxPrice = new BN(currPrice).times(1.1);
+      this.minPrice = minPrice.div(10 ** 18).toFixed(6);
+      this.maxPrice = maxPrice.div(10 ** 18).toFixed(6);
+
+      this.$emit('set-range', [minPrice.toFixed(0), maxPrice.toFixed(0)]);
+      this.optionsChart.chart.selection.xaxis = {
+        min: Number(this.minPrice),
+        max: Number(this.maxPrice),
+      };
+
+      this.optionsChart.annotations = {
+        xaxis: [
+          {
+            x: center,
+            borderColor: '#0497EC',
+            borderWidth: 2,
+            label: {
+              borderColor: '#0497EC',
+              orientation: 'horizontal',
+            },
+          },
+        ],
+      };
+
+      this.optionsChart.xaxis = {
+        labels: {
+          formatter(value: number) {
+            if (value === 0) return '0';
+            return +(value.toFixed(1)) % 0.5 === 0 ? value.toFixed(2) : '';
+          },
+          style: {
+            colors: '#687386',
+            fontSize: '14px',
+          },
+        },
+      };
+    }
+
+    this.isLoading = false;
+    console.log(currPrice.toString(), '___currPrice');
   },
   methods: {
     setMinPrice() {
@@ -214,7 +277,44 @@ export default {
     setMaxPrice() {
       console.log('setMaxPrice');
     },
-    setRange(val: number) {
+    // chart2.updateOptions({
+    //   chart: {
+    //     events: {
+    //       selection: (e, o) => {
+    //         console.log(o);
+    //       },
+    //     },
+    //   }
+    // });s
+    async setRange(val: number) {
+      const currPrice = await this.zapContract.getCurrentPrice(this.zapPool.address);
+      const center = Number(new BN(currPrice).div(10 ** 18).toFixed(4));
+
+      // (this.$refs as any)?.zapinChart?.toggleDataPointSelection(0, center * 1.5);
+      console.log(this.$refs, '___REFS');
+      const minPrice = center * (1 - val / 2 / 100);
+      const maxPrice = center * (1 + val / 2 / 100);
+
+      this.minPrice = minPrice.toFixed(6);
+      this.maxPrice = maxPrice.toFixed(6);
+
+      (this.$refs?.zapinChart as any)?.updateOptions(
+        {
+          chart: {
+            selection: {
+              xaxis: {
+                min: minPrice,
+                max: maxPrice,
+              },
+            },
+          },
+        },
+        false,
+        true,
+      );
+      (this.$refs?.zapinChart as any).updateSeries([{
+        data: this.optionsChart.series[0].data,
+      }], false, true);
       // const context = document.querySelector('#graph').getContext('2d');
       // const chart = new Chart(context).Line(data);
 
@@ -239,7 +339,7 @@ export default {
 }
 
 .zapin-v3__chart {
-  padding: 14px;
+  padding: 14px 14px 36px 14px;
   border-radius: 10px;
   background-color: var(--color-5);
   margin-top: 8px;
@@ -321,6 +421,16 @@ export default {
 
 #chart-bar {
   position: relative;
-  margin-top: -38px;
+}
+
+.zapin-v3__chart-range {
+  height: 200px;
+}
+
+.zapin-v3__loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 150px;
 }
 </style>
