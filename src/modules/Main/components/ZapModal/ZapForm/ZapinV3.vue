@@ -221,7 +221,7 @@ export default {
 
     let buildData: any = [];
 
-    // if stablepool
+    // if stablepool todo
     if (true) {
       buildData = Array.from({ length: 22 }).map((_, key) => [key / 10, 0]);
       this.optionsChart.series = [
@@ -230,7 +230,7 @@ export default {
         },
       ];
 
-      const center = Number(new BN(currPrice));
+      const center = Number(new BN(currPrice).div(10 ** 18));
 
       const minPrice = new BN(currPrice).times(0.9);
       const maxPrice = new BN(currPrice).times(1.1);
@@ -243,6 +243,7 @@ export default {
         max: Number(this.maxPrice),
       };
 
+      console.log(center, '___center');
       this.optionsChart.annotations = {
         xaxis: [
           {

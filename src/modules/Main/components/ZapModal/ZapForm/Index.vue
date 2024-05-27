@@ -435,7 +435,6 @@ export default {
         // Alienbase: ["Alien Base", "Alien Base Stable"],
         // Convex: ["Curve Crypto Registry", "Curve Factory", "Curve Registry"]
       } as any,
-      odosZapReferalCode: 3111111111,
       currentStage: zapInStep.START,
     };
   },
@@ -1198,7 +1197,6 @@ export default {
         slippageLimitPercent: this.getSlippagePercent(),
       };
 
-      const referralCode = totalInUsd.gt(3000) ? this.odosZapReferalCode : this.odosReferalCode;
       const whiteList = WHITE_LIST_ODOS[request.chainId as keyof typeof WHITE_LIST_ODOS];
       const requestData = {
         chainId: request.chainId,
@@ -1214,7 +1212,7 @@ export default {
         simulate: false,
         pathViz: false,
         disableRFQs: false,
-        referralCode,
+        referralCode: this.odosReferalCode,
       };
 
       console.log(requestData, '---requestData');
@@ -1672,7 +1670,7 @@ export default {
 
       console.log(txData, 'swapdata');
       console.log(gaugeData, 'gaugeData');
-      console.log(params, 'params');
+      console.log((params), 'params');
       try {
         const tx = await this.zapContract.zapIn(txData, gaugeData, params);
         const receipt = await tx.wait();
