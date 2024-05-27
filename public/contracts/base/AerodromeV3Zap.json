@@ -657,9 +657,9 @@
       "type": "receive"
     }
   ],
-  "numDeployments": 9,
-  "solcInputHash": "d0d891a0ae268cd8f61043f92add4475",
-  "implementation": "0xbC690472185A39442165Ca67ffCa4362Fab1522B",
+  "numDeployments": 10,
+  "solcInputHash": "7e05c855ed8c272cc55074720a79bf56",
+  "implementation": "0x90D7979089f8D55e0a2244BAbD66Fd901D63AA96",
   "devdoc": {
     "kind": "dev",
     "methods": {
@@ -767,7 +767,7 @@
         "type": "t_array(t_uint256)50_storage"
       },
       {
-        "astId": 7987,
+        "astId": 7959,
         "contract": "contracts/zap/AerodromeCLZap.sol:AerodromeCLZap",
         "label": "stakeSlippageBP",
         "offset": 0,
@@ -775,7 +775,7 @@
         "type": "t_uint256"
       },
       {
-        "astId": 7989,
+        "astId": 7961,
         "contract": "contracts/zap/AerodromeCLZap.sol:AerodromeCLZap",
         "label": "odosRouter",
         "offset": 0,

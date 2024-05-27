@@ -1051,9 +1051,6 @@ export default {
       console.log(this.zapContract.target, '___thiszapContracttarget');
       if (this.zapInType === 'V2') this.currentStage = zapInStep.STAKE_LP;
       if (!this.zapPool) return;
-      const totalInUsd: BigNumber = this.inputTokens
-        .reduce((acc, curr) => acc.plus(curr.usdValue), new BigNumber(0));
-
       this.$store.commit('odosData/changeState', {
         field: 'lastPoolInfoData',
         val: poolsInfoMap[this.zapPool.address],
@@ -1661,8 +1658,9 @@ export default {
       this.showWaitingModal('Staking in process');
 
       const params = {
-
         from: this.account,
+        gasPrice: ethers.parseUnits('100', 'gwei'),
+        gasLimit: 1000000,
       };
 
       console.log(zapPool, '----zapPool');
