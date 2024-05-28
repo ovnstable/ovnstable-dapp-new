@@ -258,25 +258,6 @@
     {
       "inputs": [
         {
-          "internalType": "uint160",
-          "name": "sqrtRatio",
-          "type": "uint160"
-        }
-      ],
-      "name": "getPriceBySqrtRatio",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "pure",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
           "internalType": "address",
           "name": "_pair",
           "type": "address"
@@ -325,30 +306,6 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "price",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "decimals",
-          "type": "uint256"
-        }
-      ],
-      "name": "getSqrtRatioByPrice",
-      "outputs": [
-        {
-          "internalType": "uint160",
-          "name": "",
-          "type": "uint160"
-        }
-      ],
-      "stateMutability": "pure",
       "type": "function"
     },
     {
@@ -657,9 +614,9 @@
       "type": "receive"
     }
   ],
-  "numDeployments": 10,
-  "solcInputHash": "7e05c855ed8c272cc55074720a79bf56",
-  "implementation": "0x90D7979089f8D55e0a2244BAbD66Fd901D63AA96",
+  "numDeployments": 15,
+  "solcInputHash": "2a2e583b2391b4eb595e103b5b933079",
+  "implementation": "0x81276285F6bE31146026eb974D751632a35Fe775",
   "devdoc": {
     "kind": "dev",
     "methods": {
@@ -767,7 +724,7 @@
         "type": "t_array(t_uint256)50_storage"
       },
       {
-        "astId": 7959,
+        "astId": 7805,
         "contract": "contracts/zap/AerodromeCLZap.sol:AerodromeCLZap",
         "label": "stakeSlippageBP",
         "offset": 0,
@@ -775,7 +732,7 @@
         "type": "t_uint256"
       },
       {
-        "astId": 7961,
+        "astId": 7807,
         "contract": "contracts/zap/AerodromeCLZap.sol:AerodromeCLZap",
         "label": "odosRouter",
         "offset": 0,
@@ -783,7 +740,7 @@
         "type": "t_address"
       },
       {
-        "astId": 7014,
+        "astId": 7093,
         "contract": "contracts/zap/AerodromeCLZap.sol:AerodromeCLZap",
         "label": "npm",
         "offset": 0,

@@ -62,6 +62,135 @@ export const getProportion = (
     });
 };
 
+export const checkApproveForGauge = async (
+  poolTokenContract: any,
+  checkedAllowanceValue: string,
+  routerContract: any,
+  account: any,
+) => {
+  const allowanceValue = await getAllowanceValue(
+    poolTokenContract,
+    account,
+    routerContract.target,
+  );
+  return new BigNumber(allowanceValue).isGreaterThanOrEqualTo(checkedAllowanceValue);
+};
+
+export const approveGaugeForStake = async (
+  showWaitingModal: (val: string) => void,
+  closeWaitingModal: VoidFunction,
+  showErrorModalWithMsg: (val: any) => void,
+  gaugeContract: any,
+  poolTokenContract: any,
+  account: string,
+  routerContract: any,
+) => {
+  const approveValue = new BigNumber(10).pow(24).toFixed();
+  showWaitingModal('Approving gauge in process');
+
+  console.log(approveValue, 'approveValue');
+  const isGaugeApproved = checkApproveForGauge(
+    poolTokenContract,
+    approveValue,
+    routerContract,
+    account,
+  );
+  if (!isGaugeApproved) {
+    closeWaitingModal();
+    return;
+  }
+
+  try {
+    const tx = await approveToken(
+      poolTokenContract,
+      gaugeContract.target,
+      approveValue,
+      account,
+    );
+    await tx.wait();
+    closeWaitingModal();
+  } catch (e) {
+    console.error('Error when approve token.', e);
+    closeWaitingModal();
+    showErrorModalWithMsg({ errorType: 'approve', errorMsg: e });
+  }
+};
+
+export const depositAllAtGauge = async (
+  account: string,
+  lastPoolInfoData: any,
+  lastNftTokenId: string,
+  currentZapPlatformContractType: any,
+  gaugeContract: any,
+  zapPoolRoot: any,
+  poolTokenContract: any,
+) => {
+  const params = { from: account };
+  console.log(
+    account,
+    lastPoolInfoData,
+    lastNftTokenId,
+    currentZapPlatformContractType,
+    gaugeContract,
+    zapPoolRoot,
+    poolTokenContract,
+    'DEparamsP',
+  );
+  if (
+    currentZapPlatformContractType.typeOfDepositConstructor
+    === 'CONSTRUCTOR_WITH_TOKEN_ID'
+  ) {
+    const poolAddress = zapPoolRoot.address;
+    const poolInfo = poolsInfoMap[poolAddress];
+    return gaugeContract.depositAll(poolInfo.poolId, params);
+  }
+
+  if (
+    currentZapPlatformContractType.typeOfDepositConstructor
+    === 'CONSTRUCTOR_WITHOUT_TOKEN_ID'
+  ) {
+    const balance = await poolTokenContract.balanceOf(account);
+    return gaugeContract.deposit(balance, params);
+  }
+
+  if (
+    currentZapPlatformContractType.typeOfDepositConstructor
+    === 'BASE_CONSTRUCTOR'
+  ) {
+    return gaugeContract.depositAll(params);
+  }
+
+  if (
+    currentZapPlatformContractType.typeOfDepositConstructor
+    === 'CONSTRUCTOR_WITH_POOL_ID_AND_TOKEN_AMOUNT'
+  ) {
+    const balance = await poolTokenContract.balanceOf(account);
+    return gaugeContract.deposit(lastPoolInfoData.poolId, balance, params);
+  }
+
+  if (
+    currentZapPlatformContractType.typeOfDepositConstructor
+    === 'CONSTRUCTOR_WITH_NFT_ID'
+  ) {
+    const data = {
+      from: account,
+      to: poolTokenContract.target,
+      tokenId: lastNftTokenId,
+      _data:
+        '0x0000000000000000000000000000000000000000000000000000000000000000',
+    };
+    return gaugeContract.safeTransferFrom(data.from, data.to, data.tokenId, data._data, params);
+  }
+
+  if (
+    currentZapPlatformContractType.typeOfDepositConstructor
+    === 'CONSTRUCTOR_STAKE_METHOD_AND_TOKEN_AMOUNT'
+  ) {
+    const balance = await poolTokenContract.balanceOf(account);
+    return gaugeContract.stake(balance, params);
+  }
+};
+
 export const calculateProportionForPool = ({
   inputTokensDecimals,
   inputTokensAddresses,
@@ -194,133 +323,4 @@ export const calculateProportionForPool = ({
       .times(new BigNumber(10).pow(outputTokensDecimals[1]))
       .toFixed(0),
   };
-};
-
-export const checkApproveForGauge = async (
-  poolTokenContract: any,
-  checkedAllowanceValue: string,
-  routerContract: any,
-  account: any,
-) => {
-  const allowanceValue = await getAllowanceValue(
-    poolTokenContract,
-    account,
-    routerContract.target,
-  );
-  return new BigNumber(allowanceValue).isGreaterThanOrEqualTo(checkedAllowanceValue);
-};
-
-export const approveGaugeForStake = async (
-  showWaitingModal: (val: string) => void,
-  closeWaitingModal: VoidFunction,
-  showErrorModalWithMsg: (val: any) => void,
-  gaugeContract: any,
-  poolTokenContract: any,
-  account: string,
-  routerContract: any,
-) => {
-  const approveValue = new BigNumber(10).pow(24).toFixed();
-  showWaitingModal('Approving gauge in process');
-
-  console.log(approveValue, 'approveValue');
-  const isGaugeApproved = checkApproveForGauge(
-    poolTokenContract,
-    approveValue,
-    routerContract,
-    account,
-  );
-  if (!isGaugeApproved) {
-    closeWaitingModal();
-    return;
-  }
-
-  try {
-    const tx = await approveToken(
-      poolTokenContract,
-      gaugeContract.target,
-      approveValue,
-      account,
-    );
-    await tx.wait();
-    closeWaitingModal();
-  } catch (e) {
-    console.error('Error when approve token.', e);
-    closeWaitingModal();
-    showErrorModalWithMsg({ errorType: 'approve', errorMsg: e });
-  }
-};
-
-export const depositAllAtGauge = async (
-  account: string,
-  lastPoolInfoData: any,
-  lastNftTokenId: string,
-  currentZapPlatformContractType: any,
-  gaugeContract: any,
-  zapPoolRoot: any,
-  poolTokenContract: any,
-) => {
-  const params = { from: account };
-  console.log(
-    account,
-    lastPoolInfoData,
-    lastNftTokenId,
-    currentZapPlatformContractType,
-    gaugeContract,
-    zapPoolRoot,
-    poolTokenContract,
-    'DEparamsP',
-  );
-  if (
-    currentZapPlatformContractType.typeOfDepositConstructor
-    === 'CONSTRUCTOR_WITH_TOKEN_ID'
-  ) {
-    const poolAddress = zapPoolRoot.address;
-    const poolInfo = poolsInfoMap[poolAddress];
-    return gaugeContract.depositAll(poolInfo.poolId, params);
-  }
-
-  if (
-    currentZapPlatformContractType.typeOfDepositConstructor
-    === 'CONSTRUCTOR_WITHOUT_TOKEN_ID'
-  ) {
-    const balance = await poolTokenContract.balanceOf(account);
-    return gaugeContract.deposit(balance, params);
-  }
-
-  if (
-    currentZapPlatformContractType.typeOfDepositConstructor
-    === 'BASE_CONSTRUCTOR'
-  ) {
-    return gaugeContract.depositAll(params);
-  }
-
-  if (
-    currentZapPlatformContractType.typeOfDepositConstructor
-    === 'CONSTRUCTOR_WITH_POOL_ID_AND_TOKEN_AMOUNT'
-  ) {
-    const balance = await poolTokenContract.balanceOf(account);
-    return gaugeContract.deposit(lastPoolInfoData.poolId, balance, params);
-  }
-
-  if (
-    currentZapPlatformContractType.typeOfDepositConstructor
-    === 'CONSTRUCTOR_WITH_NFT_ID'
-  ) {
-    const data = {
-      from: account,
-      to: poolTokenContract.target,
-      tokenId: lastNftTokenId,
-      _data:
-        '0x0000000000000000000000000000000000000000000000000000000000000000',
-    };
-    return gaugeContract.safeTransferFrom(data.from, data.to, data.tokenId, data._data, params);
-  }
-
-  if (
-    currentZapPlatformContractType.typeOfDepositConstructor
-    === 'CONSTRUCTOR_STAKE_METHOD_AND_TOKEN_AMOUNT'
-  ) {
-    const balance = await poolTokenContract.balanceOf(account);
-    return gaugeContract.stake(balance, params);
-  }
 };

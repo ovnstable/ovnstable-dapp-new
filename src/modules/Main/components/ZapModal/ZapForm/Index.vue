@@ -509,7 +509,7 @@ export default {
     },
 
     isOutputTokensRemovable() {
-      return false; // this.outputTokens.length > 1;
+      return false;
     },
 
     isTokenWithoutSlider() {
@@ -628,12 +628,6 @@ export default {
       return this.allInputsWithNotApproved.length > 0;
     },
     allInputsWithNotApproved() {
-      if (this.zapPool.poolVersion === 'v3') {
-        return this.selectedOutputTokens.filter(
-          (token: any) => !token.selectedToken.approveData.approved,
-        );
-      }
-
       return this.selectedInputTokens.filter(
         (token: any) => !token.selectedToken.approveData.approved,
       );
@@ -725,9 +719,9 @@ export default {
       return true;
     },
     zapInType() {
-      if (this.currentZapPlatformContractType?.type === 'LP_STAKE_DIFF_STEPS') {
-        return 'V3';
-      } return 'V2';
+      if (this.zapPool?.poolVersion === 'v3') return 'V3';
+
+      return 'V2';
     },
   },
   watch: {
@@ -1156,17 +1150,6 @@ export default {
       const outputAmounts = formulaOutputTokens.map((token: any) => token.contractValue);
       const outputPrices = formulaOutputTokens.map((token: any) => token.price);
 
-      console.log({
-        inputTokensDecimals: [...inputDecimals],
-        inputTokensAddresses: [...inputAddresses],
-        inputTokensAmounts: [...inputAmounts],
-        inputTokensPrices: [...inputPrices],
-        outputTokensDecimals: [...outputDecimals],
-        outputTokensAddresses: [...outputAddresses],
-        outputTokensAmounts: [...outputAmounts],
-        outputTokensPrices: [...outputPrices],
-        proportion0: new BigNumber(reserves[0]).times(outputPrices[0]).div(sumReserves).toNumber(),
-      }, '-----PARMAS');
       const proportions = calculateProportionForPool({
         inputTokensDecimals: [...inputDecimals],
         inputTokensAddresses: [...inputAddresses],
@@ -1176,10 +1159,9 @@ export default {
         outputTokensAddresses: [...outputAddresses],
         outputTokensAmounts: [...outputAmounts],
         outputTokensPrices: [...outputPrices],
-        proportion0: new BigNumber(reserves[0]).times(outputPrices[0]).div(sumReserves).toNumber(),
+        proportion0: new BigNumber(reserves[0])
+          .times(outputPrices[0]).div(sumReserves).toNumber(),
       });
-
-      console.log(proportions);
 
       proportions.outputTokens = proportions.outputTokens.filter(
         (item: any) => item.proportion > 0,
@@ -1659,8 +1641,6 @@ export default {
 
       const params = {
         from: this.account,
-        gasPrice: ethers.parseUnits('100', 'gwei'),
-        gasLimit: 1000000,
       };
 
       console.log(zapPool, '----zapPool');
@@ -1867,6 +1847,7 @@ export default {
         .times(10 ** 18)
         .toFixed(0);
 
+      console.log('TRIGGER__1');
       await this.checkApproveForToken(token, (Number(approveValue) * 0.5).toFixed(0));
       if (selectedToken.approveData.approved) {
         this.closeWaitingModal();
@@ -1887,6 +1868,7 @@ export default {
           this.showErrorModalWithMsg({ errorType: 'approve', errorMsg: e });
         });
 
+      console.log('TRIGGER__2');
       const finishTx = () => {
         this.checkApproveForToken(token, token.contractValue);
         this.closeWaitingModal();
@@ -2148,6 +2130,7 @@ export default {
     },
 
     addSelectedTokenToList(data: any) {
+      console.log(data, 'addSelectedTokenToList');
       if (data.isInput) {
         this.addSelectedTokenToInputList(data.tokenData, false);
         // this.addTokensEmptyIsNeeded();

@@ -389,6 +389,7 @@ export const getSortedSecondPools = (
     // but its should be displayed
 
     // if its tvl higher than restrictions and its promotoed, its gonna duplicate
+    if (HOT_POOLS.includes(pool.address)) return false;
     if (LOW_TVL_PROMOTE.includes(pool.address)) return false;
     if (pool.promoted) return false;
     if (new BigNumber(pool.tvl).gt(SECOND_MIN_AMOUNT)

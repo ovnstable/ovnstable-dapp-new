@@ -376,21 +376,69 @@ export const poolsInfoMap: any = {
     version: 3,
     approveType: 'TOKEN',
   },
+  '0x96331Fcb46A7757854d9E26AFf3aCA2815D623fD': {
+    gauge: '0xeA22A3AAdA580bD75Fb6caC35034e09046cbFf72',
+    poolId: 0,
+    version: 3,
+    approveType: 'TOKEN',
+  },
+  '0x20086910E220D5f4c9695B784d304A72a0de403B': {
+    gauge: '0xeA22A3AAdA580bD75Fb6caC35034e09046cbFf72',
+    poolId: 0,
+    version: 3,
+    approveType: 'TOKEN',
+  },
+  '0x4D69971CCd4A636c403a3C1B00c85e99bB9B5606': {
+    gauge: '0xeA22A3AAdA580bD75Fb6caC35034e09046cbFf72',
+    poolId: 0,
+    version: 3,
+    approveType: 'TOKEN',
+  },
 };
 
 export const poolTokensForZapMap = {
-  // Chronos
-  // pool address
+  // V3
   '0x0c1A09d5D0445047DA3Ab4994262b22404288A3B': [
+    {
+      name: 'USDC',
+      address: chainContractsMap.base.usdcNative,
+    },
+    {
+      name: 'USD+',
+      address: chainContractsMap.base.usdPlus.tokenPlus,
+    },
+  ],
+  '0x96331Fcb46A7757854d9E26AFf3aCA2815D623fD': [
+    {
+      name: 'DOLA',
+      address: '0x4621b7A9c75199271F773Ebd9A499dbd165c3191',
+    },
+    {
+      name: 'USD+',
+      address: chainContractsMap.base.usdPlus.tokenPlus,
+    },
+  ],
+  '0x20086910E220D5f4c9695B784d304A72a0de403B': [
     {
       name: 'USD+',
       address: chainContractsMap.base.usdPlus.tokenPlus,
     },
     {
-      name: 'USDC',
-      address: chainContractsMap.base.usdcNative,
+      name: 'USDbC',
+      address: chainContractsMap.base.usdc,
     },
   ],
+  '0x4D69971CCd4A636c403a3C1B00c85e99bB9B5606': [
+    {
+      name: 'WETH',
+      address: '0x4200000000000000000000000000000000000006',
+    },
+    {
+      name: 'USD+',
+      address: chainContractsMap.base.usdPlus.tokenPlus,
+    },
+  ],
+  // V2
   '0xb260163158311596ea88a700c5a30f101d072326': [
     {
       name: 'USD+',

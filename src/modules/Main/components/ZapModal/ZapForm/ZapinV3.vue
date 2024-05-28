@@ -126,7 +126,7 @@ export default {
         annotations: {
           xaxis: [
             {
-              x: 9.5,
+              x: '9.5',
               borderColor: '#0497EC',
               borderWidth: 2,
               label: {
@@ -214,9 +214,8 @@ export default {
     },
   },
   async mounted() {
-    console.log(this.zapContract, '__zapContract1');
-    console.log(this.zapPool, 'zapPool11');
     this.pairSymbols = this.zapPool.name.split('/');
+    console.log(this.zapPool.address, '___this.zapPool.address');
     const currPrice = await this.zapContract.getCurrentPrice(this.zapPool.address);
 
     let buildData: any = [];
@@ -247,7 +246,7 @@ export default {
       this.optionsChart.annotations = {
         xaxis: [
           {
-            x: center,
+            x: center.toString(),
             borderColor: '#0497EC',
             borderWidth: 2,
             label: {

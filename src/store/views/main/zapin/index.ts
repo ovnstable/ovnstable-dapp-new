@@ -54,9 +54,6 @@ const actions = {
       );
     }
 
-    console.log(state.zapPoolRoot, '___statezapPoolRoot');
-
-    console.log(abiFile, 'abiFileype');
     commit('changeState', {
       field: 'zapContract',
       val: buildEvmContract(
