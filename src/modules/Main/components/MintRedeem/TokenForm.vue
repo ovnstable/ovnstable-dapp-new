@@ -178,7 +178,6 @@ export default {
       const wrapUnwrapPairs = MINTREDEEM_SCHEME[networkId]
         .filter((_) => _.methodName[0] === mintRedeemTypes.WRAP);
 
-      console.log(list, '___LIST');
       // FILTERING tokens from wrap/unwrap, based on tab
       if (list?.length > 0) list = this.filterTokens(list, this.activeWrap, wrapUnwrapPairs);
 

@@ -1212,7 +1212,7 @@ export default {
         referralCode: this.odosReferalCode,
       };
 
-      console.log(requestData, '---requestData');
+      console.log(requestData, '___requestData');
       this.odosSwapRequest(requestData)
         .then(async (data: any) => {
           const assembleData = {
