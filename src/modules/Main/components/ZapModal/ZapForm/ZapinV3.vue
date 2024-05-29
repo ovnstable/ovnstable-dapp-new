@@ -229,12 +229,14 @@ export default {
         },
       ];
 
-      const center = Number(new BN(currPrice).div(10 ** 18));
+      console.log(currPrice.toString(), '___currPrice');
+
+      const center = Number(new BN(currPrice).div(10 ** 6));
 
       const minPrice = new BN(currPrice).times(0.9);
       const maxPrice = new BN(currPrice).times(1.1);
-      this.minPrice = minPrice.div(10 ** 18).toFixed(6);
-      this.maxPrice = maxPrice.div(10 ** 18).toFixed(6);
+      this.minPrice = minPrice.div(10 ** 6).toFixed(6);
+      this.maxPrice = maxPrice.div(10 ** 6).toFixed(6);
 
       this.$emit('set-range', [minPrice.div(10 ** 12).toFixed(0), maxPrice.div(10 ** 12).toFixed(0)]);
       this.optionsChart.chart.selection.xaxis = {
@@ -292,7 +294,7 @@ export default {
     // });s
     async setRange(val: number) {
       const currPrice = await this.zapContract.getCurrentPrice(this.zapPool.address);
-      const center = Number(new BN(currPrice).div(10 ** 18).toFixed(4));
+      const center = Number(new BN(currPrice).div(10 ** 6).toFixed(4));
 
       const minPrice = center * (1 - val / 2 / 100);
       const maxPrice = center * (1 + val / 2 / 100);
