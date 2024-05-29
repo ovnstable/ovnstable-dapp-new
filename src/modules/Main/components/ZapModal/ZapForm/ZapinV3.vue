@@ -25,6 +25,7 @@
         height="100%"
         :options="optionsChart"
         :series="optionsChart.series"
+        @selection="selectEvent"
       />
     </div>
 
@@ -39,7 +40,7 @@
           placeholder="0"
           full-width
           is-center
-          @input="setMaxPrice"
+          @input="setMinPrice"
         />
         <p v-if="pairSymbols">
           {{ pairSymbols[0] }} per {{ pairSymbols[1] }}
@@ -55,7 +56,7 @@
           placeholder="0"
           full-width
           is-center
-          @input="setMinPrice"
+          @input="setMaxPrice"
         />
         <p v-if="pairSymbols">
           {{ pairSymbols[0] }} per {{ pairSymbols[1] }}
@@ -83,12 +84,15 @@
   </div>
 </template>
 
+<!-- eslint-disable no-param-reassign -->
 <script lang="ts">
 import InputComponent from '@/components/Input/Index.vue';
 // import ButtonComponent from '@/components/Button/Index.vue';
 // import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import Spinner from '@/components/Spinner/Index.vue';
 import BN from 'bignumber.js';
+import debounce from 'lodash/debounce';
+import { notify as notifyInst } from '@kyvg/vue3-notification';
 
 export default {
   name: 'ZapinV3',
@@ -119,7 +123,7 @@ export default {
           id: 3, value: 50,
         },
         {
-          id: 4, value: 100,
+          id: 4, value: 200,
         },
       ],
       optionsChart: {
@@ -276,22 +280,77 @@ export default {
     this.isLoading = false;
     console.log(currPrice.toString(), '___currPrice');
   },
+  watch: {
+    minPrice() {
+      this.debouncePriceChange(this);
+    },
+    maxPrice() {
+      this.debouncePriceChange(this);
+    },
+  },
   methods: {
-    setMinPrice() {
-      console.log('setMinPrice');
+    selectEvent(e: any, o: any) {
+      const minPrice = o.xaxis?.min?.toFixed(4);
+      const maxPrice = o.xaxis?.max?.toFixed(4);
+
+      if (new BN(maxPrice).lt(minPrice) || new BN(minPrice).gt(minPrice)) {
+        notifyInst({
+          title: 'Error',
+          text: 'Max price or Min price is wrong',
+          type: 'error',
+        });
+        return;
+      }
+
+      if (new BN(minPrice).eq(this.minPrice) && new BN(maxPrice).eq(this.maxPrice)) {
+        return;
+      }
+
+      this.minPrice = minPrice;
+      this.maxPrice = maxPrice;
+      this.debounceSelectChange(this);
     },
-    setMaxPrice() {
-      console.log('setMaxPrice');
+    debounceSelectChange: debounce(async (self: any) => {
+      self.$emit('set-range', [self.minPrice, self.maxPrice]);
+      self.changeTrig();
+    }, 200),
+    debouncePriceChange: debounce(async (self: any) => {
+      if (new BN(self.maxPrice).lt(self.minPrice) || !self.minPrice || !self.maxPrice) {
+        notifyInst({
+          title: 'Error',
+          text: 'Max price can"t be less than min price',
+          type: 'error',
+        });
+        return;
+      }
+
+      self.$emit('set-range', [self.minPrice, self.maxPrice]);
+      (self.$refs?.zapinChart as any)?.updateOptions(
+        {
+          chart: {
+            selection: {
+              xaxis: {
+                min: Number(self.minPrice),
+                max: Number(self.maxPrice),
+              },
+            },
+          },
+        },
+        false,
+        true,
+      );
+
+      self.changeTrig();
+    }, 200),
+    changeTrig() {
+      console.log('CHANGED');
     },
-    // chart2.updateOptions({
-    //   chart: {
-    //     events: {
-    //       selection: (e, o) => {
-    //         console.log(o);
-    //       },
-    //     },
-    //   }
-    // });s
+    setMinPrice(val: string) {
+      this.minPrice = val;
+    },
+    setMaxPrice(val: string) {
+      this.maxPrice = val;
+    },
     async setRange(val: number) {
       const currPrice = await this.zapContract.getCurrentPrice(this.zapPool.address);
       const center = Number(new BN(currPrice).div(10 ** 6).toFixed(4));
