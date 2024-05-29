@@ -26,11 +26,28 @@
     <div class="swiper-container">
       <swiper
         :slides-per-view="1"
-        :space-between="0"
+        :space-between="10"
         @swiper="onSwiper"
         @transitionEnd="handleSlideChange"
         ref="mySwiper"
       >
+        <swiper-slide
+          :ref="slideRef"
+          :swiper-ref="swiperInstance"
+          class="swiper-linea"
+        >
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://overnightdefi.medium.com/overnight-linea-the-surge-ebac75eb8064"
+          >
+            <img
+              alt="banner"
+              src="/public/common/banner-linea.png"
+            />
+          </a>
+        </swiper-slide>
+
         <swiper-slide
           v-for="(slide, index) in sliderData"
           :ref="slideRef"
@@ -776,4 +793,25 @@ export default {
   }
 }
 
+.swiper-linea {
+  width: 100%;
+  cursor: pointer;
+  transition: .2s ease scale;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 20px;
+    transition: .2s ease box-shadow;
+  }
+
+  &:hover {
+    scale: 0.98;
+
+    img {
+      box-shadow: 0px 0px 2px 2px var(--color-3);
+    }
+  }
+}
 </style>
