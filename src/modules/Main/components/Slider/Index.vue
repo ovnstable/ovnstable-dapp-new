@@ -32,23 +32,6 @@
         ref="mySwiper"
       >
         <swiper-slide
-          :ref="slideRef"
-          :swiper-ref="swiperInstance"
-          class="swiper-linea"
-        >
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href="https://overnightdefi.medium.com/overnight-linea-the-surge-ebac75eb8064"
-          >
-            <img
-              alt="banner"
-              src="/public/common/banner-linea.png"
-            />
-          </a>
-        </swiper-slide>
-
-        <swiper-slide
           v-for="(slide, index) in sliderData"
           :ref="slideRef"
           :swiper-ref="swiperInstance"
@@ -113,6 +96,23 @@
             </div>
           </div>
         </swiper-slide>
+        <swiper-slide
+          :ref="slideRef"
+          :swiper-ref="swiperInstance"
+          class="swiper-linea"
+        >
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://overnightdefi.medium.com/overnight-linea-the-surge-ebac75eb8064"
+          >
+            <img
+              alt="banner"
+              src="/public/common/banner-linea.png"
+            />
+          </a>
+        </swiper-slide>
+
       </swiper>
     </div>
 
