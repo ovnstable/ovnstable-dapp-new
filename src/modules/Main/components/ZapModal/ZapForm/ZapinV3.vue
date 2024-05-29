@@ -30,34 +30,66 @@
     </div>
 
     <div class="zapin-v3__row">
-      <div class="zapin-v3__row-block">
+      <div class="zapin-v3__col-block">
         <h3>
           Min price
         </h3>
-        <InputComponent
-          :value="minPrice"
-          input-type="white"
-          placeholder="0"
-          full-width
-          is-center
-          @input="setMinPrice"
-        />
+        <div class="zapin-v3__row-block">
+          <div
+            class="zapin-v3__clicker"
+            @click="decrPrice(true)"
+            @keypress="decrPrice(true)"
+          >
+            -
+          </div>
+          <InputComponent
+            :value="minPrice"
+            input-type="white"
+            placeholder="0"
+            full-width
+            is-center
+            @input="setMinPrice"
+          />
+          <div
+            class="zapin-v3__clicker"
+            @click="addPrice(true)"
+            @keypress="addPrice(true)"
+          >
+            +
+          </div>
+        </div>
         <p v-if="pairSymbols">
           {{ pairSymbols[0] }} per {{ pairSymbols[1] }}
         </p>
       </div>
-      <div class="zapin-v3__row-block">
+      <div class="zapin-v3__col-block">
         <h3>
           Max price
         </h3>
-        <InputComponent
-          :value="maxPrice"
-          input-type="white"
-          placeholder="0"
-          full-width
-          is-center
-          @input="setMaxPrice"
-        />
+        <div class="zapin-v3__row-block">
+          <div
+            class="zapin-v3__clicker"
+            @click="decrPrice(false)"
+            @keypress="decrPrice(false)"
+          >
+            -
+          </div>
+          <InputComponent
+            :value="maxPrice"
+            input-type="white"
+            placeholder="0"
+            full-width
+            is-center
+            @input="setMaxPrice"
+          />
+          <div
+            class="zapin-v3__clicker"
+            @click="addPrice(false)"
+            @keypress="addPrice(false)"
+          >
+            +
+          </div>
+        </div>
         <p v-if="pairSymbols">
           {{ pairSymbols[0] }} per {{ pairSymbols[1] }}
         </p>
@@ -107,6 +139,7 @@ export default {
       isLoading: true,
       minPrice: '0',
       maxPrice: '0',
+      centerPrice: '0',
       currentRange: 20,
       pairSymbols: [],
       rangePresets: [
@@ -241,6 +274,7 @@ export default {
       const maxPrice = new BN(currPrice).times(1.1);
       this.minPrice = minPrice.div(10 ** 6).toFixed(6);
       this.maxPrice = maxPrice.div(10 ** 6).toFixed(6);
+      this.centerPrice = center.toFixed(2);
 
       this.$emit('set-range', [minPrice.div(10 ** 12).toFixed(0), maxPrice.div(10 ** 12).toFixed(0)]);
       this.optionsChart.chart.selection.xaxis = {
@@ -289,6 +323,20 @@ export default {
     },
   },
   methods: {
+    decrPrice(isMin: boolean) {
+      if (isMin) {
+        this.minPrice = new BN(this.minPrice).times(0.99).toFixed(4);
+      } else {
+        this.maxPrice = new BN(this.maxPrice).times(0.99).toFixed(4);
+      }
+    },
+    addPrice(isMin: boolean) {
+      if (isMin) {
+        this.minPrice = new BN(this.minPrice).times(1.01).toFixed(4);
+      } else {
+        this.maxPrice = new BN(this.maxPrice).times(1.01).toFixed(4);
+      }
+    },
     selectEvent(e: any, o: any) {
       const minPrice = o.xaxis?.min?.toFixed(4);
       const maxPrice = o.xaxis?.max?.toFixed(4);
@@ -354,12 +402,12 @@ export default {
     async setRange(val: number) {
       const currPrice = await this.zapContract.getCurrentPrice(this.zapPool.address);
       const center = Number(new BN(currPrice).div(10 ** 6).toFixed(4));
-
       const minPrice = center * (1 - val / 2 / 100);
       const maxPrice = center * (1 + val / 2 / 100);
 
       this.minPrice = minPrice.toFixed(6);
       this.maxPrice = maxPrice.toFixed(6);
+      this.centerPrice = new BN(currPrice).div(10 ** 6).toFixed(4);
 
       (this.$refs?.zapinChart as any)?.updateOptions(
         {
@@ -423,7 +471,34 @@ export default {
   }
 }
 
+.zapin-v3__clicker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-3);
+  border: 1px solid var(--color-3);
+  min-width: 20px;
+  max-width: 20px;
+  min-height: 20px;
+  max-height: 20px;
+  font-size: 18px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: .2s ease background-color, color .2s ease;
+
+  &:hover {
+    background-color: var(--color-3);
+    color: var(--color-4);
+  }
+}
+
 .zapin-v3__row-block {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.zapin-v3__col-block {
   width: 100%;
   padding: 20px 14px;
   border-radius: 10px;
