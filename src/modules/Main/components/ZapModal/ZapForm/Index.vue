@@ -268,23 +268,6 @@
                   </ButtonComponent>
                 </div>
 
-              <!-- <div class="label-container pt-3">
-            <div
-              v-if="selectedInputTokens.length > 0"
-              class="row"
-            >
-              <div class="col-12">
-                <ZapSteps
-                  :selected-input-tokens="selectedInputTokens"
-                  :click-on-stake="clickOnStake"
-                  :additional-swap-step-type="additionalSwapStepType"
-                  :current-zap-platform-contract-type="
-                    currentZapPlatformContractType
-                  "
-                />
-              </div>
-            </div>
-          </div> -->
               </div>
             </div>
             <div
