@@ -1719,6 +1719,7 @@ export default {
         });
     },
     async recalculateProportion() {
+      console.log(this.v3Range, '___thisv3Range');
       const reserves = await getProportion(
         this.zapPool.address,
         this.zapPool,
@@ -1726,6 +1727,7 @@ export default {
         this.v3Range,
       );
 
+      console.log(reserves, '__RES');
       console.log(reserves[0].toString(), '___reserves');
       console.log(reserves[1].toString(), '___reserves');
       console.log(reserves[2].toString(), '___reserves');

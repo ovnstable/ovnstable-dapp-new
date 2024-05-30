@@ -276,7 +276,7 @@ export default {
       this.maxPrice = maxPrice.div(10 ** 6).toFixed(6);
       this.centerPrice = center.toFixed(2);
 
-      this.$emit('set-range', [minPrice.div(10 ** 12).toFixed(0), maxPrice.div(10 ** 12).toFixed(0)]);
+      this.$emit('set-range', [minPrice.toFixed(0), maxPrice.toFixed(0)]);
       this.optionsChart.chart.selection.xaxis = {
         min: Number(this.minPrice),
         max: Number(this.maxPrice),
@@ -359,7 +359,10 @@ export default {
       debounce(this.debounceSelectChange, 500);
     },
     debounceSelectChange() {
-      this.$emit('set-range', [this.minPrice, this.maxPrice]);
+      this.$emit('set-range', [
+        new BN(this.minPrice).times(10 ** 6).toFixed(0),
+        new BN(this.maxPrice).times(10 ** 6).toFixed(0),
+      ]);
       this.changeTrig();
     },
     debouncePriceChange: debounce(async (self: any) => {
@@ -372,7 +375,10 @@ export default {
         return;
       }
 
-      self.$emit('set-range', [self.minPrice, self.maxPrice]);
+      self.$emit('set-range', [
+        new BN(self.minPrice).times(10 ** 6).toFixed(0),
+        new BN(self.maxPrice).times(10 ** 6).toFixed(0),
+      ]);
       (self.$refs?.zapinChart as any)?.updateOptions(
         {
           chart: {
