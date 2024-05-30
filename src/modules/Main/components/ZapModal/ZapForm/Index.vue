@@ -798,6 +798,7 @@ export default {
 
     setRangeV3(range: string[]) {
       this.v3Range = range;
+      this.updateQuotaInfo();
     },
     updateTokenState(newToken: any) {
       const indexOf = this.inputTokens.map((_) => _.id).indexOf(newToken.id);

@@ -356,12 +356,12 @@ export default {
 
       this.minPrice = minPrice;
       this.maxPrice = maxPrice;
-      this.debounceSelectChange(this);
+      debounce(this.debounceSelectChange, 500);
     },
-    debounceSelectChange: debounce(async (self: any) => {
-      self.$emit('set-range', [self.minPrice, self.maxPrice]);
-      self.changeTrig();
-    }, 200),
+    debounceSelectChange() {
+      this.$emit('set-range', [this.minPrice, this.maxPrice]);
+      this.changeTrig();
+    },
     debouncePriceChange: debounce(async (self: any) => {
       if (new BN(self.maxPrice).lt(self.minPrice) || !self.minPrice || !self.maxPrice) {
         notifyInst({
