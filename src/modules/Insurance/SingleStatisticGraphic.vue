@@ -198,7 +198,7 @@ export default {
           return acc;
         }, []);
 
-      return availableNetworks;
+      return availableNetworks.filter((_) => _ !== 'Optimism');
     },
     activeNetworkData() {
       const network = this.$store.state.network.insuranceNetwork;
@@ -336,6 +336,10 @@ export default {
     },
   },
 
+  mounted() {
+    this.initChart();
+    this.saveNetworkToLocalStore('Arbitrum');
+  },
   methods: {
     saveNetworkToLocalStore(chain:string) {
       this.$store.dispatch('network/changeInsuranceNetwork', chain.toLowerCase());
@@ -415,9 +419,6 @@ export default {
       }
     },
 
-  },
-  mounted() {
-    this.initChart();
   },
 };
 </script>

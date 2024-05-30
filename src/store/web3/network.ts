@@ -205,7 +205,7 @@ const state = {
   switchToOtherNetwork: false,
   marketNetwork: 'arbitrum',
   marketExplorerURL: 'https://arbiscan.io/',
-  insuranceNetwork: 'optimism',
+  insuranceNetwork: 'arbitrum',
   dashboardNetwork: 'arbitrum',
   accountModalNetwork: 'arbitrum',
   ovnNetwork: 'base',
