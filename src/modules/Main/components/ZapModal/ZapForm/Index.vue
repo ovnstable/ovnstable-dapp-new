@@ -387,7 +387,7 @@ export default {
       outputTokens: [] as any[],
       maxInputTokens: 6,
       maxOutputTokens: 6,
-      v3Range: [] as string[],
+      v3Range: null as any,
       isShowSelectTokensModal: false,
       swapMethod: 'BUY', // BUY (secondTokens) / SELL (secondTokens)
       selectTokenType: 'OVERNIGHT', // OVERNIGHT / ALL
@@ -779,8 +779,8 @@ export default {
     onEnterList,
     formatMoney,
 
-    setRangeV3(range: string[]) {
-      this.v3Range = range;
+    setRangeV3(v3Data: any) {
+      this.v3Range = v3Data;
       this.updateQuotaInfo();
     },
     updateTokenState(newToken: any) {
@@ -1616,8 +1616,9 @@ export default {
       if (this.zapPool.poolVersion === 'v3') {
         gaugeData = {
           pair: this.zapPool.address,
-          priceRange: this.v3Range,
+          priceRange: this.v3Range.isStable ? ['0', '0'] : this.v3Range.range,
           amountsOut: [proportions.amountToken0Out, proportions.amountToken1Out],
+          tickDelta: this.v3Range.isStable ? this.v3Range.ticks : '0',
         };
       }
 
@@ -1625,6 +1626,8 @@ export default {
 
       const params = {
         from: this.account,
+        // gasPrice: ethers.parseUnits('100', 'gwei'),
+        // gasLimit: 1000000,
       };
 
       console.log(zapPool, '----zapPool');

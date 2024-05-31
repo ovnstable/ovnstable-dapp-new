@@ -10,7 +10,7 @@ export const getProportion = (
   poolAddress: string,
   zapPool: any,
   zapContract: any,
-  range?: string[],
+  v3Data?: any,
 ) => {
   const poolInfo = poolsInfoMap[poolAddress];
   if (!poolInfo) {
@@ -23,10 +23,19 @@ export const getProportion = (
 
   const { gauge } = poolInfo;
 
-  console.log(JSON.stringify(`${zapPool.address}, ${range}`), '___zapPool.address, range');
-  if (zapPool.poolVersion === 'v3' && range && range?.length > 1) {
+  console.log(v3Data, '___zapPooladdressrange1');
+  if (zapPool.poolVersion === 'v3') {
+    const rangeData = v3Data?.isStable ? ['0', '0'] : v3Data.range;
+    const ticks = v3Data?.isStable ? v3Data.ticks : '0';
+
+    console.log({
+      pair: zapPool.address, priceRange: rangeData, amountsOut: ['0', '0'], tickDelta: ticks,
+    }, '___zapPooladdressrange');
+
     return zapContract
-      .getProportion(zapPool.address, range)
+      .getProportion({
+        pair: zapPool.address, priceRange: rangeData, amountsOut: ['0', '0'], tickDelta: ticks,
+      })
       .then((data: any) => data)
       .catch((e: any) => {
         console.error('Error get proportion for V3', e);
@@ -59,6 +68,24 @@ export const getProportion = (
         poolInfo,
         e,
       );
+    });
+};
+
+export const getProportionTicks = (
+  zapPool: any,
+  zapContract: any,
+  v3Data?: any,
+) => {
+  const rangeData = v3Data?.isStable ? ['0', '0'] : v3Data.range;
+  const ticks = v3Data?.isStable ? v3Data.ticks : '0';
+
+  return zapContract
+    .getPriceFromTick({
+      pair: zapPool.address, priceRange: rangeData, amountsOut: ['0', '0'], tickDelta: ticks,
+    })
+    .then((data: any) => data)
+    .catch((e: any) => {
+      console.error('Error get proportion for V3', e);
     });
 };
 

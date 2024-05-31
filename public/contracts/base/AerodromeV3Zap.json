@@ -258,17 +258,114 @@
     {
       "inputs": [
         {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "pair",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256[]",
+              "name": "priceRange",
+              "type": "uint256[]"
+            },
+            {
+              "internalType": "uint256[]",
+              "name": "amountsOut",
+              "type": "uint256[]"
+            },
+            {
+              "internalType": "int24",
+              "name": "tickDelta",
+              "type": "int24"
+            }
+          ],
+          "internalType": "struct AerodromeCLZap.AerodromeCLZapInParams",
+          "name": "aerodromeData",
+          "type": "tuple"
+        }
+      ],
+      "name": "getPriceFromTick",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "left",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "right",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "pair",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256[]",
+              "name": "priceRange",
+              "type": "uint256[]"
+            },
+            {
+              "internalType": "uint256[]",
+              "name": "amountsOut",
+              "type": "uint256[]"
+            },
+            {
+              "internalType": "int24",
+              "name": "tickDelta",
+              "type": "int24"
+            }
+          ],
+          "internalType": "struct AerodromeCLZap.AerodromeCLZapInParams",
+          "name": "aerodromeData",
+          "type": "tuple"
+        }
+      ],
+      "name": "getProportion",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "token0Amount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "token1Amount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "denominator",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "address",
           "name": "_pair",
           "type": "address"
         },
         {
-          "internalType": "uint256[]",
-          "name": "priceRange",
-          "type": "uint256[]"
+          "internalType": "int24[]",
+          "name": "ticks",
+          "type": "int24[]"
         }
       ],
-      "name": "getProportion",
+      "name": "getProportionForTicks",
       "outputs": [
         {
           "internalType": "uint256",
@@ -597,6 +694,11 @@
               "internalType": "uint256[]",
               "name": "amountsOut",
               "type": "uint256[]"
+            },
+            {
+              "internalType": "int24",
+              "name": "tickDelta",
+              "type": "int24"
             }
           ],
           "internalType": "struct AerodromeCLZap.AerodromeCLZapInParams",
@@ -614,9 +716,9 @@
       "type": "receive"
     }
   ],
-  "numDeployments": 15,
-  "solcInputHash": "2a2e583b2391b4eb595e103b5b933079",
-  "implementation": "0x81276285F6bE31146026eb974D751632a35Fe775",
+  "numDeployments": 28,
+  "solcInputHash": "2841ff5a5264a8ea4e7bc0688609fd25",
+  "implementation": "0x84FD046b67a54aE5d9B177Eb1aeFa114051B865d",
   "devdoc": {
     "kind": "dev",
     "methods": {
@@ -724,7 +826,7 @@
         "type": "t_array(t_uint256)50_storage"
       },
       {
-        "astId": 7805,
+        "astId": 8191,
         "contract": "contracts/zap/AerodromeCLZap.sol:AerodromeCLZap",
         "label": "stakeSlippageBP",
         "offset": 0,
@@ -732,7 +834,7 @@
         "type": "t_uint256"
       },
       {
-        "astId": 7807,
+        "astId": 8193,
         "contract": "contracts/zap/AerodromeCLZap.sol:AerodromeCLZap",
         "label": "odosRouter",
         "offset": 0,
@@ -740,7 +842,7 @@
         "type": "t_address"
       },
       {
-        "astId": 7093,
+        "astId": 7120,
         "contract": "contracts/zap/AerodromeCLZap.sol:AerodromeCLZap",
         "label": "npm",
         "offset": 0,

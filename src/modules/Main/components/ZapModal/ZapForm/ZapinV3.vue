@@ -6,7 +6,7 @@
 
     <div class="zapin-v3__chart">
       <h3 v-if='pairSymbols'>
-        Current Price:  1.000  {{ pairSymbols[0] }} per {{ pairSymbols[1] }}
+        Current Price:  {{ centerPrice }}  {{ pairSymbols[1] }} per {{ pairSymbols[0] }}
       </h3>
 
       <div
@@ -36,6 +36,7 @@
         </h3>
         <div class="zapin-v3__row-block">
           <div
+            v-if="!isStablePool"
             class="zapin-v3__clicker"
             @click="decrPrice(true)"
             @keypress="decrPrice(true)"
@@ -44,6 +45,7 @@
           </div>
           <InputComponent
             :value="minPrice"
+            :disabled="isStablePool"
             input-type="white"
             placeholder="0"
             full-width
@@ -51,6 +53,7 @@
             @input="setMinPrice"
           />
           <div
+            v-if="!isStablePool"
             class="zapin-v3__clicker"
             @click="addPrice(true)"
             @keypress="addPrice(true)"
@@ -68,6 +71,7 @@
         </h3>
         <div class="zapin-v3__row-block">
           <div
+            v-if="!isStablePool"
             class="zapin-v3__clicker"
             @click="decrPrice(false)"
             @keypress="decrPrice(false)"
@@ -76,6 +80,7 @@
           </div>
           <InputComponent
             :value="maxPrice"
+            :disabled="isStablePool"
             input-type="white"
             placeholder="0"
             full-width
@@ -83,6 +88,7 @@
             @input="setMaxPrice"
           />
           <div
+            v-if="!isStablePool"
             class="zapin-v3__clicker"
             @click="addPrice(false)"
             @keypress="addPrice(false)"
@@ -98,18 +104,18 @@
 
     <div>
       <h2>
-        Range pre-sets:
+        Range presets {{ getPresetsName }}:
       </h2>
       <div class="range-presets">
         <div
-          v-for="range in rangePresets"
+          v-for="range in getPresetsData"
           :key="range.id"
           class="range-presets__item"
-          :class="currentRange && currentRange === range.value ? 'range-presets__item--selected' : ''"
+          :class="getRangeActive(range) ? 'range-presets__item--selected' : ''"
           @click="setRange(range.value)"
           @keydown="setRange(range.value)"
         >
-          {{ range.value === 100 ? "FULL" : `${range.value}%` }}
+          {{ range.value === 100 ? "FULL" : `${range.value}${getPresetSymbol}` }}
         </div>
       </div>
     </div>
@@ -125,6 +131,7 @@ import Spinner from '@/components/Spinner/Index.vue';
 import BN from 'bignumber.js';
 import debounce from 'lodash/debounce';
 import { notify as notifyInst } from '@kyvg/vue3-notification';
+import { getProportionTicks } from '@/store/views/main/zapin/helpers.ts';
 
 export default {
   name: 'ZapinV3',
@@ -137,6 +144,7 @@ export default {
     return {
       dataToRender: [],
       isLoading: true,
+      ticksAmount: '0',
       minPrice: '0',
       maxPrice: '0',
       centerPrice: '0',
@@ -157,6 +165,26 @@ export default {
         },
         {
           id: 4, value: 200,
+        },
+      ],
+      rangePresetsTicks: [
+        {
+          id: 0, value: 1,
+        },
+        {
+          id: 1, value: 2,
+        },
+        {
+          id: 2, value: 4,
+        },
+        {
+          id: 3, value: 8,
+        },
+        {
+          id: 3, value: 12,
+        },
+        {
+          id: 4, value: 500,
         },
       ],
       optionsChart: {
@@ -235,6 +263,7 @@ export default {
           tickAmount: 2,
         },
       },
+      isStablePool: true,
     };
   },
   props: {
@@ -247,6 +276,26 @@ export default {
       required: true,
     },
   },
+  computed: {
+    getRangeActive() {
+      return (range: any) => {
+        if (this.isStablePool) {
+          return !!(this.ticksAmount && this.ticksAmount === range.value.toString());
+        }
+
+        return !!(this.currentRange && this.currentRange === range.value);
+      };
+    },
+    getPresetsName() {
+      return this.isStablePool ? 'ticks' : 'percents';
+    },
+    getPresetsData() {
+      return this.isStablePool ? this.rangePresetsTicks : this.rangePresets;
+    },
+    getPresetSymbol() {
+      return this.isStablePool ? '' : '%';
+    },
+  },
   async mounted() {
     this.pairSymbols = this.zapPool.name.split('/');
     console.log(this.zapPool, '___this.zapPool.address');
@@ -257,6 +306,7 @@ export default {
 
     // if stablepool todo
     if (center.lt(1.1)) {
+      this.ticksAmount = '1';
       buildData = Array.from({ length: 22 }).map((_, key) => [key / 10, 0]);
       this.optionsChart.series = [
         {
@@ -268,14 +318,33 @@ export default {
 
       const minPrice = new BN(currPrice).times(0.9);
       const maxPrice = new BN(currPrice).times(1.1);
-      this.minPrice = minPrice.div(10 ** 6).toFixed(6);
-      this.maxPrice = maxPrice.div(10 ** 6).toFixed(6);
+      // this.minPrice = minPrice.div(10 ** 6).toFixed(6);
+      // this.maxPrice = maxPrice.div(10 ** 6).toFixed(6);
       this.centerPrice = center.toFixed(2);
 
-      this.$emit('set-range', [minPrice.toFixed(0), maxPrice.toFixed(0)]);
+      this.$emit('set-range', {
+        range: [
+          minPrice.toFixed(0),
+          maxPrice.toFixed(0),
+        ],
+        ticks: this.ticksAmount,
+        isStable: this.isStablePool,
+      });
+
+      const rangeData = await getProportionTicks(this.zapPool, this.zapContract, {
+        range: [
+          new BN(this.minPrice).times(10 ** 6).toFixed(0),
+          new BN(this.maxPrice).times(10 ** 6).toFixed(0),
+        ],
+        ticks: this.ticksAmount,
+        isStable: this.isStablePool,
+      });
+
+      const minPriceSel = new BN(rangeData[0]).div(10 ** 6).toFixed(6);
+      const maxPriceSel = new BN(rangeData[1]).div(10 ** 6).toFixed(6);
       this.optionsChart.chart.selection.xaxis = {
-        min: Number(this.minPrice),
-        max: Number(this.maxPrice),
+        min: Number(minPriceSel),
+        max: Number(maxPriceSel),
       };
 
       console.log(center, '___center');
@@ -306,10 +375,12 @@ export default {
         },
       };
     } else {
+      this.isStablePool = false;
       // building data before and after center
       buildData = buildData.concat(Array
         .from({ length: 4 })
-        .map((_, key) => [Number((center.div(key + 1)).minus(center.div(5)).toFixed(0)), 0]).reverse());
+        .map((_, key) => [Number((center.div(key + 1)).minus(center.div(5)).toFixed(0)), 0])
+        .reverse());
       buildData = buildData.concat(Array
         .from({ length: 4 })
         .map((_, key) => [Number((center.div(key + 1)).plus(center).toFixed(0)), 0]).reverse());
@@ -329,7 +400,15 @@ export default {
       this.maxPrice = maxPrice.div(10 ** 6).toFixed(6);
       this.centerPrice = center.toFixed(2);
 
-      this.$emit('set-range', [minPrice.toFixed(0), maxPrice.toFixed(0)]);
+      this.$emit('set-range', {
+        range: [
+          minPrice.toFixed(0),
+          maxPrice.toFixed(0),
+        ],
+        ticks: this.ticksAmount,
+        isStable: this.isStablePool,
+      });
+
       this.optionsChart.chart.selection.xaxis = {
         min: Number(this.minPrice),
         max: Number(this.maxPrice),
@@ -380,6 +459,7 @@ export default {
       }
     },
     selectEvent(e: any, o: any) {
+      if (this.isStablePool) return;
       const minPrice = o.xaxis?.min?.toFixed(4);
       const maxPrice = o.xaxis?.max?.toFixed(4);
 
@@ -401,10 +481,15 @@ export default {
       debounce(this.debounceSelectChange, 500);
     },
     debounceSelectChange() {
-      this.$emit('set-range', [
-        new BN(this.minPrice).times(10 ** 6).toFixed(0),
-        new BN(this.maxPrice).times(10 ** 6).toFixed(0),
-      ]);
+      this.$emit('set-range', {
+        range: [
+          new BN(this.minPrice).times(10 ** 6).toFixed(0),
+          new BN(this.maxPrice).times(10 ** 6).toFixed(0),
+        ],
+        ticks: this.ticksAmount,
+        isStable: this.isStablePool,
+      });
+
       this.changeTrig();
     },
     debouncePriceChange: debounce(async (self: any) => {
@@ -417,10 +502,17 @@ export default {
         return;
       }
 
-      self.$emit('set-range', [
-        new BN(self.minPrice).times(10 ** 6).toFixed(0),
-        new BN(self.maxPrice).times(10 ** 6).toFixed(0),
-      ]);
+      self.$emit('set-range', {
+        range: [
+          new BN(self.minPrice).times(10 ** 6).toFixed(0),
+          new BN(self.maxPrice).times(10 ** 6).toFixed(0),
+        ],
+        ticks: self.ticksAmount,
+        isStable: self.isStablePool,
+      });
+
+      if (self.isStablePool) return;
+
       (self.$refs?.zapinChart as any)?.updateOptions(
         {
           chart: {
@@ -448,6 +540,40 @@ export default {
       this.maxPrice = val;
     },
     async setRange(val: number) {
+      if (this.isStablePool) {
+        this.ticksAmount = val.toString();
+        const rangeData = await getProportionTicks(this.zapPool, this.zapContract, {
+          range: [
+            new BN(this.minPrice).times(10 ** 6).toFixed(0),
+            new BN(this.maxPrice).times(10 ** 6).toFixed(0),
+          ],
+          ticks: this.ticksAmount,
+          isStable: this.isStablePool,
+        });
+
+        if (!rangeData) return;
+
+        console.log(rangeData, '___rangeData');
+        const minPrice = new BN(rangeData[0]).div(10 ** 6).toFixed(6);
+        const maxPrice = new BN(rangeData[1]).div(10 ** 6).toFixed(6);
+
+        (this.$refs?.zapinChart as any)?.updateOptions(
+          {
+            chart: {
+              selection: {
+                xaxis: {
+                  min: minPrice,
+                  max: maxPrice,
+                },
+              },
+            },
+          },
+          false,
+          true,
+        );
+        return;
+      }
+
       const currPrice = await this.zapContract.getCurrentPrice(this.zapPool.address);
       const center = Number(new BN(currPrice).div(10 ** 6).toFixed(4));
       const minPrice = center * (1 - val / 2 / 100);
