@@ -326,14 +326,22 @@ export default {
         isStable: this.isStablePool,
       });
 
-      const rangeData = await getProportionTicks(this.zapPool, this.zapContract, {
-        range: [
-          new BN(this.minPrice).times(10 ** 6).toFixed(0),
-          new BN(this.maxPrice).times(10 ** 6).toFixed(0),
-        ],
-        ticks: this.ticksAmount,
-        isStable: this.isStablePool,
-      });
+      let rangeData = [0, 0];
+
+      try {
+        rangeData = await getProportionTicks(this.zapPool, this.zapContract, {
+          range: [
+            new BN(this.minPrice).times(10 ** 6).toFixed(0),
+            new BN(this.maxPrice).times(10 ** 6).toFixed(0),
+          ],
+          ticks: this.ticksAmount,
+          isStable: this.isStablePool,
+        });
+      } catch (e) {
+        console.log(e, 'rangeerr');
+      }
+
+      if (new BN(rangeData[0]).eq(0) || new BN(rangeData[1]).eq(0)) return;
 
       const minPriceSel = new BN(rangeData[0]).div(10 ** 6).toFixed(6);
       const maxPriceSel = new BN(rangeData[1]).div(10 ** 6).toFixed(6);

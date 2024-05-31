@@ -66,6 +66,8 @@ const actions = {
     if (state.currentZapPlatformContractType.type === 'LP_STAKE_DIFF_STEPS') {
       dispatch('loadPoolTokenAndGaugeContracts');
     }
+
+    console.log('BUILDED');
   },
   async loadPoolTokenAndGaugeContracts({
     commit, state, dispatch, rootState,

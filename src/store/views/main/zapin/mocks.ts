@@ -374,28 +374,24 @@ export const poolsInfoMap: any = {
     gauge: '0xeA22A3AAdA580bD75Fb6caC35034e09046cbFf72',
     poolId: 0,
     version: 3,
-    isVolatile: false,
     approveType: 'TOKEN',
   },
   '0x96331Fcb46A7757854d9E26AFf3aCA2815D623fD': {
     gauge: '0xeA22A3AAdA580bD75Fb6caC35034e09046cbFf72',
     poolId: 0,
     version: 3,
-    isVolatile: false,
     approveType: 'TOKEN',
   },
   '0x20086910E220D5f4c9695B784d304A72a0de403B': {
     gauge: '0xeA22A3AAdA580bD75Fb6caC35034e09046cbFf72',
     poolId: 0,
     version: 3,
-    isVolatile: false,
     approveType: 'TOKEN',
   },
   '0x4D69971CCd4A636c403a3C1B00c85e99bB9B5606': {
     gauge: '0xeA22A3AAdA580bD75Fb6caC35034e09046cbFf72',
     poolId: 0,
     version: 3,
-    isVolatile: true,
     approveType: 'TOKEN',
   },
 };
@@ -542,18 +538,6 @@ export const poolTokensForZapMap = {
     },
   ],
 
-  // Arbidex
-  '0xeE5e74Dc56594d070E0827ec270F974A68EBAF22': [
-    {
-      name: 'DAI',
-      address: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
-    },
-    {
-      name: 'DAI+',
-      address: '0xeb8E93A0c7504Bffd8A8fFa56CD754c63aAeBFe8',
-    },
-  ],
-
   '0xE8C060d40D7Bc96fCd5b758Bd1437C8653400b0e': [
     {
       name: 'USD+',
@@ -621,34 +605,8 @@ export const poolTokensForZapMap = {
     },
   ],
 
-  // Velocimeter
-  '0x298c9f812c470598c5f97e3da9261a9899b89d35': [
-    // gauge 0x0daf00a383f8897553ac1d03f4445b15afa1dcb9
-    {
-      name: 'DAI+',
-      address: '0x65a2508C429a6078a7BC2f7dF81aB575BD9D9275',
-    },
-    {
-      name: 'USD+',
-      address: '0xB79DD08EA68A908A97220C76d19A6aA9cBDE4376',
-    },
-  ],
-
   '0x653685aa9913c6ab13d659a4ea8f358ecec3d34f': [
     // gauge 0xD9875fBe2A706f9Fed68F066D7420D63FDC5eD76
-    {
-      name: 'USD+',
-      address: '0xb79dd08ea68a908a97220c76d19a6aa9cbde4376',
-    },
-    {
-      name: 'USDbC',
-      address: '0xd9aaec86b65d86f6a7b5b1b0c42ffa531710b6ca',
-    },
-  ],
-
-  // Alienbase
-  '0x553666081db0a8fdb337560009932852059d589a': [
-    // 7 pool
     {
       name: 'USD+',
       address: '0xb79dd08ea68a908a97220c76d19a6aa9cbde4376',
@@ -919,11 +877,6 @@ export const zapPlatformContractTypeMap: any = {
     type: 'LP_WITH_STAKE_IN_ONE_STEP',
     typeOfDepositConstructor: 'BASE_CONSTRUCTOR',
   },
-  Thena: {
-    name: 'Thena',
-    type: 'LP_STAKE_DIFF_STEPS',
-    typeOfDepositConstructor: 'BASE_CONSTRUCTOR',
-  },
   Velodrome: {
     name: 'Velodrome',
     type: 'LP_WITH_STAKE_IN_ONE_STEP',
@@ -933,21 +886,6 @@ export const zapPlatformContractTypeMap: any = {
     name: 'Aerodrome',
     type: 'LP_WITH_STAKE_IN_ONE_STEP',
     typeOfDepositConstructor: 'BASE_CONSTRUCTOR',
-  },
-  Ramses: {
-    name: 'Ramses',
-    type: 'LP_STAKE_DIFF_STEPS',
-    typeOfDepositConstructor: 'CONSTRUCTOR_WITH_TOKEN_ID',
-  },
-  Arbidex: {
-    name: 'Arbidex',
-    type: 'LP_STAKE_DIFF_STEPS',
-    typeOfDepositConstructor: 'CONSTRUCTOR_WITH_POOL_ID_AND_TOKEN_AMOUNT',
-  },
-  Sperax: {
-    name: 'Sperax',
-    type: 'LP_STAKE_DIFF_STEPS',
-    typeOfDepositConstructor: 'CONSTRUCTOR_WITH_NFT_ID',
   },
   Defiedge: {
     name: 'Defiedge',

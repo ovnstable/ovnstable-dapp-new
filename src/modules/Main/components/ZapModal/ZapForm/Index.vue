@@ -858,7 +858,7 @@ export default {
     },
 
     async init() {
-      await this.loadChains();
+      // await this.loadChains();
       await this.loadTokens();
       await this.initContractData();
 
@@ -1711,7 +1711,6 @@ export default {
         this.v3Range,
       );
 
-      console.log(reserves, '___reserves');
       const outputToken0Price = this.selectedOutputTokens[0].selectedToken.price;
       const outputToken1Price = this.selectedOutputTokens[1].selectedToken.price;
 

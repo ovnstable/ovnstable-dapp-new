@@ -50,6 +50,7 @@ export const WHITE_LIST_ODOS = {
     'Overnight Exchange',
     'Aerodrome Volatile',
     'Aerodrome Stable',
+    'Aerodrome Slipstream',
     'BaseSwap',
     'Uniswap V3',
     'SynthSwap',
