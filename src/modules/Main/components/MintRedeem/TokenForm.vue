@@ -41,14 +41,9 @@
       <div class="input-tokens__row">
         <div>
           <div
-            v-if="isInputToken && tokenInfo.symbol"
+            v-if="tokenInfo.value && tokenInfo.price"
           >
-            ~ ${{formatMoney(tokenInfo.usdValue, 2)}}
-          </div>
-          <div
-            v-else-if="!isInputToken && tokenInfo.sum && tokenInfo.selectedToken"
-          >
-            ~ ${{formatMoney(tokenInfo.sum * tokenInfo.selectedtoken?.price, 2)}}
+            ~ ${{formatMoney(tokenInfo.value * tokenInfo.price, 2)}}
           </div>
           <div v-else>
             $0

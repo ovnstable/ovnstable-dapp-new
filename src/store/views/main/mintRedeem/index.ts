@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { getFilteredPoolTokens } from '@/store/helpers/index.ts';
+import { getFilteredPoolTokens, loadPriceTrigger } from '@/store/helpers/index.ts';
 import { MINTREDEEM_SCHEME } from '@/store/views/main/mintRedeem/mocks.ts';
 
 type TTokensList = Record<number, any[][]>
@@ -17,7 +17,7 @@ const getters = {
 };
 
 const actions = {
-  initTokens(
+  async initTokens(
     {
       commit, state, dispatch, rootState,
     }: any,
@@ -36,14 +36,24 @@ const actions = {
       rootState.odosData,
     ));
 
-    commit('changeState', {
-      [networkId]: list,
+    const tokensList = list.flat(1);
+    const tokensWithPrices = await loadPriceTrigger(tokensList, networkId);
+    const tokenPricesMap = tokensWithPrices.reduce((acc, token) => (
+      { ...acc, [token.id]: token.price }
+    ), {});
+
+    const listWithPrices = list.map((pair) => pair.map((token) => (
+      { ...token, price: tokenPricesMap[token.id] }
+    )));
+
+    commit('changeTokenList', {
+      [networkId]: listWithPrices,
     });
   },
 };
 
 const mutations = {
-  changeState(state: typeof stateData, payload: TTokensList) {
+  changeTokenList(state: typeof stateData, payload: TTokensList) {
     state.tokensListByNetwork = payload;
   },
 };
