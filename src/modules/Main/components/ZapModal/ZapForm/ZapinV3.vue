@@ -298,7 +298,6 @@ export default {
   },
   async mounted() {
     this.pairSymbols = this.zapPool.name.split('/');
-    console.log(this.zapPool, '___this.zapPool.address');
     const currPrice = await this.zapContract.getCurrentPrice(this.zapPool.address);
     const center = new BN(currPrice).div(10 ** 6);
 
@@ -314,12 +313,8 @@ export default {
         },
       ];
 
-      console.log(currPrice.toString(), '___currPrice');
-
       const minPrice = new BN(currPrice).times(0.9);
       const maxPrice = new BN(currPrice).times(1.1);
-      // this.minPrice = minPrice.div(10 ** 6).toFixed(6);
-      // this.maxPrice = maxPrice.div(10 ** 6).toFixed(6);
       this.centerPrice = center.toFixed(2);
 
       this.$emit('set-range', {
@@ -342,12 +337,14 @@ export default {
 
       const minPriceSel = new BN(rangeData[0]).div(10 ** 6).toFixed(6);
       const maxPriceSel = new BN(rangeData[1]).div(10 ** 6).toFixed(6);
+      this.minPrice = minPriceSel;
+      this.maxPrice = maxPriceSel;
+
       this.optionsChart.chart.selection.xaxis = {
         min: Number(minPriceSel),
         max: Number(maxPriceSel),
       };
 
-      console.log(center, '___center');
       this.optionsChart.annotations = {
         xaxis: [
           {
@@ -385,14 +382,11 @@ export default {
         .from({ length: 4 })
         .map((_, key) => [Number((center.div(key + 1)).plus(center).toFixed(0)), 0]).reverse());
 
-      console.log(buildData, '__buildData');
       this.optionsChart.series = [
         {
           data: buildData,
         },
       ];
-
-      console.log(currPrice.toString(), '___currPrice');
 
       const minPrice = new BN(currPrice).times(0.9);
       const maxPrice = new BN(currPrice).times(1.1);
@@ -414,7 +408,6 @@ export default {
         max: Number(this.maxPrice),
       };
 
-      console.log(center.toString(), '___center');
       this.optionsChart.annotations = {
         xaxis: [
           {
@@ -431,9 +424,6 @@ export default {
     }
 
     this.isLoading = false;
-
-    console.log(this.optionsChart, '___optionsChart');
-    console.log(currPrice.toString(), '___currPrice');
   },
   watch: {
     minPrice() {
@@ -553,9 +543,10 @@ export default {
 
         if (!rangeData) return;
 
-        console.log(rangeData, '___rangeData');
         const minPrice = new BN(rangeData[0]).div(10 ** 6).toFixed(6);
         const maxPrice = new BN(rangeData[1]).div(10 ** 6).toFixed(6);
+        this.minPrice = minPrice;
+        this.maxPrice = maxPrice;
 
         (this.$refs?.zapinChart as any)?.updateOptions(
           {

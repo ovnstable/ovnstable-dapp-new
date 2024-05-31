@@ -1026,7 +1026,6 @@ export default {
       this.selectedOutputTokens[0].value = 100;
     },
     async stakeTrigger() {
-      console.log(this.zapContract.target, '___thiszapContracttarget');
       if (this.zapInType === 'V2') this.currentStage = zapInStep.STAKE_LP;
       if (!this.zapPool) return;
       this.$store.commit('odosData/changeState', {
@@ -1178,7 +1177,6 @@ export default {
         referralCode: this.odosReferalCode,
       };
 
-      console.log(requestData, '___requestData');
       this.odosSwapRequest(requestData)
         .then(async (data: any) => {
           const assembleData = {
@@ -1705,18 +1703,12 @@ export default {
         });
     },
     async recalculateProportion() {
-      console.log(this.v3Range, '___thisv3Range');
       const reserves = await getProportion(
         this.zapPool.address,
         this.zapPool,
         this.zapContract,
         this.v3Range,
       );
-
-      console.log(reserves, '__RES');
-      console.log(reserves[0].toString(), '___reserves');
-      console.log(reserves[1].toString(), '___reserves');
-      console.log(reserves[2].toString(), '___reserves');
 
       const outputToken0Price = this.selectedOutputTokens[0].selectedToken.price;
       const outputToken1Price = this.selectedOutputTokens[1].selectedToken.price;

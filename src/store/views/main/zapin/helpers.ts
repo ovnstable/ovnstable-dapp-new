@@ -23,14 +23,9 @@ export const getProportion = (
 
   const { gauge } = poolInfo;
 
-  console.log(v3Data, '___zapPooladdressrange1');
   if (zapPool.poolVersion === 'v3') {
     const rangeData = v3Data?.isStable ? ['0', '0'] : v3Data.range;
     const ticks = v3Data?.isStable ? v3Data.ticks : '0';
-
-    console.log({
-      pair: zapPool.address, priceRange: rangeData, amountsOut: ['0', '0'], tickDelta: ticks,
-    }, '___zapPooladdressrange');
 
     return zapContract
       .getProportion({
