@@ -477,6 +477,7 @@ export const loadPriceTrigger = async (tokens: any[], chainId: number | string) 
 
   tokenPricesMap[sFRAXAddress] = priceToken.price;
 
+  console.log(tokens, '___tokens');
   return tokens.map((data: any) => ({
     ...data,
     price: new BigNumber(tokenPricesMap[data.address] ?? 0).toFixed(20),

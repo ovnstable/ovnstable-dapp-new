@@ -152,19 +152,19 @@ export default {
       pairSymbols: [],
       rangePresets: [
         {
-          id: 0, value: 10,
+          id: 0, value: 5,
         },
         {
-          id: 1, value: 20,
+          id: 1, value: 10,
         },
         {
-          id: 2, value: 30,
+          id: 2, value: 20,
         },
         {
-          id: 3, value: 50,
+          id: 3, value: 40,
         },
         {
-          id: 4, value: 200,
+          id: 4, value: 100,
         },
       ],
       rangePresetsTicks: [
@@ -181,10 +181,10 @@ export default {
           id: 3, value: 8,
         },
         {
-          id: 3, value: 12,
+          id: 3, value: 16,
         },
         {
-          id: 4, value: 500,
+          id: 4, value: 32,
         },
       ],
       optionsChart: {
