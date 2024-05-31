@@ -136,6 +136,7 @@ import { buildEvmContract, buildEvmContractForChain } from '@/utils/contractsMap
 import { MINTREDEEM_SCHEME } from '@/store/views/main/mintRedeem/mocks.ts';
 import debounce from 'lodash/debounce';
 import StepsRow, { mintRedeemStep } from '@/components/StepsRow/Index.vue';
+import { DUPLICATED_TOKEN_CHAINS } from '@/utils/const.ts';
 
 import {
   mintWrapStatus,
@@ -338,7 +339,7 @@ export default {
             ? _.token1.toLowerCase() : _.token0.toLowerCase();
 
           // some chains have duplicates of tokens in input, some in output
-          if ([81457, 8453].includes(networkId) && !this.isReverseArray) {
+          if (DUPLICATED_TOKEN_CHAINS.includes(networkId) && !this.isReverseArray) {
             return _.token1.toLowerCase() === this.inputToken.address.toLowerCase();
           }
 
@@ -386,7 +387,7 @@ export default {
             ? _.token1.toLowerCase() : _.token0.toLowerCase();
 
           // some chains have duplicates of tokens in input, some in output
-          if ([81457, 8453].includes(networkId) && !self.isReverseArray) {
+          if (DUPLICATED_TOKEN_CHAINS.includes(networkId) && !self.isReverseArray) {
             return _.token1.toLowerCase() === self.inputToken.address.toLowerCase();
           }
 
@@ -619,7 +620,7 @@ export default {
               ? _.token1.toLowerCase() : _.token0.toLowerCase();
 
             // some chains have duplicates of tokens in input, some in output
-            if ([81457, 8453].includes(networkId) && !this.isReverseArray) {
+            if (DUPLICATED_TOKEN_CHAINS.includes(networkId) && !this.isReverseArray) {
               return _.token1.toLowerCase() === this.inputToken.address.toLowerCase();
             }
 

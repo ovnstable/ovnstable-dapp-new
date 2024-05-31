@@ -43,11 +43,10 @@
           >
             <img
               alt="banner"
-              src="/public/common/banner-linea.png"
+              :src="getImageUrl('assets/images/common/banner-linea.png')"
             />
           </a>
         </swiper-slide>
-
         <swiper-slide
           v-for="(slide, index) in sliderData"
           :ref="slideRef"

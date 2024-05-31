@@ -152,7 +152,7 @@ $avatar-offset: 52 + 16;
   }
 }
 
-.icon-twitter:hover {
+.icon-twitter:hover, .icon-telegram:hover, .icon-medium:hover{
   fill: var(--color-3);
   [data-theme="dark"] & {
     fill: var(--color-8);

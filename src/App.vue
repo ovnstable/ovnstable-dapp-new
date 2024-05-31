@@ -3,7 +3,7 @@
     <HeaderBar />
 
     <div
-      v-if="showDeprecated"
+      v-if="isShowDeprecated"
       class="container"
     >
       <div class="app-wrapper__notify">
@@ -96,14 +96,10 @@ export default {
     },
   },
   computed: {
-    ...mapGetters('network', ['networkId']),
+    ...mapGetters('network', ['networkId', 'isShowDeprecated']),
     ...mapGetters('waitingModal', { showWaitModal: 'show' }),
     ...mapGetters('errorModal', { showErrorModal: 'show' }),
     ...mapGetters('successModal', { showSuccessModal: 'show' }),
-
-    showDeprecated() {
-      return [...DEPRECATED_NETWORKS, 10].includes(this.networkId);
-    },
   },
 };
 </script>

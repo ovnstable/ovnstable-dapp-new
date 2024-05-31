@@ -105,6 +105,28 @@
             class="sidebar__icon-social icon-discord"
           />
         </a>
+        <a
+          href="https://t.me/overnight_fi"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Telegram"
+        >
+          <BaseIcon
+            name="IconTelegram"
+            class="sidebar__icon-social icon-telegram"
+          />
+        </a>
+        <a
+          href="https://overnightdefi.medium.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Medium"
+        >
+          <BaseIcon
+            name="IconMedium"
+            class="sidebar__icon-social icon-medium"
+          />
+        </a>
       </div>
       <div class="sidebar__divider" />
       <div class="sidebar__icons-bottom">
