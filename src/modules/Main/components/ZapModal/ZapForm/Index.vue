@@ -1056,6 +1056,7 @@ export default {
         this.zapContract,
         this.v3Range,
       );
+
       const sumReserves = (
         new BigNumber(reserves.token0Amount).times(outputToken0Price)
       )
@@ -1710,6 +1711,7 @@ export default {
         this.v3Range,
       );
 
+      console.log(reserves, '___reserves');
       const outputToken0Price = this.selectedOutputTokens[0].selectedToken.price;
       const outputToken1Price = this.selectedOutputTokens[1].selectedToken.price;
 
