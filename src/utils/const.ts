@@ -26,8 +26,15 @@ export const svgIconsMap = (() => {
 })();
 
 // odos do not support currently that networks
+// todo: check, maybe oudated
 export const EMPTY_TOKENS_NETWORKS = [81457, 59144];
 export const DEPRECATED_NETWORKS = [137, 56];
+
+// Not supported by Odos as for May 24
+export const ODOS_DEPRECATED_NETWORKS = [81457];
+
+// Some chains have duplicates of tokens in input, some in output
+export const DUPLICATED_TOKEN_CHAINS = [81457, 8453];
 
 export const appNetworksData = [
   {

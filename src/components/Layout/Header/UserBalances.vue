@@ -99,7 +99,7 @@ export default {
           const tokenData = tokensForChain.find((_: any) => _.symbol === curr.symbol);
 
           // todo: load tokens prices if needed, linea/blast
-          const tokenPrice = [81457, 59144].includes(this.networkId) ? 1 : tokenData?.price;
+          const tokenPrice = EMPTY_TOKENS_NETWORKS.includes(this.networkId) ? 1 : tokenData?.price;
 
           if (!tokenData || !curr.isOvnToken || !tokenPrice) return acc;
 
