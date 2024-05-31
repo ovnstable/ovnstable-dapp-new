@@ -93,7 +93,7 @@ export default {
         .filter((_: any) => OVN_TOKENS.includes(_.symbol))
         .reduce((acc: BigNumber, curr: any) => {
         // linea/blast doesnt have token from ODOS, so we using our schemas values
-          const tokensForChain = !EMPTY_TOKENS_NETWORKS.includes(this.networkId)
+          const tokensForChain = !(EMPTY_TOKENS_NETWORKS.includes(this.networkId))
             ? this.allTokensList
             : Object.values(this.tokensMap?.chainTokenMap[this.networkId]?.tokenMap ?? {});
           const tokenData = tokensForChain.find((_: any) => _.symbol === curr.symbol);
@@ -120,7 +120,7 @@ export default {
       const balances = this.originalBalance
         .filter((_: any) => OVN_TOKENS.includes(_.symbol))
         .map((bal: any) => {
-          const tokensForChain = !EMPTY_TOKENS_NETWORKS.includes(this.networkId)
+          const tokensForChain = !(EMPTY_TOKENS_NETWORKS.includes(this.networkId))
             ? this.allTokensList
             : Object.values(this.tokensMap?.chainTokenMap[this.networkId]?.tokenMap ?? {});
           const tokenData = tokensForChain.find((_: any) => _.symbol === bal.symbol);
