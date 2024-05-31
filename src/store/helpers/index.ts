@@ -485,7 +485,7 @@ export const loadPriceTrigger = async (tokens: any[], chainId: number | string) 
   // todo: SFRAX separate loading may not be needed
   const sFRAXAddress = Object.keys(SFRAX_TOKEN[8453].tokenMap)[0];
   const priceToken: any = await odosApiService.loadPriceOfToken(8453, sFRAXAddress);
-  tokenPricesMap[sFRAXAddress] = priceToken.price;
+  tokenPricesMap[sFRAXAddress as any] = priceToken.price;
 
   const accessPriceVal = (address: number) => (
     isDeprecated ? tokenPricesMap[address].price : tokenPricesMap[address]
