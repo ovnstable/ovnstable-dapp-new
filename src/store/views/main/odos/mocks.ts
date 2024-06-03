@@ -63,6 +63,29 @@ export const LINEA_TOKENS = {
   },
 };
 
+export const ZKSYNC_TOKENS = {
+  324: {
+    tokenMap: {
+      [chainContractsMap.zksync.usdPlus.tokenPlus]: {
+        assetId: 'usdPlus',
+        assetType: 'usdPlus',
+        decimals: 6,
+        isRebasing: false,
+        name: 'USD+',
+        symbol: 'USD+',
+      },
+      [chainContractsMap.zksync.usdtPlus.tokenPlus]: {
+        assetId: 'usdtPlus',
+        assetType: 'usdtPlus',
+        decimals: 6,
+        isRebasing: true,
+        name: 'USDT+',
+        symbol: 'USDT+',
+      },
+    },
+  },
+};
+
 export const OP_TOKENS = {
   10: {
     tokenMap: {
