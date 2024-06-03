@@ -271,13 +271,13 @@
               </div>
             </div>
             <div
-              v-if="zapPool?.poolVersion === 'v3' && !zapContract && !zapContract"
+              v-if="zapPool?.poolVersion === 'v3' && !zapContract && !zapPool"
               class="zapin-block__v3-spin"
             >
               <Spinner />
             </div>
             <ZapinV3
-              v-if="zapPool?.poolVersion === 'v3' && zapContract && zapContract"
+              v-if="zapPool?.poolVersion === 'v3' && zapContract && zapPool"
               :zap-pool="zapPool"
               :zap-contract="zapContract"
               @set-range="setRangeV3"
