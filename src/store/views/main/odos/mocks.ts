@@ -47,6 +47,22 @@ export const LINEA_TOKENS = {
         name: 'wUSD+',
         symbol: 'wUSD+',
       },
+      [chainContractsMap.linea.usdPlus.tokenPlus]: {
+        assetId: 'usdPlus',
+        assetType: 'usdPlus',
+        decimals: 6,
+        isRebasing: false,
+        name: 'USD+',
+        symbol: 'USD+',
+      },
+      [chainContractsMap.linea.usdtPlus.tokenPlus]: {
+        assetId: 'usdtPlus',
+        assetType: 'usdtPlus',
+        decimals: 6,
+        isRebasing: true,
+        name: 'USDT+',
+        symbol: 'USDT+',
+      },
     },
   },
 };
