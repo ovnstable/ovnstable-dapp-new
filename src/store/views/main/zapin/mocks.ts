@@ -799,16 +799,6 @@ export const poolTokensForZapMap = {
   ],
 
   // PANCAKE ZAPS
-  '0x8a06339abd7499af755df585738ebf43d5d62b94': [
-    {
-      name: 'USDT+',
-      address: chainContractsMap.arbitrum.usdtPlus.tokenPlus,
-    },
-    {
-      name: 'USD+',
-      address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
-    },
-  ],
   '0x952388d73EA3E940eD6824DBd75ed6aD58e6B436': [
     {
       name: 'DOLA',
