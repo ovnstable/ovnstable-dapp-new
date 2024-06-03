@@ -1,9 +1,24 @@
 <template>
   <div class="app-wrapper">
     <HeaderBar />
-
     <div
-      v-if="isShowDeprecated"
+      v-if="isShowHackWarning"
+      class="container"
+    >
+      <div class="app-wrapper__notify">
+        <p>
+          All operations with USD+ on Linea and zkSync are currently unavailable. This issue will be fixed soon. We are sorry for the inconvenience.
+        </p>
+        <ButtonComponent
+          btn-styles="transparent"
+          @on-click="handleOutsideLink('https://x.com/overnight_fi/status/1797552748789195237')"
+        >
+          LEARN MORE
+        </ButtonComponent>
+      </div>
+    </div>
+    <div
+      v-else-if="!isShowHackWarning && isShowDeprecated"
       class="container"
     >
       <div class="app-wrapper__notify">
@@ -13,7 +28,7 @@
         </p>
         <ButtonComponent
           btn-styles="transparent"
-          @on-click="showModal"
+          @on-click="toggleDeprectedModal"
         >
           LEARN MORE
         </ButtonComponent>
@@ -50,7 +65,6 @@ import SuccessModal from '@/modules/ModalTemplates/SuccessModal/Index.vue';
 import DeprecatedModal from '@/modules/ModalTemplates/DeprecatedModal/Index.vue';
 import { deviceType } from '@/utils/deviceType.ts';
 import ButtonComponent from '@/components/Button/Index.vue';
-import { DEPRECATED_NETWORKS } from './utils/const.ts';
 
 export default {
   name: 'AppView',
@@ -80,8 +94,11 @@ export default {
   },
   methods: {
     deviceType,
-    showModal() {
+    toggleDeprectedModal() {
       this.showDeprecatedModal = true;
+    },
+    handleOutsideLink(url: string) {
+      window.open(url, '_blank');
     },
     async fetchDataForBlastQuest() {
       try {
@@ -100,6 +117,9 @@ export default {
     ...mapGetters('waitingModal', { showWaitModal: 'show' }),
     ...mapGetters('errorModal', { showErrorModal: 'show' }),
     ...mapGetters('successModal', { showSuccessModal: 'show' }),
+    isShowHackWarning() {
+      return [59144, 324].includes(this.networkId);
+    },
   },
 };
 </script>
