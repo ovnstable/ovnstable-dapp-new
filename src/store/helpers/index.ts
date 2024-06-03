@@ -7,7 +7,7 @@ import { loadTokenImage, loadOvernightTokenImage } from '@/utils/tokenLogo.ts';
 import odosApiService from '@/services/odos-api-service.ts';
 import SliderApiService from '@/services/slider-api-service.ts';
 import { DEPRECATED_NETWORKS, ODOS_DEPRECATED_NETWORKS } from '@/utils/const.ts';
-import { SFRAX_TOKEN, BLAST_TOKENS } from '@/store/views/main/odos/mocks.ts';
+import { SFRAX_TOKEN, BLAST_TOKENS_PRICES } from '@/store/views/main/odos/mocks.ts';
 import type { stateData } from '@/store/views/main/odos/index';
 
 const SECONDTOKEN_SECOND_DEFAULT_SYMBOL = 'DAI+';
@@ -468,32 +468,23 @@ export const loadPrices = async (chainId: number | string) => odosApiService
   });
 
 export const loadPriceTrigger = async (tokens: any[], chainId: number | string) => {
-  let tokenPricesMap: any[];
-
   const isDeprecated = ODOS_DEPRECATED_NETWORKS.includes(Number(chainId));
 
-  if (isDeprecated) {
-    const mockTokens: any = { ...BLAST_TOKENS };
-    tokenPricesMap = mockTokens[chainId].tokenMap;
-  } else {
-    tokenPricesMap = await loadPrices(chainId)
-      .catch((e) => {
-        console.error('Error when load prices info', e);
-      });
-  }
+  const getPrices = async () => loadPrices(chainId)
+    .catch((e) => {
+      console.error('Error when load prices info', e);
+    });
+
+  const tokenPricesMap = isDeprecated ? { ...BLAST_TOKENS_PRICES }[chainId] : await getPrices();
 
   // todo: SFRAX separate loading may not be needed
   const sFRAXAddress = Object.keys(SFRAX_TOKEN[8453].tokenMap)[0];
   const priceToken: any = await odosApiService.loadPriceOfToken(8453, sFRAXAddress);
   tokenPricesMap[sFRAXAddress as any] = priceToken.price;
 
-  const accessPriceVal = (address: number) => (
-    isDeprecated ? tokenPricesMap[address].price : tokenPricesMap[address]
-  );
-
   return tokens.map((data: any) => ({
     ...data,
-    price: new BigNumber(accessPriceVal(data.address) ?? 0).toFixed(20),
+    price: new BigNumber(tokenPricesMap[data.address] ?? 0).toFixed(20),
   }));
 };
 

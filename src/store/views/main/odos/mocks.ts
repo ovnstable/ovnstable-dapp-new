@@ -1,7 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 import { chainContractsMap } from '@/utils/contractsMap.ts';
 
-// todo: remove prices if not needed
 export const BLAST_TOKENS = {
   81457: {
     tokenMap: {
@@ -12,7 +11,6 @@ export const BLAST_TOKENS = {
         isRebasing: false,
         name: 'USDB',
         symbol: 'USDB',
-        price: 1,
       },
       [chainContractsMap.blast.usdPlus.tokenPlus]: {
         assetId: 'usdPlus',
@@ -21,7 +19,6 @@ export const BLAST_TOKENS = {
         isRebasing: false,
         name: 'USD+',
         symbol: 'USD+',
-        price: 1,
       },
       [chainContractsMap.blast.usdcPlus.tokenPlus]: {
         assetId: 'usdcPlus',
@@ -30,7 +27,6 @@ export const BLAST_TOKENS = {
         isRebasing: false,
         name: 'USDC+',
         symbol: 'USDC+',
-        price: 1,
       },
     },
   },
@@ -79,5 +75,13 @@ export const SFRAX_TOKEN = {
         symbol: 'sFRAX',
       },
     },
+  },
+};
+
+export const BLAST_TOKENS_PRICES = {
+  81457: {
+    [chainContractsMap.blast.usdb]: 1,
+    [chainContractsMap.blast.usdPlus.tokenPlus]: 1,
+    [chainContractsMap.blast.usdcPlus.tokenPlus]: 1,
   },
 };
