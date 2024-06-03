@@ -20,7 +20,7 @@ import { ERC20_ABI } from '@/assets/abi/index.ts';
 import { fixedByPrice } from '@/utils/numbers.ts';
 import { ZERO_ADDRESS } from '@/utils/const.ts';
 import {
-  BLAST_TOKENS, LINEA_TOKENS, OP_TOKENS, SFRAX_TOKEN
+  BLAST_TOKENS, LINEA_TOKENS, OP_TOKENS, SFRAX_TOKEN, ZKSYNC_TOKENS
 } from '@/store/views/main/odos/mocks.ts';
 import _ from 'lodash';
 
@@ -226,7 +226,13 @@ const actions = {
               ...odosTokens.chainTokenMap[8453]?.tokenMap,
               ...SFRAX_TOKEN[8453].tokenMap
             }
-          }
+          },
+          324: {
+            tokenMap: {
+              ...odosTokens.chainTokenMap[324]?.tokenMap,
+              ...ZKSYNC_TOKENS[324].tokenMap
+            }
+          },
         },
       }
     });
