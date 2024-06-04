@@ -148,20 +148,19 @@ export const depositAllAtGauge = async (
   poolTokenContract: any,
 ) => {
   const params = { from: account };
-  console.log(
-    account,
-    lastPoolInfoData,
-    lastNftTokenId,
-    currentZapPlatformContractType,
-    gaugeContract,
-    zapPoolRoot,
-    poolTokenContract,
-    'DEparamsP',
-  );
+  if (
+    currentZapPlatformContractType.typeOfDepositConstructor
+    === 'CONSTRUCTOR_V3_WITH_TOKEN_ID'
+  ) {
+    console.log('1');
+    return poolTokenContract.deposit(Number(lastNftTokenId));
+  }
+
   if (
     currentZapPlatformContractType.typeOfDepositConstructor
     === 'CONSTRUCTOR_WITH_TOKEN_ID'
   ) {
+    console.log('2');
     const poolAddress = zapPoolRoot.address;
     const poolInfo = poolsInfoMap[poolAddress];
     return gaugeContract.depositAll(poolInfo.poolId, params);
@@ -171,6 +170,7 @@ export const depositAllAtGauge = async (
     currentZapPlatformContractType.typeOfDepositConstructor
     === 'CONSTRUCTOR_WITHOUT_TOKEN_ID'
   ) {
+    console.log('3');
     const balance = await poolTokenContract.balanceOf(account);
     return gaugeContract.deposit(balance, params);
   }
@@ -179,6 +179,7 @@ export const depositAllAtGauge = async (
     currentZapPlatformContractType.typeOfDepositConstructor
     === 'BASE_CONSTRUCTOR'
   ) {
+    console.log('4');
     return gaugeContract.depositAll(params);
   }
 
@@ -186,6 +187,7 @@ export const depositAllAtGauge = async (
     currentZapPlatformContractType.typeOfDepositConstructor
     === 'CONSTRUCTOR_WITH_POOL_ID_AND_TOKEN_AMOUNT'
   ) {
+    console.log('15');
     const balance = await poolTokenContract.balanceOf(account);
     return gaugeContract.deposit(lastPoolInfoData.poolId, balance, params);
   }
@@ -194,6 +196,7 @@ export const depositAllAtGauge = async (
     currentZapPlatformContractType.typeOfDepositConstructor
     === 'CONSTRUCTOR_WITH_NFT_ID'
   ) {
+    console.log('6');
     const data = {
       from: account,
       to: poolTokenContract.target,
@@ -208,6 +211,7 @@ export const depositAllAtGauge = async (
     currentZapPlatformContractType.typeOfDepositConstructor
     === 'CONSTRUCTOR_STAKE_METHOD_AND_TOKEN_AMOUNT'
   ) {
+    console.log('7');
     const balance = await poolTokenContract.balanceOf(account);
     return gaugeContract.stake(balance, params);
   }

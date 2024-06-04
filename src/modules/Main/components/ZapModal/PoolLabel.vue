@@ -1,41 +1,40 @@
 <template>
   <div
     v-if="pool"
-    :style="'background: linear-gradient(57.78deg, ' + getParams(pool.chain).networkColor + ' -94.19%, transparent 57.68%);'"
-    :class="isShort ? 'pool-label-container-short' : ''"
     class="zap-header"
   >
     <div class="zap-header__content">
       <BaseIcon :name="pool.chainName" />
-      <div>
-        <img
-          v-if="pool.token0Icon"
-          :class="isShort ? 'icon-short' : ''"
-          :src="pool.token0Icon"
-          alt="token"
-        />
-        <img
-          v-if="pool.token1Icon"
-          :class="isShort ? 'icon-short' : ''"
-          :src="pool.token1Icon"
-          alt="token"
-        />
-      </div>
       <div class="zap-header__col">
-        <div
+        <span
           :class="isShort ? 'short-title platform-name-short' : ''"
           class="platform-name pt-1"
         >
           {{pool.name}}
+        </span>
+        <div>
+          <img
+            v-if="pool.token0Icon"
+            :class="isShort ? 'icon-short' : ''"
+            :src="pool.token0Icon"
+            alt="token"
+          />
+          <img
+            v-if="pool.token1Icon"
+            :class="isShort ? 'icon-short' : ''"
+            :src="pool.token1Icon"
+            alt="token"
+          />
         </div>
-        <div
-          :class="isShort ? 'short-title' : ''"
-          class="platform-label-container"
+      </div>
+      <div class="zap-header__col">
+        <span
+          :class="isShort ? 'pool-detail-title-short' : ''"
+          class="pool-detail-title"
         >
-          <div class="platform-label">
-            {{pool.platform ? pool.platform[0]?.toUpperCase() : '-'}}
-          </div>
-        </div>
+          {{ pool.platform[0] }}
+        </span>
+        <BaseIcon :name="pool.platform[0]" />
       </div>
       <div class="zap-header__col">
         <div
@@ -62,35 +61,26 @@
         </div>
       </div>
       <div class="zap-header__col">
-        <div
+        <span
           :class="isShort ? 'pool-detail-title-short' : ''"
           class="pool-detail-title"
         >
           TVL
-        </div>
-        <div
+        </span>
+        <span
           v-if="pool.tvl >= 1000000"
           :class="isShort ? 'pool-detail-item-short' : ''"
           class="pool-detail-item"
         >
           {{('$' + formatNumberToMln(pool.tvl, 0))}}M
-        </div>
-        <div
+        </span>
+        <span
           v-if="pool.tvl < 1000000"
           :class="isShort ? 'pool-detail-item-short' : ''"
           class="pool-detail-item"
         >
           ${{ formatNumberToThousands(pool.tvl, 0)}}K
-        </div>
-      </div>
-      <div class="zap-header__col">
-        <div
-          :class="isShort ? 'pool-detail-title-short' : ''"
-          class="pool-detail-title"
-        >
-          Staking
-        </div>
-        <BaseIcon :name="pool.platform[0]" />
+        </span>
       </div>
     </div>
   </div>
@@ -131,15 +121,23 @@ export default {
 .zap-header {
   border-radius: 12px;
   margin-bottom: 10px;
+  background-color: var(--color-5);
 
   svg, img {
     width: 32px;
     height: 32px;
   }
+
+  span {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-1)
+  }
 }
 
 .zap-header__content {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   padding: 12px;
 }
@@ -149,7 +147,10 @@ export default {
 }
 
 .zap-header__col {
+  height: 100%;
   display: flex;
+  align-items: center;
+  justify-content: space-between;
   flex-direction: column;
   gap: 8px;
 }

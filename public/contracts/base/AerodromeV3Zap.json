@@ -203,6 +203,19 @@
         {
           "indexed": false,
           "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        }
+      ],
+      "name": "TokenId",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
           "name": "stakeSlippageBP",
           "type": "uint256"
         }
@@ -332,40 +345,6 @@
         }
       ],
       "name": "getProportion",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "token0Amount",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "token1Amount",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "denominator",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_pair",
-          "type": "address"
-        },
-        {
-          "internalType": "int24[]",
-          "name": "ticks",
-          "type": "int24[]"
-        }
-      ],
-      "name": "getProportionForTicks",
       "outputs": [
         {
           "internalType": "uint256",
@@ -716,9 +695,9 @@
       "type": "receive"
     }
   ],
-  "numDeployments": 28,
-  "solcInputHash": "2841ff5a5264a8ea4e7bc0688609fd25",
-  "implementation": "0x84FD046b67a54aE5d9B177Eb1aeFa114051B865d",
+  "numDeployments": 33,
+  "solcInputHash": "7f2e82bd927965c16c683d06bf3cbb17",
+  "implementation": "0x54dbC9350206FfeC026E03dD80E1B74a820F696C",
   "devdoc": {
     "kind": "dev",
     "methods": {
@@ -826,7 +805,7 @@
         "type": "t_array(t_uint256)50_storage"
       },
       {
-        "astId": 8191,
+        "astId": 8127,
         "contract": "contracts/zap/AerodromeCLZap.sol:AerodromeCLZap",
         "label": "stakeSlippageBP",
         "offset": 0,
@@ -834,7 +813,7 @@
         "type": "t_uint256"
       },
       {
-        "astId": 8193,
+        "astId": 8129,
         "contract": "contracts/zap/AerodromeCLZap.sol:AerodromeCLZap",
         "label": "odosRouter",
         "offset": 0,
@@ -842,7 +821,7 @@
         "type": "t_address"
       },
       {
-        "astId": 7120,
+        "astId": 7216,
         "contract": "contracts/zap/AerodromeCLZap.sol:AerodromeCLZap",
         "label": "npm",
         "offset": 0,

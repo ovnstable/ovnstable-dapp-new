@@ -174,101 +174,6 @@
                   1% deposit fee.
                 </div>
               </div>
-
-              <div class="swap-footer pt-5">
-                <div
-                  v-if="!account"
-                  class="swap-button-container"
-                >
-                  <div
-                    class="swap-button"
-                    @click="connectWallet"
-                    @keypress="connectWallet"
-                  >
-                    <div class="swap-button-title">
-                      <div>CONNECT WALLET</div>
-                    </div>
-                  </div>
-                </div>
-                <div
-                  v-else
-                  class="swap-button-container"
-                >
-                  <ButtonComponent
-                    btn-size="large"
-                    full
-                    v-if="isDisableButton"
-                    btn-styles="primary"
-                    disabled
-                  >
-                    {{ disableButtonMessage }}
-                  </ButtonComponent>
-                  <ButtonComponent
-                    btn-size="large"
-                    full
-                    v-else-if="isAnyInputsNeedApprove"
-                    class="swap-button"
-                    :loading="approvingPending"
-                    @click="approveTrigger(firstInputInQueueForToApprove)"
-                    @keypress="approveTrigger(firstInputInQueueForToApprove)"
-                  >
-                    APPROVE
-                    {{ firstInputInQueueForToApprove.selectedToken?.symbol }}
-                  </ButtonComponent>
-                  <ButtonComponent
-                    btn-size="large"
-                    full
-                    v-else-if="additionalSwapStepType === 'APPROVE'"
-                    class="swap-button"
-                    :loading="approvingPending"
-                    @click="
-                      toApproveAndDepositSteps(lastZapResponseData, lastPoolInfoData)
-                    "
-                    @keypress="
-                      toApproveAndDepositSteps(lastZapResponseData, lastPoolInfoData)
-                    "
-                  >
-                    APPROVE GAUGE
-                  </ButtonComponent>
-                  <ButtonComponent
-                    btn-size="large"
-                    full
-                    v-else-if="additionalSwapStepType === 'DEPOSIT'"
-                    :loading="isSwapLoading"
-                    @click="
-                      depositGauge(
-                        lastPutIntoPoolEvent,
-                        lastReturnedToUserEvent,
-                        lastPoolInfoData,
-                        lastNftTokenId,
-                      )
-                    "
-                    @keypress="
-                      depositGauge(
-                        lastPutIntoPoolEvent,
-                        lastReturnedToUserEvent,
-                        lastPoolInfoData,
-                        lastNftTokenId,
-                      )
-                    "
-                    class="swap-button"
-                  >
-                    STAKE LP
-                  </ButtonComponent>
-                  <ButtonComponent
-                    btn-size="large"
-                    full
-                    v-else
-                    @click="stakeTrigger"
-                    @keypress="stakeTrigger"
-                    class="swap-button"
-                  >
-                    {{ btnName }}
-
-                  </ButtonComponent>
-                </div>
-
-              </div>
             </div>
             <div
               v-if="zapPool?.poolVersion === 'v3' && !zapContract && !zapPool"
@@ -285,6 +190,101 @@
           </div>
         </div>
       </template>
+    </div>
+
+    <div>
+      <div
+        v-if="!account"
+        class="swap-button-container"
+      >
+        <div
+          class="swap-button"
+          @click="connectWallet"
+          @keypress="connectWallet"
+        >
+          <div class="swap-button-title">
+            <div>CONNECT WALLET</div>
+          </div>
+        </div>
+      </div>
+      <div
+        v-else
+        class="swap-button-container"
+      >
+        <ButtonComponent
+          btn-size="large"
+          full
+          v-if="isDisableButton"
+          btn-styles="primary"
+          disabled
+        >
+          {{ disableButtonMessage }}
+        </ButtonComponent>
+        <ButtonComponent
+          btn-size="large"
+          full
+          v-else-if="isAnyInputsNeedApprove"
+          class="swap-button"
+          :loading="approvingPending"
+          @click="approveTrigger(firstInputInQueueForToApprove)"
+          @keypress="approveTrigger(firstInputInQueueForToApprove)"
+        >
+          APPROVE
+          {{ firstInputInQueueForToApprove.selectedToken?.symbol }}
+        </ButtonComponent>
+        <ButtonComponent
+          btn-size="large"
+          full
+          v-else-if="additionalSwapStepType === 'APPROVE'"
+          class="swap-button"
+          :loading="approvingPending"
+          @click="
+            toApproveAndDepositSteps(lastZapResponseData, lastPoolInfoData)
+          "
+          @keypress="
+            toApproveAndDepositSteps(lastZapResponseData, lastPoolInfoData)
+          "
+        >
+          APPROVE GAUGE
+        </ButtonComponent>
+        <ButtonComponent
+          btn-size="large"
+          full
+          v-else-if="additionalSwapStepType === 'DEPOSIT'"
+          :loading="isSwapLoading"
+          @click="
+            depositGauge(
+              lastPutIntoPoolEvent,
+              lastReturnedToUserEvent,
+              lastPoolInfoData,
+              lastNftTokenId,
+            )
+          "
+          @keypress="
+            depositGauge(
+              lastPutIntoPoolEvent,
+              lastReturnedToUserEvent,
+              lastPoolInfoData,
+              lastNftTokenId,
+            )
+          "
+          class="swap-button"
+        >
+          STAKE LP
+        </ButtonComponent>
+        <ButtonComponent
+          btn-size="large"
+          full
+          v-else
+          @click="stakeTrigger"
+          @keypress="stakeTrigger"
+          class="swap-button"
+        >
+          {{ btnName }}
+
+        </ButtonComponent>
+      </div>
+
     </div>
 
     <SelectTokensModal
@@ -1271,6 +1271,9 @@ export default {
     async toApproveAndDepositSteps(data: any, lastPoolInfoData: any) {
       let putIntoPoolEvent;
       let returnedToUserEvent;
+      let nftId = '';
+
+      console.log(data, '___data');
       for (const item of data.logs) {
         const eventName = item?.eventName;
 
@@ -1289,7 +1292,18 @@ export default {
             val: returnedToUserEvent,
           });
         }
+
+        if (eventName === 'TokenId') {
+          nftId = String(item?.args[0]);
+          returnedToUserEvent = eventName;
+          this.$store.commit('odosData/changeState', {
+            field: 'lastReturnedToUserEvent',
+            val: returnedToUserEvent,
+          });
+        }
       }
+
+      console.log(returnedToUserEvent, '__returnedToUserEvent');
 
       this.stopSwapConfirmTimer();
       this.currentStage = zapInStep.APPROVE_GAUGE;
@@ -1304,6 +1318,7 @@ export default {
           putIntoPoolEvent,
           returnedToUserEvent,
           lastPoolInfoData,
+          nftId,
         );
         return;
       }
@@ -1318,41 +1333,41 @@ export default {
       putIntoPoolEvent: any,
       returnedToUserEvent: any,
       lastPoolInfoData: any,
+      nftId: string,
     ) {
       this.showWaitingModal('Approving NFT in process');
 
-      if (!this.lastNftTokenId) {
+      if (!this.lastNftTokenId || nftId) {
         try {
-          const tokenId = await this.getLastNftId();
+          const tokenId = nftId || await this.getLastNftId();
+
           this.$store.commit('odosData/changeState', {
             field: 'lastNftTokenId',
             val: tokenId,
           });
+          const poolAddress = this.zapPoolRoot.address;
+          const poolInfo = poolsInfoMap[poolAddress];
+
+          if (!poolInfo) throw new Error('No gauge to approve for NFT');
+
           const params = { from: this.account };
-          this.gaugeContract
-            .approve(this.poolTokenContract.target, tokenId, params)
-            .then(() => {
-              this.$store.commit('odosData/changeState', {
-                field: 'additionalSwapStepType',
-                val: 'DEPOSIT',
-              });
-              this.currentStage = zapInStep.DEPOSIT;
-              this.closeWaitingModal();
-              this.depositGauge(
-                putIntoPoolEvent,
-                returnedToUserEvent,
-                lastPoolInfoData,
-                this.lastNftTokenId,
-              );
-            })
-            .catch((e: any) => {
-              console.error('Approve nft gauge failed', e);
-              this.$store.commit('odosData/changeState', {
-                field: 'lastNftTokenId',
-                val: null,
-              });
-              this.closeWaitingModal();
-            });
+          const tx = await this.gaugeContract
+            .approve(poolInfo?.gauge, tokenId, params);
+
+          await tx.wait();
+
+          this.$store.commit('odosData/changeState', {
+            field: 'additionalSwapStepType',
+            val: 'DEPOSIT',
+          });
+          this.currentStage = zapInStep.DEPOSIT;
+          this.closeWaitingModal();
+          this.depositGauge(
+            putIntoPoolEvent,
+            returnedToUserEvent,
+            lastPoolInfoData,
+            this.lastNftTokenId,
+          );
         } catch (e) {
           console.error('Approve nft gauge failed', e);
           this.$store.commit('odosData/changeState', {

@@ -50,6 +50,7 @@
             placeholder="0"
             full-width
             is-center
+            input-size="lg"
             @input="setMinPrice"
           />
           <div
@@ -85,6 +86,7 @@
             placeholder="0"
             full-width
             is-center
+            input-size="lg"
             @input="setMaxPrice"
           />
           <div
@@ -102,7 +104,7 @@
       </div>
     </div>
 
-    <div>
+    <div class="range-presets-wrap">
       <h2>
         Range presets {{ getPresetsName }}:
       </h2>
@@ -115,7 +117,15 @@
           @click="setRange(range.value)"
           @keydown="setRange(range.value)"
         >
-          {{ range.value === 100 ? "FULL" : `${range.value}${getPresetSymbol}` }}
+          <div
+            class="range-presets__plusmin"
+            v-if="showPresetPlusMinus(range)"
+          >
+            <span>+</span>
+            <span>-</span>
+          </div>
+
+          {{ range.value === 100 ? "FULL" : `${range.label}${getPresetSymbol}` }}
         </div>
       </div>
     </div>
@@ -152,39 +162,30 @@ export default {
       pairSymbols: [],
       rangePresets: [
         {
-          id: 0, value: 5,
+          id: 0, value: 10, label: '5',
         },
         {
-          id: 1, value: 10,
+          id: 1, value: 20, label: '10',
         },
         {
-          id: 2, value: 20,
+          id: 2, value: 40, label: '20',
         },
         {
-          id: 3, value: 40,
-        },
-        {
-          id: 4, value: 100,
+          id: 3, value: 100, label: '100',
         },
       ],
       rangePresetsTicks: [
         {
-          id: 0, value: 1,
+          id: 0, value: 1, label: '1',
         },
         {
-          id: 1, value: 2,
+          id: 1, value: 2, label: '1',
         },
         {
-          id: 2, value: 4,
+          id: 2, value: 4, label: '2',
         },
         {
-          id: 3, value: 8,
-        },
-        {
-          id: 3, value: 16,
-        },
-        {
-          id: 4, value: 32,
+          id: 3, value: 6, label: '3',
         },
       ],
       optionsChart: {
@@ -291,6 +292,13 @@ export default {
     },
     getPresetsData() {
       return this.isStablePool ? this.rangePresetsTicks : this.rangePresets;
+    },
+    showPresetPlusMinus() {
+      return (range: any) => {
+        if (this.isStablePool) return range.id !== 0;
+        if (!this.isStablePool && range?.value === 100) return false;
+        return true;
+      };
     },
     getPresetSymbol() {
       return this.isStablePool ? '' : '%';
@@ -636,11 +644,16 @@ export default {
     color: var(--color-1);
     margin-bottom: 20px;
     text-align: center;
+    font-weight: 600;
+    font-size: 15px;
   }
 
   p {
+    color: var(--color-1);
     margin-top: 24px;
     text-align: center;
+    font-weight: 600;
+    font-size: 15px;
   }
 }
 
@@ -717,6 +730,20 @@ export default {
         fill: var(--color-17);
       }
     }
+  }
+}
+
+.range-presets-wrap {
+  margin-top: 20px;
+}
+
+.range-presets__plusmin {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  span {
+    line-height: 4px;
   }
 }
 

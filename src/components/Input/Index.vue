@@ -1,6 +1,8 @@
 <template>
   <div
-    :class="[componentClasses, customClass, { 'input--custom': isCustom, [inputType]: !!inputType, center: isCenter }]"
+    :class="[componentClasses, customClass, {
+      'input--custom': isCustom, [inputType]: !!inputType, [inputSize]: !!inputSize, center: isCenter,
+    }]"
     @click="$emit('click', $event)"
     @mouseover="$emit('mouseover', $event)"
     @mouseenter="$emit('mouseenter', $event)"
@@ -36,6 +38,7 @@ import uniqueId from 'lodash/uniqueId';
 import type { PropType } from 'vue';
 
 type inputType = 'default' | 'primary' | 'white';
+type inputSize = 'lg';
 
 export default {
   name: 'input-component',
@@ -75,6 +78,10 @@ export default {
     isCustom: {
       type: Boolean,
       default: false,
+    },
+    inputSize: {
+      type: String as PropType<inputSize>,
+      default: '',
     },
     label: {
       type: String,
@@ -239,6 +246,10 @@ export default {
         color: var(--color-18);
       }
     }
+  }
+
+  &.lg {
+    font-size: 20px;
   }
 
   &:hover {

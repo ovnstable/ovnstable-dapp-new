@@ -24,6 +24,9 @@ const actions = {
       return;
     }
 
+    console.log(state.zapPoolRoot.address, ' --state.zapPoolRoot.address');
+    console.log(zapPlatformContractTypeMap[state.zapPoolRoot.address], '__ADD');
+
     commit('changeState', {
       field: 'currentZapPlatformContractType',
       val: zapPlatformContractTypeMap[state.zapPoolRoot.address]
@@ -86,9 +89,19 @@ const actions = {
       ? poolInfo.gaugeForLP
       : poolInfo.gauge;
 
-    const abiGaugeContractFile = await loadJSON(
-      `/contracts/${state.zapPoolRoot.chainName}/${state?.currentZapPlatformContractType?.name}Gauge.json`,
-    );
+    let abiGaugeContractFile = null;
+
+    if (state.zapPoolRoot?.poolVersion === 'v2') {
+      abiGaugeContractFile = await loadJSON(
+        `/contracts/${state.zapPoolRoot.chainName}/${state?.currentZapPlatformContractType?.name}Gauge.json`,
+      );
+    }
+
+    if (state.zapPoolRoot?.poolVersion === 'v3') {
+      abiGaugeContractFile = await loadJSON(
+        `/contracts/${state.zapPoolRoot.chainName}/${state?.currentZapPlatformContractType?.name}V3Gauge.json`,
+      );
+    }
 
     console.log(abiGaugeContractFile, '--abiGaugeContractFile');
 
@@ -101,18 +114,28 @@ const actions = {
       ),
     });
 
-    const abiPoolTokenContractFile = await loadJSON(
-      `/contracts/${state.zapPoolRoot.chainName}/${state?.currentZapPlatformContractType?.name}PoolToken.json`,
-    );
+    let abiPoolTokenContractFile = null;
+
+    if (state.zapPoolRoot?.poolVersion === 'v2') {
+      abiPoolTokenContractFile = await loadJSON(
+        `/contracts/${state.zapPoolRoot.chainName}/${state?.currentZapPlatformContractType?.name}PoolToken.json`,
+      );
+    }
+
+    if (state.zapPoolRoot?.poolVersion === 'v3') {
+      abiPoolTokenContractFile = await loadJSON(
+        `/contracts/${state.zapPoolRoot.chainName}/${state?.currentZapPlatformContractType?.name}V3PoolToken.json`,
+      );
+    }
 
     // exclude _ from pool address (aggregators)
     if (poolAddress.includes('_')) poolAddress = poolAddress.split('_')[0];
 
-    const tokenContract = poolInfo.poolTokenType
+    const tokenContract = poolInfo.poolTokenType === 'DIFFERENT'
       ? buildEvmContract(
         abiPoolTokenContractFile.abi,
         rootState.web3.evmSigner,
-        abiPoolTokenContractFile.address,
+        poolInfo.gauge,
       )
       : buildEvmContract(abiPoolTokenContractFile.abi, rootState.web3.evmSigner, poolAddress);
 
