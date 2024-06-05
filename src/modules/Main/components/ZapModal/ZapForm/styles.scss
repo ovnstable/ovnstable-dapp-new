@@ -406,3 +406,29 @@
 .zapin__modal-steps {
   margin-top: 20px;
 }
+
+.zapin-block__row {
+  display: flex;
+  width: 100%;
+  gap: 20px;
+}
+
+.zapin-block__content {
+  width: 100%;
+}
+
+.zapin-block__header {
+  background-color: var(--color-5);
+  padding: 5px 12px;
+  border-radius: 30px;
+  font-size: 14px;
+  margin: 0 auto 30px auto;
+  width: fit-content;
+}
+
+.zapin-block__v3-spin {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

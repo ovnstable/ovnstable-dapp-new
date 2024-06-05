@@ -21,282 +21,270 @@
       </div>
 
       <template v-else>
-        <div class="swap-body">
-          <div>
-            <div class="mb-4 mt-1">
-              <PoolLabel :pool="zapPool" />
-            </div>
+        <div class="zapin-block">
+          <div class="zapin-block__header">
+            ZAP IN {{ zapPool?.poolVersion?.toUpperCase() }}
+          </div>
+          <div class="zapin-block__row">
+            <div class="zapin-block__content">
+              <div>
+                <div class="mb-4 mt-1">
+                  <PoolLabel :pool="zapPool" />
+                </div>
 
-            <div class="input-swap-container">
-              <div class="swap-form__body-block">
-                <div class="swap-form__body-block__title">
-                  <h3>
-                    You send
-                  </h3>
-                  <div
-                    v-if="inputTokensWithSelectedTokensCount"
-                    class="swap-form__body-block__inputs-max"
-                    @click="maxAllMethod"
-                    @keypress="maxAllMethod"
-                  >
-                    Max all
+                <div class="input-swap-container">
+                  <div class="swap-form__body-block">
+                    <div class="swap-form__body-block__title">
+                      <h3>
+                        You send
+                      </h3>
+                      <div
+                        v-if="inputTokensWithSelectedTokensCount"
+                        class="swap-form__body-block__inputs-max"
+                        @click="maxAllMethod"
+                        @keypress="maxAllMethod"
+                      >
+                        Max all
+                      </div>
+                    </div>
+                    <TransitionGroup
+                      name="staggered-fade"
+                      tag="div"
+                      :class="{ 'swap-form__body-block__inputs': true, 'block-inputs--scroll': outputTokens?.length > 3 }"
+                      :css="false"
+                      @before-enter="beforeEnterList"
+                      @enter="onEnterList"
+                      @onLeave="onLeaveList"
+                    >
+                      <div
+                        v-for="token in inputTokens"
+                        :key="token.id"
+                        :data-index="token.id"
+                        class="swap-form__body-block__inputs-item"
+                      >
+                        <TokenForm
+                          :token-info="token"
+                          :is-token-removable="isInputTokensRemovable"
+                          :is-input-token="true"
+                          :disabled="false"
+                          :balances-loading="isBalancesLoading"
+                          @select-token="selectFormToken"
+                          @remove-token="removeInputToken"
+                          @update-token="updateTokenValueMethod"
+                        />
+                      </div>
+                      <div
+                        v-if="isInputTokensAddAvailable"
+                        class="swap-form__body-block__inputs-add"
+                        @click="addNewInputToken"
+                        @keypress="addNewInputToken"
+                      >
+                        +
+                      </div>
+                    </TransitionGroup>
                   </div>
                 </div>
-                <TransitionGroup
-                  name="staggered-fade"
-                  tag="div"
-                  :class="{ 'swap-form__body-block__inputs': true, 'block-inputs--scroll': outputTokens?.length > 3 }"
-                  :css="false"
-                  @before-enter="beforeEnterList"
-                  @enter="onEnterList"
-                  @onLeave="onLeaveList"
+
+                <div
+                  class="swap-form__body-arrow"
                 >
+                  <BaseIcon
+                    name="ArrowDown"
+                  />
+                </div>
+
+                <div class="out-swap-container pt-5">
                   <div
-                    v-for="token in inputTokens"
+                    v-for="token in (outputTokens as any)"
                     :key="token.id"
-                    :data-index="token.id"
-                    class="swap-form__body-block__inputs-item"
+                    class="input-component-container"
                   >
                     <TokenForm
                       :token-info="token"
-                      :is-token-removable="isInputTokensRemovable"
-                      :is-input-token="true"
-                      :disabled="false"
+                      :is-token-removable="isOutputTokensRemovable"
+                      :is-input-token="false"
+                      :disabled="true"
                       :balances-loading="isBalancesLoading"
-                      @select-token="selectFormToken"
-                      @remove-token="removeInputToken"
-                      @update-token="updateTokenValueMethod"
+                      @select-token="selectOutputToken"
+                      @remove-token="removeOutputToken"
                     />
                   </div>
-                  <div
-                    v-if="isInputTokensAddAvailable"
-                    class="swap-form__body-block__inputs-add"
-                    @click="addNewInputToken"
-                    @keypress="addNewInputToken"
-                  >
-                    +
-                  </div>
-                </TransitionGroup>
-              </div>
-            </div>
-
-            <div
-              class="swap-form__body-arrow"
-            >
-              <BaseIcon
-                name="ArrowDown"
-              />
-            </div>
-
-            <div class="out-swap-container pt-5">
-              <div
-                v-for="token in (outputTokens as any)"
-                :key="token.id"
-                class="input-component-container"
-              >
-                <TokenForm
-                  :token-info="token"
-                  :is-token-removable="isOutputTokensRemovable"
-                  :is-input-token="false"
-                  :disabled="true"
-                  :balances-loading="isBalancesLoading"
-                  @select-token="selectOutputToken"
-                  @remove-token="removeOutputToken"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div v-if="sumOfAllSelectedTokensInUsd && ifMoreThanOneSelectedTokensAdded">
-          <div class="transaction-info-container">
-            <div class="transaction-info-body">
-              <div
-                class="zap-row"
-              >
-                <div class="transaction-info-title">Slippage</div>
-                <div class="transaction-info">
-                  {{ slippagePercent * 1 }}%
-                  <span class="transaction-info-additional">
-                    ({{ formatMoney(getSlippageAmount, 3) }})$
-                  </span>
                 </div>
               </div>
 
-              <div
-                class="zap-row"
-              >
-                <div class="transaction-info-title">Multi-swap Odos fee</div>
-                <div>
-                  <!-- <Tooltip
+              <div v-if="sumOfAllSelectedTokensInUsd && ifMoreThanOneSelectedTokensAdded">
+                <div class="transaction-info-container">
+                  <div class="transaction-info-body">
+                    <div
+                      class="zap-row"
+                    >
+                      <div class="transaction-info-title">Slippage</div>
+                      <div class="transaction-info">
+                        {{ slippagePercent * 1 }}%
+                        <span class="transaction-info-additional">
+                          ({{ formatMoney(getSlippageAmount, 3) }})$
+                        </span>
+                      </div>
+                    </div>
+
+                    <div
+                      class="zap-row"
+                    >
+                      <div class="transaction-info-title">Multi-swap Odos fee</div>
+                      <div>
+                      <!-- <Tooltip
                       text="This fee is charged by Odos for using multi-input/multi-output"
                     /> -->
-                </div>
-                <div class="transaction-info">
-                  {{ multiSwapOdosFeePercent * 1 }}%
-                  <span class="transaction-info-additional">
-                    ({{ formatMoney(getOdosFee, 3) }})$
-                  </span>
+                      </div>
+                      <div class="transaction-info">
+                        {{ multiSwapOdosFeePercent * 1 }}%
+                        <span class="transaction-info-additional">
+                          ({{ formatMoney(getOdosFee, 3) }})$
+                        </span>
+                      </div>
+                    </div>
+
+                    <div class="zap-row">
+                      <div class="transaction-info-title">Single-swap Odos fee</div>
+                      <div>
+                      <!-- <Tooltip text="Single-input/output swaps are free" /> -->
+                      </div>
+                      <div class="transaction-info">
+                        0.00% <span class="transaction-info-additional">(0)$</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div class="zap-row">
-                <div class="transaction-info-title">Single-swap Odos fee</div>
-                <div>
-                  <!-- <Tooltip text="Single-input/output swaps are free" /> -->
-                </div>
-                <div class="transaction-info">
-                  0.00% <span class="transaction-info-additional">(0)$</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <SwapSlippageSettings
-            :selected-input-tokens="selectedInputTokens"
-            :selected-output-tokens="selectedOutputTokens"
-            @change-slippage="handleCurrentSlippageChanged"
-          />
-        </div>
-        <div
-          v-if="zapPool && zapPool.platform[0] === 'Swapbased'"
-          class="slippage-info-container"
-        >
-          <div class="slippage-info-title">
-            <BaseIcon name="swapWarn" />
-            By joining this pool, you are being notified that SwapBased takes a
-            1% deposit fee.
-          </div>
-        </div>
-
-        <!-- <div
-          class="odos-fees-container mt-5"
-          v-if="ifMoreThanOneSelectedTokensAdded"
-        >
-          <div>
-            circle
-          </div>
-          <div>
-            <div class="odos-fees-title">
-              Odos collects 0.01% fee for multi-input/multi-output swaps.
-            </div>
-          </div>
-        </div> -->
-
-        <div class="swap-footer pt-5">
-          <div
-            v-if="!account"
-            class="swap-button-container"
-          >
-            <div
-              class="swap-button"
-              @click="connectWallet"
-              @keypress="connectWallet"
-            >
-              <div class="swap-button-title">
-                <div>CONNECT WALLET</div>
-              </div>
-            </div>
-          </div>
-          <div
-            v-else
-            class="swap-button-container"
-          >
-            <ButtonComponent
-              btn-size="large"
-              full
-              v-if="isDisableButton"
-              btn-styles="primary"
-              disabled
-            >
-              {{ disableButtonMessage }}
-            </ButtonComponent>
-            <ButtonComponent
-              btn-size="large"
-              full
-              v-else-if="isAnyInputsNeedApprove"
-              class="swap-button"
-              :loading="approvingPending"
-              @click="approveTrigger(firstInputInQueueForToApprove)"
-              @keypress="approveTrigger(firstInputInQueueForToApprove)"
-            >
-              APPROVE
-              {{ firstInputInQueueForToApprove.selectedToken?.symbol }}
-            </ButtonComponent>
-            <ButtonComponent
-              btn-size="large"
-              full
-              v-else-if="additionalSwapStepType === 'APPROVE'"
-              class="swap-button"
-              :loading="approvingPending"
-              @click="
-                toApproveAndDepositSteps(lastZapResponseData, lastPoolInfoData)
-              "
-              @keypress="
-                toApproveAndDepositSteps(lastZapResponseData, lastPoolInfoData)
-              "
-            >
-              APPROVE GAUGE
-            </ButtonComponent>
-            <ButtonComponent
-              btn-size="large"
-              full
-              v-else-if="additionalSwapStepType === 'DEPOSIT'"
-              :loading="isSwapLoading"
-              @click="
-                depositGauge(
-                  lastPutIntoPoolEvent,
-                  lastReturnedToUserEvent,
-                  lastPoolInfoData,
-                  lastNftTokenId,
-                )
-              "
-              @keypress="
-                depositGauge(
-                  lastPutIntoPoolEvent,
-                  lastReturnedToUserEvent,
-                  lastPoolInfoData,
-                  lastNftTokenId,
-                )
-              "
-              class="swap-button"
-            >
-              STAKE LP
-            </ButtonComponent>
-            <ButtonComponent
-              btn-size="large"
-              full
-              v-else
-              @click="stakeTrigger"
-              @keypress="stakeTrigger"
-              class="swap-button"
-            >
-              {{ btnName }}
-
-            </ButtonComponent>
-          </div>
-
-          <!-- <div class="label-container pt-3">
-            <div
-              v-if="selectedInputTokens.length > 0"
-              class="row"
-            >
-              <div class="col-12">
-                <ZapSteps
+              <div>
+                <SwapSlippageSettings
                   :selected-input-tokens="selectedInputTokens"
-                  :click-on-stake="clickOnStake"
-                  :additional-swap-step-type="additionalSwapStepType"
-                  :current-zap-platform-contract-type="
-                    currentZapPlatformContractType
-                  "
+                  :selected-output-tokens="selectedOutputTokens"
+                  @change-slippage="handleCurrentSlippageChanged"
                 />
               </div>
+              <div
+                v-if="zapPool && zapPool.platform[0] === 'Swapbased'"
+                class="slippage-info-container"
+              >
+                <div class="slippage-info-title">
+                  <BaseIcon name="swapWarn" />
+                  By joining this pool, you are being notified that SwapBased takes a
+                  1% deposit fee.
+                </div>
+              </div>
             </div>
-          </div> -->
+            <div
+              v-if="zapPool?.poolVersion === 'v3' && !zapContract && !zapPool"
+              class="zapin-block__v3-spin"
+            >
+              <Spinner />
+            </div>
+            <ZapinV3
+              v-if="zapPool?.poolVersion === 'v3' && zapContract && zapPool"
+              :zap-pool="zapPool"
+              :zap-contract="zapContract"
+              @set-range="setRangeV3"
+            />
+          </div>
         </div>
       </template>
+    </div>
+
+    <div>
+      <div
+        v-if="!account"
+        class="swap-button-container"
+      >
+        <div
+          class="swap-button"
+          @click="connectWallet"
+          @keypress="connectWallet"
+        >
+          <div class="swap-button-title">
+            <div>CONNECT WALLET</div>
+          </div>
+        </div>
+      </div>
+      <div
+        v-else
+        class="swap-button-container"
+      >
+        <ButtonComponent
+          btn-size="large"
+          full
+          v-if="isDisableButton"
+          btn-styles="primary"
+          disabled
+        >
+          {{ disableButtonMessage }}
+        </ButtonComponent>
+        <ButtonComponent
+          btn-size="large"
+          full
+          v-else-if="isAnyInputsNeedApprove"
+          class="swap-button"
+          :loading="approvingPending"
+          @click="approveTrigger(firstInputInQueueForToApprove)"
+          @keypress="approveTrigger(firstInputInQueueForToApprove)"
+        >
+          APPROVE
+          {{ firstInputInQueueForToApprove.selectedToken?.symbol }}
+        </ButtonComponent>
+        <ButtonComponent
+          btn-size="large"
+          full
+          v-else-if="additionalSwapStepType === 'APPROVE'"
+          class="swap-button"
+          :loading="approvingPending"
+          @click="
+            toApproveAndDepositSteps(lastZapResponseData, lastPoolInfoData)
+          "
+          @keypress="
+            toApproveAndDepositSteps(lastZapResponseData, lastPoolInfoData)
+          "
+        >
+          APPROVE GAUGE
+        </ButtonComponent>
+        <ButtonComponent
+          btn-size="large"
+          full
+          v-else-if="additionalSwapStepType === 'DEPOSIT'"
+          :loading="isSwapLoading"
+          @click="
+            depositGauge(
+              lastPutIntoPoolEvent,
+              lastReturnedToUserEvent,
+              lastPoolInfoData,
+              lastNftTokenId,
+            )
+          "
+          @keypress="
+            depositGauge(
+              lastPutIntoPoolEvent,
+              lastReturnedToUserEvent,
+              lastPoolInfoData,
+              lastNftTokenId,
+            )
+          "
+          class="swap-button"
+        >
+          STAKE LP
+        </ButtonComponent>
+        <ButtonComponent
+          btn-size="large"
+          full
+          v-else
+          @click="stakeTrigger"
+          @keypress="stakeTrigger"
+          class="swap-button"
+        >
+          {{ btnName }}
+
+        </ButtonComponent>
+      </div>
+
     </div>
 
     <SelectTokensModal
@@ -331,7 +319,6 @@ import { ethers } from 'ethers';
 import {
   mapActions, mapGetters, mapState, mapMutations,
 } from 'vuex';
-import axios from 'axios';
 import {
   updateTokenValue,
   maxAll,
@@ -359,19 +346,18 @@ import PoolLabel from '@/modules/Main/components/ZapModal/PoolLabel.vue';
 import SelectTokensModal from '@/components/TokensModal/Index.vue';
 import SwapSlippageSettings from '@/modules/Main/components/Common/SwapSlippageSettings.vue';
 import ZapInStepsRow, { zapInStep } from '@/components/StepsRow/ZapinRow.vue';
-import { poolsInfoMap } from '@/store/views/main/zapin/mocks.ts';
+import ZapinV3 from '@/modules/Main/components/ZapModal/ZapForm/ZapinV3.vue';
+import { poolsInfoMap, poolTokensForZapMap } from '@/store/views/main/zapin/mocks.ts';
 import BigNumber from 'bignumber.js';
 import { approveToken, getAllowanceValue } from '@/utils/contractApprove.ts';
-import { poolTokensForZapMap } from '@/store/views/main/pools/mocks.ts';
 import { onLeaveList, onEnterList, beforeEnterList } from '@/utils/animations.ts';
-// import ZapSteps from '@/components/zap/ZapSteps.vue';
-// import ZapChangeNetwork from '@/components/zap/ZapChangeNetwork.vue';
 
 export default {
   name: 'ZapForm',
   components: {
     PoolLabel,
     BaseIcon,
+    ZapinV3,
     ButtonComponent,
     SwapSlippageSettings,
     SelectTokensModal,
@@ -400,6 +386,7 @@ export default {
       outputTokens: [] as any[],
       maxInputTokens: 6,
       maxOutputTokens: 6,
+      v3Range: null as any,
       isShowSelectTokensModal: false,
       swapMethod: 'BUY', // BUY (secondTokens) / SELL (secondTokens)
       selectTokenType: 'OVERNIGHT', // OVERNIGHT / ALL
@@ -430,7 +417,6 @@ export default {
         // Alienbase: ["Alien Base", "Alien Base Stable"],
         // Convex: ["Curve Crypto Registry", "Curve Factory", "Curve Registry"]
       } as any,
-      odosZapReferalCode: 3111111111,
       currentStage: zapInStep.START,
     };
   },
@@ -505,7 +491,7 @@ export default {
     },
 
     isOutputTokensRemovable() {
-      return false; // this.outputTokens.length > 1;
+      return false;
     },
 
     isTokenWithoutSlider() {
@@ -715,9 +701,9 @@ export default {
       return true;
     },
     zapInType() {
-      if (this.currentZapPlatformContractType?.type === 'LP_STAKE_DIFF_STEPS') {
-        return 'V3';
-      } return 'V2';
+      if (this.zapPool?.poolVersion === 'v3') return 'V3';
+
+      return 'V2';
     },
   },
   watch: {
@@ -792,6 +778,10 @@ export default {
     onEnterList,
     formatMoney,
 
+    setRangeV3(v3Data: any) {
+      this.v3Range = v3Data;
+      this.updateQuotaInfo();
+    },
     updateTokenState(newToken: any) {
       const indexOf = this.inputTokens.map((_) => _.id).indexOf(newToken.id);
       this.inputTokens[indexOf] = newToken;
@@ -867,7 +857,7 @@ export default {
     },
 
     async init() {
-      await this.loadChains();
+      // await this.loadChains();
       await this.loadTokens();
       await this.initContractData();
 
@@ -1035,13 +1025,8 @@ export default {
       this.selectedOutputTokens[0].value = 100;
     },
     async stakeTrigger() {
-      if (this.zapInType === 'V2') {
-        this.currentStage = zapInStep.STAKE_LP;
-      }
+      if (this.zapInType === 'V2') this.currentStage = zapInStep.STAKE_LP;
       if (!this.zapPool) return;
-      const totalInUsd: BigNumber = this.inputTokens
-        .reduce((acc, curr) => acc.plus(curr.usdValue), new BigNumber(0));
-
       this.$store.commit('odosData/changeState', {
         field: 'lastPoolInfoData',
         val: poolsInfoMap[this.zapPool.address],
@@ -1068,7 +1053,9 @@ export default {
         this.zapPool.address,
         this.zapPool,
         this.zapContract,
+        this.v3Range,
       );
+
       const sumReserves = (
         new BigNumber(reserves.token0Amount).times(outputToken0Price)
       )
@@ -1146,17 +1133,6 @@ export default {
       const outputAmounts = formulaOutputTokens.map((token: any) => token.contractValue);
       const outputPrices = formulaOutputTokens.map((token: any) => token.price);
 
-      console.log({
-        inputTokensDecimals: [...inputDecimals],
-        inputTokensAddresses: [...inputAddresses],
-        inputTokensAmounts: [...inputAmounts],
-        inputTokensPrices: [...inputPrices],
-        outputTokensDecimals: [...outputDecimals],
-        outputTokensAddresses: [...outputAddresses],
-        outputTokensAmounts: [...outputAmounts],
-        outputTokensPrices: [...outputPrices],
-        proportion0: new BigNumber(reserves[0]).times(outputPrices[0]).div(sumReserves).toNumber(),
-      }, '-----PARMAS');
       const proportions = calculateProportionForPool({
         inputTokensDecimals: [...inputDecimals],
         inputTokensAddresses: [...inputAddresses],
@@ -1166,10 +1142,11 @@ export default {
         outputTokensAddresses: [...outputAddresses],
         outputTokensAmounts: [...outputAmounts],
         outputTokensPrices: [...outputPrices],
-        proportion0: new BigNumber(reserves[0]).times(outputPrices[0]).div(sumReserves).toNumber(),
+        proportion0: new BigNumber(reserves[0])
+          .times(outputPrices[0]).div(sumReserves).toNumber(),
       });
 
-      console.log(proportions);
+      console.log(proportions, '__proportions');
 
       proportions.outputTokens = proportions.outputTokens.filter(
         (item: any) => item.proportion > 0,
@@ -1184,7 +1161,21 @@ export default {
         slippageLimitPercent: this.getSlippagePercent(),
       };
 
-      const referralCode = totalInUsd.gt(3000) ? this.odosZapReferalCode : this.odosReferalCode;
+      if (proportions.inputTokens?.length === 0 && proportions.outputTokens?.length === 0) {
+        await this.initZapInTransaction(
+          null,
+          proportions.inputTokens,
+          proportions.outputTokens,
+          proportions,
+          this.lastPoolInfoData,
+          this.zapPool,
+        );
+
+        this.isSwapLoading = false;
+        this.clickOnStake = false;
+        return;
+      }
+
       const whiteList = WHITE_LIST_ODOS[request.chainId as keyof typeof WHITE_LIST_ODOS];
       const requestData = {
         chainId: request.chainId,
@@ -1200,10 +1191,9 @@ export default {
         simulate: false,
         pathViz: false,
         disableRFQs: false,
-        referralCode,
+        referralCode: this.odosReferalCode,
       };
 
-      console.log(requestData, '---requestData');
       this.odosSwapRequest(requestData)
         .then(async (data: any) => {
           const assembleData = {
@@ -1241,47 +1231,6 @@ export default {
         });
     },
 
-    async getOdosRequest(request: any) {
-      const whiteList = WHITE_LIST_ODOS[request.chainId as keyof typeof WHITE_LIST_ODOS];
-      const swapParams = {
-        chainId: request.chainId,
-        inputTokens: request.inputTokens,
-        outputTokens: request.outputTokens,
-        gasPrice: request.gasPrice,
-        userAddr: ethers.getAddress(
-          request.userAddr.toLowerCase(),
-        ),
-        slippageLimitPercent: request.slippageLimitPercent,
-        sourceBlacklist: this.getSourceLiquidityBlackList(),
-        sourceWhitelist: whiteList ?? [],
-        simulate: false,
-        pathViz: false,
-        disableRFQs: false,
-      };
-
-      // @ts-ignore
-      const url = 'https://api.overnight.fi/root/odos/sor/swap';
-      let transaction: any;
-      try {
-        transaction = await axios.post(url, swapParams);
-      } catch (e) {
-        console.error(`[chronosZap] getSwapTransaction: ${e}`);
-        return 0;
-      }
-
-      if (transaction.statusCode === 400) {
-        console.error(`[chronosZap]  ${transaction.description}`);
-        return 0;
-      }
-
-      if (transaction.data.transaction === undefined) {
-        console.error('[chronosZap] transaction.tx is undefined');
-        return 0;
-      }
-
-      return transaction.data.transaction;
-    },
-
     getSourceLiquidityBlackList() {
       let sourceBlacklist = [...this.sourceLiquidityBlacklist];
       // excluding platform for big liquidities zapins
@@ -1297,6 +1246,9 @@ export default {
     async toApproveAndDepositSteps(data: any, lastPoolInfoData: any) {
       let putIntoPoolEvent;
       let returnedToUserEvent;
+      let nftId = '';
+
+      console.log(data, '___data');
       for (const item of data.logs) {
         const eventName = item?.eventName;
 
@@ -1315,7 +1267,18 @@ export default {
             val: returnedToUserEvent,
           });
         }
+
+        if (eventName === 'TokenId') {
+          nftId = String(item?.args[0]);
+          returnedToUserEvent = eventName;
+          this.$store.commit('odosData/changeState', {
+            field: 'lastReturnedToUserEvent',
+            val: returnedToUserEvent,
+          });
+        }
       }
+
+      console.log(returnedToUserEvent, '__returnedToUserEvent');
 
       this.stopSwapConfirmTimer();
       this.currentStage = zapInStep.APPROVE_GAUGE;
@@ -1330,6 +1293,7 @@ export default {
           putIntoPoolEvent,
           returnedToUserEvent,
           lastPoolInfoData,
+          nftId,
         );
         return;
       }
@@ -1344,41 +1308,41 @@ export default {
       putIntoPoolEvent: any,
       returnedToUserEvent: any,
       lastPoolInfoData: any,
+      nftId: string,
     ) {
       this.showWaitingModal('Approving NFT in process');
 
-      if (!this.lastNftTokenId) {
+      if (!this.lastNftTokenId || nftId) {
         try {
-          const tokenId = await this.getLastNftId();
+          const tokenId = nftId || await this.getLastNftId();
+
           this.$store.commit('odosData/changeState', {
             field: 'lastNftTokenId',
             val: tokenId,
           });
+          const poolAddress = this.zapPoolRoot.address;
+          const poolInfo = poolsInfoMap[poolAddress];
+
+          if (!poolInfo) throw new Error('No gauge to approve for NFT');
+
           const params = { from: this.account };
-          this.gaugeContract
-            .approve(this.poolTokenContract.target, tokenId, params)
-            .then(() => {
-              this.$store.commit('odosData/changeState', {
-                field: 'additionalSwapStepType',
-                val: 'DEPOSIT',
-              });
-              this.currentStage = zapInStep.DEPOSIT;
-              this.closeWaitingModal();
-              this.depositGauge(
-                putIntoPoolEvent,
-                returnedToUserEvent,
-                lastPoolInfoData,
-                this.lastNftTokenId,
-              );
-            })
-            .catch((e: any) => {
-              console.error('Approve nft gauge failed', e);
-              this.$store.commit('odosData/changeState', {
-                field: 'lastNftTokenId',
-                val: null,
-              });
-              this.closeWaitingModal();
-            });
+          const tx = await this.gaugeContract
+            .approve(poolInfo?.gauge, tokenId, params);
+
+          await tx.wait();
+
+          this.$store.commit('odosData/changeState', {
+            field: 'additionalSwapStepType',
+            val: 'DEPOSIT',
+          });
+          this.currentStage = zapInStep.DEPOSIT;
+          this.closeWaitingModal();
+          this.depositGauge(
+            putIntoPoolEvent,
+            returnedToUserEvent,
+            lastPoolInfoData,
+            this.lastNftTokenId,
+          );
         } catch (e) {
           console.error('Approve nft gauge failed', e);
           this.$store.commit('odosData/changeState', {
@@ -1582,8 +1546,8 @@ export default {
     },
     async initZapInTransaction(
       responseData: any,
-      requestInputTokens: any,
-      requestOutputTokens: any,
+      requestInputTokens: any[],
+      requestOutputTokens: any[],
       proportions: any,
       poolInfo: any,
       zapPool: any,
@@ -1618,31 +1582,12 @@ export default {
       const txData = {
         inputs: requestInput,
         outputs: requestOutput,
-        data: responseData.transaction.data,
+        data: responseData ? responseData.transaction.data : null,
       };
 
-      let gaugeData;
-      if (
-        zapPool.platform[0] === 'Arbidex'
-        || zapPool.platform[0] === 'Baseswap'
-        || zapPool.platform[0] === 'Alienbase'
-      ) {
-        gaugeData = {
-          gauge: gaugeAddress,
-          amountsOut: [
-            proportions.amountToken0Out,
-            proportions.amountToken1Out,
-          ],
-          poolId: poolInfo.poolId,
-        };
-      } else if (zapPool.platform[0] === 'Defiedge') {
-        gaugeData = {
-          chef: this.lastPoolInfoData.chef,
-          pid: this.lastPoolInfoData.poolId,
-          gauge: gaugeAddress,
-          amountsOut: [proportions.amountToken0Out, proportions.amountToken1Out],
-        };
-      } else if (zapPool.platform[0] === 'Pancake') {
+      let gaugeData: any;
+
+      if (zapPool.platform[0] === 'Pancake') {
         gaugeData = {
           amountsOut: [
             proportions.amountToken0Out,
@@ -1657,18 +1602,29 @@ export default {
         };
       }
 
+      if (this.zapPool.poolVersion === 'v3') {
+        gaugeData = {
+          pair: this.zapPool.address,
+          priceRange: this.v3Range.isStable ? ['0', '0'] : this.v3Range.range,
+          amountsOut: [proportions.amountToken0Out, proportions.amountToken1Out],
+          tickDelta: this.v3Range.isStable ? this.v3Range.ticks : '0',
+        };
+      }
+
       this.showWaitingModal('Staking in process');
 
       const params = {
         from: this.account,
+        // gasPrice: ethers.parseUnits('100', 'gwei'),
+        // gasLimit: 1000000,
       };
 
       console.log(zapPool, '----zapPool');
-      console.log(txData, 'ZAPIN');
-      console.log(gaugeData, 'gaugeData');
-      console.log(params, 'params');
       console.log(this.zapContract, '-this.zapContract');
 
+      console.log(txData, 'swapdata');
+      console.log(gaugeData, 'gaugeData');
+      console.log((params), 'params');
       try {
         const tx = await this.zapContract.zapIn(txData, gaugeData, params);
         const receipt = await tx.wait();
@@ -1742,6 +1698,7 @@ export default {
         this.zapPool.address,
         this.zapPool,
         this.zapContract,
+        this.v3Range,
       );
 
       const outputToken0Price = this.selectedOutputTokens[0].selectedToken.price;
@@ -1761,56 +1718,6 @@ export default {
 
       this.recalculateOutputTokensSum();
     },
-    async simulateSwap() {
-      if (this.isSumulateSwapLoading) {
-        return;
-      }
-
-      if (
-        this.inputTokensWithSelectedTokensCount < 1
-        || this.outputTokensWithSelectedTokensCount < 1
-      ) {
-        return;
-      }
-
-      this.isSumulateSwapLoading = true;
-
-      const actualGas = await odosApiService.getActualGasPrice(this.networkId);
-
-      const input = this.getRequestInputTokens(false);
-      const output = this.getRequestOutputTokens(false);
-      if (!input.length || !output.length) {
-        this.isSumulateSwapLoading = false;
-        return;
-      }
-
-      const whiteList = WHITE_LIST_ODOS[this.networkId as keyof typeof WHITE_LIST_ODOS];
-      const requestData = {
-        chainId: this.networkId,
-        inputTokens: input,
-        outputTokens: output,
-        gasPrice: actualGas,
-        userAddr: ethers.getAddress(this.account.toLowerCase()),
-        slippageLimitPercent: this.getSlippagePercent(),
-        sourceBlacklist: this.getSourceLiquidityBlackList(),
-        sourceWhitelist: whiteList ?? [],
-        simulate: true,
-        pathViz: true,
-        referralCode: this.odosReferalCode,
-      };
-
-      this.clearQuotaInfo();
-
-      this.quoteRequest(requestData)
-        .then(() => {
-          this.isSumulateSwapLoading = false;
-        })
-        .catch((e) => {
-          console.error('Odos simulate swap request failed', e);
-          this.isSumulateSwapLoading = false;
-        });
-    },
-
     getSlippagePercent() {
       return this.slippagePercent;
     },
@@ -1855,18 +1762,21 @@ export default {
       this.showWaitingModal('Approving in process');
 
       this.approvingPending = true;
-      await this.checkApproveForToken(token, token.contractValue);
       const { selectedToken } = token;
+
+      const approveValue = new BigNumber(10)
+        .pow(selectedToken.decimals)
+        .times(10 ** 18)
+        .toFixed(0);
+
+      console.log('TRIGGER__1');
+      await this.checkApproveForToken(token, (Number(approveValue) * 0.5).toFixed(0));
       if (selectedToken.approveData.approved) {
         this.closeWaitingModal();
         return;
       }
 
       const tokenContract = this.tokensContractMap[selectedToken.address];
-      const approveValue = new BigNumber(10)
-        .pow(selectedToken.decimals)
-        .times(10 ** 18)
-        .toFixed(0);
 
       const tx = await approveToken(
         tokenContract,
@@ -1880,6 +1790,7 @@ export default {
           this.showErrorModalWithMsg({ errorType: 'approve', errorMsg: e });
         });
 
+      console.log('TRIGGER__2');
       const finishTx = () => {
         this.checkApproveForToken(token, token.contractValue);
         this.closeWaitingModal();
@@ -2141,6 +2052,7 @@ export default {
     },
 
     addSelectedTokenToList(data: any) {
+      console.log(data, 'addSelectedTokenToList');
       if (data.isInput) {
         this.addSelectedTokenToInputList(data.tokenData, false);
         // this.addTokensEmptyIsNeeded();

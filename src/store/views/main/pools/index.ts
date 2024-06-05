@@ -11,10 +11,11 @@ import {
   initReversePools,
 } from '@/store/views/main/pools/helpers.ts';
 import {
-  HOT_POOLS, NEW_POOLS, POOL_TAG, poolTokensForZapMap, zapPlatformSupportList,
+  HOT_POOLS, NEW_POOLS, POOL_TAG, zapPlatformSupportList,
 } from '@/store/views/main/pools/mocks.ts';
 import { loadTokenImage } from '@/utils/tokenLogo.ts';
 import { isArray } from 'lodash';
+import { poolTokensForZapMap } from '../zapin/mocks.ts';
 
 const stateData = {
   sortedPoolList: [],
@@ -46,7 +47,6 @@ const actions = {
   },
 
   openZapIn({ commit }: any, pool: any) {
-    console.log(pool, 'openZapIn');
     commit('changeState', {
       field: 'currentZapPool',
       val: pool,

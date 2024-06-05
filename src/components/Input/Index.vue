@@ -1,6 +1,8 @@
 <template>
   <div
-    :class="[componentClasses, customClass, { 'input--custom': isCustom, [inputType]: !!inputType }]"
+    :class="[componentClasses, customClass, {
+      'input--custom': isCustom, [inputType]: !!inputType, [inputSize]: !!inputSize, center: isCenter,
+    }]"
     @click="$emit('click', $event)"
     @mouseover="$emit('mouseover', $event)"
     @mouseenter="$emit('mouseenter', $event)"
@@ -35,7 +37,8 @@
 import uniqueId from 'lodash/uniqueId';
 import type { PropType } from 'vue';
 
-type inputType = 'default' | 'primary';
+type inputType = 'default' | 'primary' | 'white';
+type inputSize = 'lg';
 
 export default {
   name: 'input-component',
@@ -56,6 +59,10 @@ export default {
       ],
       default: null,
     },
+    isCenter: {
+      type: Boolean,
+      default: false,
+    },
     inputType: {
       type: String as PropType<inputType>,
       default: 'default',
@@ -71,6 +78,10 @@ export default {
     isCustom: {
       type: Boolean,
       default: false,
+    },
+    inputSize: {
+      type: String as PropType<inputSize>,
+      default: '',
     },
     label: {
       type: String,
@@ -182,6 +193,20 @@ export default {
   align-items: center;
   border-radius: 30px;
 
+  &.center {
+    input {
+      text-align: center;
+    }
+  }
+
+  &.white {
+    background-color: var(--color-4);
+    border: 1px solid var(--color-4);
+    [data-theme="dark"] & {
+      background-color: var(--color-7);
+    }
+  }
+
   &.primary {
     background-color: var(--color-5);
     border: 1px solid var(--color-6);
@@ -223,6 +248,10 @@ export default {
     }
   }
 
+  &.lg {
+    font-size: 20px;
+  }
+
   &:hover {
       box-shadow: 0 0 1px var(--color-1);
       [data-theme="dark"] & {
@@ -242,7 +271,7 @@ export default {
   }
 
   &.is-disabled {
-    opacity: 0.5;
+    opacity: 0.7;
     cursor: not-allowed;
   }
 
@@ -266,10 +295,9 @@ export default {
 
 @media (max-width: 640px) {
   .input-component {
-
-  &.primary {
-    width: 100%;
+    &.primary {
+      width: 100%;
+    }
   }
-}
 }
 </style>

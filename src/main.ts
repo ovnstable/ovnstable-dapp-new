@@ -8,10 +8,12 @@ import Notifications from '@kyvg/vue3-notification';
 import router from '@/router/index.ts';
 import store from '@/store/index.ts';
 import App from '@/App.vue';
+import VueApexCharts from 'vue3-apexcharts';
 
 const app = createApp(App);
 
 app.config.globalProperties.$store = store;
+app.use(VueApexCharts);
 app.use(router);
 app.use(store);
 app.use(Notifications);
