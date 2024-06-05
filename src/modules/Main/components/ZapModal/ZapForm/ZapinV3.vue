@@ -561,6 +561,7 @@ export default {
 
       this.minPrice = minPrice;
       this.maxPrice = maxPrice;
+      this.ticksAmount = '0';
       debounce(this.debounceSelectChange, 500);
     },
     debounceSelectChange() {

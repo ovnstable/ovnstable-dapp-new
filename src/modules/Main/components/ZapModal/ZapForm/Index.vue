@@ -1605,7 +1605,7 @@ export default {
       if (this.zapPool.poolVersion === 'v3') {
         gaugeData = {
           pair: this.zapPool.address,
-          priceRange: this.v3Range.isStable ? ['0', '0'] : this.v3Range.range,
+          priceRange: this.v3Range.range,
           amountsOut: [proportions.amountToken0Out, proportions.amountToken1Out],
           tickDelta: this.v3Range.isStable ? this.v3Range.ticks : '0',
         };

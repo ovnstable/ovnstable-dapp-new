@@ -24,7 +24,7 @@ export const getProportion = (
   const { gauge } = poolInfo;
 
   if (zapPool.poolVersion === 'v3') {
-    const rangeData = v3Data?.isStable ? ['0', '0'] : v3Data.range;
+    const rangeData = v3Data.range;
     const ticks = v3Data?.isStable ? v3Data.ticks : '0';
 
     return zapContract
