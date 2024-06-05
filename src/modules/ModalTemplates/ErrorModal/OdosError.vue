@@ -11,31 +11,6 @@
       class="error-message-container"
     >
       <div
-        class="copy-container"
-        @click="copyErrorToClipboard('link', errorMsg)"
-        @keypress="copyErrorToClipboard('link', errorMsg)"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-        >
-          <g transform="translate(24 0) scale(-1 1)">
-            <path
-              fill="var(--links-blue)"
-              d="M19 21H8V7h11m0-2H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2m-3-4H4a2 2 0 0 0-2 2v14h2V3h12V1Z"
-            />
-          </g>
-        </svg>
-        <div
-          class="copied-message"
-          v-if="isCopied"
-        >
-          Copied to Clipboard
-        </div>
-      </div>
-      <div
         v-if="errorMsg && errorMsg.includes('path')"
         class="error-message"
       >
@@ -189,7 +164,6 @@ export default {
     .error-message-container {
         padding: 5px;
         margin-bottom: 10px;
-        border: 1px dashed #c9c9c9;
     }
 
     .info-item {
@@ -235,7 +209,6 @@ export default {
     .error-message-container {
         padding: 5px;
         margin-bottom: 10px;
-        border: 1px dashed #c9c9c9;
     }
 
     .info-item {
@@ -258,7 +231,6 @@ export default {
     overflow-y: auto;
 
     margin-bottom: 10px;
-    border: 1px dashed #c9c9c9;
     text-align: left;
 }
 

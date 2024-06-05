@@ -5,9 +5,35 @@
     </h2>
 
     <div class="zapin-v3__chart">
-      <h3 v-if='pairSymbols'>
-        Current Price:  {{ centerPrice }}  {{ pairSymbols[1] }} per {{ pairSymbols[0] }}
-      </h3>
+      <div class="zapin-v3__chart-head">
+        <h3 v-if='pairSymbols'>
+          Current Price:  {{ centerPrice }}  {{ pairSymbols[1] }} per {{ pairSymbols[0] }}
+        </h3>
+
+        <div
+          class="zapin-v3__chart-zoom"
+          v-if="isStablePool"
+        >
+          <span>
+            Zoom
+          </span>
+
+          <div
+            class="zapin-v3__chart-zoom__mark"
+            @click="zoomInOut(true)"
+            @keypress="zoomInOut(true)"
+          >
+            +
+          </div>
+          <div
+            class="zapin-v3__chart-zoom__mark"
+            @click="zoomInOut(false)"
+            @keypress="zoomInOut(false)"
+          >
+            -
+          </div>
+        </div>
+      </div>
 
       <div
         class="zapin-v3__loader"
@@ -152,6 +178,7 @@ export default {
   emits: ['set-range'],
   data() {
     return {
+      zoomType: 0.1,
       dataToRender: [],
       isLoading: true,
       ticksAmount: '0',
@@ -450,24 +477,74 @@ export default {
     },
   },
   methods: {
+    zoomInOut(scaleIn: boolean) {
+      const data: any[] = (this.$refs?.zapinChart as any)?.series[0]?.data;
+      const xStart = data[0][0];
+      const xEnd = data[data.length - 1][0];
+      console.log(this.$refs?.zapinChart, '__this.$refs?.zapinChart');
+      console.log(xStart, xEnd, 'zoomIn');
+
+      const zoomChange = this.isStablePool ? this.zoomType : this.zoomType * 10;
+
+      const start = xStart + zoomChange;
+      const finish = xEnd - zoomChange;
+      const lengthArr = (finish - start + 1) * 10;
+
+      let buildData = Array
+        .from({ length: lengthArr }, (_, a) => [Number((a / 10 + start).toFixed(1)), 0]);
+      if (this.isStablePool) buildData = buildData.filter((_) => (_[0] <= 2));
+      if ((this.zoomType === 0.5 && scaleIn)
+            || (new BN(this.zoomType).isLessThanOrEqualTo(0) && !scaleIn)) return;
+
+      const zoomNum = 0.1;
+
+      if (scaleIn) {
+        this.zoomType = zoomNum + this.zoomType;
+      } else {
+        this.zoomType -= zoomNum;
+      }
+
+      console.log(this.zoomType, '__thiszoomType');
+      if (buildData?.length === 0) return;
+
+      Array
+        .from({ length: this.zoomType * 10 }).forEach(() => buildData.pop());
+
+      // (this.$refs?.zapinChart as any)?.zoomX(xStart, xEnd);
+      (this.$refs?.zapinChart as any).updateSeries([{
+        data: buildData,
+      }], false, true);
+
+      this.optionsChart.xaxis = {
+        labels: {
+          formatter(value: number) {
+            if (value === 0) return '0';
+            return +(value.toFixed(1)) % 0.1 === 0 ? value.toFixed(2) : '';
+          },
+          style: {
+            colors: '#687386',
+            fontSize: '14px',
+          },
+        },
+      };
+    },
     decrPrice(isMin: boolean) {
       if (isMin) {
-        this.minPrice = new BN(this.minPrice).times(0.99).toFixed(4);
+        this.minPrice = new BN(this.minPrice).times(0.99).toFixed(0);
       } else {
-        this.maxPrice = new BN(this.maxPrice).times(0.99).toFixed(4);
+        this.maxPrice = new BN(this.maxPrice).times(0.99).toFixed(0);
       }
     },
     addPrice(isMin: boolean) {
       if (isMin) {
-        this.minPrice = new BN(this.minPrice).times(1.01).toFixed(4);
+        this.minPrice = new BN(this.minPrice).times(1.01).toFixed(0);
       } else {
-        this.maxPrice = new BN(this.maxPrice).times(1.01).toFixed(4);
+        this.maxPrice = new BN(this.maxPrice).times(1.01).toFixed(0);
       }
     },
     selectEvent(e: any, o: any) {
-      if (this.isStablePool) return;
-      const minPrice = o.xaxis?.min?.toFixed(4);
-      const maxPrice = o.xaxis?.max?.toFixed(4);
+      const minPrice = new BN(o.xaxis?.min).toFixed(this.isStablePool ? 6 : 0);
+      const maxPrice = new BN(o.xaxis?.max).toFixed(this.isStablePool ? 6 : 0);
 
       if (new BN(maxPrice).lt(minPrice) || new BN(minPrice).gt(minPrice)) {
         notifyInst({
@@ -764,5 +841,38 @@ export default {
   justify-content: center;
   align-items: center;
   min-height: 150px;
+}
+
+.zapin-v3__chart-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.zapin-v3__chart-zoom {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.zapin-v3__chart-zoom__mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-2);
+  border: 1px solid var(--color-2);
+  min-width: 20px;
+  max-width: 20px;
+  min-height: 20px;
+  max-height: 20px;
+  font-size: 18px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: .2s ease background-color, color .2s ease;
+
+  &:hover {
+    background-color: var(--color-3);
+    color: var(--color-4);
+  }
 }
 </style>

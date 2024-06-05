@@ -319,7 +319,6 @@ import { ethers } from 'ethers';
 import {
   mapActions, mapGetters, mapState, mapMutations,
 } from 'vuex';
-import axios from 'axios';
 import {
   updateTokenValue,
   maxAll,
@@ -1147,6 +1146,8 @@ export default {
           .times(outputPrices[0]).div(sumReserves).toNumber(),
       });
 
+      console.log(proportions, '__proportions');
+
       proportions.outputTokens = proportions.outputTokens.filter(
         (item: any) => item.proportion > 0,
       );
@@ -1159,6 +1160,21 @@ export default {
         userAddr: this.zapContract.target,
         slippageLimitPercent: this.getSlippagePercent(),
       };
+
+      if (proportions.inputTokens?.length === 0 && proportions.outputTokens?.length === 0) {
+        await this.initZapInTransaction(
+          null,
+          proportions.inputTokens,
+          proportions.outputTokens,
+          proportions,
+          this.lastPoolInfoData,
+          this.zapPool,
+        );
+
+        this.isSwapLoading = false;
+        this.clickOnStake = false;
+        return;
+      }
 
       const whiteList = WHITE_LIST_ODOS[request.chainId as keyof typeof WHITE_LIST_ODOS];
       const requestData = {
@@ -1213,47 +1229,6 @@ export default {
           this.isSwapLoading = false;
           this.clickOnStake = false;
         });
-    },
-
-    async getOdosRequest(request: any) {
-      const whiteList = WHITE_LIST_ODOS[request.chainId as keyof typeof WHITE_LIST_ODOS];
-      const swapParams = {
-        chainId: request.chainId,
-        inputTokens: request.inputTokens,
-        outputTokens: request.outputTokens,
-        gasPrice: request.gasPrice,
-        userAddr: ethers.getAddress(
-          request.userAddr.toLowerCase(),
-        ),
-        slippageLimitPercent: request.slippageLimitPercent,
-        sourceBlacklist: this.getSourceLiquidityBlackList(),
-        sourceWhitelist: whiteList ?? [],
-        simulate: false,
-        pathViz: false,
-        disableRFQs: false,
-      };
-
-      // @ts-ignore
-      const url = 'https://api.overnight.fi/root/odos/sor/swap';
-      let transaction: any;
-      try {
-        transaction = await axios.post(url, swapParams);
-      } catch (e) {
-        console.error(`[chronosZap] getSwapTransaction: ${e}`);
-        return 0;
-      }
-
-      if (transaction.statusCode === 400) {
-        console.error(`[chronosZap]  ${transaction.description}`);
-        return 0;
-      }
-
-      if (transaction.data.transaction === undefined) {
-        console.error('[chronosZap] transaction.tx is undefined');
-        return 0;
-      }
-
-      return transaction.data.transaction;
     },
 
     getSourceLiquidityBlackList() {
@@ -1571,8 +1546,8 @@ export default {
     },
     async initZapInTransaction(
       responseData: any,
-      requestInputTokens: any,
-      requestOutputTokens: any,
+      requestInputTokens: any[],
+      requestOutputTokens: any[],
       proportions: any,
       poolInfo: any,
       zapPool: any,
@@ -1607,7 +1582,7 @@ export default {
       const txData = {
         inputs: requestInput,
         outputs: requestOutput,
-        data: responseData.transaction.data,
+        data: responseData ? responseData.transaction.data : null,
       };
 
       let gaugeData: any;
@@ -1743,56 +1718,6 @@ export default {
 
       this.recalculateOutputTokensSum();
     },
-    async simulateSwap() {
-      if (this.isSumulateSwapLoading) {
-        return;
-      }
-
-      if (
-        this.inputTokensWithSelectedTokensCount < 1
-        || this.outputTokensWithSelectedTokensCount < 1
-      ) {
-        return;
-      }
-
-      this.isSumulateSwapLoading = true;
-
-      const actualGas = await odosApiService.getActualGasPrice(this.networkId);
-
-      const input = this.getRequestInputTokens(false);
-      const output = this.getRequestOutputTokens(false);
-      if (!input.length || !output.length) {
-        this.isSumulateSwapLoading = false;
-        return;
-      }
-
-      const whiteList = WHITE_LIST_ODOS[this.networkId as keyof typeof WHITE_LIST_ODOS];
-      const requestData = {
-        chainId: this.networkId,
-        inputTokens: input,
-        outputTokens: output,
-        gasPrice: actualGas,
-        userAddr: ethers.getAddress(this.account.toLowerCase()),
-        slippageLimitPercent: this.getSlippagePercent(),
-        sourceBlacklist: this.getSourceLiquidityBlackList(),
-        sourceWhitelist: whiteList ?? [],
-        simulate: true,
-        pathViz: true,
-        referralCode: this.odosReferalCode,
-      };
-
-      this.clearQuotaInfo();
-
-      this.quoteRequest(requestData)
-        .then(() => {
-          this.isSumulateSwapLoading = false;
-        })
-        .catch((e) => {
-          console.error('Odos simulate swap request failed', e);
-          this.isSumulateSwapLoading = false;
-        });
-    },
-
     getSlippagePercent() {
       return this.slippagePercent;
     },
