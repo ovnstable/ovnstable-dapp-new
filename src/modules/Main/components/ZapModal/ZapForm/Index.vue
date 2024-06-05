@@ -1582,7 +1582,7 @@ export default {
       const txData = {
         inputs: requestInput,
         outputs: requestOutput,
-        data: responseData ? responseData.transaction.data : null,
+        data: responseData ? responseData.transaction.data : '0x',
       };
 
       let gaugeData: any;
