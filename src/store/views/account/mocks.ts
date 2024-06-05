@@ -123,6 +123,11 @@ export const USER_BALANCES_SCHEME = {
   137: [
     wUsdToken,
     ...chains_56_324_137,
+    {
+      symbol: 'USDC.e',
+      contractName: 'usdcBridged',
+      isOvnToken: false,
+    },
   ],
   10: [
     ...allChainsTokens,
@@ -141,6 +146,11 @@ export const USER_BALANCES_SCHEME = {
   ],
   324: [
     ...chains_56_324_137,
+    {
+      symbol: 'USDC.e',
+      contractName: 'usdcBridged',
+      isOvnToken: false,
+    },
   ],
   59144: [
     ...chains_56_59144_42161,

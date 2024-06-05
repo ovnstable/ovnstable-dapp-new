@@ -148,10 +148,10 @@ export const buildLink = (pool: any, poolPlatform: string) => {
       url = 'https://www.convexfinance.com/stake/arbitrum/13';
       break;
     case 'Pancake':
-      url = `https://pancakeswap.finance/info/v3/arb/pairs/${pool.address}`;
+      url = `https://pancakeswap.finance/info/v3/${pool.chainName}/pairs/${pool.address}?chain=${pool.chainName}`;
       break;
     case 'Lynex':
-      url = 'https://app.lynex.fi/liquidity';
+      url = 'https://app.lynex.fi/liquidity/manage/';
       break;
     case 'Baseswapdefiedge':
       url = 'https://baseswap.defiedge.io/s/base/';
