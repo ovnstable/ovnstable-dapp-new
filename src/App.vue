@@ -7,7 +7,7 @@
     >
       <div class="app-wrapper__notify">
         <p>
-          All operations with USD+ on Linea and zkSync are currently unavailable. This issue will be fixed soon. We are sorry for the inconvenience.
+          All operations with USD+ on zkSync are currently unavailable. This issue will be fixed soon. We are sorry for the inconvenience.
         </p>
         <ButtonComponent
           btn-styles="transparent"
@@ -118,7 +118,7 @@ export default {
     ...mapGetters('errorModal', { showErrorModal: 'show' }),
     ...mapGetters('successModal', { showSuccessModal: 'show' }),
     isShowHackWarning() {
-      return [59144, 324].includes(this.networkId);
+      return [324].includes(this.networkId);
     },
   },
 };
