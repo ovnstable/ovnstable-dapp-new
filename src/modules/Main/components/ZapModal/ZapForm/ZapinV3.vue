@@ -578,7 +578,7 @@ export default {
             labels: {
               formatter(value: number) {
                 if (value === 0) return '0';
-                const modulo = self.zoomType < 5 ? 0.0002 : 0.5;
+                const modulo = self.zoomType <= 5 ? 0.0002 : 0.5;
                 const num = new BN(value.toFixed(1)).times(10);
                 return num.modulo(modulo).toNumber() === 0 ? value.toFixed(modulo === 0.0002 ? 4 : 2) : '';
               },
