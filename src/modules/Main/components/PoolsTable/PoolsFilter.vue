@@ -4,6 +4,7 @@
       <SwitchTabs
         :tabs="filterTabs"
         :active-tab="poolTypes.ALL"
+        tabStyle="transparent"
         type="large"
         @tab-change="changeTab"
       />
@@ -98,16 +99,28 @@ export default {
           name: 'ALL',
         },
         {
+          id: poolTypes.VOLATILE,
+          name: 'VOLATILE',
+        },
+        {
+          id: poolTypes.STABLE,
+          name: 'STABLE',
+        },
+        {
+          id: poolTypes.V2,
+          name: 'V2',
+        },
+        {
+          id: poolTypes.V3,
+          name: 'V3',
+        },
+        {
           id: poolTypes.TOKENPLUS,
-          name: 'TOKEN+',
+          name: 'USD+',
         },
         {
           id: poolTypes.OVN,
           name: 'OVN',
-        },
-        {
-          id: poolTypes.HOT,
-          name: 'HOT',
         },
       ],
     };
@@ -222,12 +235,12 @@ export default {
 }
 .pools-wrap__filters-networks {
   display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-left: auto;
+  width: 100%;
 
   @media (max-width: 1240px) {
-    width: 100%;
-    justify-content: space-between;
-    align-items: center;
     margin: 10px 0;
   }
 }

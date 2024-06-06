@@ -5,9 +5,7 @@
 
       <div class="pools-header">
         <div class="pools-header__item">Chain</div>
-        <div class="pools-header__item">Pool tokens</div>
-        <div class="pools-header__item">Staking platform</div>
-        <div class="pools-header__item">Version</div>
+        <div class="pools-header__item">Pool name</div>
         <div
           class="pools-header__item pools-header__item--hover"
           @click="toggleOrderType('APR')"
@@ -24,6 +22,7 @@
           TVL
           <BaseIcon :name="iconNameSort('TVL')" />
         </div>
+        <div class="pools-header__item">Platforms</div>
         <div class="pools-header__item" />
       </div>
 
@@ -53,9 +52,6 @@
                     alt="token"
                     :src="pool.token0Icon"
                   />
-                  <span>
-                    {{ getTokenNames(pool)[0] }}
-                  </span>
                 </div>
                 <div
                   v-if="pool.token1Icon"
@@ -65,9 +61,6 @@
                     alt="token"
                     :src="pool.token1Icon"
                   />
-                  <span>
-                    {{ getTokenNames(pool)[1] }}
-                  </span>
                   <div
                     v-if="pool.poolTag && !pool.token2Icon"
                     class="pools-table__tag"
@@ -109,37 +102,19 @@
                   />
                 </div>
               </div>
-            </div>
-            <div class="pools-table__platform-row">
-              <a
-                target="_blank"
-                rel="noopener noreferrer"
-                class="pools-table__platform"
-                v-for="(poolPlat, key) in pool.platform"
-                :href="getPlatformLink(pool, poolPlat)"
-                :key="key"
-              >
-                <BaseIcon
-                  class="pools-table__platform-icon"
-                  :name="poolPlat"
-                />
-
-                <span v-if="pool.poolNameForAgregator">
-                  {{ pool.poolNameForAgregator.toUpperCase() }}
-                </span>
-                <span v-else>
-                  {{ poolPlat.toUpperCase() }}
-                </span>
-                <div class="button-link">
-                  <BaseIcon
-                    name="PayoutArrow"
-                  />
+              <div>
+                <div>
+                  {{ pool.name }}
                 </div>
-              </a>
-            </div>
-
-            <div class="pools-table__version">
-              {{ pool.poolVersion }}
+                <div class="pools-table__tokens-details">
+                  <span>
+                    {{ pool.poolVersion }}
+                  </span>
+                  <span>
+                    {{ isVolatile }}
+                  </span>
+                </div>
+              </div>
             </div>
             <div class="pools-table__apy">
               <div
@@ -178,6 +153,34 @@
                 </div>
               </div>
             </div>
+            <div class="pools-table__platform-row">
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                class="pools-table__platform"
+                v-for="(poolPlat, key) in pool.platform"
+                :href="getPlatformLink(pool, poolPlat)"
+                :key="key"
+              >
+                <BaseIcon
+                  class="pools-table__platform-icon"
+                  :name="poolPlat"
+                />
+
+                <span v-if="pool.poolNameForAgregator">
+                  {{ pool.poolNameForAgregator.toUpperCase() }}
+                </span>
+                <span v-else>
+                  {{ poolPlat.toUpperCase() }}
+                </span>
+                <div class="button-link">
+                  <BaseIcon
+                    name="PayoutArrow"
+                  />
+                </div>
+              </a>
+            </div>
+
             <ButtonComponent
               v-if="pool.platform[0] === 'Thruster'"
               btnStyles="faded"
@@ -272,6 +275,9 @@ export default {
     },
   },
   computed: {
+    isVolatile() {
+      return 'pool';
+    },
     getTagName() {
       return (poolTag: string) => {
         if (poolTag === POOL_TAG.HOT) return 'HOT';
@@ -424,7 +430,7 @@ export default {
 .pools-table__new,
 .pools-table__blast {
   display: grid;
-  grid-template-columns: minmax(70px, 0.5fr) minmax(200px, 3fr) minmax(200px, 2fr) minmax(140px, 1fr) minmax(140px, 1fr) minmax(140px, 1fr) minmax(140px, 1fr);
+  grid-template-columns: minmax(70px, 0.5fr) minmax(200px, 3fr) minmax(200px, 2fr) minmax(140px, 1fr) minmax(140px, 1fr) minmax(140px, 1fr);
   justify-content: space-between;
   width: 100%;
   padding: 15px 0;
@@ -452,12 +458,12 @@ export default {
   }
 }
 .pools-table__blast {
-  grid-template-columns: minmax(70px, 0.5fr) minmax(200px, 3fr) minmax(200px, 2fr) minmax(140px, 1fr) minmax(140px, 1fr) minmax(140px, 1fr) minmax(140px, 1fr);
+  grid-template-columns: minmax(70px, 0.5fr) minmax(200px, 3fr) minmax(200px, 2fr) minmax(140px, 1fr) minmax(140px, 1fr) minmax(140px, 1fr);
 }
 
 .pools-header {
   display: grid;
-  grid-template-columns: minmax(70px, 0.5fr) minmax(200px, 3fr) minmax(200px, 2fr) minmax(140px, 1fr) minmax(140px, 1fr) minmax(140px, 1fr) minmax(140px, 1fr);
+  grid-template-columns: minmax(70px, 0.5fr) minmax(200px, 3fr) minmax(200px, 2fr) minmax(140px, 1fr) minmax(140px, 1fr) minmax(140px, 1fr);
   width: 100%;
   color: var(--color-2);
   margin-top: 20px;
@@ -508,8 +514,14 @@ export default {
 }
 
 .pools-table__tokens-wrap {
+  display: flex;
   position: relative;
   width: fit-content;
+}
+
+.pools-table__tokens-details {
+  display: flex;
+  gap: 4px
 }
 
 .pools-table__tokens {
@@ -539,27 +551,20 @@ export default {
   position: relative;
   display: flex;
   align-items: center;
-  padding: 2px 30px 2px 9px;
-  border: 1px solid var(--color-17);
-  background-color: var(--color-4);
-  border-radius: 30px;
-  right: 26px;
+  border-radius: 50%;
+  right: 0;
   [data-theme="dark"] & {
     border-color: var(--color-2);
     background-color: var(--color-17);
     color: var(--color-4);
   }
 
-  &:first-child {
-    right: 0;
-  }
-
-  &:last-child {
-    padding: 2px 9px;
+  &:nth-child(2) {
+    right: 5px;
   }
 
   &:nth-child(3) {
-    right: 52px;
+    right: 10px;
 
     span {
       display: none;
@@ -567,9 +572,8 @@ export default {
   }
 
   img {
-    width: 24px;
-    height: 24px;
-    margin-right: 5px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
   }
 
@@ -897,7 +901,7 @@ export default {
     font-size: 12px;
   }
   .pools-table__row {
-    grid-template-columns: 0.5fr 2fr 2fr 2fr 1fr 1.35fr 0.9fr;
+    grid-template-columns: 0.5fr 2fr 2fr 1fr 1.35fr 0.9fr;
     button {
       font-size: 14px;
     }
