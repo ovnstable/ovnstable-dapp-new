@@ -129,6 +129,7 @@
 
                     <div
                       class="zap-row"
+                      v-if="selectedInputTokens?.length > 1"
                     >
                       <div class="transaction-info-title">Multi-swap Odos fee</div>
                       <div>
@@ -144,7 +145,9 @@
                       </div>
                     </div>
 
-                    <div class="zap-row">
+                    <div
+                      class="zap-row"
+                    >
                       <div class="transaction-info-title">Single-swap Odos fee</div>
                       <div>
                       <!-- <Tooltip text="Single-input/output swaps are free" /> -->
@@ -1582,7 +1585,7 @@ export default {
       const txData = {
         inputs: requestInput,
         outputs: requestOutput,
-        data: responseData ? responseData.transaction.data : null,
+        data: responseData ? responseData.transaction.data : '0x',
       };
 
       let gaugeData: any;
@@ -1605,7 +1608,7 @@ export default {
       if (this.zapPool.poolVersion === 'v3') {
         gaugeData = {
           pair: this.zapPool.address,
-          priceRange: this.v3Range.isStable ? ['0', '0'] : this.v3Range.range,
+          priceRange: this.v3Range.range,
           amountsOut: [proportions.amountToken0Out, proportions.amountToken1Out],
           tickDelta: this.v3Range.isStable ? this.v3Range.ticks : '0',
         };
