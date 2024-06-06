@@ -430,7 +430,7 @@ export default {
 .pools-table__new,
 .pools-table__blast {
   display: grid;
-  grid-template-columns: minmax(70px, 0.5fr) minmax(200px, 3fr) minmax(200px, 2fr) minmax(140px, 1fr) minmax(140px, 1fr) minmax(140px, 1fr);
+  grid-template-columns: minmax(70px, 0.5fr) minmax(150px, 1.5fr) minmax(100px, 1fr) minmax(140px, 1fr) minmax(140px, 1.5fr) minmax(140px, 1fr);
   justify-content: space-between;
   width: 100%;
   padding: 15px 0;
@@ -458,12 +458,12 @@ export default {
   }
 }
 .pools-table__blast {
-  grid-template-columns: minmax(70px, 0.5fr) minmax(200px, 3fr) minmax(200px, 2fr) minmax(140px, 1fr) minmax(140px, 1fr) minmax(140px, 1fr);
+  grid-template-columns: minmax(70px, 0.5fr) minmax(150px, 1.5fr) minmax(100px, 1fr) minmax(140px, 1fr) minmax(140px, 1.5fr) minmax(140px, 1fr);
 }
 
 .pools-header {
   display: grid;
-  grid-template-columns: minmax(70px, 0.5fr) minmax(200px, 3fr) minmax(200px, 2fr) minmax(140px, 1fr) minmax(140px, 1fr) minmax(140px, 1fr);
+  grid-template-columns: minmax(70px, 0.5fr) minmax(150px, 1.5fr) minmax(100px, 1fr) minmax(140px, 1fr) minmax(140px, 1.5fr) minmax(140px, 1fr);
   width: 100%;
   color: var(--color-2);
   margin-top: 20px;
