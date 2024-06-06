@@ -39,11 +39,11 @@
           <a
             target="_blank"
             rel="noopener noreferrer"
-            href="https://overnightdefi.medium.com/overnight-linea-the-surge-ebac75eb8064"
+            href="https://overnightdefi.medium.com/overnight-finance-presents-zap-in-feature-for-concentrated-liquidity-pools-ff1f547d76cb"
           >
             <img
               alt="banner"
-              :src="getImageUrl('assets/images/common/banner-linea.png')"
+              :src="getImageUrl('assets/images/common/banner_zapin_cl.png')"
             />
           </a>
         </swiper-slide>
