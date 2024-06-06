@@ -1,3 +1,5 @@
+<!-- eslint-disable vue/html-indent -->
+<!-- eslint-disable vue/first-attribute-linebreak -->
 <template>
   <div>
     <div
@@ -21,99 +23,108 @@
       </div>
 
       <template v-else>
-        <div class="zapin-block">
+        <div :class="['zapin-block', { v3: zapPool?.poolVersion === 'v3' }]">
           <div class="zapin-block__header">
             ZAP IN {{ zapPool?.poolVersion?.toUpperCase() }}
           </div>
           <div class="zapin-block__row">
             <div class="zapin-block__content">
-              <div>
+              <div class="zapin-block__wrapper">
                 <div class="mb-4 mt-1">
-                  <PoolLabel :pool="zapPool" />
-                </div>
-
-                <div class="input-swap-container">
-                  <div class="swap-form__body-block">
-                    <div class="swap-form__body-block__title">
-                      <h3>
-                        You send
-                      </h3>
-                      <div
-                        v-if="inputTokensWithSelectedTokensCount"
-                        class="swap-form__body-block__inputs-max"
-                        @click="maxAllMethod"
-                        @keypress="maxAllMethod"
-                      >
-                        Max all
-                      </div>
-                    </div>
-                    <TransitionGroup
-                      name="staggered-fade"
-                      tag="div"
-                      :class="{ 'swap-form__body-block__inputs': true, 'block-inputs--scroll': outputTokens?.length > 3 }"
-                      :css="false"
-                      @before-enter="beforeEnterList"
-                      @enter="onEnterList"
-                      @onLeave="onLeaveList"
-                    >
-                      <div
-                        v-for="token in inputTokens"
-                        :key="token.id"
-                        :data-index="token.id"
-                        class="swap-form__body-block__inputs-item"
-                      >
-                        <TokenForm
-                          :token-info="token"
-                          :is-token-removable="isInputTokensRemovable"
-                          :is-input-token="true"
-                          :disabled="false"
-                          :balances-loading="isBalancesLoading"
-                          @select-token="selectFormToken"
-                          @remove-token="removeInputToken"
-                          @update-token="updateTokenValueMethod"
-                        />
-                      </div>
-                      <div
-                        v-if="isInputTokensAddAvailable"
-                        class="swap-form__body-block__inputs-add"
-                        @click="addNewInputToken"
-                        @keypress="addNewInputToken"
-                      >
-                        +
-                      </div>
-                    </TransitionGroup>
-                  </div>
-                </div>
-
-                <div
-                  class="swap-form__body-arrow"
-                >
-                  <BaseIcon
-                    name="ArrowDown"
+                  <h2 v-if="zapPool?.poolVersion === 'v3'">
+                    Pool you shoose
+                  </h2>
+                  <PoolLabel
+                    :pool="zapPool"
+                    class="pool-info"
                   />
                 </div>
+                <div class="zapin-block__swap-wrapper">
+                  <div class="input-swap-container">
+                    <div class="swap-form__body-block">
+                      <div class="swap-form__body-block__title">
+                        <h3>
+                          You send
+                        </h3>
+                        <div
+                          v-if="inputTokensWithSelectedTokensCount"
+                          class="swap-form__body-block__inputs-max"
+                          @click="maxAllMethod"
+                          @keypress="maxAllMethod"
+                        >
+                          Max all
+                        </div>
+                      </div>
+                      <TransitionGroup
+                        name="staggered-fade"
+                        tag="div"
+                        :class="{ 'swap-form__body-block__inputs': true, 'block-inputs--scroll': outputTokens?.length > 3 }"
+                        :css="false"
+                        @before-enter="beforeEnterList"
+                        @enter="onEnterList"
+                        @onLeave="onLeaveList"
+                      >
+                        <div
+                          v-for="token in inputTokens"
+                          :key="token.id"
+                          :data-index="token.id"
+                          class="swap-form__body-block__inputs-item"
+                        >
+                          <TokenForm
+                            :token-info="token"
+                            :is-token-removable="isInputTokensRemovable"
+                            :is-input-token="true"
+                            :disabled="false"
+                            :balances-loading="isBalancesLoading"
+                            @select-token="selectFormToken"
+                            @remove-token="removeInputToken"
+                            @update-token="updateTokenValueMethod"
+                          />
+                        </div>
+                        <div
+                          v-if="isInputTokensAddAvailable"
+                          class="swap-form__body-block__inputs-add"
+                          @click="addNewInputToken"
+                          @keypress="addNewInputToken"
+                        >
+                          +
+                        </div>
+                      </TransitionGroup>
+                    </div>
+                  </div>
+                  <div class="swap-form__body-arrow-conatiner">
+                    <div
+                      class="swap-form__body-arrow"
+                    >
+                      <BaseIcon
+                        name="ArrowDown"
+                      />
+                    </div>
+                  </div>
 
-                <div class="out-swap-container pt-5">
-                  <div
-                    v-for="token in (outputTokens as any)"
-                    :key="token.id"
-                    class="input-component-container"
-                  >
-                    <TokenForm
-                      :token-info="token"
-                      :is-token-removable="isOutputTokensRemovable"
-                      :is-input-token="false"
-                      :disabled="true"
-                      :balances-loading="isBalancesLoading"
-                      @select-token="selectOutputToken"
-                      @remove-token="removeOutputToken"
-                    />
+                  <div class="out-swap-container pt-5">
+                    <div
+                      v-for="token in (outputTokens as any)"
+                      :key="token.id"
+                      class="input-component-container"
+                    >
+                      <TokenForm
+                        :token-info="token"
+                        :is-token-removable="isOutputTokensRemovable"
+                        :is-input-token="false"
+                        :disabled="true"
+                        :balances-loading="isBalancesLoading"
+                        @select-token="selectOutputToken"
+                        @remove-token="removeOutputToken"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <div v-if="sumOfAllSelectedTokensInUsd && ifMoreThanOneSelectedTokensAdded">
-                <div class="transaction-info-container">
+              <div v-if="sumOfAllSelectedTokensInUsd && ifMoreThanOneSelectedTokensAdded"
+                   class="transaction-info-container"
+              >
                   <div class="transaction-info-body">
                     <div
                       class="zap-row"
@@ -155,7 +166,6 @@
                     </div>
                   </div>
                 </div>
-              </div>
 
               <div>
                 <SwapSlippageSettings

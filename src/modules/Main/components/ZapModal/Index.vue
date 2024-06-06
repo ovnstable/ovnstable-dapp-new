@@ -4,6 +4,7 @@
       type-modal="custom"
       v-model="showModal"
       @close="closeModal"
+      :customClass="zapPool?.poolVersion ?? ''"
     >
       <div :class="['modal-content', { v3: zapPool?.poolVersion === 'v3' }]">
         <ZapForm
@@ -83,12 +84,15 @@ export default {
 
   &.v3 {
     width: 100vw;
-    max-width: 1200px;
+    max-width: 80vw;
+    height: 100%;
+    // zoom: 90%;
   }
 
   @media (max-width: 1240px) {
     &.v3 {
-      width: 80vw;
+      max-width: 80vw;
+      // zoom: normal;
     }
   }
 }

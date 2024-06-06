@@ -80,7 +80,9 @@
 }
 
 .input-component-container {
-  margin-bottom: 4px;
+  // margin-bottom: 4px;
+  display: flex;
+  flex-direction: column;
 }
 
 .max-all {
@@ -282,11 +284,18 @@
   align-items: center;
 }
 
+.swap-form__body-arrow-conatiner {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
 .swap-form__body-arrow {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 20px auto;
+  // margin: 20px auto;
   background-color: var(--color-5);
   border-radius: 50%;
   width: 34px;
@@ -407,6 +416,50 @@
   margin-top: 20px;
 }
 
+.zapin-block {
+  &.v3 {
+    .zapin-block__content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      .zapin-block__wrapper {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        .mb-4 .mt-1 {
+          flex: 1;
+        }
+        .zapin-block__swap-wrapper {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          flex: 1;
+          gap: 10px;
+        }
+        .input-swap-container {
+          flex: 1;
+        }
+        .out-swap-container {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          box-sizing: border-box;
+          gap: 4px;
+        }
+      }
+      .pool-info {
+        margin: 8px 0;
+      }
+      .slipage-block {
+        .slippage-selector {
+          justify-content: flex-start;
+        }
+      }
+    }
+  } 
+}
+
 .zapin-block__row {
   display: flex;
   width: 100%;
@@ -418,12 +471,16 @@
 }
 
 .zapin-block__header {
-  background-color: var(--color-5);
+  // background-color: var(--color-5);
   padding: 5px 12px;
   border-radius: 30px;
   font-size: 14px;
   margin: 0 auto 30px auto;
   width: fit-content;
+  [data-theme="dark"] & {
+    background-color: var(--color-7);
+    color: var(--color-1);
+  }
 }
 
 .zapin-block__v3-spin {

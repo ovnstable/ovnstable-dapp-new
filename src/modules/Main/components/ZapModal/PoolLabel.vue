@@ -6,13 +6,7 @@
     <div class="zap-header__content">
       <BaseIcon :name="pool.chainName" />
       <div class="zap-header__col">
-        <span
-          :class="isShort ? 'short-title platform-name-short' : ''"
-          class="platform-name pt-1"
-        >
-          {{pool.name}}
-        </span>
-        <div>
+        <div class="zap-header__token-container">
           <img
             v-if="pool.token0Icon"
             :class="isShort ? 'icon-short' : ''"
@@ -26,26 +20,32 @@
             alt="token"
           />
         </div>
+        <span
+          :class="isShort ? 'short-title platform-name-short' : ''"
+          class="platform-name pt-1"
+        >
+          {{pool.name}}
+        </span>
       </div>
       <div class="zap-header__col">
+        <BaseIcon :name="pool.platform[0]" />
         <span
           :class="isShort ? 'pool-detail-title-short' : ''"
           class="pool-detail-title"
         >
           {{ pool.platform[0] }}
         </span>
-        <BaseIcon :name="pool.platform[0]" />
       </div>
-      <div class="zap-header__col">
+      <div class="zap-header__col short">
         <div
           :class="isShort ? 'pool-detail-title-short' : ''"
           class="pool-detail-title"
         >
           <span v-if="pool.platform[0] === 'Beefy'">
-            APY
+            APY:&nbsp;
           </span>
           <span v-else>
-            APR
+            APR:&nbsp;
           </span>
         </div>
         <div
@@ -60,12 +60,12 @@
           </span>
         </div>
       </div>
-      <div class="zap-header__col">
+      <div class="zap-header__col short">
         <span
           :class="isShort ? 'pool-detail-title-short' : ''"
           class="pool-detail-title"
         >
-          TVL
+          TVL:&nbsp;
         </span>
         <span
           v-if="pool.tvl >= 1000000"
@@ -140,6 +140,10 @@ export default {
   align-items: center;
   justify-content: space-between;
   padding: 12px;
+  border-radius: 12px;
+  [data-theme="dark"] & {
+    background-color: var(--color-7);
+  }
 }
 
 .zap-header__row {
@@ -151,12 +155,29 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-direction: column;
+  flex-direction: row;
   gap: 8px;
+  &.short {
+    gap: 0px;
+  }
 }
 @media (max-width: 640px) {
   .zap-header__col {
     font-size: 12px;
   }
+}
+.zap-header__token-container {
+  position: relative;
+  min-width: 50px;
+  img {
+    position: absolute;
+  }
+  :nth-child(1) {
+    bottom: -16px;
+}
+:nth-child(2) {
+    bottom: -16px;
+    left: 20px;
+}
 }
 </style>
