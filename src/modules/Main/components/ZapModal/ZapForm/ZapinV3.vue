@@ -541,7 +541,6 @@ export default {
 
       this.zoomType = newZoomType;
 
-      console.log(this.zoomType, '__this.zoomType');
       if (this.zoomType === 1) {
         this.initBuildData();
         return;
@@ -566,7 +565,6 @@ export default {
 
       const buildData = createScaledArray(minVal, maxVal);
 
-      console.log(buildData, '___buildData');
       if (buildData?.length === 0) return;
       (this.$refs?.zapinChart as any).updateSeries([{
         data: buildData,

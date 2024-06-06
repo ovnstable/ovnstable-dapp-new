@@ -129,6 +129,7 @@
 
                     <div
                       class="zap-row"
+                      v-if="selectedInputTokens?.length > 1"
                     >
                       <div class="transaction-info-title">Multi-swap Odos fee</div>
                       <div>
@@ -144,7 +145,9 @@
                       </div>
                     </div>
 
-                    <div class="zap-row">
+                    <div
+                      class="zap-row"
+                    >
                       <div class="transaction-info-title">Single-swap Odos fee</div>
                       <div>
                       <!-- <Tooltip text="Single-input/output swaps are free" /> -->
