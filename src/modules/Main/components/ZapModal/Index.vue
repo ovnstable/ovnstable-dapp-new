@@ -6,7 +6,7 @@
       @close="closeModal"
       :customClass="zapPool?.poolVersion ?? ''"
     >
-      <div :class="['modal-content', { v3: zapPool?.poolVersion === 'v3' }]">
+      <div :class="['modal-content', { v3: zapPool?.poolVersion === 'v3' }, { v2: zapPool?.poolVersion === 'v2' }]">
         <ZapForm
           :zap-pool="zapPool"
           @close-form="closeModal"

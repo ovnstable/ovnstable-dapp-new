@@ -417,7 +417,7 @@
 }
 
 .zapin-block {
-  &.v3 {
+  &.v3, &.v2 {
     .zapin-block__content {
       flex: 1;
       display: flex;
