@@ -3,7 +3,6 @@
     <h2>
       Set price range
     </h2>
-
     <div class="zapin-v3__chart">
       <div class="zapin-v3__chart-head">
         <h3 v-if='pairSymbols'>
@@ -147,8 +146,9 @@
             class="range-presets__plusmin"
             v-if="showPresetPlusMinus(range)"
           >
-            <span>+</span>
-            <span>-</span>
+            ±
+            <!-- <span>+</span>
+            <span>-</span> -->
           </div>
 
           {{ range.value === 100 ? "FULL" : `${range.label}${getPresetSymbol}` }}
@@ -760,18 +760,22 @@ export default {
 
 <style lang="scss" scoped>
 .zapin-v3 {
-  width: 100%;
-
-  h2 {
-    margin-top: 14px;
-  }
+  // width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
 }
 
 .zapin-v3__chart {
   padding: 14px 14px 36px 14px;
   border-radius: 10px;
   background-color: var(--color-5);
-  margin-top: 8px;
+  flex-grow: 1;
+  [data-theme="dark"] & {
+    background-color: var(--color-7);
+    color: var(--color-1);
+  }
 
   h3 {
     margin-bottom: 16px;
@@ -781,7 +785,6 @@ export default {
 .zapin-v3__row {
   display: flex;
   gap: 8px;
-  margin-top: 8px;
 
   h3 {
     color: var(--color-1);
@@ -825,6 +828,8 @@ export default {
   display: flex;
   align-items: center;
   gap: 8px;
+  color: var(--color-1);
+  margin-top: 12px;
 }
 
 .zapin-v3__col-block {
@@ -832,6 +837,10 @@ export default {
   padding: 20px 14px;
   border-radius: 10px;
   background-color: var(--color-5);
+  [data-theme="dark"] & {
+    color: var(--color-4);
+    background-color: var(--color-7);
+  }
 }
 
 .range-presets {
@@ -839,13 +848,14 @@ export default {
   grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
   grid-gap: 10px;
   min-width: 300px;
-  margin-top: 12px;
+  // margin-top: 12px;
 }
 
 .range-presets__item {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 2px;
   padding: 8px 12px;
   min-width: 80px;
   color: var(--color-2);
@@ -877,13 +887,17 @@ export default {
 }
 
 .range-presets-wrap {
-  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  // margin-top: 14px;
 }
 
 .range-presets__plusmin {
   display: flex;
   flex-direction: column;
   align-items: center;
+  transform: scale(1.1);
 
   span {
     line-height: 4px;

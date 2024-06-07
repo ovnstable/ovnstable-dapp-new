@@ -495,6 +495,11 @@ export default {
   color: var(--color-2);
 }
 
+.pools-table__tokens-details {
+  display: flex;
+  gap: 4px
+}
+
 .pools-table__tokens {
   position: relative;
   display: flex;
