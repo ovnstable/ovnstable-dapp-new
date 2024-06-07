@@ -143,6 +143,7 @@
           <SelectComponent
             :value="selectModel"
             :list="selectListDemo"
+            select-styles="secondary"
             class="notranslate"
             value-field="title"
             id-field="id"

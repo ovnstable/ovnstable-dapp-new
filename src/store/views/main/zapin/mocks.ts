@@ -320,6 +320,25 @@ export const poolsInfoMap: any = {
     approveType: 'NFT',
     poolTokenType: 'DIFFERENT',
   },
+  // PANCAKE CL
+  '0xa1F9159e11aD48524c16C9bf10bf440815b03e6C': {
+    gauge: '0x46a15b0b27311cedf172ab29e4f4766fbe7f4364',
+    version: 3,
+    approveType: 'NFT',
+    poolTokenType: 'DIFFERENT',
+  },
+  '0xf92768916015b5eBd9fa54D6BA10dA5864e24914': {
+    gauge: '0x46a15b0b27311cedf172ab29e4f4766fbe7f4364',
+    version: 3,
+    approveType: 'NFT',
+    poolTokenType: 'DIFFERENT',
+  },
+  '0xe37304F7489ed253b2A46A1d9DabDcA3d311D22E': {
+    gauge: '0x46a15b0b27311cedf172ab29e4f4766fbe7f4364',
+    version: 3,
+    approveType: 'NFT',
+    poolTokenType: 'DIFFERENT',
+  },
 };
 
 export const poolTokensForZapMap = {
@@ -785,6 +804,37 @@ export const poolTokensForZapMap = {
       address: '0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452',
     },
   ],
+  // Pancake CL
+  '0xa1F9159e11aD48524c16C9bf10bf440815b03e6C': [
+    {
+      name: 'USD+',
+      address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
+    },
+    {
+      name: 'USDC',
+      address: chainContractsMap.arbitrum.usdcNative,
+    },
+  ],
+  '0xf92768916015b5eBd9fa54D6BA10dA5864e24914': [
+    {
+      name: 'USD+',
+      address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
+    },
+    {
+      name: 'ARB',
+      address: '0x912ce59144191c1204e64559fe8253a0e49e6548',
+    },
+  ],
+  '0xe37304F7489ed253b2A46A1d9DabDcA3d311D22E': [
+    {
+      name: 'USD+',
+      address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
+    },
+    {
+      name: 'WETH',
+      address: '0x82af49447d8a07e3bd95bd0d56f35241523fbab1',
+    },
+  ],
 } as any;
 
 export const zapPlatformContractTypeMap: any = {
@@ -876,6 +926,22 @@ export const zapPlatformContractTypeMap: any = {
   '0x4D69971CCd4A636c403a3C1B00c85e99bB9B5606': {
     name: 'Aerodrome',
     type: 'LP_STAKE_DIFF_STEPS',
+    typeOfDepositConstructor: 'CONSTRUCTOR_V3_WITH_TOKEN_ID',
+  },
+  // Pancake CL
+  '0xa1F9159e11aD48524c16C9bf10bf440815b03e6C': {
+    name: 'Pancake',
+    type: 'LP_WITH_STAKE_IN_ONE_STEP',
+    typeOfDepositConstructor: 'CONSTRUCTOR_V3_WITH_TOKEN_ID',
+  },
+  '0xf92768916015b5eBd9fa54D6BA10dA5864e24914': {
+    name: 'Pancake',
+    type: 'LP_WITH_STAKE_IN_ONE_STEP',
+    typeOfDepositConstructor: 'CONSTRUCTOR_V3_WITH_TOKEN_ID',
+  },
+  '0xe37304F7489ed253b2A46A1d9DabDcA3d311D22E': {
+    name: 'Pancake',
+    type: 'LP_WITH_STAKE_IN_ONE_STEP',
     typeOfDepositConstructor: 'CONSTRUCTOR_V3_WITH_TOKEN_ID',
   },
 };

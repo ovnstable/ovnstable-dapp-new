@@ -1,7 +1,10 @@
 <!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
 <template>
   <div class="switchtabs">
-    <div class="switchtabs__inner">
+    <div
+      class="switchtabs__inner"
+      :class="{ [tabStyle]: !!tabStyle }"
+    >
       <div
         v-for="item in tabs"
         class="switchtabs__inner-text"
@@ -27,6 +30,7 @@ interface ITab {
 }
 
 type TSize = 'default' | 'large'
+type TStyle = 'default' | 'transparent'
 
 export default {
   name: 'TabsComponent',
@@ -35,6 +39,10 @@ export default {
     tabs: {
       default: () => [],
       type: Array as PropType<ITab[]>,
+    },
+    tabStyle: {
+      default: 'default',
+      type: String as PropType<TStyle>,
     },
     type: {
       default: 'default',
@@ -108,6 +116,9 @@ export default {
     color: var(--color-18);
     background: var(--color-6);
   }
+  &.transparent {
+    background: transparent;
+  }
 }
 
 .switchtabs__inner-text {
@@ -124,6 +135,10 @@ export default {
   }
   &.large {
     padding: 9px 10px;
+  }
+
+  .transparent & {
+    background: transparent;
   }
 
   &::before {

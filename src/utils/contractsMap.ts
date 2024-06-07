@@ -62,6 +62,7 @@ export const chainContractsMap = {
     },
     ovn: '0xA3d1a8DEB97B111454B294E2324EfAD13a9d8396',
     usdc: '0xff970a61a04b1ca14834a43f5de4533ebddb5cc8',
+    usdcNative: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
     wrapped: '0x82af49447d8a07e3bd95bd0d56f35241523fbab1',
     market: '0x149Eb6E777aDa78D383bD93c57D45a9A71b171B1',
     dai: '0xda10009cbd5d07dd0cecc66161fc93d7c9000da1',

@@ -65,7 +65,7 @@
     <div class="mintredeem-form__row mintredeem-form__row--fees">
       <div class="mintredeem-form__row-item">
         <h1>Overnight Fee:</h1>
-        <span>0.04%</span>
+        <span>{{ getFee }}%</span>
       </div>
       <div class="mintredeem-form__row-item">
         <h1>You {{ swapMsg }}</h1>
@@ -241,6 +241,9 @@ export default {
     ...mapGetters('web3', ['contracts', 'evmProvider', 'evmSigner']),
     ...mapState('odosData', ['tokensContractMap']),
 
+    getFee() {
+      return this.networkId === 8453 ? 0.01 : 0.04;
+    },
     inputIndex() {
       return '1';
     },
@@ -262,12 +265,12 @@ export default {
       if ((!this.updatingWrapUnwrapAmount && this.activeWrapTab > 0)
         || !this.inputToken.symbol
         || !this.inputToken.value) return '0.00';
-      return new BigNumber(this.inputToken.value).times(0.9996).toFixed(6);
+      return new BigNumber(this.inputToken.value).times(this.getFee / 100).toFixed(6);
     },
     estimateResultDisplay() {
       if (!this.inputToken.symbol
         || !this.inputToken.value) return '0.00';
-      return new BigNumber(this.inputToken.value).times(0.9996).toFixed(6);
+      return new BigNumber(this.inputToken.value).times(this.getFee / 100).toFixed(6);
     },
     swapMsg() {
       if (this.activeMintTab === mintWrapStatus.MINT) return 'mint';

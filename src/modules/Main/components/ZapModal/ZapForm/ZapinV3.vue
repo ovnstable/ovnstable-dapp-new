@@ -169,6 +169,18 @@ import debounce from 'lodash/debounce';
 import { notify as notifyInst } from '@kyvg/vue3-notification';
 import { getProportionTicks } from '@/store/views/main/zapin/helpers.ts';
 
+const createScaledArray = (start: number, end: number, maxItems = 10) => {
+  const result = [];
+  const step = (end - start) / (maxItems - 1); // Calculate the step size
+
+  for (let i = 0; i < maxItems; i++) {
+    // Push the current value rounded to four decimal places
+    result.push([parseFloat((start + step * i).toFixed(4)), 0]);
+  }
+
+  return result;
+};
+
 export default {
   name: 'ZapinV3',
   components: {
@@ -178,7 +190,7 @@ export default {
   emits: ['set-range'],
   data() {
     return {
-      zoomType: 0.1,
+      zoomType: 1,
       dataToRender: [],
       isLoading: true,
       ticksAmount: '0',
@@ -477,6 +489,34 @@ export default {
     },
   },
   methods: {
+    initBuildData() {
+      if (this.isStablePool) {
+        const buildData = Array.from({ length: 22 }).map((_, key) => [key / 10, 0]);
+
+        (this.$refs?.zapinChart as any).updateSeries([{
+          data: buildData,
+        }], false, true);
+
+        (this.$refs?.zapinChart as any)?.updateOptions(
+          {
+            xaxis: {
+              labels: {
+                formatter(value: number) {
+                  if (value === 0) return '0';
+                  return +(value.toFixed(1)) % 0.5 === 0 ? value.toFixed(2) : '';
+                },
+                style: {
+                  colors: '#687386',
+                  fontSize: '14px',
+                },
+              },
+            },
+          },
+          false,
+          true,
+        );
+      }
+    },
     zoomInOut(scaleIn: boolean) {
       const data: any[] = (this.$refs?.zapinChart as any)?.series[0]?.data;
       const xStart = data[0][0];
@@ -484,49 +524,74 @@ export default {
       console.log(this.$refs?.zapinChart, '__this.$refs?.zapinChart');
       console.log(xStart, xEnd, 'zoomIn');
 
-      const zoomChange = this.isStablePool ? this.zoomType : this.zoomType * 10;
+      let minVal = 0;
+      let maxVal = 0;
 
-      const start = xStart + zoomChange;
-      const finish = xEnd - zoomChange;
-      const lengthArr = (finish - start + 1) * 10;
-
-      let buildData = Array
-        .from({ length: lengthArr }, (_, a) => [Number((a / 10 + start).toFixed(1)), 0]);
-      if (this.isStablePool) buildData = buildData.filter((_) => (_[0] <= 2));
-      if ((this.zoomType === 0.5 && scaleIn)
-            || (new BN(this.zoomType).isLessThanOrEqualTo(0) && !scaleIn)) return;
-
-      const zoomNum = 0.1;
+      const zoomNum = 1;
+      let newZoomType = 0;
 
       if (scaleIn) {
-        this.zoomType = zoomNum + this.zoomType;
+        newZoomType = Number((zoomNum + this.zoomType).toFixed(0));
       } else {
-        this.zoomType -= zoomNum;
+        newZoomType = Number((this.zoomType - zoomNum).toFixed(0));
       }
 
-      console.log(this.zoomType, '__thiszoomType');
+      if ((new BN(newZoomType).gt(5) && scaleIn)
+            || (new BN(newZoomType).lt(1) && !scaleIn)) return;
+
+      this.zoomType = newZoomType;
+
+      if (this.zoomType === 1) {
+        this.initBuildData();
+        return;
+      }
+
+      if (this.zoomType === 2) {
+        minVal = 0.9;
+        maxVal = 1.1;
+      }
+      if (this.zoomType === 3) {
+        minVal = 0.99;
+        maxVal = 1.01;
+      }
+      if (this.zoomType === 4) {
+        minVal = 0.999;
+        maxVal = 1.001;
+      }
+      if (this.zoomType === 5) {
+        minVal = 0.9995;
+        maxVal = 1.0005;
+      }
+
+      const buildData = createScaledArray(minVal, maxVal);
+
       if (buildData?.length === 0) return;
-
-      Array
-        .from({ length: this.zoomType * 10 }).forEach(() => buildData.pop());
-
-      // (this.$refs?.zapinChart as any)?.zoomX(xStart, xEnd);
       (this.$refs?.zapinChart as any).updateSeries([{
         data: buildData,
       }], false, true);
 
-      this.optionsChart.xaxis = {
-        labels: {
-          formatter(value: number) {
-            if (value === 0) return '0';
-            return +(value.toFixed(1)) % 0.1 === 0 ? value.toFixed(2) : '';
-          },
-          style: {
-            colors: '#687386',
-            fontSize: '14px',
+      const self = this;
+
+      (this.$refs?.zapinChart as any)?.updateOptions(
+        {
+          xaxis: {
+            labels: {
+              formatter(value: number) {
+                if (value === 0) return '0';
+                const modulo = self.zoomType <= 5 ? 0.0002 : 0.5;
+                const num = new BN(value.toFixed(1)).times(10);
+                return num.modulo(modulo).toNumber() === 0 ? value.toFixed(modulo === 0.0002 ? 4 : 2) : '';
+              },
+              style: {
+                colors: '#687386',
+                fontSize: '14px',
+              },
+            },
           },
         },
-      };
+        false,
+        true,
+      );
     },
     decrPrice(isMin: boolean) {
       if (isMin) {
@@ -561,6 +626,7 @@ export default {
 
       this.minPrice = minPrice;
       this.maxPrice = maxPrice;
+      this.ticksAmount = '0';
       debounce(this.debounceSelectChange, 500);
     },
     debounceSelectChange() {
