@@ -439,7 +439,7 @@ export default {
   grid-template-columns: minmax(100px, 0.5fr) minmax(150px, 2fr) minmax(100px, 1fr) minmax(140px, 1fr) minmax(140px, 1.5fr) minmax(140px, 1fr);
   width: 100%;
   color: var(--color-2);
-  margin-top: 20px;
+  margin-top: 10px;
   padding: 0 20px;
   overflow-y: hidden;
   [data-theme="dark"] & {
