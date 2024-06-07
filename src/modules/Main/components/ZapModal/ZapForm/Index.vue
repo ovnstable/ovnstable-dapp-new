@@ -24,8 +24,10 @@
 
       <template v-else>
         <div :class="['zapin-block', { v3: zapPool?.poolVersion === 'v3' }, { v2: zapPool?.poolVersion === 'v2' }]">
-          <div class="zapin-block__header">
-            ZAP IN {{ zapPool?.poolVersion?.toUpperCase() }}
+          <div class="zapin-block__header-container">
+            <div class="zapin-block__header">
+              ZAP IN {{ zapPool?.poolVersion?.toUpperCase() }}
+            </div>
           </div>
           <div class="zapin-block__row">
             <div class="zapin-block__content">
