@@ -30,7 +30,7 @@ interface ITab {
 }
 
 type TSize = 'default' | 'large'
-type TStyle = 'default' | 'transparent'
+type TStyle = 'default' | 'transparent' | 'white'
 
 export default {
   name: 'TabsComponent',
@@ -118,6 +118,10 @@ export default {
     background: var(--color-6);
   }
 
+  &.white {
+    background: var(--color-4);
+  }
+
   &.transparent {
     background: transparent;
   }
@@ -137,8 +141,13 @@ export default {
   [data-theme="dark"] & {
     background-color: var(--color-6);
   }
+
   &.large {
     padding: 9px 10px;
+  }
+
+  .white & {
+    background: var(--color-4);
   }
 
   .transparent & {
