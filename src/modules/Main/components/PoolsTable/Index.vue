@@ -85,6 +85,7 @@ import TableSkeleton from '@/components/TableSkeleton/Index.vue';
 import dayjs from 'dayjs';
 import { POOL_TAG } from '@/store/views/main/pools/mocks.ts';
 import { POOL_TYPES } from '@/store/views/main/pools/index.ts';
+import type { PropType } from 'vue';
 
 dayjs.extend(utc);
 
@@ -94,6 +95,11 @@ export default {
     isOverview: {
       type: Boolean,
       required: true,
+    },
+    poolType: {
+      type: Number as PropType<POOL_TYPES>,
+      default: POOL_TYPES.ALL,
+      required: false,
     },
   },
   components: {
@@ -107,6 +113,7 @@ export default {
   data: () => ({
     avgApy: null,
     poolTabType: POOL_TYPES.ALL,
+    showingPools: 10,
 
     openPoolList: false,
 
@@ -118,6 +125,16 @@ export default {
 
     orderType: 'TVL_UP', // APR, APR_UP, APR_DOWN, TVL, TVL_UP, TVL_DOWN
   }),
+
+  watch: {
+    filteredPools(arr: any[]) {
+      this.showingPools = arr?.length;
+
+      if (this.showingPools + (arr?.length ?? 0) <= 10) {
+        this.openPoolList = true;
+      }
+    },
+  },
 
   computed: {
     ...mapGetters('network', ['getParams', 'networkId', 'isShowDeprecated']),
@@ -140,12 +157,8 @@ export default {
       );
 
       const sortByNewTagAndValue = (valueExtractor: any) => tabOrderedPools.sort((a, b) => {
-        if (a.poolTag === POOL_TAG.NEW && b.poolTag !== POOL_TAG.NEW) {
-          return -1;
-        }
-        if (b.poolTag === POOL_TAG.NEW && a.poolTag !== POOL_TAG.NEW) {
-          return 1;
-        }
+        if (a.poolTag === POOL_TAG.NEW && b.poolTag !== POOL_TAG.NEW) return -1;
+        if (b.poolTag === POOL_TAG.NEW && a.poolTag !== POOL_TAG.NEW) return 1;
         return valueExtractor(b) - valueExtractor(a);
       }).slice(0, 10);
 
@@ -176,28 +189,28 @@ export default {
         // last step filter
         return tabOrderedPools
           .sort((a: any, b: any) => b.apr - a.apr)
-          .slice(10, tabOrderedPools.length);
+          .slice(this.showingPools, tabOrderedPools.length);
       }
 
       if (this.orderType === 'APR_DOWN') {
         // last step filter
         return tabOrderedPools
           .sort((a: any, b: any) => a.apr - b.apr)
-          .slice(10, tabOrderedPools.length);
+          .slice(this.showingPools, tabOrderedPools.length);
       }
 
       if (this.orderType === 'TVL_UP') {
         // last step filter
         return tabOrderedPools
           .sort((a: any, b: any) => b.tvl - a.tvl)
-          .slice(10, tabOrderedPools.length);
+          .slice(this.showingPools, tabOrderedPools.length);
       }
 
       if (this.orderType === 'TVL_DOWN') {
         // last step filter
         return tabOrderedPools
           .sort((a: any, b: any) => a.tvl - b.tvl)
-          .slice(10, tabOrderedPools.length);
+          .slice(this.showingPools, tabOrderedPools.length);
       }
 
       return [];
@@ -270,6 +283,17 @@ export default {
   },
   async mounted() {
     this.clearAllFilters();
+
+    // for main page + ovn pools page
+    if (this.poolType !== undefined) {
+      this.changeState({
+        field: 'typeOfPool',
+        val: this.poolType,
+      });
+      console.log(this.poolType, '__poolType');
+      this.poolTabType = this.poolType;
+    }
+
     await this.loadPools();
   },
 

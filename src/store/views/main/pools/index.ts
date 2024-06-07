@@ -177,14 +177,6 @@ const actions = {
         initReversePools(pool, state.allPools);
       }
 
-      // top pool from all pools
-      if (!state.topPool) {
-        commit('changeState', {
-          field: 'topPool',
-          val: state.allPools.sort((a: any, b: any) => b.apr - a.apr),
-        });
-      }
-
       commit('changeState', {
         field: 'velodromePool',
         val: state.allPools.find(

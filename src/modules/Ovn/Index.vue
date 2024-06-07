@@ -24,7 +24,7 @@
       class="ovn__pools"
     >
       <PoolsContainer
-        :type="poolTypes.OVN"
+        :poolType="poolTypes.OVN"
         :isOverview="true"
         class="ovn__pools-inner"
       />
@@ -39,7 +39,7 @@ import OvnBenefits from '@/modules/Ovn/Benefits.vue';
 import OvnTokenomics from '@/modules/Ovn/Tokenomics.vue';
 import Spinner from '@/components/Spinner/Index.vue';
 import PoolsContainer from '@/modules/Main/components/PoolsTable/Index.vue';
-import { poolTypes } from '@/modules/Main/components/PoolsTable/types/index.ts';
+import { POOL_TYPES } from '@/store/views/main/pools/index.ts';
 
 export default {
   name: 'OvnPage',
@@ -52,7 +52,7 @@ export default {
   },
   data() {
     return {
-      poolTypes,
+      poolTypes: POOL_TYPES,
     };
   },
   props: {

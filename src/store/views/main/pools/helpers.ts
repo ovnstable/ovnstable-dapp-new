@@ -334,6 +334,12 @@ export const checkIsOVNStable = (pool: any) => {
   return false;
 };
 
+export const checkIsOVNVolatile = (pool: any) => {
+  const poolTokens = pool.name.split('/');
+  if (poolTokens.some((id: string) => ['OVN'].includes(id))) return true;
+  return false;
+};
+
 const filterByPoolType = (
   poolsList: any[],
   filterType: POOL_TYPES,
@@ -343,14 +349,7 @@ const filterByPoolType = (
   if (filterType === POOL_TYPES.TOKENPLUS) return poolsList.filter((_) => checkIsOVNStable(_));
   if (filterType === POOL_TYPES.VOLATILE) return poolsList.filter((_) => !checkIsEveryStable(_));
   if (filterType === POOL_TYPES.STABLE) return poolsList.filter((_) => checkIsEveryStable(_));
-
-  if (filterType === POOL_TYPES.OVN) {
-    return poolsList.filter((_) => {
-      const poolTokens = _.name.split('/');
-      if (poolTokens.some((id: string) => ['OVN'].includes(id))) return true;
-      return false;
-    });
-  }
+  if (filterType === POOL_TYPES.OVN) return poolsList.filter((_) => checkIsOVNVolatile(_));
 
   return poolsList;
 };
@@ -387,7 +386,9 @@ export const getSortedPools = (
     poolsList = filteredPools;
   }
 
-  return filterByPoolType(poolsList, filterByType);
+  const arrLis = filterByPoolType(poolsList, filterByType);
+
+  return arrLis;
 };
 
 export const getSortedSecondPools = (
