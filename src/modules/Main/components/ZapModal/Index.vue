@@ -86,6 +86,7 @@ export default {
     width: 100vw;
     max-width: 80vw;
     height: 100%;
+    padding: 20px;
     // zoom: 90%;
   }
 

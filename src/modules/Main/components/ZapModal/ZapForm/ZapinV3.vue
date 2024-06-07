@@ -830,6 +830,9 @@ export default {
   gap: 8px;
   color: var(--color-1);
   margin-top: 12px;
+  .input-component.is-disabled {
+    opacity: 1;
+  }
 }
 
 .zapin-v3__col-block {

@@ -34,7 +34,7 @@
               <div class="zapin-block__wrapper">
                 <div class="mb-4 mt-1">
                   <h2 v-if="zapPool?.poolVersion === 'v3'">
-                    Pool you shoose
+                    Pool you choose
                   </h2>
                   <PoolLabel
                     :pool="zapPool"
