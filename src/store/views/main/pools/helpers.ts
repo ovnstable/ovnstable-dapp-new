@@ -1,17 +1,21 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-unused-expressions */
-import { poolTypes } from '@/modules/Main/components/PoolsTable/types/index.ts';
+import { POOL_TYPES } from '@/store/views/main/pools/index.ts';
 import BigNumber from 'bignumber.js';
 import {
   HOT_POOLS,
   FIRST_MIN_AMOUNT,
   LOW_TVL_PROMOTE,
   NEW_POOLS,
-  POOL_TAG,
   SECOND_MIN_AMOUNT,
 } from './mocks.ts';
 
 const STABLE_TOKENS = ['USD+', 'DAI+', 'WUSD+', 'USDC+', 'USDT+'];
+const ALL_STABLE_TOKENS = [
+  'USD+', 'DAI+', 'WUSD+', 'USDC+', 'USDT+', 'DOLA',
+  'FRAX', 'SFRAX', 'USDC', 'USDT', 'USDB', 'EUSD',
+  'USDBC', 'CRVUSD', 'USDZ', 'USDC.E',
+];
 
 export const buildLink = (pool: any, poolPlatform: string) => {
   let url;
@@ -318,28 +322,34 @@ export const buildLink = (pool: any, poolPlatform: string) => {
   return url;
 };
 
+export const checkIsEveryStable = (pool: any) => {
+  const poolTokens = pool.name.split('/');
+  if (poolTokens.every((id: string) => ALL_STABLE_TOKENS.includes(id))) return true;
+  return false;
+};
+
+export const checkIsOVNStable = (pool: any) => {
+  const poolTokens = pool.name.split('/');
+  if (poolTokens.every((id: string) => STABLE_TOKENS.includes(id))) return true;
+  return false;
+};
+
 const filterByPoolType = (
   poolsList: any[],
-  filterType: poolTypes,
+  filterType: POOL_TYPES,
 ) => {
-  if (filterType === poolTypes.TOKENPLUS) {
-    return poolsList.filter((_) => {
-      const poolTokens = _.name.split('/');
-      if (poolTokens.every((id: string) => STABLE_TOKENS.includes(id))) return true;
-      return false;
-    });
-  }
+  if (filterType === POOL_TYPES.V2) return poolsList.filter((_) => (_?.poolVersion === 'v2'));
+  if (filterType === POOL_TYPES.V3) return poolsList.filter((_) => (_?.poolVersion === 'v3'));
+  if (filterType === POOL_TYPES.TOKENPLUS) return poolsList.filter((_) => checkIsOVNStable(_));
+  if (filterType === POOL_TYPES.VOLATILE) return poolsList.filter((_) => !checkIsEveryStable(_));
+  if (filterType === POOL_TYPES.STABLE) return poolsList.filter((_) => checkIsEveryStable(_));
 
-  if (filterType === poolTypes.OVN) {
+  if (filterType === POOL_TYPES.OVN) {
     return poolsList.filter((_) => {
       const poolTokens = _.name.split('/');
       if (poolTokens.some((id: string) => ['OVN'].includes(id))) return true;
       return false;
     });
-  }
-
-  if (filterType === poolTypes.HOT) {
-    return poolsList.filter((_) => _.poolTag === POOL_TAG.HOT);
   }
 
   return poolsList;
@@ -348,7 +358,7 @@ const filterByPoolType = (
 export const getSortedPools = (
   pools: any[],
   filterByTvl: boolean,
-  filterByType = poolTypes.ALL,
+  filterByType = POOL_TYPES.ALL,
 ) => {
   let poolsList = [];
 
@@ -382,7 +392,7 @@ export const getSortedPools = (
 
 export const getSortedSecondPools = (
   pools: any[],
-  filterByType = poolTypes.ALL,
+  filterByType = POOL_TYPES.ALL,
 ) => {
   let secondPools = pools.filter((pool) => {
     // this is for new pools which TVL do not pass pool.tvl < 300000 && pool.tvl > 100000
@@ -394,7 +404,6 @@ export const getSortedSecondPools = (
     if (pool.promoted) return false;
     if (new BigNumber(pool.tvl).gt(SECOND_MIN_AMOUNT)
           && new BigNumber(pool.tvl).lt(FIRST_MIN_AMOUNT)) return true;
-    if (pool.promoted !== false) return true;
 
     return false;
   });

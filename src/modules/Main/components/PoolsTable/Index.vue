@@ -49,7 +49,7 @@
               <BaseIcon name="ArrowDown" />
             </div>
             <h1>
-              {{openPoolList ? "CLOSE" : "OPEN"}} Pools with TVL less than $300K
+              {{openPoolList ? "CLOSE POOLS" : "OPEN HIDDEN POOLS"}}
             </h1>
             <div
               class="table-extend__arrow"
@@ -75,11 +75,7 @@ import {
   mapActions, mapGetters, mapState, mapMutations,
 } from 'vuex';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
-import { poolTypes } from '@/modules/Main/components/PoolsTable/types/index.ts';
-import {
-  getSortedSecondPools, getSortedPools,
-} from '@/store/views/main/pools/helpers.ts';
-
+import { getSortedSecondPools, getSortedPools } from '@/store/views/main/pools/helpers.ts';
 import utc from 'dayjs/plugin/utc';
 
 import ZapModal from '@/modules/Main/components/ZapModal/Index.vue';
@@ -87,18 +83,14 @@ import PoolsFilter from '@/modules/Main/components/PoolsTable/PoolsFilter.vue';
 import PoolsTable from '@/components/PoolsTable/Index.vue';
 import TableSkeleton from '@/components/TableSkeleton/Index.vue';
 import dayjs from 'dayjs';
-import type { PropType } from 'vue';
 import { POOL_TAG } from '@/store/views/main/pools/mocks.ts';
+import { POOL_TYPES } from '@/store/views/main/pools/index.ts';
 
 dayjs.extend(utc);
 
 export default {
   name: 'PoolsContainer',
   props: {
-    type: {
-      type: Number as PropType<poolTypes>,
-      required: true,
-    },
     isOverview: {
       type: Boolean,
       required: true,
@@ -114,7 +106,7 @@ export default {
 
   data: () => ({
     avgApy: null,
-    poolTabType: poolTypes.ALL,
+    poolTabType: POOL_TYPES.ALL,
 
     openPoolList: false,
 
@@ -147,7 +139,7 @@ export default {
         this.poolTabType,
       );
 
-      const sortByNewTagAndValue = (valueExtractor: any) => tabOrderedPools.slice().sort((a, b) => {
+      const sortByNewTagAndValue = (valueExtractor: any) => tabOrderedPools.sort((a, b) => {
         if (a.poolTag === POOL_TAG.NEW && b.poolTag !== POOL_TAG.NEW) {
           return -1;
         }
@@ -155,61 +147,57 @@ export default {
           return 1;
         }
         return valueExtractor(b) - valueExtractor(a);
-      });
+      }).slice(0, 10);
 
-      if (this.orderType === 'APR_UP') {
-        return sortByNewTagAndValue((pool: any) => pool.apr);
-      }
-
-      if (this.orderType === 'APR_DOWN') {
-        return sortByNewTagAndValue((pool: any) => -pool.apr);
-      }
-
-      if (this.orderType === 'TVL_UP') {
-        return sortByNewTagAndValue((pool: any) => pool.tvl);
-      }
-
-      if (this.orderType === 'TVL_DOWN') {
-        return sortByNewTagAndValue((pool: any) => -pool.tvl);
-      }
+      if (this.orderType === 'APR_UP') return sortByNewTagAndValue((pool: any) => pool.apr);
+      if (this.orderType === 'APR_DOWN') return sortByNewTagAndValue((pool: any) => -pool.apr);
+      if (this.orderType === 'TVL_UP') return sortByNewTagAndValue((pool: any) => pool.tvl);
+      if (this.orderType === 'TVL_DOWN') return sortByNewTagAndValue((pool: any) => -pool.tvl);
 
       return sortByNewTagAndValue(() => 0);
     },
 
     filteredPoolsForSecondTab() {
-      const tabOrderedPools = getSortedSecondPools(
+      const mainPools = getSortedPools(
+        this.filteredBySearchQueryPools,
+        true,
+        this.poolTabType,
+      );
+      const secondaryPools = getSortedSecondPools(
         this.filteredBySearchQuerySecondPools,
         this.poolTabType,
       );
+
+      const tabOrderedPools = [...mainPools, ...secondaryPools];
 
       if (['APR', 'TVL'].includes(this.orderType)) return tabOrderedPools;
 
       if (this.orderType === 'APR_UP') {
         // last step filter
         return tabOrderedPools
-          .slice()
-          .sort((a: any, b: any) => b.apr - a.apr);
+          .sort((a: any, b: any) => b.apr - a.apr)
+          .slice(10, tabOrderedPools.length);
       }
 
       if (this.orderType === 'APR_DOWN') {
         // last step filter
         return tabOrderedPools
-          .slice()
-          .sort((a: any, b: any) => a.apr - b.apr);
+          .sort((a: any, b: any) => a.apr - b.apr)
+          .slice(10, tabOrderedPools.length);
       }
 
       if (this.orderType === 'TVL_UP') {
         // last step filter
         return tabOrderedPools
-          .slice()
-          .sort((a: any, b: any) => b.tvl - a.tvl);
+          .sort((a: any, b: any) => b.tvl - a.tvl)
+          .slice(10, tabOrderedPools.length);
       }
 
       if (this.orderType === 'TVL_DOWN') {
         // last step filter
         return tabOrderedPools
-          .slice()
-          .sort((a: any, b: any) => a.tvl - b.tvl);
+          .sort((a: any, b: any) => a.tvl - b.tvl)
+          .slice(10, tabOrderedPools.length);
       }
 
       return [];
@@ -281,19 +269,6 @@ export default {
     },
   },
   async mounted() {
-    if (this.type === poolTypes.OVN) {
-      this.changeState({
-        field: 'typeOfPool',
-        val: 'OVN',
-      });
-      this.poolTabType = poolTypes.OVN;
-    } else {
-      this.changeState({
-        field: 'typeOfPool',
-        val: 'ALL',
-      });
-    }
-
     this.clearAllFilters();
     await this.loadPools();
   },
@@ -302,8 +277,7 @@ export default {
     ...mapActions('poolsData', ['loadPools', 'openZapIn', 'setIsZapModalShow']),
     ...mapMutations('poolsData', ['changeState']),
 
-    changePoolsTab(type: poolTypes) {
-      console.log(type, 'POOLTYPE');
+    changePoolsTab(type: POOL_TYPES) {
       this.poolTabType = type;
     },
     updateSearch(searchQuery: string) {

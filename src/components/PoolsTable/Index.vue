@@ -61,17 +61,6 @@
                     alt="token"
                     :src="pool.token1Icon"
                   />
-                  <div
-                    v-if="pool.poolTag && !pool.token2Icon"
-                    class="pools-table__tag"
-                    :class="{
-                      'pools-table--hot': pool.poolTag === POOL_TAG.HOT,
-                      'pools-table--new': pool.poolTag === POOL_TAG.NEW,
-                    }"
-                  >
-                    <BaseIcon :name="getIconName(pool.poolTag)" />
-                    {{ getTagName(pool.poolTag)}}
-                  </div>
                 </div>
                 <div
                   v-if="pool.token2Icon"
@@ -89,7 +78,6 @@
                     v-if="pool.poolTag && pool.token2Icon"
                   >
                     <BaseIcon :name="getIconName(pool.poolTag)" />
-                    {{ getTagName(pool.poolTag)}}
                   </div>
                 </div>
                 <div
@@ -102,17 +90,25 @@
                   />
                 </div>
               </div>
-              <div>
-                <div>
-                  {{ pool.name }}
+              <div class="pools-table__details">
+                <div class="pools-table__details-row">
+                  <div>
+                    {{ pool.name }}
+                  </div>
+                  <div
+                    v-if="pool.poolTag && !pool.token2Icon"
+                    class="pools-table__tag"
+                    :class="{
+                      'pools-table--hot': pool.poolTag === POOL_TAG.HOT,
+                      'pools-table--new': pool.poolTag === POOL_TAG.NEW,
+                    }"
+                  >
+                    {{ getTagName(pool.poolTag)}}
+                    <BaseIcon :name="getIconName(pool.poolTag)" />
+                  </div>
                 </div>
                 <div class="pools-table__tokens-details">
-                  <span>
-                    {{ pool.poolVersion }}
-                  </span>
-                  <span>
-                    {{ isVolatile }}
-                  </span>
+                  {{ poolVolatileType(pool) }}
                 </div>
               </div>
             </div>
@@ -121,9 +117,8 @@
                 v-if="pool.apr"
                 class="card-label text-center"
               >
-                {{ formatMoneyComma(pool.apr, 2) }}%<sup
-                  v-if="APY_POOLS.includes(pool.platform[0])"
-                >(apy)</sup>
+                {{ formatMoneyComma(pool.apr, 2) }}%
+                <sup v-if="APY_POOLS.includes(pool.platform[0])">(apy)</sup>
               </div>
               <div
                 v-else
@@ -175,36 +170,18 @@
                 </span>
                 <div class="button-link">
                   <BaseIcon
-                    name="PayoutArrow"
+                    name="LinkExtra"
                   />
                 </div>
               </a>
             </div>
 
             <ButtonComponent
-              v-if="pool.platform[0] === 'Thruster'"
-              btnStyles="faded"
-              class='pools-table__blast-pool'
-              data-tooltip="Points / $1k ~25 / $1k"
-            >
-              <BaseIcon
-                name="blastSidebar"
-              />
-              <a
-                v-if="pool.platform[0] === 'Thruster'"
-                href="https://app.hyperlock.finance/#/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                BLAST POINTS
-              </a>
-            </ButtonComponent>
-            <ButtonComponent
-              v-if="pool.zappable"
+              :disabled="!pool.zappable"
               btnStyles="faded"
               @click="openZapIn(pool)"
             >
-              ZAP IN
+              DEPOSIT
             </ButtonComponent>
           </div>
         </template>
@@ -235,7 +212,7 @@ import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import { formatMoneyComma, formatNumberToMln, formatNumberToThousands } from '@/utils/numbers.ts';
 import ZapInComponent from '@/modules/Main/components/ZapModal/Index.vue';
-import { buildLink } from '@/store/views/main/pools/helpers.ts';
+import { buildLink, checkIsEveryStable } from '@/store/views/main/pools/helpers.ts';
 import { POOL_TAG, APY_POOLS } from '@/store/views/main/pools/mocks.ts';
 
 export default {
@@ -275,8 +252,17 @@ export default {
     },
   },
   computed: {
-    isVolatile() {
-      return 'pool';
+    poolVolatileType() {
+      return (poolD: any) => {
+        const isVol = checkIsEveryStable(poolD);
+
+        if (isVol && poolD.poolVersion === 'v3') return 'V3 Сoncentrated Volatile pool';
+        if (!isVol && poolD.poolVersion === 'v3') return 'V3 Сoncentrated Volatile pool';
+        if (isVol && poolD.poolVersion === 'v2') return 'V2 Basic Volatile pool';
+        if (!isVol && poolD.poolVersion === 'v2') return 'V2 Basic Stable pool';
+
+        return '';
+      };
     },
     getTagName() {
       return (poolTag: string) => {
@@ -310,19 +296,6 @@ export default {
 
       return lastNewPoolIndex;
     },
-    // getPoolType() {
-    //   return (pool) => {
-    //     if (pool.address === '0x4b9f00860d7f42870addeb687fa4e47062df71d9') {
-    //       return 'LP V1';
-    //     }
-
-    //     if (pool.address === '0xf5E67261CB357eDb6C7719fEFAFaaB280cB5E2A6') {
-    //       return 'LP V2';
-    //     }
-
-    //     return 'LP';
-    //   };
-    // },
   },
   methods: {
     ...mapActions('poolsData', ['openZapIn']),
@@ -430,7 +403,7 @@ export default {
 .pools-table__new,
 .pools-table__blast {
   display: grid;
-  grid-template-columns: minmax(70px, 0.5fr) minmax(150px, 1.5fr) minmax(100px, 1fr) minmax(140px, 1fr) minmax(140px, 1.5fr) minmax(140px, 1fr);
+  grid-template-columns: minmax(100px, 0.5fr) minmax(150px, 2fr) minmax(100px, 1fr) minmax(140px, 1fr) minmax(140px, 1.5fr) minmax(140px, 1fr);
   justify-content: space-between;
   width: 100%;
   padding: 15px 0;
@@ -458,12 +431,12 @@ export default {
   }
 }
 .pools-table__blast {
-  grid-template-columns: minmax(70px, 0.5fr) minmax(150px, 1.5fr) minmax(100px, 1fr) minmax(140px, 1fr) minmax(140px, 1.5fr) minmax(140px, 1fr);
+  grid-template-columns: minmax(100px, 0.5fr) minmax(150px, 2fr) minmax(100px, 1fr) minmax(140px, 1fr) minmax(140px, 1.5fr) minmax(140px, 1fr);
 }
 
 .pools-header {
   display: grid;
-  grid-template-columns: minmax(70px, 0.5fr) minmax(150px, 1.5fr) minmax(100px, 1fr) minmax(140px, 1fr) minmax(140px, 1.5fr) minmax(140px, 1fr);
+  grid-template-columns: minmax(100px, 0.5fr) minmax(150px, 2fr) minmax(100px, 1fr) minmax(140px, 1fr) minmax(140px, 1.5fr) minmax(140px, 1fr);
   width: 100%;
   color: var(--color-2);
   margin-top: 20px;
@@ -477,10 +450,6 @@ export default {
 
 .pools-header__item {
   font-size: 15px;
-
-  &:nth-child(2) {
-    padding-left: 10px;
-  }
 }
 
 .pools-filters {
@@ -517,11 +486,13 @@ export default {
   display: flex;
   position: relative;
   width: fit-content;
+  gap: 8px;
 }
 
 .pools-table__tokens-details {
   display: flex;
-  gap: 4px
+  font-size: 12px;
+  color: var(--color-2);
 }
 
 .pools-table__tokens {
@@ -530,6 +501,8 @@ export default {
   align-items: center;
   width: fit-content;
   border-radius: 30px;
+  min-width: 92px;
+
   [data-theme="dark"] & {
     border: none;
   }
@@ -681,7 +654,7 @@ export default {
 
 .button-link {
   position: relative;
-  top: -10px;
+  top: -12px;
   box-shadow: none;
   align-items: center;
   border-radius: 10px;
@@ -690,8 +663,8 @@ export default {
 
   svg {
     fill: var(--color-2);
-    width: 8px;
-    height: 8px;
+    width: 12px;
+    height: 12px;
     overflow: visible;
   }
 
@@ -702,9 +675,7 @@ export default {
   }
 }
 
-.pools-table__tag,
-.pools-table__tag-token-3 {
-  position: absolute;
+.pools-table__tag {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -713,17 +684,10 @@ export default {
   font-size: 10px;
   height: 19px;
   padding: 0 4px;
-  border: 1px solid var(--color-6);
-  background-color: var(--color-4);
-
-  [data-theme="dark"] & {
-    background-color: var(--color-17);
-  }
 }
 
 .pools-table--new {
   color: var(--color-12);
-  animation: pulse-animation-green 3s infinite;
 
   [data-theme="dark"] & {
     color: var(--color-4);
@@ -732,7 +696,6 @@ export default {
 
 .pools-table--hot {
   color: var(--color-10);
-  animation: pulse-animation-red 3s infinite;
 
   [data-theme="dark"] & {
     color: var(--color-4);
@@ -741,7 +704,6 @@ export default {
 
 .pools-table--promo {
   color: var(--color-3);
-  animation: pulse-animation-blue 3s infinite;
 
   [data-theme="dark"] & {
     color: var(--color-4);
@@ -919,4 +881,10 @@ export default {
   }
 }
 
+.pools-table__details-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+  gap: 8px;
+}
 </style>
