@@ -130,6 +130,10 @@ export default {
     filteredPools(arr: any[]) {
       this.showingPools = arr?.length;
 
+      if (this.showingPools + (arr?.length ?? 0) > 10) {
+        this.openPoolList = false;
+      }
+
       if (this.showingPools + (arr?.length ?? 0) <= 10) {
         this.openPoolList = true;
       }

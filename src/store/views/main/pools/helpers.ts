@@ -10,7 +10,7 @@ import {
   SECOND_MIN_AMOUNT,
 } from './mocks.ts';
 
-const STABLE_TOKENS = ['USD+', 'DAI+', 'WUSD+', 'USDC+', 'USDT+'];
+// const OVN_STABLE_TOKENS = ['USD+', 'DAI+', 'WUSD+', 'USDC+', 'USDT+'];
 const ALL_STABLE_TOKENS = [
   'USD+', 'DAI+', 'WUSD+', 'USDC+', 'USDT+', 'DOLA',
   'FRAX', 'SFRAX', 'USDC', 'USDT', 'USDB', 'EUSD',
@@ -328,9 +328,9 @@ export const checkIsEveryStable = (pool: any) => {
   return false;
 };
 
-export const checkIsOVNStable = (pool: any) => {
+export const checkIsUsdPlusStable = (pool: any) => {
   const poolTokens = pool.name.split('/');
-  if (poolTokens.every((id: string) => STABLE_TOKENS.includes(id))) return true;
+  if (poolTokens.some((id: string) => ['USD+'].includes(id))) return true;
   return false;
 };
 
@@ -346,7 +346,7 @@ const filterByPoolType = (
 ) => {
   if (filterType === POOL_TYPES.V2) return poolsList.filter((_) => (_?.poolVersion === 'v2'));
   if (filterType === POOL_TYPES.V3) return poolsList.filter((_) => (_?.poolVersion === 'v3'));
-  if (filterType === POOL_TYPES.TOKENPLUS) return poolsList.filter((_) => checkIsOVNStable(_));
+  if (filterType === POOL_TYPES.TOKENPLUS) return poolsList.filter((_) => checkIsUsdPlusStable(_));
   if (filterType === POOL_TYPES.VOLATILE) return poolsList.filter((_) => !checkIsEveryStable(_));
   if (filterType === POOL_TYPES.STABLE) return poolsList.filter((_) => checkIsEveryStable(_));
   if (filterType === POOL_TYPES.OVN) return poolsList.filter((_) => checkIsOVNVolatile(_));
