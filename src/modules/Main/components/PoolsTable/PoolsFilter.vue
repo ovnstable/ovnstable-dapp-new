@@ -4,27 +4,37 @@
       <SwitchTabs
         :tabs="filterTabs"
         :active-tab="poolTypes.ALL"
-        tabStyle="transparent"
+        tabStyle="white"
         type="large"
         @tab-change="changeTab"
       />
     </div>
 
-    <InputComponent
-      type="text"
-      placeholder="Search token"
-      input-type="primary"
-      @input="updateInputSearch"
-    >
-      <template #prefix>
-        <BaseIcon
-          class="search-icon"
-          name="SearchBasic"
-        />
-      </template>
-    </InputComponent>
+    <div class="pools-wrap__search">
+      <InputComponent
+        type="text"
+        placeholder="Search token"
+        input-type="primary"
+        @input="updateInputSearch"
+      >
+        <template #prefix>
+          <BaseIcon
+            class="search-icon"
+            name="SearchBasic"
+          />
+        </template>
+      </InputComponent>
+    </div>
 
     <div class="pools-wrap__filters-networks">
+      <div
+        @click="changeNetwork('all')"
+        @keypress="changeNetwork('all')"
+        :class="selectedNetwork.includes('ALL') ? 'pools-wrap__filters-item--selected' : ''"
+        class="pools-wrap__filters-item"
+      >
+        ALL
+      </div>
       <div
         v-for="networkConfig in sortedChains"
         :key="networkConfig.chain"
@@ -35,14 +45,6 @@
       >
         <BaseIcon :name="networkConfig.name.toLowerCase()" />
       </div>
-      <div
-        @click="changeNetwork('all')"
-        @keypress="changeNetwork('all')"
-        :class="selectedNetwork.includes('ALL') ? 'pools-wrap__filters-item--selected' : ''"
-        class="pools-wrap__filters-item"
-      >
-        SELECT ALL
-      </div>
     </div>
   </div>
 </template>
@@ -52,8 +54,8 @@ import InputComponent from '@/components/Input/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import SwitchTabs from '@/components/SwitchTabs/Index.vue';
 import { appNetworksData } from '@/utils/const.ts';
-import { poolTypes } from '@/modules/Main/components/PoolsTable/types/index.ts';
 import { sortedChainsByTVL } from '@/store/helpers/index.ts';
+import { POOL_TYPES } from '@/store/views/main/pools/index.ts';
 
 interface Chain {
   chainName: string;
@@ -92,34 +94,34 @@ export default {
     return {
       sortedChains: [] as Chain[],
       networksData: appNetworksData,
-      poolTypes,
+      poolTypes: POOL_TYPES,
       filterTabs: [
         {
-          id: poolTypes.ALL,
+          id: POOL_TYPES.ALL,
           name: 'ALL',
         },
         {
-          id: poolTypes.VOLATILE,
+          id: POOL_TYPES.VOLATILE,
           name: 'VOLATILE',
         },
         {
-          id: poolTypes.STABLE,
+          id: POOL_TYPES.STABLE,
           name: 'STABLE',
         },
         {
-          id: poolTypes.V2,
+          id: POOL_TYPES.V2,
           name: 'V2',
         },
         {
-          id: poolTypes.V3,
+          id: POOL_TYPES.V3,
           name: 'V3',
         },
         {
-          id: poolTypes.TOKENPLUS,
+          id: POOL_TYPES.TOKENPLUS,
           name: 'USD+',
         },
         {
-          id: poolTypes.OVN,
+          id: POOL_TYPES.OVN,
           name: 'OVN',
         },
       ],
@@ -156,17 +158,14 @@ export default {
 <style lang="scss" scoped>
 .pools-wrap__filters {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 20px;
   padding: 14px 20px;
   border-radius: 30px;
-  background-color: var(--color-4);
-  border: 1px solid var(--color-1);
-  [data-theme="dark"] & {
-    background-color: var(--color-17);
-    border-color: var(--color-2);
+
+  @media (max-width: 1400px) {
+    flex-wrap: wrap;
   }
 
   @media (max-width: 1320px) {
@@ -189,7 +188,7 @@ export default {
   align-items: center;
   width: 36px;
   height: 36px;
-  margin: 0 4px;
+  margin: 0 2px;
   font-size: 10px;
   font-weight: 600;
   text-align: center;
@@ -238,10 +237,10 @@ export default {
   justify-content: space-between;
   align-items: center;
   margin-left: auto;
-  width: 100%;
+  width: 30%;
 
-  @media (max-width: 1240px) {
-    margin: 10px 0;
+  @media (max-width: 1340px) {
+    width: 100%;
   }
 }
 
@@ -251,4 +250,7 @@ export default {
   }
 }
 
+.pools-wrap__search {
+  min-width: 150px;
+}
 </style>

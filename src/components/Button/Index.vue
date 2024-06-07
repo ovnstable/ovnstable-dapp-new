@@ -202,6 +202,7 @@ export default {
   &.disabled {
     color: var(--color-2);
     background-color: var(--color-5);
+    opacity: .8;
     border: unset;
     box-shadow: unset;
     pointer-events: none;

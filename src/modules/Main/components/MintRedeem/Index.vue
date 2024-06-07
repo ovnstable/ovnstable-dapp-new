@@ -265,12 +265,12 @@ export default {
       if ((!this.updatingWrapUnwrapAmount && this.activeWrapTab > 0)
         || !this.inputToken.symbol
         || !this.inputToken.value) return '0.00';
-      return new BigNumber(this.inputToken.value).times(this.getFee / 100).toFixed(6);
+      return new BigNumber(this.inputToken.value).times(1 - this.getFee / 100).toFixed(6);
     },
     estimateResultDisplay() {
       if (!this.inputToken.symbol
         || !this.inputToken.value) return '0.00';
-      return new BigNumber(this.inputToken.value).times(this.getFee / 100).toFixed(6);
+      return new BigNumber(this.inputToken.value).times(1 - this.getFee / 100).toFixed(6);
     },
     swapMsg() {
       if (this.activeMintTab === mintWrapStatus.MINT) return 'mint';

@@ -30,7 +30,7 @@ interface ITab {
 }
 
 type TSize = 'default' | 'large'
-type TStyle = 'default' | 'transparent'
+type TStyle = 'default' | 'transparent' | 'white'
 
 export default {
   name: 'TabsComponent',
@@ -112,10 +112,16 @@ export default {
   border: 1px solid var(--color-6);
   background: var(--color-5);
   border-radius: 30px;
+
   [data-theme="dark"] & {
     color: var(--color-18);
     background: var(--color-6);
   }
+
+  &.white {
+    background: var(--color-4);
+  }
+
   &.transparent {
     background: transparent;
   }
@@ -129,12 +135,19 @@ export default {
   cursor: pointer;
   background: var(--color-5);
   z-index: 2;
+  text-transform: uppercase;
   transition: opacity .2s ease, color .2s ease;
+
   [data-theme="dark"] & {
     background-color: var(--color-6);
   }
+
   &.large {
     padding: 9px 10px;
+  }
+
+  .white & {
+    background: var(--color-4);
   }
 
   .transparent & {
@@ -178,7 +191,12 @@ export default {
 
   @media (min-width: 1024px) {
     &.large {
-      padding: 9px 20px;
+      padding: 9px 12px;
+
+      &:last-child {
+        padding: 9px 12px;
+        padding-left: 4px;
+      }
     }
   }
 }
