@@ -254,12 +254,12 @@ export default {
   computed: {
     poolVolatileType() {
       return (poolD: any) => {
-        const isVol = checkIsEveryStable(poolD);
+        const isStable = checkIsEveryStable(poolD);
 
-        if (isVol && poolD.poolVersion === 'v3') return 'V3 Сoncentrated Volatile pool';
-        if (!isVol && poolD.poolVersion === 'v3') return 'V3 Сoncentrated Volatile pool';
-        if (isVol && poolD.poolVersion === 'v2') return 'V2 Basic Volatile pool';
-        if (!isVol && poolD.poolVersion === 'v2') return 'V2 Basic Stable pool';
+        if (isStable && poolD.poolVersion === 'v3') return 'V3 Сoncentrated Stable pool';
+        if (!isStable && poolD.poolVersion === 'v3') return 'V3 Сoncentrated Volatile pool';
+        if (isStable && poolD.poolVersion === 'v2') return 'V2 Basic Stable pool';
+        if (!isStable && poolD.poolVersion === 'v2') return 'V2 Basic Volatile pool';
 
         return '';
       };
