@@ -1,91 +1,93 @@
 <template>
   <div class="slippage-block">
-    <h3>
-      Slippage Tolerance
-    </h3>
-    <TransitionGroup
-      name="staggered-fade"
-      tag="div"
-      class="slippage-block__list"
-      :css="false"
-      @before-enter="beforeEnterList"
-      @enter="onEnterList"
-      @onLeave="onLeaveList"
-      appear
-    >
-      <template v-if="showList">
-        <template v-if="deviceSize.isMobile">
-          <div class="slippage-block-modal">
-            <ModalComponent
-              type-modal="custom"
-              v-model="showModal"
-              @close="closeModal"
-            >
-              <p class="slippage-block-modal-title">SLIPPAGE TOLERANCE</p>
-
-              <div class="slippage-block-modal-settings">
-                <div
-                  v-for="(setting, key) in slippageSettings"
-                  :key="slippageSettings.length - key"
-                  class="slippage-block__item"
-                  :class="currentSlippage && currentSlippage.type === setting.type ? 'slippage-block__item--selected' : ''"
-                  :data-index="slippageSettings.length - key"
-                  @click="newSlippageSettingModal(setting)"
-                  @keydown="newSlippageSettingModal(setting)"
-                >
-                  {{ setting.value }}%
-                </div>
-              </div>
-              <div class="slippage-block-modal-divider" />
-
-              <div class="slippage-block__info">
-                <div
-                  v-for="(setting, key) in slippageSettings"
-                  :key="slippageSettings.length - key"
-
-                  class="slippage-block__item-info"
-                >
-                  <p v-if="key !== 0">{{ setting.value }}% - <span>{{ setting. name}}</span></p>
-                  <p v-if="key !== 0">Recommended {{ setting.info }}</p>
-                </div>
-              </div>
-              <ButtonComponent
-                class="slippage-block-modal-btn-confirm"
-                @click="setSlippageCloseModal"
-              >
-                <p>SELECT</p>
-              </ButtonComponent>
-
-            </ModalComponent>
-          </div>
-
-        </template>
-
-        <template v-else>
-          <div
-            v-for="(setting, key) in slippageSettings"
-            :key="slippageSettings.length - key"
-            class="slippage-block__item"
-            :class="currentSlippage && currentSlippage.type === setting.type ? 'slippage-block__item--selected' : ''"
-            :data-index="slippageSettings.length - key"
-            @click="newSlippageSetting(setting)"
-            @keydown="newSlippageSetting(setting)"
-          >
-            {{ setting.value }}%
-          </div>
-        </template>
-      </template>
-
-      <div
-        v-else
-        class="slippage-block__item"
-        @click="showSlippageModal"
-        @keypress="showSlippageModal"
+    <div class="slippage-selector">
+      <h3>
+        Slippage Tolerance
+      </h3>
+      <TransitionGroup
+        name="staggered-fade"
+        tag="div"
+        class="slippage-block__list"
+        :css="false"
+        @before-enter="beforeEnterList"
+        @enter="onEnterList"
+        @onLeave="onLeaveList"
+        appear
       >
-        {{ currentSlippage.value }}%
-        <BaseIcon name="CommonSettings" />
-      </div>
-    </TransitionGroup>
+        <template v-if="showList">
+          <template v-if="deviceSize.isMobile">
+            <div class="slippage-block-modal">
+              <ModalComponent
+                type-modal="custom"
+                v-model="showModal"
+                @close="closeModal"
+              >
+                <p class="slippage-block-modal-title">SLIPPAGE TOLERANCE</p>
+
+                <div class="slippage-block-modal-settings">
+                  <div
+                    v-for="(setting, key) in slippageSettings"
+                    :key="slippageSettings.length - key"
+                    class="slippage-block__item"
+                    :class="currentSlippage && currentSlippage.type === setting.type ? 'slippage-block__item--selected' : ''"
+                    :data-index="slippageSettings.length - key"
+                    @click="newSlippageSettingModal(setting)"
+                    @keydown="newSlippageSettingModal(setting)"
+                  >
+                    {{ setting.value }}%
+                  </div>
+                </div>
+                <div class="slippage-block-modal-divider" />
+
+                <div class="slippage-block__info">
+                  <div
+                    v-for="(setting, key) in slippageSettings"
+                    :key="slippageSettings.length - key"
+
+                    class="slippage-block__item-info"
+                  >
+                    <p v-if="key !== 0">{{ setting.value }}% - <span>{{ setting. name}}</span></p>
+                    <p v-if="key !== 0">Recommended {{ setting.info }}</p>
+                  </div>
+                </div>
+                <ButtonComponent
+                  class="slippage-block-modal-btn-confirm"
+                  @click="setSlippageCloseModal"
+                >
+                  <p>SELECT</p>
+                </ButtonComponent>
+
+              </ModalComponent>
+            </div>
+
+          </template>
+
+          <template v-else>
+            <div
+              v-for="(setting, key) in slippageSettings"
+              :key="slippageSettings.length - key"
+              class="slippage-block__item"
+              :class="currentSlippage && currentSlippage.type === setting.type ? 'slippage-block__item--selected' : ''"
+              :data-index="slippageSettings.length - key"
+              @click="newSlippageSetting(setting)"
+              @keydown="newSlippageSetting(setting)"
+            >
+              {{ setting.value }}%
+            </div>
+          </template>
+        </template>
+
+        <div
+          v-else
+          class="slippage-block__item"
+          @click="showSlippageModal"
+          @keypress="showSlippageModal"
+        >
+          {{ currentSlippage.value }}%
+          <BaseIcon name="CommonGear" />
+        </div>
+      </TransitionGroup>
+    </div>
   </div>
 </template>
 <!-- eslint-disable no-param-reassign -->
@@ -212,19 +214,39 @@ export default {
 };
 </script>
 
+<style>
+.zapin-block {
+  &.v3 {
+        .slippage-block {
+          margin-top: 28px;
+          .slippage-selector {
+            justify-content: flex-start;
+            gap: 20px;
+            .slippage-block__list {
+              max-height: 30px;
+            }
+          }
+        }
+      }
+    }
+</style>
+
 <style lang="scss" scoped>
 .slippage-block {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 20px;
-
-  h3 {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--color-1);
-    [data-theme="dark"] & {
-      color: var(--color-4);
+  flex-direction: column;
+  margin-top: 14px;
+  .slippage-selector {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    h3 {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--color-1);
+      [data-theme="dark"] & {
+        color: var(--color-4);
+      }
     }
   }
 }
@@ -267,12 +289,17 @@ export default {
   }
 
   svg {
-    width: 16px;
-    height: 16px;
-    fill: var(--color-2);
+    // width: 16px;
+    // height: 16px;
+    transform: scale(.75);
     margin-left: 10px;
-    [data-theme="dark"] & {
-      fill: var(--color-18);
+    path {
+      fill: white;
+    }
+  }
+  [data-theme="dark"] & {
+    svg path {
+      fill: var(--color-1);
     }
   }
 }

@@ -17,6 +17,17 @@ import { loadTokenImage } from '@/utils/tokenLogo.ts';
 import { isArray } from 'lodash';
 import { poolTokensForZapMap } from '../zapin/mocks.ts';
 
+// eslint-disable-next-line no-shadow
+export enum POOL_TYPES {
+  ALL,
+  VOLATILE,
+  STABLE,
+  V2,
+  V3,
+  TOKENPLUS,
+  OVN,
+}
+
 const stateData = {
   sortedPoolList: [],
   sortedPoolSecondList: [],
@@ -29,7 +40,7 @@ const stateData = {
   aerodromePool: null,
   velodromePool: null,
 
-  typeOfPool: 'OVN', // ALL, OVN
+  typeOfPool: POOL_TYPES.ALL,
 
   isZapModalShow: false,
   currentZapPool: null,
@@ -166,14 +177,6 @@ const actions = {
         initReversePools(pool, state.allPools);
       }
 
-      // top pool from all pools
-      if (!state.topPool) {
-        commit('changeState', {
-          field: 'topPool',
-          val: state.allPools.sort((a: any, b: any) => b.apr - a.apr),
-        });
-      }
-
       commit('changeState', {
         field: 'velodromePool',
         val: state.allPools.find(
@@ -190,7 +193,7 @@ const actions = {
       });
     }
 
-    if (state.typeOfPool === 'OVN') {
+    if (state.typeOfPool === POOL_TYPES.OVN) {
       commit('changeState', {
         field: 'sortedPoolList',
         val: getSortedPools(state.allPools, true),

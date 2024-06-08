@@ -34,6 +34,12 @@
         >
           {{ selectedText }}
         </span>
+        <span
+          v-if="selectStyles === 'primary'"
+          class="select-icon"
+        >
+          <BaseIcon name="ArrowRight" />
+        </span>
       </template>
 
       <span
@@ -102,9 +108,16 @@
 <script lang="ts">
 import uniqueId from 'lodash/uniqueId';
 import { onClickOutside, templateRef } from '@vueuse/core';
+import type { PropType } from 'vue';
+import BaseIcon from '../Icon/BaseIcon.vue';
+
+type selectStyles = 'primary' | 'secondary';
 
 export default {
   name: 'select-component',
+  components: {
+    BaseIcon,
+  },
 
   model: {
     event: 'change',
@@ -120,6 +133,10 @@ export default {
         Array,
       ],
       default: null,
+    },
+    selectStyles: {
+      type: String as PropType<selectStyles>,
+      default: 'primary',
     },
     list: {
       type: Array,
@@ -206,6 +223,7 @@ export default {
     classObject() {
       return {
         [this.$options.name as string]: true,
+        [this.selectStyles]: this.selectStyles,
         'is-small': this.small,
         'is-tiny': this.tiny,
         'is-inverse': this.inverse,
@@ -459,24 +477,45 @@ export default {
 
   .select-selected {
     display: flex;
-    justify-content: flex-start;
-    background: var(--color-4);
-    color: var(--color-2);
-    border: 1px solid var(--color-2);
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
     font-size: 12px;
     padding: 2px 6px;
     min-width: 40px;
-    font-weight: 400;
+    font-weight: 500;
     overflow: hidden;
-    border-radius: 12px;
+    border-radius: 30px;
     white-space: nowrap;
-    [data-theme="dark"] & {
-      background: var(--color-17);
-    }
+
     &.active {
       &::after {
         transition: 0.3s;
         transform: translate(-50%, -50%) rotate(270deg);
+      }
+    }
+  }
+
+  &.primary {
+    .select-selected {
+      background: var(--color-5);
+      color: var(--color-1);
+      border: 1px solid var(--color-6);
+
+      [data-theme="dark"] & {
+        background: var(--color-17);
+      }
+    }
+  }
+
+  &.secondary {
+    .select-selected {
+      background: var(--color-4);
+      color: var(--color-2);
+      border: 1px solid var(--color-2);
+
+      [data-theme="dark"] & {
+        background: var(--color-17);
       }
     }
   }
@@ -602,6 +641,12 @@ export default {
     display: flex;
     flex-wrap: nowrap;
     padding: 8px;
+  }
+}
+
+.select-icon {
+  svg {
+    width: 8px;
   }
 }
 </style>

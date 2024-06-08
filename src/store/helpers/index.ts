@@ -478,7 +478,6 @@ export const loadPriceTrigger = async (tokens: any[], chainId: number | string) 
 
   const tokenPricesMap = isDeprecated ? { ...BLAST_TOKENS_PRICES }[chainId] : await getPrices();
 
-  console.log(tokens, '___tokens');
   return tokens.map((data: any) => ({
     ...data,
     price: new BigNumber(tokenPricesMap[data.address] ?? 0).toFixed(20),

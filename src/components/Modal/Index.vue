@@ -38,7 +38,7 @@
               <slot name="header" />
             </div>
 
-            <div class="modal__body">
+            <div v-bind:class="['modal__body', customClass]">
               <slot />
             </div>
 
@@ -155,6 +155,10 @@ export default {
     height: 100%;
     background-color: rgba(0, 0, 0, 0.1);
 
+    &.v3 {
+      backdrop-filter: blur(5px);
+    }
+
     .modal__wrap-stop {
         position: relative;
         z-index: 250;
@@ -217,6 +221,12 @@ export default {
 .modal__body {
   max-height: 80vh;
   overflow-y: auto;
+  &.v3 {
+    max-height: 90vh;
+    [data-theme="dark"] & {
+    background-color: var(--color-17);
+  }
+  }
   [data-theme="dark"] & {
     background-color: var(--color-6);
   }

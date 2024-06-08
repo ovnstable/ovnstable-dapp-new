@@ -213,7 +213,7 @@ export default {
   justify-content: space-between;
 
   &:first-child {
-    margin-bottom: 15px;
+    // margin-bottom: 15px;
   }
 }
 
