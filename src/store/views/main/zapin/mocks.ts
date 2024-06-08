@@ -805,36 +805,36 @@ export const poolTokensForZapMap = {
     },
   ],
   // Pancake CL
-  '0xa1F9159e11aD48524c16C9bf10bf440815b03e6C': [
-    {
-      name: 'USD+',
-      address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
-    },
-    {
-      name: 'USDC',
-      address: chainContractsMap.arbitrum.usdcNative,
-    },
-  ],
-  '0xf92768916015b5eBd9fa54D6BA10dA5864e24914': [
-    {
-      name: 'USD+',
-      address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
-    },
-    {
-      name: 'ARB',
-      address: '0x912ce59144191c1204e64559fe8253a0e49e6548',
-    },
-  ],
-  '0xe37304F7489ed253b2A46A1d9DabDcA3d311D22E': [
-    {
-      name: 'USD+',
-      address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
-    },
-    {
-      name: 'WETH',
-      address: '0x82af49447d8a07e3bd95bd0d56f35241523fbab1',
-    },
-  ],
+  // '0xa1F9159e11aD48524c16C9bf10bf440815b03e6C': [
+  //   {
+  //     name: 'USD+',
+  //     address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
+  //   },
+  //   {
+  //     name: 'USDC',
+  //     address: chainContractsMap.arbitrum.usdcNative,
+  //   },
+  // ],
+  // '0xf92768916015b5eBd9fa54D6BA10dA5864e24914': [
+  //   {
+  //     name: 'USD+',
+  //     address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
+  //   },
+  //   {
+  //     name: 'ARB',
+  //     address: '0x912ce59144191c1204e64559fe8253a0e49e6548',
+  //   },
+  // ],
+  // '0xe37304F7489ed253b2A46A1d9DabDcA3d311D22E': [
+  //   {
+  //     name: 'USD+',
+  //     address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
+  //   },
+  //   {
+  //     name: 'WETH',
+  //     address: '0x82af49447d8a07e3bd95bd0d56f35241523fbab1',
+  //   },
+  // ],
 } as any;
 
 export const zapPlatformContractTypeMap: any = {
