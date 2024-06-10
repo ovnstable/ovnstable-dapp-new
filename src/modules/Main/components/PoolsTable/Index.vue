@@ -128,7 +128,7 @@ export default {
 
   watch: {
     filteredPools(arr: any[]) {
-      this.showingPools = (arr?.length ?? 0) + 1;
+      this.showingPools = arr?.length;
 
       if (this.showingPools + (arr?.length ?? 0) > 10) {
         this.openPoolList = false;
@@ -187,6 +187,7 @@ export default {
 
       const tabOrderedPools = [...mainPools, ...secondaryPools];
 
+      console.log(tabOrderedPools, this.showingPools, '__tabOrderedPools');
       if (['APR', 'TVL'].includes(this.orderType)) return tabOrderedPools.slice(this.showingPools, tabOrderedPools.length);
 
       if (this.orderType === 'APR_UP') {

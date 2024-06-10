@@ -101,6 +101,7 @@
                     :class="{
                       'pools-table--hot': pool.poolTag === POOL_TAG.HOT,
                       'pools-table--new': pool.poolTag === POOL_TAG.NEW,
+                      'pools-table--zapin': pool.poolTag === POOL_TAG.ZAPIN,
                     }"
                   >
                     {{ getTagName(pool.poolTag)}}
@@ -269,6 +270,7 @@ export default {
         if (poolTag === POOL_TAG.HOT) return 'HOT';
         if (poolTag === POOL_TAG.NEW) return 'NEW';
         if (poolTag === POOL_TAG.PROMO) return 'PROMO';
+        if (poolTag === POOL_TAG.ZAPIN) return 'ZAPIN';
         return '';
       };
     },
@@ -277,6 +279,7 @@ export default {
         if (poolTag === POOL_TAG.HOT) return 'CommonHot';
         if (poolTag === POOL_TAG.NEW) return 'CommonStar';
         if (poolTag === POOL_TAG.PROMO) return 'CommonPromo';
+        if (poolTag === POOL_TAG.ZAPIN) return 'CommonStar';
         return '';
       };
     },
@@ -692,6 +695,14 @@ export default {
 }
 
 .pools-table--new {
+  color: var(--color-12);
+
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
+}
+
+.pools-table--zapin {
   color: var(--color-12);
 
   [data-theme="dark"] & {

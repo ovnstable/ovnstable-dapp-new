@@ -111,6 +111,8 @@ const actions = {
                 pool.zappable = true;
               }
 
+              if (!pool.poolTag && pool.zappable) poolTag = POOL_TAG.ZAPIN;
+
               // const moreThanOnePlatform = checkForSamePlatform(pool.id.address);
 
               // unique cases, different platforms, one pool
@@ -122,7 +124,6 @@ const actions = {
                 const newName = pool.id.name.toUpperCase();
 
                 if (HOT_POOLS.includes(pool.id.address)) poolTag = POOL_TAG.HOT;
-
                 if (NEW_POOLS.includes(pool.id.address)) poolTag = POOL_TAG.NEW;
                 // if (LOW_TVL_PROMOTE.includes(pool.id.address)) poolTag = POOL_TAG.NEW;
 
