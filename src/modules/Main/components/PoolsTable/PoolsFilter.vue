@@ -4,7 +4,7 @@
       <SwitchTabs
         :tabs="filterTabs"
         :active-tab="poolTypes.ALL"
-        tabStyle="white"
+        tabStyle="transparent"
         type="large"
         @tab-change="changeTab"
       />
