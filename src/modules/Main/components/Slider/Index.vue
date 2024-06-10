@@ -812,5 +812,12 @@ export default {
       box-shadow: 0px 0px 2px 2px var(--color-3);
     }
   }
+
+  @media (max-width: 640px) {
+
+    img {
+      max-height: 400px;
+    }
+  }
 }
 </style>

@@ -514,18 +514,6 @@ export default {
   [data-theme="dark"] & {
     border: none;
   }
-
-  @media (max-width: 1024px) {
-    flex-direction: column;
-    align-items: flex-start;
-    border: 1px solid var(--color-17);
-    background-color: var(--color-4);
-    padding: 5px;
-    border-radius: 10px;
-    [data-theme="dark"] & {
-      background-color: var(--color-17);
-    }
-  }
 }
 
 .pools-table__tokens-item {
@@ -559,10 +547,13 @@ export default {
   }
 
   @media (max-width: 1024px) {
-    right: 0;
     border: unset;
     background-color: unset;
     padding: 2px 9px;
+
+    &:nth-child(2) {
+      right: 10px;
+    }
 
     &:nth-child(3) {
       right: unset;
@@ -571,13 +562,6 @@ export default {
         display: block;
       }
     }
-  }
-
-  @media (max-width: 1024px) {
-    right: 0;
-    border: unset;
-    background-color: unset;
-    padding: 2px 9px;
   }
 }
 

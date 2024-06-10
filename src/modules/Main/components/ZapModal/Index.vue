@@ -78,7 +78,7 @@ export default {
 
 <style lang="scss" scoped>
 .modal-content {
-  padding: 24px;
+  padding: 40px 20px 20px 20px;
   min-width: 600px;
   max-width: 600px;
 
@@ -86,14 +86,11 @@ export default {
     width: 100vw;
     max-width: 80vw;
     height: 100%;
-    padding: 20px;
-    // zoom: 90%;
   }
 
   @media (max-width: 1240px) {
     &.v3 {
       max-width: 80vw;
-      // zoom: normal;
     }
   }
 }
