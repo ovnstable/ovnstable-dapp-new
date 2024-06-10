@@ -321,7 +321,7 @@ export const poolsInfoMap: any = {
     poolTokenType: 'DIFFERENT',
   },
   // PANCAKE CL
-  '0xa1F9159e11aD48524c16C9bf10bf440815b03e6C': {
+  '0xa1f9159e11ad48524c16c9bf10bf440815b03e6c': {
     gauge: '0x46a15b0b27311cedf172ab29e4f4766fbe7f4364',
     version: 3,
     approveType: 'NFT',
@@ -805,7 +805,7 @@ export const poolTokensForZapMap = {
     },
   ],
   // Pancake CL
-  '0xa1F9159e11aD48524c16C9bf10bf440815b03e6C': [
+  '0xa1f9159e11ad48524c16c9bf10bf440815b03e6c': [
     {
       name: 'USD+',
       address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
@@ -832,7 +832,7 @@ export const poolTokensForZapMap = {
     },
     {
       name: 'WETH',
-      address: '0x82af49447d8a07e3bd95bd0d56f35241523fbab1',
+      address: '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1',
     },
   ],
 } as any;
@@ -929,7 +929,7 @@ export const zapPlatformContractTypeMap: any = {
     typeOfDepositConstructor: 'CONSTRUCTOR_V3_WITH_TOKEN_ID',
   },
   // Pancake CL
-  '0xa1F9159e11aD48524c16C9bf10bf440815b03e6C': {
+  '0xa1f9159e11ad48524c16c9bf10bf440815b03e6c': {
     name: 'Pancake',
     type: 'LP_WITH_STAKE_IN_ONE_STEP',
     typeOfDepositConstructor: 'CONSTRUCTOR_V3_WITH_TOKEN_ID',

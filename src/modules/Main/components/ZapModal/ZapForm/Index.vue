@@ -1178,20 +1178,20 @@ export default {
         slippageLimitPercent: this.getSlippagePercent(),
       };
 
-      if (proportions.inputTokens?.length === 0 && proportions.outputTokens?.length === 0) {
-        await this.initZapInTransaction(
-          null,
-          proportions.inputTokens,
-          proportions.outputTokens,
-          proportions,
-          this.lastPoolInfoData,
-          this.zapPool,
-        );
+      // if (proportions.inputTokens?.length === 0 && proportions.outputTokens?.length === 0) {
+      //   await this.initZapInTransaction(
+      //     null,
+      //     proportions.inputTokens,
+      //     proportions.outputTokens,
+      //     proportions,
+      //     this.lastPoolInfoData,
+      //     this.zapPool,
+      //   );
 
-        this.isSwapLoading = false;
-        this.clickOnStake = false;
-        return;
-      }
+      //   this.isSwapLoading = false;
+      //   this.clickOnStake = false;
+      //   return;
+      // }
 
       const whiteList = WHITE_LIST_ODOS[request.chainId as keyof typeof WHITE_LIST_ODOS];
       const requestData = {

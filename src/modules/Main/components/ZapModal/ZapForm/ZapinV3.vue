@@ -168,6 +168,7 @@ import BN from 'bignumber.js';
 import debounce from 'lodash/debounce';
 import { notify as notifyInst } from '@kyvg/vue3-notification';
 import { getProportionTicks } from '@/store/views/main/zapin/helpers.ts';
+import { awaitDelay } from '@/utils/const.ts';
 
 const createScaledArray = (start: number, end: number, maxItems = 10) => {
   const result = [];
@@ -479,6 +480,12 @@ export default {
     }
 
     this.isLoading = false;
+
+    if (this.isStablePool) {
+      await awaitDelay(100);
+      this.zoomType = 4;
+      this.zoomInOut(true);
+    }
   },
   watch: {
     minPrice() {
