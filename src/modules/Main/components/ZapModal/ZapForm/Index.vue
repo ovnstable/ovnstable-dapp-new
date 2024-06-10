@@ -212,16 +212,16 @@
         v-if="!account"
         class="swap-button-container"
       >
-        <div
-          class="swap-button"
+      <ButtonComponent
+          btn-size="large"
+          btn-styles="primary"
+          full
           @click="connectWallet"
           @keypress="connectWallet"
         >
-          <div class="swap-button-title">
-            <div>CONNECT WALLET</div>
-          </div>
+        CONNECT WALLET
+        </ButtonComponent>
         </div>
-      </div>
       <div
         v-else
         class="swap-button-container"
@@ -237,9 +237,9 @@
         </ButtonComponent>
         <ButtonComponent
           btn-size="large"
+          btn-styles="primary"
           full
           v-else-if="isAnyInputsNeedApprove"
-          class="swap-button"
           :loading="approvingPending"
           @click="approveTrigger(firstInputInQueueForToApprove)"
           @keypress="approveTrigger(firstInputInQueueForToApprove)"
@@ -249,9 +249,9 @@
         </ButtonComponent>
         <ButtonComponent
           btn-size="large"
+          btn-styles="primary"
           full
           v-else-if="additionalSwapStepType === 'APPROVE'"
-          class="swap-button"
           :loading="approvingPending"
           @click="
             toApproveAndDepositSteps(lastZapResponseData, lastPoolInfoData)
@@ -264,6 +264,7 @@
         </ButtonComponent>
         <ButtonComponent
           btn-size="large"
+          btn-styles="primary"
           full
           v-else-if="additionalSwapStepType === 'DEPOSIT'"
           :loading="isSwapLoading"
@@ -289,6 +290,7 @@
         </ButtonComponent>
         <ButtonComponent
           btn-size="large"
+          btn-styles="primary"
           full
           v-else
           @click="stakeTrigger"
