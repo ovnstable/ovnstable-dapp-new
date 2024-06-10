@@ -40,7 +40,7 @@
         :key="networkConfig.chain"
         @click="changeNetwork(networkConfig.chain)"
         @keypress="changeNetwork(networkConfig.chain)"
-        :class="selectedNetwork.includes(networkConfig.chain) ? 'pools-wrap__filters-item--selected' : ''"
+        :class="selectedNetwork.includes(networkConfig.chain) || selectedNetwork.includes('ALL') ? 'pools-wrap__filters-item--selected' : ''"
         class="pools-wrap__filters-item"
       >
         <BaseIcon :name="networkConfig.name.toLowerCase()" />
