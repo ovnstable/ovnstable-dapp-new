@@ -122,7 +122,6 @@ const actions = {
                 const newName = pool.id.name.toUpperCase();
 
                 if (HOT_POOLS.includes(pool.id.address)) poolTag = POOL_TAG.HOT;
-
                 if (NEW_POOLS.includes(pool.id.address)) poolTag = POOL_TAG.NEW;
                 // if (LOW_TVL_PROMOTE.includes(pool.id.address)) poolTag = POOL_TAG.NEW;
 

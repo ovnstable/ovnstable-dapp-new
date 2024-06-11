@@ -168,6 +168,7 @@ import BN from 'bignumber.js';
 import debounce from 'lodash/debounce';
 import { notify as notifyInst } from '@kyvg/vue3-notification';
 import { getProportionTicks } from '@/store/views/main/zapin/helpers.ts';
+import { awaitDelay } from '@/utils/const.ts';
 
 const createScaledArray = (start: number, end: number, maxItems = 10) => {
   const result = [];
@@ -348,6 +349,7 @@ export default {
     const currPrice = await this.zapContract.getCurrentPrice(this.zapPool.address);
     const center = new BN(currPrice).div(10 ** 6);
 
+    console.log(center.toString(), '___centercenter');
     let buildData: any = [];
 
     // if stablepool todo
@@ -362,7 +364,7 @@ export default {
 
       const minPrice = new BN(currPrice).times(0.9);
       const maxPrice = new BN(currPrice).times(1.1);
-      this.centerPrice = center.toFixed(2);
+      this.centerPrice = center.toFixed(6);
 
       this.$emit('set-range', {
         range: [
@@ -447,7 +449,7 @@ export default {
       const maxPrice = new BN(currPrice).times(1.1);
       this.minPrice = minPrice.div(10 ** 6).toFixed(6);
       this.maxPrice = maxPrice.div(10 ** 6).toFixed(6);
-      this.centerPrice = center.toFixed(2);
+      this.centerPrice = center.toFixed(6);
 
       this.$emit('set-range', {
         range: [
@@ -479,6 +481,12 @@ export default {
     }
 
     this.isLoading = false;
+
+    if (this.isStablePool) {
+      await awaitDelay(100);
+      this.zoomType = 4;
+      this.zoomInOut(true);
+    }
   },
   watch: {
     minPrice() {
@@ -524,8 +532,8 @@ export default {
       console.log(this.$refs?.zapinChart, '__this.$refs?.zapinChart');
       console.log(xStart, xEnd, 'zoomIn');
 
-      let minVal = 0;
-      let maxVal = 0;
+      let minVal = '0';
+      let maxVal = '0';
 
       const zoomNum = 1;
       let newZoomType = 0;
@@ -547,24 +555,25 @@ export default {
       }
 
       if (this.zoomType === 2) {
-        minVal = 0.9;
-        maxVal = 1.1;
+        minVal = new BN(this.centerPrice).times(0.9).toFixed(1);
+        maxVal = new BN(this.centerPrice).times(1.1).toFixed(1);
       }
       if (this.zoomType === 3) {
-        minVal = 0.99;
-        maxVal = 1.01;
+        minVal = new BN(this.centerPrice).times(0.99).toFixed(2);
+        maxVal = new BN(this.centerPrice).times(1.01).toFixed(2);
       }
       if (this.zoomType === 4) {
-        minVal = 0.999;
-        maxVal = 1.001;
+        minVal = new BN(this.centerPrice).times(0.999).toFixed(3);
+        maxVal = new BN(this.centerPrice).times(1.001).toFixed(3);
       }
       if (this.zoomType === 5) {
-        minVal = 0.9995;
-        maxVal = 1.0005;
+        minVal = new BN(this.centerPrice).times(0.9995).toFixed(4);
+        maxVal = new BN(this.centerPrice).times(1.0005).toFixed(4);
       }
 
-      const buildData = createScaledArray(minVal, maxVal);
+      const buildData = createScaledArray(Number(minVal), Number(maxVal));
 
+      console.log(buildData, '__buildData');
       if (buildData?.length === 0) return;
       (this.$refs?.zapinChart as any).updateSeries([{
         data: buildData,
@@ -725,13 +734,13 @@ export default {
       }
 
       const currPrice = await this.zapContract.getCurrentPrice(this.zapPool.address);
-      const center = Number(new BN(currPrice).div(10 ** 6).toFixed(4));
+      const center = Number(new BN(currPrice).div(10 ** 6).toFixed(6));
       const minPrice = center * (1 - val / 2 / 100);
       const maxPrice = center * (1 + val / 2 / 100);
 
       this.minPrice = minPrice.toFixed(6);
       this.maxPrice = maxPrice.toFixed(6);
-      this.centerPrice = new BN(currPrice).div(10 ** 6).toFixed(4);
+      this.centerPrice = new BN(currPrice).div(10 ** 6).toFixed(6);
 
       (this.$refs?.zapinChart as any)?.updateOptions(
         {

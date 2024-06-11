@@ -41,6 +41,7 @@ export enum POOL_TAG {
   NEW = '0',
   PROMO = '1',
   HOT = '2',
+  ZAPIN = '3',
 }
 
 // POOLS WITH EARNINGS MORE THAN 500$ per month

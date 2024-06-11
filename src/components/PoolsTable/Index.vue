@@ -106,6 +106,13 @@
                     {{ getTagName(pool.poolTag)}}
                     <BaseIcon :name="getIconName(pool.poolTag)" />
                   </div>
+                  <div
+                    v-if="pool.zappable"
+                    class="pools-table__tag pools-table--zapin"
+                  >
+                    {{ getTagName(POOL_TAG.ZAPIN)}}
+                    <BaseIcon :name="getIconName(POOL_TAG.ZAPIN)" />
+                  </div>
                 </div>
                 <div class="pools-table__tokens-details">
                   {{ poolVolatileType(pool) }}
@@ -269,6 +276,7 @@ export default {
         if (poolTag === POOL_TAG.HOT) return 'HOT';
         if (poolTag === POOL_TAG.NEW) return 'NEW';
         if (poolTag === POOL_TAG.PROMO) return 'PROMO';
+        if (poolTag === POOL_TAG.ZAPIN) return 'ZAPIN';
         return '';
       };
     },
@@ -277,6 +285,7 @@ export default {
         if (poolTag === POOL_TAG.HOT) return 'CommonHot';
         if (poolTag === POOL_TAG.NEW) return 'CommonStar';
         if (poolTag === POOL_TAG.PROMO) return 'CommonPromo';
+        if (poolTag === POOL_TAG.ZAPIN) return 'CommonStar';
         return '';
       };
     },
@@ -403,7 +412,7 @@ export default {
 .pools-table__new,
 .pools-table__blast {
   display: grid;
-  grid-template-columns: minmax(100px, 0.5fr) minmax(150px, 2fr) minmax(100px, 1fr) minmax(140px, 1fr) minmax(140px, 1.5fr) minmax(140px, 1fr);
+  grid-template-columns: minmax(100px, 0.5fr) minmax(200px, 2.5fr) minmax(100px, 1fr) minmax(140px, 1fr) minmax(140px, 1.5fr) minmax(140px, 1fr);
   justify-content: space-between;
   width: 100%;
   padding: 15px 0;
@@ -431,12 +440,12 @@ export default {
   }
 }
 .pools-table__blast {
-  grid-template-columns: minmax(100px, 0.5fr) minmax(150px, 2fr) minmax(100px, 1fr) minmax(140px, 1fr) minmax(140px, 1.5fr) minmax(140px, 1fr);
+  grid-template-columns: minmax(100px, 0.5fr) minmax(200px, 2.5fr) minmax(100px, 1fr) minmax(140px, 1fr) minmax(140px, 1.5fr) minmax(140px, 1fr);
 }
 
 .pools-header {
   display: grid;
-  grid-template-columns: minmax(100px, 0.5fr) minmax(150px, 2fr) minmax(100px, 1fr) minmax(140px, 1fr) minmax(140px, 1.5fr) minmax(140px, 1fr);
+  grid-template-columns: minmax(100px, 0.5fr) minmax(200px, 2.5fr) minmax(100px, 1fr) minmax(140px, 1fr) minmax(140px, 1.5fr) minmax(140px, 1fr);
   width: 100%;
   color: var(--color-2);
   margin-top: 10px;
@@ -683,6 +692,14 @@ export default {
   }
 }
 
+.pools-table--zapin {
+  color: var(--color-12);
+
+  [data-theme="dark"] & {
+    color: var(--color-4);
+  }
+}
+
 .pools-table--hot {
   color: var(--color-10);
 
@@ -852,7 +869,7 @@ export default {
     font-size: 12px;
   }
   .pools-table__row {
-    grid-template-columns: 0.5fr 2fr 2fr 1fr 1.35fr 0.9fr;
+    grid-template-columns: 0.5fr 3fr 2fr 1fr 1.35fr 0.9fr;
     button {
       font-size: 14px;
     }
@@ -866,7 +883,7 @@ export default {
     right: -36px;
   }
   .pools-table__blast {
-    grid-template-columns: 0.5fr 2fr 2fr 2fr 1fr 0.8fr 0.9fr;
+    grid-template-columns: 0.5fr 3fr 2fr 2fr 1fr 0.8fr 0.9fr;
   }
 }
 

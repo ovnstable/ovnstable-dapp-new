@@ -318,7 +318,8 @@
     <ZapInStepsRow
       v-if="zapPool.chain === networkId && isTokensLoadedAndFiltered"
       class="zapin__modal-steps"
-      :typeOfZapIn="zapInType"
+      :version="zapInType"
+      :type="currentZapPlatformContractType"
       :current-stage="currentStage"
     />
 
@@ -363,7 +364,7 @@ import SwapSlippageSettings from '@/modules/Main/components/Common/SwapSlippageS
 import ZapInStepsRow, { zapInStep } from '@/components/StepsRow/ZapinRow.vue';
 import ZapinV3 from '@/modules/Main/components/ZapModal/ZapForm/ZapinV3.vue';
 import { poolsInfoMap, poolTokensForZapMap } from '@/store/views/main/zapin/mocks.ts';
-import BigNumber from 'bignumber.js';
+import BN from 'bignumber.js';
 import { approveToken, getAllowanceValue } from '@/utils/contractApprove.ts';
 import { onLeaveList, onEnterList, beforeEnterList } from '@/utils/animations.ts';
 
@@ -473,13 +474,13 @@ export default {
     ...mapGetters('accountData', ['account']),
 
     getOdosFee() {
-      return new BigNumber(this.sumOfAllSelectedTokensInUsd)
+      return new BN(this.sumOfAllSelectedTokensInUsd)
         .times(this.multiSwapOdosFeePercent)
         .div(100)
         .toNumber();
     },
     getSlippageAmount() {
-      return new BigNumber(this.sumOfAllSelectedTokensInUsd)
+      return new BN(this.sumOfAllSelectedTokensInUsd)
         .times(this.slippagePercent).div(100).toNumber();
     },
     zapAllTokens() {
@@ -696,9 +697,9 @@ export default {
       for (let i = 0; i < this.selectedInputTokens.length; i++) {
         const token: any = this.selectedInputTokens[i];
         const selectedTokenUsdValue = token.usdValue;
-        sum = new BigNumber(
+        sum = new BN(
           selectedTokenUsdValue,
-        ).plus(sum).toFixed(6, BigNumber.ROUND_DOWN);
+        ).plus(sum).toFixed(6, BN.ROUND_DOWN);
       }
 
       return sum;
@@ -813,7 +814,7 @@ export default {
           tokenData,
           tokenData.value,
           this.checkApproveForToken,
-          new BigNumber(tokenData.selectedToken.balanceData.originalBalance)
+          new BN(tokenData.selectedToken.balanceData.originalBalance)
             .minus(10).toString(),
         );
       } else {
@@ -1040,6 +1041,8 @@ export default {
       this.selectedOutputTokens[0].value = 100;
     },
     async stakeTrigger() {
+      console.log(this.poolTokenContract, '__this.poolTokenContract');
+      // await this.poolTokenContract.deposit(Number(26997));
       if (this.zapInType === 'V2') this.currentStage = zapInStep.STAKE_LP;
       if (!this.zapPool) return;
       this.$store.commit('odosData/changeState', {
@@ -1072,14 +1075,15 @@ export default {
       );
 
       const sumReserves = (
-        new BigNumber(reserves.token0Amount).times(outputToken0Price)
+        new BN(reserves.token0Amount).times(outputToken0Price)
       )
         .plus(
-          new BigNumber(reserves.token1Amount).times(outputToken1Price),
-        ).toNumber();
+          new BN(reserves.token1Amount).times(outputToken1Price),
+        ).toFixed(0);
 
       const userInputTokens = this.selectedInputTokens;
       const poolOutputTokens = this.selectedOutputTokens;
+
       const formulaInputTokens = [];
       let formulaOutputTokens = [];
 
@@ -1148,6 +1152,18 @@ export default {
       const outputAmounts = formulaOutputTokens.map((token: any) => token.contractValue);
       const outputPrices = formulaOutputTokens.map((token: any) => token.price);
 
+      console.log(JSON.stringify({
+        inputTokensDecimals: [...inputDecimals],
+        inputTokensAddresses: [...inputAddresses],
+        inputTokensAmounts: [...inputAmounts],
+        inputTokensPrices: [...inputPrices],
+        outputTokensDecimals: [...outputDecimals],
+        outputTokensAddresses: [...outputAddresses],
+        outputTokensAmounts: [...outputAmounts],
+        outputTokensPrices: [...outputPrices],
+        proportion0: new BN(reserves[0])
+          .times(outputPrices[0]).div(sumReserves).toFixed(),
+      }), '__PARAMS');
       const proportions = calculateProportionForPool({
         inputTokensDecimals: [...inputDecimals],
         inputTokensAddresses: [...inputAddresses],
@@ -1157,8 +1173,8 @@ export default {
         outputTokensAddresses: [...outputAddresses],
         outputTokensAmounts: [...outputAmounts],
         outputTokensPrices: [...outputPrices],
-        proportion0: new BigNumber(reserves[0])
-          .times(outputPrices[0]).div(sumReserves).toNumber(),
+        proportion0: new BN(reserves[0])
+          .times(outputPrices[0]).div(sumReserves).toFixed(),
       });
 
       console.log(proportions, '__proportions');
@@ -1393,7 +1409,7 @@ export default {
       lastPoolInfoData: any,
     ) {
       this.currentStage = zapInStep.APPROVE_GAUGE;
-      const approveAmount = new BigNumber(10).pow(24).toFixed();
+      const approveAmount = new BN(10).pow(24).toFixed();
       const isGaugeApproved = await checkApproveForGauge(
         this.poolTokenContract,
         approveAmount,
@@ -1453,6 +1469,16 @@ export default {
       this.currentStage = zapInStep.STAKE_LP;
       this.showWaitingModal('Stake LP in process');
 
+      console.log({
+        acc: this.account,
+        lastPoolInfoData,
+        lastNftTokenId,
+        zap: this.currentZapPlatformContractType,
+        gauge: this.gaugeContract,
+        zaproot: this.zapPoolRoot,
+        token: this.poolTokenContract,
+
+      }, '___DATA1');
       depositAllAtGauge(
         this.account,
         lastPoolInfoData,
@@ -1630,8 +1656,8 @@ export default {
 
       const params = {
         from: this.account,
-        gasPrice: ethers.parseUnits('100', 'gwei'),
-        gasLimit: 1000000,
+        // gasPrice: ethers.parseUnits('100', 'gwei'),
+        // gasLimit: 1000000,
       };
 
       console.log(zapPool, '----zapPool');
@@ -1720,14 +1746,16 @@ export default {
       const outputToken1Price = this.selectedOutputTokens[1].selectedToken.price;
 
       const sumReserves = (
-        new BigNumber(reserves.token0Amount).times(outputToken0Price)
+        new BN(reserves.token0Amount).times(outputToken0Price)
       )
         .plus(
-          new BigNumber(reserves.token1Amount).times(outputToken1Price),
+          new BN(reserves.token1Amount).times(outputToken1Price),
         ).toNumber();
 
       this.selectedOutputTokens[0]
-        .value = ((Number(reserves[0]) * Number(outputToken0Price)) / sumReserves) * 100;
+        .value = new BN(Number(reserves[0]))
+          .times(Number(outputToken0Price)).div(sumReserves).times(100)
+          .toFixed();
       this.selectedOutputTokens[1]
         .value = ((Number(reserves[1]) * Number(outputToken1Price)) / sumReserves) * 100;
 
@@ -1764,7 +1792,7 @@ export default {
         selectedToken.approveData.approved = true;
         return;
       }
-      selectedToken.approveData.approved = new BigNumber(selectedToken.approveData.allowanceValue)
+      selectedToken.approveData.approved = new BN(selectedToken.approveData.allowanceValue)
         .isGreaterThanOrEqualTo(checkedAllowanceValue);
       if (this.zapInType === 'V2' && selectedToken.approveData.approved) {
         this.currentStage = zapInStep.STAKE_LP;
@@ -1779,7 +1807,7 @@ export default {
       this.approvingPending = true;
       const { selectedToken } = token;
 
-      const approveValue = new BigNumber(10)
+      const approveValue = new BN(10)
         .pow(selectedToken.decimals)
         .times(10 ** 18)
         .toFixed(0);
@@ -1884,12 +1912,12 @@ export default {
     recalculateOutputTokensSum() {
       for (let i = 0; i < this.selectedOutputTokens.length; i++) {
         const token: any = this.selectedOutputTokens[i];
-        const tokenSum = new BigNumber(
+        const tokenSum = new BN(
           this.sumOfAllSelectedTokensInUsd,
         ).times(token.value).div(100);
         const sum = this.swapMethod === 'BUY'
-          ? new BigNumber(tokenSum).div(token.selectedToken.price)
-          : new BigNumber(tokenSum).times(token.selectedToken.price);
+          ? new BN(tokenSum).div(token.selectedToken.price)
+          : new BN(tokenSum).times(token.selectedToken.price);
         this.outputTokens[i] = {
           ...token,
           sum: this.formatMoney(sum.toNumber(), 4),
@@ -2101,7 +2129,7 @@ export default {
 
       this.checkApproveForToken(
         newInputToken,
-        new BigNumber(10 ** selectedToken.decimals).times(1000000).toFixed(0),
+        new BN(10 ** selectedToken.decimals).times(1000000).toFixed(0),
       );
     },
     addSelectedTokenToOutputList(selectedToken: any, isLocked: any, startPercent: any) {

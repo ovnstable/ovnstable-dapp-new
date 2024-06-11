@@ -292,6 +292,7 @@ export const poolsInfoMap: any = {
   },
 
   // CL AERODROME
+  // base have unique logic of staking, compare to other DEX
   '0x0c1A09d5D0445047DA3Ab4994262b22404288A3B': {
     gauge: '0xeA22A3AAdA580bD75Fb6caC35034e09046cbFf72',
     gaugeForLP: '0x827922686190790b37229fd06084350e74485b72',
@@ -321,23 +322,23 @@ export const poolsInfoMap: any = {
     poolTokenType: 'DIFFERENT',
   },
   // PANCAKE CL
-  '0xa1F9159e11aD48524c16C9bf10bf440815b03e6C': {
+  '0xa1f9159e11ad48524c16c9bf10bf440815b03e6c': {
     gauge: '0x46a15b0b27311cedf172ab29e4f4766fbe7f4364',
     version: 3,
     approveType: 'NFT',
-    poolTokenType: 'DIFFERENT',
+    poolTokenType: 'TOKEN',
   },
-  '0xf92768916015b5eBd9fa54D6BA10dA5864e24914': {
+  '0xf92768916015b5ebd9fa54d6ba10da5864e24914': {
     gauge: '0x46a15b0b27311cedf172ab29e4f4766fbe7f4364',
     version: 3,
     approveType: 'NFT',
-    poolTokenType: 'DIFFERENT',
+    poolTokenType: 'TOKEN',
   },
-  '0xe37304F7489ed253b2A46A1d9DabDcA3d311D22E': {
+  '0xe37304f7489ed253b2a46a1d9dabdca3d311d22e': {
     gauge: '0x46a15b0b27311cedf172ab29e4f4766fbe7f4364',
     version: 3,
     approveType: 'NFT',
-    poolTokenType: 'DIFFERENT',
+    poolTokenType: 'TOKEN',
   },
 };
 
@@ -805,36 +806,36 @@ export const poolTokensForZapMap = {
     },
   ],
   // Pancake CL
-  // '0xa1F9159e11aD48524c16C9bf10bf440815b03e6C': [
-  //   {
-  //     name: 'USD+',
-  //     address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
-  //   },
-  //   {
-  //     name: 'USDC',
-  //     address: chainContractsMap.arbitrum.usdcNative,
-  //   },
-  // ],
-  // '0xf92768916015b5eBd9fa54D6BA10dA5864e24914': [
-  //   {
-  //     name: 'USD+',
-  //     address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
-  //   },
-  //   {
-  //     name: 'ARB',
-  //     address: '0x912ce59144191c1204e64559fe8253a0e49e6548',
-  //   },
-  // ],
-  // '0xe37304F7489ed253b2A46A1d9DabDcA3d311D22E': [
-  //   {
-  //     name: 'USD+',
-  //     address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
-  //   },
-  //   {
-  //     name: 'WETH',
-  //     address: '0x82af49447d8a07e3bd95bd0d56f35241523fbab1',
-  //   },
-  // ],
+  '0xa1f9159e11ad48524c16c9bf10bf440815b03e6c': [
+    {
+      name: 'USDC',
+      address: chainContractsMap.arbitrum.usdcNative,
+    },
+    {
+      name: 'USD+',
+      address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
+    },
+  ],
+  '0xf92768916015b5ebd9fa54d6ba10da5864e24914': [
+    {
+      name: 'ARB',
+      address: '0x912ce59144191c1204e64559fe8253a0e49e6548',
+    },
+    {
+      name: 'USD+',
+      address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
+    },
+  ],
+  '0xe37304f7489ed253b2a46a1d9dabdca3d311d22e': [
+    {
+      name: 'WETH',
+      address: '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1',
+    },
+    {
+      name: 'USD+',
+      address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
+    },
+  ],
 } as any;
 
 export const zapPlatformContractTypeMap: any = {
@@ -929,19 +930,19 @@ export const zapPlatformContractTypeMap: any = {
     typeOfDepositConstructor: 'CONSTRUCTOR_V3_WITH_TOKEN_ID',
   },
   // Pancake CL
-  '0xa1F9159e11aD48524c16C9bf10bf440815b03e6C': {
+  '0xa1f9159e11ad48524c16c9bf10bf440815b03e6c': {
     name: 'Pancake',
-    type: 'LP_WITH_STAKE_IN_ONE_STEP',
-    typeOfDepositConstructor: 'CONSTRUCTOR_V3_WITH_TOKEN_ID',
+    type: 'LP_STAKE_DIFF_STEPS',
+    typeOfDepositConstructor: 'CONSTRUCTOR_WITH_NFT_ID',
   },
-  '0xf92768916015b5eBd9fa54D6BA10dA5864e24914': {
+  '0xf92768916015b5ebd9fa54d6ba10da5864e24914': {
     name: 'Pancake',
-    type: 'LP_WITH_STAKE_IN_ONE_STEP',
-    typeOfDepositConstructor: 'CONSTRUCTOR_V3_WITH_TOKEN_ID',
+    type: 'LP_STAKE_DIFF_STEPS',
+    typeOfDepositConstructor: 'CONSTRUCTOR_WITH_NFT_ID',
   },
-  '0xe37304F7489ed253b2A46A1d9DabDcA3d311D22E': {
+  '0xe37304f7489ed253b2a46a1d9dabdca3d311d22e': {
     name: 'Pancake',
-    type: 'LP_WITH_STAKE_IN_ONE_STEP',
-    typeOfDepositConstructor: 'CONSTRUCTOR_V3_WITH_TOKEN_ID',
+    type: 'LP_STAKE_DIFF_STEPS',
+    typeOfDepositConstructor: 'CONSTRUCTOR_WITH_NFT_ID',
   },
 };

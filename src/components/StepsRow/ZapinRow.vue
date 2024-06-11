@@ -19,7 +19,7 @@
     </p>
     <BaseIcon name="InsuranceModalArrowRight" />
     <p
-      v-if="typeOfZapIn === 'V3'"
+      v-if="version === 'V3'"
       :class="{
         'active-stage': currentStage === zapInStep.DEPOSIT,
         'active-color': isActiveTab(zapInStep.DEPOSIT),
@@ -28,11 +28,11 @@
       Deposit
     </p>
     <BaseIcon
-      v-if="typeOfZapIn === 'V3'"
+      v-if="version === 'V3'"
       name="InsuranceModalArrowRight"
     />
     <p
-      v-if="typeOfZapIn === 'V3'"
+      v-if="version === 'V3' && showStaking"
       :class="{
         'active-stage': currentStage === zapInStep.APPROVE_GAUGE,
         'active-color': isActiveTab(zapInStep.APPROVE_GAUGE),
@@ -41,7 +41,7 @@
       Approve Gauge
     </p>
     <BaseIcon
-      v-if="typeOfZapIn === 'V3'"
+      v-if="version === 'V3' && showStaking"
       name="InsuranceModalArrowRight"
     />
     <p
@@ -59,6 +59,9 @@
 <script lang="ts">
 import { type PropType } from 'vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import BigNumber from 'bignumber.js';
+
+(window as any).bigNumber = BigNumber;
 // eslint-disable-next-line no-shadow
 export enum zapInStep {
   START,
@@ -74,9 +77,13 @@ export default {
     BaseIcon,
   },
   props: {
-    typeOfZapIn: {
+    version: {
       type: String,
       default: '1W',
+    },
+    type: {
+      type: Object,
+      default: () => {},
     },
     currentStage: {
       type: Number as PropType<zapInStep>,
@@ -88,7 +95,13 @@ export default {
       zapInStep,
     };
   },
+  mounted() {
+    console.log(this.type, '__DAA');
+  },
   computed: {
+    showStaking() {
+      return this.type?.type !== 'LP_WITH_STAKE_IN_ONE_STEP';
+    },
     isActiveTab() {
       return (stage: number) => this.currentStage > stage;
     },
