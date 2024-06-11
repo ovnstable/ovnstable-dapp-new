@@ -807,32 +807,32 @@ export const poolTokensForZapMap = {
   // Pancake CL
   '0xa1f9159e11ad48524c16c9bf10bf440815b03e6c': [
     {
-      name: 'USD+',
-      address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
-    },
-    {
       name: 'USDC',
       address: chainContractsMap.arbitrum.usdcNative,
+    },
+    {
+      name: 'USD+',
+      address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
     },
   ],
   '0xf92768916015b5ebd9fa54d6ba10da5864e24914': [
     {
-      name: 'USD+',
-      address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
-    },
-    {
       name: 'ARB',
       address: '0x912ce59144191c1204e64559fe8253a0e49e6548',
+    },
+    {
+      name: 'USD+',
+      address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
     },
   ],
   '0xe37304f7489ed253b2a46a1d9dabdca3d311d22e': [
     {
-      name: 'USD+',
-      address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
-    },
-    {
       name: 'WETH',
       address: '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1',
+    },
+    {
+      name: 'USD+',
+      address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
     },
   ],
 } as any;

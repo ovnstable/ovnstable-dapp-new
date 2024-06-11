@@ -4,7 +4,7 @@
 /* eslint-disable consistent-return */
 import { poolsInfoMap } from '@/store/views/main/zapin/mocks.ts';
 import { approveToken, getAllowanceValue } from '@/utils/contractApprove.ts';
-import BigNumber from 'bignumber.js';
+import BN from 'bignumber.js';
 
 export const getProportion = (
   poolAddress: string,
@@ -26,7 +26,9 @@ export const getProportion = (
   if (zapPool.poolVersion === 'v3') {
     const rangeData = v3Data.range;
     const ticks = v3Data?.isStable ? v3Data.ticks : '0';
-
+    console.log({
+      pair: zapPool.address, priceRange: rangeData, amountsOut: ['0', '0'], tickDelta: ticks,
+    }, '__PARAMS');
     return zapContract
       .getProportion({
         pair: zapPool.address, priceRange: rangeData, amountsOut: ['0', '0'], tickDelta: ticks,
@@ -95,7 +97,7 @@ export const checkApproveForGauge = async (
     account,
     routerContract.target,
   );
-  return new BigNumber(allowanceValue).isGreaterThanOrEqualTo(checkedAllowanceValue);
+  return new BN(allowanceValue).isGreaterThanOrEqualTo(checkedAllowanceValue);
 };
 
 export const approveGaugeForStake = async (
@@ -107,7 +109,7 @@ export const approveGaugeForStake = async (
   account: string,
   routerContract: any,
 ) => {
-  const approveValue = new BigNumber(10).pow(24).toFixed();
+  const approveValue = new BN(10).pow(24).toFixed();
   showWaitingModal('Approving gauge in process');
 
   console.log(approveValue, 'approveValue');
@@ -217,6 +219,18 @@ export const depositAllAtGauge = async (
   }
 };
 
+interface IProportion {
+  inputTokensDecimals: number[],
+  inputTokensAddresses: string[],
+  inputTokensAmounts: string[],
+  inputTokensPrices: number[],
+  outputTokensDecimals: string[],
+  outputTokensAddresses: string[],
+  outputTokensAmounts: string[],
+  outputTokensPrices: number[],
+  proportion0: string,
+}
+
 export const calculateProportionForPool = ({
   inputTokensDecimals,
   inputTokensAddresses,
@@ -227,17 +241,17 @@ export const calculateProportionForPool = ({
   outputTokensAmounts,
   outputTokensPrices,
   proportion0,
-}: any) => {
+}: IProportion) => {
   const tokenOut0 = Number.parseFloat(
-    new BigNumber(outputTokensAmounts[0].toString())
-      .div(new BigNumber(10).pow(outputTokensDecimals[0]))
-      .toFixed(3, BigNumber.ROUND_DOWN)
+    new BN(outputTokensAmounts[0].toString())
+      .div(new BN(10).pow(outputTokensDecimals[0]))
+      .toFixed(3, BN.ROUND_DOWN)
       .toString(),
   ) * outputTokensPrices[0];
   const tokenOut1 = Number.parseFloat(
-    new BigNumber(outputTokensAmounts[1].toString())
-      .div(new BigNumber(10).pow(outputTokensDecimals[1]))
-      .toFixed(3, BigNumber.ROUND_DOWN)
+    new BN(outputTokensAmounts[1].toString())
+      .div(new BN(10).pow(outputTokensDecimals[1]))
+      .toFixed(3, BN.ROUND_DOWN)
       .toString(),
   ) * outputTokensPrices[1];
   const sumInitialOut = tokenOut0 + tokenOut1;
@@ -245,29 +259,29 @@ export const calculateProportionForPool = ({
   for (let i = 0; i < inputTokensAmounts.length; i++) {
     sumInputs
       += Number.parseFloat(
-        new BigNumber(inputTokensAmounts[i].toString())
-          .div(new BigNumber(10).pow(inputTokensDecimals[i]))
-          .toFixed(3, BigNumber.ROUND_DOWN)
+        new BN(inputTokensAmounts[i].toString())
+          .div(new BN(10).pow(inputTokensDecimals[i]))
+          .toFixed(3, BN.ROUND_DOWN)
           .toString(),
       ) * inputTokensPrices[i];
   }
   sumInputs += sumInitialOut;
 
-  const output0InMoneyWithProportion = sumInputs * proportion0;
-  const output1InMoneyWithProportion = sumInputs * (1 - proportion0);
+  const output0InMoneyWithProportion = new BN(sumInputs).times(proportion0);
+  const output1InMoneyWithProportion = new BN(sumInputs).times(new BN(1).minus(proportion0));
 
   const inputTokens = inputTokensAddresses.map((address: string, index: number) => ({
     tokenAddress: address,
     amount: inputTokensAmounts[index].toString(),
   }));
 
-  if (output0InMoneyWithProportion < tokenOut0) {
-    const dif = tokenOut0 - output0InMoneyWithProportion;
-    const token0AmountForSwap = new BigNumber(
-      (dif / outputTokensPrices[0]).toString(),
+  if (output0InMoneyWithProportion.lt(tokenOut0)) {
+    const dif = new BN(tokenOut0).minus(output0InMoneyWithProportion);
+    const token0AmountForSwap = new BN(
+      (dif.div(outputTokensPrices[0])).toString(),
     )
-      .times(new BigNumber(10).pow(outputTokensDecimals[0]))
-      .toFixed(0, BigNumber.ROUND_DOWN);
+      .times(new BN(10).pow(outputTokensDecimals[0]))
+      .toFixed(0, BN.ROUND_DOWN);
     inputTokens.push({
       tokenAddress: outputTokensAddresses[0],
       amount: token0AmountForSwap.toString(),
@@ -281,18 +295,18 @@ export const calculateProportionForPool = ({
         },
       ],
       inputTokens,
-      amountToken0Out: new BigNumber(outputTokensAmounts[0])
+      amountToken0Out: new BN(outputTokensAmounts[0])
         .minus(token0AmountForSwap)
-        .toFixed(0, BigNumber.ROUND_DOWN),
+        .toFixed(0, BN.ROUND_DOWN),
       amountToken1Out: outputTokensAmounts[1].toString(),
     };
-  } if (output1InMoneyWithProportion < tokenOut1) {
-    const dif = tokenOut1 - output1InMoneyWithProportion;
-    const token1AmountForSwap = new BigNumber(
-      (dif / outputTokensPrices[1]).toString(),
+  } if (output1InMoneyWithProportion.lt(tokenOut1)) {
+    const dif = new BN(tokenOut1).minus(output1InMoneyWithProportion);
+    const token1AmountForSwap = new BN(
+      (new BN(dif).div(outputTokensPrices[1])).toString(),
     )
-      .times(new BigNumber(10).pow(outputTokensDecimals[1]))
-      .toFixed(0, BigNumber.ROUND_DOWN);
+      .times(new BN(10).pow(outputTokensDecimals[1]))
+      .toFixed(0, BN.ROUND_DOWN);
 
     inputTokens.push({
       tokenAddress: outputTokensAddresses[1],
@@ -308,13 +322,13 @@ export const calculateProportionForPool = ({
       ],
       inputTokens,
       amountToken0Out: outputTokensAmounts[0].toString(),
-      amountToken1Out: new BigNumber(outputTokensAmounts[1])
+      amountToken1Out: new BN(outputTokensAmounts[1])
         .minus(token1AmountForSwap)
-        .toFixed(0, BigNumber.ROUND_DOWN),
+        .toFixed(0, BN.ROUND_DOWN),
     };
   }
-  const difToGetFromOdos0 = output0InMoneyWithProportion - tokenOut0;
-  const difToGetFromOdos1 = output1InMoneyWithProportion - tokenOut1;
+  const difToGetFromOdos0 = output0InMoneyWithProportion.minus(tokenOut0);
+  const difToGetFromOdos1 = output1InMoneyWithProportion.minus(tokenOut1);
 
   return {
     inputTokens,
@@ -323,8 +337,7 @@ export const calculateProportionForPool = ({
         tokenAddress: outputTokensAddresses[0],
         proportion: Number.parseFloat(
           (
-            difToGetFromOdos0
-              / (difToGetFromOdos0 + difToGetFromOdos1)
+            new BN(difToGetFromOdos0).div(new BN(difToGetFromOdos0).plus(difToGetFromOdos1))
           ).toFixed(2),
         ),
       },
@@ -332,21 +345,20 @@ export const calculateProportionForPool = ({
         tokenAddress: outputTokensAddresses[1],
         proportion: Number.parseFloat(
           (
-            difToGetFromOdos1
-              / (difToGetFromOdos0 + difToGetFromOdos1)
+            new BN(difToGetFromOdos1).div(new BN(difToGetFromOdos0).plus(difToGetFromOdos1))
           ).toFixed(2),
         ),
       },
     ],
-    amountToken0Out: new BigNumber(
-      (tokenOut0 / outputTokensPrices[0]).toString(),
+    amountToken0Out: new BN(
+      (new BN(tokenOut0).div(outputTokensPrices[0])).toString(),
     )
-      .times(new BigNumber(10).pow(outputTokensDecimals[0]))
+      .times(new BN(10).pow(outputTokensDecimals[0]))
       .toFixed(0),
-    amountToken1Out: new BigNumber(
-      (tokenOut1 / outputTokensPrices[1]).toString(),
+    amountToken1Out: new BN(
+      (new BN(tokenOut1).div(outputTokensPrices[1])).toString(),
     )
-      .times(new BigNumber(10).pow(outputTokensDecimals[1]))
+      .times(new BN(10).pow(outputTokensDecimals[1]))
       .toFixed(0),
   };
 };
