@@ -315,7 +315,8 @@ export default {
 
       for (let i = 0; i < this.successData.outputTokens.length; i++) {
         const token = this.successData.outputTokens[i];
-        const value = token.sum;
+        // eslint-disable-next-line no-restricted-globals
+        const value = isNaN(Number(token.sum)) ? '0' : token.sum;
         this.tokensReturnList.push({
           id: `${token.id}return`,
           token: token.selectedToken,
