@@ -284,7 +284,6 @@
               lastNftTokenId,
             )
           "
-          class="swap-button"
         >
           STAKE LP
         </ButtonComponent>
@@ -295,7 +294,6 @@
           v-else
           @click="stakeTrigger"
           @keypress="stakeTrigger"
-          class="swap-button"
         >
           {{ btnName }}
 
