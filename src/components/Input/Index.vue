@@ -225,7 +225,7 @@ export default {
     font: inherit;
     color: inherit;
     outline: none;
-    border-radius: 30px;
+    // border-radius: 30px;
     transition: box-shadow .2s ease;
 
     [data-theme="dark"] & {
