@@ -78,7 +78,7 @@ export default {
 
 <style lang="scss" scoped>
 .modal-content {
-  padding: 40px 20px 20px 20px;
+  padding: 20px;
   min-width: 600px;
   max-width: 600px;
 

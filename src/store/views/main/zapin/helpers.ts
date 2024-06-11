@@ -152,14 +152,6 @@ export const depositAllAtGauge = async (
   const params = { from: account };
   if (
     currentZapPlatformContractType.typeOfDepositConstructor
-    === 'CONSTRUCTOR_V3_WITH_TOKEN_ID'
-  ) {
-    console.log('1');
-    return poolTokenContract.deposit(Number(lastNftTokenId));
-  }
-
-  if (
-    currentZapPlatformContractType.typeOfDepositConstructor
     === 'CONSTRUCTOR_WITH_TOKEN_ID'
   ) {
     console.log('2');
@@ -192,6 +184,15 @@ export const depositAllAtGauge = async (
     console.log('15');
     const balance = await poolTokenContract.balanceOf(account);
     return gaugeContract.deposit(lastPoolInfoData.poolId, balance, params);
+  }
+
+  // v3 pools at diff dex, have diff methods
+  if (
+    currentZapPlatformContractType.typeOfDepositConstructor
+    === 'CONSTRUCTOR_V3_WITH_TOKEN_ID'
+  ) {
+    console.log('1');
+    return poolTokenContract.deposit(Number(lastNftTokenId));
   }
 
   if (

@@ -1043,6 +1043,8 @@ export default {
       this.selectedOutputTokens[0].value = 100;
     },
     async stakeTrigger() {
+      console.log(this.poolTokenContract, '__this.poolTokenContract');
+      // await this.poolTokenContract.deposit(Number(26997));
       if (this.zapInType === 'V2') this.currentStage = zapInStep.STAKE_LP;
       if (!this.zapPool) return;
       this.$store.commit('odosData/changeState', {
@@ -1469,6 +1471,16 @@ export default {
       this.currentStage = zapInStep.STAKE_LP;
       this.showWaitingModal('Stake LP in process');
 
+      console.log({
+        acc: this.account,
+        lastPoolInfoData,
+        lastNftTokenId,
+        zap: this.currentZapPlatformContractType,
+        gauge: this.gaugeContract,
+        zaproot: this.zapPoolRoot,
+        token: this.poolTokenContract,
+
+      }, '___DATA1');
       depositAllAtGauge(
         this.account,
         lastPoolInfoData,
