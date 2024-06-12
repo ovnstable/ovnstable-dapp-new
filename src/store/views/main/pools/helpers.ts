@@ -1,10 +1,8 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-unused-expressions */
 import { POOL_TYPES } from '@/store/views/main/pools/index.ts';
-import BigNumber from 'bignumber.js';
 import {
   HOT_POOLS,
-  FIRST_MIN_AMOUNT,
   LOW_TVL_PROMOTE,
   NEW_POOLS,
   SECOND_MIN_AMOUNT,
@@ -16,6 +14,11 @@ const ALL_STABLE_TOKENS = [
   'FRAX', 'SFRAX', 'USDC', 'USDT', 'USDB', 'EUSD',
   'USDBC', 'CRVUSD', 'USDZ', 'USDC.E',
 ];
+
+// const REVERT_AGG = [
+//   '0x844D7d2fCa6786Be7De6721AabdfF6957ACE73a0',
+//   '0x61366A4e6b1DB1b85DD701f2f4BFa275EF271197',
+// ];
 
 export const buildLink = (pool: any, poolPlatform: string) => {
   let url;
@@ -359,64 +362,23 @@ export const getSortedPools = (
   filterByTvl: boolean,
   filterByType = POOL_TYPES.ALL,
 ) => {
-  let poolsList = [];
+  const minTvl = filterByTvl ? SECOND_MIN_AMOUNT : 0;
+  const poolWhiteLists = [HOT_POOLS, LOW_TVL_PROMOTE, NEW_POOLS];
+  // const poolBlackLists = [REVERT_AGG];
 
-  const revertAgg = [
-    '0x844D7d2fCa6786Be7De6721AabdfF6957ACE73a0',
-    '0x61366A4e6b1DB1b85DD701f2f4BFa275EF271197',
-  ];
+  const isInLists = (
+    listsArr: string[][],
+    address: string,
+  ) => listsArr.some((list) => list.includes(address));
 
-  // execute revert aggregator
-  const filteredPools = pools.filter((pool) => {
-    if (!revertAgg.includes(pool.address)) false;
-    return true;
-  });
-
-  if (!filterByTvl) {
-    poolsList = filteredPools
-      .filter((pool) => {
-        if (NEW_POOLS.includes(pool.address)) return true;
-        if (HOT_POOLS.includes(pool.address)) return true;
-        if (LOW_TVL_PROMOTE.includes(pool.address)) return true;
-        if (pool.tvl >= FIRST_MIN_AMOUNT) return true;
-
-        return false;
-      });
-  } else {
-    poolsList = filteredPools;
-  }
-
-  const arrLis = filterByPoolType(poolsList, filterByType);
-
-  return arrLis;
-};
-
-export const getSortedSecondPools = (
-  pools: any[],
-  filterByType = POOL_TYPES.ALL,
-) => {
-  let secondPools = pools.filter((pool) => {
-    // this is for new pools which TVL do not pass pool.tvl < 300000 && pool.tvl > 100000
-    // but its should be displayed
-
-    // if its tvl higher than restrictions and its promotoed, its gonna duplicate
-    if (HOT_POOLS.includes(pool.address)) return false;
-    if (LOW_TVL_PROMOTE.includes(pool.address)) return false;
-    if (pool.promoted) return false;
-    if (new BigNumber(pool.tvl).gt(SECOND_MIN_AMOUNT)
-          && new BigNumber(pool.tvl).lt(FIRST_MIN_AMOUNT)) return true;
-
+  const poolsList = pools.filter((pool) => {
+    // if (isInLists(poolBlackLists, pool.address)) return false;
+    if (isInLists(poolWhiteLists, pool.address)) return true;
+    if (pool.tvl >= minTvl) return true;
     return false;
   });
 
-  secondPools = secondPools.sort((a, b) => {
-    if (a.apr !== b.apr) {
-      return b.apr - a.apr; // sort by APR number
-    }
-    return b.tvl - a.tvl; // sort by TVL number
-  });
-
-  return filterByPoolType(secondPools, filterByType);
+  return filterByPoolType(poolsList, filterByType);
 };
 
 export const initReversePools = (pool: any, pools: any[]) => {
