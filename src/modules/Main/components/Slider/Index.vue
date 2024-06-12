@@ -39,11 +39,11 @@
           <a
             target="_blank"
             rel="noopener noreferrer"
-            href="https://overnightdefi.medium.com/overnight-finance-presents-zap-in-feature-for-concentrated-liquidity-pools-ff1f547d76cb"
+            href="https://forms.gle/BCwwX4yhGW7EadTCA"
           >
             <img
               alt="banner"
-              :src="getImageUrl('assets/images/common/banner_zapin_cl.png')"
+              :src="getImageUrl('assets/images/common/banner_feedback_zapin.png')"
             />
           </a>
         </swiper-slide>
