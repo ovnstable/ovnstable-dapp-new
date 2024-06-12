@@ -89,6 +89,14 @@ import type { PropType } from 'vue';
 
 dayjs.extend(utc);
 
+const sortByTagAndValue = (tag: POOL_TAG, pools: any[]) => (valueExtractor: any) => pools.sort(
+  (a, b) => {
+    if (a.poolTag === tag && b.poolTag !== tag) return -1;
+    if (b.poolTag === tag && a.poolTag !== tag) return 1;
+    return valueExtractor(b) - valueExtractor(a);
+  },
+).slice(0, 10);
+
 export default {
   name: 'PoolsContainer',
   props: {
@@ -160,11 +168,7 @@ export default {
         this.poolTabType,
       );
 
-      const sortByNewTagAndValue = (valueExtractor: any) => tabOrderedPools.sort((a, b) => {
-        if (a.poolTag === POOL_TAG.NEW && b.poolTag !== POOL_TAG.NEW) return -1;
-        if (b.poolTag === POOL_TAG.NEW && a.poolTag !== POOL_TAG.NEW) return 1;
-        return valueExtractor(b) - valueExtractor(a);
-      }).slice(0, 10);
+      const sortByNewTagAndValue = sortByTagAndValue(POOL_TAG.HOT, tabOrderedPools);
 
       if (this.orderType === 'APR_UP') return sortByNewTagAndValue((pool: any) => pool.apr);
       if (this.orderType === 'APR_DOWN') return sortByNewTagAndValue((pool: any) => -pool.apr);
