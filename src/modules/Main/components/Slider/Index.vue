@@ -244,7 +244,10 @@ export default {
         const nameApyData = await SliderApiService.loadApyName();
         const tvlData = await SliderApiService.loadTVL();
 
-        const products = Object.keys(nameApyData).filter((key) => key.endsWith('PlusProduct'));
+        console.log('nameApyData', nameApyData);
+        console.log('tvlData', nameApyData);
+
+        const products = ['usdPlusProduct'];
         const sliderDataFromLoad = products.map((productKey): SlideData | null => {
           if (nameApyData[productKey]) {
             const productType = nameApyData[productKey].productType.replace('_PLUS', '+');
