@@ -59,6 +59,9 @@
 <script lang="ts">
 import { type PropType } from 'vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import BigNumber from 'bignumber.js';
+
+(window as any).bigNumber = BigNumber;
 // eslint-disable-next-line no-shadow
 export enum zapInStep {
   START,

@@ -111,8 +111,6 @@ const actions = {
                 pool.zappable = true;
               }
 
-              if (!pool.poolTag && pool.zappable) poolTag = POOL_TAG.ZAPIN;
-
               // const moreThanOnePlatform = checkForSamePlatform(pool.id.address);
 
               // unique cases, different platforms, one pool

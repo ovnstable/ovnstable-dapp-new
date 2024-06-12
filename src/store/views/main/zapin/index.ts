@@ -131,13 +131,28 @@ const actions = {
     // exclude _ from pool address (aggregators)
     if (poolAddress.includes('_')) poolAddress = poolAddress.split('_')[0];
 
-    const tokenContract = poolInfo.poolTokenType === 'DIFFERENT'
-      ? buildEvmContract(
+    let tokenContract = buildEvmContract(
+      abiPoolTokenContractFile.abi,
+      rootState.web3.evmSigner,
+      poolAddress,
+    );
+
+    if (poolInfo.poolTokenType === 'DIFFERENT') {
+      tokenContract = buildEvmContract(
         abiPoolTokenContractFile.abi,
         rootState.web3.evmSigner,
         poolInfo.gauge,
-      )
-      : buildEvmContract(abiPoolTokenContractFile.abi, rootState.web3.evmSigner, poolAddress);
+      );
+    }
+
+    // if some custom pool contract, passing it, in other case skip
+    if (abiPoolTokenContractFile.address) {
+      tokenContract = buildEvmContract(
+        abiPoolTokenContractFile.abi,
+        rootState.web3.evmSigner,
+        abiPoolTokenContractFile.address,
+      );
+    }
 
     commit('changeState', {
       field: 'poolTokenContract',
