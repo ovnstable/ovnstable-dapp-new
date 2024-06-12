@@ -35,6 +35,7 @@
           :ref="slideRef"
           :swiper-ref="swiperInstance"
           class="swiper-linea"
+          key="slide-contest"
         >
           <a
             target="_blank"
@@ -51,6 +52,24 @@
           :ref="slideRef"
           :swiper-ref="swiperInstance"
           class="swiper-linea"
+          key="slide-poll"
+        >
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://forms.gle/BCwwX4yhGW7EadTCA"
+          >
+            <img
+              alt="banner"
+              :src="getImageUrl('assets/images/common/banner_feedback_zapin.png')"
+            />
+          </a>
+        </swiper-slide>
+        <swiper-slide
+          :ref="slideRef"
+          :swiper-ref="swiperInstance"
+          class="swiper-linea"
+          key="slide-zapin"
         >
           <a
             target="_blank"
@@ -60,38 +79,6 @@
             <img
               alt="banner"
               :src="getImageUrl('assets/images/common/banner_zapin_cl.png')"
-            />
-          </a>
-        </swiper-slide>
-        <swiper-slide
-          :ref="slideRef"
-          :swiper-ref="swiperInstance"
-          class="swiper-linea"
-        >
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href="https://forms.gle/BCwwX4yhGW7EadTCA"
-          >
-            <img
-              alt="banner"
-              :src="getImageUrl('assets/images/common/banner_feedback_zapin.png')"
-            />
-          </a>
-        </swiper-slide>
-        <swiper-slide
-          :ref="slideRef"
-          :swiper-ref="swiperInstance"
-          class="swiper-linea"
-        >
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href="https://forms.gle/BCwwX4yhGW7EadTCA"
-          >
-            <img
-              alt="banner"
-              :src="getImageUrl('assets/images/common/banner_feedback_zapin.png')"
             />
           </a>
         </swiper-slide>
@@ -165,9 +152,9 @@
 
     <div
       class="slider__arrow-wrapper"
-      :class="{ 'slider__arrow-disabled': currentIndex === sliderData.length - 1 }"
-      @click="currentIndex < sliderData.length - 1 && nextSlide()"
-      @keydown.enter="currentIndex < sliderData.length - 1 && nextSlide()"
+      :class="{ 'slider__arrow-disabled': currentIndex === maxIndex }"
+      @click="nextSlide()"
+      @keydown.enter="nextSlide()"
       tabindex="0"
     >
       <BaseIcon
@@ -217,6 +204,8 @@ const sliderDescriptionForWrapped = (tokenName: string) => `An index-adjusted wr
 Your w${tokenName} balance won't increase over time. 
 When w${tokenName} will unwrap, you receive ${tokenName} based on the latest index.`;
 
+const MANUAL_SLIDES = 3;
+
 export default {
   name: 'MainSlider',
   components: {
@@ -228,6 +217,7 @@ export default {
   data() {
     return {
       currentIndex: 0,
+      maxIndex: MANUAL_SLIDES,
       slideRef: ref(null) as any,
       swiperInstance: null as any,
       sliderData: [] as SlideData[],
@@ -237,6 +227,7 @@ export default {
   async mounted() {
     this.sliderLoaded = false;
     await this.loadDataSlider();
+    this.maxIndex = MANUAL_SLIDES + this.sliderData.length - 1;
     this.sliderLoaded = true;
   },
   computed: {
@@ -309,7 +300,7 @@ export default {
       this.swiperInstance = swiper;
     },
     nextSlide() {
-      if (this.currentIndex < Object.keys(this.sliderData).length - 1 && this.swiperInstance) {
+      if (this.currentIndex < this.maxIndex && this.swiperInstance) {
         this.currentIndex += 1;
         this.swiperInstance.slideTo(this.currentIndex);
       }
