@@ -15,6 +15,7 @@
         type="text"
         placeholder="Search token"
         input-type="primary"
+        :value="searchQuery"
         @input="updateInputSearch"
       >
         <template #prefix>
@@ -28,9 +29,9 @@
 
     <div class="pools-wrap__filters-networks">
       <div
-        @click="changeNetwork('all')"
-        @keypress="changeNetwork('all')"
-        :class="selectedNetwork.includes('ALL') ? 'pools-wrap__filters-item--selected' : ''"
+        @click="changeNetwork('ALL')"
+        @keypress="changeNetwork('ALL')"
+        :class="selectedNetwork.length === 0 ? 'pools-wrap__filters-item--selected' : ''"
         class="pools-wrap__filters-item"
       >
         ALL
@@ -40,7 +41,7 @@
         :key="networkConfig.chain"
         @click="changeNetwork(networkConfig.chain)"
         @keypress="changeNetwork(networkConfig.chain)"
-        :class="selectedNetwork.includes(networkConfig.chain) || selectedNetwork.includes('ALL') ? 'pools-wrap__filters-item--selected' : ''"
+        :class="selectedNetwork.includes(networkConfig.chain) || selectedNetwork.length === 0 ? 'pools-wrap__filters-item--selected' : ''"
         class="pools-wrap__filters-item"
       >
         <BaseIcon :name="networkConfig.name.toLowerCase()" />
@@ -79,6 +80,10 @@ export default {
     },
     isShowDeprecated: {
       type: Boolean,
+      required: true,
+    },
+    searchQuery: {
+      type: String,
       required: true,
     },
   },

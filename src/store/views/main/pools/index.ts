@@ -6,7 +6,6 @@
 import { poolApiService } from '@/services/pool-api-service.ts';
 import {
   getSortedPools,
-  getSortedSecondPools,
   initAggregators,
   initReversePools,
 } from '@/store/views/main/pools/helpers.ts';
@@ -30,7 +29,6 @@ export enum POOL_TYPES {
 
 const stateData = {
   sortedPoolList: [],
-  sortedPoolSecondList: [],
   allPools: [],
   isPoolsLoading: true,
 
@@ -192,26 +190,10 @@ const actions = {
       });
     }
 
-    if (state.typeOfPool === POOL_TYPES.OVN) {
-      commit('changeState', {
-        field: 'sortedPoolList',
-        val: getSortedPools(state.allPools, true),
-      });
-      commit('changeState', {
-        field: 'sortedPoolSecondList',
-        val: [],
-      });
-    } else {
-      commit('changeState', {
-        field: 'sortedPoolList',
-        val: getSortedPools(state.allPools, false),
-      });
-
-      commit('changeState', {
-        field: 'sortedPoolSecondList',
-        val: getSortedSecondPools(state.allPools),
-      });
-    }
+    commit('changeState', {
+      field: 'sortedPoolList',
+      val: getSortedPools(state.allPools, false),
+    });
 
     commit('changeState', {
       field: 'isPoolsLoading',
