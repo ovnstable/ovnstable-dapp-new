@@ -155,6 +155,7 @@ import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { mapGetters } from 'vuex';
 import { formatMoney } from '@/utils/numbers.ts';
+import BigNumber from 'bignumber.js';
 
 export default {
   name: 'SuccessZapModal',
@@ -316,7 +317,7 @@ export default {
       for (let i = 0; i < this.successData.outputTokens.length; i++) {
         const token = this.successData.outputTokens[i];
         // eslint-disable-next-line no-restricted-globals
-        const value = isNaN(Number(token.sum)) ? '0' : token.sum;
+        const value = new BigNumber(token.sum).isNaN() ? '0' : token.sum;
         this.tokensReturnList.push({
           id: `${token.id}return`,
           token: token.selectedToken,
