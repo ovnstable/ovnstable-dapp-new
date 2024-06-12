@@ -166,7 +166,6 @@ import InputComponent from '@/components/Input/Index.vue';
 import Spinner from '@/components/Spinner/Index.vue';
 import BN from 'bignumber.js';
 import debounce from 'lodash/debounce';
-import { notify as notifyInst } from '@kyvg/vue3-notification';
 import { getProportionTicks } from '@/store/views/main/zapin/helpers.ts';
 import { awaitDelay } from '@/utils/const.ts';
 
@@ -620,15 +619,6 @@ export default {
       const minPrice = new BN(o.xaxis?.min).toFixed(this.isStablePool ? 6 : 0);
       const maxPrice = new BN(o.xaxis?.max).toFixed(this.isStablePool ? 6 : 0);
 
-      if (new BN(maxPrice).lt(minPrice) || new BN(minPrice).gt(minPrice)) {
-        notifyInst({
-          title: 'Error',
-          text: 'Max price or Min price is wrong',
-          type: 'error',
-        });
-        return;
-      }
-
       if (new BN(minPrice).eq(this.minPrice) && new BN(maxPrice).eq(this.maxPrice)) {
         return;
       }
@@ -651,15 +641,6 @@ export default {
       this.changeTrig();
     },
     debouncePriceChange: debounce(async (self: any) => {
-      if (new BN(self.maxPrice).lt(self.minPrice) || !self.minPrice || !self.maxPrice) {
-        notifyInst({
-          title: 'Error',
-          text: 'Max price can"t be less than min price',
-          type: 'error',
-        });
-        return;
-      }
-
       self.$emit('set-range', {
         range: [
           new BN(self.minPrice).times(10 ** 6).toFixed(0),

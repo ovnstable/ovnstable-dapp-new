@@ -7,7 +7,9 @@
     >
       <div class="app-wrapper__notify">
         <p>
-          All operations with USD+ on zkSync are currently unavailable. This issue will be fixed soon. We are sorry for the inconvenience.
+          All operations with USD+ on zkSync
+          are currently unavailable.
+          This issue will be fixed soon. We are sorry for the inconvenience.
         </p>
         <ButtonComponent
           btn-styles="transparent"

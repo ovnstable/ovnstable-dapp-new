@@ -27,6 +27,9 @@
       <swiper
         :slides-per-view="1"
         :space-between="10"
+        :autoplay="{
+          delay: 5000,
+        }"
         @swiper="onSwiper"
         @transitionEnd="handleSlideChange"
         ref="mySwiper"
@@ -181,13 +184,20 @@ import { ref } from 'vue';
 
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { Swiper, SwiperSlide } from 'swiper/vue';
-import { Swiper as SwiperClass } from 'swiper/core';
+import {
+  Swiper as SwiperClass,
+  Autoplay,
+} from 'swiper/core';
+
+// import { Autoplay } from 'swiper/modules';
 import { deviceType } from '@/utils/deviceType.ts';
 import { mapGetters } from 'vuex';
 import Spinner from '@/components/Spinner/Index.vue';
 import SliderApiService from '@/services/slider-api-service.ts';
 import 'swiper/swiper.min.css';
 import { getImageUrl } from '@/utils/const.ts';
+
+SwiperClass.use([Autoplay]);
 
 interface SlideData {
   tokenName: string;
@@ -521,6 +531,7 @@ export default {
 }
 
 .slider__arrow-wrapper {
+  position: relative;
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -528,6 +539,14 @@ export default {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+
+  &:first-child {
+    left: -5px;
+  }
+
+  &:last-child {
+    right: -5px;
+  }
 }
 
 .slider__arrow-wrapper:hover {
