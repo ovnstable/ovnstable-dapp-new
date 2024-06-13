@@ -169,7 +169,7 @@ const createScaledArray = (start: number, end: number, maxItems = 10) => {
 
   for (let i = 0; i < maxItems; i++) {
     // Push the current value rounded to four decimal places
-    result.push([parseFloat((start + step * i).toFixed(0)), 0]);
+    result.push([parseFloat((start + step * i).toFixed(4)), 0]);
   }
 
   return result;
