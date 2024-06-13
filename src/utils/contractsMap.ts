@@ -21,6 +21,7 @@ export const chainContractsMap = {
     ovnGovernor: '0x279a30ed284D49D32De901acfC0004B2dB1c091E',
     ovnTimelockController: '0xA4fc2F25CA4dFEc08F07eE92d3173BA21A01E9f8',
     usdc: '0x7F5c764cBc14f9669B88837ca1490cCa17c31607',
+    usdcNative: '0x0b2c639c533813f4aa9d7837caf62653d097ff85',
     market: '0x9489d4769d3AbD3483421Fbff41BD6C7fe8541cA',
     dai: '0xda10009cbd5d07dd0cecc66161fc93d7c9000da1',
     exchange_insurance: '0xB8F254F316FFa6d53969F8D4b01CAC25Ac8A2d08',

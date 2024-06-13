@@ -27,6 +27,9 @@
       <swiper
         :slides-per-view="1"
         :space-between="10"
+        :autoplay="{
+          delay: 5000,
+        }"
         @swiper="onSwiper"
         @transitionEnd="handleSlideChange"
         ref="mySwiper"
@@ -35,6 +38,41 @@
           :ref="slideRef"
           :swiper-ref="swiperInstance"
           class="swiper-linea"
+          key="slide-contest"
+        >
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://x.com/overnight_fi/status/1800885269295480989"
+          >
+            <img
+              alt="banner"
+              :src="getImageUrl('assets/images/common/banner_zapin_contest.png')"
+            />
+          </a>
+        </swiper-slide>
+        <swiper-slide
+          :ref="slideRef"
+          :swiper-ref="swiperInstance"
+          class="swiper-linea"
+          key="slide-poll"
+        >
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://forms.gle/BCwwX4yhGW7EadTCA"
+          >
+            <img
+              alt="banner"
+              :src="getImageUrl('assets/images/common/banner_feedback_zapin.png')"
+            />
+          </a>
+        </swiper-slide>
+        <swiper-slide
+          :ref="slideRef"
+          :swiper-ref="swiperInstance"
+          class="swiper-linea"
+          key="slide-zapin"
         >
           <a
             target="_blank"
@@ -117,9 +155,9 @@
 
     <div
       class="slider__arrow-wrapper"
-      :class="{ 'slider__arrow-disabled': currentIndex === sliderData.length - 1 }"
-      @click="currentIndex < sliderData.length - 1 && nextSlide()"
-      @keydown.enter="currentIndex < sliderData.length - 1 && nextSlide()"
+      :class="{ 'slider__arrow-disabled': currentIndex === maxIndex }"
+      @click="nextSlide()"
+      @keydown.enter="nextSlide()"
       tabindex="0"
     >
       <BaseIcon
@@ -146,13 +184,20 @@ import { ref } from 'vue';
 
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { Swiper, SwiperSlide } from 'swiper/vue';
-import { Swiper as SwiperClass } from 'swiper/core';
+import {
+  Swiper as SwiperClass,
+  Autoplay,
+} from 'swiper/core';
+
+// import { Autoplay } from 'swiper/modules';
 import { deviceType } from '@/utils/deviceType.ts';
 import { mapGetters } from 'vuex';
 import Spinner from '@/components/Spinner/Index.vue';
 import SliderApiService from '@/services/slider-api-service.ts';
 import 'swiper/swiper.min.css';
 import { getImageUrl } from '@/utils/const.ts';
+
+SwiperClass.use([Autoplay]);
 
 interface SlideData {
   tokenName: string;
@@ -169,6 +214,8 @@ const sliderDescriptionForWrapped = (tokenName: string) => `An index-adjusted wr
 Your w${tokenName} balance won't increase over time. 
 When w${tokenName} will unwrap, you receive ${tokenName} based on the latest index.`;
 
+const MANUAL_SLIDES = 3;
+
 export default {
   name: 'MainSlider',
   components: {
@@ -180,6 +227,7 @@ export default {
   data() {
     return {
       currentIndex: 0,
+      maxIndex: MANUAL_SLIDES,
       slideRef: ref(null) as any,
       swiperInstance: null as any,
       sliderData: [] as SlideData[],
@@ -189,6 +237,7 @@ export default {
   async mounted() {
     this.sliderLoaded = false;
     await this.loadDataSlider();
+    this.maxIndex = MANUAL_SLIDES + this.sliderData.length - 1;
     this.sliderLoaded = true;
   },
   computed: {
@@ -205,7 +254,10 @@ export default {
         const nameApyData = await SliderApiService.loadApyName();
         const tvlData = await SliderApiService.loadTVL();
 
-        const products = Object.keys(nameApyData).filter((key) => key.endsWith('PlusProduct'));
+        console.log('nameApyData', nameApyData);
+        console.log('tvlData', nameApyData);
+
+        const products = ['usdPlusProduct'];
         const sliderDataFromLoad = products.map((productKey): SlideData | null => {
           if (nameApyData[productKey]) {
             const productType = nameApyData[productKey].productType.replace('_PLUS', '+');
@@ -261,7 +313,7 @@ export default {
       this.swiperInstance = swiper;
     },
     nextSlide() {
-      if (this.currentIndex < Object.keys(this.sliderData).length - 1 && this.swiperInstance) {
+      if (this.currentIndex < this.maxIndex && this.swiperInstance) {
         this.currentIndex += 1;
         this.swiperInstance.slideTo(this.currentIndex);
       }
@@ -479,6 +531,7 @@ export default {
 }
 
 .slider__arrow-wrapper {
+  position: relative;
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -486,6 +539,14 @@ export default {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+
+  &:first-child {
+    left: -5px;
+  }
+
+  &:last-child {
+    right: -5px;
+  }
 }
 
 .slider__arrow-wrapper:hover {
