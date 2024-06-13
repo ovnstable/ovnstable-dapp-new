@@ -15,7 +15,7 @@
       class="pools-container"
     >
       <PoolsTable
-        :pools="mergedPools"
+        :pools="displayedPools"
         :is-show-only-zap="isShowOnlyZap"
         :is-show-apr-limit="isShowAprLimit"
         :open-zap-in-func="openZapIn"
@@ -27,21 +27,22 @@
           #filters
         >
           <PoolsFilter
-            :selected-network="selectedTabs"
-            :is-show-deprecated="isShowDeprecated"
-            @change-tab="changePoolsTab"
-            @change-network="setSelectedNetwork"
+            :selectedNetwork="selectedNetworks"
+            :isShowDeprecated="isShowDeprecated"
+            :searchQuery="searchQuery"
+            @changeTab="switchPoolsTab"
+            @changeNetwork="setSelectedNetwork"
             @search="updateSearch"
           />
         </template>
         <template
           #footer
-          v-if="!isPoolsLoading && filteredPoolsForSecondTab?.length > 0"
+          v-if="!isPoolsLoading && isMorePoolsToShow"
         >
           <div
             class="table-extend"
-            @click="openPoolList = !openPoolList"
-            @keypress="openPoolList = !openPoolList"
+            @click="isOpenHiddenPools = !isOpenHiddenPools"
+            @keypress="isOpenHiddenPools = !isOpenHiddenPools"
           >
             <div
               class="table-extend__arrow"
@@ -49,7 +50,7 @@
               <BaseIcon name="ArrowDown" />
             </div>
             <h1>
-              {{openPoolList ? "CLOSE POOLS" : "OPEN HIDDEN POOLS"}}
+              {{isOpenHiddenPools ? "CLOSE POOLS" : "OPEN HIDDEN POOLS"}}
             </h1>
             <div
               class="table-extend__arrow"
@@ -75,7 +76,7 @@ import {
   mapActions, mapGetters, mapState, mapMutations,
 } from 'vuex';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
-import { getSortedSecondPools, getSortedPools } from '@/store/views/main/pools/helpers.ts';
+import { getSortedPools } from '@/store/views/main/pools/helpers.ts';
 import utc from 'dayjs/plugin/utc';
 
 import ZapModal from '@/modules/Main/components/ZapModal/Index.vue';
@@ -89,13 +90,18 @@ import type { PropType } from 'vue';
 
 dayjs.extend(utc);
 
-const sortByTagAndValue = (tag: POOL_TAG, pools: any[]) => (valueExtractor: any) => pools.sort(
+const sortByTagAndValue = (
+  tag: POOL_TAG,
+  pools: any[],
+) => (valueExtractor: any) => pools.sort(
   (a, b) => {
     if (a.poolTag === tag && b.poolTag !== tag) return -1;
     if (b.poolTag === tag && a.poolTag !== tag) return 1;
     return valueExtractor(b) - valueExtractor(a);
   },
-).slice(0, 10);
+);
+
+const POOL_SHOW_LIMIT = 10;
 
 export default {
   name: 'PoolsContainer',
@@ -121,11 +127,12 @@ export default {
   data: () => ({
     avgApy: null,
     poolTabType: POOL_TYPES.ALL,
-    showingPools: 10,
+    showingPools: POOL_SHOW_LIMIT,
+    isMorePoolsToShow: true,
+    isOpenHiddenPools: false,
 
-    openPoolList: false,
-
-    selectedTabs: ['ALL'], // ALL or networkName,
+    selectedTabs: ['ALL'],
+    selectedNetworks: [] as number[], // [] for ALL or networks,
     isShowOnlyZap: false,
     isShowAprLimit: false,
     aprLimitForFilter: 15,
@@ -136,39 +143,29 @@ export default {
 
   watch: {
     filteredPools(arr: any[]) {
-      this.showingPools = arr?.length;
-
-      if (this.showingPools + (arr?.length ?? 0) > 10) {
-        this.openPoolList = false;
-      }
-
-      if (this.showingPools + (arr?.length ?? 0) <= 10) {
-        this.openPoolList = true;
-      }
+      this.isMorePoolsToShow = this.showingPools <= (arr?.length ?? 0);
     },
   },
 
   computed: {
     ...mapGetters('network', ['getParams', 'networkId', 'isShowDeprecated']),
     ...mapState('poolsData', [
-      'sortedPoolSecondList',
       'sortedPoolList',
       'isPoolsLoading',
       'currentZapPool',
       'isZapModalShow',
     ]),
-    mergedPools() {
-      return this.openPoolList
-        ? [...this.filteredPools, ...this.filteredPoolsForSecondTab] : this.filteredPools;
-    },
     filteredPools() {
-      const tabOrderedPools = getSortedPools(
-        this.filteredBySearchQueryPools,
+      const tabFilteredPools = getSortedPools(
+        this.filteredBySearchQuery,
         true,
         this.poolTabType,
       );
 
-      const sortByNewTagAndValue = sortByTagAndValue(POOL_TAG.HOT, tabOrderedPools);
+      const sortByNewTagAndValue = sortByTagAndValue(
+        POOL_TAG.HOT,
+        tabFilteredPools,
+      );
 
       if (this.orderType === 'APR_UP') return sortByNewTagAndValue((pool: any) => pool.apr);
       if (this.orderType === 'APR_DOWN') return sortByNewTagAndValue((pool: any) => -pool.apr);
@@ -177,101 +174,28 @@ export default {
 
       return sortByNewTagAndValue(() => 0);
     },
-
-    filteredPoolsForSecondTab() {
-      const mainPools = getSortedPools(
-        this.filteredBySearchQueryPools,
-        true,
-        this.poolTabType,
-      );
-      const secondaryPools = getSortedSecondPools(
-        this.filteredBySearchQuerySecondPools,
-        this.poolTabType,
-      );
-
-      const tabOrderedPools = [...mainPools, ...secondaryPools];
-
-      console.log(tabOrderedPools, this.showingPools, '__tabOrderedPools');
-      if (['APR', 'TVL'].includes(this.orderType)) return tabOrderedPools.slice(this.showingPools, tabOrderedPools.length);
-
-      if (this.orderType === 'APR_UP') {
-        // last step filter
-        return tabOrderedPools
-          .sort((a: any, b: any) => b.apr - a.apr)
-          .slice(this.showingPools, tabOrderedPools.length);
-      }
-
-      if (this.orderType === 'APR_DOWN') {
-        // last step filter
-        return tabOrderedPools
-          .sort((a: any, b: any) => a.apr - b.apr)
-          .slice(this.showingPools, tabOrderedPools.length);
-      }
-
-      if (this.orderType === 'TVL_UP') {
-        // last step filter
-        return tabOrderedPools
-          .sort((a: any, b: any) => b.tvl - a.tvl)
-          .slice(this.showingPools, tabOrderedPools.length);
-      }
-
-      if (this.orderType === 'TVL_DOWN') {
-        // last step filter
-        return tabOrderedPools
-          .sort((a: any, b: any) => a.tvl - b.tvl)
-          .slice(this.showingPools, tabOrderedPools.length);
-      }
-
-      return [];
+    displayedPools() {
+      return this.isOpenHiddenPools
+        ? this.filteredPools
+        : this.filteredPools.slice(0, POOL_SHOW_LIMIT);
     },
-
-    filteredBySearchQueryPools() {
-      if (!this.searchQuery) return this.filteredAprPools;
-
-      return this.filteredAprPools
-        .filter((pool: any) => pool.name.toLowerCase().includes(this.searchQuery.toLowerCase())
-              || pool.id.toLowerCase().includes(this.searchQuery.toLowerCase())
-              || pool.chainName.toLowerCase().includes(this.searchQuery.toLowerCase())
-              || pool.address.toLowerCase().includes(this.searchQuery.toLowerCase())
-              || pool.platform.join('').toLowerCase().includes(this.searchQuery.toLowerCase()));
-    },
-    filteredBySearchQuerySecondPools() {
-      if (!this.searchQuery) return this.filteredAprSecondPools;
-
-      return this.filteredAprSecondPools
-        .filter((pool: any) => pool.name.toLowerCase().includes(this.searchQuery.toLowerCase())
-              || pool.id.toLowerCase().includes(this.searchQuery.toLowerCase())
-              || pool.chainName.toLowerCase().includes(this.searchQuery.toLowerCase())
-              || pool.address.toLowerCase().includes(this.searchQuery.toLowerCase())
-              || pool.platform.join('').toLowerCase().includes(this.searchQuery.toLowerCase()));
-    },
-    filteredAprPools() {
-      if (!this.isShowAprLimit) return this.filteredByNetwork;
+    filteredBySearchQuery() {
+      if (!this.searchQuery || this.searchQuery.trim().length === 0) return this.filteredByNetwork;
 
       return this.filteredByNetwork
-        .filter((pool: any) => pool.apr && this.aprLimitForFilter <= pool.apr * 1);
-    },
-    filteredAprSecondPools() {
-      if (!this.isShowAprLimit) return this.filteredByNetworkSecond;
-
-      return this.filteredByNetworkSecond
-        .filter((pool: any) => pool.apr && this.aprLimitForFilter <= pool.apr * 1);
+        .filter((pool: any) => pool.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+              || pool.id.toLowerCase().includes(this.searchQuery.toLowerCase())
+              || pool.chainName.toLowerCase().includes(this.searchQuery.toLowerCase())
+              || pool.address.toLowerCase().includes(this.searchQuery.toLowerCase())
+              || pool.platform.join('').toLowerCase().includes(this.searchQuery.toLowerCase()));
     },
     filteredByNetwork() {
-      if (this.selectedTabs.length === 1 && this.selectedTabs.includes('ALL')) {
-        return this.sortedPoolList;
-      }
+      if (this.selectedNetworks.length === 0) return this.sortedPoolList;
 
       return this.sortedPoolList
-        .filter((pool: any) => this.selectedTabs.includes(this.getParams(pool.chain).networkId));
-    },
-    filteredByNetworkSecond() {
-      if (this.selectedTabs.length === 1 && this.selectedTabs.includes('ALL')) {
-        return this.sortedPoolSecondList;
-      }
-
-      return this.sortedPoolSecondList
-        .filter((pool: any) => this.selectedTabs.includes(this.getParams(pool.chain).networkId));
+        .filter((pool: any) => this.selectedNetworks.includes(
+          this.getParams(pool.chain).networkId,
+        ));
     },
 
     lastUpdateAgoMinutes() {
@@ -310,55 +234,31 @@ export default {
     ...mapActions('poolsData', ['loadPools', 'openZapIn', 'setIsZapModalShow']),
     ...mapMutations('poolsData', ['changeState']),
 
-    changePoolsTab(type: POOL_TYPES) {
+    switchPoolsTab(type: POOL_TYPES) {
+      this.isOpenHiddenPools = false;
       this.poolTabType = type;
     },
     updateSearch(searchQuery: string) {
+      this.isOpenHiddenPools = false;
       this.searchQuery = searchQuery;
     },
     setOrderType(orderType: any) {
       this.orderType = orderType;
     },
-    setSelectedNetwork(tab: string) {
-      if (tab === 'all' && this.selectedTabs.includes('ALL')) {
-        this.selectedTabs = ['ALL'];
-        return;
-      }
-
-      if (tab === 'all') {
-        this.selectedTabs = ['ALL'];
-        return;
-      }
-
-      // remove all if click other
-      if (tab !== 'all' && !this.tabExistInTabs(this.selectedTabs, tab)) {
-        this.selectedTabs = this.selectedTabs.filter((selectedTab) => selectedTab !== 'ALL');
-      }
-
-      if (this.tabExistInTabs(this.selectedTabs, tab)) {
-        this.selectedTabs = this.selectedTabs.filter((selectedTab) => selectedTab !== tab);
-        if (this.selectedTabs.length === 0) {
-          this.selectedTabs = ['ALL'];
-        }
-
-        return;
-      }
-
-      this.selectedTabs.push(tab);
-    },
-    tabExistInTabs(tabs: any[], tab: string) {
-      for (let i = 0; i < tabs.length; i++) {
-        if (tab === tabs[i]) {
-          return true;
-        }
-      }
-
-      return false;
+    setSelectedNetwork(selectedChain: number | 'ALL') {
+      this.isOpenHiddenPools = false;
+      if (selectedChain === 'ALL') this.selectedNetworks = [];
+      else if (this.selectedNetworks.includes(selectedChain)) {
+        this.selectedNetworks = this.selectedNetworks
+          .filter((network) => network !== selectedChain);
+      } else this.selectedNetworks.push(selectedChain);
     },
     clearAllFilters() {
+      this.isOpenHiddenPools = false;
       this.isShowOnlyZap = false;
       this.isShowAprLimit = false;
       this.selectedTabs = ['ALL'];
+      this.selectedNetworks = [];
     },
   },
 };

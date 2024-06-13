@@ -98,6 +98,7 @@ import { deviceType } from '@/utils/deviceType.ts';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ModalComponent from '@/components/Modal/Index.vue';
+import { checkIsEveryStable } from '@/store/views/main/pools/helpers.ts';
 
 export default {
   name: 'SwapSlippageSettings',
@@ -113,6 +114,10 @@ export default {
     },
     selectedOutputTokens: {
       type: Array,
+      required: true,
+    },
+    zapPoolData: {
+      type: Object,
       required: true,
     },
   },
@@ -147,18 +152,9 @@ export default {
     deviceSize() {
       return deviceType();
     },
-    isAnyNonStablecoinSelected() {
-      return this.selectedInputTokens.some((token: any) => token.selectedToken.assetType !== 'usd')
-                || this.selectedOutputTokens.some((token: any) => token.selectedToken.assetType !== 'usd');
-    },
-
-  },
-  watch: {
-    isAnyNonStablecoinSelected: {
-      handler() {
-        this.autoUpdateSlippage();
-      },
-      immediate: true,
+    isStablePool() {
+      if (!this.zapPoolData) return true;
+      return checkIsEveryStable(this.zapPoolData);
     },
   },
   methods: {
@@ -189,14 +185,9 @@ export default {
       return this.slippageSettings.find((setting) => setting.id === id);
     },
     autoUpdateSlippage() {
-      if (this.isAnyNonStablecoinSelected) {
-        const updatedValue: any = this.getSlippageSettingById(3);
-        const auto: any = this.getSlippageSettingById(4);
-        this.currentSlippage = {
-          ...auto,
-          value: updatedValue.value,
-        };
-        this.newSlippageSetting(auto);
+      if (!this.isStablePool) {
+        const newVal = this.getSlippageSettingById(1);
+        this.newSlippageSetting(newVal);
         return;
       }
 

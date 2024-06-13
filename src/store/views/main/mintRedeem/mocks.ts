@@ -88,7 +88,7 @@ export const MINTREDEEM_SCHEME = {
   // optimism
   10: [
     {
-      token0: chainContractsMap.optimism.usdc,
+      token0: chainContractsMap.optimism.usdcNative,
       token1: chainContractsMap.optimism.usdPlus.tokenPlus,
       exchange: chainContractsMap.optimism.usdPlus.exchange,
       methodName: [mintRedeemTypes.MINT, mintRedeemTypes.REDEEM],

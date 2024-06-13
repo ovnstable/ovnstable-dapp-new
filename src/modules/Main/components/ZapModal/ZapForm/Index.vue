@@ -176,18 +176,9 @@
                 <SwapSlippageSettings
                   :selected-input-tokens="selectedInputTokens"
                   :selected-output-tokens="selectedOutputTokens"
+                  :zap-pool-data="zapPool"
                   @change-slippage="handleCurrentSlippageChanged"
                 />
-              </div>
-              <div
-                v-if="zapPool && zapPool.platform[0] === 'Swapbased'"
-                class="slippage-info-container"
-              >
-                <div class="slippage-info-title">
-                  <BaseIcon name="swapWarn" />
-                  By joining this pool, you are being notified that SwapBased takes a
-                  1% deposit fee.
-                </div>
               </div>
             </div>
             <div
@@ -473,6 +464,9 @@ export default {
     ...mapGetters('network', ['getParams', 'networkId']),
     ...mapGetters('accountData', ['account']),
 
+    isVolatilePool() {
+      return !this.v3Range?.isStable;
+    },
     getOdosFee() {
       return new BN(this.sumOfAllSelectedTokensInUsd)
         .times(this.multiSwapOdosFeePercent)
@@ -726,7 +720,6 @@ export default {
     sumOfAllSelectedTokensInUsd() {
       this.recalculateOutputTokensSum();
     },
-
     // on wallet connect
     async account(val) {
       if (val) this.clearAndInitForm();
@@ -1628,7 +1621,7 @@ export default {
 
       let gaugeData: any;
 
-      if (zapPool.platform[0] === 'Pancake') {
+      if (zapPool.platform[0] === 'Pancake' && this.zapPool.poolVersion === 'v2') {
         gaugeData = {
           amountsOut: [
             proportions.amountToken0Out,
@@ -1735,6 +1728,7 @@ export default {
         });
     },
     async recalculateProportion() {
+      console.log(this.v3Range, '__thisv3Range');
       const reserves = await getProportion(
         this.zapPool.address,
         this.zapPool,
@@ -1750,14 +1744,16 @@ export default {
       )
         .plus(
           new BN(reserves.token1Amount).times(outputToken1Price),
-        ).toNumber();
+        ).toFixed();
 
       this.selectedOutputTokens[0]
         .value = new BN(Number(reserves[0]))
           .times(Number(outputToken0Price)).div(sumReserves).times(100)
           .toFixed();
       this.selectedOutputTokens[1]
-        .value = ((Number(reserves[1]) * Number(outputToken1Price)) / sumReserves) * 100;
+        .value = new BN(Number(reserves[1]))
+          .times(Number(outputToken1Price)).div(sumReserves).times(100)
+          .toFixed();
 
       this.recalculateOutputTokensSum();
     },

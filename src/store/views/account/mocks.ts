@@ -134,8 +134,8 @@ export const USER_BALANCES_SCHEME = {
     ovnToken,
     wUsdToken,
     {
-      symbol: 'USDC.e',
-      contractName: 'usdcBridged',
+      symbol: 'USDC',
+      contractName: 'usdcNative',
       isOvnToken: false,
     },
     {
