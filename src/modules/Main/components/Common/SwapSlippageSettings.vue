@@ -118,7 +118,8 @@ export default {
     },
     zapPoolData: {
       type: Object,
-      required: true,
+      default: () => {},
+      required: false,
     },
   },
   data() {
