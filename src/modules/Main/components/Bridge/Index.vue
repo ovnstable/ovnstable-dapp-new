@@ -60,7 +60,7 @@ export default {
         slippage: 0.5,
         infiniteApproval: false,
         enableExpress: true,
-        apiUrl: 'https://v2.api.squidrouter.com',
+        apiUrl: 'https://apiplus.squidrouter.com',
         comingSoonChainIds: [],
         titles: {
           swap: 'Bridge',
@@ -119,7 +119,7 @@ export default {
         slippage: 0.5,
         infiniteApproval: false,
         enableExpress: true,
-        apiUrl: 'https://v2.api.squidrouter.com',
+        apiUrl: 'https://apiplus.squidrouter.com',
         comingSoonChainIds: [],
         titles: {
           swap: 'Bridge',
