@@ -17,11 +17,7 @@ const getters = {
 };
 
 const actions = {
-  async initTokens(
-    {
-      commit, state, dispatch, rootState,
-    }: any,
-  ) {
+  async initTokens({ commit, rootState }: any) {
     const networkId = rootState.network.networkId as keyof typeof MINTREDEEM_SCHEME;
 
     if (!MINTREDEEM_SCHEME[networkId]) return;
