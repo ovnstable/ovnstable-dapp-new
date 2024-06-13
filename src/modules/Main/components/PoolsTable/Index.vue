@@ -191,7 +191,6 @@ export default {
 
       const tabOrderedPools = [...mainPools, ...secondaryPools];
 
-      console.log(tabOrderedPools, this.showingPools, '__tabOrderedPools');
       if (['APR', 'TVL'].includes(this.orderType)) return tabOrderedPools.slice(this.showingPools, tabOrderedPools.length);
 
       if (this.orderType === 'APR_UP') {

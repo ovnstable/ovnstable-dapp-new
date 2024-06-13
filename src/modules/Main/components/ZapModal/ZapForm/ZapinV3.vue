@@ -11,7 +11,6 @@
 
         <div
           class="zapin-v3__chart-zoom"
-          v-if="isStablePool"
         >
           <span>
             Zoom
@@ -61,7 +60,6 @@
         </h3>
         <div class="zapin-v3__row-block">
           <div
-            v-if="!isStablePool"
             class="zapin-v3__clicker"
             @click="decrPrice(true)"
             @keypress="decrPrice(true)"
@@ -70,7 +68,6 @@
           </div>
           <InputComponent
             :value="minPrice"
-            :disabled="isStablePool"
             input-type="white"
             placeholder="0"
             full-width
@@ -79,7 +76,6 @@
             @input="setMinPrice"
           />
           <div
-            v-if="!isStablePool"
             class="zapin-v3__clicker"
             @click="addPrice(true)"
             @keypress="addPrice(true)"
@@ -97,7 +93,6 @@
         </h3>
         <div class="zapin-v3__row-block">
           <div
-            v-if="!isStablePool"
             class="zapin-v3__clicker"
             @click="decrPrice(false)"
             @keypress="decrPrice(false)"
@@ -106,7 +101,6 @@
           </div>
           <InputComponent
             :value="maxPrice"
-            :disabled="isStablePool"
             input-type="white"
             placeholder="0"
             full-width
@@ -115,7 +109,6 @@
             @input="setMaxPrice"
           />
           <div
-            v-if="!isStablePool"
             class="zapin-v3__clicker"
             @click="addPrice(false)"
             @keypress="addPrice(false)"
@@ -168,6 +161,7 @@ import BN from 'bignumber.js';
 import debounce from 'lodash/debounce';
 import { getProportionTicks } from '@/store/views/main/zapin/helpers.ts';
 import { awaitDelay } from '@/utils/const.ts';
+import { checkIsEveryStable } from '@/store/views/main/pools/helpers.ts';
 
 const createScaledArray = (start: number, end: number, maxItems = 10) => {
   const result = [];
@@ -175,7 +169,7 @@ const createScaledArray = (start: number, end: number, maxItems = 10) => {
 
   for (let i = 0; i < maxItems; i++) {
     // Push the current value rounded to four decimal places
-    result.push([parseFloat((start + step * i).toFixed(4)), 0]);
+    result.push([parseFloat((start + step * i).toFixed(0)), 0]);
   }
 
   return result;
@@ -197,7 +191,7 @@ export default {
       minPrice: '0',
       maxPrice: '0',
       centerPrice: '0',
-      currentRange: 20,
+      currentRange: 10,
       pairSymbols: [],
       rangePresets: [
         {
@@ -303,6 +297,8 @@ export default {
           tickAmount: 2,
         },
       },
+      // < 2$
+      lowPoolPrice: true,
       isStablePool: true,
     };
   },
@@ -317,6 +313,7 @@ export default {
     },
   },
   computed: {
+    // if low price
     getRangeActive() {
       return (range: any) => {
         if (this.isStablePool) {
@@ -350,10 +347,10 @@ export default {
 
     console.log(center.toString(), '___centercenter');
     let buildData: any = [];
+    this.isStablePool = checkIsEveryStable(this.zapPool);
 
-    // if stablepool todo
-    if (center.lt(1.1)) {
-      this.ticksAmount = '1';
+    // if center price lower than 2$, doing higher zoom
+    if (center.lt(2)) {
       buildData = Array.from({ length: 22 }).map((_, key) => [key / 10, 0]);
       this.optionsChart.series = [
         {
@@ -361,10 +358,21 @@ export default {
         },
       ];
 
+      // some pools have low center price, ex arb/usd+ and its volatile
+      if (!this.isStablePool) {
+        console.log('VOLATILE__');
+        this.selectVolatileData(currPrice, center);
+        this.isLoading = false;
+        this.maxZoom(1);
+        return;
+      }
+
       const minPrice = new BN(currPrice).times(0.9);
       const maxPrice = new BN(currPrice).times(1.1);
       this.centerPrice = center.toFixed(6);
 
+      console.log('SETR2');
+      this.ticksAmount = '1';
       this.$emit('set-range', {
         range: [
           minPrice.toFixed(0),
@@ -428,7 +436,7 @@ export default {
         },
       };
     } else {
-      this.isStablePool = false;
+      this.lowPoolPrice = false;
       // building data before and after center
       buildData = buildData.concat(Array
         .from({ length: 4 })
@@ -444,12 +452,41 @@ export default {
         },
       ];
 
-      const minPrice = new BN(currPrice).times(0.9);
-      const maxPrice = new BN(currPrice).times(1.1);
+      this.selectVolatileData(currPrice, center);
+    }
+
+    this.isLoading = false;
+    if (this.isStablePool) this.maxZoom();
+  },
+  watch: {
+    minPrice() {
+      this.debouncePriceChange(this);
+    },
+    maxPrice() {
+      this.debouncePriceChange(this);
+    },
+  },
+  methods: {
+    async maxZoom(num = 4) {
+      await awaitDelay(100);
+      this.zoomType = num;
+      this.zoomInOut(true);
+    },
+    selectVolatileData(currPrice: string, center: BN) {
+      const minPrice = new BN(currPrice).times(0.95);
+      const maxPrice = new BN(currPrice).times(1.05);
       this.minPrice = minPrice.div(10 ** 6).toFixed(6);
       this.maxPrice = maxPrice.div(10 ** 6).toFixed(6);
       this.centerPrice = center.toFixed(6);
 
+      console.log({
+        range: [
+          minPrice.toFixed(0),
+          maxPrice.toFixed(0),
+        ],
+        ticks: this.ticksAmount,
+        isStable: this.isStablePool,
+      }, '___selectVolatileData');
       this.$emit('set-range', {
         range: [
           minPrice.toFixed(0),
@@ -477,27 +514,9 @@ export default {
           },
         ],
       };
-    }
-
-    this.isLoading = false;
-
-    if (this.isStablePool) {
-      await awaitDelay(100);
-      this.zoomType = 4;
-      this.zoomInOut(true);
-    }
-  },
-  watch: {
-    minPrice() {
-      this.debouncePriceChange(this);
     },
-    maxPrice() {
-      this.debouncePriceChange(this);
-    },
-  },
-  methods: {
     initBuildData() {
-      if (this.isStablePool) {
+      if (this.isStablePool || this.lowPoolPrice) {
         const buildData = Array.from({ length: 22 }).map((_, key) => [key / 10, 0]);
 
         (this.$refs?.zapinChart as any).updateSeries([{
@@ -522,6 +541,26 @@ export default {
           false,
           true,
         );
+      } else {
+        let buildData: any = [];
+        // building data before and after center
+        buildData = buildData.concat(Array
+          .from({ length: 4 })
+          .map((_, key) => [Number((new BN(this.centerPrice)
+            .div(key + 1))
+            .minus(new BN(this.centerPrice).div(5)).toFixed(0)), 0])
+          .reverse());
+        buildData = buildData.concat(Array
+          .from({ length: 4 })
+          .map((_, key) => [Number((new BN(this.centerPrice)
+            .div(key + 1))
+            .plus(new BN(this.centerPrice)).toFixed(0)), 0]).reverse());
+
+        this.optionsChart.series = [
+          {
+            data: buildData,
+          },
+        ];
       }
     },
     zoomInOut(scaleIn: boolean) {
@@ -537,37 +576,40 @@ export default {
       const zoomNum = 1;
       let newZoomType = 0;
 
-      if (scaleIn) {
-        newZoomType = Number((zoomNum + this.zoomType).toFixed(0));
-      } else {
-        newZoomType = Number((this.zoomType - zoomNum).toFixed(0));
-      }
+      if (scaleIn) newZoomType = Number((zoomNum + this.zoomType).toFixed(0));
+      else newZoomType = Number((this.zoomType - zoomNum).toFixed(0));
 
+      console.log(newZoomType, scaleIn, '__newZoomType');
       if ((new BN(newZoomType).gt(5) && scaleIn)
             || (new BN(newZoomType).lt(1) && !scaleIn)) return;
 
       this.zoomType = newZoomType;
 
+      console.log(newZoomType, scaleIn, '__newZoomType2');
       if (this.zoomType === 1) {
         this.initBuildData();
         return;
       }
 
       if (this.zoomType === 2) {
-        minVal = new BN(this.centerPrice).times(0.9).toFixed(1);
-        maxVal = new BN(this.centerPrice).times(1.1).toFixed(1);
+        const dec = this.lowPoolPrice ? 1 : 0;
+        minVal = new BN(this.centerPrice).times(0.9).toFixed(dec);
+        maxVal = new BN(this.centerPrice).times(1.1).toFixed(dec);
       }
       if (this.zoomType === 3) {
-        minVal = new BN(this.centerPrice).times(0.99).toFixed(2);
-        maxVal = new BN(this.centerPrice).times(1.01).toFixed(2);
+        const dec = this.lowPoolPrice ? 1 : 0;
+        minVal = new BN(this.centerPrice).times(0.99).toFixed(dec);
+        maxVal = new BN(this.centerPrice).times(1.01).toFixed(dec);
       }
       if (this.zoomType === 4) {
-        minVal = new BN(this.centerPrice).times(0.999).toFixed(3);
-        maxVal = new BN(this.centerPrice).times(1.001).toFixed(3);
+        const dec = this.lowPoolPrice ? 1 : 0;
+        minVal = new BN(this.centerPrice).times(0.999).toFixed(dec);
+        maxVal = new BN(this.centerPrice).times(1.001).toFixed(dec);
       }
       if (this.zoomType === 5) {
-        minVal = new BN(this.centerPrice).times(0.9995).toFixed(4);
-        maxVal = new BN(this.centerPrice).times(1.0005).toFixed(4);
+        const dec = this.lowPoolPrice ? 1 : 0;
+        minVal = new BN(this.centerPrice).times(0.9995).toFixed(dec);
+        maxVal = new BN(this.centerPrice).times(1.0005).toFixed(dec);
       }
 
       const buildData = createScaledArray(Number(minVal), Number(maxVal));
@@ -586,9 +628,14 @@ export default {
             labels: {
               formatter(value: number) {
                 if (value === 0) return '0';
-                const modulo = self.zoomType <= 5 ? 0.0002 : 0.5;
-                const num = new BN(value.toFixed(1)).times(10);
-                return num.modulo(modulo).toNumber() === 0 ? value.toFixed(modulo === 0.0002 ? 4 : 2) : '';
+
+                if (self.lowPoolPrice) {
+                  const modulo = self.zoomType <= 5 ? 0.0002 : 0.5;
+                  const num = new BN(value.toFixed(1)).times(10);
+                  return num.modulo(modulo).toNumber() === 0 ? value.toFixed(modulo === 0.0002 ? 4 : 2) : '';
+                }
+
+                return value.toFixed(0);
               },
               style: {
                 colors: '#687386',
@@ -603,26 +650,27 @@ export default {
     },
     decrPrice(isMin: boolean) {
       if (isMin) {
-        this.minPrice = new BN(this.minPrice).times(0.99).toFixed(0);
+        this.minPrice = new BN(this.minPrice).times(0.99).toFixed(this.lowPoolPrice ? 6 : 0);
       } else {
-        this.maxPrice = new BN(this.maxPrice).times(0.99).toFixed(0);
+        this.maxPrice = new BN(this.maxPrice).times(0.99).toFixed(this.lowPoolPrice ? 6 : 0);
       }
     },
     addPrice(isMin: boolean) {
       if (isMin) {
-        this.minPrice = new BN(this.minPrice).times(1.01).toFixed(0);
+        this.minPrice = new BN(this.minPrice).times(1.01).toFixed(this.lowPoolPrice ? 6 : 0);
       } else {
-        this.maxPrice = new BN(this.maxPrice).times(1.01).toFixed(0);
+        this.maxPrice = new BN(this.maxPrice).times(1.01).toFixed(this.lowPoolPrice ? 6 : 0);
       }
     },
     selectEvent(e: any, o: any) {
-      const minPrice = new BN(o.xaxis?.min).toFixed(this.isStablePool ? 6 : 0);
-      const maxPrice = new BN(o.xaxis?.max).toFixed(this.isStablePool ? 6 : 0);
+      const minPrice = new BN(o.xaxis?.min).toFixed(this.lowPoolPrice ? 6 : 0);
+      const maxPrice = new BN(o.xaxis?.max).toFixed(this.lowPoolPrice ? 6 : 0);
 
       if (new BN(minPrice).eq(this.minPrice) && new BN(maxPrice).eq(this.maxPrice)) {
         return;
       }
 
+      console.log('selectEvent__');
       this.minPrice = minPrice;
       this.maxPrice = maxPrice;
       this.ticksAmount = '0';
@@ -679,6 +727,7 @@ export default {
       this.maxPrice = val;
     },
     async setRange(val: number) {
+      console.log(val, 'SET_RANGE');
       if (this.isStablePool) {
         this.ticksAmount = val.toString();
         const rangeData = await getProportionTicks(this.zapPool, this.zapContract, {
@@ -737,11 +786,6 @@ export default {
         false,
         true,
       );
-
-      (this.$refs?.zapinChart as any).updateSeries([{
-        data: this.optionsChart.series[0].data,
-      }], false, true);
-
       this.currentRange = val;
     },
   },
