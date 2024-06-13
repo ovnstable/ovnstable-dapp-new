@@ -60,7 +60,7 @@ export default {
         slippage: 0.5,
         infiniteApproval: false,
         enableExpress: true,
-        apiUrl: 'https://apiplus.squidrouter.com',
+        apiUrl: 'https://api.squidrouter.com',
         comingSoonChainIds: [],
         titles: {
           swap: 'Bridge',
@@ -119,7 +119,7 @@ export default {
         slippage: 0.5,
         infiniteApproval: false,
         enableExpress: true,
-        apiUrl: 'https://apiplus.squidrouter.com',
+        apiUrl: 'https://api.squidrouter.com',
         comingSoonChainIds: [],
         titles: {
           swap: 'Bridge',
@@ -192,7 +192,7 @@ export default {
     generateIframeURL(config: any) {
       const encodedConfig = encodeURIComponent(JSON.stringify(config));
 
-      return `https://squid-widget-git-main-v2-0xsquid.vercel.app/iframe?config=${encodedConfig}`;
+      return `https://widget.squidrouter.com/iframe?config=${encodedConfig}`;
     },
 
     async handleIframeLoad() {
