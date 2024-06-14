@@ -313,7 +313,6 @@ export default {
     },
   },
   computed: {
-    // if low price
     getRangeActive() {
       return (range: any) => {
         if (this.isStablePool) {
@@ -371,7 +370,6 @@ export default {
       const maxPrice = new BN(currPrice).times(1.1);
       this.centerPrice = center.toFixed(6);
 
-      console.log('SETR2');
       this.ticksAmount = '1';
       this.$emit('set-range', {
         range: [
@@ -504,7 +502,7 @@ export default {
       this.optionsChart.annotations = {
         xaxis: [
           {
-            x: center.toFixed(0),
+            x: center.toFixed(this.lowPoolPrice ? 6 : 0),
             borderColor: '#0497EC',
             borderWidth: 2,
             label: {
@@ -597,21 +595,22 @@ export default {
         maxVal = new BN(this.centerPrice).times(1.1).toFixed(dec);
       }
       if (this.zoomType === 3) {
-        const dec = this.lowPoolPrice ? 1 : 0;
+        const dec = this.lowPoolPrice ? 2 : 0;
         minVal = new BN(this.centerPrice).times(0.99).toFixed(dec);
         maxVal = new BN(this.centerPrice).times(1.01).toFixed(dec);
       }
       if (this.zoomType === 4) {
-        const dec = this.lowPoolPrice ? 1 : 0;
+        const dec = this.lowPoolPrice ? 3 : 0;
         minVal = new BN(this.centerPrice).times(0.999).toFixed(dec);
         maxVal = new BN(this.centerPrice).times(1.001).toFixed(dec);
       }
       if (this.zoomType === 5) {
-        const dec = this.lowPoolPrice ? 1 : 0;
+        const dec = this.lowPoolPrice ? 4 : 0;
         minVal = new BN(this.centerPrice).times(0.9995).toFixed(dec);
         maxVal = new BN(this.centerPrice).times(1.0005).toFixed(dec);
       }
 
+      console.log(minVal, maxVal, '_maxmin');
       const buildData = createScaledArray(Number(minVal), Number(maxVal));
 
       console.log(buildData, '__buildData');
