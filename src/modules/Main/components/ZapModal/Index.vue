@@ -19,6 +19,8 @@
       :success-data="successData"
       :set-show-func="triggerSuccessZapin"
       :returnedToUser="lastReturnedToUserEvent"
+      :putIntoPool="lastPutIntoPoolEvent"
+      :input-tokens="lastInputTokensEvent"
     />
   </div>
 </template>
@@ -65,6 +67,8 @@ export default {
       'successData',
       'showSuccessZapin',
       'lastReturnedToUserEvent',
+      'lastPutIntoPoolEvent',
+      'lastInputTokensEvent',
     ]),
   },
   methods: {
