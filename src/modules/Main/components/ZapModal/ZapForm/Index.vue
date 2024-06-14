@@ -358,6 +358,7 @@ import { poolsInfoMap, poolTokensForZapMap } from '@/store/views/main/zapin/mock
 import BN from 'bignumber.js';
 import { approveToken, getAllowanceValue } from '@/utils/contractApprove.ts';
 import { onLeaveList, onEnterList, beforeEnterList } from '@/utils/animations.ts';
+import { parseLogs } from './helpers.ts';
 
 export default {
   name: 'ZapForm',
@@ -1267,49 +1268,22 @@ export default {
 
       return sourceBlacklist;
     },
+    decodeEventData(eventSignature: string[], eventData: string) {
+      return new ethers.AbiCoder().decode(eventSignature, eventData);
+    },
+    commitEventToStore(field: string, value: any) {
+      this.$store.commit('odosData/changeState', {
+        field,
+        val: value,
+      });
+    },
     async toApproveAndDepositSteps(data: any, lastPoolInfoData: any) {
       let putIntoPoolEvent;
       let returnedToUserEvent;
-      let nftId = '';
+      const nftId = '';
 
       console.log(data, '___data');
-      for (const item of data.logs) {
-        const eventName = item?.eventName;
-
-        if (eventName === 'PutIntoPool') {
-          putIntoPoolEvent = eventName;
-          this.$store.commit('odosData/changeState', {
-            field: 'lastPutIntoPoolEvent',
-            val: putIntoPoolEvent,
-          });
-        }
-
-        if (eventName === 'ReturnedToUser') {
-          const abiCoder = new ethers.AbiCoder();
-          const returnedToUserData = abiCoder.decode(['uint256[]', 'address[]'], item.data);
-          console.log('__returnedToUserRaw', returnedToUserData);
-          const returnedToUser = {
-            amounts: returnedToUserData[0],
-            addresses: returnedToUserData[1],
-          };
-          console.log('__returnedToUserParsed', returnedToUser);
-          this.$store.commit('odosData/changeState', {
-            field: 'lastReturnedToUserEvent',
-            val: returnedToUser,
-          });
-        }
-
-        if (eventName === 'TokenId') {
-          nftId = String(item?.args[0]);
-          // const returnedToUserNftEvent = eventName;
-          // this.$store.commit('odosData/changeState', {
-          //   field: 'lastReturnedToUserEvent',
-          //   val: returnedToUserNftEvent,
-          // });
-        }
-      }
-
-      console.log(returnedToUserEvent, '__returnedToUserEvent');
+      parseLogs(data.logs, this.commitEventToStore);
 
       this.stopSwapConfirmTimer();
       this.currentStage = zapInStep.APPROVE_GAUGE;
@@ -1525,14 +1499,14 @@ export default {
         });
     },
     clearZapData() {
-      this.$store.commit('odosData/changeState', {
-        field: 'lastPutIntoPoolEvent',
-        val: null,
-      });
+      // this.$store.commit('odosData/changeState', {
+      //   field: 'lastPutIntoPoolEvent',
+      //   val: null,
+      // });
       // this.$store.commit('odosData/changeState', {
       //   field: 'lastReturnedToUserEvent',
       //   val: null,
-      // });
+      // });if (eventName === 'InputTokens') {}
       this.$store.commit('odosData/changeState', {
         field: 'lastZapResponseData',
         val: null,
@@ -1542,32 +1516,7 @@ export default {
       let putIntoPoolEvent;
       let returnedToUserEvent;
 
-      for (const item of data.logs) {
-        const eventName = item?.eventName;
-
-        if (eventName === 'PutIntoPool') {
-          putIntoPoolEvent = eventName;
-          this.$store.commit('odosData/changeState', {
-            field: 'lastPutIntoPoolEvent',
-            val: putIntoPoolEvent,
-          });
-        }
-
-        if (eventName === 'ReturnedToUser') {
-          const abiCoder = new ethers.AbiCoder();
-          const returnedToUserData = abiCoder.decode(['uint256[]', 'address[]'], item.data);
-          console.log('__returnedToUserRaw', returnedToUserData);
-          const returnedToUser = {
-            amounts: returnedToUserData[0].map((amount: any) => BN(amount)),
-            addresses: returnedToUserData[1],
-          };
-          console.log('__returnedToUserParsed', returnedToUser);
-          this.$store.commit('odosData/changeState', {
-            field: 'lastReturnedToUserEvent',
-            val: returnedToUser,
-          });
-        }
-      }
+      parseLogs(data.logs, this.commitEventToStore);
 
       const inputTokens = [...this.selectedInputTokens];
       const outputTokens = [...this.selectedOutputTokens];
