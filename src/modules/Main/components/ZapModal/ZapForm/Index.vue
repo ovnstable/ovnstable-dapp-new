@@ -1285,20 +1285,27 @@ export default {
         }
 
         if (eventName === 'ReturnedToUser') {
-          returnedToUserEvent = eventName;
+          const abiCoder = new ethers.AbiCoder();
+          const returnedToUserData = abiCoder.decode(['uint256[]', 'address[]'], item.data);
+          console.log('__returnedToUserRaw', returnedToUserData);
+          const returnedToUser = {
+            amounts: returnedToUserData[0],
+            addresses: returnedToUserData[1],
+          };
+          console.log('__returnedToUserParsed', returnedToUser);
           this.$store.commit('odosData/changeState', {
             field: 'lastReturnedToUserEvent',
-            val: returnedToUserEvent,
+            val: returnedToUser,
           });
         }
 
         if (eventName === 'TokenId') {
           nftId = String(item?.args[0]);
-          returnedToUserEvent = eventName;
-          this.$store.commit('odosData/changeState', {
-            field: 'lastReturnedToUserEvent',
-            val: returnedToUserEvent,
-          });
+          // const returnedToUserNftEvent = eventName;
+          // this.$store.commit('odosData/changeState', {
+          //   field: 'lastReturnedToUserEvent',
+          //   val: returnedToUserNftEvent,
+          // });
         }
       }
 
@@ -1522,10 +1529,10 @@ export default {
         field: 'lastPutIntoPoolEvent',
         val: null,
       });
-      this.$store.commit('odosData/changeState', {
-        field: 'lastReturnedToUserEvent',
-        val: null,
-      });
+      // this.$store.commit('odosData/changeState', {
+      //   field: 'lastReturnedToUserEvent',
+      //   val: null,
+      // });
       this.$store.commit('odosData/changeState', {
         field: 'lastZapResponseData',
         val: null,
@@ -1547,10 +1554,17 @@ export default {
         }
 
         if (eventName === 'ReturnedToUser') {
-          returnedToUserEvent = eventName;
+          const abiCoder = new ethers.AbiCoder();
+          const returnedToUserData = abiCoder.decode(['uint256[]', 'address[]'], item.data);
+          console.log('__returnedToUserRaw', returnedToUserData);
+          const returnedToUser = {
+            amounts: returnedToUserData[0].map((amount: any) => BN(amount)),
+            addresses: returnedToUserData[1],
+          };
+          console.log('__returnedToUserParsed', returnedToUser);
           this.$store.commit('odosData/changeState', {
             field: 'lastReturnedToUserEvent',
-            val: returnedToUserEvent,
+            val: returnedToUser,
           });
         }
       }
