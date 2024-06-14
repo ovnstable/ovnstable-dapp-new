@@ -18,6 +18,7 @@
       :is-show="showSuccessZapin"
       :success-data="successData"
       :set-show-func="triggerSuccessZapin"
+      :returnedToUser="lastReturnedToUserEvent"
     />
   </div>
 </template>
@@ -63,6 +64,7 @@ export default {
     ...mapState('odosData', [
       'successData',
       'showSuccessZapin',
+      'lastReturnedToUserEvent',
     ]),
   },
   methods: {
