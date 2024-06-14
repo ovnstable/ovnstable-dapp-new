@@ -413,7 +413,7 @@ export default {
         Chronos: ['Chronos Volatile'], // "Chronos Stable"
         // Pancake: ["PancakeSwap", "PancakeSwap V3"],
         // Beefy: ["Aerodrome Stable", "Aerodrome Volatile"],
-        // Aerodrome: ["Aerodrome Volatile"],
+        Aerodrome: ['Aerodrome Slipstream'],
         Velodrome: [
           'Velodrome Stable',
           'Velodrome Volatile',
