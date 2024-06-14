@@ -4,147 +4,108 @@
     v-model="showModal"
     @close="closeModal"
   >
+
     <div class="modal-content">
       <BaseIcon
         class="modal-content__icon"
         name="CommonSuccess"
       />
       <h1>
-        You successfully staked
+        YOU SUCCESSFULLY ZAP IN
       </h1>
 
-      <div
-        v-if="successData"
-        class="modal-content__data"
-      >
-        <div class="modal-content__data-logo">
-          <img
-            alt="img"
-            v-if="successData.pool.token0Icon"
-            :src="successData.pool.token0Icon"
-          />
-          <img
-            alt="img"
-            v-if="successData.pool.token1Icon"
-            :src="successData.pool.token1Icon"
-          />
-          <img
-            alt="img"
-            v-if="successData.pool.token2Icon"
-            :src="successData.pool.token2Icon"
-          />
-          <img
-            alt="img"
-            v-if="successData.pool.token3Icon"
-            :src="successData.pool.token3Icon"
-          />
-        </div>
-        <div class="modal-content__data-main">
-          <div class="modal-content__data-row">
-            <div class="success-token-title">Pool name</div>
-            <span class="success-data-item">
-              {{ successData.pool.name }}
-            </span>
-          </div>
-          <div class="modal-content__data-row">
-            <div class="success-token-title">Staking platform</div>
-            <span class="success-data-item">
-              {{ successData.pool.platform[0] }}
-            </span>
-          </div>
-          <div class="modal-content__data-row">
-            <div class="success-token-title">Swapped from</div>
-            <div class="success-data-list">
-              <span
-                v-for="(token, index) in successData.inputTokens"
-                :key="token.symbol"
-                class="success-data-item"
-              >
-                {{
-                  index === 0 && token.selectedToken
-                    ? token.selectedToken.symbol
-                    : ", " + token.selectedToken.symbol
-                }}
-              </span>
-            </div>
-          </div>
-          <div class="modal-content__data-row">
-            <div class="success-token-title">Swapped to</div>
-            <div class="success-data-list">
-              <span
-                v-for="(token, index) in successData.outputTokens"
-                :key="token.symbol"
-                class="success-data-item"
-              >
-                {{
-                  index === 0 && token.selectedToken
-                    ? token.selectedToken.symbol
-                    : ", " + token.selectedToken.symbol
-                }}
-              </span>
-            </div>
-          </div>
-        </div>
+      <span class="divider" />
 
-        <div class="modal-content__data-main">
-          <div class="modal-content__data-row modal-content__data-row--stake">
-            <div class="success-token-title">
-              Received stake position
-            </div>
-            <div class="success-data-list">
-              <div
-                v-for="stake in (tokensStakeList as any)"
-                :key="stake.id"
-                class="success-position-data-item"
-              >
-                {{ stake.value }}
-                {{ stake.token.symbol }}
-              </div>
-            </div>
-          </div>
-
-          <div class="modal-content__data-row">
-            <div class="success-token-title">Returned in wallet</div>
-            <div class="success-data-list">
-              <div
-                v-for="returnData in tokensReturnList"
-                :key="returnData.id"
-                class="success-data-item"
-              >
-                {{ formatMoney(returnData.value, 6) }}
-                {{ returnData.token.symbol }}
-              </div>
-            </div>
-          </div>
-        </div>
-
+      <div class="zap-header-container">
+        <PoolLabel :pool="successData.pool" />
         <div class="modal-content__data-row">
           <a
             :href="openPositionOnPool"
             target="_blank"
             rel="noopener noreferrer"
-            class="platform-position-container text-center mt-5"
+            class="view-position-link"
           >
-            <ButtonComponent btn-styles="link">MY POSITION IN POOL</ButtonComponent>
+            <ButtonComponent btn-styles="link">
+              VIEW POSITION
+              <BaseIcon name="PayoutArrow" />
+            </ButtonComponent>
           </a>
+        </div>
+      </div>
 
-          <div class="modal-content__link">
-            <a
-              :href="openOnExplorer"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              View on Scan
-            </a>
-            <BaseIcon name="scan-open" />
+      <span class="divider" />
+
+      <div
+        v-if="successData"
+        class="modal-content__data"
+      >
+
+        <div class="modal-content__data-main">
+          <div class="data-row sent">
+            <div class="success-row-title">
+              Sent
+            </div>
+            <div class="success-data-list">
+              <div
+                v-for="sentData in (tokensSentList as any)"
+                :key="sentData.id"
+                class="token-amount"
+              >
+                - {{ sentData.value }}
+                {{ sentData.token.symbol }}
+              </div>
+            </div>
+          </div>
+
+          <div class="data-row returned">
+            <div class="success-row-title">Returned</div>
+            <div class="success-data-list">
+              <div
+                v-for="returnData in tokensReturnList"
+                :key="returnData.id"
+                class="token-amount"
+              >
+                + {{ formatMoney(returnData.value, 6) }}
+                {{ returnData.token.symbol }}
+              </div>
+            </div>
+          </div>
+
+          <div class="data-row staked">
+            <div class="success-row-title">
+              Staked
+            </div>
+            <div class="success-data-list">
+              <div
+                v-for="stakeData in (tokensStakedList as any)"
+                :key="stakeData.id"
+                class="token-amount"
+              >
+                + {{ formatMoney(stakeData.value, 6) }}
+                {{ stakeData.token.symbol }}
+              </div>
+            </div>
           </div>
         </div>
       </div>
-      <div class="divider" />
 
-      <!-- <div>
-            <Carousel />
-          </div> -->
+      <span class="divider" />
+
+      <div class="zap-modal-footer">
+        Leave your feedback on Zap In feature and win $50 reward
+        <a
+          href='https://forms.gle/BCwwX4yhGW7EadTCA'
+          target="_blank"
+          rel="noopener noreferrer"
+          class="leave-feedback-link"
+        >
+          <ButtonComponent btn-styles="link">
+            <BaseIcon name="Pencil" />
+            LEAVE FEEDBACK
+            <BaseIcon name="Pencil" />
+          </ButtonComponent>
+        </a>
+      </div>
     </div>
   </ModalComponent>
 </template>
@@ -153,6 +114,7 @@
 import ModalComponent from '@/components/Modal/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import PoolLabel from '@/modules/Main/components/ZapModal/PoolLabel.vue';
 import { mapGetters } from 'vuex';
 import { formatMoney } from '@/utils/numbers.ts';
 import BigNumber from 'bignumber.js';
@@ -162,6 +124,7 @@ export default {
   components: {
     ModalComponent,
     ButtonComponent,
+    PoolLabel,
     BaseIcon,
   },
   props: {
@@ -177,12 +140,17 @@ export default {
       type: Object,
       required: true,
     },
+    returnedToUser: {
+      type: Object,
+      required: true,
+    },
   },
   data() {
     return {
-      tokensStakeList: [] as any[],
+      tokensSentList: [] as any[],
       tokensReturnList: [] as any[],
-      showModal: false,
+      tokensStakedList: [] as any[],
+      showModal: this.isShow,
     };
   },
   watch: {
@@ -191,18 +159,22 @@ export default {
     },
     successData(val) {
       if (val) {
-        this.initStakeList();
-        this.initReturnList();
+        this.initStakedList();
+        this.initReturnedList();
+        this.initSentList();
       }
     },
   },
   mounted() {
-    this.initStakeList();
-    this.initReturnList();
+    this.initReturnedList();
+    this.initStakedList();
+    this.initSentList();
   },
   computed: {
     ...mapGetters('network', ['getParams']),
-    openPositionOnPool() {
+    openPositionOnPool(): string {
+      if (!this.successData.pool) return '';
+
       if (this.successData.pool.platform[0] === 'Lynex') {
         return `https://app.lynex.fi/liquidity/manage/${this.successData.pool.address}`;
       }
@@ -295,21 +267,51 @@ export default {
     closeModal() {
       this.setShowFunc({ isShow: false });
     },
-    initStakeList() {
+    initSentList() {
       if (!this.successData || !this.successData.inputTokens) return;
 
       for (let i = 0; i < this.successData.inputTokens.length; i++) {
         const token = this.successData.inputTokens[i];
         const { value } = token;
 
-        this.tokensStakeList.push({
+        this.tokensSentList.push({
           id: `${token.id}stake`,
           token: token.selectedToken,
           value,
         });
       }
     },
-    initReturnList() {
+    initReturnedList(): any[] {
+      if (!this.successData || !this.successData.outputTokens || !this.returnedToUser) {
+        return [];
+      }
+
+      console.log('__retUserSuccessParse', this.returnedToUser);
+
+      // eslint-disable-next-line prefer-destructuring
+      const outputTokens = this.successData.outputTokens;
+      console.log(outputTokens.length);
+
+      for (let i = 0; i < outputTokens.length; i++) {
+        const token = outputTokens[i];
+        // eslint-disable-next-line no-restricted-globals
+        const valDecimals = (18 - token.selectedToken.decimals) ?? 18;
+        const fValue = new BigNumber(this.returnedToUser.amounts[i])
+          .div(10 ** 15).toString();
+        const fValue2 = new BigNumber(this.returnedToUser.amounts[i])
+          .div(10 ** valDecimals).toString();
+        const value = new BigNumber(fValue).isNaN() ? '0' : fValue;
+        this.tokensReturnList.push({
+          id: `${token.id}return`,
+          token: token.selectedToken,
+          value,
+          fValue2,
+        });
+        console.log('__returnedFinal', this.tokensReturnList);
+      }
+      return this.tokensReturnList;
+    },
+    initStakedList() {
       if (!this.successData || !this.successData.outputTokens) {
         return;
       }
@@ -318,7 +320,7 @@ export default {
         const token = this.successData.outputTokens[i];
         // eslint-disable-next-line no-restricted-globals
         const value = new BigNumber(token.sum).isNaN() ? '0' : token.sum;
-        this.tokensReturnList.push({
+        this.tokensStakedList.push({
           id: `${token.id}return`,
           token: token.selectedToken,
           value,
@@ -335,8 +337,9 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  gap: 30px;
   min-width: 600px;
-  padding: 50px 70px 30px 70px;
+  padding: 50px 30px 30px 30px;
 
   h1 {
     font-size: 24px;
@@ -349,6 +352,57 @@ export default {
     width: 32px;
     height: 32px;
   }
+
+  .zap-header-container {
+    width: 100%;
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+  }
+
+  .zap-header {
+    width: 100%;
+    background: none;
+    margin: none;
+    padding: none;
+  }
+
+  .divider {
+    width: 100%;
+    height: 1px;
+    background-color: var(--color-7);
+  }
+
+  .zap-modal-footer {
+    font-size: 16px;
+    font-weight: 500;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+    justify-content: center;
+
+    .button {
+      color: var(--color-4);
+      border-radius: 50px;
+      gap: 20px;
+      padding: 5px 10px;
+      background-color: var(--color-3);
+
+      &:hover {
+        background-color: var(--color-4);
+        color: var(--color-3);
+      }
+
+      svg {
+        fill: var(--color-4);
+        path: {
+          fill: var(--color-4);
+        }
+      }
+    }
+
+  }
 }
 
 .modal-content__data {
@@ -359,18 +413,70 @@ export default {
   text-align: center;
 }
 
-.modal-content__data-main {
-  margin: 20px 0;
-}
-
 .modal-content__data-row {
   display: flex;
-  justify-content: space-between;
-  margin: 5px 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  .view-position-link .button {
+    border: 1px solid var(--color-2);
+    color: var(--color-2);
+    border-radius: 50px;
+    gap: 20px;
+    padding: 5px 10px;
+
+    &:hover {
+        background-color: var(--color-3);
+        color: var(--color-4);
+      }
+
+    svg {
+      fill: var(--color-2);
+      height: 80%;
+    }
+  }
 }
 
-.modal-content__data-row--stake {
-  margin-bottom: 10px;
+.modal-content__data-main {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  font-weight: 500;
+
+  .data-row {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-size: 16px;
+
+    &.sent .token-amount {
+      color: var(--color-14);
+    }
+
+    &.staked .token-amount {
+      color: var(--color-3);
+    }
+
+    &.returned .token-amount {
+      color: var(--color-12);
+    }
+
+    .success-row-title {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .success-data-list {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+  }
 }
 
 .modal-content__link {
@@ -396,7 +502,8 @@ export default {
 .modal-content__tokens-col {
   text-align: center;
 
-  span, h3 {
+  span,
+  h3 {
     font-size: 16px;
     font-weight: 600;
     margin-bottom: 10px;
@@ -414,12 +521,14 @@ export default {
     }
   }
 }
+
 @media (max-width: 640px) {
   .modal-content {
     padding: 5px 7px 3px 7px;
     min-width: 0;
     max-width: 400px;
   }
+
   .modal-content__link {
     margin-left: 40px;
   }
