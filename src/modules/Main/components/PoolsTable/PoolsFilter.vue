@@ -216,9 +216,7 @@ export default {
     color: var(--color-1);
   }
 }
-.pools-wrap__filters-item:last-child {
-  border: none;
-}
+
 .pools-wrap__filters-item--selected {
   color: var(--color-3);
   border-color: var(--color-6);
@@ -257,5 +255,8 @@ export default {
 
 .pools-wrap__search {
   min-width: 150px;
+    .input-component {
+      background-color: transparent;
+  }
 }
 </style>
