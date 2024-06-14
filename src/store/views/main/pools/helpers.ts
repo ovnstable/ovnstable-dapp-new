@@ -325,6 +325,11 @@ export const buildLink = (pool: any, poolPlatform: string) => {
   return url;
 };
 
+export const checkIsEveryStableToken = (tokenSymbols: string[]) => {
+  if (tokenSymbols.every((id: string) => ALL_STABLE_TOKENS.includes(id.toUpperCase()))) return true;
+  return false;
+};
+
 export const checkIsEveryStable = (pool: any) => {
   const poolTokens = pool.name.split('/');
   if (poolTokens.every((id: string) => ALL_STABLE_TOKENS.includes(id))) return true;
