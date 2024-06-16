@@ -331,7 +331,7 @@ import {
   maxAll,
   getNewOutputToken,
   getNewInputToken,
-  WHITE_LIST_ODOS,
+  // WHITE_LIST_ODOS,
   getTokenByAddress,
 } from '@/store/helpers/index.ts';
 import {
@@ -358,6 +358,7 @@ import { poolsInfoMap, poolTokensForZapMap } from '@/store/views/main/zapin/mock
 import BN from 'bignumber.js';
 import { approveToken, getAllowanceValue } from '@/utils/contractApprove.ts';
 import { onLeaveList, onEnterList, beforeEnterList } from '@/utils/animations.ts';
+import { parseLogs } from './helpers.ts';
 
 export default {
   name: 'ZapForm',
@@ -413,7 +414,7 @@ export default {
         Chronos: ['Chronos Volatile'], // "Chronos Stable"
         // Pancake: ["PancakeSwap", "PancakeSwap V3"],
         // Beefy: ["Aerodrome Stable", "Aerodrome Volatile"],
-        // Aerodrome: ["Aerodrome Volatile"],
+        Aerodrome: ['Aerodrome Slipstream'],
         Velodrome: [
           'Velodrome Stable',
           'Velodrome Volatile',
@@ -1200,7 +1201,7 @@ export default {
         return;
       }
 
-      const whiteList = WHITE_LIST_ODOS[request.chainId as keyof typeof WHITE_LIST_ODOS];
+      // const whiteList = WHITE_LIST_ODOS[request.chainId as keyof typeof WHITE_LIST_ODOS];
       const requestData = {
         chainId: request.chainId,
         inputTokens: request.inputTokens,
@@ -1211,7 +1212,7 @@ export default {
         ),
         slippageLimitPercent: request.slippageLimitPercent,
         sourceBlacklist: this.getSourceLiquidityBlackList(),
-        sourceWhitelist: whiteList ?? [],
+        sourceWhitelist: [],
         simulate: false,
         pathViz: false,
         disableRFQs: false,
@@ -1267,42 +1268,22 @@ export default {
 
       return sourceBlacklist;
     },
+    decodeEventData(eventSignature: string[], eventData: string) {
+      return new ethers.AbiCoder().decode(eventSignature, eventData);
+    },
+    commitEventToStore(field: string, value: any) {
+      this.$store.commit('odosData/changeState', {
+        field,
+        val: value,
+      });
+    },
     async toApproveAndDepositSteps(data: any, lastPoolInfoData: any) {
       let putIntoPoolEvent;
       let returnedToUserEvent;
-      let nftId = '';
+      const nftId = '';
 
       console.log(data, '___data');
-      for (const item of data.logs) {
-        const eventName = item?.eventName;
-
-        if (eventName === 'PutIntoPool') {
-          putIntoPoolEvent = eventName;
-          this.$store.commit('odosData/changeState', {
-            field: 'lastPutIntoPoolEvent',
-            val: putIntoPoolEvent,
-          });
-        }
-
-        if (eventName === 'ReturnedToUser') {
-          returnedToUserEvent = eventName;
-          this.$store.commit('odosData/changeState', {
-            field: 'lastReturnedToUserEvent',
-            val: returnedToUserEvent,
-          });
-        }
-
-        if (eventName === 'TokenId') {
-          nftId = String(item?.args[0]);
-          returnedToUserEvent = eventName;
-          this.$store.commit('odosData/changeState', {
-            field: 'lastReturnedToUserEvent',
-            val: returnedToUserEvent,
-          });
-        }
-      }
-
-      console.log(returnedToUserEvent, '__returnedToUserEvent');
+      parseLogs(data.logs, this.commitEventToStore);
 
       this.stopSwapConfirmTimer();
       this.currentStage = zapInStep.APPROVE_GAUGE;
@@ -1518,14 +1499,14 @@ export default {
         });
     },
     clearZapData() {
-      this.$store.commit('odosData/changeState', {
-        field: 'lastPutIntoPoolEvent',
-        val: null,
-      });
-      this.$store.commit('odosData/changeState', {
-        field: 'lastReturnedToUserEvent',
-        val: null,
-      });
+      // this.$store.commit('odosData/changeState', {
+      //   field: 'lastPutIntoPoolEvent',
+      //   val: null,
+      // });
+      // this.$store.commit('odosData/changeState', {
+      //   field: 'lastReturnedToUserEvent',
+      //   val: null,
+      // });if (eventName === 'InputTokens') {}
       this.$store.commit('odosData/changeState', {
         field: 'lastZapResponseData',
         val: null,
@@ -1535,25 +1516,7 @@ export default {
       let putIntoPoolEvent;
       let returnedToUserEvent;
 
-      for (const item of data.logs) {
-        const eventName = item?.eventName;
-
-        if (eventName === 'PutIntoPool') {
-          putIntoPoolEvent = eventName;
-          this.$store.commit('odosData/changeState', {
-            field: 'lastPutIntoPoolEvent',
-            val: putIntoPoolEvent,
-          });
-        }
-
-        if (eventName === 'ReturnedToUser') {
-          returnedToUserEvent = eventName;
-          this.$store.commit('odosData/changeState', {
-            field: 'lastReturnedToUserEvent',
-            val: returnedToUserEvent,
-          });
-        }
-      }
+      parseLogs(data.logs, this.commitEventToStore);
 
       const inputTokens = [...this.selectedInputTokens];
       const outputTokens = [...this.selectedOutputTokens];

@@ -60,7 +60,7 @@ export default {
         slippage: 0.5,
         infiniteApproval: false,
         enableExpress: true,
-        apiUrl: 'https://api.squidrouter.com',
+        apiUrl: 'https://apiplus.squidrouter.com',
         comingSoonChainIds: [],
         titles: {
           swap: 'Bridge',
@@ -119,7 +119,7 @@ export default {
         slippage: 0.5,
         infiniteApproval: false,
         enableExpress: true,
-        apiUrl: 'https://api.squidrouter.com',
+        apiUrl: 'https://apiplus.squidrouter.com',
         comingSoonChainIds: [],
         titles: {
           swap: 'Bridge',
@@ -156,7 +156,7 @@ export default {
         collectFees: {
           // dev test wallet
           integratorAddress: '0xEd446C56F89e84b3dC9ACec060154eC6BC6bB299',
-          fee: 20,
+          fee: 0,
         },
       },
     },
@@ -192,7 +192,7 @@ export default {
     generateIframeURL(config: any) {
       const encodedConfig = encodeURIComponent(JSON.stringify(config));
 
-      return `https://widget.squidrouter.com/iframe?config=${encodedConfig}`;
+      return `https://v2.widget.squidrouter.com/iframe?config=${encodedConfig}`;
     },
 
     async handleIframeLoad() {

@@ -254,9 +254,6 @@ export default {
         const nameApyData = await SliderApiService.loadApyName();
         const tvlData = await SliderApiService.loadTVL();
 
-        console.log('nameApyData', nameApyData);
-        console.log('tvlData', nameApyData);
-
         const products = ['usdPlusProduct'];
         const sliderDataFromLoad = products.map((productKey): SlideData | null => {
           if (nameApyData[productKey]) {

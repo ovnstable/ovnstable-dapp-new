@@ -98,7 +98,7 @@ import { deviceType } from '@/utils/deviceType.ts';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ModalComponent from '@/components/Modal/Index.vue';
-import { checkIsEveryStable } from '@/store/views/main/pools/helpers.ts';
+import { checkIsEveryStableToken } from '@/store/views/main/pools/helpers.ts';
 
 export default {
   name: 'SwapSlippageSettings',
@@ -144,7 +144,6 @@ export default {
     };
   },
   mounted() {
-    // auto
     this.autoUpdateSlippage();
   },
   computed: {
@@ -153,9 +152,14 @@ export default {
     deviceSize() {
       return deviceType();
     },
-    isStablePool() {
-      if (!this.zapPoolData) return true;
-      return checkIsEveryStable(this.zapPoolData);
+    isStableTokens() {
+      const allTokens = [...this.selectedInputTokens, ...this.selectedOutputTokens];
+      return checkIsEveryStableToken(allTokens.map((_: any) => _?.selectedToken?.symbol));
+    },
+  },
+  watch: {
+    selectedInputTokens() {
+      this.autoUpdateSlippage();
     },
   },
   methods: {
@@ -186,7 +190,8 @@ export default {
       return this.slippageSettings.find((setting) => setting.id === id);
     },
     autoUpdateSlippage() {
-      if (!this.isStablePool) {
+      // if volatile tokens choosen by user, slippage should be higher
+      if (!this.isStableTokens) {
         const newVal = this.getSlippageSettingById(1);
         this.newSlippageSetting(newVal);
         return;
