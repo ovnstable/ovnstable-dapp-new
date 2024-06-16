@@ -128,10 +128,14 @@ export default {
 }
 
 .switchtabs__inner-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
   position: relative;
   white-space: nowrap;
   border-radius: 30px;
-  padding: 4px 10px;
+  padding: 12px;
   cursor: pointer;
   background: var(--color-5);
   z-index: 2;
@@ -140,10 +144,6 @@ export default {
 
   [data-theme="dark"] & {
     background-color: var(--color-6);
-  }
-
-  &.large {
-    padding: 9px 10px;
   }
 
   .white & {
@@ -186,17 +186,6 @@ export default {
   &:last-child {
     &::before {
       transform: translateX(7px);
-    }
-  }
-
-  @media (min-width: 1024px) {
-    &.large {
-      padding: 9px 12px;
-
-      &:last-child {
-        padding: 9px 12px;
-        padding-left: 4px;
-      }
     }
   }
 }
