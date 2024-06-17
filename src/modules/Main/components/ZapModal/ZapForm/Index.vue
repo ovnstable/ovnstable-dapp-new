@@ -809,7 +809,8 @@ export default {
           tokenData.value,
           this.checkApproveForToken,
           new BN(tokenData.selectedToken.balanceData.originalBalance)
-            .minus(10).toString(),
+            .minus(10)
+            .toFixed(),
         );
       } else {
         newToken = updateTokenValue(
@@ -1177,7 +1178,7 @@ export default {
       console.log(proportions, '__proportions');
 
       proportions.outputTokens = proportions.outputTokens.filter(
-        (item: any) => item.proportion > 0,
+        (item: any) => new BN(item.proportion).gt(0),
       );
 
       const request = {
@@ -1625,6 +1626,7 @@ export default {
       console.log(txData, 'swapdata');
       console.log(gaugeData, 'gaugeData');
       console.log((params), 'params');
+
       try {
         const tx = await this.zapContract.zapIn(txData, gaugeData, params);
         const receipt = await tx.wait();
@@ -1665,7 +1667,6 @@ export default {
 
         this.isSwapLoading = false;
         this.closeWaitingModal();
-        this.$emit('close-form');
         this.showErrorModalWithMsg({ errorType: 'zap', errorMsg: e });
       }
     },

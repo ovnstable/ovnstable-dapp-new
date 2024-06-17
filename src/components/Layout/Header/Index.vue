@@ -44,7 +44,7 @@
             rel="noopener noreferrer"
           >
             Old Dapp
-            BETA
+            BETA2
           </a>
 
         </div>

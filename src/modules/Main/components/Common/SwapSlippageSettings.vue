@@ -132,10 +132,10 @@ export default {
           id: 4, type: 'AUTO', name: 'Auto', value: 0.05, info: 'Automatic selection by current tokens',
         },
         {
-          id: 2, type: 'LOW', name: 'Low', value: 0.1, info: 'For stablecoins only',
+          id: 3, type: 'LOW', name: 'Low', value: 0.1, info: 'For stablecoins only',
         },
         {
-          id: 3, type: 'MEDIUM', name: 'Medium', value: 0.5, info: 'For mix of stablecoins and volatile assets',
+          id: 2, type: 'MEDIUM', name: 'Medium', value: 0.5, info: 'For mix of stablecoins and volatile assets',
         },
         {
           id: 1, type: 'HIGH', name: 'High', value: 1, info: 'For volatile assets',
@@ -197,7 +197,7 @@ export default {
         return;
       }
 
-      const auto: any = this.getSlippageSettingById(4);
+      const auto: any = this.getSlippageSettingById(3);
       this.currentSlippage = {
         ...auto,
         value: 0.1,

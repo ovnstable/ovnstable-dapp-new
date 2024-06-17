@@ -243,48 +243,58 @@ export const calculateProportionForPool = ({
   outputTokensPrices,
   proportion0,
 }: IProportion) => {
-  const tokenOut0 = Number.parseFloat(
-    new BN(outputTokensAmounts[0].toString())
+  const tokenOut0 = new BN(
+    new BN(outputTokensAmounts[0])
       .div(new BN(10).pow(outputTokensDecimals[0]))
       .toFixed(3, BN.ROUND_DOWN),
-  ) * outputTokensPrices[0];
-  const tokenOut1 = Number.parseFloat(
-    new BN(outputTokensAmounts[1].toString())
+  )
+    .times(outputTokensPrices[0])
+    .toFixed();
+
+  const tokenOut1 = new BN(
+    new BN(outputTokensAmounts[1])
       .div(new BN(10).pow(outputTokensDecimals[1]))
       .toFixed(3, BN.ROUND_DOWN),
-  ) * outputTokensPrices[1];
+  )
+    .times(outputTokensPrices[1])
+    .toFixed();
+
   const sumInitialOut = tokenOut0 + tokenOut1;
-  let sumInputs = 0;
+
+  let sumInputs = new BN(0);
+
   for (let i = 0; i < inputTokensAmounts.length; i++) {
-    sumInputs
-      += Number.parseFloat(
-        new BN(inputTokensAmounts[i].toString())
-          .div(new BN(10).pow(inputTokensDecimals[i]))
-          .toFixed(3, BN.ROUND_DOWN),
-      ) * inputTokensPrices[i];
+    sumInputs = sumInputs.plus(new BN(
+      new BN(inputTokensAmounts[i])
+        .div(new BN(10).pow(inputTokensDecimals[i]))
+        .toFixed(3, BN.ROUND_DOWN),
+    ).times(inputTokensPrices[i]));
   }
-  sumInputs += sumInitialOut;
+
+  sumInputs = sumInputs.plus(sumInitialOut);
 
   const output0InMoneyWithProportion = new BN(sumInputs).times(proportion0);
   const output1InMoneyWithProportion = new BN(sumInputs).times(new BN(1).minus(proportion0));
 
   const inputTokens = inputTokensAddresses.map((address: string, index: number) => ({
     tokenAddress: address,
-    amount: inputTokensAmounts[index].toString(),
+    amount: inputTokensAmounts[index],
   }));
 
   if (output0InMoneyWithProportion.lt(tokenOut0)) {
     const dif = new BN(tokenOut0).minus(output0InMoneyWithProportion);
     const token0AmountForSwap = new BN(
-      (dif.div(outputTokensPrices[0])).toString(),
+      dif.div(outputTokensPrices[0]),
     )
       .times(new BN(10).pow(outputTokensDecimals[0]))
       .toFixed(0, BN.ROUND_DOWN);
+
     inputTokens.push({
       tokenAddress: outputTokensAddresses[0],
-      amount: token0AmountForSwap.toString(),
+      amount: token0AmountForSwap,
     });
 
+    console.log('1');
     return {
       outputTokens: [
         {
@@ -296,21 +306,22 @@ export const calculateProportionForPool = ({
       amountToken0Out: new BN(outputTokensAmounts[0])
         .minus(token0AmountForSwap)
         .toFixed(0, BN.ROUND_DOWN),
-      amountToken1Out: outputTokensAmounts[1].toString(),
+      amountToken1Out: outputTokensAmounts[1],
     };
   } if (output1InMoneyWithProportion.lt(tokenOut1)) {
     const dif = new BN(tokenOut1).minus(output1InMoneyWithProportion);
     const token1AmountForSwap = new BN(
-      (new BN(dif).div(outputTokensPrices[1])).toString(),
+      new BN(dif).div(outputTokensPrices[1]),
     )
       .times(new BN(10).pow(outputTokensDecimals[1]))
       .toFixed(0, BN.ROUND_DOWN);
 
     inputTokens.push({
       tokenAddress: outputTokensAddresses[1],
-      amount: token1AmountForSwap.toString(),
+      amount: token1AmountForSwap,
     });
 
+    console.log('2222');
     return {
       outputTokens: [
         {
@@ -319,7 +330,7 @@ export const calculateProportionForPool = ({
         },
       ],
       inputTokens,
-      amountToken0Out: outputTokensAmounts[0].toString(),
+      amountToken0Out: outputTokensAmounts[0],
       amountToken1Out: new BN(outputTokensAmounts[1])
         .minus(token1AmountForSwap)
         .toFixed(0, BN.ROUND_DOWN),
@@ -328,33 +339,32 @@ export const calculateProportionForPool = ({
   const difToGetFromOdos0 = output0InMoneyWithProportion.minus(tokenOut0);
   const difToGetFromOdos1 = output1InMoneyWithProportion.minus(tokenOut1);
 
+  console.log('3333');
   return {
     inputTokens,
     outputTokens: [
       {
         tokenAddress: outputTokensAddresses[0],
-        proportion: Number.parseFloat(
-          (
-            new BN(difToGetFromOdos0).div(new BN(difToGetFromOdos0).plus(difToGetFromOdos1))
-          ).toFixed(2),
-        ),
+        proportion:
+        Number(new BN(difToGetFromOdos0)
+          .div(new BN(difToGetFromOdos0).plus(difToGetFromOdos1))
+          .toFixed(2)),
       },
       {
         tokenAddress: outputTokensAddresses[1],
-        proportion: Number.parseFloat(
-          (
-            new BN(difToGetFromOdos1).div(new BN(difToGetFromOdos0).plus(difToGetFromOdos1))
-          ).toFixed(2),
-        ),
+        proportion:
+            Number(new BN(difToGetFromOdos1)
+              .div(new BN(difToGetFromOdos0).plus(difToGetFromOdos1))
+              .toFixed(2)),
       },
     ],
     amountToken0Out: new BN(
-      (new BN(tokenOut0).div(outputTokensPrices[0])).toString(),
+      new BN(tokenOut0).div(outputTokensPrices[0]),
     )
       .times(new BN(10).pow(outputTokensDecimals[0]))
       .toFixed(0),
     amountToken1Out: new BN(
-      (new BN(tokenOut1).div(outputTokensPrices[1])).toString(),
+      new BN(tokenOut1).div(outputTokensPrices[1]),
     )
       .times(new BN(10).pow(outputTokensDecimals[1]))
       .toFixed(0),

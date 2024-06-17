@@ -403,7 +403,7 @@ const actions = {
             balanceData: {
               name: token.symbol,
               balance: balanceFormatted.toFixed(fixedBy),
-              balanceInUsd: new BigNumber(balanceFormatted).times(tokenPrice).toString(),
+              balanceInUsd: new BigNumber(balanceFormatted).times(tokenPrice).toFixed(),
               originalBalance: balance,
               decimal: token.decimals,
             }
@@ -548,7 +548,7 @@ const actions = {
     try {
       // get balance from eth token
       const weiBalance = await rootState.web3.evmProvider.getBalance(rootState.accountData.account);
-      const balance = new BigNumber(weiBalance).div(10 ** 18).toString();
+      const balance = new BigNumber(weiBalance).div(10 ** 18).toFixed();
       commit('changeState', {
         field: 'zksyncFeeHistory',
         val: {
@@ -569,7 +569,7 @@ const actions = {
         console.log('OdosSwap estimating gasLimit:', gasLimit);
         const feeInWei = gasLimit * 262500000;
         console.log('OdosSwap estimating feeInWei:', feeInWei);
-        const feeInEther = new BigNumber(feeInWei).div(10 ** 18).toString();
+        const feeInEther = new BigNumber(feeInWei).div(10 ** 18).toFixed();
         commit('changeState', {
           field: 'zksyncFeeHistory',
           val: {
@@ -632,7 +632,7 @@ const actions = {
         console.log('state.account after tx: ', rootState.accountData.account);
         const weiBalance = await rootState.web3.evmProvider
           .getBalance(rootState.accountData.account);
-        const balance = new BigNumber(weiBalance).div(10 ** 18).toString();
+        const balance = new BigNumber(weiBalance).div(10 ** 18).toFixed();
         state.zksyncFeeHistory.finalWeiBalance = balance;
       } catch (e) {
         console.log({

@@ -383,7 +383,7 @@ export const maxAll = (
   isZap?: boolean,
 ) => selectedInputTokens.map((item) => {
   const maxContractBal = isZap
-    ? new BigNumber(item.selectedToken.balanceData.originalBalance).minus(1).toString()
+    ? new BigNumber(item.selectedToken.balanceData.originalBalance).minus(1).toFixed()
     : item.selectedToken.balanceData.originalBalance;
 
   return updateTokenValue(
@@ -411,7 +411,7 @@ export const loadBalance = async (
       data.token.balanceData = {
         name: data.token.symbol,
         balance,
-        balanceInUsd: balance.times(data.token.price).toString(),
+        balanceInUsd: balance.times(data.token.price).toFixed(),
         originalBalance: ethBalance,
         decimal: data.token.decimals,
       };
@@ -419,7 +419,7 @@ export const loadBalance = async (
       return {
         name: data.token.symbol,
         balance,
-        balanceInUsd: balance.times(data.token.price).toString(),
+        balanceInUsd: balance.times(data.token.price).toFixed(),
         originalBalance: ethBalance,
         decimal: data.token.decimals,
       };
@@ -432,7 +432,7 @@ export const loadBalance = async (
     return {
       name: data.token.symbol,
       balance,
-      balanceInUsd: balance.times(data.token.price).toString(),
+      balanceInUsd: balance.times(data.token.price).toFixed(),
       originalBalance: erc20Balance,
       decimal: data.token.decimals,
     };
