@@ -246,14 +246,12 @@ export const calculateProportionForPool = ({
   const tokenOut0 = Number.parseFloat(
     new BN(outputTokensAmounts[0].toString())
       .div(new BN(10).pow(outputTokensDecimals[0]))
-      .toFixed(3, BN.ROUND_DOWN)
-      .toString(),
+      .toFixed(3, BN.ROUND_DOWN),
   ) * outputTokensPrices[0];
   const tokenOut1 = Number.parseFloat(
     new BN(outputTokensAmounts[1].toString())
       .div(new BN(10).pow(outputTokensDecimals[1]))
-      .toFixed(3, BN.ROUND_DOWN)
-      .toString(),
+      .toFixed(3, BN.ROUND_DOWN),
   ) * outputTokensPrices[1];
   const sumInitialOut = tokenOut0 + tokenOut1;
   let sumInputs = 0;
@@ -262,8 +260,7 @@ export const calculateProportionForPool = ({
       += Number.parseFloat(
         new BN(inputTokensAmounts[i].toString())
           .div(new BN(10).pow(inputTokensDecimals[i]))
-          .toFixed(3, BN.ROUND_DOWN)
-          .toString(),
+          .toFixed(3, BN.ROUND_DOWN),
       ) * inputTokensPrices[i];
   }
   sumInputs += sumInitialOut;

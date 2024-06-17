@@ -217,7 +217,7 @@
         v-else
         class="swap-button-container"
       >
-        <ButtonComponent
+        <!-- <ButtonComponent
           btn-size="large"
           full
           v-if="isDisableButton"
@@ -225,12 +225,12 @@
           disabled
         >
           {{ disableButtonMessage }}
-        </ButtonComponent>
+        </ButtonComponent> -->
         <ButtonComponent
           btn-size="large"
           btn-styles="primary"
           full
-          v-else-if="isAnyInputsNeedApprove"
+          v-if="isAnyInputsNeedApprove"
           :loading="approvingPending"
           @click="approveTrigger(firstInputInQueueForToApprove)"
           @keypress="approveTrigger(firstInputInQueueForToApprove)"
@@ -1158,6 +1158,7 @@ export default {
         proportion0: new BN(reserves[0])
           .times(outputPrices[0]).div(sumReserves).toFixed(),
       }), '__PARAMS');
+
       const proportions = calculateProportionForPool({
         inputTokensDecimals: [...inputDecimals],
         inputTokensAddresses: [...inputAddresses],
@@ -1168,7 +1169,9 @@ export default {
         outputTokensAmounts: [...outputAmounts],
         outputTokensPrices: [...outputPrices],
         proportion0: new BN(reserves[0])
-          .times(outputPrices[0]).div(sumReserves).toFixed(),
+          .times(outputPrices[0])
+          .div(sumReserves)
+          .toFixed(),
       });
 
       console.log(proportions, '__proportions');
