@@ -28,7 +28,6 @@ export const parseLogs = (logs: any, commitEventToStore: (storeField: string, da
         if (Object.values(ZAP_EVENTS).includes(eventName)) {
           const storeField = getStoreFieldName(eventName);
           const decodedData = decodeTokenEvent(item?.data);
-          console.log(`__${eventName}`, decodedData);
             commitEventToStore(storeField, decodedData);
         }
     }
