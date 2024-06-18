@@ -352,12 +352,13 @@ import TokenForm from '@/modules/Main/components/ZapModal/TokenForm.vue';
 import PoolLabel from '@/modules/Main/components/ZapModal/PoolLabel.vue';
 import SelectTokensModal from '@/components/TokensModal/Index.vue';
 import SwapSlippageSettings from '@/modules/Main/components/Common/SwapSlippageSettings.vue';
-import ZapInStepsRow, { zapInStep } from '@/components/StepsRow/ZapinRow.vue';
+import ZapInStepsRow from '@/components/StepsRow/ZapinRow/ZapinRow.vue';
 import ZapinV3 from '@/modules/Main/components/ZapModal/ZapForm/ZapinV3.vue';
 import { poolsInfoMap, poolTokensForZapMap } from '@/store/views/main/zapin/mocks.ts';
 import BN from 'bignumber.js';
 import { approveToken, getAllowanceValue } from '@/utils/contractApprove.ts';
 import { onLeaveList, onEnterList, beforeEnterList } from '@/utils/animations.ts';
+import { zapInStep } from '@/store/views/main/zapin/index.ts';
 import { parseLogs } from './helpers.ts';
 
 export default {
@@ -718,6 +719,17 @@ export default {
     },
   },
   watch: {
+    currentStage(stage: zapInStep) {
+      this.$store.commit('zapinData/changeState', { field: 'currentStage', val: stage });
+      if (this.currentStage !== zapInStep.START) {
+        this.$store.commit('zapinData/changeState', { field: 'selectedTokens', val: this.inputTokens });
+      }
+    },
+    zapPool(pool: any) {
+      if (pool.address) {
+        this.$store.commit('zapinData/changeState', { field: 'poolInfo', val: this.zapPool });
+      }
+    },
     sumOfAllSelectedTokensInUsd() {
       this.recalculateOutputTokensSum();
     },

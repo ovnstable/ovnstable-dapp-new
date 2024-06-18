@@ -4,12 +4,26 @@ import { poolsInfoMap, zapPlatformContractTypeMap } from '@/store/views/main/zap
 import { buildEvmContract } from '@/utils/contractsMap.ts';
 import { loadJSON } from '@/utils/httpUtils.ts';
 
+export enum zapInStep {
+  START,
+  APPROVE_TOKENS,
+  DEPOSIT,
+  APPROVE_GAUGE,
+  STAKE_LP
+}
+
 const stateData = {
   zapPoolRoot: null,
   currentZapPlatformContractType: null,
   zapContract: null,
   poolTokenContract: null,
   gaugeContract: null,
+  currentStage: zapInStep.START,
+  selectedTokens: [
+    { logoUrl: 'http://localhost:5173/src/assets/icons/currencies/stablecoins/USD+.png' },
+    { logoUrl: 'http://localhost:5173/src/assets/icons/currencies/stablecoins/USD+.png' },
+  ],
+  poolInfo: {},
 };
 
 const getters = {
