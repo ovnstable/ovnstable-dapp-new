@@ -6,7 +6,7 @@ import { mapGetters } from 'vuex';
 import { formatMoney } from '@/utils/numbers.ts';
 import { defineComponent, type PropType } from 'vue';
 import {
-  mapEventTokenData, getPlatformLink, type TFormatTokenInfo, type TTokenDataList,
+  mapEventTokenData, mapInputTokenData, getPlatformLink, type TFormatTokenInfo, type TTokenDataList,
 } from './helpers.ts';
 
 export default defineComponent({
@@ -87,14 +87,15 @@ export default defineComponent({
     closeModal() {
       this.setShowFunc({ isShow: false });
     },
+    // Comes from values computed locally befor tx
     initSentList() {
-      if (this.inputTokens?.amounts) {
-        this.tokensSentList = mapEventTokenData(
-          this.inputTokens,
-          this.allTokensMap,
+      if (this.successData?.inputTokens?.length > 0) {
+        this.tokensSentList = mapInputTokenData(
+          this.successData.inputTokens,
         );
       }
     },
+    // Comes from contract event log
     initReturnedList(): void {
       if (this.returnedToUser?.amounts) {
         this.tokensReturnedList = mapEventTokenData(
@@ -103,6 +104,7 @@ export default defineComponent({
         );
       }
     },
+    // Comes from contract event log
     initStakedList(): void {
       if (this.putIntoPool?.amounts) {
         this.tokensStakedList = mapEventTokenData(
