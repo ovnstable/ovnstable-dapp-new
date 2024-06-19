@@ -20,7 +20,7 @@ const decodeTokenEvent = (data: string) => {
   };
 };
 
-const getStoreFieldName = (eventName: string) => `last${eventName}Event`;
+const getStoreFieldName = (eventName: string) => `lastParsed${eventName}Event`;
 
 export const parseLogs = (logs: any, commitEventToStore: (storeField: string, data: any) => void): void => {
     for (const item of logs) {

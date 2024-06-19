@@ -1510,14 +1510,16 @@ export default {
         });
     },
     clearZapData() {
-      // this.$store.commit('odosData/changeState', {
-      //   field: 'lastPutIntoPoolEvent',
-      //   val: null,
-      // });
-      // this.$store.commit('odosData/changeState', {
-      //   field: 'lastReturnedToUserEvent',
-      //   val: null,
-      // });if (eventName === 'InputTokens') {}
+      this.inputTokens = [];
+      this.outputTokens = [];
+      this.$store.commit('odosData/changeState', {
+        field: 'lastPutIntoPoolEvent',
+        val: null,
+      });
+      this.$store.commit('odosData/changeState', {
+        field: 'lastReturnedToUserEvent',
+        val: null,
+      });
       this.$store.commit('odosData/changeState', {
         field: 'lastZapResponseData',
         val: null,
