@@ -8,7 +8,7 @@
     <div class="modal-content zap-waiting-modal">
       <div
         class="zap-waiting-modal-container"
-        v-if="true"
+        v-if="isZapModalShow"
       >
         <ZapinWaitingModal />
       </div>
@@ -29,7 +29,7 @@
 </template>
 
 <script lang="ts">
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 import Carousel from '@/modules/ModalTemplates/components/Carousel.vue';
 import Spinner from '@/components/Spinner/Index.vue';
 import ModalComponent from '@/components/Modal/Index.vue';
@@ -48,6 +48,7 @@ export default {
   },
   computed: {
     ...mapGetters('waitingModal', ['show', 'modalText']),
+    ...mapState('poolsData', ['isZapModalShow']),
   },
   methods: {
     ...mapActions('waitingModal', ['showWaitingModal', 'closeWaitingModal']),
@@ -72,7 +73,7 @@ export default {
     align-items: center;
     justify-content: center;
     gap: 20px;
-    min-width: 500px;
+    min-width: 700px;
     .zap-waiting-modal-container {
       width: 100%;
     }
