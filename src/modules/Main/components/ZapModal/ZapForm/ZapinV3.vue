@@ -5,9 +5,17 @@
     </h2>
     <div class="zapin-v3__chart">
       <div class="zapin-v3__chart-head">
-        <h3 v-if='pairSymbols'>
-          Current Price:  {{ centerPrice }}  {{ pairSymbols[1] }} per {{ pairSymbols[0] }}
-        </h3>
+        <div class="zapin-v3__chart-head__col">
+          <h2 v-if='pairSymbols'>
+            Price:  {{ getCenterPrice }}  {{ getFirstSymbol }} per {{ getSecondSymbol }}
+          </h2>
+          <ButtonComponent
+            @click="inversePrices"
+            :btn-styles="!reversePrice ? 'primary' : 'secondary'"
+          >
+            Prices in {{ activeSymbolPrice }}
+          </ButtonComponent>
+        </div>
 
         <div
           class="zapin-v3__chart-zoom"
@@ -67,7 +75,7 @@
             -
           </div>
           <InputComponent
-            :value="minPrice"
+            :value="frontMinPrice"
             input-type="white"
             placeholder="0"
             full-width
@@ -84,7 +92,7 @@
           </div>
         </div>
         <p v-if="pairSymbols">
-          {{ pairSymbols[0] }} per {{ pairSymbols[1] }}
+          {{ getFirstSymbol }} per {{ getSecondSymbol }}
         </p>
       </div>
       <div class="zapin-v3__col-block">
@@ -100,7 +108,7 @@
             -
           </div>
           <InputComponent
-            :value="maxPrice"
+            :value="frontMaxPrice"
             input-type="white"
             placeholder="0"
             full-width
@@ -117,7 +125,7 @@
           </div>
         </div>
         <p v-if="pairSymbols">
-          {{ pairSymbols[0] }} per {{ pairSymbols[1] }}
+          {{ getFirstSymbol }} per {{ getSecondSymbol }}
         </p>
       </div>
     </div>
@@ -144,7 +152,7 @@
             <span>-</span> -->
           </div>
 
-          {{ range.value === 100 ? "FULL" : `${range.label}${getPresetSymbol}` }}
+          {{ range.label === "100" ? "FULL" : `${range.label}${getPresetSymbol}` }}
         </div>
       </div>
     </div>
@@ -154,8 +162,7 @@
 <!-- eslint-disable no-param-reassign -->
 <script lang="ts">
 import InputComponent from '@/components/Input/Index.vue';
-// import ButtonComponent from '@/components/Button/Index.vue';
-// import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import ButtonComponent from '@/components/Button/Index.vue';
 import Spinner from '@/components/Spinner/Index.vue';
 import BN from 'bignumber.js';
 import debounce from 'lodash/debounce';
@@ -179,6 +186,7 @@ export default {
   name: 'ZapinV3',
   components: {
     InputComponent,
+    ButtonComponent,
     Spinner,
   },
   emits: ['set-range'],
@@ -187,6 +195,7 @@ export default {
       zoomType: 1,
       dataToRender: [],
       isLoading: true,
+      reversePrice: false,
       ticksAmount: '0',
       minPrice: '0',
       maxPrice: '0',
@@ -195,7 +204,7 @@ export default {
       pairSymbols: [],
       rangePresets: [
         {
-          id: 0, value: 10, label: '5',
+          id: 0, value: 2, label: '5',
         },
         {
           id: 1, value: 20, label: '10',
@@ -220,6 +229,9 @@ export default {
         {
           id: 3, value: 6, label: '3',
         },
+        {
+          id: 4, value: 887272, label: '100',
+        },
       ],
       optionsChart: {
         annotations: {
@@ -238,9 +250,9 @@ export default {
         chart: {
           id: 'chart1',
           width: '100%',
-          height: '50px',
           type: 'bar',
           foreColor: '#ccc',
+          parentHeightOffset: 50,
           brush: {
             target: 'chart2',
             enabled: true,
@@ -281,6 +293,9 @@ export default {
         grid: {
           borderColor: '#E3F2FD',
           show: false,
+          padding: {
+            top: 0, bottom: 20,
+          },
         },
         markers: {
           size: 0,
@@ -313,6 +328,34 @@ export default {
     },
   },
   computed: {
+    getFirstSymbol() {
+      if (!this.reversePrice) return this.pairSymbols[0];
+
+      return this.pairSymbols[1];
+    },
+    getSecondSymbol() {
+      if (!this.reversePrice) return this.pairSymbols[1];
+
+      return this.pairSymbols[0];
+    },
+    getCenterPrice() {
+      if (!this.reversePrice) return this.centerPrice;
+
+      return new BN(1).div(this.centerPrice).toFixed(8);
+    },
+    frontMinPrice() {
+      if (!this.reversePrice) return this.minPrice;
+
+      return new BN(1).div(this.maxPrice).toFixed(8);
+    },
+    frontMaxPrice() {
+      if (!this.reversePrice) return this.maxPrice;
+
+      return new BN(1).div(this.minPrice).toFixed(8);
+    },
+    activeSymbolPrice() {
+      return this.reversePrice ? this.pairSymbols[1] : this.pairSymbols[0];
+    },
     getRangeActive() {
       return (range: any) => {
         if (this.isStablePool) {
@@ -341,6 +384,7 @@ export default {
   },
   async mounted() {
     this.pairSymbols = this.zapPool.name.split('/');
+    console.log(this.zapContract, '__thiszapContract');
     const currPrice = await this.zapContract.getCurrentPrice(this.zapPool.address);
     const center = new BN(currPrice).div(10 ** 6);
 
@@ -465,6 +509,9 @@ export default {
     },
   },
   methods: {
+    async inversePrices() {
+      this.reversePrice = !this.reversePrice;
+    },
     async maxZoom(num = 4) {
       await awaitDelay(100);
       this.zoomType = num;
@@ -562,11 +609,9 @@ export default {
       }
     },
     zoomInOut(scaleIn: boolean) {
-      const data: any[] = (this.$refs?.zapinChart as any)?.series[0]?.data;
-      const xStart = data[0][0];
-      const xEnd = data[data.length - 1][0];
-      console.log(this.$refs?.zapinChart, '__this.$refs?.zapinChart');
-      console.log(xStart, xEnd, 'zoomIn');
+      // const data: any[] = (this.$refs?.zapinChart as any)?.series[0]?.data;
+      // const xStart = data[0][0];
+      // const xEnd = data[data.length - 1][0];
 
       let minVal = '0';
       let maxVal = '0';
@@ -576,14 +621,11 @@ export default {
 
       if (scaleIn) newZoomType = Number((zoomNum + this.zoomType).toFixed(0));
       else newZoomType = Number((this.zoomType - zoomNum).toFixed(0));
-
-      console.log(newZoomType, scaleIn, '__newZoomType');
       if ((new BN(newZoomType).gt(5) && scaleIn)
             || (new BN(newZoomType).lt(1) && !scaleIn)) return;
 
       this.zoomType = newZoomType;
 
-      console.log(newZoomType, scaleIn, '__newZoomType2');
       if (this.zoomType === 1) {
         this.initBuildData();
         return;
@@ -610,10 +652,8 @@ export default {
         maxVal = new BN(this.centerPrice).times(1.0005).toFixed(dec);
       }
 
-      console.log(minVal, maxVal, '_maxmin');
       const buildData = createScaledArray(Number(minVal), Number(maxVal));
 
-      console.log(buildData, '__buildData');
       if (buildData?.length === 0) return;
       (this.$refs?.zapinChart as any).updateSeries([{
         data: buildData,
@@ -961,8 +1001,14 @@ export default {
 
 .zapin-v3__chart-head {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
+}
+
+.zapin-v3__chart-head__col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .zapin-v3__chart-zoom {

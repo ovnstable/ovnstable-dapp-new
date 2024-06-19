@@ -7,7 +7,7 @@ import { loadTokenImage, loadOvernightTokenImage } from '@/utils/tokenLogo.ts';
 import odosApiService from '@/services/odos-api-service.ts';
 import SliderApiService from '@/services/slider-api-service.ts';
 import { DEPRECATED_NETWORKS, ODOS_DEPRECATED_NETWORKS } from '@/utils/const.ts';
-import { SFRAX_TOKEN, BLAST_TOKENS_PRICES } from '@/store/views/main/odos/mocks.ts';
+import { BLAST_TOKENS_PRICES } from '@/store/views/main/odos/mocks.ts';
 import type { stateData } from '@/store/views/main/odos/index';
 
 const SECONDTOKEN_SECOND_DEFAULT_SYMBOL = 'DAI+';
@@ -32,7 +32,6 @@ export const WHITE_LIST_ODOS = {
   ],
   42161: [
     'Overnight Exchange',
-    'Ramses V2',
     'Camelot Stable',
     'Camelot V3',
     'Balancer V2 Stable',
