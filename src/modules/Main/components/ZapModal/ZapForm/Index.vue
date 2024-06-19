@@ -217,7 +217,7 @@
         v-else
         class="swap-button-container"
       >
-        <!-- <ButtonComponent
+        <ButtonComponent
           btn-size="large"
           full
           v-if="isDisableButton"
@@ -225,12 +225,12 @@
           disabled
         >
           {{ disableButtonMessage }}
-        </ButtonComponent> -->
+        </ButtonComponent>
         <ButtonComponent
           btn-size="large"
           btn-styles="primary"
           full
-          v-if="isAnyInputsNeedApprove"
+          v-else-if="isAnyInputsNeedApprove"
           :loading="approvingPending"
           @click="approveTrigger(firstInputInQueueForToApprove)"
           @keypress="approveTrigger(firstInputInQueueForToApprove)"
