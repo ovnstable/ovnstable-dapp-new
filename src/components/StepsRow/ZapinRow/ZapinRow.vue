@@ -57,21 +57,11 @@
 
 <!-- eslint-disable no-unused-vars -->
 <script lang="ts">
-import { type PropType } from 'vue';
+import { defineComponent, type PropType } from 'vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
-import BigNumber from 'bignumber.js';
+import { zapInStep } from '@/store/views/main/zapin/index.ts';
 
-(window as any).bigNumber = BigNumber;
-// eslint-disable-next-line no-shadow
-export enum zapInStep {
-  START,
-  APPROVE_TOKENS,
-  DEPOSIT,
-  APPROVE_GAUGE,
-  STAKE_LP
-}
-
-export default {
+export default defineComponent({
   name: 'ZapInStepsRow',
   components: {
     BaseIcon,
@@ -95,9 +85,6 @@ export default {
       zapInStep,
     };
   },
-  mounted() {
-    console.log(this.type, '__DAA');
-  },
   computed: {
     showStaking() {
       return this.type?.type !== 'LP_WITH_STAKE_IN_ONE_STEP';
@@ -106,32 +93,6 @@ export default {
       return (stage: number) => this.currentStage > stage;
     },
   },
-};
+});
 </script>
-
-<style lang="scss" scoped>
-.steps-row {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  color: var(--color-7);
-  padding: 0 20px;
-
-  [data-theme="dark"] & {
-    color: var(--color-18);
-  }
-
-  .active-color {
-    color: var(--color-1);
-  }
-
-  .active-stage {
-    text-decoration: underline;
-    color: var(--color-1);
-    [data-theme="dark"] & {
-      color: var(--color-4);
-    }
-  }
-}
-</style>
+<style lang="scss" scoped src='./styles.scss' />

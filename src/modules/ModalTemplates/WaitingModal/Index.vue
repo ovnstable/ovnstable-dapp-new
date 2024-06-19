@@ -5,16 +5,23 @@
     overlayModals
     type-modal="custom"
   >
-    <div class="modal-content">
-      <div class="modal-content__spin">
-        <Spinner size="90px" />
+    <div class="modal-content zap-waiting-modal">
+      <div
+        class="zap-waiting-modal-container"
+        v-if="isZapModalShow"
+      >
+        <ZapinWaitingModal />
       </div>
-      <h1>Waiting for confirmation</h1>
-      <p class="modal-content__confirm">Confirm this transaction in your wallet</p>
-      <div class="divider" />
-
-      <div class="modal-content__tips">
-        <Carousel />
+      <div v-else>
+        <div class="modal-content__spin">
+          <Spinner size="90px" />
+        </div>
+        <h1>Waiting for confirmation</h1>
+        <p class="modal-content__confirm">Confirm this transaction in your wallet</p>
+        <div class="divider" />
+        <div class="modal-content__tips">
+          <Carousel />
+        </div>
       </div>
 
     </div>
@@ -22,14 +29,17 @@
 </template>
 
 <script lang="ts">
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 import Carousel from '@/modules/ModalTemplates/components/Carousel.vue';
 import Spinner from '@/components/Spinner/Index.vue';
 import ModalComponent from '@/components/Modal/Index.vue';
+import ZapinWaitingModal from '@/modules/Main/components/ZapModal/ZapWaitingModal/ZapWaitingModal.vue';
 
 export default {
   name: 'WaitingModal',
-  components: { Carousel, Spinner, ModalComponent },
+  components: {
+    Carousel, Spinner, ModalComponent, ZapinWaitingModal,
+  },
   props: {
     showModal: {
       type: Boolean,
@@ -38,6 +48,7 @@ export default {
   },
   computed: {
     ...mapGetters('waitingModal', ['show', 'modalText']),
+    ...mapState('poolsData', ['isZapModalShow']),
   },
   methods: {
     ...mapActions('waitingModal', ['showWaitingModal', 'closeWaitingModal']),
@@ -55,6 +66,18 @@ export default {
 <style lang="scss" scoped>
 .modal-content {
   padding: 50px 70px 30px 70px;
+  &.zap-waiting-modal {
+    padding: 50px 25px 50px 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    min-width: 700px;
+    .zap-waiting-modal-container {
+      width: 100%;
+    }
+  }
   [data-theme="dark"] & {
     background-color: var(--color-17);
     border-color: var(--color-4);

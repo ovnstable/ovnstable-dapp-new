@@ -23,7 +23,7 @@ import {
   BLAST_TOKENS, LINEA_TOKENS, OP_TOKENS, SFRAX_TOKEN, ZKSYNC_TOKENS
 } from '@/store/views/main/odos/mocks.ts';
 import _ from 'lodash';
-import { succesDataMock, returnedDataMock, allTokens } from './zap_mock_data.ts';
+// import { succesDataMock, returnedDataMock, allTokens } from './zap_mock_data.ts';
 
 // const KEY = 'REFERRAL_CODE';
 
@@ -77,9 +77,16 @@ export const stateData = {
   lastNftTokenId: null,
   lastZapResponseData: null,
 
+  // Too tied with other events
   lastPutIntoPoolEvent: {},
   lastReturnedToUserEvent: {},
   lastInputTokensEvent: {},
+
+  // Adding new
+  lastParsedPutIntoPoolEvent: {},
+  lastParsedReturnedToUserEvent: {},
+  lastParsedInputTokensEvent: {},
+
   successData: {
     inputTokens: [] as any[],
     outputTokens: [] as any[],

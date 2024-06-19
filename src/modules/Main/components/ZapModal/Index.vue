@@ -18,9 +18,9 @@
       :is-show="showSuccessZapin"
       :success-data="successData"
       :set-show-func="triggerSuccessZapin"
-      :returnedToUser="lastReturnedToUserEvent"
-      :putIntoPool="lastPutIntoPoolEvent"
-      :input-tokens="lastInputTokensEvent"
+      :returnedToUser="lastParsedReturnedToUserEvent"
+      :putIntoPool="lastParsedPutIntoPoolEvent"
+      :input-tokens="lastParsedInputTokensEvent"
     />
   </div>
 </template>
@@ -66,9 +66,9 @@ export default {
     ...mapState('odosData', [
       'successData',
       'showSuccessZapin',
-      'lastReturnedToUserEvent',
-      'lastPutIntoPoolEvent',
-      'lastInputTokensEvent',
+      'lastParsedReturnedToUserEvent',
+      'lastParsedPutIntoPoolEvent',
+      'lastParsedInputTokensEvent',
     ]),
   },
   methods: {
