@@ -3,8 +3,8 @@
   <div class="zap-waiting-content">
     <h1>ZAP IN</h1>
     <PoolLabel
-      v-if="poolInfo?.address"
-      :pool="poolInfo"
+      v-if="currentZapPool?.address"
+      :pool="currentZapPool"
     />
     <div class="stages-container">
       <div

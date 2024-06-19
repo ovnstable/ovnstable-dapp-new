@@ -725,11 +725,6 @@ export default {
         this.$store.commit('zapinData/changeState', { field: 'selectedTokens', val: this.inputTokens });
       }
     },
-    zapPool(pool: any) {
-      if (pool.address) {
-        this.$store.commit('zapinData/changeState', { field: 'poolInfo', val: this.zapPool });
-      }
-    },
     sumOfAllSelectedTokensInUsd() {
       this.recalculateOutputTokensSum();
     },

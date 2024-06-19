@@ -33,7 +33,10 @@ export default defineComponent({
     ...mapState('zapinData', [
       'currentStage',
       'selectedTokens',
-      'poolInfo',
+    ]),
+    ...mapState('poolsData', [
+      'currentZapPool',
+      'isZapModalShow',
     ]),
   },
   methods: {

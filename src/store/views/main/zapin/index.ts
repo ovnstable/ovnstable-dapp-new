@@ -19,11 +19,6 @@ const stateData = {
   poolTokenContract: null,
   gaugeContract: null,
   currentStage: zapInStep.START,
-  selectedTokens: [
-    { logoUrl: 'http://localhost:5173/src/assets/icons/currencies/stablecoins/USD+.png' },
-    { logoUrl: 'http://localhost:5173/src/assets/icons/currencies/stablecoins/USD+.png' },
-  ],
-  poolInfo: {},
 };
 
 const getters = {
