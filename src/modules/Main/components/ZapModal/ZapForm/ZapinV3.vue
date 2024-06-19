@@ -148,8 +148,6 @@
             v-if="showPresetPlusMinus(range)"
           >
             ±
-            <!-- <span>+</span>
-            <span>-</span> -->
           </div>
 
           {{ range.label === "100" ? "FULL" : `${range.label}${getPresetSymbol}` }}
@@ -170,13 +168,13 @@ import { getProportionTicks } from '@/store/views/main/zapin/helpers.ts';
 import { awaitDelay } from '@/utils/const.ts';
 import { checkIsEveryStable } from '@/store/views/main/pools/helpers.ts';
 
-const createScaledArray = (start: number, end: number, maxItems = 10) => {
+const createScaledArray = (start: number, end: number, decimals = 4, maxItems = 10) => {
   const result = [];
   const step = (end - start) / (maxItems - 1); // Calculate the step size
 
   for (let i = 0; i < maxItems; i++) {
     // Push the current value rounded to four decimal places
-    result.push([parseFloat((start + step * i).toFixed(4)), 0]);
+    result.push([parseFloat((start + step * i).toFixed(decimals)), 0]);
   }
 
   return result;
@@ -507,6 +505,101 @@ export default {
     maxPrice() {
       this.debouncePriceChange(this);
     },
+    async reversePrice(val) {
+      const self = this;
+      let buildData: any[] = (this.$refs?.zapinChart as any)?.series[0]?.data;
+
+      if (val) {
+        buildData = buildData
+          .slice(2, buildData.length)
+          .map((_) => [Number(new BN(1).div(_[0]).toFixed(6)), _[1]]);
+      } else {
+        const currPrice = await this.zapContract.getCurrentPrice(this.zapPool.address);
+        this.selectVolatileData(currPrice, new BN(currPrice).div(10 ** 6), true);
+        this.initBuildData();
+        (this.$refs?.zapinChart as any)?.updateOptions(
+          {
+            chart: {
+              selection: {
+                xaxis: {
+                  min: Number(this.frontMinPrice),
+                  max: Number(this.frontMaxPrice),
+                },
+              },
+            },
+            annotations: {
+              xaxis: [
+                {
+                  x: this.getCenterPrice,
+                  borderColor: '#0497EC',
+                  borderWidth: 2,
+                  label: {
+                    borderColor: '#0497EC',
+                    orientation: 'horizontal',
+                  },
+                },
+              ],
+            },
+            xaxis: {
+              labels: {
+                formatter(value: number) {
+                  const dec = self.lowPoolPrice ? 2 : 0;
+                  return value.toFixed(dec);
+                },
+                style: {
+                  colors: '#687386',
+                  fontSize: '14px',
+                },
+              },
+            },
+          },
+          false,
+          true,
+        );
+        return;
+      }
+
+      (this.$refs?.zapinChart as any).updateSeries([{
+        data: buildData,
+      }], false, true);
+
+      await awaitDelay(300);
+      (this.$refs?.zapinChart as any)?.updateOptions(
+        {
+          chart: {
+            selection: {
+              xaxis: {
+                min: Number(this.frontMinPrice),
+                max: Number(this.frontMaxPrice),
+              },
+            },
+          },
+          annotations: {
+            xaxis: [
+              {
+                x: this.getCenterPrice,
+                borderColor: '#0497EC',
+                borderWidth: 2,
+                label: {
+                  borderColor: '#0497EC',
+                  orientation: 'horizontal',
+                },
+              },
+            ],
+          },
+          xaxis: {
+            labels: {
+              formatter(value: number) {
+                const dec = self.lowPoolPrice ? 2 : 6;
+                return value.toFixed(dec);
+              },
+            },
+          },
+        },
+        false,
+        true,
+      );
+    },
   },
   methods: {
     async inversePrices() {
@@ -517,21 +610,13 @@ export default {
       this.zoomType = num;
       this.zoomInOut(true);
     },
-    selectVolatileData(currPrice: string, center: BN) {
+    selectVolatileData(currPrice: string, center: BN, updateData?: boolean) {
       const minPrice = new BN(currPrice).times(0.95);
       const maxPrice = new BN(currPrice).times(1.05);
       this.minPrice = minPrice.div(10 ** 6).toFixed(6);
       this.maxPrice = maxPrice.div(10 ** 6).toFixed(6);
       this.centerPrice = center.toFixed(6);
 
-      console.log({
-        range: [
-          minPrice.toFixed(0),
-          maxPrice.toFixed(0),
-        ],
-        ticks: this.ticksAmount,
-        isStable: this.isStablePool,
-      }, '___selectVolatileData');
       this.$emit('set-range', {
         range: [
           minPrice.toFixed(0),
@@ -540,6 +625,8 @@ export default {
         ticks: this.ticksAmount,
         isStable: this.isStablePool,
       });
+
+      if (updateData) return;
 
       this.optionsChart.chart.selection.xaxis = {
         min: Number(this.minPrice),
@@ -561,6 +648,7 @@ export default {
       };
     },
     initBuildData() {
+      if (this.reversePrice) return;
       if (this.isStablePool || this.lowPoolPrice) {
         const buildData = Array.from({ length: 22 }).map((_, key) => [key / 10, 0]);
 
@@ -632,29 +720,35 @@ export default {
       }
 
       if (this.zoomType === 2) {
-        const dec = this.lowPoolPrice ? 1 : 0;
-        minVal = new BN(this.centerPrice).times(0.9).toFixed(dec);
-        maxVal = new BN(this.centerPrice).times(1.1).toFixed(dec);
+        const highPricePool = this.reversePrice ? 6 : 0;
+        const dec = this.lowPoolPrice ? 1 : highPricePool;
+        minVal = new BN(this.getCenterPrice).times(0.8).toFixed(dec);
+        maxVal = new BN(this.getCenterPrice).times(1.2).toFixed(dec);
       }
       if (this.zoomType === 3) {
-        const dec = this.lowPoolPrice ? 2 : 0;
-        minVal = new BN(this.centerPrice).times(0.99).toFixed(dec);
-        maxVal = new BN(this.centerPrice).times(1.01).toFixed(dec);
+        const highPricePool = this.reversePrice ? 6 : 0;
+        const dec = this.lowPoolPrice ? 2 : highPricePool;
+        minVal = new BN(this.getCenterPrice).times(0.99).toFixed(dec);
+        maxVal = new BN(this.getCenterPrice).times(1.01).toFixed(dec);
       }
       if (this.zoomType === 4) {
-        const dec = this.lowPoolPrice ? 3 : 0;
-        minVal = new BN(this.centerPrice).times(0.999).toFixed(dec);
-        maxVal = new BN(this.centerPrice).times(1.001).toFixed(dec);
+        const highPricePool = this.reversePrice ? 6 : 0;
+        const dec = this.lowPoolPrice ? 3 : highPricePool;
+        minVal = new BN(this.getCenterPrice).times(0.999).toFixed(dec);
+        maxVal = new BN(this.getCenterPrice).times(1.001).toFixed(dec);
       }
       if (this.zoomType === 5) {
-        const dec = this.lowPoolPrice ? 4 : 0;
-        minVal = new BN(this.centerPrice).times(0.9995).toFixed(dec);
-        maxVal = new BN(this.centerPrice).times(1.0005).toFixed(dec);
+        const highPricePool = this.reversePrice ? 6 : 0;
+        const dec = this.lowPoolPrice ? 4 : highPricePool;
+        minVal = new BN(this.getCenterPrice).times(0.9995).toFixed(dec);
+        maxVal = new BN(this.getCenterPrice).times(1.0005).toFixed(dec);
       }
 
-      const buildData = createScaledArray(Number(minVal), Number(maxVal));
+      const dataDec = this.reversePrice ? 6 : 4;
+      const buildData = createScaledArray(Number(minVal), Number(maxVal), dataDec);
 
       if (buildData?.length === 0) return;
+
       (this.$refs?.zapinChart as any).updateSeries([{
         data: buildData,
       }], false, true);
@@ -666,6 +760,10 @@ export default {
           xaxis: {
             labels: {
               formatter(value: number) {
+                if (self.reversePrice && !self.lowPoolPrice) {
+                  return value.toFixed(5);
+                }
+
                 if (value === 0) return '0';
 
                 if (self.lowPoolPrice) {
@@ -675,10 +773,6 @@ export default {
                 }
 
                 return value.toFixed(0);
-              },
-              style: {
-                colors: '#687386',
-                fontSize: '14px',
               },
             },
           },
@@ -702,14 +796,14 @@ export default {
       }
     },
     selectEvent(e: any, o: any) {
-      const minPrice = new BN(o.xaxis?.min).toFixed(this.lowPoolPrice ? 6 : 0);
-      const maxPrice = new BN(o.xaxis?.max).toFixed(this.lowPoolPrice ? 6 : 0);
+      const decimals = this.reversePrice ? 6 : 0;
+      const minPrice = new BN(o.xaxis?.min).toFixed(this.lowPoolPrice ? 6 : decimals);
+      const maxPrice = new BN(o.xaxis?.max).toFixed(this.lowPoolPrice ? 6 : decimals);
 
-      if (new BN(minPrice).eq(this.minPrice) && new BN(maxPrice).eq(this.maxPrice)) {
+      if (new BN(minPrice).eq(this.frontMinPrice) && new BN(maxPrice).eq(this.frontMaxPrice)) {
         return;
       }
 
-      console.log('selectEvent__');
       this.minPrice = minPrice;
       this.maxPrice = maxPrice;
       this.ticksAmount = '0';
@@ -738,14 +832,15 @@ export default {
       });
 
       if (self.isStablePool) return;
+      if (!self.isStablePool && self.lowPoolPrice) return;
 
       (self.$refs?.zapinChart as any)?.updateOptions(
         {
           chart: {
             selection: {
               xaxis: {
-                min: Number(self.minPrice),
-                max: Number(self.maxPrice),
+                min: Number(self.frontMinPrice),
+                max: Number(self.frontMaxPrice),
               },
             },
           },
@@ -755,7 +850,7 @@ export default {
       );
 
       self.changeTrig();
-    }, 200),
+    }, 500),
     changeTrig() {
       console.log('CHANGED');
     },
