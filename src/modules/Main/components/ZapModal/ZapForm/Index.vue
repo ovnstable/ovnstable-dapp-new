@@ -38,7 +38,7 @@
           <div class="zapin-block__row">
             <div
             class="zapin-block__content"
-            :class="currentSection === zapMobileSection.TOKEN_FORM ? 'mobile-active' : ''"
+            :class="currentSection === zapMobileSection.TOKEN_FORM && 'mobile-active'"
             >
               <div class="zapin-block__wrapper">
                 <div class="mb-4 mt-1">
@@ -201,7 +201,7 @@
               :zap-pool="zapPool"
               :zap-contract="zapContract"
               @set-range="setRangeV3"
-              :class="currentSection === zapMobileSection.SET_PRICE_RANGE ? 'mobile-active' : ''"
+              :class="currentSection === zapMobileSection.SET_PRICE_RANGE && 'mobile-active'"
             />
           </div>
         </div>
