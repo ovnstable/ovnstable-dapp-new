@@ -1511,6 +1511,10 @@ export default {
         field: 'lastZapResponseData',
         val: null,
       });
+      this.$store.commit('odosData/changeState', {
+        field: 'lastNftTokenId',
+        val: null,
+      });
     },
     finishSingleStepTransaction(data: any) {
       let putIntoPoolEvent;
