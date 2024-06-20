@@ -1,5 +1,6 @@
 <template>
   <ModalComponent
+    custom-class="success-modal"
     type-modal="custom"
     v-model="showModal"
     @close="closeModal"
