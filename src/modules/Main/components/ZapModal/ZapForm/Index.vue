@@ -25,14 +25,18 @@
       <template v-else>
         <div :class="['zapin-block', { v3: zapPool?.poolVersion === 'v3' }, { v2: zapPool?.poolVersion === 'v2' }]">
           <div class="zapin-block__header-container">
-            <BaseIcon name="ArrowLeft" @click="toggleMobileSection" />
+            <BaseIcon name="ArrowLeft"
+            @click="toggleMobileSection"
+            />
             <div class="zapin-block__header">
               ZAP IN
             </div>
-            <BaseIcon name="ArrowRight" @click="toggleMobileSection"/>
+            <BaseIcon name="ArrowRight"
+            @click="toggleMobileSection"
+            />
           </div>
           <div class="zapin-block__row">
-            <div 
+            <div
             class="zapin-block__content"
             :class="currentSection === zapMobileSection.TOKEN_FORM ? 'mobile-active' : ''"
             >
@@ -372,6 +376,9 @@ enum zapMobileSection {
   'SET_PRICE_RANGE' 
 }
 
+const MAX_INPUT_TOKENS = 3;
+const MAX_OUTPUT_TOKENS = 6;
+
 export default {
   name: 'ZapForm',
   components: {
@@ -404,8 +411,8 @@ export default {
       approvingPending: false,
       inputTokens: [] as any[],
       outputTokens: [] as any[],
-      maxInputTokens: 6,
-      maxOutputTokens: 6,
+      maxInputTokens: MAX_INPUT_TOKENS,
+      maxOutputTokens: MAX_OUTPUT_TOKENS,
       v3Range: null as any,
       isShowSelectTokensModal: false,
       swapMethod: 'BUY', // BUY (secondTokens) / SELL (secondTokens)
