@@ -268,7 +268,7 @@ export default {
       );
     },
     selectedCount() {
-      return this.selectedTokens.length;
+      return this.selectedTokensList.length;
     },
   },
   methods: {
