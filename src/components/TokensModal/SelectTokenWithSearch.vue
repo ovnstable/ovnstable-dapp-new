@@ -158,6 +158,7 @@ import { deviceType } from '@/utils/deviceType.ts';
 import BigNumber from 'bignumber.js';
 
 const NATIVE_ID = 'eth0x0000000000000000000000000000000000000000';
+const MAX_TOKEN_COUNT = 3;
 
 export default {
   name: 'SelectTokenWithSearch',
@@ -187,7 +188,7 @@ export default {
   },
   data() {
     return {
-      maxTokenSelectCount: 3,
+      maxTokenSelectCount: MAX_TOKEN_COUNT,
       searchQuery: '',
     };
   },
@@ -266,13 +267,7 @@ export default {
         (token: any) => nonOvnTokens.includes(token) && token.balanceData.balance === '0.00',
       );
     },
-    isAvailableCountForSelect() {
-      return this.selectedCount < this.maxTokenSelectCount;
-    },
     selectedCount() {
-      if (this.selectedTokensList.length === 0) {
-        return 0;
-      }
       return this.selectedTokens.length;
     },
   },
@@ -283,15 +278,9 @@ export default {
       this.searchQuery = val;
     },
     toggleToken(token: any) {
-      const selected = this.selectedTokensAddress.includes(token.address);
-      if (selected) {
-        this.$emit('remove-token', token);
-        return;
-      }
-
-      if (this.isAvailableCountForSelect) {
-        this.$emit('add-token', token);
-      }
+      const isSelected: boolean = this.selectedTokensAddress.includes(token.address);
+      if (isSelected) this.$emit('remove-token', token);
+      else if (this.selectedTokensList.length < MAX_TOKEN_COUNT) this.$emit('add-token', token);
     },
   },
 };

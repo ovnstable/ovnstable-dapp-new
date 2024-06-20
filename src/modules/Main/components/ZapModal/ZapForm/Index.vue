@@ -361,6 +361,9 @@ import { onLeaveList, onEnterList, beforeEnterList } from '@/utils/animations.ts
 import { zapInStep } from '@/store/views/main/zapin/index.ts';
 import { parseLogs } from './helpers.ts';
 
+const MAX_INPUT_TOKENS = 3;
+const MAX_OUTPUT_TOKENS = 6;
+
 export default {
   name: 'ZapForm',
   components: {
@@ -393,8 +396,8 @@ export default {
       approvingPending: false,
       inputTokens: [] as any[],
       outputTokens: [] as any[],
-      maxInputTokens: 6,
-      maxOutputTokens: 6,
+      maxInputTokens: MAX_INPUT_TOKENS,
+      maxOutputTokens: MAX_OUTPUT_TOKENS,
       v3Range: null as any,
       isShowSelectTokensModal: false,
       swapMethod: 'BUY', // BUY (secondTokens) / SELL (secondTokens)
