@@ -34,6 +34,16 @@ export const parseLogs = (logs: any, commitEventToStore: (storeField: string, da
 
 };
 
+export const createScaledArray = (start: number, end: number, decimals = 4, maxItems = 10) => {
+  const result = [];
+  const step = (end - start) / (maxItems - 1); // Calculate the step size
 
+  for (let i = 0; i < maxItems; i++) {
+    // Push the current value rounded to four decimal places
+    result.push([parseFloat((start + step * i).toFixed(decimals)), 0]);
+  }
+
+  return result;
+};
 
 export default decodeTokenEvent;

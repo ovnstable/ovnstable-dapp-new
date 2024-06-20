@@ -257,6 +257,49 @@
           "type": "address"
         }
       ],
+      "name": "closestTicksForCurrentTick",
+      "outputs": [
+        {
+          "internalType": "int24",
+          "name": "left",
+          "type": "int24"
+        },
+        {
+          "internalType": "int24",
+          "name": "right",
+          "type": "int24"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "pair",
+          "type": "address"
+        }
+      ],
+      "name": "getCurrentPoolTick",
+      "outputs": [
+        {
+          "internalType": "int24",
+          "name": "tick",
+          "type": "int24"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "pair",
+          "type": "address"
+        }
+      ],
       "name": "getCurrentPrice",
       "outputs": [
         {
@@ -387,6 +430,25 @@
     {
       "inputs": [
         {
+          "internalType": "address",
+          "name": "pair",
+          "type": "address"
+        }
+      ],
+      "name": "getTickSpacing",
+      "outputs": [
+        {
+          "internalType": "int24",
+          "name": "",
+          "type": "int24"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "bytes32",
           "name": "role",
           "type": "bytes32"
@@ -454,6 +516,30 @@
           "internalType": "address",
           "name": "",
           "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "pair",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "price",
+          "type": "uint256"
+        }
+      ],
+      "name": "priceToClosestTick",
+      "outputs": [
+        {
+          "internalType": "int24",
+          "name": "closestTick",
+          "type": "int24"
         }
       ],
       "stateMutability": "view",
@@ -582,6 +668,30 @@
       "inputs": [
         {
           "internalType": "address",
+          "name": "pair",
+          "type": "address"
+        },
+        {
+          "internalType": "int24",
+          "name": "tick",
+          "type": "int24"
+        }
+      ],
+      "name": "tickToPrice",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
           "name": "newImplementation",
           "type": "address"
         }
@@ -695,9 +805,9 @@
       "type": "receive"
     }
   ],
-  "numDeployments": 33,
-  "solcInputHash": "7f2e82bd927965c16c683d06bf3cbb17",
-  "implementation": "0x54dbC9350206FfeC026E03dD80E1B74a820F696C",
+  "numDeployments": 37,
+  "solcInputHash": "ca0b6120b531b98f967db44ae44c8e10",
+  "implementation": "0xA462e3093b2A1D65f9632dc99f1A669035607E11",
   "devdoc": {
     "kind": "dev",
     "methods": {
@@ -805,7 +915,7 @@
         "type": "t_array(t_uint256)50_storage"
       },
       {
-        "astId": 8127,
+        "astId": 8416,
         "contract": "contracts/zap/AerodromeCLZap.sol:AerodromeCLZap",
         "label": "stakeSlippageBP",
         "offset": 0,
@@ -813,7 +923,7 @@
         "type": "t_uint256"
       },
       {
-        "astId": 8129,
+        "astId": 8418,
         "contract": "contracts/zap/AerodromeCLZap.sol:AerodromeCLZap",
         "label": "odosRouter",
         "offset": 0,
