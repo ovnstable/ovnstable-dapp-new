@@ -497,3 +497,40 @@
   align-items: center;
   justify-content: center;
 }
+
+// Fresh adaptive
+.zapin-block__header-container {
+  display: none;
+}
+@media only screen and (max-width: 1200px) {
+  .swap-container {
+    padding-top: 40px;
+  }
+  .zapin-block__header-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    .zapin-block__header {
+      background-color: transparent;
+      color: var(--color-1);
+      font-size: 24px;
+    }
+    svg {
+      &:hover {
+        fill: #0497EC;
+        transform: scale(1.2);
+      }
+    }
+  }
+  .zapin-block {
+    .zapin-block__row {
+      flex-direction: column;
+      .zapin-v3, .zapin-block__content {
+        display: none;
+        &.mobile-active {
+          display: flex;
+        }
+      }
+    }
+  }
+}

@@ -24,13 +24,18 @@
 
       <template v-else>
         <div :class="['zapin-block', { v3: zapPool?.poolVersion === 'v3' }, { v2: zapPool?.poolVersion === 'v2' }]">
-          <!-- <div class="zapin-block__header-container">
+          <div class="zapin-block__header-container">
+            <BaseIcon name="ArrowLeft" @click="toggleMobileSection" />
             <div class="zapin-block__header">
-              ZAP IN {{ zapPool?.poolVersion?.toUpperCase() }}
+              ZAP IN
             </div>
-          </div> -->
+            <BaseIcon name="ArrowRight" @click="toggleMobileSection"/>
+          </div>
           <div class="zapin-block__row">
-            <div class="zapin-block__content">
+            <div 
+            class="zapin-block__content"
+            :class="currentSection === zapMobileSection.TOKEN_FORM ? 'mobile-active' : ''"
+            >
               <div class="zapin-block__wrapper">
                 <div class="mb-4 mt-1">
                   <h2 v-if="zapPool?.poolVersion === 'v3'">
@@ -192,6 +197,7 @@
               :zap-pool="zapPool"
               :zap-contract="zapContract"
               @set-range="setRangeV3"
+              :class="currentSection === zapMobileSection.SET_PRICE_RANGE ? 'mobile-active' : ''"
             />
           </div>
         </div>
@@ -361,6 +367,11 @@ import { onLeaveList, onEnterList, beforeEnterList } from '@/utils/animations.ts
 import { zapInStep } from '@/store/views/main/zapin/index.ts';
 import { parseLogs } from './helpers.ts';
 
+enum zapMobileSection {
+  'TOKEN_FORM',
+  'SET_PRICE_RANGE' 
+}
+
 export default {
   name: 'ZapForm',
   components: {
@@ -427,6 +438,10 @@ export default {
         // Convex: ["Curve Crypto Registry", "Curve Factory", "Curve Registry"]
       } as any,
       currentStage: zapInStep.START,
+      // Mobile section switch
+      zapMobileSection,
+      currentSection: zapMobileSection.TOKEN_FORM,
+      toggleMobileSection: this.toggleMobileSection,
     };
   },
   mounted() {
@@ -795,6 +810,10 @@ export default {
     onEnterList,
     formatMoney,
 
+    // Mobile section switcher
+    toggleMobileSection() {
+      this.currentSection = zapMobileSection.SET_PRICE_RANGE ^ zapMobileSection.TOKEN_FORM ^ this.currentSection;
+    },
     setRangeV3(v3Data: any) {
       this.v3Range = v3Data;
       this.updateQuotaInfo();
