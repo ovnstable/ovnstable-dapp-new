@@ -297,7 +297,6 @@
           @keypress="stakeTrigger"
         >
           {{ btnName }}
-
         </ButtonComponent>
       </div>
 

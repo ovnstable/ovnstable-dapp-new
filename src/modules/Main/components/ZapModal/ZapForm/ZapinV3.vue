@@ -43,7 +43,7 @@
 
       <div
         class="zapin-v3__loader"
-        v-if="isLoading"
+        v-if="initialLoading"
       >
         <Spinner
           size="48px"
@@ -69,8 +69,8 @@
         <div class="zapin-v3__row-block">
           <div
             class="zapin-v3__clicker"
-            @click="handleLeftTick(true)"
-            @keypress="handleLeftTick(true)"
+            @click="reversePrice ? handleRightTick(false) : handleLeftTick(true)"
+            @keypress="reversePrice ? handleRightTick(false) : handleLeftTick(true)"
           >
             -
           </div>
@@ -85,8 +85,8 @@
           />
           <div
             class="zapin-v3__clicker"
-            @click="handleLeftTick(false)"
-            @keypress="handleLeftTick(false)"
+            @click="reversePrice ? handleRightTick(true) : handleLeftTick(false)"
+            @keypress="reversePrice ? handleRightTick(true) : handleLeftTick(false)"
           >
             +
           </div>
@@ -102,8 +102,8 @@
         <div class="zapin-v3__row-block">
           <div
             class="zapin-v3__clicker"
-            @click="handleRightTick(true)"
-            @keypress="handleRightTick(true)"
+            @click="reversePrice ? handleLeftTick(false) : handleRightTick(true)"
+            @keypress="reversePrice ? handleLeftTick(false) : handleRightTick(true)"
           >
             -
           </div>
@@ -118,8 +118,8 @@
           />
           <div
             class="zapin-v3__clicker"
-            @click="handleRightTick(false)"
-            @keypress="handleRightTick(false)"
+            @click="reversePrice ? handleLeftTick(true) : handleRightTick(false)"
+            @keypress="reversePrice ? handleLeftTick(true) : handleRightTick(false)"
           >
             +
           </div>
@@ -132,7 +132,7 @@
 
     <div class="range-presets-wrap">
       <h2>
-        Range presets {{ getPresetsName }}: {{ ticksAmount }}
+        Range presets {{ getPresetsName }}: {{ currentRange }}
       </h2>
       <div class="range-presets">
         <div
@@ -154,6 +154,16 @@
         </div>
       </div>
     </div>
+    <Transition name="slide-fade">
+      <div
+        class="zapin-v3__loader-tx"
+        v-if="isLoading"
+      >
+        <Spinner
+          size="48px"
+        />
+      </div>
+    </Transition>
   </div>
 </template>
 
@@ -181,8 +191,10 @@ export default {
     return {
       zoomType: 1,
       dataToRender: [],
-      isLoading: true,
+      initialLoading: true,
+      isLoading: false,
       reversePrice: false,
+      reverseTriggered: false,
       ticksAmount: '0',
       tickLeft: '0',
       tickRight: '0',
@@ -358,7 +370,7 @@ export default {
     const center = new BN(currPrice).div(10 ** 6);
     this.initTicks(tickSpace);
 
-    console.log(tickSpace.toString(), '__closestTick');
+    console.log(centerTick.toString(), '__closestTick');
     this.tickSpace = tickSpace.toString();
     this.tickLeft = new BN(centerTick.toString()).minus(tickSpace.toString()).toFixed();
     this.tickRight = new BN(centerTick.toString()).plus(tickSpace.toString()).toFixed();
@@ -370,8 +382,6 @@ export default {
     const maxPrice = new BN(await this.zapContract
       .tickToPrice(this.zapPool.address, this.tickRight));
 
-    console.log(minPrice.toFixed(), '__minPrice');
-    console.log(maxPrice.toFixed(), '__maxPricee');
     let buildData: any = [];
     this.isStablePool = checkIsEveryStable(this.zapPool);
 
@@ -386,9 +396,8 @@ export default {
 
       // some pools have low center price, ex arb/usd+ and its volatile
       if (!this.isStablePool) {
-        console.log('VOLATILE__');
         this.selectVolatileData(center, minPrice, maxPrice);
-        this.isLoading = false;
+        this.initialLoading = false;
         this.maxZoom(1);
         return;
       }
@@ -477,24 +486,54 @@ export default {
       this.selectVolatileData(center, minPrice, maxPrice);
     }
 
-    this.isLoading = false;
+    this.initialLoading = false;
     if (this.isStablePool) this.maxZoom();
   },
   watch: {
-    minPrice() {
-      this.debouncePriceChange(this);
-    },
-    maxPrice() {
-      this.debouncePriceChange(this);
-    },
     async reversePrice(val) {
       const self = this;
       let buildData: any[] = (this.$refs?.zapinChart as any)?.series[0]?.data;
+      this.isLoading = true;
+      this.reverseTriggered = true;
 
       if (val) {
         buildData = buildData
           .slice(2, buildData.length)
           .map((_) => [Number(new BN(1).div(_[0]).toFixed(6)), _[1]]);
+      }
+
+      if (val) {
+        (this.$refs?.zapinChart as any).updateSeries([{
+          data: buildData,
+        }], false, true);
+
+        (this.$refs?.zapinChart as any)?.updateOptions(
+          {
+            chart: {
+              selection: {
+                xaxis: {
+                  min: Number(this.frontMinPrice),
+                  max: Number(this.frontMaxPrice),
+                },
+              },
+            },
+            annotations: {
+              xaxis: [
+                {
+                  x: this.getCenterPrice,
+                  borderColor: '#0497EC',
+                  borderWidth: 2,
+                  label: {
+                    borderColor: '#0497EC',
+                    orientation: 'horizontal',
+                  },
+                },
+              ],
+            },
+          },
+          false,
+          true,
+        );
       } else {
         this.tickLeft = new BN(
           this.centerTick.toString(),
@@ -549,49 +588,11 @@ export default {
           false,
           true,
         );
-        return;
       }
 
-      (this.$refs?.zapinChart as any).updateSeries([{
-        data: buildData,
-      }], false, true);
-
-      await awaitDelay(300);
-      (this.$refs?.zapinChart as any)?.updateOptions(
-        {
-          chart: {
-            selection: {
-              xaxis: {
-                min: Number(this.frontMinPrice),
-                max: Number(this.frontMaxPrice),
-              },
-            },
-          },
-          annotations: {
-            xaxis: [
-              {
-                x: this.getCenterPrice,
-                borderColor: '#0497EC',
-                borderWidth: 2,
-                label: {
-                  borderColor: '#0497EC',
-                  orientation: 'horizontal',
-                },
-              },
-            ],
-          },
-          xaxis: {
-            labels: {
-              formatter(value: number) {
-                const dec = self.lowPoolPrice ? 2 : 6;
-                return value.toFixed(dec);
-              },
-            },
-          },
-        },
-        false,
-        true,
-      );
+      await this.maxZoom();
+      this.isLoading = false;
+      this.reverseTriggered = false;
     },
   },
   methods: {
@@ -605,8 +606,6 @@ export default {
           label: new BN(item.label).times(tSpace).toFixed(),
         };
       });
-
-      console.log(this.rangePresetsTicks, '__rangePresetsTicks');
     },
     async inversePrices() {
       this.reversePrice = !this.reversePrice;
@@ -623,8 +622,9 @@ export default {
       maxPrice: BN,
       updateData?: boolean,
     ) {
-      this.minPrice = minPrice.div(10 ** 6).toFixed(6);
-      this.maxPrice = maxPrice.div(10 ** 6).toFixed(6);
+      const dec = this.lowPoolPrice ? 6 : 0;
+      this.minPrice = minPrice.div(10 ** 6).toFixed(dec);
+      this.maxPrice = maxPrice.div(10 ** 6).toFixed(dec);
       this.centerPrice = center.toFixed(6);
 
       this.$emit('set-range', {
@@ -759,7 +759,6 @@ export default {
 
       if (buildData?.length === 0) return;
 
-      console.log(buildData, '__buildData');
       (this.$refs?.zapinChart as any).updateSeries([{
         data: buildData,
       }], false, true);
@@ -804,6 +803,8 @@ export default {
         const tickNum = await this.zapContract.tickToPrice(this.zapPool.address, this.tickLeft);
         this.minPrice = new BN(tickNum).div(10 ** 6).toFixed(this.lowPoolPrice ? 6 : 0);
       }
+
+      this.debouncePriceChange(this, this.minPrice, this.maxPrice, true);
     },
     async handleRightTick(isMinus: boolean) {
       this.ticksAmount = '0';
@@ -817,21 +818,30 @@ export default {
         const tickNum = await this.zapContract.tickToPrice(this.zapPool.address, this.tickRight);
         this.maxPrice = new BN(tickNum.toString()).div(10 ** 6).toFixed(this.lowPoolPrice ? 6 : 0);
       }
+
+      this.debouncePriceChange(this, this.minPrice, this.maxPrice, true);
     },
     selectEvent(e: any, o: any) {
+      if (this.reverseTriggered) return;
       const decimals = this.reversePrice ? 6 : 0;
       const minPrice = new BN(o.xaxis?.min).toFixed(this.lowPoolPrice ? 6 : decimals);
       const maxPrice = new BN(o.xaxis?.max).toFixed(this.lowPoolPrice ? 6 : decimals);
 
-      if (new BN(minPrice).eq(this.frontMinPrice) && new BN(maxPrice).eq(this.frontMaxPrice)) {
+      const prevMinPrice = new BN(this.frontMinPrice).toFixed(this.lowPoolPrice ? 6 : decimals);
+      const prevMaxPrice = new BN(this.frontMaxPrice).toFixed(this.lowPoolPrice ? 6 : decimals);
+
+      if (new BN(minPrice).eq(prevMinPrice) && new BN(maxPrice).eq(prevMaxPrice)) {
         return;
       }
 
-      console.log('SELECTEV');
-      this.minPrice = minPrice;
-      this.maxPrice = maxPrice;
+      if (new BN(minPrice).eq(0) || new BN(maxPrice).eq(0)) return;
+
       this.ticksAmount = '0';
-      debounce(this.debounceSelectChange, 500);
+
+      const mainMinP = this.reversePrice ? new BN(1).div(maxPrice).toFixed(decimals) : minPrice;
+      const mainMaxP = this.reversePrice ? new BN(1).div(minPrice).toFixed(decimals) : maxPrice;
+
+      this.debouncePriceChange(this, mainMinP, mainMaxP);
     },
     debounceSelectChange() {
       this.$emit('set-range', {
@@ -842,22 +852,44 @@ export default {
         ticks: this.ticksAmount,
         isStable: this.isStablePool,
       });
-
-      this.changeTrig();
     },
-    debouncePriceChange: debounce(async (self: any) => {
+    debouncePriceChange: debounce(async (
+      self: any,
+      minPriceVal: string,
+      maxPriceVal: string,
+      skipLoading?: boolean,
+    ) => {
+      self.changeTrig();
+      const minPrice = new BN(minPriceVal).times(10 ** 6).toFixed(0);
+      const maxPrice = new BN(maxPriceVal).times(10 ** 6).toFixed(0);
+
       self.$emit('set-range', {
-        range: [
-          new BN(self.minPrice).times(10 ** 6).toFixed(0),
-          new BN(self.maxPrice).times(10 ** 6).toFixed(0),
-        ],
+        range: [minPrice, maxPrice],
         ticks: self.ticksAmount,
         isStable: self.isStablePool,
       });
 
-      if (self.isStablePool) return;
-      if (!self.isStablePool && self.lowPoolPrice) return;
+      // loading need, when we converting front price to real contract ticks
+      if (!skipLoading) {
+        self.isLoading = true;
 
+        const minPriceTick = await self.zapContract
+          .priceToClosestTick(self.zapPool.address, minPrice);
+        const maxPriceTick = await self.zapContract
+          .priceToClosestTick(self.zapPool.address, maxPrice);
+
+        const minPriceTickPrice = await self.zapContract
+          .tickToPrice(self.zapPool.address, minPriceTick);
+        const maxPriceTickPrice = await self.zapContract
+          .tickToPrice(self.zapPool.address, maxPriceTick);
+
+        const decimals = self.lowPoolPrice ? 6 : 0;
+        self.minPrice = new BN(minPriceTickPrice).div(10 ** 6).toFixed(decimals);
+        self.maxPrice = new BN(maxPriceTickPrice).div(10 ** 6).toFixed(decimals);
+        self.isLoading = false;
+      }
+
+      console.log(self.frontMinPrice, '__selffrontMinPrice');
       (self.$refs?.zapinChart as any)?.updateOptions(
         {
           chart: {
@@ -872,8 +904,6 @@ export default {
         false,
         true,
       );
-
-      self.changeTrig();
     }, 500),
     changeTrig() {
       console.log('CHANGED');
@@ -887,7 +917,6 @@ export default {
     async setRange(val: number) {
       const tickChange = val;
 
-      console.log(val, '__val');
       this.tickLeft = new BN(this.centerTick).minus(tickChange).toFixed();
       const tickNumL = await this.zapContract.tickToPrice(this.zapPool.address, this.tickLeft);
       this.minPrice = new BN(tickNumL.toString()).div(10 ** 6).toFixed(this.lowPoolPrice ? 6 : 0);
@@ -902,8 +931,8 @@ export default {
           chart: {
             selection: {
               xaxis: {
-                min: this.minPrice,
-                max: this.maxPrice,
+                min: this.frontMinPrice,
+                max: this.frontMaxPrice,
               },
             },
           },
@@ -919,6 +948,7 @@ export default {
 
 <style lang="scss" scoped>
 .zapin-v3 {
+  position: relative;
   // width: 100%;
   display: flex;
   flex-direction: column;
@@ -1083,6 +1113,18 @@ export default {
   justify-content: center;
   align-items: center;
   min-height: 150px;
+}
+
+.zapin-v3__loader-tx {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(4px);
 }
 
 .zapin-v3__chart-head {
