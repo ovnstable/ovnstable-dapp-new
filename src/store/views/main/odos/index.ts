@@ -93,8 +93,6 @@ export const stateData = {
   } as any,
   showSuccessZapin: false,
 
-  zksyncFeeHistory: {} as any,
-
   tokenSeparationScheme: null, // OVERNIGHT_SWAP, POOL_SWAP,
   typeOfPoolScheme: null, // OVN, ALL, null
 
@@ -539,54 +537,6 @@ const actions = {
       }
     });
   },
-  async addedZkSyncGasHistoryData({
-    commit, state, dispatch, rootState,
-  }: any, transactionData: any) {
-    commit('changeState', {
-      field: 'zksyncFeeHistory',
-      val: {
-        startWeiBalance: null,
-        finalWeiBalance: null,
-        estimateFeeInEther: null,
-        ethPrice: 0,
-      }
-    });
-
-    try {
-      // get balance from eth token
-      const weiBalance = await rootState.web3.evmProvider.getBalance(rootState.accountData.account);
-      const balance = new BigNumber(weiBalance).div(10 ** 18).toFixed();
-      commit('changeState', {
-        field: 'zksyncFeeHistory',
-        val: {
-          startWeiBalance: balance,
-          finalWeiBalance: null,
-          estimateFeeInEther: null,
-          ethPrice: 0,
-        }
-      });
-    } catch (e) {
-      console.error('OdosSwap Error get balance from eth token', e);
-    }
-
-    await rootState.web3.evmProvider.estimateGas(transactionData, (error: any, gasLimit: any) => {
-      if (error) {
-        console.error('OdosSwap Error estimating gas:', error);
-      } else {
-        console.log('OdosSwap estimating gasLimit:', gasLimit);
-        const feeInWei = gasLimit * 262500000;
-        console.log('OdosSwap estimating feeInWei:', feeInWei);
-        const feeInEther = new BigNumber(feeInWei).div(10 ** 18).toFixed();
-        commit('changeState', {
-          field: 'zksyncFeeHistory',
-          val: {
-            ...state.zksyncFeeHistory,
-            estimateFeeInEther: feeInEther,
-          }
-        });
-      }
-    });
-  },
   async initWalletTransaction(
     {
       commit, state, dispatch, rootState,
@@ -605,10 +555,6 @@ const actions = {
       ...data.txData.transaction,
       from: rootState.accountData.account,
     };
-
-    if (rootState.network.networkName === 'zksync') {
-      await dispatch('addedZkSyncGasHistoryData', transactionData);
-    }
 
     dispatch('waitingModal/showWaitingModal', 'Swapping in process', { root: true });
 
@@ -633,22 +579,6 @@ const actions = {
       data: dataTx,
     });
     dispatch('waitingModal/closeWaitingModal', null, { root: true });
-
-    if (rootState.network.networkName === 'zksync' && state.zksyncFeeHistory) {
-      try {
-        console.log('state.account after tx: ', rootState.accountData.account);
-        const weiBalance = await rootState.web3.evmProvider
-          .getBalance(rootState.accountData.account);
-        const balance = new BigNumber(weiBalance).div(10 ** 18).toFixed();
-        state.zksyncFeeHistory.finalWeiBalance = balance;
-      } catch (e) {
-        console.log({
-          message: 'Error get balance from eth token  after tx',
-          swapSession: state.swapSessionId,
-          data: e,
-        });
-      }
-    }
 
     const inputTokens = [...data.selectedInputTokens];
     const outputTokens = [...data.selectedOutputTokens];

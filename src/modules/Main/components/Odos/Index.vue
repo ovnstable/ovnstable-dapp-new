@@ -138,35 +138,6 @@
           @change-slippage="changeSlippage"
         />
 
-        <!-- <div
-          v-if="networkName === 'zksync'"
-          class="slippage-info-container"
-        >
-          <div class="slippage-info-title">
-            <BaseIcon
-              name="WarnInfoIcon"
-              style="margin-right: 2px"
-            />
-            20-80% of the displayed gas fee on zkSync will be refunded
-            automatically.
-          </div>
-        </div> -->
-        <!-- <div
-          class="odos-fees-container mt-5"
-          v-if="ifMoreThanOneSelectedTokensAdded"
-        >
-          <div>
-            <BaseIcon
-              class="alert-icon mr-2"
-              name="AlertCircleOutline"
-            />
-          </div>
-          <div>
-            Odos collects 0.01% fee for multi-input/multi-output swaps. Single
-            input/output swaps collects 0% fee.
-          </div>
-        </div> -->
-
         <div class="swap-form__btns">
           <ButtonComponent
             v-if="!account"
