@@ -47,15 +47,34 @@ export enum POOL_TAG {
 // POOLS WITH EARNINGS MORE THAN 500$ per month
 // https://docs.google.com/spreadsheets/d/1zyNA4mbpmyG30R1aIqkkRvbCJSjfyb7pV4hhCa7pohM/edit#gid=813615557
 
-export const NEW_POOLS: string[] = [];
+export const NEW_POOLS: string[] = [
+  // Trader Joe
+  // USD+/ETH
+  '0xa8A502ACF4084B8D38362E9F620C689CB4D2EB89',
+  // USD+/USDT
+  '0x37570DB173beF23F6924beaE3CD960b41AB6AD74',
+  // Pancake
+  // USD+/WETH
+  '0x5b9FEB72588D2800892a00d2abB4ca9071df846e',
+  // wstETH/USD+
+  '0xa4846201E94D2a5399774926f760A36D52Ac22BF',
+  // USD+/cbETH
+  '0x40C91EBd1FA940A363989aC80a31B3a988dD649B',
+  // USD+/BRETT
+  '0x98Ee8cd99370Ab19F18Fb9033337995076867ee9',
+  // USD+/DEGEN
+  '0xdd5AC923f03a97FF9F0cfbFa0F5E155E46c3727d',
+  // USD+/AERO
+  '0x62996340a9bFEeE2A72bfAE8F21b8c0A5E692261',
+  // OVN/WETH
+  '0xcC7BfD85395042EE0cACe335E40b549b3d08Eb78',
+];
 
 export const HOT_POOLS = [
   // AERODROME
   '0x61366A4e6b1DB1b85DD701f2f4BFa275EF271197',
   '0x61366A4e6b1DB1b85DD701f2f4BFa275EF271197_Aerodrome',
-
   '0x6f501662a76577fbb3bb230be5e8e69d41d8c711',
-
   // CL
   '0x0c1A09d5D0445047DA3Ab4994262b22404288A3B',
   '0x96331Fcb46A7757854d9E26AFf3aCA2815D623fD',
@@ -77,40 +96,27 @@ export const SECOND_MIN_AMOUNT = 20000;
 export const LOW_TVL_PROMOTE = [
   '0xd01075f7314a6436e8b74fc18069848229d0c555',
   '0xb9c2d906f94b27bc403ab76b611d2c4490c2ae3f',
-
   // VELOCORE
   '0x1d0188c4b276a09366d05d6be06af61a73bc7535',
-
   // PANCAKE
   '0x6a8fc7e8186ddc572e149dfaa49cfae1e571108b',
   '0x35d85d531be7159cb6f92e8b9ceaf04ec28c6ad9',
-
   // LYNEX
   '0x58aacbccaec30938cb2bb11653cad726e5c4194a',
   '0xc5f4c5c2077bbbac5a8381cf30ecdf18fde42a91',
   '0x6f501662a76577fbb3bb230be5e8e69d41d8c711',
-
   // FRAX
   '0x56390acF12bce9675ab3922060D8d955149BE286',
-
   // CL
   '0x4D69971CCd4A636c403a3C1B00c85e99bB9B5606',
   '0x20086910E220D5f4c9695B784d304A72a0de403B',
-
-  // SYNCSWAP
-  // '0xA06f1cce2Bb89f59D244178C2134e4Fc17B07306',
-
-  // SWAPBLAST
-  // '0x49b6992dbacf7caa9cbf4dbc37234a0167b8edcd',
-  // '0xb70ab4c4be5872fdd22f43c5907428198cdcb2d5',
-
-  // Dyson
-  // '0xf63291375d3eb7014fbe658f256c79163dc308ab',
-
-  // AMBIENT
-  // '0xaAaaaAAAFfe404EE9433EEf0094b6382D81fb958_eth',
-  // '0xaAaaaAAAFfe404EE9433EEf0094b6382D81fb958_usdb',
 ];
+
+export const POOL_WHITE_LIST: {[key: string]: boolean} = [
+  ...LOW_TVL_PROMOTE,
+  ...NEW_POOLS,
+  ...HOT_POOLS]
+  .reduce((o, key) => Object.assign(o, { [key.toLowerCase()]: true }), {});
 
 export const APY_POOLS = [
   'Dyson',
