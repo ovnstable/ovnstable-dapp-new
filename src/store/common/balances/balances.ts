@@ -1,130 +1,77 @@
-import { useEventBus } from '@vueuse/core';
-import BigNumber from 'bignumber.js';
-import { ethers } from 'ethers';
-import { MulticallWrapper } from 'ethers-multicall-provider';
-import { fixedByPrice } from '@/utils/numbers.ts';
-import { ZERO_ADDRESS } from '@/utils/const.ts';
-import { ERC20_ABI } from '@/assets/abi/index.ts';
+import BalanceService from '@/services/BalanceService/BalanceService.ts';
+import type { TTokenInfo, TTokenBalanceData } from '@/types/common/token';
 
-// Types
-type TTokenInfo = {
-  id: string,
-  address: string,
-  decimals: number,
-  assetType: string,
-  name: string,
-  symbol: string,
-  logoUrl: string,
-  selected: false,
-  price: string,
-}
+const BALANCE_FETCH_INTERVAL = 30000;
 
-type TBalanceInfo = {
-  name: string,
-  balance: string,
-  balanceInUsd: string,
-  originalBalance: string,
-  decimal: number,
-}
-
-// Helper functions
-const formatTokenDecimals = (amount: string, decimals: number) => new BigNumber(amount)
-  .div(10 ** decimals);
-
-const formatFixed = (amount: BigNumber) => (amount.gt(0) ? fixedByPrice(amount.toNumber()) : 2);
-
-const getBlanceFixed = (fBalance: BigNumber) => {
-  const fixedBy = formatFixed(fBalance);
-  return fBalance.toFixed(fixedBy);
+const state = {
+  isBalancesLoading: false as boolean,
+  tokenBalanceMap: {} as TTokenBalanceData,
+  fetchIntervalId: null,
 };
 
-const handleNativeBal = async (rootState: any) => (await rootState.web3.evmProvider
-  .getBalance(rootState.accountData.account))
-  .toString();
-
-const getBalanceInUsd = (fBalance: BigNumber, price: string) => new BigNumber(fBalance).times(price ?? '0').toFixed();
-
-const fetchAllTokenBalances = async (
-  provider: any,
-  tokenList: TTokenInfo[],
-  account: string,
-): Promise<BigNumber[]> => {
-  try {
-    const multicaller = MulticallWrapper.wrap(provider);
-    if (MulticallWrapper.isMulticallProvider(provider)) {
-      const tokenPriceMap: {[key: string]:  TBalanceInfo} = {};
-      const requests = tokenList
-        .map((token: TTokenInfo) => new ethers.Contract(
-          token.address,
-          ERC20_ABI,
-          multicaller,
-        ).balanceOf(account).catch(() => '0'));
-
-      const balancesData: BigNumber[] = await Promise.all(requests);
-      return balancesData;
-    }
-  } catch (e) {
-    console.error('Error when load balance', e);
-  }
-  return [];
+const getters = {
+  getTokenBalances(state: any) {
+    return state.tokenBalanceMap;
+  },
+  getTokenBalanceInfo(state: any, getters: any, rootState: any) {
+    const allTokenList = rootState.odosData.tokens;
+    const tokenInfo = BalanceService.geTTokenBalanceData(allTokenList, state.tokenBalanceMap);
+    return tokenInfo;
+  },
 };
-
-const state = {};
-
-const getters = {};
 
 const actions = {
+  // Todo remove and subscribe for token contract events instead
+  initUpdateBalancesInterval({
+    commit, dispatch,
+  }: any) {
+    dispatch('loadBalances');
+    commit('setFetchIntervalId', setInterval(() => {
+      dispatch('loadBalances');
+    }, BALANCE_FETCH_INTERVAL));
+  },
   async loadBalances({
-    commit, state, getters, rootState,
-  }: any, providerInstance: any) {
+    commit, rootState, rootGetters,
+  }: any, providerInstance: any): Promise<void> {
     const provider = providerInstance || rootState.web3.evmProvider;
 
-    if (!rootState.accountData.account || !provider) {
-      commit('changeState', { field: 'isBalancesLoading', val: false });
+    if (state.isBalancesLoading) return;
+
+    const allTokenList = await rootGetters['odosData/allTokensList']!;
+
+    const { account } = rootState.accountData;
+
+    if (!account || !provider || !allTokenList || allTokenList?.length === 0) {
+      commit('setIsBalanceLoading', false);
       return;
     }
 
-    if (state.isBalancesLoading) return;
-    if (getters.allTokensList.length === 0) return;
+    commit('setIsBalanceLoading', true);
 
-    commit('changeState', { field: 'isBalancesLoading', val: true });
-
+    const tokenFetchList = allTokenList.map((token: TTokenInfo) => token.address);
     try {
-      const balancesData = await fetchAllTokenBalances(provider, getters.allTokensList, rootState.accountData.account);
-      const nativeTokenBalance = await handleNativeBal(rootState);
-
-      const newBalances = await Promise.all(
-        getters.allTokensList.map(async (token: any, key: number) => {
-          let balance = balancesData[key].toString() ?? '0';
-          const balanceFormatted = formatTokenDecimals(balance, token.decimals);
-
-          return {
-            ...token,
-            balanceData: {
-              name: token.symbol,
-              balance: getBlanceFixed(balanceFormatted),
-              balanceInUsd: getBalanceInUsd(balanceFormatted, token.price),
-              originalBalance: balance,
-              decimal: token.decimals,
-            },
-          };
-        }),
-      );
-
-      // console.log(newBalances, 'newBalances');
-      const bus = useEventBus('odos-tokens-loaded');
-      bus.emit(true);
-
-      await commit('changeBalances', newBalances);
+      const balanceMap: TTokenBalanceData = await BalanceService
+        .getAllTokenBalance(provider, tokenFetchList, account);
+      commit('setTokenBalances', balanceMap);
     } catch (e) {
-      console.error('Error when load balance', e);
+      console.error('Error loading balances to store', e);
+      commit('setIsBalanceLoading', false);
     }
-    commit('changeState', { field: 'isBalancesLoading', val: false });
+    commit('setIsBalanceLoading', false);
   },
-
 };
 
-const mutations = {};
+const mutations = {
+  setTokenBalances(state: any, balanceMap: TTokenBalanceData) {
+    state.tokenBalanceMap = balanceMap;
+  },
+  setFetchIntervalId(state: any, id: string) {
+    state.fetchIntervalId = id;
+  },
+  setIsBalanceLoading(state: any, val: boolean) {
+    state.isBalancesLoading = val;
+  },
+};
 
 export default {
   namespaced: true,
