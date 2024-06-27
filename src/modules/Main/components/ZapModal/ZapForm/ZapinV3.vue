@@ -132,7 +132,7 @@
 
     <div class="range-presets-wrap">
       <h2>
-        Range presets {{ getPresetsName }}: {{ tickLeft }} {{ tickRight }}
+        Range presets {{ getPresetsName }}: {{ tickLeft }} {{ centerTick }} {{ tickRight }}
       </h2>
       <div class="range-presets">
         <div
@@ -475,7 +475,7 @@ export default {
     const closestTicks = await this.zapContract.closestTicksForCurrentTick(this.zapPool.address);
     this.initTicks(tickSpace);
 
-    console.log(tickSpace.toString(), '__centerTick');
+    console.log(closestTicks, '__centerTick');
     this.closestTicks = [closestTicks[0]?.toString(), closestTicks[1]?.toString()];
     this.tickSpace = tickSpace.toString();
     this.tickLeft = closestTicks[0]?.toString();
@@ -494,7 +494,6 @@ export default {
 
     this.$emit('set-range', {
       ticks: [this.tickLeft, this.tickRight],
-      isStable: this.isStablePool,
     });
 
     // if center price lower than 2$, doing higher zoom
@@ -607,7 +606,6 @@ export default {
 
       this.$emit('set-range', {
         ticks: [this.tickLeft, this.tickRight],
-        isStable: this.isStablePool,
       });
 
       if (updateData) return;
@@ -839,7 +837,6 @@ export default {
       console.log(self.tickLeft, self.tickRight, 'TICKS');
       self.$emit('set-range', {
         ticks: [self.tickLeft, self.tickRight],
-        isStable: self.isStablePool,
       });
 
       // loading need, when we converting front price to real contract ticks
@@ -890,11 +887,17 @@ export default {
     },
     async setRange(val: number) {
       console.log(val, '__tickChange');
-      this.tickLeft = new BN(this.closestTicks[0]).minus(val).toFixed();
+
+      if (val === 1) {
+        this.tickLeft = this.closestTicks[0]?.toString();
+        this.tickRight = this.closestTicks[1]?.toString();
+      } else {
+        this.tickLeft = new BN(this.closestTicks[0]).minus(val / 2).toFixed();
+        this.tickRight = new BN(this.closestTicks[1]).plus(val / 2).toFixed();
+      }
+
       const tickNumL = await this.zapContract.tickToPrice(this.zapPool.address, this.tickLeft);
       this.minPrice = new BN(tickNumL.toString()).div(10 ** 6).toFixed(this.lowPoolPrice ? 6 : 0);
-
-      this.tickRight = new BN(this.closestTicks[1]).plus(val).toFixed();
       const tickNumR = await this.zapContract.tickToPrice(this.zapPool.address, this.tickRight);
       this.maxPrice = new BN(tickNumR.toString()).div(10 ** 6).toFixed(this.lowPoolPrice ? 6 : 0);
 
@@ -914,6 +917,10 @@ export default {
         true,
       );
       this.currentRange = val;
+
+      this.$emit('set-range', {
+        ticks: [this.tickLeft, this.tickRight],
+      });
     },
   },
 };
