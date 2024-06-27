@@ -6,6 +6,29 @@ import { poolsInfoMap } from '@/store/views/main/zapin/mocks.ts';
 import { approveToken, getAllowanceValue } from '@/utils/contractApprove.ts';
 import BN from 'bignumber.js';
 
+interface ISwapData {
+  tokenAddress: string,
+  amount: string,
+  price: string;
+}
+export const getV3Proportion = (
+  poolAddress: string,
+  tickRange: string[],
+  inputSwapTokens: ISwapData[],
+  zapContract: any,
+) => {
+  console.log(tickRange, '__Range');
+  console.log(poolAddress, '__poolAddress');
+  console.log(inputSwapTokens, '__inputSwapTokens');
+  console.log(zapContract, '__zapContract');
+  return zapContract
+    .getProportionForZap(poolAddress, tickRange, inputSwapTokens)
+    .then((data: any) => data)
+    .catch((e: any) => {
+      console.error('Error get proportion for V3', e);
+    });
+};
+
 export const getProportion = (
   poolAddress: string,
   zapPool: any,
@@ -65,24 +88,6 @@ export const getProportion = (
         poolInfo,
         e,
       );
-    });
-};
-
-export const getProportionTicks = (
-  zapPool: any,
-  zapContract: any,
-  v3Data?: any,
-) => {
-  const rangeData = v3Data?.isStable ? ['0', '0'] : v3Data.range;
-  const ticks = v3Data?.isStable ? v3Data.ticks : '0';
-
-  return zapContract
-    .getPriceFromTick({
-      pair: zapPool.address, priceRange: rangeData, amountsOut: ['0', '0'], tickDelta: ticks,
-    })
-    .then((data: any) => data)
-    .catch((e: any) => {
-      console.error('Error get proportion for V3', e);
     });
 };
 

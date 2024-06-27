@@ -9,20 +9,22 @@
         tag="div"
         class="slippage-block__list"
         :css="false"
+        appear
         @before-enter="beforeEnterList"
         @enter="onEnterList"
-        @onLeave="onLeaveList"
-        appear
+        @on-leave="onLeaveList"
       >
         <template v-if="showList">
           <template v-if="deviceSize.isMobile">
             <div class="slippage-block-modal">
               <ModalComponent
-                type-modal="custom"
                 v-model="showModal"
+                type-modal="custom"
                 @close="closeModal"
               >
-                <p class="slippage-block-modal-title">SLIPPAGE TOLERANCE</p>
+                <p class="slippage-block-modal-title">
+                  SLIPPAGE TOLERANCE
+                </p>
 
                 <div class="slippage-block-modal-settings">
                   <div
@@ -46,8 +48,12 @@
 
                     class="slippage-block__item-info"
                   >
-                    <p v-if="key !== 0">{{ setting.value }}% - <span>{{ setting. name}}</span></p>
-                    <p v-if="key !== 0">Recommended {{ setting.info }}</p>
+                    <p v-if="key !== 0">
+                      {{ setting.value }}% - <span>{{ setting. name }}</span>
+                    </p>
+                    <p v-if="key !== 0">
+                      Recommended {{ setting.info }}
+                    </p>
                   </div>
                 </div>
                 <ButtonComponent
@@ -56,10 +62,8 @@
                 >
                   <p>SELECT</p>
                 </ButtonComponent>
-
               </ModalComponent>
             </div>
-
           </template>
 
           <template v-else>

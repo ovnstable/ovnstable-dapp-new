@@ -6,12 +6,12 @@
     <div class="zapin-v3__chart">
       <div class="zapin-v3__chart-head">
         <div class="zapin-v3__chart-head__col">
-          <h2 v-if='pairSymbols'>
+          <h2 v-if="pairSymbols">
             Price:  {{ getCenterPrice }}  {{ getFirstSymbol }} per {{ getSecondSymbol }}
           </h2>
           <ButtonComponent
-            @click="inversePrices"
             :btn-styles="!reversePrice ? 'primary' : 'secondary'"
+            @click="inversePrices"
           >
             Prices in {{ activeSymbolPrice }}
           </ButtonComponent>
@@ -42,8 +42,8 @@
       </div>
 
       <div
-        class="zapin-v3__loader"
         v-if="initialLoading"
+        class="zapin-v3__loader"
       >
         <Spinner
           size="48px"
@@ -132,7 +132,7 @@
 
     <div class="range-presets-wrap">
       <h2>
-        Range presets {{ getPresetsName }}: {{ currentRange }}
+        Range presets {{ getPresetsName }}: {{ tickLeft }} {{ tickRight }}
       </h2>
       <div class="range-presets">
         <div
@@ -144,8 +144,8 @@
           @keydown="setRange(range.value)"
         >
           <div
-            class="range-presets__plusmin"
             v-if="showPresetPlusMinus(range)"
+            class="range-presets__plusmin"
           >
             ±
           </div>
@@ -156,8 +156,8 @@
     </div>
     <Transition name="slide-fade">
       <div
-        class="zapin-v3__loader-tx"
         v-if="isLoading"
+        class="zapin-v3__loader-tx"
       >
         <Spinner
           size="48px"
@@ -174,7 +174,6 @@ import ButtonComponent from '@/components/Button/Index.vue';
 import Spinner from '@/components/Spinner/Index.vue';
 import BN from 'bignumber.js';
 import debounce from 'lodash/debounce';
-import { getProportionTicks } from '@/store/views/main/zapin/helpers.ts';
 import { awaitDelay } from '@/utils/const.ts';
 import { checkIsEveryStable } from '@/store/views/main/pools/helpers.ts';
 import { createScaledArray } from './helpers.ts';
@@ -186,15 +185,25 @@ export default {
     ButtonComponent,
     Spinner,
   },
+  props: {
+    zapPool: {
+      type: Object,
+      required: true,
+    },
+    zapContract: {
+      type: Object,
+      required: true,
+    },
+  },
   emits: ['set-range'],
   data() {
     return {
       zoomType: 1,
-      dataToRender: [],
       initialLoading: true,
       isLoading: false,
       reversePrice: false,
       reverseTriggered: false,
+      closestTicks: ['0', '0'],
       ticksAmount: '0',
       tickLeft: '0',
       tickRight: '0',
@@ -306,16 +315,6 @@ export default {
       isStablePool: true,
     };
   },
-  props: {
-    zapPool: {
-      type: Object,
-      required: true,
-    },
-    zapContract: {
-      type: Object,
-      required: true,
-    },
-  },
   computed: {
     getFirstSymbol() {
       if (!this.reversePrice) return this.pairSymbols[0];
@@ -361,133 +360,6 @@ export default {
         return true;
       };
     },
-  },
-  async mounted() {
-    this.pairSymbols = this.zapPool.name.split('/');
-    const currPrice = await this.zapContract.getCurrentPrice(this.zapPool.address);
-    const tickSpace = await this.zapContract.getTickSpacing(this.zapPool.address);
-    const centerTick = await this.zapContract.getCurrentPoolTick(this.zapPool.address);
-    const center = new BN(currPrice).div(10 ** 6);
-    this.initTicks(tickSpace);
-
-    console.log(centerTick.toString(), '__closestTick');
-    this.tickSpace = tickSpace.toString();
-    this.tickLeft = new BN(centerTick.toString()).minus(tickSpace.toString()).toFixed();
-    this.tickRight = new BN(centerTick.toString()).plus(tickSpace.toString()).toFixed();
-    this.ticksAmount = tickSpace.toString();
-    this.centerTick = centerTick.toString();
-
-    const minPrice = new BN(await this.zapContract
-      .tickToPrice(this.zapPool.address, this.tickLeft));
-    const maxPrice = new BN(await this.zapContract
-      .tickToPrice(this.zapPool.address, this.tickRight));
-
-    let buildData: any = [];
-    this.isStablePool = checkIsEveryStable(this.zapPool);
-
-    // if center price lower than 2$, doing higher zoom
-    if (center.lt(2)) {
-      buildData = Array.from({ length: 22 }).map((_, key) => [key / 10, 0]);
-      this.optionsChart.series = [
-        {
-          data: buildData,
-        },
-      ];
-
-      // some pools have low center price, ex arb/usd+ and its volatile
-      if (!this.isStablePool) {
-        this.selectVolatileData(center, minPrice, maxPrice);
-        this.initialLoading = false;
-        this.maxZoom(1);
-        return;
-      }
-
-      this.centerPrice = center.toFixed(6);
-
-      this.$emit('set-range', {
-        range: [
-          minPrice.toFixed(0),
-          maxPrice.toFixed(0),
-        ],
-        ticks: this.ticksAmount,
-        isStable: this.isStablePool,
-      });
-
-      let rangeData = [0, 0];
-
-      try {
-        rangeData = await getProportionTicks(this.zapPool, this.zapContract, {
-          range: [
-            new BN(this.minPrice).times(10 ** 6).toFixed(0),
-            new BN(this.maxPrice).times(10 ** 6).toFixed(0),
-          ],
-          ticks: this.ticksAmount,
-          isStable: this.isStablePool,
-        });
-      } catch (e) {
-        console.log(e, 'rangeerr');
-      }
-
-      if (new BN(rangeData[0]).eq(0) || new BN(rangeData[1]).eq(0)) return;
-
-      const minPriceSel = new BN(rangeData[0]).div(10 ** 6).toFixed(6);
-      const maxPriceSel = new BN(rangeData[1]).div(10 ** 6).toFixed(6);
-      this.minPrice = minPriceSel;
-      this.maxPrice = maxPriceSel;
-
-      this.optionsChart.chart.selection.xaxis = {
-        min: Number(minPriceSel),
-        max: Number(maxPriceSel),
-      };
-
-      this.optionsChart.annotations = {
-        xaxis: [
-          {
-            x: center.toString(),
-            borderColor: '#0497EC',
-            borderWidth: 2,
-            label: {
-              borderColor: '#0497EC',
-              orientation: 'horizontal',
-            },
-          },
-        ],
-      };
-
-      this.optionsChart.xaxis = {
-        labels: {
-          formatter(value: number) {
-            if (value === 0) return '0';
-            return +(value.toFixed(1)) % 0.5 === 0 ? value.toFixed(2) : '';
-          },
-          style: {
-            colors: '#687386',
-            fontSize: '14px',
-          },
-        },
-      };
-    } else {
-      this.lowPoolPrice = false;
-      // building data before and after center
-      buildData = buildData.concat(Array
-        .from({ length: 4 })
-        .map((_, key) => [Number((center.div(key + 1)).minus(center.div(5)).toFixed(0)), 0])
-        .reverse());
-      buildData = buildData.concat(Array
-        .from({ length: 4 })
-        .map((_, key) => [Number((center.div(key + 1)).plus(center).toFixed(0)), 0]).reverse());
-
-      this.optionsChart.series = [
-        {
-          data: buildData,
-        },
-      ];
-
-      this.selectVolatileData(center, minPrice, maxPrice);
-    }
-
-    this.initialLoading = false;
-    if (this.isStablePool) this.maxZoom();
   },
   watch: {
     async reversePrice(val) {
@@ -535,12 +407,10 @@ export default {
           true,
         );
       } else {
-        this.tickLeft = new BN(
-          this.centerTick.toString(),
-        ).minus(this.tickSpace.toString()).toFixed();
-        this.tickRight = new BN(
-          this.centerTick.toString(),
-        ).plus(this.tickSpace.toString()).toFixed();
+        const closestTicks = await this.zapContract
+          .closestTicksForCurrentTick(this.zapPool.address);
+        this.tickLeft = closestTicks[0]?.toString();
+        this.tickRight = closestTicks[1]?.toString();
 
         const minPrice = new BN(await this.zapContract
           .tickToPrice(this.zapPool.address, this.tickLeft));
@@ -595,6 +465,113 @@ export default {
       this.reverseTriggered = false;
     },
   },
+  async mounted() {
+    this.pairSymbols = this.zapPool.name.split('/');
+    const currPrice = await this.zapContract.getCurrentPrice(this.zapPool.address);
+    const tickSpace = await this.zapContract.getTickSpacing(this.zapPool.address);
+    const centerTick = await this.zapContract.getCurrentPoolTick(this.zapPool.address);
+    const center = new BN(currPrice).div(10 ** 6);
+    const closestTicks = await this.zapContract.closestTicksForCurrentTick(this.zapPool.address);
+    this.initTicks(tickSpace);
+
+    console.log(tickSpace.toString(), '__centerTick');
+    this.closestTicks = [closestTicks[0]?.toString(), closestTicks[1]?.toString()];
+    this.tickSpace = tickSpace.toString();
+    this.tickLeft = closestTicks[0]?.toString();
+    this.tickRight = closestTicks[1]?.toString();
+    this.ticksAmount = tickSpace.toString();
+    this.centerTick = centerTick.toString();
+
+    console.log(closestTicks, '__closesTicks');
+    const minPrice = new BN(await this.zapContract
+      .tickToPrice(this.zapPool.address, this.tickLeft));
+    const maxPrice = new BN(await this.zapContract
+      .tickToPrice(this.zapPool.address, this.tickRight));
+
+    let buildData: any = [];
+    this.isStablePool = checkIsEveryStable(this.zapPool);
+
+    this.$emit('set-range', {
+      ticks: [this.tickLeft, this.tickRight],
+      isStable: this.isStablePool,
+    });
+
+    // if center price lower than 2$, doing higher zoom
+    if (center.lt(2)) {
+      buildData = Array.from({ length: 22 }).map((_, key) => [key / 10, 0]);
+      this.optionsChart.series = [
+        {
+          data: buildData,
+        },
+      ];
+
+      // some pools have low center price, ex arb/usd+ and its volatile
+      if (!this.isStablePool) {
+        this.selectVolatileData(center, minPrice, maxPrice);
+        this.initialLoading = false;
+        this.maxZoom(1);
+        return;
+      }
+
+      this.centerPrice = center.toFixed(6);
+
+      this.minPrice = minPrice.div(10 ** 6).toFixed(6);
+      this.maxPrice = maxPrice.div(10 ** 6).toFixed(6);
+
+      this.optionsChart.chart.selection.xaxis = {
+        min: Number(this.minPrice),
+        max: Number(this.maxPrice),
+      };
+
+      this.optionsChart.annotations = {
+        xaxis: [
+          {
+            x: center.toString(),
+            borderColor: '#0497EC',
+            borderWidth: 2,
+            label: {
+              borderColor: '#0497EC',
+              orientation: 'horizontal',
+            },
+          },
+        ],
+      };
+
+      this.optionsChart.xaxis = {
+        labels: {
+          formatter(value: number) {
+            if (value === 0) return '0';
+            return +(value.toFixed(1)) % 0.5 === 0 ? value.toFixed(2) : '';
+          },
+          style: {
+            colors: '#687386',
+            fontSize: '14px',
+          },
+        },
+      };
+    } else {
+      this.lowPoolPrice = false;
+      // building data before and after center
+      buildData = buildData.concat(Array
+        .from({ length: 4 })
+        .map((_, key) => [Number((center.div(key + 1)).minus(center.div(5)).toFixed(0)), 0])
+        .reverse());
+      buildData = buildData.concat(Array
+        .from({ length: 4 })
+        .map((_, key) => [Number((center.div(key + 1)).plus(center).toFixed(0)), 0]).reverse());
+
+      this.optionsChart.series = [
+        {
+          data: buildData,
+        },
+      ];
+
+      this.selectVolatileData(center, minPrice, maxPrice);
+    }
+
+    this.initialLoading = false;
+    if (this.isStablePool) this.maxZoom();
+  },
   methods: {
     initTicks(tSpace: string) {
       this.rangePresetsTicks = this.rangePresetsTicks.map((item, key) => {
@@ -628,11 +605,7 @@ export default {
       this.centerPrice = center.toFixed(6);
 
       this.$emit('set-range', {
-        range: [
-          minPrice.toFixed(0),
-          maxPrice.toFixed(0),
-        ],
-        ticks: this.ticksAmount,
+        ticks: [this.tickLeft, this.tickRight],
         isStable: this.isStablePool,
       });
 
@@ -843,29 +816,28 @@ export default {
 
       this.debouncePriceChange(this, mainMinP, mainMaxP);
     },
-    debounceSelectChange() {
-      this.$emit('set-range', {
-        range: [
-          new BN(this.minPrice).times(10 ** 6).toFixed(0),
-          new BN(this.maxPrice).times(10 ** 6).toFixed(0),
-        ],
-        ticks: this.ticksAmount,
-        isStable: this.isStablePool,
-      });
-    },
+    // debounceSelectChange() {
+    //   this.$emit('set-range', {
+    //     range: [
+    //       new BN(this.minPrice).times(10 ** 6).toFixed(0),
+    //       new BN(this.maxPrice).times(10 ** 6).toFixed(0),
+    //     ],
+    //     ticks: this.ticksAmount,
+    //     isStable: this.isStablePool,
+    //   });
+    // },
     debouncePriceChange: debounce(async (
       self: any,
       minPriceVal: string,
       maxPriceVal: string,
       skipLoading?: boolean,
     ) => {
-      self.changeTrig();
       const minPrice = new BN(minPriceVal).times(10 ** 6).toFixed(0);
       const maxPrice = new BN(maxPriceVal).times(10 ** 6).toFixed(0);
 
+      console.log(self.tickLeft, self.tickRight, 'TICKS');
       self.$emit('set-range', {
-        range: [minPrice, maxPrice],
-        ticks: self.ticksAmount,
+        ticks: [self.tickLeft, self.tickRight],
         isStable: self.isStablePool,
       });
 
@@ -873,17 +845,21 @@ export default {
       if (!skipLoading) {
         self.isLoading = true;
 
-        const minPriceTick = await self.zapContract
-          .priceToClosestTick(self.zapPool.address, minPrice);
-        const maxPriceTick = await self.zapContract
-          .priceToClosestTick(self.zapPool.address, maxPrice);
+        console.log(minPrice, '0');
+        const [leftTick, rightTick] = await self.zapContract
+          .priceToClosestTick(self.zapPool.address, [minPrice, maxPrice]);
 
+        console.log(leftTick, rightTick, '1');
         const minPriceTickPrice = await self.zapContract
-          .tickToPrice(self.zapPool.address, minPriceTick);
+          .tickToPrice(self.zapPool.address, leftTick);
         const maxPriceTickPrice = await self.zapContract
-          .tickToPrice(self.zapPool.address, maxPriceTick);
+          .tickToPrice(self.zapPool.address, rightTick);
 
+        console.log('2');
         const decimals = self.lowPoolPrice ? 6 : 0;
+
+        self.tickLeft = leftTick;
+        self.tickRight = rightTick;
         self.minPrice = new BN(minPriceTickPrice).div(10 ** 6).toFixed(decimals);
         self.maxPrice = new BN(maxPriceTickPrice).div(10 ** 6).toFixed(decimals);
         self.isLoading = false;
@@ -905,9 +881,6 @@ export default {
         true,
       );
     }, 500),
-    changeTrig() {
-      console.log('CHANGED');
-    },
     setMinPrice(val: string) {
       this.minPrice = val;
     },
@@ -915,13 +888,12 @@ export default {
       this.maxPrice = val;
     },
     async setRange(val: number) {
-      const tickChange = val;
-
-      this.tickLeft = new BN(this.centerTick).minus(tickChange).toFixed();
+      console.log(val, '__tickChange');
+      this.tickLeft = new BN(this.closestTicks[0]).minus(val).toFixed();
       const tickNumL = await this.zapContract.tickToPrice(this.zapPool.address, this.tickLeft);
       this.minPrice = new BN(tickNumL.toString()).div(10 ** 6).toFixed(this.lowPoolPrice ? 6 : 0);
 
-      this.tickRight = new BN(this.centerTick).plus(tickChange).toFixed();
+      this.tickRight = new BN(this.closestTicks[1]).plus(val).toFixed();
       const tickNumR = await this.zapContract.tickToPrice(this.zapPool.address, this.tickRight);
       this.maxPrice = new BN(tickNumR.toString()).div(10 ** 6).toFixed(this.lowPoolPrice ? 6 : 0);
 

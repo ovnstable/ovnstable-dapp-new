@@ -35,7 +35,7 @@ module.exports = {
     'vuejs-accessibility/form-control-has-label': 0,
     'no-console': isProd ? 'warn' : 'off',
     'no-debugger': isProd ? 'warn' : 'off',
-    'no-shadow': [2, { allow: ['state', 'getters'] }],
+    'no-shadow': 'off',
     'no-param-reassign': ['error', {
       props: true, ignorePropertyModificationsFor: ['state'],
     }],
