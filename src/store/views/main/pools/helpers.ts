@@ -167,6 +167,9 @@ export const buildLink = (pool: any, poolPlatform: string) => {
     case 'Dyson':
       url = 'https://app.dyson.money/all?id=dyson-base-aerodrome-ovn-usd';
       break;
+    case 'Trader Joe':
+      url = `https://traderjoexyz.com/${pool.chainName}/pool`;
+      break;
 
     default:
       url = `${pool.explorerUrl}/address/`;
@@ -194,6 +197,7 @@ export const buildLink = (pool: any, poolPlatform: string) => {
     || poolPlatform === 'Pancake'
     || poolPlatform === 'Syncswap'
     || poolPlatform === 'Dyson'
+    || poolPlatform === 'Trader Joe'
   ) {
     return url;
   }
