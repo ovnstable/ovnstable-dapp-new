@@ -2,9 +2,7 @@
 /* eslint-disable no-unused-expressions */
 import { POOL_TYPES } from '@/store/views/main/pools/index.ts';
 import {
-  HOT_POOLS,
-  LOW_TVL_PROMOTE,
-  NEW_POOLS,
+  POOL_WHITE_LIST,
   SECOND_MIN_AMOUNT,
 } from './mocks.ts';
 
@@ -169,6 +167,9 @@ export const buildLink = (pool: any, poolPlatform: string) => {
     case 'Dyson':
       url = 'https://app.dyson.money/all?id=dyson-base-aerodrome-ovn-usd';
       break;
+    case 'Trader Joe':
+      url = `https://traderjoexyz.com/${pool.chainName}/pool`;
+      break;
 
     default:
       url = `${pool.explorerUrl}/address/`;
@@ -196,6 +197,7 @@ export const buildLink = (pool: any, poolPlatform: string) => {
     || poolPlatform === 'Pancake'
     || poolPlatform === 'Syncswap'
     || poolPlatform === 'Dyson'
+    || poolPlatform === 'Trader Joe'
   ) {
     return url;
   }
@@ -368,18 +370,9 @@ export const getSortedPools = (
   filterByType = POOL_TYPES.ALL,
 ) => {
   const minTvl = filterByTvl ? SECOND_MIN_AMOUNT : 0;
-  const poolWhiteLists = [HOT_POOLS, LOW_TVL_PROMOTE, NEW_POOLS];
-  // const poolBlackLists = [REVERT_AGG];
-
-  const isInLists = (
-    listsArr: string[][],
-    address: string,
-  ) => listsArr.some((list) => list.includes(address));
 
   const poolsList = pools.filter((pool) => {
-    // if (isInLists(poolBlackLists, pool.address)) return false;
-    if (isInLists(poolWhiteLists, pool.address)) return true;
-    if (pool.tvl >= minTvl) return true;
+    if (!!POOL_WHITE_LIST[pool?.address.toLowerCase()] || pool.tvl >= minTvl) return true;
     return false;
   });
 
