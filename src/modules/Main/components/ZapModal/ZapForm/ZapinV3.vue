@@ -132,7 +132,7 @@
 
     <div class="range-presets-wrap">
       <h2>
-        Range presets {{ getPresetsName }}: {{ tickLeft }} {{ centerTick }} {{ tickRight }}
+        Range presets {{ getPresetsName }}:
       </h2>
       <div class="range-presets">
         <div
