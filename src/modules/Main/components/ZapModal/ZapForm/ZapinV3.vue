@@ -329,7 +329,8 @@ export default {
     getCenterPrice() {
       if (!this.reversePrice) return this.centerPrice;
 
-      return new BN(1).div(this.centerPrice).toFixed(8);
+      const dec = this.lowPoolPrice ? 8 : 0;
+      return new BN(1).div(this.centerPrice).toFixed(dec);
     },
     frontMinPrice() {
       if (!this.reversePrice) return this.minPrice;
