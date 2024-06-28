@@ -1165,7 +1165,7 @@ export default {
           inputTokens: userInputTokens.map((_: any, key: number) => ({
             tokenAddress: _?.selectedToken?.address,
             amount: resp[1][key]?.toString(),
-          })),
+          })).filter((_) => new BN(_.amount).gt(0)),
           outputTokens: resp[2].map((_: any, key: number) => ({
             tokenAddress: _,
             proportion: new BN(resp[3][key]?.toString()).div(10 ** 6),
