@@ -1162,9 +1162,9 @@ export default {
         if (!resp) return;
 
         proportions = {
-          inputTokens: userInputTokens.map((_: any) => ({
+          inputTokens: userInputTokens.map((_: any, key: number) => ({
             tokenAddress: _?.selectedToken?.address,
-            amount: _?.contractValue,
+            amount: resp[1][key]?.toString(),
           })),
           outputTokens: resp[2].map((_: any, key: number) => ({
             tokenAddress: _,
