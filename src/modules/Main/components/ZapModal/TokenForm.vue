@@ -139,19 +139,6 @@ export default {
     selectTokenFunc(val: boolean) {
       this.$emit('select-token', val);
     },
-    isNumber(evt: any) {
-      evt = (evt) || window.event;
-      const charCode = (evt.which) ? evt.which : evt.keyCode;
-
-      if ((charCode > 31 && (charCode < 48 || charCode > 57)) && charCode !== 46) {
-        evt.preventDefault();
-      } else if (charCode === 46 && (!this.tokenInfo.value || this.tokenInfo.value.includes('.'))) {
-        evt.preventDefault();
-      } else {
-        return true;
-      }
-      return true;
-    },
     inputUpdate(value: any) {
       this.$emit('update-token', {
         ...this.tokenInfo,

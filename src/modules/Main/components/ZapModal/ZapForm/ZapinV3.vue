@@ -815,16 +815,6 @@ export default {
 
       this.debouncePriceChange(this, mainMinP, mainMaxP);
     },
-    // debounceSelectChange() {
-    //   this.$emit('set-range', {
-    //     range: [
-    //       new BN(this.minPrice).times(10 ** 6).toFixed(0),
-    //       new BN(this.maxPrice).times(10 ** 6).toFixed(0),
-    //     ],
-    //     ticks: this.ticksAmount,
-    //     isStable: this.isStablePool,
-    //   });
-    // },
     debouncePriceChange: debounce(async (
       self: any,
       minPriceVal: string,
@@ -834,16 +824,10 @@ export default {
       const minPrice = new BN(minPriceVal).times(10 ** 6).toFixed(0);
       const maxPrice = new BN(maxPriceVal).times(10 ** 6).toFixed(0);
 
-      console.log(self.tickLeft, self.tickRight, 'TICKS');
-      self.$emit('set-range', {
-        ticks: [self.tickLeft, self.tickRight],
-      });
-
       // loading need, when we converting front price to real contract ticks
       if (!skipLoading) {
         self.isLoading = true;
 
-        console.log(minPrice, '0');
         const [leftTick, rightTick] = await self.zapContract
           .priceToClosestTick(self.zapPool.address, [minPrice, maxPrice]);
 
@@ -853,7 +837,6 @@ export default {
         const maxPriceTickPrice = await self.zapContract
           .tickToPrice(self.zapPool.address, rightTick);
 
-        console.log('2');
         const decimals = self.lowPoolPrice ? 6 : 0;
 
         self.tickLeft = leftTick;
@@ -863,7 +846,10 @@ export default {
         self.isLoading = false;
       }
 
-      console.log(self.frontMinPrice, '__selffrontMinPrice');
+      self.$emit('set-range', {
+        ticks: [self.tickLeft, self.tickRight],
+      });
+
       (self.$refs?.zapinChart as any)?.updateOptions(
         {
           chart: {

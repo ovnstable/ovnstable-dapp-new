@@ -41,15 +41,13 @@
             :class="currentSection === zapMobileSection.TOKEN_FORM && 'mobile-active'"
             >
               <div class="zapin-block__wrapper">
-                <div class="mb-4 mt-1">
-                  <h2 v-if="zapPool?.poolVersion === 'v3'">
-                    Pool you choose
-                  </h2>
-                  <PoolLabel
-                    :pool="zapPool"
-                    class="pool-info"
-                  />
-                </div>
+                <h2 v-if="zapPool?.poolVersion === 'v3'">
+                  Pool you choose
+                </h2>
+                <PoolLabel
+                  :pool="zapPool"
+                  class="pool-info"
+                />
                 <div class="zapin-block__swap-wrapper">
                   <div class="input-swap-container">
                     <div class="swap-form__body-block">
@@ -1620,8 +1618,8 @@ export default {
 
       const params = {
         from: this.account,
-        gasPrice: ethers.parseUnits('100', 'gwei'),
-        gasLimit: 1000000,
+        // gasPrice: ethers.parseUnits('100', 'gwei'),
+        // gasLimit: 1000000,
       };
 
       console.log(zapPool, '----zapPool');
@@ -1688,7 +1686,45 @@ export default {
       console.log(this.v3Range, '__thisv3Range');
       let reserves = null;
 
-      if (this.zapPool?.poolVersion === 'v3') return;
+      const outputToken0Price = this.selectedOutputTokens[0].selectedToken.price;
+      const outputToken1Price = this.selectedOutputTokens[1].selectedToken.price;
+
+      const emptyVals = this.inputTokens.map((_) => {
+        if (new BN(_?.value).eq(0) || !_?.value) return null;
+
+        return _;
+      });
+
+      console.log(emptyVals, '__emptyVals');
+
+      if (emptyVals.every((_) => !_)) return;
+
+      if (this.zapPool?.poolVersion === 'v3') {
+        const resp = await getV3Proportion(
+          this.zapPool.address,
+          this.v3Range.ticks,
+          this.selectedInputTokens.map((_) => ({
+            tokenAddress: _?.selectedToken?.address,
+            amount: _?.contractValue,
+            price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
+          })),
+          this.zapContract,
+        );
+
+        if (!resp || resp[5]?.length === 0) return;
+
+        resp[5]?.forEach((_: BigInt, key: number) => {
+          const { price } = this.selectedOutputTokens[key].selectedToken;
+          const val = new BN(_?.toString() ?? 0)
+            .div(10 ** 18)
+            .div(price);
+
+          this.selectedOutputTokens[key].value = val.toFixed();
+          this.selectedOutputTokens[key].sum = val.toFixed(5);
+        });
+
+        return;
+      }
 
       if (this.zapPool?.poolVersion === 'v2') {
         reserves = await getProportion(
@@ -1698,9 +1734,6 @@ export default {
           this.v3Range,
         );
       }
-
-      const outputToken0Price = this.selectedOutputTokens[0].selectedToken.price;
-      const outputToken1Price = this.selectedOutputTokens[1].selectedToken.price;
 
       const sumReserves = (
         new BN(reserves.token0Amount).times(outputToken0Price)
@@ -1718,6 +1751,7 @@ export default {
           .times(Number(outputToken1Price)).div(sumReserves).times(100)
           .toFixed();
 
+      console.log(this.selectedOutputTokens, '__resp1');
       this.recalculateOutputTokensSum();
     },
     getSlippagePercent() {
