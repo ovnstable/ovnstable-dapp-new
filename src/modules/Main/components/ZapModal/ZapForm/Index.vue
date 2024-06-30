@@ -1028,7 +1028,6 @@ export default {
           this.zapPool.address,
           this.zapPool,
           this.zapContract,
-          this.v3Range,
         );
         sumReserves = (
           new BN(reserves.token0Amount).times(outputToken0Price)
@@ -1731,7 +1730,6 @@ export default {
           this.zapPool.address,
           this.zapPool,
           this.zapContract,
-          this.v3Range,
         );
       }
 
