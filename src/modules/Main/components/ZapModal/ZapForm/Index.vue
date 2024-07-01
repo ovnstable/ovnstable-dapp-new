@@ -463,7 +463,6 @@ export default {
     ...mapGetters('accountData', ['account']),
 
     zapsLoaded() {
-      console.log(this.zapPool, '__thiszapContract22');
       return this.isTokensLoadedAndFiltered && this.zapPool && this.zapContract && this.isZapLoaded;
     },
     getOdosFee() {
