@@ -46,15 +46,14 @@
             Old Dapp
             BETA2
           </a>
-
         </div>
 
         <div class="app-header__content-data">
           <router-link
+            v-if="!account && !deviceSize.isDesktop"
             to="/"
             class="app-header__content__logo"
             :style="{ 'margin-right': (!walletConnected || !account) ? 'auto' : '' }"
-            v-if="!account && !deviceSize.isDesktop"
           >
             <BaseIcon
               class="app-header__content__logo-svg"
@@ -153,9 +152,9 @@
                   class="popper-list"
                 >
                   <div
-                    class="networks-list__item"
                     v-for="item in sortedChains"
                     :key="item.name"
+                    class="networks-list__item"
                     @click="chooseNetwork(item.chain, close)"
                     @keypress="chooseNetwork(item.chain, close)"
                   >
@@ -176,7 +175,7 @@
                         {{ isShowDeprecated ? "On" : "Off" }}
                       </div>
                       <SwitchComponent
-                        :isChecked="isShowDeprecated"
+                        :is-checked="isShowDeprecated"
                         :disabled="chainsLoading"
                         @change-switch="showDeprecated"
                       />
@@ -204,10 +203,8 @@ import SpinnerComponent from '@/components/Spinner/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { cutString } from '@/utils/strings.ts';
 import {
-  OVN_TOKENS, appNetworksData, getImageUrl,
+  appNetworksData, getImageUrl,
 } from '@/utils/const.ts';
-import BigNumber from 'bignumber.js';
-import { loadTokenImage } from '@/utils/tokenLogo.ts';
 import { sortedChainsByTVL } from '@/store/helpers/index.ts';
 import AccountModal from '@/modules/Account/Index.vue';
 import { deviceType } from '@/utils/deviceType.ts';
@@ -241,22 +238,7 @@ export default {
       networksData: appNetworksData,
       showModalAccount: false,
       showMobMenu: false,
-      showBlastModal: false,
     };
-  },
-  async mounted() {
-    this.sortedChains = await sortedChainsByTVL(this.networksData, this.isShowDeprecated);
-    const onTabChange = useEventBus<string>('change-profile-picture-request');
-    onTabChange.on((color) => {
-      this.selectedProfileColor = color;
-    });
-  },
-  watch: {
-    async isShowDeprecated() {
-      this.chainsLoading = true;
-      this.sortedChains = await sortedChainsByTVL(this.networksData, this.isShowDeprecated);
-      this.chainsLoading = false;
-    },
   },
   computed: {
     ...mapState('odosData', ['isBalancesLoading', 'isTokensLoadedAndFiltered', 'firstRenderDone', 'isTokensLoading']),
@@ -280,37 +262,32 @@ export default {
       const data = appNetworksData.find((_) => _.chain === this.networkId);
       return data || appNetworksData[0];
     },
-    userBalancesList() {
-      if (this.originalBalance.length === 0) return [];
-      return this.originalBalance
-        .filter((_: any) => OVN_TOKENS.includes(_.symbol)).map((bal: any) => {
-          const tokenData = this.allTokensList.find((_: any) => _.symbol === bal.symbol);
-
-          return {
-            balance: tokenData ? new BigNumber(bal.balance).div(10 ** tokenData.decimals).toFixed(2) : '0',
-            srcPath: loadTokenImage(tokenData?.symbol),
-            symbol: tokenData?.symbol,
-          };
-        });
-    },
     deviceSize() {
       return deviceType();
     },
   },
+  watch: {
+    async isShowDeprecated() {
+      this.chainsLoading = true;
+      this.sortedChains = await sortedChainsByTVL(this.networksData, this.isShowDeprecated);
+      this.chainsLoading = false;
+    },
+  },
+  async mounted() {
+    this.sortedChains = await sortedChainsByTVL(this.networksData, this.isShowDeprecated);
+    const onTabChange = useEventBus<string>('change-profile-picture-request');
+    onTabChange.on((color) => {
+      this.selectedProfileColor = color;
+    });
+  },
   methods: {
     ...mapActions('network', ['setWalletNetwork', 'showDeprecated']),
     getImageUrl,
-    async claimBlastPoints() {
-      this.showBlastModal = true;
-    },
     openAccountModal() {
       this.showModalAccount = !this.showModalAccount;
     },
     closeAccountModal() {
       this.showModalAccount = false;
-    },
-    disconnectWallet() {
-      this.$store.dispatch('walletAction/disconnectWallet');
     },
     connectWallet() {
       this.$store.dispatch('walletAction/connectWallet');
@@ -318,9 +295,6 @@ export default {
     chooseNetwork(network: number, close: () => null) {
       this.setWalletNetwork(network);
       close();
-    },
-    selectColor(color: any) {
-      this.selectedProfileColor = color;
     },
     cutString,
   },
