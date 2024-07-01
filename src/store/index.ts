@@ -10,7 +10,6 @@ import network from '@/store/web3/network.ts';
 import walletAction from '@/store/web3/legacy/wallet-action.ts';
 import contractAction from '@/store/web3/legacy/contract-action.ts';
 import web3 from '@/store/web3/web3.ts';
-import tokenAction from '@/store/web3/legacy/token-action.ts';
 
 // Common
 import gasPrice from '@/store/common/gas-price.ts';
@@ -66,7 +65,6 @@ const store = new Vuex.Store({
     walletAction,
     contractAction,
     web3,
-    tokenAction,
     dappDataAction,
     etsAction,
 

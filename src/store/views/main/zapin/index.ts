@@ -98,7 +98,7 @@ const actions = {
       return;
     }
 
-    let abiFile = {};
+    let abiFile = {} as ContractAbi;
     if (chainName && platformName) {
       const abiFileSrc = zapAbiSrcMap[poolVersion as poolVersionList]?.(chainName, platformName);
       abiFile = await loadAbi(abiFileSrc);

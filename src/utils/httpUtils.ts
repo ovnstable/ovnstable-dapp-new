@@ -9,7 +9,6 @@ export const loadJSON = (url: string) => fetch(url, { method: 'GET' })
 
 export const JSONLoader = async (src: string): Promise<ContractAbi> => {
   if (src) {
-    console.log(src);
     try {
       const mod = await import(`@/${src}`);
       return mod.default;
