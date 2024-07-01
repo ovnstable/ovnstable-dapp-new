@@ -2,7 +2,7 @@
 /* eslint-disable no-unused-vars */
 import { poolsInfoMap, zapPlatformContractTypeMap } from '@/store/views/main/zapin/mocks.ts';
 import { buildEvmContract } from '@/utils/contractsMap.ts';
-import { loadJSON } from '@/utils/httpUtils.ts';
+import { JSONLoader } from '@/utils/httpUtils.ts';
 
 import type { ContractAbi } from '@/types/common/abi';
 
@@ -45,8 +45,7 @@ const poolTokenSrcMap: TSrcMap = {
 
 const loadAbi = async (abiFileSrc: string): Promise<ContractAbi> => {
   try {
-    const abiFile = await loadJSON(abiFileSrc);
-    console.log('__abi', abiFile);
+    const abiFile = await JSONLoader(abiFileSrc);
     if (!abiFile || !abiFile?.abi) return {} as ContractAbi;
     return abiFile;
   } catch (e) {
