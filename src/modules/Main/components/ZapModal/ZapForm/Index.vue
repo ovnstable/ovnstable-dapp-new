@@ -1682,7 +1682,6 @@ export default {
       });
     },
     async recalculateProportion() {
-      console.log(this.v3Range, '__thisv3Range');
       let reserves = null;
 
       const outputToken0Price = this.selectedOutputTokens[0].selectedToken.price;
@@ -1693,8 +1692,6 @@ export default {
 
         return _;
       });
-
-      console.log(emptyVals, '__emptyVals');
 
       if (emptyVals.every((_) => !_)) return;
 

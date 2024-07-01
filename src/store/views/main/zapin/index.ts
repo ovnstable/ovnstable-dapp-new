@@ -82,7 +82,7 @@ const actions = {
     console.log('BUILDED');
   },
   async loadPoolTokenAndGaugeContracts({
-    commit, state, dispatch, rootState,
+    commit, state, rootState,
   }: any) {
     let poolAddress = state.zapPoolRoot.address;
     const poolInfo = poolsInfoMap[poolAddress];
@@ -111,8 +111,6 @@ const actions = {
         `/contracts/${state.zapPoolRoot.chainName}/${state?.currentZapPlatformContractType?.name}V3Gauge.json`,
       );
     }
-
-    console.log(abiGaugeContractFile, '--abiGaugeContractFile');
 
     commit('changeState', {
       field: 'gaugeContract',
