@@ -6,6 +6,7 @@ import compression from 'vite-plugin-compression';
 import vue from '@vitejs/plugin-vue';
 import nodePolyfills from 'rollup-plugin-polyfill-node';
 import svgLoader from 'vite-svg-loader';
+import dynamicImport from 'vite-plugin-dynamic-import';
 
 const MODE = process.env.NODE_ENV;
 const development = MODE === 'development';
@@ -48,6 +49,7 @@ export default defineConfig(({ mode }) => {
         crypto: true,
         http: true,
       }),
+      dynamicImport(),
     ],
     resolve: {
       alias: {

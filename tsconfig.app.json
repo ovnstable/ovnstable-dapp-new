@@ -5,6 +5,8 @@
   "compilerOptions": {
     // "noUnusedLocals": true,
     // "noUnusedParameters": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
     "composite": true,
     "noEmit": true,
     "allowJs": true,

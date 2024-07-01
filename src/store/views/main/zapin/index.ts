@@ -4,6 +4,8 @@ import { poolsInfoMap, zapPlatformContractTypeMap } from '@/store/views/main/zap
 import { buildEvmContract } from '@/utils/contractsMap.ts';
 import { loadJSON } from '@/utils/httpUtils.ts';
 
+import type { ContractAbi } from '@/types/common/abi';
+
 export enum zapInStep {
   START,
   APPROVE_TOKENS,
@@ -11,6 +13,47 @@ export enum zapInStep {
   APPROVE_GAUGE,
   STAKE_LP
 }
+
+enum poolVersionList {
+  'v2',
+  'v3',
+}
+
+type TSrcMap = {
+  [key: string]: (chainName: string, platformName: string) => string;
+}
+
+const srcStringBuilder = (fileType: string) => (
+  chainName: string,
+  fileName: string,
+): string => `contracts/${chainName}/${fileName}${fileType}.json`;
+
+const zapAbiSrcMap: TSrcMap = {
+  v2: srcStringBuilder('Zap'),
+  v3: srcStringBuilder('V3Zap'),
+};
+
+const gaugeSrcMap: TSrcMap = {
+  v2: srcStringBuilder('Gauge'),
+  v3: srcStringBuilder('V3Gauge'),
+};
+
+const poolTokenSrcMap: TSrcMap = {
+  v2: srcStringBuilder('PoolToken'),
+  v3: srcStringBuilder('V3PoolToken'),
+};
+
+const loadAbi = async (abiFileSrc: string): Promise<ContractAbi> => {
+  try {
+    const abiFile = await loadJSON(abiFileSrc);
+    console.log('__abi', abiFile);
+    if (!abiFile || !abiFile?.abi) return {} as ContractAbi;
+    return abiFile;
+  } catch (e) {
+    console.log('Error fetching ABI file');
+  }
+  return {} as ContractAbi;
+};
 
 const stateData = {
   zapPoolRoot: null,
@@ -28,12 +71,18 @@ const actions = {
   async loadZapContract({
     commit, state, dispatch, rootState,
   }: any) {
-    if (!state.zapPoolRoot) {
-      console.error('Zap Pool Root not found: ', state.zapPoolRoot);
+    const poolRoot = state.zapPoolRoot;
+    const platformName = state.currentZapPlatformContractType?.name;
+    const poolVersion = state.zapPoolRoot?.poolVersion;
+    const chainName = state.zapPoolRoot.chainName;
+    const address = state.zapPoolRoot.address;
+
+    if (!poolRoot) {
+      console.error('Zap Pool Root not found: ', poolRoot);
       return;
     }
 
-    console.log(state.zapPoolRoot.address, ' --state.zapPoolRoot.address');
+    console.log(address, ' --state.zapPoolRoot.address');
     console.log(zapPlatformContractTypeMap[state.zapPoolRoot.address], '__ADD');
 
     commit('changeState', {
@@ -50,20 +99,10 @@ const actions = {
       return;
     }
 
-    const platformName = state.currentZapPlatformContractType.name;
-
-    let abiFile = null;
-
-    if (state.zapPoolRoot?.poolVersion === 'v2') {
-      abiFile = await loadJSON(
-        `/contracts/${state.zapPoolRoot.chainName}/${platformName}Zap.json`,
-      );
-    }
-
-    if (state.zapPoolRoot?.poolVersion === 'v3') {
-      abiFile = await loadJSON(
-        `/contracts/${state.zapPoolRoot.chainName}/${platformName}V3Zap.json`,
-      );
+    let abiFile = {};
+    if (chainName && platformName) {
+      const abiFileSrc = zapAbiSrcMap[poolVersion as poolVersionList]?.(chainName, platformName);
+      abiFile = await loadAbi(abiFileSrc);
     }
 
     commit('changeState', {
@@ -98,19 +137,12 @@ const actions = {
       ? poolInfo.gaugeForLP
       : poolInfo.gauge;
 
-    let abiGaugeContractFile = null;
+    const poolVersion = state.zapPoolRoot?.poolVersion;
+    const chainName = state.zapPoolRoot.chainName;
+    const contractName = state?.currentZapPlatformContractType?.name;
 
-    if (state.zapPoolRoot?.poolVersion === 'v2') {
-      abiGaugeContractFile = await loadJSON(
-        `/contracts/${state.zapPoolRoot.chainName}/${state?.currentZapPlatformContractType?.name}Gauge.json`,
-      );
-    }
-
-    if (state.zapPoolRoot?.poolVersion === 'v3') {
-      abiGaugeContractFile = await loadJSON(
-        `/contracts/${state.zapPoolRoot.chainName}/${state?.currentZapPlatformContractType?.name}V3Gauge.json`,
-      );
-    }
+    const abiFileSrc = gaugeSrcMap[poolVersion as poolVersionList]?.(chainName, contractName);
+    const abiGaugeContractFile = await loadAbi(abiFileSrc);
 
     console.log(abiGaugeContractFile, '--abiGaugeContractFile');
 
@@ -123,19 +155,8 @@ const actions = {
       ),
     });
 
-    let abiPoolTokenContractFile = null;
-
-    if (state.zapPoolRoot?.poolVersion === 'v2') {
-      abiPoolTokenContractFile = await loadJSON(
-        `/contracts/${state.zapPoolRoot.chainName}/${state?.currentZapPlatformContractType?.name}PoolToken.json`,
-      );
-    }
-
-    if (state.zapPoolRoot?.poolVersion === 'v3') {
-      abiPoolTokenContractFile = await loadJSON(
-        `/contracts/${state.zapPoolRoot.chainName}/${state?.currentZapPlatformContractType?.name}V3PoolToken.json`,
-      );
-    }
+    const poolTokenSrc = poolTokenSrcMap[poolVersion as poolVersionList]?.(chainName, contractName);
+    const abiPoolTokenContractFile = await loadAbi(poolTokenSrc);
 
     // exclude _ from pool address (aggregators)
     if (poolAddress.includes('_')) poolAddress = poolAddress.split('_')[0];
