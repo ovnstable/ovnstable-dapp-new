@@ -467,7 +467,6 @@ export default {
     },
   },
   async mounted() {
-    console.log(this.zapContract, '__his.zapContrac');
     this.pairSymbols = this.zapPool.name.split('/');
     const currPrice = await this.zapContract.getCurrentPrice(this.zapPool.address);
     const tickSpace = await this.zapContract.getTickSpacing(this.zapPool.address);

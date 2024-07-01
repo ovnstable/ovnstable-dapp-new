@@ -713,7 +713,6 @@ export default {
     },
   },
   mounted() {
-    console.log(this.zapContract, '__CONTRACT');
     if (this.zapPool.chain !== this.networkId) this.currentStage = zapInStep.START;
 
     this.firstInit();
