@@ -342,8 +342,8 @@ import {
   maxAll,
   getNewOutputToken,
   getNewInputToken,
-  // WHITE_LIST_ODOS,
   getTokenByAddress,
+  WHITE_LIST_ODOS,
 } from '@/store/helpers/index.ts';
 import {
   getProportion,
@@ -1204,7 +1204,7 @@ export default {
         return;
       }
 
-      // const whiteList = WHITE_LIST_ODOS[request.chainId as keyof typeof WHITE_LIST_ODOS];
+      const whiteList = WHITE_LIST_ODOS[request.chainId as keyof typeof WHITE_LIST_ODOS];
       const requestData = {
         chainId: request.chainId,
         inputTokens: request.inputTokens,
@@ -1215,7 +1215,7 @@ export default {
         ),
         slippageLimitPercent: request.slippageLimitPercent,
         sourceBlacklist: this.getSourceLiquidityBlackList(),
-        sourceWhitelist: [],
+        sourceWhitelist: whiteList ?? [],
         simulate: false,
         pathViz: false,
         disableRFQs: false,
