@@ -41,15 +41,13 @@
             :class="currentSection === zapMobileSection.TOKEN_FORM && 'mobile-active'"
             >
               <div class="zapin-block__wrapper">
-                <div class="mb-4 mt-1">
-                  <h2 v-if="zapPool?.poolVersion === 'v3'">
-                    Pool you choose
-                  </h2>
-                  <PoolLabel
-                    :pool="zapPool"
-                    class="pool-info"
-                  />
-                </div>
+                <h2 v-if="zapPool?.poolVersion === 'v3'">
+                  Pool you choose
+                </h2>
+                <PoolLabel
+                  :pool="zapPool"
+                  class="pool-info"
+                />
                 <div class="zapin-block__swap-wrapper">
                   <div class="input-swap-container">
                     <div class="swap-form__body-block">
@@ -344,8 +342,8 @@ import {
   maxAll,
   getNewOutputToken,
   getNewInputToken,
-  // WHITE_LIST_ODOS,
   getTokenByAddress,
+  WHITE_LIST_ODOS,
 } from '@/store/helpers/index.ts';
 import {
   getProportion,
@@ -1030,7 +1028,6 @@ export default {
           this.zapPool.address,
           this.zapPool,
           this.zapContract,
-          this.v3Range,
         );
         sumReserves = (
           new BN(reserves.token0Amount).times(outputToken0Price)
@@ -1162,10 +1159,10 @@ export default {
         if (!resp) return;
 
         proportions = {
-          inputTokens: userInputTokens.map((_: any) => ({
+          inputTokens: userInputTokens.map((_: any, key: number) => ({
             tokenAddress: _?.selectedToken?.address,
-            amount: _?.contractValue,
-          })),
+            amount: resp[1][key]?.toString(),
+          })).filter((_) => new BN(_.amount).gt(0)),
           outputTokens: resp[2].map((_: any, key: number) => ({
             tokenAddress: _,
             proportion: new BN(resp[3][key]?.toString()).div(10 ** 6),
@@ -1207,7 +1204,7 @@ export default {
         return;
       }
 
-      // const whiteList = WHITE_LIST_ODOS[request.chainId as keyof typeof WHITE_LIST_ODOS];
+      const whiteList = WHITE_LIST_ODOS[request.chainId as keyof typeof WHITE_LIST_ODOS];
       const requestData = {
         chainId: request.chainId,
         inputTokens: request.inputTokens,
@@ -1218,7 +1215,7 @@ export default {
         ),
         slippageLimitPercent: request.slippageLimitPercent,
         sourceBlacklist: this.getSourceLiquidityBlackList(),
-        sourceWhitelist: [],
+        sourceWhitelist: whiteList ?? [],
         simulate: false,
         pathViz: false,
         disableRFQs: false,
@@ -1620,8 +1617,8 @@ export default {
 
       const params = {
         from: this.account,
-        gasPrice: ethers.parseUnits('100', 'gwei'),
-        gasLimit: 1000000,
+        // gasPrice: ethers.parseUnits('100', 'gwei'),
+        // gasLimit: 1000000,
       };
 
       console.log(zapPool, '----zapPool');
@@ -1685,22 +1682,53 @@ export default {
       });
     },
     async recalculateProportion() {
-      console.log(this.v3Range, '__thisv3Range');
       let reserves = null;
 
-      if (this.zapPool?.poolVersion === 'v3') return;
+      const outputToken0Price = this.selectedOutputTokens[0].selectedToken.price;
+      const outputToken1Price = this.selectedOutputTokens[1].selectedToken.price;
+
+      const emptyVals = this.inputTokens.map((_) => {
+        if (new BN(_?.value).eq(0) || !_?.value) return null;
+
+        return _;
+      });
+
+      if (emptyVals.every((_) => !_)) return;
+
+      if (this.zapPool?.poolVersion === 'v3') {
+        const resp = await getV3Proportion(
+          this.zapPool.address,
+          this.v3Range.ticks,
+          this.selectedInputTokens.map((_) => ({
+            tokenAddress: _?.selectedToken?.address,
+            amount: _?.contractValue,
+            price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
+          })),
+          this.zapContract,
+        );
+
+        if (!resp || resp[5]?.length === 0) return;
+
+        resp[5]?.forEach((_: BigInt, key: number) => {
+          const { price } = this.selectedOutputTokens[key].selectedToken;
+          const val = new BN(_?.toString() ?? 0)
+            .div(10 ** 18)
+            .div(price);
+
+          this.selectedOutputTokens[key].value = val.toFixed();
+          this.selectedOutputTokens[key].sum = val.toFixed(5);
+        });
+
+        return;
+      }
 
       if (this.zapPool?.poolVersion === 'v2') {
         reserves = await getProportion(
           this.zapPool.address,
           this.zapPool,
           this.zapContract,
-          this.v3Range,
         );
       }
-
-      const outputToken0Price = this.selectedOutputTokens[0].selectedToken.price;
-      const outputToken1Price = this.selectedOutputTokens[1].selectedToken.price;
 
       const sumReserves = (
         new BN(reserves.token0Amount).times(outputToken0Price)
@@ -1718,6 +1746,7 @@ export default {
           .times(Number(outputToken1Price)).div(sumReserves).times(100)
           .toFixed();
 
+      console.log(this.selectedOutputTokens, '__resp1');
       this.recalculateOutputTokensSum();
     },
     getSlippagePercent() {

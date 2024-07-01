@@ -426,25 +426,17 @@
       display: flex;
       flex-direction: column;
       gap: 8px;
+      justify-content: space-between;
       .zapin-block__wrapper {
         display: flex;
         flex-direction: column;
-        flex: 1;
-        .mb-4 .mt-1 {
-          flex: 1;
-        }
         .zapin-block__swap-wrapper {
           display: flex;
           flex-direction: column;
           justify-content: space-between;
-          flex: 1;
           gap: 10px;
         }
-        .input-swap-container {
-          flex: 1;
-        }
         .out-swap-container {
-          flex: 1;
           display: flex;
           flex-direction: column;
           box-sizing: border-box;

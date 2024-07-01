@@ -120,7 +120,7 @@ const actions = {
     console.log('BUILDED');
   },
   async loadPoolTokenAndGaugeContracts({
-    commit, state, dispatch, rootState,
+    commit, state, rootState,
   }: any) {
     let poolAddress = state.zapPoolRoot.address;
     const poolInfo = poolsInfoMap[poolAddress];
@@ -142,8 +142,6 @@ const actions = {
 
     const abiFileSrc = gaugeSrcMap[poolVersion as poolVersionList]?.(chainName, contractName);
     const abiGaugeContractFile = await loadAbi(abiFileSrc);
-
-    console.log(abiGaugeContractFile, '--abiGaugeContractFile');
 
     commit('changeState', {
       field: 'gaugeContract',

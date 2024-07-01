@@ -16,24 +16,17 @@ export const getV3Proportion = (
   tickRange: string[],
   inputSwapTokens: ISwapData[],
   zapContract: any,
-) => {
-  console.log(tickRange, '__Range');
-  console.log(poolAddress, '__poolAddress');
-  console.log(inputSwapTokens, '__inputSwapTokens');
-  console.log(zapContract, '__zapContract');
-  return zapContract
-    .getProportionForZap(poolAddress, tickRange, inputSwapTokens)
-    .then((data: any) => data)
-    .catch((e: any) => {
-      console.error('Error get proportion for V3', e);
-    });
-};
+) => zapContract
+  .getProportionForZap(poolAddress, tickRange, inputSwapTokens)
+  .then((data: any) => data)
+  .catch((e: any) => {
+    console.error('Error get proportion for V3', e);
+  });
 
 export const getProportion = (
   poolAddress: string,
   zapPool: any,
   zapContract: any,
-  v3Data?: any,
 ) => {
   const poolInfo = poolsInfoMap[poolAddress];
   if (!poolInfo) {
@@ -45,22 +38,6 @@ export const getProportion = (
   }
 
   const { gauge } = poolInfo;
-
-  if (zapPool.poolVersion === 'v3') {
-    const rangeData = v3Data.range;
-    const ticks = v3Data?.isStable ? v3Data.ticks : '0';
-    console.log({
-      pair: zapPool.address, priceRange: rangeData, amountsOut: ['0', '0'], tickDelta: ticks,
-    }, '__PARAMS');
-    return zapContract
-      .getProportion({
-        pair: zapPool.address, priceRange: rangeData, amountsOut: ['0', '0'], tickDelta: ticks,
-      })
-      .then((data: any) => data)
-      .catch((e: any) => {
-        console.error('Error get proportion for V3', e);
-      });
-  }
 
   if (zapPool.data.platform[0] === 'Baseswap') {
     return zapContract
