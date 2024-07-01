@@ -202,6 +202,9 @@ export default {
 .modal__body {
   @media (min-width: 1024px) {
     max-height: 60vh;
+    &.success-modal {
+    max-height: none;
+  }
   }
 }
 
@@ -221,6 +224,9 @@ export default {
 .modal__body {
   max-height: 80vh;
   overflow-y: auto;
+  &.success-modal {
+    max-height: none;
+  }
   &.v3 {
     max-height: 90vh;
     [data-theme="dark"] & {

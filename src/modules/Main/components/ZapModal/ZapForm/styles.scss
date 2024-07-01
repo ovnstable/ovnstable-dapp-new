@@ -426,25 +426,17 @@
       display: flex;
       flex-direction: column;
       gap: 8px;
+      justify-content: space-between;
       .zapin-block__wrapper {
         display: flex;
         flex-direction: column;
-        flex: 1;
-        .mb-4 .mt-1 {
-          flex: 1;
-        }
         .zapin-block__swap-wrapper {
           display: flex;
           flex-direction: column;
           justify-content: space-between;
-          flex: 1;
           gap: 10px;
         }
-        .input-swap-container {
-          flex: 1;
-        }
         .out-swap-container {
-          flex: 1;
           display: flex;
           flex-direction: column;
           box-sizing: border-box;
@@ -496,4 +488,42 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+// Fresh adaptive
+.zapin-block__header-container {
+  display: none;
+}
+@media only screen and (max-width: 1200px) {
+  .swap-container {
+    padding-top: 40px;
+  }
+  .zapin-block__header-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    .zapin-block__header {
+      background-color: transparent;
+      color: var(--color-1);
+      font-size: 24px;
+    }
+    svg {
+      cursor: pointer;
+      &:hover {
+        fill: #0497EC;
+        transform: scale(1.2);
+      }
+    }
+  }
+  .zapin-block {
+    .zapin-block__row {
+      flex-direction: column;
+      .zapin-v3, .zapin-block__content {
+        display: none;
+        &.mobile-active {
+          display: flex;
+        }
+      }
+    }
+  }
 }

@@ -12,198 +12,191 @@
       </div>
     </div>
     <div
+      v-else-if="!zapsLoaded"
+      class="loader-container"
+    >
+      <Spinner />
+    </div>
+    <div
       v-else
       class="swap-container"
     >
-      <div
-        v-if="!isTokensLoadedAndFiltered"
-        class="loader-container"
-      >
-        <Spinner />
-      </div>
-
-      <template v-else>
-        <div :class="['zapin-block', { v3: zapPool?.poolVersion === 'v3' }, { v2: zapPool?.poolVersion === 'v2' }]">
-          <!-- <div class="zapin-block__header-container">
-            <div class="zapin-block__header">
-              ZAP IN {{ zapPool?.poolVersion?.toUpperCase() }}
-            </div>
-          </div> -->
-          <div class="zapin-block__row">
-            <div class="zapin-block__content">
-              <div class="zapin-block__wrapper">
-                <div class="mb-4 mt-1">
-                  <h2 v-if="zapPool?.poolVersion === 'v3'">
-                    Pool you choose
-                  </h2>
-                  <PoolLabel
-                    :pool="zapPool"
-                    class="pool-info"
-                  />
-                </div>
-                <div class="zapin-block__swap-wrapper">
-                  <div class="input-swap-container">
-                    <div class="swap-form__body-block">
-                      <div class="swap-form__body-block__title">
-                        <h3>
-                          You send
-                        </h3>
-                        <div
-                          v-if="inputTokensWithSelectedTokensCount"
-                          class="swap-form__body-block__inputs-max"
-                          @click="maxAllMethod"
-                          @keypress="maxAllMethod"
-                        >
-                          Max all
-                        </div>
-                      </div>
-                      <TransitionGroup
-                        name="staggered-fade"
-                        tag="div"
-                        :class="{ 'swap-form__body-block__inputs': true, 'block-inputs--scroll': outputTokens?.length > 3 }"
-                        :css="false"
-                        @before-enter="beforeEnterList"
-                        @enter="onEnterList"
-                        @onLeave="onLeaveList"
-                      >
-                        <div
-                          v-for="token in inputTokens"
-                          :key="token.id"
-                          :data-index="token.id"
-                          class="swap-form__body-block__inputs-item"
-                        >
-                          <TokenForm
-                            :token-info="token"
-                            :is-token-removable="isInputTokensRemovable"
-                            :is-input-token="true"
-                            :disabled="false"
-                            :balances-loading="isBalancesLoading"
-                            @select-token="selectFormToken"
-                            @remove-token="removeInputToken"
-                            @update-token="updateTokenValueMethod"
-                          />
-                        </div>
-                        <div
-                          v-if="isInputTokensAddAvailable"
-                          class="swap-form__body-block__inputs-add"
-                          @click="addNewInputToken"
-                          @keypress="addNewInputToken"
-                        >
-                          +
-                        </div>
-                      </TransitionGroup>
-                    </div>
-                  </div>
-                  <div class="swap-form__body-arrow-conatiner">
-                    <div
-                      class="swap-form__body-arrow"
-                    >
-                      <BaseIcon
-                        name="ArrowDown"
-                      />
-                    </div>
-                  </div>
-
-                  <div class="out-swap-container pt-5">
-                    <div
-                      v-for="token in (outputTokens as any)"
-                      :key="token.id"
-                      class="input-component-container"
-                    >
-                      <TokenForm
-                        :token-info="token"
-                        :is-token-removable="isOutputTokensRemovable"
-                        :is-input-token="false"
-                        :disabled="true"
-                        :balances-loading="isBalancesLoading"
-                        @select-token="selectOutputToken"
-                        @remove-token="removeOutputToken"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div v-if="sumOfAllSelectedTokensInUsd && ifMoreThanOneSelectedTokensAdded"
-                   class="transaction-info-container"
-              >
-                  <div class="transaction-info-body">
-                    <div
-                      class="zap-row"
-                    >
-                      <div class="transaction-info-title">Slippage</div>
-                      <div class="transaction-info">
-                        {{ slippagePercent * 1 }}%
-                        <span class="transaction-info-additional">
-                          ({{ formatMoney(getSlippageAmount, 3) }})$
-                        </span>
-                      </div>
-                    </div>
-
-                    <div
-                      class="zap-row"
-                      v-if="selectedInputTokens?.length > 1"
-                    >
-                      <div class="transaction-info-title">Multi-swap Odos fee</div>
-                      <div>
-                      <!-- <Tooltip
-                      text="This fee is charged by Odos for using multi-input/multi-output"
-                    /> -->
-                      </div>
-                      <div class="transaction-info">
-                        {{ multiSwapOdosFeePercent * 1 }}%
-                        <span class="transaction-info-additional">
-                          ({{ formatMoney(getOdosFee, 3) }})$
-                        </span>
-                      </div>
-                    </div>
-
-                    <div
-                      class="zap-row"
-                    >
-                      <div class="transaction-info-title">Single-swap Odos fee</div>
-                      <div>
-                      <!-- <Tooltip text="Single-input/output swaps are free" /> -->
-                      </div>
-                      <div class="transaction-info">
-                        0.00% <span class="transaction-info-additional">(0)$</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-              <div>
-                <SwapSlippageSettings
-                  :selected-input-tokens="selectedInputTokens"
-                  :selected-output-tokens="selectedOutputTokens"
-                  :zap-pool-data="zapPool"
-                  @change-slippage="handleCurrentSlippageChanged"
-                />
-              </div>
-            </div>
-            <div
-              v-if="zapPool?.poolVersion === 'v3' && !zapContract && !zapPool"
-              class="zapin-block__v3-spin"
-            >
-              <Spinner />
-            </div>
-            <ZapinV3
-              v-if="zapPool?.poolVersion === 'v3' && zapContract && zapPool"
-              :zap-pool="zapPool"
-              :zap-contract="zapContract"
-              @set-range="setRangeV3"
-            />
+      <div :class="['zapin-block', { v3: zapPool?.poolVersion === 'v3' }, { v2: zapPool?.poolVersion === 'v2' }]">
+        <div class="zapin-block__header-container">
+          <BaseIcon name="ArrowLeft"
+          @click="toggleMobileSection"
+          />
+          <div class="zapin-block__header">
+            ZAP IN
           </div>
+          <BaseIcon name="ArrowRight"
+          @click="toggleMobileSection"
+          />
         </div>
-      </template>
-    </div>
+        <div class="zapin-block__row">
+          <div
+          class="zapin-block__content"
+          :class="currentSection === zapMobileSection.TOKEN_FORM && 'mobile-active'"
+          >
+            <div class="zapin-block__wrapper">
+              <h2 v-if="zapPool?.poolVersion === 'v3'">
+                Pool you choose
+              </h2>
+              <PoolLabel
+                :pool="zapPool"
+                class="pool-info"
+              />
+              <div class="zapin-block__swap-wrapper">
+                <div class="input-swap-container">
+                  <div class="swap-form__body-block">
+                    <div class="swap-form__body-block__title">
+                      <h3>
+                        You send
+                      </h3>
+                      <div
+                        v-if="inputTokensWithSelectedTokensCount"
+                        class="swap-form__body-block__inputs-max"
+                        @click="maxAllMethod"
+                        @keypress="maxAllMethod"
+                      >
+                        Max all
+                      </div>
+                    </div>
+                    <TransitionGroup
+                      name="staggered-fade"
+                      tag="div"
+                      :class="{ 'swap-form__body-block__inputs': true, 'block-inputs--scroll': outputTokens?.length > 3 }"
+                      :css="false"
+                      @before-enter="beforeEnterList"
+                      @enter="onEnterList"
+                      @on-leave="onLeaveList"
+                    >
+                      <div
+                        v-for="token in inputTokens"
+                        :key="token.id"
+                        :data-index="token.id"
+                        class="swap-form__body-block__inputs-item"
+                      >
+                        <TokenForm
+                          :token-info="token"
+                          :is-token-removable="isInputTokensRemovable"
+                          :is-input-token="true"
+                          :disabled="false"
+                          :balances-loading="isBalancesLoading"
+                          @select-token="selectFormToken"
+                          @remove-token="removeInputToken"
+                          @update-token="updateTokenValueMethod"
+                        />
+                      </div>
+                      <div
+                        v-if="isInputTokensAddAvailable"
+                        class="swap-form__body-block__inputs-add"
+                        @click="addNewInputToken"
+                        @keypress="addNewInputToken"
+                      >
+                        +
+                      </div>
+                    </TransitionGroup>
+                  </div>
+                </div>
+                <div class="swap-form__body-arrow-conatiner">
+                  <div
+                    class="swap-form__body-arrow"
+                  >
+                    <BaseIcon
+                      name="ArrowDown"
+                    />
+                  </div>
+                </div>
 
-    <div>
-      <div
-        v-if="!account"
-        class="swap-button-container"
-      >
-      <ButtonComponent
+                <div class="out-swap-container pt-5">
+                  <div
+                    v-for="token in (outputTokens as any)"
+                    :key="token.id"
+                    class="input-component-container"
+                  >
+                    <TokenForm
+                      :token-info="token"
+                      :is-token-removable="isOutputTokensRemovable"
+                      :is-input-token="false"
+                      :disabled="true"
+                      :balances-loading="isBalancesLoading"
+                      @select-token="selectOutputToken"
+                      @remove-token="removeOutputToken"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div v-if="sumOfAllSelectedTokensInUsd && ifMoreThanOneSelectedTokensAdded"
+                  class="transaction-info-container"
+            >
+                <div class="transaction-info-body">
+                  <div
+                    class="zap-row"
+                  >
+                    <div class="transaction-info-title">
+                      Slippage
+                    </div>
+                    <div class="transaction-info">
+                      {{ slippagePercent * 1 }}%
+                      <span class="transaction-info-additional">
+                        ({{ formatMoney(getSlippageAmount, 3) }})$
+                      </span>
+                    </div>
+                  </div>
+
+                  <div
+                    v-if="selectedInputTokens?.length > 1"
+                    class="zap-row"
+                  >
+                    <div class="transaction-info-title">
+                      Multi-swap Odos fee
+                    </div>
+                    <div class="transaction-info">
+                      {{ multiSwapOdosFeePercent * 1 }}%
+                      <span class="transaction-info-additional">
+                        ({{ formatMoney(getOdosFee, 3) }})$
+                      </span>
+                    </div>
+                  </div>
+
+                  <div
+                    class="zap-row"
+                  >
+                    <div class="transaction-info-title">
+                      Single-swap Odos fee
+                    </div>
+                    <div class="transaction-info">
+                      0.00% <span class="transaction-info-additional">(0)$</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            <div>
+              <SwapSlippageSettings
+                :selected-input-tokens="selectedInputTokens"
+                :selected-output-tokens="selectedOutputTokens"
+                :zap-pool-data="zapPool"
+                @change-slippage="handleCurrentSlippageChanged"
+              />
+            </div>
+          </div>
+          <ZapinV3
+            v-if="zapPool?.poolVersion === 'v3'"
+            :zap-pool="zapPool"
+            :zap-contract="zapContract"
+            :class="currentSection === zapMobileSection.SET_PRICE_RANGE && 'mobile-active'"
+            @set-range="setRangeV3"
+          />
+        </div>
+      </div>
+      <div class="swap-container__footer">
+        <ButtonComponent
+          v-if="!account"
+          class="swap-button-container"
           btn-size="large"
           btn-styles="primary"
           full
@@ -212,85 +205,90 @@
         >
         CONNECT WALLET
         </ButtonComponent>
-        </div>
-      <div
-        v-else
-        class="swap-button-container"
-      >
-        <ButtonComponent
-          btn-size="large"
-          full
-          v-if="isDisableButton"
-          btn-styles="primary"
-          disabled
-        >
-          {{ disableButtonMessage }}
-        </ButtonComponent>
-        <ButtonComponent
-          btn-size="large"
-          btn-styles="primary"
-          full
-          v-else-if="isAnyInputsNeedApprove"
-          :loading="approvingPending"
-          @click="approveTrigger(firstInputInQueueForToApprove)"
-          @keypress="approveTrigger(firstInputInQueueForToApprove)"
-        >
-          APPROVE
-          {{ firstInputInQueueForToApprove.selectedToken?.symbol }}
-        </ButtonComponent>
-        <ButtonComponent
-          btn-size="large"
-          btn-styles="primary"
-          full
-          v-else-if="additionalSwapStepType === 'APPROVE'"
-          :loading="approvingPending"
-          @click="
-            toApproveAndDepositSteps(lastZapResponseData, lastPoolInfoData)
-          "
-          @keypress="
-            toApproveAndDepositSteps(lastZapResponseData, lastPoolInfoData)
-          "
-        >
-          APPROVE GAUGE
-        </ButtonComponent>
-        <ButtonComponent
-          btn-size="large"
-          btn-styles="primary"
-          full
-          v-else-if="additionalSwapStepType === 'DEPOSIT'"
-          :loading="isSwapLoading"
-          @click="
-            depositGauge(
-              lastPutIntoPoolEvent,
-              lastReturnedToUserEvent,
-              lastPoolInfoData,
-              lastNftTokenId,
-            )
-          "
-          @keypress="
-            depositGauge(
-              lastPutIntoPoolEvent,
-              lastReturnedToUserEvent,
-              lastPoolInfoData,
-              lastNftTokenId,
-            )
-          "
-        >
-          STAKE LP
-        </ButtonComponent>
-        <ButtonComponent
-          btn-size="large"
-          btn-styles="primary"
-          full
+        <div
           v-else
-          @click="stakeTrigger"
-          @keypress="stakeTrigger"
+          class="swap-button-container"
         >
-          {{ btnName }}
-
-        </ButtonComponent>
+          <ButtonComponent
+            v-if="isDisableButton"
+            btn-size="large"
+            full
+            btn-styles="primary"
+            disabled
+          >
+            {{ disableButtonMessage }}
+          </ButtonComponent>
+          <ButtonComponent
+            v-else-if="isAnyInputsNeedApprove"
+            btn-size="large"
+            btn-styles="primary"
+            full
+            :loading="approvingPending"
+            @click="approveTrigger(firstInputInQueueForToApprove)"
+            @keypress="approveTrigger(firstInputInQueueForToApprove)"
+          >
+            APPROVE
+            {{ firstInputInQueueForToApprove.selectedToken?.symbol }}
+          </ButtonComponent>
+          <ButtonComponent
+            v-else-if="additionalSwapStepType === 'APPROVE'"
+            btn-size="large"
+            btn-styles="primary"
+            full
+            :loading="approvingPending"
+            @click="
+              toApproveAndDepositSteps(lastZapResponseData, lastPoolInfoData)
+            "
+            @keypress="
+              toApproveAndDepositSteps(lastZapResponseData, lastPoolInfoData)
+            "
+          >
+            APPROVE GAUGE
+          </ButtonComponent>
+          <ButtonComponent
+            v-else-if="additionalSwapStepType === 'DEPOSIT'"
+            btn-size="large"
+            btn-styles="primary"
+            full
+            :loading="isSwapLoading"
+            @click="
+              depositGauge(
+                lastPutIntoPoolEvent,
+                lastReturnedToUserEvent,
+                lastPoolInfoData,
+                lastNftTokenId,
+              )
+            "
+            @keypress="
+              depositGauge(
+                lastPutIntoPoolEvent,
+                lastReturnedToUserEvent,
+                lastPoolInfoData,
+                lastNftTokenId,
+              )
+            "
+          >
+            STAKE LP
+          </ButtonComponent>
+          <ButtonComponent
+            v-else
+            btn-size="large"
+            btn-styles="primary"
+            full
+            @click="stakeTrigger"
+            @keypress="stakeTrigger"
+          >
+            {{ btnName }}
+          </ButtonComponent>
+        </div>
+        <ZapInStepsRow
+          v-if="zapPool.chain === networkId && isTokensLoadedAndFiltered"
+          class="zapin__modal-steps"
+          :version="zapInType"
+          :type="currentZapPlatformContractType"
+          :current-stage="currentStage"
+        />
       </div>
-
     </div>
 
     <SelectTokensModal
@@ -301,20 +299,12 @@
       :selected-tokens="inputTokens"
       :balances-loading="isBalancesLoading"
       :user-account="account"
-      removeNative
+      remove-native
       @set-show="showSelectTokensModals"
       @add-token-to-list="addSelectedTokenToList"
       @remove-token-from-list="removeSelectedTokenFromList"
     />
-    <ZapInStepsRow
-      v-if="zapPool.chain === networkId && isTokensLoadedAndFiltered"
-      class="zapin__modal-steps"
-      :version="zapInType"
-      :type="currentZapPlatformContractType"
-      :current-stage="currentStage"
-    />
-
-  </div>
+</div>
 </template>
 <!-- eslint-disable no-restricted-syntax -->
 <!-- eslint-disable no-continue -->
@@ -331,8 +321,8 @@ import {
   maxAll,
   getNewOutputToken,
   getNewInputToken,
-  // WHITE_LIST_ODOS,
   getTokenByAddress,
+  WHITE_LIST_ODOS,
 } from '@/store/helpers/index.ts';
 import {
   getProportion,
@@ -340,6 +330,7 @@ import {
   depositAllAtGauge,
   checkApproveForGauge,
   approveGaugeForStake,
+  getV3Proportion,
 } from '@/store/views/main/zapin/helpers.ts';
 import odosApiService from '@/services/odos-api-service.ts';
 
@@ -352,13 +343,21 @@ import TokenForm from '@/modules/Main/components/ZapModal/TokenForm.vue';
 import PoolLabel from '@/modules/Main/components/ZapModal/PoolLabel.vue';
 import SelectTokensModal from '@/components/TokensModal/Index.vue';
 import SwapSlippageSettings from '@/modules/Main/components/Common/SwapSlippageSettings.vue';
-import ZapInStepsRow, { zapInStep } from '@/components/StepsRow/ZapinRow.vue';
+import ZapInStepsRow from '@/components/StepsRow/ZapinRow/ZapinRow.vue';
 import ZapinV3 from '@/modules/Main/components/ZapModal/ZapForm/ZapinV3.vue';
 import { poolsInfoMap, poolTokensForZapMap } from '@/store/views/main/zapin/mocks.ts';
 import BN from 'bignumber.js';
 import { approveToken, getAllowanceValue } from '@/utils/contractApprove.ts';
 import { onLeaveList, onEnterList, beforeEnterList } from '@/utils/animations.ts';
+import { zapInStep } from '@/store/views/main/zapin/index.ts';
 import { parseLogs } from './helpers.ts';
+
+enum zapMobileSection {
+  'TOKEN_FORM',
+  'SET_PRICE_RANGE'
+}
+
+const MAX_INPUT_TOKENS = 3;
 
 export default {
   name: 'ZapForm',
@@ -392,15 +391,13 @@ export default {
       approvingPending: false,
       inputTokens: [] as any[],
       outputTokens: [] as any[],
-      maxInputTokens: 6,
-      maxOutputTokens: 6,
+      maxInputTokens: MAX_INPUT_TOKENS,
       v3Range: null as any,
       isShowSelectTokensModal: false,
       swapMethod: 'BUY', // BUY (secondTokens) / SELL (secondTokens)
       selectTokenType: 'OVERNIGHT', // OVERNIGHT / ALL
 
       isSwapLoading: false,
-      isSumulateSwapLoading: false,
       slippagePercent: 0.5,
       multiSwapOdosFeePercent: 0.01,
 
@@ -426,19 +423,15 @@ export default {
         // Convex: ["Curve Crypto Registry", "Curve Factory", "Curve Registry"]
       } as any,
       currentStage: zapInStep.START,
+      // Mobile section switch
+      zapMobileSection,
+      currentSection: zapMobileSection.TOKEN_FORM,
     };
-  },
-  mounted() {
-    if (this.zapPool.chain !== this.networkId) this.currentStage = zapInStep.START;
-
-    this.firstInit();
   },
   computed: {
     ...mapState('odosData', [
       'isTokensLoadedAndFiltered',
-      'tokenSeparationScheme',
       'tokensContractMap',
-      'isShowDecreaseAllowance',
       'additionalSwapStepType',
       'lastZapResponseData',
       'lastPoolInfoData',
@@ -462,11 +455,15 @@ export default {
       'isAllDataLoaded',
       'isAvailableOnNetwork',
     ]),
-    ...mapGetters('network', ['getParams', 'networkId']),
+
+    ...mapGetters('zapinData', [
+      'isZapLoaded',
+    ]),
+    ...mapGetters('network', ['networkId']),
     ...mapGetters('accountData', ['account']),
 
-    isVolatilePool() {
-      return !this.v3Range?.isStable;
+    zapsLoaded() {
+      return this.isTokensLoadedAndFiltered && this.zapPool && this.zapContract && this.isZapLoaded;
     },
     getOdosFee() {
       return new BN(this.sumOfAllSelectedTokensInUsd)
@@ -488,15 +485,6 @@ export default {
         selected: selectedAdd.includes(item.address?.toLowerCase()) ? item?.selected : false,
       }));
     },
-
-    noneOvnTokens() {
-      return this.allTokensList.filter((item: any) => item.symbol !== 'OVN');
-    },
-
-    ovnTokens() {
-      return this.allTokensList.filter((item: any) => item.symbol === 'OVN');
-    },
-
     isInputTokensRemovable() {
       return this.inputTokens.length > 1;
     },
@@ -504,11 +492,6 @@ export default {
     isOutputTokensRemovable() {
       return false;
     },
-
-    isTokenWithoutSlider() {
-      return this.outputTokens.length <= 1;
-    },
-
     isInputTokensAddAvailable() {
       return (
         this.inputTokens.length < this.maxInputTokens
@@ -516,19 +499,8 @@ export default {
       );
     },
 
-    isOutputTokensAddAvailable() {
-      return (
-        this.outputTokens.length < this.maxOutputTokens
-        && this.outputTokensWithoutSelectedTokensCount === 0
-      );
-    },
-
     inputTokensWithoutSelectedTokensCount() {
       return this.inputTokens.filter((item: any) => !item.selectedToken).length;
-    },
-
-    outputTokensWithoutSelectedTokensCount() {
-      return this.outputTokens.filter((item: any) => !item.selectedToken).length;
     },
 
     inputTokensWithSelectedTokensCount() {
@@ -550,35 +522,13 @@ export default {
       return this.outputTokens.filter((item: any) => item.selectedToken);
     },
 
-    noneOvnInputTokens() {
-      return this.inputTokens.filter(
-        (item: any) => item.selectedToken && item.selectedToken.symbol !== 'OVN',
-      );
-    },
-
-    noneOvnOutputTokens() {
-      return this.outputTokens.filter(
-        (item: any) => item.selectedToken && item.selectedToken.symbol !== 'OVN',
-      );
-    },
-
     selectedOvnInputTokens() {
       return this.selectedInputTokens.filter(
         (item: any) => item.selectedToken.symbol === 'OVN',
       );
     },
-    selectedOvnOutputTokens() {
-      return this.selectedOutputTokens.filter(
-        (item: any) => item.selectedToken.symbol === 'OVN',
-      );
-    },
     selectedNoneOvnInputTokens() {
       return this.selectedInputTokens.filter(
-        (item: any) => item.selectedToken.symbol !== 'OVN',
-      );
-    },
-    selectedNoneOvnOutputTokens() {
-      return this.selectedOutputTokens.filter(
         (item: any) => item.selectedToken.symbol !== 'OVN',
       );
     },
@@ -718,6 +668,12 @@ export default {
     },
   },
   watch: {
+    currentStage(stage: zapInStep) {
+      this.$store.commit('zapinData/changeState', { field: 'currentStage', val: stage });
+      if (this.currentStage !== zapInStep.START) {
+        this.$store.commit('zapinData/changeState', { field: 'selectedTokens', val: this.inputTokens });
+      }
+    },
     sumOfAllSelectedTokensInUsd() {
       this.recalculateOutputTokensSum();
     },
@@ -756,6 +712,11 @@ export default {
       // this.updateButtonDisabledFunc(val);
     },
   },
+  mounted() {
+    if (this.zapPool.chain !== this.networkId) this.currentStage = zapInStep.START;
+
+    this.firstInit();
+  },
   created() {
     if (this.zapPool.chain !== this.networkId) return;
 
@@ -768,7 +729,6 @@ export default {
   methods: {
     ...mapActions('swapModal', ['showSwapModal', 'showMintView']),
     ...mapActions('odosData', [
-      'loadChains',
       'loadTokens',
       'initContractData',
       'loadBalances',
@@ -778,7 +738,7 @@ export default {
     ]),
     ...mapActions('accountData', ['refreshBalance']),
     ...mapActions('zapinData', ['loadZapContract']),
-    ...mapActions('errorModal', ['showErrorModal', 'showErrorModalWithMsg']),
+    ...mapActions('errorModal', ['showErrorModalWithMsg']),
     ...mapActions('waitingModal', ['showWaitingModal', 'closeWaitingModal']),
     ...mapActions('walletAction', ['connectWallet']),
 
@@ -788,6 +748,12 @@ export default {
     onEnterList,
     formatMoney,
 
+    // Mobile section switcher
+    toggleMobileSection() {
+      // eslint-disable-next-line operator-assignment, no-bitwise
+      this.currentSection = zapMobileSection.SET_PRICE_RANGE
+        ^ zapMobileSection.TOKEN_FORM ^ this.currentSection;
+    },
     setRangeV3(v3Data: any) {
       this.v3Range = v3Data;
       this.updateQuotaInfo();
@@ -809,7 +775,8 @@ export default {
           tokenData.value,
           this.checkApproveForToken,
           new BN(tokenData.selectedToken.balanceData.originalBalance)
-            .minus(10).toString(),
+            .minus(10)
+            .toFixed(),
         );
       } else {
         newToken = updateTokenValue(
@@ -875,12 +842,6 @@ export default {
       bus.on(() => {
         this.finishTransaction();
       });
-    },
-    addOvnTokenToInput() {
-      if (!this.ovnTokens || !this.ovnTokens.length) return;
-      const ovnToken = this.ovnTokens[0];
-      ovnToken.selected = true;
-      this.addSelectedTokenToInputList(ovnToken, true);
     },
     addDefaultPoolToken() {
       const poolTokens = poolTokensForZapMap[this.zapPool.address];
@@ -972,22 +933,6 @@ export default {
           this.showErrorModalWithMsg({ errorType: 'odos', errorMsg: e });
         });
     },
-    changeSwap() {
-      if (this.swapMethod === 'BUY') {
-        this.setSwapMethod('SELL');
-        this.clearAndInitForm();
-        return;
-      }
-
-      if (this.swapMethod === 'SELL') {
-        this.setSwapMethod('BUY');
-        this.clearAndInitForm();
-        return;
-      }
-
-      console.error('Change swap method not found.', this.swapMethod);
-    },
-
     handleCurrentSlippageChanged(newSlippage: number) {
       this.slippagePercent = newSlippage;
     },
@@ -1061,19 +1006,22 @@ export default {
       const outputToken0Price = this.selectedOutputTokens[0].selectedToken.price;
       const outputToken1Price = this.selectedOutputTokens[1].selectedToken.price;
 
-      const reserves = await getProportion(
-        this.zapPool.address,
-        this.zapPool,
-        this.zapContract,
-        this.v3Range,
-      );
+      let reserves = null;
+      let sumReserves = '0';
 
-      const sumReserves = (
-        new BN(reserves.token0Amount).times(outputToken0Price)
-      )
-        .plus(
-          new BN(reserves.token1Amount).times(outputToken1Price),
-        ).toFixed(0);
+      if (this.zapPool?.poolVersion === 'v2') {
+        reserves = await getProportion(
+          this.zapPool.address,
+          this.zapPool,
+          this.zapContract,
+        );
+        sumReserves = (
+          new BN(reserves.token0Amount).times(outputToken0Price)
+        )
+          .plus(
+            new BN(reserves.token1Amount).times(outputToken1Price),
+          ).toFixed(0);
+      }
 
       const userInputTokens = this.selectedInputTokens;
       const poolOutputTokens = this.selectedOutputTokens;
@@ -1155,26 +1103,67 @@ export default {
         outputTokensAddresses: [...outputAddresses],
         outputTokensAmounts: [...outputAmounts],
         outputTokensPrices: [...outputPrices],
-        proportion0: new BN(reserves[0])
-          .times(outputPrices[0]).div(sumReserves).toFixed(),
       }), '__PARAMS');
-      const proportions = calculateProportionForPool({
-        inputTokensDecimals: [...inputDecimals],
-        inputTokensAddresses: [...inputAddresses],
-        inputTokensAmounts: [...inputAmounts],
-        inputTokensPrices: [...inputPrices],
-        outputTokensDecimals: [...outputDecimals],
-        outputTokensAddresses: [...outputAddresses],
-        outputTokensAmounts: [...outputAmounts],
-        outputTokensPrices: [...outputPrices],
-        proportion0: new BN(reserves[0])
-          .times(outputPrices[0]).div(sumReserves).toFixed(),
-      });
+
+      console.log(userInputTokens, '__userInputTokens');
+      let proportions: any = {
+        inputTokens: [],
+        outputTokens: [],
+        amountToken0Out: '0',
+        amountToken1Out: '0',
+      };
+
+      if (this.zapPool?.poolVersion === 'v2') {
+        proportions = calculateProportionForPool({
+          inputTokensDecimals: [...inputDecimals],
+          inputTokensAddresses: [...inputAddresses],
+          inputTokensAmounts: [...inputAmounts],
+          inputTokensPrices: [...inputPrices],
+          outputTokensDecimals: [...outputDecimals],
+          outputTokensAddresses: [...outputAddresses],
+          outputTokensAmounts: [...outputAmounts],
+          outputTokensPrices: [...outputPrices],
+          proportion0: new BN(reserves[0])
+            .times(outputPrices[0])
+            .div(sumReserves)
+            .toFixed(),
+        });
+      }
+
+      if (this.zapPool?.poolVersion === 'v3') {
+        const resp = await getV3Proportion(
+          this.zapPool.address,
+          this.v3Range.ticks,
+          userInputTokens.map((_) => ({
+            tokenAddress: _?.selectedToken?.address,
+            amount: _?.contractValue,
+            price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
+          })),
+          this.zapContract,
+        );
+
+        if (!resp) return;
+
+        proportions = {
+          inputTokens: userInputTokens.map((_: any, key: number) => ({
+            tokenAddress: _?.selectedToken?.address,
+            amount: resp[1][key]?.toString(),
+          })).filter((_) => new BN(_.amount).gt(0)),
+          outputTokens: resp[2].map((_: any, key: number) => ({
+            tokenAddress: _,
+            proportion: new BN(resp[3][key]?.toString()).div(10 ** 6),
+          })),
+          amountToken0Out: resp[4][0]?.toString(),
+          amountToken1Out: resp[4][1]?.toString(),
+        };
+
+        console.log(resp, '__resp');
+      }
 
       console.log(proportions, '__proportions');
 
       proportions.outputTokens = proportions.outputTokens.filter(
-        (item: any) => item.proportion > 0,
+        (item: any) => new BN(item.proportion).gt(0),
       );
 
       const request = {
@@ -1201,7 +1190,7 @@ export default {
         return;
       }
 
-      // const whiteList = WHITE_LIST_ODOS[request.chainId as keyof typeof WHITE_LIST_ODOS];
+      const whiteList = WHITE_LIST_ODOS[request.chainId as keyof typeof WHITE_LIST_ODOS];
       const requestData = {
         chainId: request.chainId,
         inputTokens: request.inputTokens,
@@ -1212,7 +1201,7 @@ export default {
         ),
         slippageLimitPercent: request.slippageLimitPercent,
         sourceBlacklist: this.getSourceLiquidityBlackList(),
-        sourceWhitelist: [],
+        sourceWhitelist: whiteList ?? [],
         simulate: false,
         pathViz: false,
         disableRFQs: false,
@@ -1267,9 +1256,6 @@ export default {
       }
 
       return sourceBlacklist;
-    },
-    decodeEventData(eventSignature: string[], eventData: string) {
-      return new ethers.AbiCoder().decode(eventSignature, eventData);
     },
     commitEventToStore(field: string, value: any) {
       this.$store.commit('odosData/changeState', {
@@ -1499,14 +1485,16 @@ export default {
         });
     },
     clearZapData() {
-      // this.$store.commit('odosData/changeState', {
-      //   field: 'lastPutIntoPoolEvent',
-      //   val: null,
-      // });
-      // this.$store.commit('odosData/changeState', {
-      //   field: 'lastReturnedToUserEvent',
-      //   val: null,
-      // });if (eventName === 'InputTokens') {}
+      this.inputTokens = [];
+      this.outputTokens = [];
+      this.$store.commit('odosData/changeState', {
+        field: 'lastPutIntoPoolEvent',
+        val: null,
+      });
+      this.$store.commit('odosData/changeState', {
+        field: 'lastReturnedToUserEvent',
+        val: null,
+      });
       this.$store.commit('odosData/changeState', {
         field: 'lastZapResponseData',
         val: null,
@@ -1606,9 +1594,8 @@ export default {
       if (this.zapPool.poolVersion === 'v3') {
         gaugeData = {
           pair: this.zapPool.address,
-          priceRange: this.v3Range.range,
+          tickRange: this.v3Range.ticks,
           amountsOut: [proportions.amountToken0Out, proportions.amountToken1Out],
-          tickDelta: this.v3Range.isStable ? this.v3Range.ticks : '0',
         };
       }
 
@@ -1626,6 +1613,7 @@ export default {
       console.log(txData, 'swapdata');
       console.log(gaugeData, 'gaugeData');
       console.log((params), 'params');
+
       try {
         const tx = await this.zapContract.zapIn(txData, gaugeData, params);
         const receipt = await tx.wait();
@@ -1666,7 +1654,6 @@ export default {
 
         this.isSwapLoading = false;
         this.closeWaitingModal();
-        this.$emit('close-form');
         this.showErrorModalWithMsg({ errorType: 'zap', errorMsg: e });
       }
     },
@@ -1680,31 +1667,54 @@ export default {
         val: null,
       });
     },
-    quoteRequest(requestData: any) {
-      return odosApiService
-        .quoteRequest(requestData)
-        .then((data) => {
-          this.$store.commit('odosData/changeState', {
-            field: 'quotaResponseInfo',
-            val: data,
-          });
-          return data;
-        })
-        .catch((e) => {
-          console.log('Quota request error: ', e);
-        });
-    },
     async recalculateProportion() {
-      console.log(this.v3Range, '__thisv3Range');
-      const reserves = await getProportion(
-        this.zapPool.address,
-        this.zapPool,
-        this.zapContract,
-        this.v3Range,
-      );
+      let reserves = null;
 
       const outputToken0Price = this.selectedOutputTokens[0].selectedToken.price;
       const outputToken1Price = this.selectedOutputTokens[1].selectedToken.price;
+
+      const emptyVals = this.inputTokens.map((_) => {
+        if (new BN(_?.value).eq(0) || !_?.value) return null;
+
+        return _;
+      });
+
+      if (emptyVals.every((_) => !_)) return;
+
+      if (this.zapPool?.poolVersion === 'v3') {
+        const resp = await getV3Proportion(
+          this.zapPool.address,
+          this.v3Range.ticks,
+          this.selectedInputTokens.map((_) => ({
+            tokenAddress: _?.selectedToken?.address,
+            amount: _?.contractValue,
+            price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
+          })),
+          this.zapContract,
+        );
+
+        if (!resp || resp[5]?.length === 0) return;
+
+        resp[5]?.forEach((_: BigInt, key: number) => {
+          const { price } = this.selectedOutputTokens[key].selectedToken;
+          const val = new BN(_?.toString() ?? 0)
+            .div(10 ** 18)
+            .div(price);
+
+          this.selectedOutputTokens[key].value = val.toFixed();
+          this.selectedOutputTokens[key].sum = val.toFixed(5);
+        });
+
+        return;
+      }
+
+      if (this.zapPool?.poolVersion === 'v2') {
+        reserves = await getProportion(
+          this.zapPool.address,
+          this.zapPool,
+          this.zapContract,
+        );
+      }
 
       const sumReserves = (
         new BN(reserves.token0Amount).times(outputToken0Price)
@@ -1722,6 +1732,7 @@ export default {
           .times(Number(outputToken1Price)).div(sumReserves).times(100)
           .toFixed();
 
+      console.log(this.selectedOutputTokens, '__resp1');
       this.recalculateOutputTokensSum();
     },
     getSlippagePercent() {
@@ -1812,66 +1823,6 @@ export default {
       finishTx();
       this.currentStage = zapInStep.DEPOSIT;
     },
-
-    getRequestInputTokens(ignoreNullable: boolean) {
-      const inputTokens = [];
-      for (let i = 0; i < this.selectedInputTokens.length; i++) {
-        const token: any = this.selectedInputTokens[i];
-        const { selectedToken } = token;
-        if (!ignoreNullable && !token.value) {
-          continue;
-        }
-
-        if (token.value > 0) {
-          inputTokens.push({
-            tokenAddress: selectedToken.address,
-            amount: token.contractValue,
-          });
-        }
-      }
-      return inputTokens;
-    },
-    getRequestOutputTokens(ignoreNullable: boolean) {
-      const outputTokens = [];
-      for (let i = 0; i < this.selectedOutputTokens.length; i++) {
-        const token: any = this.selectedOutputTokens[i];
-        const { selectedToken } = token;
-        if (!ignoreNullable && !token.value) {
-          continue;
-        }
-
-        outputTokens.push({
-          tokenAddress: selectedToken.address,
-          proportion: token.value,
-        });
-      }
-      return outputTokens;
-    },
-
-    lockProportion(isLock: boolean, token: any) {
-      if (this.outputTokensWithSelectedTokensCount <= 1 && !isLock) {
-        return;
-      }
-
-      token.locked = isLock;
-    },
-    updateSliderValue(token: any, value: any) {
-      token.value = value;
-
-      // if(!this.isSlidersOutOfLimit()) {
-      token.value = value;
-      this.subtraction(token, 100 - value);
-      this.recalculateOutputTokensSum();
-
-      // this.updateQuotaInfo();
-
-      // if (oldTokenValue > value) {
-      //     this.subTokensProportions(token, 100 - value)
-      // } else {
-      //     this.addTokensProportions(token, 100 - value)
-      // }
-      // }
-    },
     recalculateOutputTokensSum() {
       for (let i = 0; i < this.selectedOutputTokens.length; i++) {
         const token: any = this.selectedOutputTokens[i];
@@ -1887,83 +1838,6 @@ export default {
         };
       }
     },
-    subTokensProportions(currentToken: any, difference: any) {
-      const tokens = this.getActiveTokens(currentToken);
-      if (tokens.length === 0) {
-        return;
-      }
-
-      const proportion = Math.floor(difference / tokens.length);
-      const remains = difference % tokens.length;
-
-      for (let i = 0; i < tokens.length; i++) {
-        const token: any = tokens[i];
-        const tokenValue = token.value - proportion;
-        if (tokenValue <= 0) {
-          token.value = 0;
-          continue;
-        }
-
-        token.value = tokenValue;
-      }
-
-      const lastToken = tokens[0].value;
-      const lastTokenValue = lastToken - remains;
-      if (lastTokenValue <= 0) {
-        lastToken.value = 0;
-      } else {
-        lastToken.value = lastTokenValue;
-      }
-    },
-    addTokensProportions(currentToken: any, difference: any) {
-      const tokens = this.getActiveTokens(currentToken);
-      if (tokens.length === 0) {
-        return;
-      }
-
-      const proportion = Math.floor(difference / tokens.length);
-      const remains = difference % tokens.length;
-
-      for (let i = 0; i < tokens.length; i++) {
-        const token: any = tokens[i];
-        const tokenValue = token.value + proportion;
-        token.value = tokenValue;
-      }
-
-      const lastToken = tokens[0].value;
-      const lastTokenValue = lastToken + remains;
-      lastToken.value = lastTokenValue;
-    },
-    subtraction(token: any, difference: any) {
-      const tokens = this.getActiveTokens(token);
-      if (tokens.length === 0) {
-        return;
-      }
-
-      const proportion = Math.floor(difference / tokens.length);
-      this.calculateProportions(tokens, proportion);
-    },
-    calculateProportions(tokens: any, proportion: any) {
-      tokens.value = proportion;
-      for (let i = 0; i < proportion; i++) {
-        for (let j = 0; j < tokens.length; j++) {
-          const token: any = tokens[j];
-          // token.value++
-          token.value = proportion;
-        }
-      }
-
-      this.recalculateOutputTokensSum();
-    },
-    getOutputsTokensPercentage() {
-      let tokensPercentage = 0;
-      for (const token of this.outputTokens) {
-        tokensPercentage += token.value;
-      }
-
-      return tokensPercentage;
-    },
-
     recalculateOvnTokenByAnotherTotalBalances() {
       if (!this.selectedOvnInputTokens || !this.selectedOvnInputTokens.length) {
         return;
@@ -2010,51 +1884,6 @@ export default {
 
         this.updateTokenState(newToken);
       }, 30);
-    },
-
-    initDefaultTopInputTokensByBalance(tokens: any[]) {
-      if (!tokens || !tokens.length) {
-        return;
-      }
-
-      if (!this.selectedOvnInputTokens || !this.selectedOvnInputTokens.length) {
-        return;
-      }
-
-      const onvToken = this.selectedOvnInputTokens[0];
-      this.clearAllInputSelectedTokens(onvToken);
-      const ovnTokenBalance = onvToken.selectedToken.balanceData.balanceInUsd;
-
-      // find top 5 tokens by balance and order desc
-      let topTokens = tokens
-        .sort((a, b) => b.balanceData.balance - a.balanceData.balance)
-        .slice(0, 5);
-
-      // find all with balance
-      topTokens = topTokens.filter((token: any) => token.balanceData.balance > 0);
-
-      let tokensByBalanceSum = 0;
-      const tokensByBalanceResult = [];
-      for (let i = 0; i < topTokens.length; i++) {
-        const token: any = topTokens[i];
-        if (!token.balanceData.balance) {
-          continue;
-        }
-
-        tokensByBalanceSum += token.balanceData.balanceInUsd;
-        tokensByBalanceResult.push(token);
-        if (tokensByBalanceSum >= ovnTokenBalance) {
-          break;
-        }
-      }
-
-      for (let i = 0; i < tokensByBalanceResult.length; i++) {
-        const token: any = tokensByBalanceResult[i];
-        token.selected = true;
-        this.addSelectedTokenToInputList(token, true);
-      }
-
-      this.recalcualteOvnInputValue();
     },
 
     addSelectedTokenToList(data: any) {
@@ -2160,53 +1989,6 @@ export default {
       this.inputTokens = [];
       this.outputTokens = [];
     },
-    isInputToken(swapMethod: any, selectTokenType: any) {
-      if (swapMethod === 'BUY' && selectTokenType === 'ALL') {
-        return true;
-      }
-
-      if (swapMethod === 'SELL' && selectTokenType === 'OVERNIGHT') {
-        return true;
-      }
-
-      if (swapMethod === 'BUY' && selectTokenType === 'OVERNIGHT') {
-        return false;
-      }
-
-      if (swapMethod === 'SELL' && selectTokenType === 'ALL') {
-        return false;
-      }
-
-      console.error(
-        'Token type not detected by method and selected type.',
-        swapMethod,
-        selectTokenType,
-      );
-      throw Error;
-    },
-    isOutputToken(swapMethod: any, selectTokenType: any) {
-      return !this.isInputToken(swapMethod, selectTokenType);
-    },
-    isSlidersOutOfLimit(additionalPercent: any) {
-      if (!additionalPercent) additionalPercent = 0;
-      return this.getOutputsTokensPercentage() + additionalPercent > 100;
-    },
-    getActiveTokens(currentToken: any) {
-      const sliders = [];
-      // let count = 1
-      for (let i = 0; i < this.outputTokens.length; i++) {
-        const token: any = this.outputTokens[i];
-        if (token.id === currentToken.id) continue;
-
-        if (!token.locked) {
-          // stockIndex.number = count
-          // count++
-          sliders.push(token);
-        }
-      }
-      return sliders;
-    },
-
     showSelectTokensModals(isShow: boolean) {
       this.isShowSelectTokensModal = isShow;
     },
@@ -2229,9 +2011,6 @@ export default {
     openModalWithSelectTokenAndBySwapMethod(tokenType: any) {
       this.setSelectTokenType(tokenType);
       this.showSelectTokensModals(true);
-    },
-    setSwapMethod(method: any) {
-      this.swapMethod = method;
     },
     setSelectTokenType(type: any) {
       this.selectTokenType = type;

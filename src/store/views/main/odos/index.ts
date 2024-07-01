@@ -14,16 +14,13 @@ import BigNumber from 'bignumber.js';
 import { getNetworkParams } from '@/store/web3/network.ts';
 import { buildEvmContract } from '@/utils/contractsMap.ts';
 // import { awaitDelay } from '@/utils/const.ts';
-import { MulticallWrapper } from 'ethers-multicall-provider';
-import { ethers } from 'ethers';
 import { ERC20_ABI } from '@/assets/abi/index.ts';
-import { fixedByPrice } from '@/utils/numbers.ts';
-import { ZERO_ADDRESS } from '@/utils/const.ts';
 import {
   BLAST_TOKENS, LINEA_TOKENS, OP_TOKENS, SFRAX_TOKEN, ZKSYNC_TOKENS
 } from '@/store/views/main/odos/mocks.ts';
 import _ from 'lodash';
-import { succesDataMock, returnedDataMock, allTokens } from './zap_mock_data.ts';
+import type { TTokenBalanceMap, TTokenInfo } from '@/types/common/token';
+// import { succesDataMock, returnedDataMock, allTokens } from './zap_mock_data.ts';
 
 // const KEY = 'REFERRAL_CODE';
 
@@ -77,16 +74,21 @@ export const stateData = {
   lastNftTokenId: null,
   lastZapResponseData: null,
 
+  // Too tied with other events
   lastPutIntoPoolEvent: {},
   lastReturnedToUserEvent: {},
   lastInputTokensEvent: {},
+
+  // Adding new
+  lastParsedPutIntoPoolEvent: {},
+  lastParsedReturnedToUserEvent: {},
+  lastParsedInputTokensEvent: {},
+
   successData: {
     inputTokens: [] as any[],
     outputTokens: [] as any[],
   } as any,
   showSuccessZapin: false,
-
-  zksyncFeeHistory: {} as any,
 
   tokenSeparationScheme: null, // OVERNIGHT_SWAP, POOL_SWAP,
   typeOfPoolScheme: null, // OVN, ALL, null
@@ -345,77 +347,22 @@ const actions = {
 
     commit('changeState', { field: 'tokensContractMap', val: tokensList });
   },
-  initUpdateBalancesInterval({
-    commit, state, dispatch
-  }: any) {
-    commit('changeState', {
-      field: 'updateBalancesIntervalId',
-      val: setInterval(() => {
-        dispatch('loadBalances');
-      }, 30000)
-    });
-  },
 
+  // Logic is removed, method left for compatibility. Todo: remove
   async loadBalances({
-    commit, dispatch, state, getters, rootState
-  }: any, providerInstance: any) {
-    const provider = providerInstance || rootState.web3.evmProvider;
-
-    if (!rootState.accountData.account || !provider) {
-      commit('changeState', { field: 'isBalancesLoading', val: false });
-      return;
-    }
-
-    if (state.isBalancesLoading) return;
-    if (getters.allTokensList.length === 0) return;
-
+    commit, getters, rootGetters
+  }: any) {
+    if (!getters?.allTokensList || getters?.allTokensList.length === 0) return;
     commit('changeState', { field: 'isBalancesLoading', val: true });
-
     try {
-      const multicaller = MulticallWrapper.wrap(provider);
-      const requests = getters.allTokensList
-        .map((_: any) => new ethers.Contract(
-          _.address,
-          ERC20_ABI,
-          multicaller,
-        ).balanceOf(rootState.accountData.account).catch(() => '0'));
+      const tokenBalanceInfo = rootGetters['balances/getTokenBalanceInfo'];
 
-      if (!MulticallWrapper.isMulticallProvider(provider)) return;
+      if (!tokenBalanceInfo) return;
 
-      const balancesData = await Promise.all(requests);
-
-      const handleNativeBal = async () => (await rootState.web3.evmProvider
-        .getBalance(rootState.accountData.account))
-        .toString();
-
-      const newBalances = await Promise.all(
-        getters.allTokensList.map(async (token: any, key: number) => {
-          let balance = balancesData[key] ? balancesData[key].toString() : '0';
-
-          if (token.address === ZERO_ADDRESS) balance = await handleNativeBal();
-
-          const balanceFormatted = new BigNumber(balance).div(10 ** token.decimals);
-          const fixedBy = balanceFormatted.gt(0) ? fixedByPrice(balanceFormatted.toNumber()) : 2;
-          const tokenPrice = token.price ?? '0';
-
-          return {
-            ...token,
-            balanceData: {
-              name: token.symbol,
-              balance: balanceFormatted.toFixed(fixedBy),
-              balanceInUsd: new BigNumber(balanceFormatted).times(tokenPrice).toString(),
-              originalBalance: balance,
-              decimal: token.decimals,
-            }
-          };
-        })
-      );
-
-      // console.log(newBalances, 'newBalances');
       const bus = useEventBus('odos-tokens-loaded');
       bus.emit(true);
 
-      await commit('changeBalances', newBalances);
+      await commit('changeBalances', tokenBalanceInfo);
 
       commit('changeState', { field: 'isBalancesLoading', val: false });
       commit('changeState', { field: 'firstRenderDone', val: true });
@@ -532,54 +479,6 @@ const actions = {
       }
     });
   },
-  async addedZkSyncGasHistoryData({
-    commit, state, dispatch, rootState,
-  }: any, transactionData: any) {
-    commit('changeState', {
-      field: 'zksyncFeeHistory',
-      val: {
-        startWeiBalance: null,
-        finalWeiBalance: null,
-        estimateFeeInEther: null,
-        ethPrice: 0,
-      }
-    });
-
-    try {
-      // get balance from eth token
-      const weiBalance = await rootState.web3.evmProvider.getBalance(rootState.accountData.account);
-      const balance = new BigNumber(weiBalance).div(10 ** 18).toString();
-      commit('changeState', {
-        field: 'zksyncFeeHistory',
-        val: {
-          startWeiBalance: balance,
-          finalWeiBalance: null,
-          estimateFeeInEther: null,
-          ethPrice: 0,
-        }
-      });
-    } catch (e) {
-      console.error('OdosSwap Error get balance from eth token', e);
-    }
-
-    await rootState.web3.evmProvider.estimateGas(transactionData, (error: any, gasLimit: any) => {
-      if (error) {
-        console.error('OdosSwap Error estimating gas:', error);
-      } else {
-        console.log('OdosSwap estimating gasLimit:', gasLimit);
-        const feeInWei = gasLimit * 262500000;
-        console.log('OdosSwap estimating feeInWei:', feeInWei);
-        const feeInEther = new BigNumber(feeInWei).div(10 ** 18).toString();
-        commit('changeState', {
-          field: 'zksyncFeeHistory',
-          val: {
-            ...state.zksyncFeeHistory,
-            estimateFeeInEther: feeInEther,
-          }
-        });
-      }
-    });
-  },
   async initWalletTransaction(
     {
       commit, state, dispatch, rootState,
@@ -598,10 +497,6 @@ const actions = {
       ...data.txData.transaction,
       from: rootState.accountData.account,
     };
-
-    if (rootState.network.networkName === 'zksync') {
-      await dispatch('addedZkSyncGasHistoryData', transactionData);
-    }
 
     dispatch('waitingModal/showWaitingModal', 'Swapping in process', { root: true });
 
@@ -626,22 +521,6 @@ const actions = {
       data: dataTx,
     });
     dispatch('waitingModal/closeWaitingModal', null, { root: true });
-
-    if (rootState.network.networkName === 'zksync' && state.zksyncFeeHistory) {
-      try {
-        console.log('state.account after tx: ', rootState.accountData.account);
-        const weiBalance = await rootState.web3.evmProvider
-          .getBalance(rootState.accountData.account);
-        const balance = new BigNumber(weiBalance).div(10 ** 18).toString();
-        state.zksyncFeeHistory.finalWeiBalance = balance;
-      } catch (e) {
-        console.log({
-          message: 'Error get balance from eth token  after tx',
-          swapSession: state.swapSessionId,
-          data: e,
-        });
-      }
-    }
 
     const inputTokens = [...data.selectedInputTokens];
     const outputTokens = [...data.selectedOutputTokens];
@@ -721,14 +600,12 @@ const mutations = {
       state.tokens[index].price = tok.price;
     });
   },
-  changeBalances(state: any, tokensBalances: any[]) {
-    const balancesArr = state.tokens.map((_: any) => _.id);
-    tokensBalances.forEach((tok: any) => {
-      const index = balancesArr.indexOf(tok.id);
-      if (index === -1 || !state.tokens[index]) return;
-
-      state.tokens[index].balanceData = tok.balanceData;
-    });
+  changeBalances(state: any, tokensBalances: TTokenBalanceMap) {
+    const tokenBalanceInfo = state.tokens.map((token: TTokenInfo) => ({
+      ...token,
+      balanceData: tokensBalances[token.address],
+    }));
+    state.tokens = tokenBalanceInfo;
   },
 };
 

@@ -1,10 +1,10 @@
 <template>
   <div>
     <ModalComponent
-      type-modal="custom"
       v-model="showModal"
+      type-modal="custom"
+      :custom-class="zapPool?.poolVersion ?? ''"
       @close="closeModal"
-      :customClass="zapPool?.poolVersion ?? ''"
     >
       <div :class="['modal-content', { v3: zapPool?.poolVersion === 'v3' }, { v2: zapPool?.poolVersion === 'v2' }]">
         <ZapForm
@@ -18,9 +18,9 @@
       :is-show="showSuccessZapin"
       :success-data="successData"
       :set-show-func="triggerSuccessZapin"
-      :returnedToUser="lastReturnedToUserEvent"
-      :putIntoPool="lastPutIntoPoolEvent"
-      :input-tokens="lastInputTokensEvent"
+      :returned-to-user="lastParsedReturnedToUserEvent"
+      :put-into-pool="lastParsedPutIntoPoolEvent"
+      :input-tokens="lastParsedInputTokensEvent"
     />
   </div>
 </template>
@@ -28,6 +28,7 @@
 <script lang="ts">
 import {
   mapActions,
+  mapMutations,
   mapState,
 } from 'vuex';
 import ModalComponent from '@/components/Modal/Index.vue';
@@ -57,25 +58,27 @@ export default {
       showModal: false,
     };
   },
+  computed: {
+    ...mapState('odosData', [
+      'successData',
+      'showSuccessZapin',
+      'lastParsedReturnedToUserEvent',
+      'lastParsedPutIntoPoolEvent',
+      'lastParsedInputTokensEvent',
+    ]),
+  },
   watch: {
     isShow(currVal: boolean) {
       this.showModal = currVal;
     },
   },
-  computed: {
-    ...mapState('odosData', [
-      'successData',
-      'showSuccessZapin',
-      'lastReturnedToUserEvent',
-      'lastPutIntoPoolEvent',
-      'lastInputTokensEvent',
-    ]),
-  },
   methods: {
     ...mapActions('odosData', [
       'triggerSuccessZapin',
     ]),
+    ...mapMutations('zapinData', ['resetStore']),
     closeModal() {
+      this.resetStore();
       this.$emit('toggle-modal');
     },
   },

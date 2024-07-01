@@ -9,20 +9,22 @@
         tag="div"
         class="slippage-block__list"
         :css="false"
+        appear
         @before-enter="beforeEnterList"
         @enter="onEnterList"
-        @onLeave="onLeaveList"
-        appear
+        @on-leave="onLeaveList"
       >
         <template v-if="showList">
           <template v-if="deviceSize.isMobile">
             <div class="slippage-block-modal">
               <ModalComponent
-                type-modal="custom"
                 v-model="showModal"
+                type-modal="custom"
                 @close="closeModal"
               >
-                <p class="slippage-block-modal-title">SLIPPAGE TOLERANCE</p>
+                <p class="slippage-block-modal-title">
+                  SLIPPAGE TOLERANCE
+                </p>
 
                 <div class="slippage-block-modal-settings">
                   <div
@@ -46,8 +48,12 @@
 
                     class="slippage-block__item-info"
                   >
-                    <p v-if="key !== 0">{{ setting.value }}% - <span>{{ setting. name}}</span></p>
-                    <p v-if="key !== 0">Recommended {{ setting.info }}</p>
+                    <p v-if="key !== 0">
+                      {{ setting.value }}% - <span>{{ setting. name }}</span>
+                    </p>
+                    <p v-if="key !== 0">
+                      Recommended {{ setting.info }}
+                    </p>
                   </div>
                 </div>
                 <ButtonComponent
@@ -56,10 +62,8 @@
                 >
                   <p>SELECT</p>
                 </ButtonComponent>
-
               </ModalComponent>
             </div>
-
           </template>
 
           <template v-else>
@@ -132,10 +136,10 @@ export default {
           id: 4, type: 'AUTO', name: 'Auto', value: 0.05, info: 'Automatic selection by current tokens',
         },
         {
-          id: 2, type: 'LOW', name: 'Low', value: 0.1, info: 'For stablecoins only',
+          id: 3, type: 'LOW', name: 'Low', value: 0.1, info: 'For stablecoins only',
         },
         {
-          id: 3, type: 'MEDIUM', name: 'Medium', value: 0.5, info: 'For mix of stablecoins and volatile assets',
+          id: 2, type: 'MEDIUM', name: 'Medium', value: 0.5, info: 'For mix of stablecoins and volatile assets',
         },
         {
           id: 1, type: 'HIGH', name: 'High', value: 1, info: 'For volatile assets',
@@ -197,7 +201,7 @@ export default {
         return;
       }
 
-      const auto: any = this.getSlippageSettingById(4);
+      const auto: any = this.getSlippageSettingById(3);
       this.currentSlippage = {
         ...auto,
         value: 0.1,

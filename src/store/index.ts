@@ -10,13 +10,13 @@ import network from '@/store/web3/network.ts';
 import walletAction from '@/store/web3/legacy/wallet-action.ts';
 import contractAction from '@/store/web3/legacy/contract-action.ts';
 import web3 from '@/store/web3/web3.ts';
-import tokenAction from '@/store/web3/legacy/token-action.ts';
 
 // Common
 import gasPrice from '@/store/common/gas-price.ts';
 import supplyData from '@/store/common/supply.ts';
 import referral from '@/store/common/referral.ts';
 import etsAction from '@/store/web3/legacy/ets-action.ts';
+import balances from '@/store/common/balances/balances.ts';
 
 // views
 import accountData from '@/store/views/account/data.ts';
@@ -44,7 +44,7 @@ import odosData from '@/store/views/main/odos/index.ts';
 import poolsData from '@/store/views/main/pools/index.ts';
 import zapinData from '@/store/views/main/zapin/index.ts';
 
-export default new Vuex.Store({
+const store = new Vuex.Store({
   modules: {
     zapinData,
     odosData,
@@ -65,7 +65,6 @@ export default new Vuex.Store({
     walletAction,
     contractAction,
     web3,
-    tokenAction,
     dappDataAction,
     etsAction,
 
@@ -84,9 +83,17 @@ export default new Vuex.Store({
     intervalDashboard,
     porfolioBalanceData,
     jackpotData,
+    balances,
   },
 
   plugins: [
     createPersistedState({ paths: ['transaction'] }),
   ],
 });
+
+// Костыли. Watching state between modules
+store.watch((state) => state.balances.tokenBalanceMap, () => {
+  store.dispatch('odosData/loadBalances', { root: true });
+});
+
+export default store;

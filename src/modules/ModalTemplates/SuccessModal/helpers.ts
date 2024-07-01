@@ -15,7 +15,7 @@ export type TTokenDataList = {
     amounts: number[],
 }
 
-type TTokenInfo = {
+type TSelectedTokenInfo = {
     id: string,
     address: string,
     decimals: number,
@@ -38,7 +38,15 @@ type TTokenInfo = {
     price: string,
 }
 
-type TAllTokenList = Map<string, TTokenInfo>;
+type TTokenInfo = {
+    'id': string,
+    'value': string,
+    'usdValue': string,
+    'contractValue': string,
+    'selectedToken': TSelectedTokenInfo
+};
+
+type TAllTokenList = Map<string, TSelectedTokenInfo>;
 
 export type TFormatTokenInfo = {
     id: string,
@@ -62,7 +70,7 @@ const platformLinkMap: TPlatformLinkMap = {
   Defiedge: (address: string) => `https://app.defiedge.io/s/optimism/${address}`,
   Convex: (address: string) => 'https://www.convexfinance.com/stake/arbitrum/13',
   Beefy: (address: string) => 'https://app.beefy.com/dashboard',
-  Pancake: (address: string) => `https://pancakeswap.finance/info/v3/arb/pairs/${address}`,
+  Pancake: (address: string) => 'https://pancakeswap.finance/liquidity/?chain=arb',
   '0xb34a7d1444a707349Bc7b981B7F2E1f20F81F013': (address: string) => 'https://curve.fi/#/arbitrum/pools/factory-v2-117',
   '0x1446999B0b0E4f7aDA6Ee73f2Ae12a2cfdc5D9E7': (address: string) => 'https://curve.fi/#/arbitrum/pools/factory-stable-ng-15',
   Curve: (address: string) => 'https://curve.fi/#/base/pools/factory-v2-2/deposit',
@@ -99,5 +107,13 @@ export const mapEventTokenData = (
       value,
     };
   });
+
+export const mapInputTokenData = (inputTokens: TTokenInfo[]) => inputTokens.map(
+  (token: TTokenInfo) => ({
+    id: `${token.id}_return`,
+    symbol: token.selectedToken.symbol,
+    value: token.value,
+  }),
+);
 
 export default getPlatformLink;

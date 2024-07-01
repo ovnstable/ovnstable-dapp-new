@@ -122,6 +122,7 @@ export default {
   border-radius: 12px;
   margin-bottom: 10px;
   background-color: var(--color-5);
+  width: 100%;
 
   svg, img {
     width: 32px;

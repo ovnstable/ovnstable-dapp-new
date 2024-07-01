@@ -93,10 +93,13 @@ dayjs.extend(utc);
 const sortByTagAndValue = (
   tag: POOL_TAG,
   pools: any[],
+  isDefault: boolean = false,
 ) => (valueExtractor: any) => pools.sort(
   (a, b) => {
-    if (a.poolTag === tag && b.poolTag !== tag) return -1;
-    if (b.poolTag === tag && a.poolTag !== tag) return 1;
+    if (isDefault) {
+      if (a.poolTag === tag && b.poolTag !== tag) return -1;
+      if (b.poolTag === tag && a.poolTag !== tag) return 1;
+    }
     return valueExtractor(b) - valueExtractor(a);
   },
 );
@@ -139,6 +142,7 @@ export default {
     searchQuery: '',
 
     orderType: 'TVL_UP', // APR, APR_UP, APR_DOWN, TVL, TVL_UP, TVL_DOWN
+    isDefaultOrder: true as boolean,
   }),
 
   watch: {
@@ -162,17 +166,18 @@ export default {
         this.poolTabType,
       );
 
-      const sortByNewTagAndValue = sortByTagAndValue(
+      const sortByHotTagAndValue = sortByTagAndValue(
         POOL_TAG.HOT,
         tabFilteredPools,
+        this.isDefaultOrder,
       );
 
-      if (this.orderType === 'APR_UP') return sortByNewTagAndValue((pool: any) => pool.apr);
-      if (this.orderType === 'APR_DOWN') return sortByNewTagAndValue((pool: any) => -pool.apr);
-      if (this.orderType === 'TVL_UP') return sortByNewTagAndValue((pool: any) => pool.tvl);
-      if (this.orderType === 'TVL_DOWN') return sortByNewTagAndValue((pool: any) => -pool.tvl);
+      if (this.orderType === 'APR_UP') return sortByHotTagAndValue((pool: any) => pool.apr);
+      if (this.orderType === 'APR_DOWN') return sortByHotTagAndValue((pool: any) => -pool.apr);
+      if (this.orderType === 'TVL_UP') return sortByHotTagAndValue((pool: any) => pool.tvl);
+      if (this.orderType === 'TVL_DOWN') return sortByHotTagAndValue((pool: any) => -pool.tvl);
 
-      return sortByNewTagAndValue(() => 0);
+      return sortByHotTagAndValue(() => 0);
     },
     displayedPools() {
       return this.isOpenHiddenPools
@@ -235,18 +240,22 @@ export default {
     ...mapMutations('poolsData', ['changeState']),
 
     switchPoolsTab(type: POOL_TYPES) {
+      this.isDefaultOrder = true;
       this.isOpenHiddenPools = false;
       this.poolTabType = type;
     },
     updateSearch(searchQuery: string) {
+      this.isDefaultOrder = true;
       this.isOpenHiddenPools = false;
       this.searchQuery = searchQuery;
     },
     setOrderType(orderType: any) {
+      this.isDefaultOrder = false;
       this.orderType = orderType;
     },
     setSelectedNetwork(selectedChain: number | 'ALL') {
       this.isOpenHiddenPools = false;
+      this.isDefaultOrder = true;
       if (selectedChain === 'ALL') this.selectedNetworks = [];
       else if (this.selectedNetworks.includes(selectedChain)) {
         this.selectedNetworks = this.selectedNetworks
@@ -259,6 +268,7 @@ export default {
       this.isShowAprLimit = false;
       this.selectedTabs = ['ALL'];
       this.selectedNetworks = [];
+      this.isDefaultOrder = true;
     },
   },
 };

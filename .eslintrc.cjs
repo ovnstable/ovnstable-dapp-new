@@ -4,14 +4,24 @@ require('@rushstack/eslint-patch/modern-module-resolution');
 const path = require('node:path');
 const createAliasSetting = require('@vue/eslint-config-airbnb/createAliasSetting');
 
+const isProd = process.env.NODE_ENV === 'production';
+
 module.exports = {
   root: true,
+  parser: 'vue-eslint-parser',
   extends: [
-    'plugin:vue/vue3-essential',
+    'plugin:vue/vue3-recommended',
     '@vue/eslint-config-typescript',
     '@vue/eslint-config-airbnb',
   ],
   rules: {
+    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    'vue/no-unused-properties': ['error', {
+      groups: ['props', 'methods', 'data', 'computed'],
+      deepData: true,
+      ignorePublicMembers: false,
+      unreferencedOptions: ['unknownMemberAsUnreferenced'],
+    }],
     'vue/html-indent': [
       'error',
       2,
@@ -23,9 +33,9 @@ module.exports = {
       multiline: 'always',
     }],
     'vuejs-accessibility/form-control-has-label': 0,
-    'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'no-shadow': [2, { allow: ['state', 'getters'] }],
+    'no-console': isProd ? 'warn' : 'off',
+    'no-debugger': isProd ? 'warn' : 'off',
+    'no-shadow': 'off',
     'no-param-reassign': ['error', {
       props: true, ignorePropertyModificationsFor: ['state'],
     }],
@@ -44,6 +54,8 @@ module.exports = {
     }),
   },
   parserOptions: {
+    parser: '@typescript-eslint/parser',
+    sourceType: 'module',
     ecmaVersion: 'latest',
   },
 };

@@ -21,6 +21,15 @@ const ALL_STABLE_TOKENS = [
 export const buildLink = (pool: any, poolPlatform: string) => {
   let url;
 
+  if (poolPlatform === 'Trader Joe') {
+    if (pool.address === '0xa8A502ACF4084B8D38362E9F620C689CB4D2EB89') {
+      return 'https://traderjoexyz.com/arbitrum/pool/v22/0xe80772eaf6e2e18b651f160bc9158b2a5cafca65/ETH/10';
+    }
+    if (pool.address === '0x37570DB173beF23F6924beaE3CD960b41AB6AD74') {
+      return 'https://traderjoexyz.com/arbitrum/pool/v22/0xe80772eaf6e2e18b651f160bc9158b2a5cafca65/0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9/1';
+    }
+  }
+
   // eusd/usd+
   if (poolPlatform === 'Aerodrome'
     && pool.address === '0x8041e2A135D2da7A8E21E4B14113D8245EC532e1'
@@ -167,6 +176,9 @@ export const buildLink = (pool: any, poolPlatform: string) => {
     case 'Dyson':
       url = 'https://app.dyson.money/all?id=dyson-base-aerodrome-ovn-usd';
       break;
+    case 'Trader Joe':
+      url = `https://traderjoexyz.com/${pool.chainName}/pool`;
+      break;
 
     default:
       url = `${pool.explorerUrl}/address/`;
@@ -194,6 +206,7 @@ export const buildLink = (pool: any, poolPlatform: string) => {
     || poolPlatform === 'Pancake'
     || poolPlatform === 'Syncswap'
     || poolPlatform === 'Dyson'
+    || poolPlatform === 'Trader Joe'
   ) {
     return url;
   }
