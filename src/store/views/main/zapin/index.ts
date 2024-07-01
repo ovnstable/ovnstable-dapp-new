@@ -54,16 +54,22 @@ const loadAbi = async (abiFileSrc: string): Promise<ContractAbi> => {
   return {} as ContractAbi;
 };
 
-const stateData = {
+const defaultState = () => ({
   zapPoolRoot: null,
   currentZapPlatformContractType: null,
   zapContract: null,
   poolTokenContract: null,
   gaugeContract: null,
   currentStage: zapInStep.START,
-};
+  zapLoaded: false,
+});
+
+const stateData = defaultState();
 
 const getters = {
+  isZapLoaded(state: typeof stateData) {
+    return state.zapLoaded;
+  },
 };
 
 const actions = {
@@ -71,7 +77,6 @@ const actions = {
     commit, state, dispatch, rootState,
   }: any) {
     const poolRoot = state.zapPoolRoot;
-    const platformName = state.currentZapPlatformContractType?.name;
     const poolVersion = state.zapPoolRoot?.poolVersion;
     const chainName = state.zapPoolRoot.chainName;
     const address = state.zapPoolRoot.address;
@@ -81,14 +86,13 @@ const actions = {
       return;
     }
 
-    console.log(address, ' --state.zapPoolRoot.address');
-    console.log(zapPlatformContractTypeMap[state.zapPoolRoot.address], '__ADD');
-
     commit('changeState', {
       field: 'currentZapPlatformContractType',
-      val: zapPlatformContractTypeMap[state.zapPoolRoot.address]
+      val: zapPlatformContractTypeMap[address]
         ?? zapPlatformContractTypeMap[state.zapPoolRoot.platform[0]],
     });
+
+    const platformName = state.currentZapPlatformContractType?.name;
 
     if (!state.currentZapPlatformContractType) {
       console.error(
@@ -117,21 +121,16 @@ const actions = {
       dispatch('loadPoolTokenAndGaugeContracts');
     }
 
-    console.log('BUILDED');
+    commit('changeState', {
+      field: 'zapLoaded',
+      val: true,
+    });
   },
   async loadPoolTokenAndGaugeContracts({
     commit, state, rootState,
   }: any) {
     let poolAddress = state.zapPoolRoot.address;
     const poolInfo = poolsInfoMap[poolAddress];
-    if (!poolInfo) {
-      console.log(
-        'Error when get proportion. Gauge not found at pool: ',
-        poolAddress,
-      );
-      return;
-    }
-
     const gaugeAddress = poolInfo.gaugeForLP
       ? poolInfo.gaugeForLP
       : poolInfo.gauge;
@@ -194,6 +193,9 @@ const mutations = {
     val: any
   }) {
     state[data.field] = data.val;
+  },
+  resetStore(state: typeof stateData) {
+    Object.assign(state, defaultState());
   },
 };
 

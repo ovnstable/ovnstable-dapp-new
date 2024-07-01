@@ -67,7 +67,7 @@ const actions = {
   },
 
   async loadPools({
-    commit, state, dispatch, rootState,
+    commit, state, rootState,
   }: any) {
     commit('changeState', {
       field: 'isPoolsLoading',

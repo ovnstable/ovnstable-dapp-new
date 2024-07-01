@@ -91,8 +91,6 @@ const stagesMap: Record<zapInStep, string> = {
   [zapInStep.STAKE_LP]: 'Stake LP',
 };
 
-const getStageName = (stage: number) => zapInStep[stage];
-
 export default defineComponent({
   name: 'ZapinWaitingModal',
   components: {
@@ -100,8 +98,6 @@ export default defineComponent({
   },
   data() {
     return {
-      zapInStep,
-      getStageName,
       // Enum, filtering number keys to get strings
       stageNames: stagesMap,
     };
