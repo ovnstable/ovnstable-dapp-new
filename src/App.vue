@@ -1,6 +1,17 @@
 <template>
   <div class="app-wrapper">
     <HeaderBar />
+    <img
+      class="app-wrapper__img"
+      alt="stars"
+      :src="getImageUrl('assets/images/common/stars_page.png')"
+    />
+    <img
+      class="app-wrapper__img"
+      alt="grid"
+      :src="getImageUrl('assets/images/common/grid.png')"
+    />
+
     <div
       v-if="isShowHackWarning"
       class="container"
@@ -38,11 +49,11 @@
     </div>
 
     <div class="container">
-      <Sidebar />
       <RouterView />
     </div>
 
-    <FooterMobile v-if="!deviceType().isDesktop" />
+    <FooterDesktop v-if="deviceType().isDesktop" />
+    <FooterMobile v-else />
 
     <WaitingModal :show-modal="showWaitModal" />
     <ErrorModal :show-modal="showErrorModal" />
@@ -59,22 +70,23 @@
 import { mapGetters } from 'vuex';
 import { RouterView } from 'vue-router';
 import HeaderBar from '@/components/Layout/Header/Index.vue';
-import Sidebar from '@/components/Layout/Sidebar/Index.vue';
 import FooterMobile from '@/components/Layout/FooterMobile/Index.vue';
+import FooterDesktop from '@/components/Layout/FooterDesktop/Index.vue';
 import WaitingModal from '@/modules/ModalTemplates/WaitingModal/Index.vue';
 import ErrorModal from '@/modules/ModalTemplates/ErrorModal/Index.vue';
 import SuccessModal from '@/modules/ModalTemplates/SuccessModal/Index.vue';
 import DeprecatedModal from '@/modules/ModalTemplates/DeprecatedModal/Index.vue';
 import { deviceType } from '@/utils/deviceType.ts';
 import ButtonComponent from '@/components/Button/Index.vue';
+import { getImageUrl } from './utils/const';
 
 export default {
   name: 'AppView',
   components: {
     RouterView,
     HeaderBar,
-    Sidebar,
     FooterMobile,
+    FooterDesktop,
     DeprecatedModal,
     ErrorModal,
     WaitingModal,
@@ -86,6 +98,15 @@ export default {
       showDeprecatedModal: false,
     };
   },
+  computed: {
+    ...mapGetters('network', ['networkId', 'isShowDeprecated']),
+    ...mapGetters('waitingModal', { showWaitModal: 'show' }),
+    ...mapGetters('errorModal', { showErrorModal: 'show' }),
+    ...mapGetters('successModal', { showSuccessModal: 'show' }),
+    isShowHackWarning() {
+      return [324].includes(this.networkId);
+    },
+  },
   async mounted() {
     await this.$store.dispatch('theme/initTheme');
     await this.$store.dispatch('web3/initWeb3');
@@ -96,38 +117,28 @@ export default {
   },
   methods: {
     deviceType,
+    getImageUrl,
     toggleDeprectedModal() {
       this.showDeprecatedModal = true;
     },
     handleOutsideLink(url: string) {
       window.open(url, '_blank');
     },
-    async fetchDataForBlastQuest() {
-      try {
-        this.$store.commit('jackpotData/setJackpotDataLoaded', false);
-        await Promise.all([
-          this.$store.dispatch('jackpotData/fetchJackpotData'),
-        ]);
-        this.$store.commit('jackpotData/setJackpotDataLoaded', true);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    },
-  },
-  computed: {
-    ...mapGetters('network', ['networkId', 'isShowDeprecated']),
-    ...mapGetters('waitingModal', { showWaitModal: 'show' }),
-    ...mapGetters('errorModal', { showErrorModal: 'show' }),
-    ...mapGetters('successModal', { showSuccessModal: 'show' }),
-    isShowHackWarning() {
-      return [324].includes(this.networkId);
-    },
   },
 };
 </script>
 <style lang="scss" scoped>
 .app-wrapper {
+  position: relative;
   height: calc(100vh - 100px);
+}
+
+.app-wrapper__img {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  inset: 0;
+  filter: contrast(106%);
 }
 
 .app-wrapper__notify {

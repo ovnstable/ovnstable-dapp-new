@@ -242,10 +242,8 @@ export default {
   computed: {
     ...mapState('odosData', ['isBalancesLoading', 'isTokensLoadedAndFiltered', 'firstRenderDone', 'isTokensLoading']),
     ...mapGetters('walletAction', ['walletConnected']),
-    ...mapGetters('accountData', ['originalBalance', 'account', 'isLoadingOvnBalances']),
+    ...mapGetters('accountData', ['account', 'isLoadingOvnBalances']),
     ...mapGetters('network', ['networkId', 'isShowDeprecated']),
-    ...mapGetters('odosData', ['allTokensList']),
-    ...mapGetters('web3', ['evmProvider', 'provider']),
     ...mapGetters('theme', ['light']),
 
     balancesLoading() {
