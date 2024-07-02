@@ -24,13 +24,12 @@
       class="ovn__pools"
     >
       <PoolsContainer
-        :poolType="poolTypes.OVN"
-        :isOverview="true"
+        :pool-type="poolTypes.OVN"
+        :is-overview="true"
         class="ovn__pools-inner"
       />
     </div>
   </div>
-
 </template>
 
 <script lang="ts">
@@ -50,11 +49,6 @@ export default {
     Spinner,
     PoolsContainer,
   },
-  data() {
-    return {
-      poolTypes: POOL_TYPES,
-    };
-  },
   props: {
     tokenData: {
       type: Object,
@@ -68,6 +62,11 @@ export default {
       type: Boolean,
       default: false,
     },
+  },
+  data() {
+    return {
+      poolTypes: POOL_TYPES,
+    };
   },
   computed: {
     insuranceIsMobileMintRedeem() {
@@ -149,7 +148,6 @@ export default {
 }
 
 .ovn__loader {
-  position: absolute;
   left: 10px;
   top: 0;
   margin: auto;

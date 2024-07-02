@@ -20,31 +20,33 @@
             </h1>
           </router-link>
           <router-link
+            to="/"
+            class="app-header__dashboard"
+            active-class="active-link"
+          >
+            MINT
+          </router-link>
+          <router-link
+            to="/ovn"
+            class="app-header__dashboard"
+            active-class="active-link"
+          >
+            OVN
+          </router-link>
+          <router-link
+            to="/market/usd"
+            class="app-header__dashboard"
+            active-class="active-link"
+          >
+            MONEY MARKETS
+          </router-link>
+          <router-link
             to="/dashboard"
             class="app-header__dashboard"
             active-class="active-link"
           >
-            <p>
-              My dashboard
-            </p>
+            DASHBOARD
           </router-link>
-
-          <a
-            href="https://docs.overnight.fi/"
-            class="app-header__docs"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Docs
-          </a>
-          <a
-            href="https://dev.overnight.fi/swap"
-            target="_blank"
-            class="app-header__docs"
-            rel="noopener noreferrer"
-          >
-            Old Dapp
-          </a>
         </div>
 
         <div class="app-header__content-data">
@@ -360,6 +362,7 @@ export default {
   font-weight: 600;
 }
 .active-link {
+  color: var(--color-3);
   text-decoration: underline;
 }
 .app-header__docs {

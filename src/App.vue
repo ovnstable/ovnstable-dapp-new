@@ -78,7 +78,7 @@ import SuccessModal from '@/modules/ModalTemplates/SuccessModal/Index.vue';
 import DeprecatedModal from '@/modules/ModalTemplates/DeprecatedModal/Index.vue';
 import { deviceType } from '@/utils/deviceType.ts';
 import ButtonComponent from '@/components/Button/Index.vue';
-import { getImageUrl } from './utils/const';
+import { getImageUrl } from './utils/const.ts';
 
 export default {
   name: 'AppView',

@@ -15,8 +15,8 @@
       <TabsComponent
         :tabs="tabsData"
         :active-tab="activeTab"
-        @tab-change="changeTab"
         class="dashboard-tabs"
+        @tab-change="changeTab"
       >
         <div
           v-if="activeTab === 0"
@@ -26,23 +26,22 @@
           <div class="dashboard_token_data_graphics">
             <TokenDataDashboard
               class="dashboard__token-data"
-              :portfolioBalanceData="portfolioBalanceData.dataUSDPlus"
+              :portfolio-balance-data="portfolioBalanceData.dataUSDPlus"
             />
             <DashboardGraphic
-              :portfolioBalanceData="portfolioBalanceData.dataUSDPlus"
-              :onlyUSD=true
+              :portfolio-balance-data="portfolioBalanceData.dataUSDPlus"
+              :only-u-s-d="true"
               :loaded="loaded"
-              :portfolioPrices="portfolioBalanceData.prices"
+              :portfolio-prices="portfolioBalanceData.prices"
               class="dashboard__graphics"
             />
           </div>
           <p
-            class="dashboard-tokens-transactions"
             v-if="portfolioBalanceData.dataUSDPlus.length > 0"
+            class="dashboard-tokens-transactions"
           >
             USD+ TRANSACTIONS
           </p>
-
         </div>
         <div
           v-if="activeTab === 1"
@@ -52,34 +51,35 @@
           <div class="dashboard_token_data_graphics">
             <TokensPlusDashboard
               class="dashboard__token-data"
-              :portfolioBalanceData="portfolioBalanceData"
-              :portfolioBalanceDataFull="combinedPortfolioData"
+              :portfolio-balance-data="portfolioBalanceData"
+              :portfolio-balance-data-full="combinedPortfolioData"
             />
             <DashboardGraphic
-              :portfolioBalanceData="combinedPortfolioData"
-              :onlyUSD=false
+              :portfolio-balance-data="combinedPortfolioData"
+              :only-u-s-d="false"
               :loaded="loaded"
-              :portfolioPrices="portfolioBalanceData.prices"
+              :portfolio-prices="portfolioBalanceData.prices"
               class="dashboard__graphics"
             />
           </div>
 
           <p
-            class="dashboard-tokens-transactions"
             v-if="combinedPortfolioData.length > 0"
-          >TOKENS+ TRANSACTIONS</p>
+            class="dashboard-tokens-transactions"
+          >
+            TOKENS+ TRANSACTIONS
+          </p>
         </div>
       </TabsComponent>
     </div>
     <div class="dashboard__payouts">
       <DashboardTransactions
-        :portfolioBalanceData="portfolioDataForDashboardTransactions"
-        class="dashboard__payout-inner"
         v-if="portfolioDataForDashboardTransactions.length > 0"
+        :portfolio-balance-data="portfolioDataForDashboardTransactions"
+        class="dashboard__payout-inner"
       />
     </div>
   </div>
-
 </template>
 
 <script lang="ts">
@@ -132,14 +132,6 @@ export default {
       activeTab: 0,
     };
   },
-  watch: {
-    activeTab: {
-      immediate: true,
-      handler() {
-        this.$store.dispatch('intervalDashboard/setInterval', 'DAY');
-      },
-    },
-  },
   computed: {
     portfolioDataForDashboardTransactions() {
       if (this.activeTab === 1) {
@@ -185,6 +177,14 @@ export default {
         ...convertedDaiTransactions,
         ...convertedUsdcTransactions,
       ];
+    },
+  },
+  watch: {
+    activeTab: {
+      immediate: true,
+      handler() {
+        this.$store.dispatch('intervalDashboard/setInterval', 'DAY');
+      },
     },
   },
 
@@ -288,7 +288,6 @@ export default {
 }
 
 .dashboard__loader {
-  position: absolute;
   left: 10px;
   top: 0;
   margin: auto;
