@@ -893,6 +893,7 @@ export default {
           .times((100 + val / 2) / 100).times(10 ** 6).toFixed(0);
         const percentMaxPrice = new BN(this.centerPrice)
           .times((100 - val / 2) / 100).times(10 ** 6).toFixed(0);
+
         const ticks = await this.zapContract
           .priceToClosestTick(this.zapPool.address, [percentMinPrice, percentMaxPrice]);
 
@@ -900,14 +901,12 @@ export default {
         tickVal = Number(new BN(tickVal).div(this.tickSpace).toFixed(0)) * Number(this.tickSpace);
       }
 
-      console.log(tickVal, '__tick');
-
       if (tickVal === 1) {
         this.tickLeft = this.closestTicks[0]?.toString();
         this.tickRight = this.closestTicks[1]?.toString();
       } else {
-        this.tickLeft = new BN(this.closestTicks[0]).minus(tickVal / 2).toFixed();
-        this.tickRight = new BN(this.closestTicks[1]).plus(tickVal / 2).toFixed();
+        this.tickLeft = new BN(this.closestTicks[0]).minus(tickVal / 2).toFixed(0);
+        this.tickRight = new BN(this.closestTicks[1]).plus(tickVal / 2).toFixed(0);
       }
 
       const tickNumL = await this.zapContract.tickToPrice(this.zapPool.address, this.tickLeft);
