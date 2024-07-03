@@ -86,11 +86,19 @@ export default {
       showDeprecatedModal: false,
     };
   },
+  computed: {
+    ...mapGetters('network', ['networkId', 'isShowDeprecated']),
+    ...mapGetters('waitingModal', { showWaitModal: 'show' }),
+    ...mapGetters('errorModal', { showErrorModal: 'show' }),
+    ...mapGetters('successModal', { showSuccessModal: 'show' }),
+    isShowHackWarning() {
+      return [324].includes(this.networkId);
+    },
+  },
   async mounted() {
     await this.$store.dispatch('theme/initTheme');
     await this.$store.dispatch('web3/initWeb3');
     await this.$store.dispatch('walletAction/dappInitWalletConnect');
-    // await this.fetchDataForBlastQuest();
 
     this.$store.dispatch('balances/initUpdateBalancesInterval');
   },
@@ -102,74 +110,7 @@ export default {
     handleOutsideLink(url: string) {
       window.open(url, '_blank');
     },
-    async fetchDataForBlastQuest() {
-      try {
-        this.$store.commit('jackpotData/setJackpotDataLoaded', false);
-        await Promise.all([
-          this.$store.dispatch('jackpotData/fetchJackpotData'),
-        ]);
-        this.$store.commit('jackpotData/setJackpotDataLoaded', true);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    },
-  },
-  computed: {
-    ...mapGetters('network', ['networkId', 'isShowDeprecated']),
-    ...mapGetters('waitingModal', { showWaitModal: 'show' }),
-    ...mapGetters('errorModal', { showErrorModal: 'show' }),
-    ...mapGetters('successModal', { showSuccessModal: 'show' }),
-    isShowHackWarning() {
-      return [324].includes(this.networkId);
-    },
   },
 };
 </script>
-<style lang="scss" scoped>
-.app-wrapper {
-  height: calc(100vh - 100px);
-}
-
-.app-wrapper__notify {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-  width: 100%;
-  margin-bottom: 50px;
-  background-color: var(--color-3);
-  color: var(--color-4);
-  border-radius: 8px;
-  padding: 12px;
-  font-weight: 600;
-
-  b {
-    text-decoration: underline;
-  }
-
-  @media (max-width: 640px) {
-    margin: 0 15px 0 15px;
-  }
-}
-
-.container {
-  width: 100%;
-  max-width: 1360px;
-  padding: 0 20px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-
-  @media (min-width: 640px) {
-    gap: 40px;
-  }
-
-  @media (min-width: 1024px) {
-    gap: 80px;
-  }
-  @media (max-width: 640px) {
-    margin-top: 60px;
-    padding: 0;
-  }
-}
-</style>
+<style lang="scss" src="./app.scss" scoped />

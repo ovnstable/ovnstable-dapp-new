@@ -4,7 +4,7 @@
       <SwitchTabs
         :tabs="filterTabs"
         :active-tab="poolTypes.ALL"
-        tabStyle="transparent"
+        tab-style="transparent"
         type="large"
         @tab-change="changeTab"
       />
@@ -29,20 +29,20 @@
 
     <div class="pools-wrap__filters-networks">
       <div
-        @click="changeNetwork('ALL')"
-        @keypress="changeNetwork('ALL')"
         :class="selectedNetwork.length === 0 ? 'pools-wrap__filters-item--selected' : ''"
         class="pools-wrap__filters-item"
+        @click="changeNetwork('ALL')"
+        @keypress="changeNetwork('ALL')"
       >
         ALL
       </div>
       <div
         v-for="networkConfig in sortedChains"
         :key="networkConfig.chain"
-        @click="changeNetwork(networkConfig.chain)"
-        @keypress="changeNetwork(networkConfig.chain)"
         :class="selectedNetwork.includes(networkConfig.chain) || selectedNetwork.length === 0 ? 'pools-wrap__filters-item--selected' : ''"
         class="pools-wrap__filters-item"
+        @click="changeNetwork(networkConfig.chain)"
+        @keypress="changeNetwork(networkConfig.chain)"
       >
         <BaseIcon :name="networkConfig.name.toLowerCase()" />
       </div>
@@ -87,14 +87,6 @@ export default {
       required: true,
     },
   },
-  async mounted() {
-    this.sortedChains = await sortedChainsByTVL(this.networksData, this.isShowDeprecated);
-  },
-  watch: {
-    async isShowDeprecated() {
-      this.sortedChains = await sortedChainsByTVL(this.networksData, this.isShowDeprecated);
-    },
-  },
   data() {
     return {
       sortedChains: [] as Chain[],
@@ -131,6 +123,14 @@ export default {
         },
       ],
     };
+  },
+  watch: {
+    async isShowDeprecated() {
+      this.sortedChains = await sortedChainsByTVL(this.networksData, this.isShowDeprecated);
+    },
+  },
+  async mounted() {
+    this.sortedChains = await sortedChainsByTVL(this.networksData, this.isShowDeprecated);
   },
   methods: {
     changeTab(val: string) {

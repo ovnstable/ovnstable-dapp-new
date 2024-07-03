@@ -1,11 +1,13 @@
 <template>
   <div class="pools-wrap">
     <!-- for debug -->
-    <div v-if="false"> {{ lastUpdateAgoMinutes }}</div>
+    <div v-if="false">
+      {{ lastUpdateAgoMinutes }}
+    </div>
 
     <div
-      class="pools-wrap__loader"
       v-if="isPoolsLoading"
+      class="pools-wrap__loader"
     >
       <TableSkeleton />
     </div>
@@ -27,17 +29,17 @@
           #filters
         >
           <PoolsFilter
-            :selectedNetwork="selectedNetworks"
-            :isShowDeprecated="isShowDeprecated"
-            :searchQuery="searchQuery"
-            @changeTab="switchPoolsTab"
-            @changeNetwork="setSelectedNetwork"
+            :selected-network="selectedNetworks"
+            :is-show-deprecated="isShowDeprecated"
+            :search-query="searchQuery"
+            @change-tab="switchPoolsTab"
+            @change-network="setSelectedNetwork"
             @search="updateSearch"
           />
         </template>
         <template
-          #footer
           v-if="!isPoolsLoading && isMorePoolsToShow"
+          #footer
         >
           <div
             class="table-extend"
@@ -50,7 +52,7 @@
               <BaseIcon name="ArrowDown" />
             </div>
             <h1>
-              {{isOpenHiddenPools ? "CLOSE POOLS" : "OPEN HIDDEN POOLS"}}
+              {{ isOpenHiddenPools ? "CLOSE POOLS" : "OPEN HIDDEN POOLS" }}
             </h1>
             <div
               class="table-extend__arrow"
@@ -80,8 +82,8 @@ import { getSortedPools } from '@/store/views/main/pools/helpers.ts';
 import utc from 'dayjs/plugin/utc';
 
 import ZapModal from '@/modules/Main/components/ZapModal/Index.vue';
-import PoolsFilter from '@/modules/Main/components/PoolsTable/PoolsFilter.vue';
-import PoolsTable from '@/components/PoolsTable/Index.vue';
+import PoolsFilter from '@/components/Pools/PoolsFilter/Index.vue';
+import PoolsTable from '@/components/Pools/PoolsTable/Index.vue';
 import TableSkeleton from '@/components/TableSkeleton/Index.vue';
 import dayjs from 'dayjs';
 import { POOL_TAG } from '@/store/views/main/pools/mocks.ts';
@@ -89,6 +91,27 @@ import { POOL_TYPES } from '@/store/views/main/pools/index.ts';
 import type { PropType } from 'vue';
 
 dayjs.extend(utc);
+
+// interface IEnumIterator {
+//   next: () => number,
+//   reset: () => void,
+// }
+
+// function iterateEnum(enumObj: any): IEnumIterator {
+//   const keys = Object.values(enumObj).filter((key) => typeof key === 'number');
+//   let index = 0;
+
+//   return {
+//     next: () => {
+//       const key = keys[index] as number;
+//       index = (index + 1) % keys.length;
+//       return key;
+//     },
+//     reset: () => {
+//       index = 0;
+//     },
+//   };
+// }
 
 const sortByTagAndValue = (
   tag: POOL_TAG,
@@ -106,8 +129,22 @@ const sortByTagAndValue = (
 
 const POOL_SHOW_LIMIT = 10;
 
+// enum TVL_ORDER_TYPE {
+// 'TVL', 'TVL_UP', 'TVL_DOWN',
+// }
+// enum APR_ORDER_TYPE {
+//   'APR', 'APR_UP', 'APR_DOWN',
+// }
+
 export default {
   name: 'PoolsContainer',
+  components: {
+    BaseIcon,
+    PoolsFilter,
+    TableSkeleton,
+    PoolsTable,
+    ZapModal,
+  },
   props: {
     isOverview: {
       type: Boolean,
@@ -119,16 +156,8 @@ export default {
       required: false,
     },
   },
-  components: {
-    BaseIcon,
-    PoolsFilter,
-    TableSkeleton,
-    PoolsTable,
-    ZapModal,
-  },
 
   data: () => ({
-    avgApy: null,
     poolTabType: POOL_TYPES.ALL,
     showingPools: POOL_SHOW_LIMIT,
     isMorePoolsToShow: true,
@@ -138,19 +167,15 @@ export default {
     selectedNetworks: [] as number[], // [] for ALL or networks,
     isShowOnlyZap: false,
     isShowAprLimit: false,
-    aprLimitForFilter: 15,
     searchQuery: '',
 
     orderType: 'TVL_UP', // APR, APR_UP, APR_DOWN, TVL, TVL_UP, TVL_DOWN
+    // tvlSortIterator: {} as IEnumIterator,
+    // aprSortIterator: {} as IEnumIterator,
+    // tvlOrder: 0 as number,
+    // aprOrder: 0 as number,
     isDefaultOrder: true as boolean,
   }),
-
-  watch: {
-    filteredPools(arr: any[]) {
-      this.isMorePoolsToShow = this.showingPools <= (arr?.length ?? 0);
-    },
-  },
-
   computed: {
     ...mapGetters('network', ['getParams', 'networkId', 'isShowDeprecated']),
     ...mapState('poolsData', [
@@ -219,8 +244,19 @@ export default {
       return now.diff(lastUpdateMoment, 'minutes');
     },
   },
+  watch: {
+    filteredPools(arr: any[]) {
+      this.isMorePoolsToShow = this.showingPools <= (arr?.length ?? 0);
+    },
+  },
   async mounted() {
     this.clearAllFilters();
+
+    // this.tvlSortIterator = iterateEnum(TVL_ORDER_TYPE);
+    // this.aprSortIterator = iterateEnum(APR_ORDER_TYPE);
+
+    // this.tvlOrder = this.tvlSortIterator.next();
+    // this.aprOrder = this.aprSortIterator.next();
 
     // for main page + ovn pools page
     if (this.poolType !== undefined) {
@@ -274,59 +310,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-.pools-wrap {
-  margin: 30px 0;
-
-  @media (max-width: 1024px) {
-    margin: 30px 0 120px 0;
-  }
-
-  @media (max-width: 768px) {
-    margin: 0 0 150px 0;
-  }
-}
-
-.pools-wrap__loader {
-  min-height: 300px;
-  width: 100%;
-  display: flex;
-  padding-bottom: 50vh;
-  justify-content: center;
-  align-items: center;
-}
-
-.table-extend {
-  display: flex;
-  justify-content: center;
-  padding: 10px 20px;
-  width: 100%;
-  border-radius: 30px;
-  border: 1px solid var(--color-7);
-  color: var(--color-7);
-  cursor: pointer;
-  transition: background-color .2s ease;
-  [data-theme="dark"] & {
-    border-color: var(--color-2);
-    color: var(--color-2);
-  }
-
-  h1 {
-    font-weight: 500;
-    text-transform: uppercase;
-    margin: 0 10px;
-    transition: color .2s ease;
-    [data-theme="dark"] & {
-      color: var(--color-21);
-    }
-  }
-
-  &:hover {
-    color: var(--color-1);
-    background-color: var(--color-4);
-    [data-theme="dark"] & {
-      color: var(--color-17);
-    }
-  }
-}
-</style>
+<style lang="scss" src='./styles.scss' scoped />
