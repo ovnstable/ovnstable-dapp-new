@@ -44,6 +44,13 @@ import Spinner from '@/components/Spinner/Index.vue';
 
 export default {
   name: 'MarketPage',
+  components: {
+    TokenDataPerformance,
+    GraphicsPerformance,
+    PortfolioPerformance,
+    PortfolioPayouts,
+    Spinner,
+  },
   props: {
     tokenData: {
       type: Object,
@@ -69,13 +76,6 @@ export default {
       type: Boolean,
       default: false,
     },
-  },
-  components: {
-    TokenDataPerformance,
-    GraphicsPerformance,
-    PortfolioPerformance,
-    PortfolioPayouts,
-    Spinner,
   },
 };
 </script>
@@ -137,7 +137,6 @@ export default {
 }
 
 .market__loader {
-  position: absolute;
   left: 10px;
   top: 0;
   margin: auto;

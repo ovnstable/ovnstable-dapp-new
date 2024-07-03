@@ -148,7 +148,6 @@ export default {
 }
 
 .ovn__loader {
-  position: absolute;
   left: 10px;
   top: 0;
   margin: auto;

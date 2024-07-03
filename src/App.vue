@@ -1,6 +1,17 @@
 <template>
   <div class="app-wrapper">
     <HeaderBar />
+    <img
+      class="app-wrapper__img"
+      alt="stars"
+      :src="getImageUrl('assets/images/common/stars_page.png')"
+    />
+    <img
+      class="app-wrapper__img"
+      alt="grid"
+      :src="getImageUrl('assets/images/common/grid.png')"
+    />
+
     <div
       v-if="isShowHackWarning"
       class="container"
@@ -38,11 +49,11 @@
     </div>
 
     <div class="container">
-      <Sidebar />
       <RouterView />
     </div>
 
-    <FooterMobile v-if="!deviceType().isDesktop" />
+    <FooterDesktop v-if="deviceType().isDesktop" />
+    <FooterMobile v-else />
 
     <WaitingModal :show-modal="showWaitModal" />
     <ErrorModal :show-modal="showErrorModal" />
@@ -59,22 +70,23 @@
 import { mapGetters } from 'vuex';
 import { RouterView } from 'vue-router';
 import HeaderBar from '@/components/Layout/Header/Index.vue';
-import Sidebar from '@/components/Layout/Sidebar/Index.vue';
 import FooterMobile from '@/components/Layout/FooterMobile/Index.vue';
+import FooterDesktop from '@/components/Layout/FooterDesktop/Index.vue';
 import WaitingModal from '@/modules/ModalTemplates/WaitingModal/Index.vue';
 import ErrorModal from '@/modules/ModalTemplates/ErrorModal/Index.vue';
 import SuccessModal from '@/modules/ModalTemplates/SuccessModal/Index.vue';
 import DeprecatedModal from '@/modules/ModalTemplates/DeprecatedModal/Index.vue';
 import { deviceType } from '@/utils/deviceType.ts';
 import ButtonComponent from '@/components/Button/Index.vue';
+import { getImageUrl } from './utils/const.ts';
 
 export default {
   name: 'AppView',
   components: {
     RouterView,
     HeaderBar,
-    Sidebar,
     FooterMobile,
+    FooterDesktop,
     DeprecatedModal,
     ErrorModal,
     WaitingModal,
@@ -104,6 +116,7 @@ export default {
   },
   methods: {
     deviceType,
+    getImageUrl,
     toggleDeprectedModal() {
       this.showDeprecatedModal = true;
     },
