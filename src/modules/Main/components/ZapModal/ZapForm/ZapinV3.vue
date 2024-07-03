@@ -132,7 +132,7 @@
 
     <div class="range-presets-wrap">
       <h2>
-        Range presets {{ getPresetsName }}:
+        Range presets:
       </h2>
       <div class="range-presets">
         <div
@@ -140,17 +140,24 @@
           :key="range.id"
           class="range-presets__item"
           :class="getRangeActive(range) ? 'range-presets__item--selected' : ''"
-          @click="setRange(range.value)"
-          @keydown="setRange(range.value)"
+          @click="setRange(range.value, range.tick)"
+          @keydown="setRange(range.value, range.tick)"
         >
           <div
             v-if="showPresetPlusMinus(range)"
             class="range-presets__plusmin"
           >
-            ±
+            {{ range.tick ? "+-" : "" }}
           </div>
 
           {{ range.label }}
+
+          <div
+            v-if="showPresetPlusMinus(range)"
+            class="range-presets__plusmin"
+          >
+            {{ range.tick ? "" : "%" }}
+          </div>
         </div>
       </div>
     </div>
@@ -216,19 +223,30 @@ export default {
       pairSymbols: [],
       rangePresetsTicks: [
         {
-          id: 0, value: 1, label: '1',
+          id: 0, value: 1, label: '1', tick: true,
         },
         {
-          id: 1, value: 2, label: '1',
+          id: 1, value: 2, label: '1', tick: true,
         },
         {
-          id: 2, value: 4, label: '2',
+          id: 2, value: 4, label: '2', tick: true,
         },
         {
-          id: 3, value: 6, label: '3',
+          id: 3, value: 6, label: '3', tick: true,
         },
         {
-          id: 4, value: 887272, label: 'FULL',
+          id: 4, value: 887272, label: 'FULL', tick: true,
+        },
+      ],
+      rangePresetsPercents: [
+        {
+          id: 5, value: 10, label: '10', tick: false,
+        },
+        {
+          id: 6, value: 20, label: '20', tick: false,
+        },
+        {
+          id: 7, value: 40, label: '40', tick: false,
         },
       ],
       optionsChart: {
@@ -348,10 +366,8 @@ export default {
     getRangeActive() {
       return (range: any) => !!(this.ticksAmount && this.ticksAmount === range.value.toString());
     },
-    getPresetsName() {
-      return this.isStablePool ? 'ticks' : 'percents';
-    },
     getPresetsData() {
+      if (!this.isStablePool) return [...this.rangePresetsPercents, ...this.rangePresetsTicks];
       return this.rangePresetsTicks;
     },
     showPresetPlusMinus() {
@@ -579,6 +595,7 @@ export default {
           id: key,
           value: new BN(item.value).times(tSpace).toNumber(),
           label: new BN(item.label).times(tSpace).toFixed(),
+          tick: item.tick,
         };
       });
     },
@@ -868,13 +885,29 @@ export default {
     setMaxPrice(val: string) {
       this.maxPrice = val;
     },
-    async setRange(val: number) {
-      if (val === 1) {
+    async setRange(val: number, isTick: boolean) {
+      let tickVal = isTick ? val : 0;
+
+      if (!isTick) {
+        const percentMinPrice = new BN(this.centerPrice)
+          .times((100 + val / 2) / 100).times(10 ** 6).toFixed(0);
+        const percentMaxPrice = new BN(this.centerPrice)
+          .times((100 - val / 2) / 100).times(10 ** 6).toFixed(0);
+        const ticks = await this.zapContract
+          .priceToClosestTick(this.zapPool.address, [percentMinPrice, percentMaxPrice]);
+
+        tickVal = Number(new BN(this.centerTick).minus(ticks[1]).toFixed(0));
+        tickVal = Number(new BN(tickVal).div(this.tickSpace).toFixed(0)) * Number(this.tickSpace);
+      }
+
+      console.log(tickVal, '__tick');
+
+      if (tickVal === 1) {
         this.tickLeft = this.closestTicks[0]?.toString();
         this.tickRight = this.closestTicks[1]?.toString();
       } else {
-        this.tickLeft = new BN(this.closestTicks[0]).minus(val / 2).toFixed();
-        this.tickRight = new BN(this.closestTicks[1]).plus(val / 2).toFixed();
+        this.tickLeft = new BN(this.closestTicks[0]).minus(tickVal / 2).toFixed();
+        this.tickRight = new BN(this.closestTicks[1]).plus(tickVal / 2).toFixed();
       }
 
       const tickNumL = await this.zapContract.tickToPrice(this.zapPool.address, this.tickLeft);
@@ -883,6 +916,7 @@ export default {
       this.maxPrice = new BN(tickNumR.toString()).div(10 ** 6).toFixed(this.lowPoolPrice ? 6 : 0);
 
       this.ticksAmount = val.toString();
+
       (this.$refs?.zapinChart as any)?.updateOptions(
         {
           chart: {
