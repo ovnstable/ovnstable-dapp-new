@@ -13,8 +13,8 @@
     >
       <PoolsTable
         :pools="displayedPools"
-        :set-order-type-func="setOrderType"
-        :order-type="orderType"
+        :set-order-type-func="toggleOrderType"
+        :apy-order-type="orderType"
       >
         <template
           #filters
@@ -44,6 +44,27 @@ import TableSkeleton from '@/components/TableSkeleton/Index.vue';
 import { POOL_TAG } from '@/store/views/main/pools/mocks.ts';
 import { getSortedPools } from '@/store/views/main/pools/helpers.ts';
 
+interface IEnumIterator {
+  next: () => number,
+  reset: () => void,
+}
+
+function iterateEnum(enumObj: any): IEnumIterator {
+  const keys = Object.values(enumObj).filter((key) => typeof key === 'number');
+  let index = 0;
+
+  return {
+    next: () => {
+      const key = keys[index] as number;
+      index = (index + 1) % keys.length;
+      return key;
+    },
+    reset: () => {
+      index = 0;
+    },
+  };
+}
+
 const sortByTagAndValue = (
   tag: POOL_TAG,
   pools: any[],
@@ -59,6 +80,10 @@ const sortByTagAndValue = (
 );
 
 const POOL_SHOW_LIMIT = 10;
+
+enum APR_ORDER_TYPE {
+  'APR', 'APR_UP', 'APR_DOWN',
+}
 
 export default {
   name: 'PositionsTable',
@@ -77,8 +102,11 @@ export default {
     isShowAprLimit: false,
     searchQuery: '',
 
-    orderType: 'TVL_UP', // APR, APR_UP, APR_DOWN, TVL, TVL_UP, TVL_DOWN
+    orderType: APR_ORDER_TYPE.APR_UP,
     isDefaultOrder: true as boolean,
+
+    aprSortIterator: {} as IEnumIterator,
+    aprOrder: 0 as number,
   }),
   computed: {
     ...mapGetters('network', ['getParams', 'networkId', 'isShowDeprecated']),
@@ -99,10 +127,12 @@ export default {
         this.isDefaultOrder,
       );
 
-      if (this.orderType === 'APR_UP') return sortByHotTagAndValue((pool: any) => pool.apr);
-      if (this.orderType === 'APR_DOWN') return sortByHotTagAndValue((pool: any) => -pool.apr);
-      if (this.orderType === 'TVL_UP') return sortByHotTagAndValue((pool: any) => pool.tvl);
-      if (this.orderType === 'TVL_DOWN') return sortByHotTagAndValue((pool: any) => -pool.tvl);
+      if (this.orderType === APR_ORDER_TYPE.APR_UP) {
+        return sortByHotTagAndValue((pool: any) => pool.apr);
+      }
+      if (this.orderType === APR_ORDER_TYPE.APR_DOWN) {
+        return sortByHotTagAndValue((pool: any) => -pool.apr);
+      }
 
       return sortByHotTagAndValue(() => 0);
     },
@@ -115,11 +145,8 @@ export default {
       if (!this.searchQuery || this.searchQuery.trim().length === 0) return this.filteredByNetwork;
 
       return this.filteredByNetwork
-        .filter((pool: any) => pool.name.toLowerCase().includes(this.searchQuery.toLowerCase())
-              || pool.id.toLowerCase().includes(this.searchQuery.toLowerCase())
-              || pool.chainName.toLowerCase().includes(this.searchQuery.toLowerCase())
-              || pool.address.toLowerCase().includes(this.searchQuery.toLowerCase())
-              || pool.platform.join('').toLowerCase().includes(this.searchQuery.toLowerCase()));
+        .filter((pool: any) => [pool.name, pool.id, pool.chainName, pool.address, pool.platform?.join('')]
+          .some((col: any) => col?.toLowerCase()?.includes(this.searchQuery.toLowerCase())));
     },
     filteredByNetwork() {
       if (this.selectedNetworks.length === 0) return this.sortedPoolList;
@@ -133,7 +160,10 @@ export default {
   async mounted() {
     this.clearAllFilters();
     await this.loadPools();
-    console.log(this.sortedPoolList);
+
+    this.aprSortIterator = iterateEnum(APR_ORDER_TYPE);
+
+    this.aprOrder = this.aprSortIterator.next();
   },
 
   methods: {
@@ -150,9 +180,8 @@ export default {
       this.isOpenHiddenPools = false;
       this.searchQuery = searchQuery;
     },
-    setOrderType(orderType: any) {
-      this.isDefaultOrder = false;
-      this.orderType = orderType;
+    toggleOrderType() {
+      this.orderType = this.aprSortIterator.next();
     },
     setSelectedNetwork(selectedChain: number | 'ALL') {
       this.isOpenHiddenPools = false;

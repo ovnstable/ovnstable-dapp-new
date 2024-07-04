@@ -16,11 +16,11 @@
         </div>
         <div
           class="pools-header__item pools-header__item--hover"
-          @click="toggleOrderType('APR')"
-          @keypress="toggleOrderType('APR')"
+          @click="setOrderTypeFunc()"
+          @keypress="setOrderTypeFunc()"
         >
           APR
-          <BaseIcon :name="iconNameSort('APR')" />
+          <BaseIcon :name="iconNameSort()" />
         </div>
         <div class="pools-header__item">
           Daily rewards
@@ -40,12 +40,6 @@
             v-for="(pool, key) in (pools as any)"
             :key="key"
             class="pools-table__row position-table_row"
-            :class="{
-              'pools-table__new': key === indexOfLastNewPool,
-              'pools-table__blast': pool.platform[0] === 'Thruster',
-            }"
-            @click="toggleDetails(pool)"
-            @keypress="toggleDetails(pool)"
           >
             <div class="pools-table__chain">
               <BaseIcon :name="pool.chainName" />
@@ -119,7 +113,6 @@
                 class="card-label text-center"
               >
                 {{ formatMoneyComma(pool.apr, 2) }}%
-                <sup v-if="APY_POOLS.includes(pool.platform[0])">(apy)</sup>
               </div>
               <div
                 v-else
@@ -176,7 +169,11 @@ import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import { formatMoneyComma } from '@/utils/numbers.ts';
 import { buildLink } from '@/store/views/main/pools/helpers.ts';
-import { APY_POOLS } from '@/store/views/main/pools/mocks.ts';
+import type { PropType } from 'vue';
+
+enum APR_ORDER_TYPE {
+  'APR', 'APR_UP', 'APR_DOWN',
+}
 
 export default {
   name: 'PositionsTable',
@@ -189,31 +186,14 @@ export default {
       type: Array,
       required: true,
     },
-    orderType: {
-      type: String,
+    apyOrderType: {
+      type: Number as PropType<APR_ORDER_TYPE>,
       required: true,
-      default: 'APR', // APR, APR_UP, APR_DOWN, TVL, TVL_UP, TVL_DOWN
+      default: APR_ORDER_TYPE.APR,
     },
     setOrderTypeFunc: {
       type: Function,
       required: true,
-    },
-  },
-  data() {
-    return {
-      APY_POOLS,
-    };
-  },
-  computed: {
-    indexOfLastNewPool() {
-      let lastNewPoolIndex = -1;
-      this.pools.forEach((pool: any, index) => {
-        if (pool.poolTag === '0') {
-          lastNewPoolIndex = index;
-        }
-      });
-
-      return lastNewPoolIndex;
     },
   },
   methods: {
@@ -224,74 +204,10 @@ export default {
     getPlatformLink(pool: any, platform: string) {
       return buildLink(pool, platform) ?? '';
     },
-    toggleDetails(pool: any) {
-      if (this.pools && this.pools.length) {
-        pool.isOpened = !pool.isOpened;
-        return;
-      }
-
-      // pools without aggregators always is opened
-      pool.isOpened = true;
-    },
-    toggleOrderType(type: string) {
-      if (type === 'APR') {
-        if (!this.orderType.startsWith('APR')) {
-          this.setOrderTypeFunc('APR');
-          this.setOrderTypeFunc('APR_UP');
-        }
-
-        if (this.orderType === 'APR') {
-          this.setOrderTypeFunc('APR_UP');
-          return;
-        }
-
-        if (this.orderType === 'APR_UP') {
-          this.setOrderTypeFunc('APR_DOWN');
-          return;
-        }
-
-        if (this.orderType === 'APR_DOWN') {
-          this.setOrderTypeFunc('APR');
-          return;
-        }
-      }
-
-      if (type === 'TVL') {
-        if (!this.orderType.startsWith('TVL')) {
-          this.setOrderTypeFunc('TVL');
-          this.setOrderTypeFunc('TVL_UP');
-        }
-
-        if (this.orderType === 'TVL') {
-          this.setOrderTypeFunc('TVL_UP');
-          return;
-        }
-
-        if (this.orderType === 'TVL_UP') {
-          this.setOrderTypeFunc('TVL_DOWN');
-          return;
-        }
-
-        if (this.orderType === 'TVL_DOWN') {
-          this.setOrderTypeFunc('TVL');
-        }
-      }
-    },
-    iconNameSort(type: string) {
-      if (type === 'APR') {
-        if (['APR_UP'].includes(this.orderType)) {
-          return 'ArrowUpSort';
-        } if (['APR_DOWN'].includes(this.orderType)) {
-          return 'ArrowDownSort';
-        }
-      } else {
-        if (['TVL_UP'].includes(this.orderType)) {
-          return 'ArrowUpSort';
-        } if (['TVL_DOWN'].includes(this.orderType)) {
-          return 'ArrowDownSort';
-        }
-      }
-
+    iconNameSort() {
+      const orderTypeStr = APR_ORDER_TYPE[this.apyOrderType];
+      if (orderTypeStr.includes('UP')) return 'ArrowUpSort';
+      if (orderTypeStr.includes('DOWN')) return 'ArrowDownSort';
       return 'ArrowsFilter';
     },
   },
