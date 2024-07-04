@@ -41,6 +41,13 @@
             MONEY MARKETS
           </router-link>
           <router-link
+            to="/pools"
+            class="app-header__dashboard"
+            active-class="active-link"
+          >
+            POOLS
+          </router-link>
+          <router-link
             to="/dashboard"
             class="app-header__dashboard"
             active-class="active-link"
