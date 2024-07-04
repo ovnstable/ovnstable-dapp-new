@@ -1,14 +1,18 @@
+<!-- eslint-disable vuejs-accessibility/anchor-has-content -->
 <template>
   <div>
     <div class="pools-table">
       <slot name="filters" />
 
-      <div class="pools-header">
+      <div class="pools-header positions-header">
         <div class="pools-header__item">
           Chain
         </div>
         <div class="pools-header__item">
           Pool name
+        </div>
+        <div class="pools-header__item center">
+          Position size, USD
         </div>
         <div
           class="pools-header__item pools-header__item--hover"
@@ -18,15 +22,13 @@
           APR
           <BaseIcon :name="iconNameSort('APR')" />
         </div>
-        <div
-          class="pools-header__item pools-header__item--hover"
-          @click="toggleOrderType('TVL')"
-          @keypress="toggleOrderType('TVL')"
-        >
-          TVL
-          <BaseIcon :name="iconNameSort('TVL')" />
+        <div class="pools-header__item">
+          Daily rewards
         </div>
         <div class="pools-header__item">
+          Earned
+        </div>
+        <div class="pools-header__item center">
           Platforms
         </div>
         <div class="pools-header__item" />
@@ -37,7 +39,7 @@
           <div
             v-for="(pool, key) in (pools as any)"
             :key="key"
-            class="pools-table__row"
+            class="pools-table__row position-table_row"
             :class="{
               'pools-table__new': key === indexOfLastNewPool,
               'pools-table__blast': pool.platform[0] === 'Thruster',
@@ -79,12 +81,6 @@
                   <span>
                     {{ getTokenNames(pool)[2] }}
                   </span>
-                  <div
-                    v-if="pool.poolTag && pool.token2Icon"
-                    class="pools-table__tag-token-3"
-                  >
-                    <BaseIcon :name="getIconName(pool.poolTag)" />
-                  </div>
                 </div>
                 <div
                   v-if="pool.token3Icon"
@@ -101,29 +97,21 @@
                   <div>
                     {{ pool.name }}
                   </div>
-                  <div
-                    v-if="pool.poolTag && !pool.token2Icon"
-                    class="pools-table__tag"
-                    :class="{
-                      'pools-table--hot': pool.poolTag === POOL_TAG.HOT,
-                      'pools-table--new': pool.poolTag === POOL_TAG.NEW,
-                    }"
-                  >
-                    {{ getTagName(pool.poolTag) }}
-                    <BaseIcon :name="getIconName(pool.poolTag)" />
-                  </div>
-                  <div
-                    v-if="pool.zappable"
-                    class="pools-table__tag pools-table--zapin"
-                  >
-                    {{ getTagName(POOL_TAG.ZAPIN) }}
-                    <BaseIcon :name="getIconName(POOL_TAG.ZAPIN)" />
-                  </div>
                 </div>
                 <div class="pools-table__tokens-details">
-                  {{ poolVolatileType(pool) }}
+                  ID#34597823
                 </div>
               </div>
+            </div>
+            <div class="pools-table__position-size">
+              <div>1234.5 Mln</div>
+              <div>Ovn 100% | USD+ 46%</div>
+            </div>
+            <div class="pools-table__apy">
+              34.8 Trln
+            </div>
+            <div class="pools-table__apy">
+              $9000
             </div>
             <div class="pools-table__apy">
               <div
@@ -140,28 +128,7 @@
                 see on platform
               </div>
             </div>
-            <div class="pools-table__tvl">
-              <div class="pool-table-header-item">
-                <div
-                  v-if="pool.tvl"
-                  class="card-label"
-                >
-                  <template v-if="pool.tvl >= 1000000">
-                    ${{ formatNumberToMln(pool.tvl, 2) }}M
-                  </template>
-                  <template v-if="pool.tvl < 1000000">
-                    ${{ formatNumberToThousands(pool.tvl, 0) }}K
-                  </template>
-                </div>
-                <div
-                  v-else
-                  class="card-label see-on-dex-label see-on-dex-another"
-                >
-                  see on platform
-                </div>
-              </div>
-            </div>
-            <div class="pools-table__platform-row">
+            <div class="pools-table__platform-row center">
               <a
                 v-for="(poolPlat, key) in pool.platform"
                 :key="key"
@@ -174,27 +141,14 @@
                   class="pools-table__platform-icon"
                   :name="poolPlat"
                 />
-
-                <span v-if="pool.poolNameForAgregator">
-                  {{ pool.poolNameForAgregator.toUpperCase() }}
-                </span>
-                <span v-else>
-                  {{ poolPlat.toUpperCase() }}
-                </span>
-                <div class="button-link">
-                  <BaseIcon
-                    name="LinkExtra"
-                  />
-                </div>
               </a>
             </div>
 
             <ButtonComponent
               :disabled="!pool.zappable"
               btn-styles="faded"
-              @click="openZapIn(pool)"
             >
-              DEPOSIT
+              MANAGE
             </ButtonComponent>
           </div>
         </template>
@@ -213,45 +167,21 @@
         <slot name="footer" />
       </div>
     </div>
-
-    <ZapInComponent />
   </div>
 </template>
 
 <!-- eslint-disable no-param-reassign -->
 <script lang="ts">
-import { mapActions } from 'vuex';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
-import { formatMoneyComma, formatNumberToMln, formatNumberToThousands } from '@/utils/numbers.ts';
-import ZapInComponent from '@/modules/Main/components/ZapModal/Index.vue';
-import { buildLink, checkIsEveryStable } from '@/store/views/main/pools/helpers.ts';
+import { formatMoneyComma } from '@/utils/numbers.ts';
+import { buildLink } from '@/store/views/main/pools/helpers.ts';
 import { APY_POOLS } from '@/store/views/main/pools/mocks.ts';
 
-enum POOL_TAG {
-  NEW,
-  PROMO,
-  HOT,
-  ZAPIN,
-}
-
-const tagIconMap = {
-  [POOL_TAG.HOT]: 'CommonHot',
-  [POOL_TAG.NEW]: 'CommonStar',
-  [POOL_TAG.PROMO]: 'CommonPromo',
-  [POOL_TAG.ZAPIN]: 'CommonStar',
-};
-
-const getPoolDescStr = (
-  isStable: boolean,
-  version: string,
-) => `${version.toUpperCase()} Concentrated ${isStable ? 'Stable' : 'Volatile'} pool`;
-
 export default {
-  name: 'PoolsTable',
+  name: 'PositionsTable',
   components: {
     BaseIcon,
-    ZapInComponent,
     ButtonComponent,
   },
   props: {
@@ -271,7 +201,6 @@ export default {
   },
   data() {
     return {
-      POOL_TAG,
       APY_POOLS,
     };
   },
@@ -288,20 +217,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions('poolsData', ['openZapIn']),
     formatMoneyComma,
-    formatNumberToMln,
-    formatNumberToThousands,
-    poolVolatileType(poolD: any) {
-      const isStable = checkIsEveryStable(poolD);
-      return getPoolDescStr(isStable, poolD.poolVersion);
-    },
-    getTagName(poolTag: POOL_TAG) {
-      return POOL_TAG[poolTag as number];
-    },
-    getIconName(poolTag: POOL_TAG) {
-      return tagIconMap[poolTag];
-    },
     getTokenNames(pool: any) {
       return pool.name.split('/');
     },

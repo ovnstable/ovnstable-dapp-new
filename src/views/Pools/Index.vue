@@ -1,8 +1,5 @@
 <template>
   <div>
-    <div>
-      PoolsView
-    </div>
     <PoolsPositions />
   </div>
 </template>
@@ -14,8 +11,6 @@ export default {
   name: 'PoolsView',
   components: {
     PoolsPositions,
-  },
-  data() {
   },
   watch: {
 

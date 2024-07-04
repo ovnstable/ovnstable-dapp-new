@@ -1,18 +1,176 @@
 <template>
-  <div>Hello world</div>
+  <div class="pools-wrap">
+    <div
+      v-if="isPoolsLoading"
+      class="pools-wrap__loader"
+    >
+      <TableSkeleton />
+    </div>
+
+    <div
+      v-else
+      class="pools-container"
+    >
+      <PoolsTable
+        :pools="displayedPools"
+        :set-order-type-func="setOrderType"
+        :order-type="orderType"
+      >
+        <template
+          #filters
+        >
+          <PoolsFilter
+            :selected-network="selectedNetworks"
+            :is-show-deprecated="isShowDeprecated"
+            :search-query="searchQuery"
+            @change-tab="switchPoolsTab"
+            @change-network="setSelectedNetwork"
+            @search="updateSearch"
+          />
+        </template>
+      </PoolsTable>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
+import PoolsTable from '@/components/Pools/PositionsTable/Index.vue';
+import PoolsFilter from '@/components/Pools/PositionsFilter/Index.vue';
+import {
+  mapActions, mapGetters, mapMutations, mapState,
+} from 'vuex';
+import { POOL_TYPES } from '@/store/views/main/pools/index.ts';
+import TableSkeleton from '@/components/TableSkeleton/Index.vue';
+import { POOL_TAG } from '@/store/views/main/pools/mocks.ts';
+import { getSortedPools } from '@/store/views/main/pools/helpers.ts';
+
+const sortByTagAndValue = (
+  tag: POOL_TAG,
+  pools: any[],
+  isDefault: boolean = false,
+) => (valueExtractor: any) => pools.sort(
+  (a, b) => {
+    if (isDefault) {
+      if (a.poolTag === tag && b.poolTag !== tag) return -1;
+      if (b.poolTag === tag && a.poolTag !== tag) return 1;
+    }
+    return valueExtractor(b) - valueExtractor(a);
+  },
+);
+
+const POOL_SHOW_LIMIT = 10;
 
 export default {
   name: 'PositionsTable',
   components: {
+    PoolsTable,
+    PoolsFilter,
+    TableSkeleton,
   },
-  data() {
+  data: () => ({
+    poolTabType: POOL_TYPES.ALL,
+    isOpenHiddenPools: false,
+
+    selectedTabs: ['ALL'],
+    selectedNetworks: [] as number[], // [] for ALL or networks,
+    isShowOnlyZap: false,
+    isShowAprLimit: false,
+    searchQuery: '',
+
+    orderType: 'TVL_UP', // APR, APR_UP, APR_DOWN, TVL, TVL_UP, TVL_DOWN
+    isDefaultOrder: true as boolean,
+  }),
+  computed: {
+    ...mapGetters('network', ['getParams', 'networkId', 'isShowDeprecated']),
+    ...mapState('poolsData', [
+      'sortedPoolList',
+      'isPoolsLoading',
+    ]),
+    filteredPools() {
+      const tabFilteredPools = getSortedPools(
+        this.filteredBySearchQuery,
+        true,
+        this.poolTabType,
+      );
+
+      const sortByHotTagAndValue = sortByTagAndValue(
+        POOL_TAG.HOT,
+        tabFilteredPools,
+        this.isDefaultOrder,
+      );
+
+      if (this.orderType === 'APR_UP') return sortByHotTagAndValue((pool: any) => pool.apr);
+      if (this.orderType === 'APR_DOWN') return sortByHotTagAndValue((pool: any) => -pool.apr);
+      if (this.orderType === 'TVL_UP') return sortByHotTagAndValue((pool: any) => pool.tvl);
+      if (this.orderType === 'TVL_DOWN') return sortByHotTagAndValue((pool: any) => -pool.tvl);
+
+      return sortByHotTagAndValue(() => 0);
+    },
+    displayedPools() {
+      return this.isOpenHiddenPools
+        ? this.filteredPools
+        : this.filteredPools.slice(0, POOL_SHOW_LIMIT);
+    },
+    filteredBySearchQuery() {
+      if (!this.searchQuery || this.searchQuery.trim().length === 0) return this.filteredByNetwork;
+
+      return this.filteredByNetwork
+        .filter((pool: any) => pool.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+              || pool.id.toLowerCase().includes(this.searchQuery.toLowerCase())
+              || pool.chainName.toLowerCase().includes(this.searchQuery.toLowerCase())
+              || pool.address.toLowerCase().includes(this.searchQuery.toLowerCase())
+              || pool.platform.join('').toLowerCase().includes(this.searchQuery.toLowerCase()));
+    },
+    filteredByNetwork() {
+      if (this.selectedNetworks.length === 0) return this.sortedPoolList;
+
+      return this.sortedPoolList
+        .filter((pool: any) => this.selectedNetworks.includes(
+          this.getParams(pool.chain).networkId,
+        ));
+    },
   },
-  watch: {
+  async mounted() {
+    this.clearAllFilters();
+    await this.loadPools();
+    console.log(this.sortedPoolList);
   },
+
   methods: {
+    ...mapActions('poolsData', ['loadPools']),
+    ...mapMutations('poolsData', ['changeState']),
+
+    switchPoolsTab(type: POOL_TYPES) {
+      this.isDefaultOrder = true;
+      this.isOpenHiddenPools = false;
+      this.poolTabType = type;
+    },
+    updateSearch(searchQuery: string) {
+      this.isDefaultOrder = true;
+      this.isOpenHiddenPools = false;
+      this.searchQuery = searchQuery;
+    },
+    setOrderType(orderType: any) {
+      this.isDefaultOrder = false;
+      this.orderType = orderType;
+    },
+    setSelectedNetwork(selectedChain: number | 'ALL') {
+      this.isOpenHiddenPools = false;
+      this.isDefaultOrder = true;
+      if (selectedChain === 'ALL') this.selectedNetworks = [];
+      else if (this.selectedNetworks.includes(selectedChain)) {
+        this.selectedNetworks = this.selectedNetworks
+          .filter((network) => network !== selectedChain);
+      } else this.selectedNetworks.push(selectedChain);
+    },
+    clearAllFilters() {
+      this.isOpenHiddenPools = false;
+      this.isShowOnlyZap = false;
+      this.isShowAprLimit = false;
+      this.selectedTabs = ['ALL'];
+      this.selectedNetworks = [];
+      this.isDefaultOrder = true;
+    },
   },
 };
 </script>
