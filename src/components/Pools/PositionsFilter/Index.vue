@@ -4,7 +4,7 @@
       <SwitchTabs
         :tabs="filterTabs"
         :active-tab="poolTypes.ALL"
-        tabStyle="transparent"
+        tab-style="transparent"
         type="large"
         @tab-change="changeTab"
       />
@@ -13,7 +13,7 @@
     <div class="pools-wrap__search">
       <InputComponent
         type="text"
-        placeholder="Search token"
+        placeholder="Search position"
         input-type="primary"
         :value="searchQuery"
         @input="updateInputSearch"
@@ -29,20 +29,20 @@
 
     <div class="pools-wrap__filters-networks">
       <div
-        @click="changeNetwork('ALL')"
-        @keypress="changeNetwork('ALL')"
         :class="selectedNetwork.length === 0 ? 'pools-wrap__filters-item--selected' : ''"
         class="pools-wrap__filters-item"
+        @click="changeNetwork('ALL')"
+        @keypress="changeNetwork('ALL')"
       >
         ALL
       </div>
       <div
         v-for="networkConfig in sortedChains"
         :key="networkConfig.chain"
-        @click="changeNetwork(networkConfig.chain)"
-        @keypress="changeNetwork(networkConfig.chain)"
         :class="selectedNetwork.includes(networkConfig.chain) || selectedNetwork.length === 0 ? 'pools-wrap__filters-item--selected' : ''"
         class="pools-wrap__filters-item"
+        @click="changeNetwork(networkConfig.chain)"
+        @keypress="changeNetwork(networkConfig.chain)"
       >
         <BaseIcon :name="networkConfig.name.toLowerCase()" />
       </div>
@@ -66,7 +66,7 @@ interface Chain {
 }
 
 export default {
-  name: 'PoolsFilter',
+  name: 'PositionsFilter',
   components: {
     BaseIcon,
     InputComponent,
@@ -87,14 +87,6 @@ export default {
       required: true,
     },
   },
-  async mounted() {
-    this.sortedChains = await sortedChainsByTVL(this.networksData, this.isShowDeprecated);
-  },
-  watch: {
-    async isShowDeprecated() {
-      this.sortedChains = await sortedChainsByTVL(this.networksData, this.isShowDeprecated);
-    },
-  },
   data() {
     return {
       sortedChains: [] as Chain[],
@@ -106,14 +98,6 @@ export default {
           name: 'ALL',
         },
         {
-          id: POOL_TYPES.VOLATILE,
-          name: 'VOLATILE',
-        },
-        {
-          id: POOL_TYPES.STABLE,
-          name: 'STABLE',
-        },
-        {
           id: POOL_TYPES.V2,
           name: 'V2',
         },
@@ -121,16 +105,16 @@ export default {
           id: POOL_TYPES.V3,
           name: 'V3',
         },
-        {
-          id: POOL_TYPES.TOKENPLUS,
-          name: 'USD+',
-        },
-        {
-          id: POOL_TYPES.OVN,
-          name: 'OVN',
-        },
       ],
     };
+  },
+  watch: {
+    async isShowDeprecated() {
+      this.sortedChains = await sortedChainsByTVL(this.networksData, this.isShowDeprecated);
+    },
+  },
+  async mounted() {
+    this.sortedChains = await sortedChainsByTVL(this.networksData, this.isShowDeprecated);
   },
   methods: {
     changeTab(val: string) {
