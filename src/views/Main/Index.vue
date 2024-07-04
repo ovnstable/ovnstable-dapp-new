@@ -9,7 +9,7 @@
 
 <script lang="ts">
 import MainModule from '@/modules/Main/Index.vue';
-import PoolsContainer from '@/modules/Main/components/PoolsTable/Index.vue';
+import PoolsContainer from '@/modules/Main/components/Pools/Index.vue';
 
 export default {
   name: 'MainView',
