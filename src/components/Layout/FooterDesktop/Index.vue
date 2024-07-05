@@ -178,6 +178,7 @@ export default {
 
 .app-footer__icons-bottom {
   display: flex;
+  align-items: center;
   gap: 24px;
 }
 

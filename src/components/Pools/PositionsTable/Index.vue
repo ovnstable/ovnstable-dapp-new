@@ -140,6 +140,7 @@
             <ButtonComponent
               :disabled="!pool.zappable"
               btn-styles="faded"
+              @click="openZapIn(pool)"
             >
               MANAGE
             </ButtonComponent>
@@ -170,6 +171,7 @@ import ButtonComponent from '@/components/Button/Index.vue';
 import { formatMoneyComma } from '@/utils/numbers.ts';
 import { buildLink } from '@/store/views/main/pools/helpers.ts';
 import type { PropType } from 'vue';
+import { mapActions } from 'vuex';
 
 enum APR_ORDER_TYPE {
   'APR', 'APR_UP', 'APR_DOWN',
@@ -197,6 +199,7 @@ export default {
     },
   },
   methods: {
+    ...mapActions('poolsData', ['openZapIn']),
     formatMoneyComma,
     getTokenNames(pool: any) {
       return pool.name.split('/');
