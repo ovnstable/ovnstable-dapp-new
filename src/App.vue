@@ -92,7 +92,7 @@ export default {
     await this.$store.dispatch('walletAction/dappInitWalletConnect');
     // await this.fetchDataForBlastQuest();
 
-    this.$store.dispatch('balances/initUpdateBalancesInterval');
+    this.$store.dispatch('odosData/initUpdateBalancesInterval');
   },
   methods: {
     deviceType,
