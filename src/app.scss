@@ -11,6 +11,8 @@
   height: 100vh;
   inset: 0;
   filter: contrast(106%);
+  z-index: -1;
+
   [data-theme="dark"] & {
     filter: contrast(0.1%);
     opacity: .1;
