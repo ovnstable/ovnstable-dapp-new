@@ -116,12 +116,9 @@ table {
 }
 
 body {
+  position: relative;
   min-height: 100vh;
   background-color: var(--color-16);
-  background-image: url('../assets/images/common/background-dark.svg');
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-blend-mode: color-dodge;
   color: var(--color-2);
   transition: color 0.5s, background-color 0.5s;
   font-family: "Red Hat Display", sans-serif;
@@ -130,24 +127,27 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  @keyframes background-image {
-    0% {
-      background-image: none;
-    }
-    100% {
-      background-image: url('../assets/images/common/background-dark.svg');
-    }
-  }
+  /* width */
+::-webkit-scrollbar {
+  width: 10px;
+  z-index: 1000;
+}
 
-  animation-name: background-image;
-  animation-duration: 2s;
-  animation-fill-mode: forwards;
-  animation-timing-function: ease-out;
+/* Track */
+::-webkit-scrollbar-track {
+  background: transparent;
+}
 
-  [data-theme="dark"] & {
-      background-color: var(--color-7);
-      background-blend-mode: unset;
-  }
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: var(--color-6);
+  border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-3);
+}
 }
 
 svg, svg path {
