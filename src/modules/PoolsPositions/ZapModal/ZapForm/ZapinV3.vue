@@ -108,7 +108,7 @@
             -
           </div>
           <InputComponent
-            :value="currentRange === 887272 ? '∞' : frontMaxPrice"
+            :value="frontMaxPrice"
             input-type="white"
             placeholder="0"
             full-width

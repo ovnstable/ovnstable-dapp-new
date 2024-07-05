@@ -37,7 +37,7 @@
 import PoolsTable from '@/components/Pools/PositionsTable/Index.vue';
 import PoolsFilter from '@/components/Pools/PositionsFilter/Index.vue';
 import {
-  mapActions, mapGetters, mapMutations, mapState,
+  mapActions, mapGetters, mapState,
 } from 'vuex';
 import { POOL_TYPES } from '@/store/views/main/pools/index.ts';
 import TableSkeleton from '@/components/TableSkeleton/Index.vue';
@@ -109,7 +109,7 @@ export default {
     aprOrder: 0 as number,
   }),
   computed: {
-    ...mapGetters('network', ['getParams', 'networkId', 'isShowDeprecated']),
+    ...mapGetters('network', ['getParams', 'isShowDeprecated']),
     ...mapState('poolsData', [
       'sortedPoolList',
       'isPoolsLoading',
@@ -168,8 +168,6 @@ export default {
 
   methods: {
     ...mapActions('poolsData', ['loadPools']),
-    ...mapMutations('poolsData', ['changeState']),
-
     switchPoolsTab(type: POOL_TYPES) {
       this.isDefaultOrder = true;
       this.isOpenHiddenPools = false;

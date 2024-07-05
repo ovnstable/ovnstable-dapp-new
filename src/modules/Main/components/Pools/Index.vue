@@ -177,7 +177,7 @@ export default {
     isDefaultOrder: true as boolean,
   }),
   computed: {
-    ...mapGetters('network', ['getParams', 'networkId', 'isShowDeprecated']),
+    ...mapGetters('network', ['getParams', 'isShowDeprecated']),
     ...mapState('poolsData', [
       'sortedPoolList',
       'isPoolsLoading',

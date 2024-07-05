@@ -60,7 +60,7 @@
       class="select-list"
     >
       <div
-        v-if="list.length > 10"
+        v-if="list.length > 20"
         class="select-list__search"
       >
         <input
@@ -231,6 +231,7 @@ export default {
         'is-clearable': this.clearable,
         'is-required': this.required,
         'is-label-editable': this.labelEditable,
+        'select-component': true,
       };
     },
 
