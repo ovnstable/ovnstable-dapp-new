@@ -312,7 +312,9 @@ export default {
 
 <style lang="scss" scoped>
 .app-header {
-  position: fixed;
+  // position: fixed;
+  position: sticky;
+  margin-bottom: auto;
   z-index: 10;
   top: 0;
   left: 0;
@@ -565,6 +567,7 @@ export default {
 }
 
 .app-header__balances {
+  position: relative;
   @media (max-width: 1024px) {
     order: 3;
   }

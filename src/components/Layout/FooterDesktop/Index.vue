@@ -214,6 +214,7 @@ export default {
   display: flex;
   width: 100%;
   padding: 30px 0;
+  margin-top: auto;
 
   @media (max-width: 1024px) {
     display: none;
