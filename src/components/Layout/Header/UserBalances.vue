@@ -158,7 +158,8 @@ export default {
 
 <style lang="scss" scoped>
 .app-header {
-  position: fixed;
+  // position: fixed;
+  position: sticky;
   z-index: 10;
   top: 0;
   left: 0;
@@ -171,6 +172,7 @@ export default {
     background-color: var(--color-17);
     border-bottom: 1px solid var(--color-2);
   }
+  margin-bottom: auto;
 }
 
 .app-header__balance-account {

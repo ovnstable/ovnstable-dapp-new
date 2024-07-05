@@ -164,6 +164,10 @@ export default {
 
 <style lang="scss" scoped>
 .app-footer {
+  position: relative;
+  z-index: 5;
+  // backdrop-filter: blur(20px);
+
   a {
     text-transform: uppercase;
     color: var(--color-2);
@@ -215,6 +219,7 @@ export default {
   display: flex;
   width: 100%;
   padding: 30px 0;
+  margin-top: auto;
 
   @media (max-width: 1024px) {
     display: none;

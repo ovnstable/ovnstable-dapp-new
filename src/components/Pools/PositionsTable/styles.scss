@@ -6,6 +6,8 @@
   font-weight: 500;
   font-size: 14px;
   border-radius: 30px;
+  backdrop-filter: blur(20px);
+  
   [data-theme="dark"] & {
     background-color: var(--color-19);
   }
