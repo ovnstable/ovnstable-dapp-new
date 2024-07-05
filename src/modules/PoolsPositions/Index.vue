@@ -1,8 +1,6 @@
 <template>
-  <div>
-    <div>
-      <h1>MY POSITIONS</h1>
-    </div>
+  <div class="pos-wrap">
+    <h1>MY POSITIONS</h1>
     <Positions />
 
     <ZapModal
@@ -42,5 +40,9 @@ h1 {
   font-weight: 800;
   color: var(--color-1);
   margin-bottom: 35px;
+}
+
+.pos-wrap {
+  width: 100%;
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="pos">
     <PoolsPositions />
   </div>
 </template>
@@ -12,10 +12,11 @@ export default {
   components: {
     PoolsPositions,
   },
-  watch: {
-
-  },
-  methods: {
-  },
 };
 </script>
+
+<style>
+.pos {
+  width: 100%;
+}
+</style>
