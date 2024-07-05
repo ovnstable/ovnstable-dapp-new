@@ -164,6 +164,10 @@ export default {
 
 <style lang="scss" scoped>
 .app-footer {
+  position: relative;
+  z-index: 5;
+  // backdrop-filter: blur(20px);
+
   a {
     text-transform: uppercase;
     color: var(--color-2);
