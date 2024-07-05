@@ -130,6 +130,20 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
+  @keyframes background-image {
+    0% {
+      background-image: none;
+    }
+    100% {
+      background-image: url('../assets/images/common/background-dark.svg');
+    }
+  }
+
+  animation-name: background-image;
+  animation-duration: 2s;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-out;
+
   [data-theme="dark"] & {
       background-color: var(--color-7);
       background-blend-mode: unset;
