@@ -118,6 +118,10 @@ table {
 body {
   min-height: 100vh;
   background-color: var(--color-16);
+  background-image: url('../assets/images/common/background-dark.svg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-blend-mode: color-dodge;
   color: var(--color-2);
   transition: color 0.5s, background-color 0.5s;
   font-family: "Red Hat Display", sans-serif;
@@ -128,6 +132,7 @@ body {
 
   [data-theme="dark"] & {
       background-color: var(--color-7);
+      background-blend-mode: unset;
   }
 }
 

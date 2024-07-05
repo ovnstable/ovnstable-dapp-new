@@ -1,17 +1,6 @@
 <template>
   <div class="app-wrapper">
     <HeaderBar />
-    <img
-      class="app-wrapper__img"
-      alt="stars"
-      :src="getImageUrl('assets/images/common/stars_page.png')"
-    />
-    <img
-      class="app-wrapper__img"
-      alt="grid"
-      :src="getImageUrl('assets/images/common/grid.png')"
-    />
-
     <div
       v-if="isShowHackWarning"
       class="container container--main"
