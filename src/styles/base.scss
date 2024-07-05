@@ -127,6 +127,10 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
+  [data-theme="dark"] & {
+    background-color: var(--color-7);
+}
+
   /* width */
 ::-webkit-scrollbar {
   width: 10px;
