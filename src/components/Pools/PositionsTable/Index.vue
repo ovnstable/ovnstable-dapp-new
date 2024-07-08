@@ -35,13 +35,13 @@
       </div>
 
       <div class="pools-table__content">
-        <template v-if="pools.length > 0">
+        <template v-if="getUserPositions.length > 0">
           <div
-            v-for="(pool, key) in (pools as any)"
+            v-for="(pool, key) in (getUserPositions as any)"
             :key="key"
             class="pools-table__row position-table_row"
           >
-            <div class="pools-table__chain">
+            <!-- <div class="pools-table__chain">
               <BaseIcon :name="pool.chainName" />
             </div>
             <div class="pools-table__tokens-wrap">
@@ -135,7 +135,7 @@
                   :name="poolPlat"
                 />
               </a>
-            </div>
+            </div> -->
 
             <ButtonComponent
               :disabled="!pool.zappable"
@@ -168,10 +168,10 @@
 <script lang="ts">
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
-import { formatMoneyComma } from '@/utils/numbers.ts';
-import { buildLink } from '@/store/views/main/pools/helpers.ts';
+// import { formatMoneyComma } from '@/utils/numbers.ts';
+// import { buildLink } from '@/store/views/main/pools/helpers.ts';
 import type { PropType } from 'vue';
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 
 enum APR_ORDER_TYPE {
   'APR', 'APR_UP', 'APR_DOWN',
@@ -198,19 +198,25 @@ export default {
       required: true,
     },
   },
-  mounted() {
-    this.loadPositionContract();
+  computed: {
+    ...mapGetters('accountData', ['account']),
+    ...mapGetters('zapinData', ['getUserPositions']),
+  },
+  watch: {
+    async account(val) {
+      this.loadPositionContract(val);
+    },
   },
   methods: {
     ...mapActions('poolsData', ['openZapIn']),
     ...mapActions('zapinData', ['loadPositionContract']),
-    formatMoneyComma,
-    getTokenNames(pool: any) {
-      return pool.name.split('/');
-    },
-    getPlatformLink(pool: any, platform: string) {
-      return buildLink(pool, platform) ?? '';
-    },
+    // formatMoneyComma,
+    // getTokenNames(pool: any) {
+    //   return pool.name.split('/');
+    // },
+    // getPlatformLink(pool: any, platform: string) {
+    //   return buildLink(pool, platform) ?? '';
+    // },
     iconNameSort() {
       const orderTypeStr = APR_ORDER_TYPE[this.apyOrderType];
       if (orderTypeStr.includes('UP')) return 'ArrowUpSort';

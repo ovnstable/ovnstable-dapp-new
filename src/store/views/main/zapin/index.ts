@@ -62,11 +62,15 @@ const defaultState = () => ({
   gaugeContract: null,
   currentStage: zapInStep.START,
   zapLoaded: false,
+  userPositions: [],
 });
 
 const stateData = defaultState();
 
 const getters = {
+  getUserPositions(state: typeof stateData) {
+    return state.userPositions;
+  },
   isZapLoaded(state: typeof stateData) {
     return state.zapLoaded;
   },
@@ -186,7 +190,7 @@ const actions = {
     });
   },
   async loadPositionContract({
-    commit, state, dispatch, rootState,
+    rootState, commit,
   }: any, address: string) {
     const abiFile = await loadAbi('contracts/base/AerodromeCLZap.json');
     console.log('__abifile', abiFile);
@@ -195,9 +199,13 @@ const actions = {
       rootState.web3.evmSigner,
       abiFile.address,
     );
-    console.log('__positionContract', positionContract);
-    const positions = await positionContract.getPositions('0xEd446C56F89e84b3dC9ACec060154eC6BC6bB299');
-    console.log(positions);
+    console.log('address', address);
+    const positions = await positionContract.getPositions(address);
+    console.log(positions, '__pos');
+    commit('changeState', {
+      field: 'userPositions',
+      val: positions,
+    });
   },
 };
 

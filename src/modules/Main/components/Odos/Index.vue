@@ -246,7 +246,7 @@ import SelectTokensModal from '@/components/TokensModal/Index.vue';
 import SelectTokensModalMobile from '@/modules/Main/components/MobileModals/TokenSelect.vue';
 import SwapSlippageSettings from '@/modules/Main/components/Common/SwapSlippageSettings.vue';
 import { deviceType } from '@/utils/deviceType.ts';
-import { formatMoney, fixedByPrice } from '@/utils/numbers.ts';
+import { fixedByPrice } from '@/utils/numbers.ts';
 import { getRandomString } from '@/utils/strings.ts';
 import { clearApproveToken, getAllowanceValue, approveToken } from '@/utils/contractApprove.ts';
 import odosApiService from '@/services/odos-api-service.ts';
@@ -290,13 +290,11 @@ export default {
       selectModalTypeInput: true,
       isShowSelectTokensModal: false,
       swapMethod: 'BUY', // BUY (secondTokens) / SELL (secondTokens)
-      selectTokenType: 'OVERNIGHT', // OVERNIGHT / ALL
 
       isSwapLoading: false,
       isSumulateSwapLoading: false,
       isSumulateIntervalStarted: false,
       slippagePercent: 0.05,
-      multiSwapOdosFeePercent: 0.01,
 
       tokensQuotaCounterId: null as any,
       tokensQuotaCheckerSec: 0,
@@ -305,103 +303,12 @@ export default {
       isAllDataTrigger: false,
     };
   },
-  watch: {
-    async isAllDataLoaded(val) {
-      if (this.isAllDataTrigger) return;
-      if (val) {
-        this.isAllDataTrigger = true;
-        this.clearForm('0');
-      }
-    },
-    async account(val) {
-      if (!this.isAllDataTrigger) return;
-      if (val) this.clearForm('0');
-    },
-    async networkId(newVal) {
-      if (newVal) {
-        this.$store.commit('odosData/changeState', {
-          field: 'isFirstBalanceLoaded',
-          val: false,
-        });
-        this.$store.commit('odosData/changeState', {
-          field: 'quotaResponseInfo',
-          val: null,
-        });
-        await this.initContractData();
-        await this.initData({
-          tokenSeparationScheme: this.tokenSeparationScheme,
-          listOfBuyTokensAddresses: this.listOfBuyTokensAddresses,
-        });
-        this.clearForm('1');
-      }
-    },
-    outputTokensWithSelectedTokensCount(val, oldVal) {
-      // lock first
-      if (val === 1) {
-        const token: any = this.selectedOutputTokens[0];
-        if (!token.locked) {
-          this.lockProportion(true, token);
-        }
-        this.recalculateOutputTokensSum();
-        return;
-      }
-
-      if (val === 2 && oldVal === 1) {
-        const token: any = this.selectedOutputTokens[0];
-        if (token.locked) {
-          this.lockProportion(false, token);
-        }
-        this.recalculateOutputTokensSum();
-      }
-    },
-    sumOfAllSelectedTokensInUsd() {
-      this.recalculateOutputTokensSum();
-    },
-    firstRenderDone(val) {
-      if (val) this.clearForm('3');
-    },
-    hideSwapButton(val) {
-      if (val) {
-        this.clearQuotaInfo();
-      }
-    },
-  },
-  async mounted() {
-    this.$store.commit('odosData/changeState', {
-      field: 'baseViewType',
-      val: this.viewType,
-    });
-    this.$store.commit('odosData/changeState', {
-      field: 'tokenSeparationScheme',
-      val: 'OVERNIGHT_SWAP',
-    });
-
-    this.$store.commit('odosData/changeState', {
-      field: 'isTokensLoadedAndFiltered',
-      val: false,
-    });
-
-    if (this.inputTokens.length === 0 && this.outputTokens.length === 0) {
-      this.clearForm('4');
-    }
-
-    await this.init();
-
-    this.$store.commit('odosData/changeState', {
-      field: 'isTokensLoadedAndFiltered',
-      val: true,
-    });
-
-    if (this.$route.query.action === 'swap-out') this.changeSwap();
-  },
   computed: {
     ...mapState('odosData', [
-      'isTokensLoadedAndFiltered',
       'tokensContractMap',
       'routerContract',
       'swapSessionId',
       'odosReferalCode',
-      'quotaResponseInfo',
       'isShowDecreaseAllowance',
       'tokenSeparationScheme',
       'listOfBuyTokensAddresses',
@@ -411,12 +318,10 @@ export default {
     ...mapGetters('odosData', [
       'allTokensList',
       'isAvailableOnNetwork',
-      'isAllLoaded',
       'isAllDataLoaded',
     ]),
-    ...mapGetters('web3', ['loadingWeb3']),
     ...mapGetters('accountData', ['account']),
-    ...mapGetters('network', ['getParams', 'networkId', 'networkName']),
+    ...mapGetters('network', ['networkId', 'networkName']),
 
     deviceSize() {
       return deviceType();
@@ -457,10 +362,6 @@ export default {
       return false;
     },
 
-    isTokenWithoutSlider() {
-      return this.outputTokens.length <= 1;
-    },
-
     isInputTokensAddAvailable() {
       return (
         (this.inputTokens.length + 1) < this.maxInputTokens
@@ -489,42 +390,6 @@ export default {
 
     outputTokensWithSelectedTokensCount() {
       return this.outputTokens.filter((item: any) => item.selectedToken).length;
-    },
-
-    ifMoreThanOneSelectedTokensAdded() {
-      return this.inputTokens.length > 1 || this.outputTokens.length > 1;
-    },
-
-    outputUnlockedTokens() {
-      return this.outputTokens.filter((item: any) => !item.locked);
-    },
-
-    outputUnlockedTokensCount() {
-      return this.outputUnlockedTokens.length;
-    },
-
-    getLastUnlockedToken() {
-      if (this.outputUnlockedTokensCount === 1) {
-        return this.outputUnlockedTokens[0];
-      }
-
-      return null;
-    },
-
-    freeOutputTokensPercentage() {
-      let sumLockedTokens = 0;
-      let result = 100;
-
-      for (let i = 0; i < this.selectedOutputTokens.length; i++) {
-        const token: any = this.selectedOutputTokens[i];
-        if (token.locked) {
-          sumLockedTokens += token.value;
-        }
-      }
-
-      result = 100 - sumLockedTokens;
-
-      return result;
     },
 
     selectedInputTokens() {
@@ -628,7 +493,95 @@ export default {
       return true;
     },
   },
+  watch: {
+    async isAllDataLoaded(val) {
+      if (this.isAllDataTrigger) return;
+      if (val) {
+        this.isAllDataTrigger = true;
+        this.clearForm('0');
+      }
+    },
+    async account(val) {
+      if (!this.isAllDataTrigger) return;
+      if (val) this.clearForm('0');
+    },
+    async networkId(newVal) {
+      if (newVal) {
+        this.$store.commit('odosData/changeState', {
+          field: 'isFirstBalanceLoaded',
+          val: false,
+        });
+        this.$store.commit('odosData/changeState', {
+          field: 'quotaResponseInfo',
+          val: null,
+        });
+        await this.initContractData();
+        await this.initData({
+          tokenSeparationScheme: this.tokenSeparationScheme,
+          listOfBuyTokensAddresses: this.listOfBuyTokensAddresses,
+        });
+        this.clearForm('1');
+      }
+    },
+    outputTokensWithSelectedTokensCount(val, oldVal) {
+      // lock first
+      if (val === 1) {
+        const token: any = this.selectedOutputTokens[0];
+        if (!token.locked) {
+          this.lockProportion(true, token);
+        }
+        this.recalculateOutputTokensSum();
+        return;
+      }
 
+      if (val === 2 && oldVal === 1) {
+        const token: any = this.selectedOutputTokens[0];
+        if (token.locked) {
+          this.lockProportion(false, token);
+        }
+        this.recalculateOutputTokensSum();
+      }
+    },
+    sumOfAllSelectedTokensInUsd() {
+      this.recalculateOutputTokensSum();
+    },
+    firstRenderDone(val) {
+      if (val) this.clearForm('3');
+    },
+    hideSwapButton(val) {
+      if (val) {
+        this.clearQuotaInfo();
+      }
+    },
+  },
+  async mounted() {
+    this.$store.commit('odosData/changeState', {
+      field: 'baseViewType',
+      val: this.viewType,
+    });
+    this.$store.commit('odosData/changeState', {
+      field: 'tokenSeparationScheme',
+      val: 'OVERNIGHT_SWAP',
+    });
+
+    this.$store.commit('odosData/changeState', {
+      field: 'isTokensLoadedAndFiltered',
+      val: false,
+    });
+
+    if (this.inputTokens.length === 0 && this.outputTokens.length === 0) {
+      this.clearForm('4');
+    }
+
+    await this.init();
+
+    this.$store.commit('odosData/changeState', {
+      field: 'isTokensLoadedAndFiltered',
+      val: true,
+    });
+
+    if (this.$route.query.action === 'swap-out') this.changeSwap();
+  },
   methods: {
     ...mapActions(
       'odosData',
@@ -639,7 +592,6 @@ export default {
         'getActualGasPrice',
         'initWalletTransaction',
         'initData',
-        'loadBalances',
       ],
     ),
     ...mapActions('errorModal', ['showErrorModalWithMsg']),
@@ -647,7 +599,6 @@ export default {
     ...mapActions('waitingModal', ['showWaitingModal', 'closeWaitingModal']),
     ...mapActions('walletAction', ['connectWallet']),
 
-    formatMoney,
     onLeaveList,
     beforeEnterList,
     onEnterList,
@@ -717,14 +668,6 @@ export default {
         if (this.firstRenderDone) return;
         this.finishTransaction();
       });
-    },
-    addDefaultUsdToken() {
-      const ovnSelectedToken: any = getDefaultSecondtoken(
-        this.tokenSeparationScheme,
-        this.allTokensList,
-        null,
-      );
-      this.addSelectedTokenToOutputList(ovnSelectedToken);
     },
     addDefaultOvnToken() {
       const symbol = this.$route.query.symbol ? this.$route.query.symbol : null;
@@ -1301,18 +1244,6 @@ export default {
       token.locked = isLock;
       this.recalculateOutputTokensSum();
     },
-    updateSliderValue(token: any, value: any) {
-      token.value = value;
-
-      this.subtraction(token, this.freeOutputTokensPercentage - value);
-      this.recalculateOutputTokensSum();
-
-      this.updateQuotaInfo();
-
-      if (token.value === 0 || !token.value) {
-        this.updateQuotaInfo();
-      }
-    },
     recalculateOutputTokensSum() {
       for (let i = 0; i < this.selectedOutputTokens.length; i++) {
         const token: any = this.selectedOutputTokens[i];
@@ -1322,41 +1253,6 @@ export default {
           : sum / token.selectedToken.price;
         // token.sum = this.formatMoney(sum, 4)
       }
-    },
-
-    subtraction(token: any, difference: any) {
-      const tokens = this.getActiveTokens(token);
-
-      if (tokens.length === 0) {
-        return;
-      }
-
-      const proportion = Math.floor(difference / tokens.length);
-      const remains = difference % tokens.length;
-
-      this.calculateProportions(tokens, proportion);
-
-      // Distribute the remains among the tokens
-      for (let i = 0; i < remains; i++) {
-        tokens[i].value += 1;
-      }
-    },
-
-    calculateProportions(tokens: any, proportion: any) {
-      for (let i = 0; i < tokens.length; i++) {
-        tokens[i].value = proportion;
-      }
-
-      this.recalculateOutputTokensSum();
-    },
-
-    getOutputsTokensPercentage() {
-      let tokensPercentage = 0;
-      for (const token of this.outputTokens) {
-        tokensPercentage += token.value;
-      }
-
-      return tokensPercentage;
     },
 
     addSelectedTokenToList(data: any) {
@@ -1448,53 +1344,6 @@ export default {
       this.inputTokens = [];
       this.outputTokens = [];
     },
-    isInputToken(swapMethod: any, selectTokenType: any) {
-      if (swapMethod === 'BUY' && selectTokenType === 'ALL') {
-        return true;
-      }
-
-      if (swapMethod === 'SELL' && selectTokenType === 'OVERNIGHT') {
-        return true;
-      }
-
-      if (swapMethod === 'BUY' && selectTokenType === 'OVERNIGHT') {
-        return false;
-      }
-
-      if (swapMethod === 'SELL' && selectTokenType === 'ALL') {
-        return false;
-      }
-
-      console.error(
-        'Token type not detected by method and selected type.',
-        swapMethod,
-        selectTokenType,
-      );
-      throw Error;
-    },
-    isOutputToken(swapMethod: any, selectTokenType: any) {
-      return !this.isInputToken(swapMethod, selectTokenType);
-    },
-    isSlidersOutOfLimit(additionalPercent: any) {
-      if (!additionalPercent) {
-        additionalPercent = 0;
-      }
-      return this.getOutputsTokensPercentage() + additionalPercent > 100;
-    },
-    getActiveTokens(currentToken: any) {
-      // let count = 1
-      const sliders = [];
-      for (let i = 0; i < this.outputTokens.length; i++) {
-        const token: any = this.outputTokens[i];
-        if (token.id === currentToken.id || token.locked) {
-          continue;
-        }
-
-        sliders.push(token);
-      }
-
-      return sliders;
-    },
 
     showSelectTokensModals(isShow: any) {
       this.isShowSelectTokensModal = isShow;
@@ -1505,9 +1354,6 @@ export default {
     },
     setSwapMethod(method: any) {
       this.swapMethod = method;
-    },
-    setSelectTokenType(type: any) {
-      this.selectTokenType = type;
     },
 
     updateQuotaInfo() {
@@ -1543,32 +1389,6 @@ export default {
       }, 1000);
 
       this.tokensQuotaCounterId = intervalId;
-    },
-
-    initTopInputTokensByBalance(tokens: any[]) {
-      if (this.viewType !== 'SWIPE' || !tokens || tokens.length === 0) {
-        return;
-      }
-
-      // find top 6 tokens by balance and order desc
-      let topTokens = tokens
-        .sort((a, b) => b.balanceData.balance - a.balanceData.balance)
-        .slice(0, 6);
-
-      // find all with balance
-      topTokens = topTokens.filter((token: any) => token.balanceData.balance > 0);
-
-      for (let i = 0; i < topTokens.length; i++) {
-        const token: any = topTokens[i];
-        token.selected = true;
-        this.addSelectedTokenToInputList(token);
-      }
-
-      setTimeout(() => {
-        maxAll(this.selectedInputTokens, this.checkApproveForToken);
-        this.updateQuotaInfo();
-        this.$emit('update-stablecoins-list', tokens);
-      });
     },
 
     initTabName(path: any, queryParams: any) {

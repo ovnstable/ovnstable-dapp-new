@@ -56,6 +56,7 @@ const actions = {
   },
 
   openZapIn({ commit }: any, pool: any) {
+    console.log(pool, '__POOl');
     commit('changeState', {
       field: 'currentZapPool',
       val: pool,
