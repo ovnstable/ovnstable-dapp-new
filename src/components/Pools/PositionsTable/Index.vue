@@ -198,8 +198,12 @@ export default {
       required: true,
     },
   },
+  mounted() {
+    this.loadPositionContract();
+  },
   methods: {
     ...mapActions('poolsData', ['openZapIn']),
+    ...mapActions('zapinData', ['loadPositionContract']),
     formatMoneyComma,
     getTokenNames(pool: any) {
       return pool.name.split('/');

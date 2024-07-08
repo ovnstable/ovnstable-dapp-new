@@ -43,7 +43,7 @@ const poolTokenSrcMap: TSrcMap = {
   v3: srcStringBuilder('V3PoolToken'),
 };
 
-const loadAbi = async (abiFileSrc: string): Promise<ContractAbi> => {
+export const loadAbi = async (abiFileSrc: string): Promise<ContractAbi> => {
   try {
     const abiFile = await JSONLoader(abiFileSrc);
     if (!abiFile || !abiFile?.abi) return {} as ContractAbi;
@@ -184,6 +184,20 @@ const actions = {
       field: 'poolTokenContract',
       val: tokenContract,
     });
+  },
+  async loadPositionContract({
+    commit, state, dispatch, rootState,
+  }: any, address: string) {
+    const abiFile = await loadAbi('contracts/base/AerodromeCLZap.json');
+    console.log('__abifile', abiFile);
+    const positionContract = buildEvmContract(
+      abiFile.abi,
+      rootState.web3.evmSigner,
+      abiFile.address,
+    );
+    console.log('__positionContract', positionContract);
+    const positions = await positionContract.getPositions('0xEd446C56F89e84b3dC9ACec060154eC6BC6bB299');
+    console.log(positions);
   },
 };
 
