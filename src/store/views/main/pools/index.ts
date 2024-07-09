@@ -45,6 +45,9 @@ const stateData = {
 };
 
 const getters = {
+  getAllPools(state: typeof stateData) {
+    return state.allPools;
+  },
 };
 
 const actions = {

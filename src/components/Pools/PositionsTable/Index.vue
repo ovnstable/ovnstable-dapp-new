@@ -172,6 +172,7 @@ import ButtonComponent from '@/components/Button/Index.vue';
 // import { buildLink } from '@/store/views/main/pools/helpers.ts';
 import type { PropType } from 'vue';
 import { mapActions, mapGetters } from 'vuex';
+import {formatPositionData} from './helpers.ts';
 
 enum APR_ORDER_TYPE {
   'APR', 'APR_UP', 'APR_DOWN',
@@ -201,15 +202,27 @@ export default {
   computed: {
     ...mapGetters('accountData', ['account']),
     ...mapGetters('zapinData', ['getUserPositions']),
+    ...mapGetters('poolsData', ['getAllPools']),
+    ...mapGetters('odosData', ['allTokensList']),
   },
   watch: {
     async account(val) {
       this.loadPositionContract(val);
     },
   },
+  async mounted() {
+    await this.loadTokens();
+    const posData = await this.loadPositionContract('0x6012955253cd944d42354ad129a5f37bbbd6d05a');
+    const poolInfo = await this.getAllPools;
+    const tokensList = this.allTokensList;
+    console.log(tokensList);
+    const fPos = formatPositionData(posData, poolInfo, tokensList);
+    console.log(fPos);
+  },
   methods: {
     ...mapActions('poolsData', ['openZapIn']),
     ...mapActions('zapinData', ['loadPositionContract']),
+    ...mapActions('odosData', ['loadTokens']),
     // formatMoneyComma,
     // getTokenNames(pool: any) {
     //   return pool.name.split('/');
