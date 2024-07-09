@@ -221,11 +221,13 @@ export default {
   async mounted() {
     await this.initData();
     await this.loadTokens();
+    await this.loadChains();
+    await this.initContractData();
   },
   methods: {
     ...mapActions('poolsData', ['openZapIn']),
     ...mapActions('zapinData', ['loadPositionContract']),
-    ...mapActions('odosData', ['loadTokens', 'initData']),
+    ...mapActions('odosData', ['loadTokens', 'initData', 'loadChains', 'initContractData']),
     // formatMoneyComma,
     // getTokenNames(pool: any) {
     //   return pool.name.split('/');
