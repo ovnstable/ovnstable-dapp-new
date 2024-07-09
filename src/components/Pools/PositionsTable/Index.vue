@@ -22,9 +22,9 @@
           APR
           <BaseIcon :name="iconNameSort()" />
         </div>
-        <div class="pools-header__item">
+        <!-- <div class="pools-header__item">
           Daily rewards
-        </div>
+        </div> -->
         <div class="pools-header__item">
           Earned
         </div>
@@ -37,11 +37,11 @@
       <div class="pools-table__content">
         <template v-if="getUserPositions.length > 0">
           <div
-            v-for="(pool, key) in (getUserPositions as any)"
+            v-for="(pool, key) in (positionData as any)"
             :key="key"
             class="pools-table__row position-table_row"
           >
-            <!-- <div class="pools-table__chain">
+            <div class="pools-table__chain">
               <BaseIcon :name="pool.chainName" />
             </div>
             <div class="pools-table__tokens-wrap">
@@ -98,28 +98,14 @@
               </div>
             </div>
             <div class="pools-table__position-size">
-              <div>1234.5 Mln</div>
-              <div>Ovn 100% | USD+ 46%</div>
+              <div>{{ pool.position.usdAmount }}</div>
+              <div>{{ getTokenNames(pool)[0] }} | {{ getTokenNames(pool)[1] }}</div>
             </div>
             <div class="pools-table__apy">
-              34.8 Trln
+              {{ formatMoneyComma(pool.apr, 2) }}%
             </div>
             <div class="pools-table__apy">
-              $9000
-            </div>
-            <div class="pools-table__apy">
-              <div
-                v-if="pool.apr"
-                class="card-label text-center"
-              >
-                {{ formatMoneyComma(pool.apr, 2) }}%
-              </div>
-              <div
-                v-else
-                class="card-label see-on-dex-label see-on-dex-another"
-              >
-                see on platform
-              </div>
+              {{ pool.rewards.usdAmount }}
             </div>
             <div class="pools-table__platform-row center">
               <a
@@ -135,7 +121,7 @@
                   :name="poolPlat"
                 />
               </a>
-            </div> -->
+            </div>
 
             <ButtonComponent
               :disabled="!pool.zappable"
@@ -150,7 +136,7 @@
           v-else
           class="pools-table__empty"
         >
-          pools not found
+          POSITIONS NOT FOUND
         </div>
       </div>
 
@@ -168,8 +154,8 @@
 <script lang="ts">
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
-// import { formatMoneyComma } from '@/utils/numbers.ts';
-// import { buildLink } from '@/store/views/main/pools/helpers.ts';
+import { formatMoneyComma } from '@/utils/numbers.ts';
+import { buildLink } from '@/store/views/main/pools/helpers.ts';
 import type { PropType } from 'vue';
 import { mapActions, mapGetters } from 'vuex';
 import { formatPositionData } from './helpers.ts';
@@ -199,23 +185,24 @@ export default {
       required: true,
     },
   },
+  data: () => ({
+    isLoaded: false as boolean,
+    positionData: {} as any,
+  }),
   computed: {
     ...mapGetters('accountData', ['account']),
     ...mapGetters('zapinData', ['getUserPositions']),
-    ...mapGetters('poolsData', ['getAllPools']),
-    ...mapGetters('odosData', ['allTokensList']),
+    ...mapGetters('poolsData', ['allPoolsMap']),
+    ...mapGetters('odosData', ['allTokensMap']),
   },
   watch: {
-    async account(val) {
-      this.loadPositionContract(val);
-    },
-    async allTokensList() {
-      const poolInfo = this.getAllPools;
-      const tokensList = this.allTokensList;
-      const posData = await this.loadPositionContract(this.account);
-      const fPos = formatPositionData(posData, poolInfo, tokensList);
-      console.log(this.allTokensList, '__this.allTokensList');
-      console.log(fPos);
+    async allTokensMap() {
+      if (!this.isLoaded && this.allTokensMap.size > 0) {
+        const posData = await this.getFormatPositions();
+        console.log(posData);
+        this.positionData = posData;
+        this.isLoaded = true;
+      }
     },
   },
   async mounted() {
@@ -228,18 +215,25 @@ export default {
     ...mapActions('poolsData', ['openZapIn']),
     ...mapActions('zapinData', ['loadPositionContract']),
     ...mapActions('odosData', ['loadTokens', 'initData', 'loadChains', 'initContractData']),
-    // formatMoneyComma,
-    // getTokenNames(pool: any) {
-    //   return pool.name.split('/');
-    // },
-    // getPlatformLink(pool: any, platform: string) {
-    //   return buildLink(pool, platform) ?? '';
-    // },
+    formatMoneyComma,
+    getTokenNames(pool: any) {
+      return pool.name.split('/');
+    },
+    getPlatformLink(pool: any, platform: string) {
+      return buildLink(pool, platform) ?? '';
+    },
     iconNameSort() {
       const orderTypeStr = APR_ORDER_TYPE[this.apyOrderType];
       if (orderTypeStr.includes('UP')) return 'ArrowUpSort';
       if (orderTypeStr.includes('DOWN')) return 'ArrowDownSort';
       return 'ArrowsFilter';
+    },
+    async getFormatPositions() {
+      const poolInfo = this.allPoolsMap;
+      const tokensList = this.allTokensMap;
+      const posData = await this.loadPositionContract(this.account);
+      const fPos = formatPositionData(posData, poolInfo, tokensList);
+      return fPos;
     },
   },
 };
