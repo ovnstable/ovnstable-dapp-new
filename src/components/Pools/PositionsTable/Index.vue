@@ -172,7 +172,7 @@ import ButtonComponent from '@/components/Button/Index.vue';
 // import { buildLink } from '@/store/views/main/pools/helpers.ts';
 import type { PropType } from 'vue';
 import { mapActions, mapGetters } from 'vuex';
-import {formatPositionData} from './helpers.ts';
+import { formatPositionData } from './helpers.ts';
 
 enum APR_ORDER_TYPE {
   'APR', 'APR_UP', 'APR_DOWN',
@@ -209,18 +209,25 @@ export default {
     async account(val) {
       this.loadPositionContract(val);
     },
+    async allTokensList() {
+      const poolInfo = this.getAllPools;
+      const tokensList = this.allTokensList;
+      const posData = await this.loadPositionContract(this.account);
+      const fPos = formatPositionData(posData, poolInfo, tokensList);
+      console.log(this.allTokensList, '__this.allTokensList');
+      console.log(fPos);
+    },
   },
   async mounted() {
-    const posData = await this.loadPositionContract(this.account);
-    const poolInfo = await this.getAllPools;
-    const tokensList = this.allTokensList;
-    const fPos = formatPositionData(posData, poolInfo, tokensList);
-    console.log(fPos);
+    await this.initData();
+    await this.loadTokens();
+    await this.loadChains();
+    await this.initContractData();
   },
   methods: {
     ...mapActions('poolsData', ['openZapIn']),
     ...mapActions('zapinData', ['loadPositionContract']),
-    ...mapActions('odosData', ['loadTokens']),
+    ...mapActions('odosData', ['loadTokens', 'initData', 'loadChains', 'initContractData']),
     // formatMoneyComma,
     // getTokenNames(pool: any) {
     //   return pool.name.split('/');
