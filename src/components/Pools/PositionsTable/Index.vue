@@ -211,11 +211,9 @@ export default {
     },
   },
   async mounted() {
-    await this.loadTokens();
-    const posData = await this.loadPositionContract('0x6012955253cd944d42354ad129a5f37bbbd6d05a');
+    const posData = await this.loadPositionContract(this.account);
     const poolInfo = await this.getAllPools;
     const tokensList = this.allTokensList;
-    console.log(tokensList);
     const fPos = formatPositionData(posData, poolInfo, tokensList);
     console.log(fPos);
   },

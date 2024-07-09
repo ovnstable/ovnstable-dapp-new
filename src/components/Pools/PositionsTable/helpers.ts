@@ -93,7 +93,8 @@ type TTokenInfo = {
     'selectedToken': TSelectedTokenInfo
 };
 
-const getPoolsMap = (poolInfo: TPoolInfo[]) => poolInfo.reduce((acc, pool) => ({ ...acc, [pool.address]: pool }), {});
+const getPoolsMap = (poolInfo: TPoolInfo[]) => poolInfo
+  .reduce((acc, pool) => ({ ...acc, [pool.address]: pool }), {});
 const getTokenNames = (poolName: string) => {
   const tokens = poolName.split('/');
   return {
@@ -102,14 +103,8 @@ const getTokenNames = (poolName: string) => {
   };
 };
 
-const formatBN = (
-  val: string | number,
-  decimals: number = DEFAULT_DECIMALS,
-): string => new BigNumber(val).div(10 ** decimals).toString(BN_STRING_BASE);
-
-export const formatPositionData = (posDataArr: TPositionData[], poolInfo: TPoolInfo[], tokenMap: {[key: string]: TTokenInfo}) => {
+export const formatPositionData = (posDataArr: TPositionData[], poolInfo: TPoolInfo[]) => {
   const poolMap: {[key: string]: TPoolInfo} = getPoolsMap(poolInfo);
-  console.log(tokenMap);
   return posDataArr.flatMap((
     [platform, tokenId, poolId, token0, token1, amount0, amount1, rewardAmount0, rewardAmount1,
       tickLower, tickUpper, apr]: TPositionData,

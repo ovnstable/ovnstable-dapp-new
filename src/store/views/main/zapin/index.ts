@@ -193,19 +193,17 @@ const actions = {
     rootState, commit,
   }: any, address: string) {
     const abiFile = await loadAbi('contracts/base/AerodromeCLZap.json');
-    console.log('__abifile', abiFile);
     const positionContract = buildEvmContract(
       abiFile.abi,
       rootState.web3.evmSigner,
       abiFile.address,
     );
-    console.log('address', address);
     const positions = await positionContract.getPositions(address);
-    console.log(positions, '__pos');
     commit('changeState', {
       field: 'userPositions',
       val: positions,
     });
+    return positions;
   },
 };
 
