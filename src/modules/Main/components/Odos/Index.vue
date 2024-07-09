@@ -40,7 +40,7 @@
               :css="false"
               @before-enter="beforeEnterList"
               @enter="onEnterList"
-              @onLeave="onLeaveList"
+              @on-leave="onLeaveList"
             >
               <div
                 v-for="token in inputTokens"
@@ -50,9 +50,9 @@
               >
                 <div
                   v-if="isShowDecreaseAllowance && token.selectedToken"
+                  class="decrease-allowance"
                   @click="disapproveToken(token)"
                   @keypress="disapproveToken(token)"
-                  class="decrease-allowance"
                 >
                   Decrease Allowance
                 </div>
@@ -81,9 +81,9 @@
           </div>
 
           <div
+            class="swap-form__body-arrow"
             @click="changeSwap"
             @keypress="changeSwap"
-            class="swap-form__body-arrow"
           >
             <BaseIcon
               name="ChangeSwapVector"
@@ -101,7 +101,7 @@
               :css="false"
               @before-enter="beforeEnterList"
               @enter="onEnterList"
-              @onLeave="onLeaveList"
+              @on-leave="onLeaveList"
             >
               <div
                 v-for="token in outputTokens"
@@ -141,9 +141,9 @@
         <div class="swap-form__btns">
           <ButtonComponent
             v-if="!account"
-            @on-click="connectWallet"
             btn-size="large"
             full
+            @on-click="connectWallet"
           >
             CONNECT WALLET
           </ButtonComponent>
@@ -158,10 +158,10 @@
             </ButtonComponent>
             <ButtonComponent
               v-else-if="isAnyInputsNeedApprove"
-              @on-click="approveTrigger(firstInputInQueueForToApprove)"
               btn-size="large"
               full
               :loading="firstSwipeClickOnApprove"
+              @on-click="approveTrigger(firstInputInQueueForToApprove)"
             >
               <span
                 v-if="viewType === 'SWIPE' && !firstSwipeClickOnApprove"
@@ -175,10 +175,10 @@
             </ButtonComponent>
             <ButtonComponent
               v-else
-              @on-click="swapTrigger"
               btn-size="large"
               full
               :loading="isLoadingSwap"
+              @on-click="swapTrigger"
             >
               <span v-if="viewType === 'SWIPE'">SWIPE LIQUIDITY</span><span v-else>SWAP</span>
             </ButtonComponent>
@@ -227,7 +227,6 @@
         @reload="reloadList"
       />
     </div>
-
   </div>
 </template>
 <!-- eslint-disable no-restricted-syntax -->
@@ -987,6 +986,7 @@ export default {
             simulate: true,
           };
 
+          console.log('SIMULATE');
           this.odosAssembleRequest(assembleData)
             .then(async (responseAssembleData: any) => {
               if (

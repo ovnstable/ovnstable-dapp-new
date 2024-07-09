@@ -93,7 +93,8 @@ export default {
     ...mapGetters('errorModal', { showErrorModal: 'show' }),
     ...mapGetters('successModal', { showSuccessModal: 'show' }),
     isShowHackWarning() {
-      return [324].includes(this.networkId);
+      return false;
+      // return [324].includes(this.networkId);
     },
   },
   async mounted() {
