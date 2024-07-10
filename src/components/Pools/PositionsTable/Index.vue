@@ -25,8 +25,13 @@
         <!-- <div class="pools-header__item">
           Daily rewards
         </div> -->
-        <div class="pools-header__item">
+        <div
+          class="pools-header__item "
+          @click="positionSizeSortFunc()"
+          @keypress="positionSizeSortFunc()"
+        >
           Earned
+          <BaseIcon :name="iconNameSort()" />
         </div>
         <div class="pools-header__item center">
           Platforms
@@ -37,7 +42,7 @@
       <div class="pools-table__content">
         <template v-if="getUserPositions.length > 0">
           <div
-            v-for="(pool, key) in (positionData as any)"
+            v-for="(pool, key) in (pools as any)"
             :key="key"
             class="pools-table__row position-table_row"
           >
@@ -199,11 +204,15 @@ export default {
       type: Function,
       required: true,
     },
+    positionSizeSortFunc: {
+      type: Function,
+      required: true,
+    },
   },
-  data: () => ({
-    isLoaded: false,
-    positionData: {} as any,
-  }),
+  // data: () => ({
+  //   isLoaded: false,
+  //   positionData: {} as any,
+  // }),
   computed: {
     ...mapGetters('accountData', ['account']),
     ...mapGetters('zapinData', ['getUserPositions']),
@@ -221,40 +230,40 @@ export default {
       return (val: string | number) => (new BN(val).gt(0.1) ? new BN(val).toFixed(2) : '< 0.1');
     },
   },
-  watch: {
-    async allTokensLoaded(val) {
-      if (!val) return;
-      if (!this.isLoaded && this.allTokensMap.size > 0) {
-        const posData = await this.getFormatPositions();
-        this.positionData = posData;
-        this.isLoaded = true;
-      }
-    },
-  },
-  async mounted() {
-    this.$store.commit('odosData/changeState', {
-      field: 'isTokensLoadedAndFiltered',
-      val: false,
-    });
+  // watch: {
+  //   async allTokensLoaded(val) {
+  //     if (!val) return;
+  //     if (!this.isLoaded && this.allTokensMap.size > 0) {
+  //       const posData = await this.getFormatPositions();
+  //       this.positionData = posData;
+  //       this.isLoaded = true;
+  //     }
+  //   },
+  // },
+  // async mounted() {
+  //   this.$store.commit('odosData/changeState', {
+  //     field: 'isTokensLoadedAndFiltered',
+  //     val: false,
+  //   });
 
-    await this.init();
+  //   await this.init();
 
-    this.$store.commit('odosData/changeState', {
-      field: 'isTokensLoadedAndFiltered',
-      val: true,
-    });
-  },
+  //   this.$store.commit('odosData/changeState', {
+  //     field: 'isTokensLoadedAndFiltered',
+  //     val: true,
+  //   });
+  // },
   methods: {
     ...mapActions('poolsData', ['openZapIn']),
     ...mapActions('zapinData', ['loadPositionContract']),
     ...mapActions('odosData', ['loadTokens', 'initData', 'loadChains', 'initContractData']),
     formatMoneyComma,
-    async init() {
-      await this.loadTokens();
-      await this.loadChains();
-      await this.initContractData();
-      await this.initData();
-    },
+    // async init() {
+    //   await this.loadTokens();
+    //   await this.loadChains();
+    //   await this.initContractData();
+    //   await this.initData();
+    // },
     getTokenNames(pool: any) {
       return pool.name.split('/');
     },
@@ -267,14 +276,14 @@ export default {
       if (orderTypeStr.includes('DOWN')) return 'ArrowDownSort';
       return 'ArrowsFilter';
     },
-    async getFormatPositions() {
-      const poolInfo = this.allPoolsMap;
-      const tokensList = this.allTokensMap;
-      const posData = await this.loadPositionContract(this.account);
-      console.log(posData, '_this.allTokensMap');
-      const fPos = formatPositionData(posData, poolInfo, tokensList);
-      return fPos;
-    },
+    // async getFormatPositions() {
+    //   const poolInfo = this.allPoolsMap;
+    //   const tokensList = this.allTokensMap;
+    //   const posData = await this.loadPositionContract(this.account);
+    //   console.log(posData, '_this.allTokensMap');
+    //   const fPos = formatPositionData(posData, poolInfo, tokensList);
+    //   return fPos;
+    // },
   },
 };
 </script>
