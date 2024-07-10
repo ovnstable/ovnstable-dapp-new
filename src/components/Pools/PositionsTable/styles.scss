@@ -506,6 +506,16 @@
   align-items: center;
   margin-bottom: 4px;
   gap: 8px;
+
+  & .in-range {
+    color: green;
+    white-space: nowrap;
+  }
+
+  & .out-range {
+    color: red;
+    white-space: nowrap;
+  }
 }
 
 

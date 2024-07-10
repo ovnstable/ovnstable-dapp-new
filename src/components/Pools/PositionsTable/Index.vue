@@ -92,20 +92,34 @@
                     {{ pool.name }}
                   </div>
                 </div>
-                <div class="pools-table__tokens-details">
-                  ID#34597823
+                <div class="pools-table__details-row">
+                  <div class="pools-table__tokens-details">
+                    ID#{{ pool.tokenId }}
+                  </div>
+                  <div
+                    v-if="isInRange(pool)"
+                    class="in-range"
+                  >
+                    IN RANGE
+                  </div>
+                  <div
+                    v-else
+                    class="out-range"
+                  >
+                    OUT OF RANGE
+                  </div>
                 </div>
               </div>
             </div>
             <div class="pools-table__position-size">
-              <div>{{ pool.position.usdAmount }}</div>
+              <div>{{ gtMinimumVal(pool.position.usdAmount) }}$</div>
               <div>{{ getTokenNames(pool)[0] }} | {{ getTokenNames(pool)[1] }}</div>
             </div>
             <div class="pools-table__apy">
               {{ formatMoneyComma(pool.apr, 2) }}%
             </div>
             <div class="pools-table__apy">
-              {{ pool.rewards.usdAmount }}
+              {{ gtMinimumVal(pool.rewards.usdAmount) }}$
             </div>
             <div class="pools-table__platform-row center">
               <a
@@ -158,6 +172,7 @@ import { formatMoneyComma } from '@/utils/numbers.ts';
 import { buildLink } from '@/store/views/main/pools/helpers.ts';
 import type { PropType } from 'vue';
 import { mapActions, mapGetters } from 'vuex';
+import BN from 'bignumber.js';
 import { formatPositionData } from './helpers.ts';
 
 enum APR_ORDER_TYPE {
@@ -194,6 +209,17 @@ export default {
     ...mapGetters('zapinData', ['getUserPositions']),
     ...mapGetters('poolsData', ['allPoolsMap']),
     ...mapGetters('odosData', ['allTokensMap', 'allTokensLoaded']),
+    isInRange() {
+      return (pool: any) => {
+        const lowTick = pool?.ticks?.tickLower;
+        const upTick = pool?.ticks?.tickUpper;
+        const centerTick = new BN(pool?.ticks?.centerTick);
+        return !(centerTick.gt(upTick) || centerTick.lt(lowTick));
+      };
+    },
+    gtMinimumVal() {
+      return (val: string | number) => (new BN(val).gt(0.1) ? new BN(val).toFixed(2) : '< 0.1');
+    },
   },
   watch: {
     async allTokensLoaded(val) {

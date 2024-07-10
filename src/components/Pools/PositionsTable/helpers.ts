@@ -169,6 +169,7 @@ export const formatPositionData = (
       ticks: {
         tickLower,
         tickUpper,
+        centerTick,
       },
     };
     return positionFullInfo;
