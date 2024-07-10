@@ -501,9 +501,7 @@ export default {
   async mounted() {
     this.pairSymbols = this.zapPool.name.split('/');
     const tickSpace = await this.zapContract.getTickSpacing(this.zapPool.address);
-    console.log(this.zapPool.address, '__tickSpace');
     const currPrice = await this.zapContract.getCurrentPrice(this.zapPool.address);
-    console.log(this.zapPool.address, '__tickSpace2');
     const centerTick = await this.zapContract.getCurrentPoolTick(this.zapPool.address);
     const center = new BN(currPrice).div(10 ** 6);
     const closestTicks = await this.zapContract.closestTicksForCurrentTick(this.zapPool.address);

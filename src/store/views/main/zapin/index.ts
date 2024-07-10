@@ -218,7 +218,7 @@ const actions = {
   async loadPositionContract({
     rootState, commit,
   }: any, address: string) {
-    const abiFile = await loadAbi('contracts/base/AerodromeCLZap.json');
+    const abiFile = await loadAbi('contracts/base/AerodromeV3Zap.json');
     const positionContract = buildEvmContract(
       abiFile.abi,
       rootState.web3.evmSigner,

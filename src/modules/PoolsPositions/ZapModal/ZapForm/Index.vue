@@ -837,10 +837,10 @@ export default {
       if (!resp) return;
 
       proportions = {
-        inputTokens: userInputTokens.map((_: any, key: number) => ({
-          tokenAddress: _?.selectedToken?.address,
+        inputTokens: resp[0].map((_: any, key: number) => ({
+          tokenAddress: _,
           amount: resp[1][key]?.toString(),
-        })).filter((_) => new BN(_.amount).gt(0)),
+        })).filter((_: any) => new BN(_.amount).gt(0)),
         outputTokens: resp[2].map((_: any, key: number) => ({
           tokenAddress: _,
           proportion: new BN(resp[3][key]?.toString()).div(10 ** 6).toFixed(2),
@@ -850,7 +850,6 @@ export default {
       };
 
       console.log(resp, '__resp2');
-
       console.log(proportions, '__proportions');
 
       proportions.outputTokens = proportions.outputTokens.filter(
@@ -865,6 +864,8 @@ export default {
         userAddr: this.zapContract.target,
         slippageLimitPercent: this.getSlippagePercent(),
       };
+
+      console.log(request, '__request');
 
       if (proportions.inputTokens?.length === 0) {
         await this.initZapInTransaction(
@@ -974,7 +975,6 @@ export default {
       poolInfo: any,
       zapPool: any,
     ) {
-      const gaugeAddress = poolInfo.gauge;
       if (!this.zapContract) {
         console.error(
           'Init zap transactions failed, chronos contract not found. responseData: ',
@@ -1007,30 +1007,11 @@ export default {
         data: responseData ? responseData.transaction.data : '0x',
       };
 
-      let gaugeData: any;
-
-      if (zapPool.platform[0] === 'Pancake' && this.zapPool.poolVersion === 'v2') {
-        gaugeData = {
-          amountsOut: [
-            proportions.amountToken0Out,
-            proportions.amountToken1Out,
-          ],
-          pair: gaugeAddress,
-        };
-      } else {
-        gaugeData = {
-          gauge: gaugeAddress,
-          amountsOut: [proportions.amountToken0Out, proportions.amountToken1Out],
-        };
-      }
-
-      if (this.zapPool.poolVersion === 'v3') {
-        gaugeData = {
-          pair: this.zapPool.address,
-          tickRange: this.v3Range.ticks,
-          amountsOut: [proportions.amountToken0Out, proportions.amountToken1Out],
-        };
-      }
+      const gaugeData = {
+        pair: this.zapPool.address,
+        tickRange: this.v3Range.ticks,
+        amountsOut: [proportions.amountToken0Out, proportions.amountToken1Out],
+      };
 
       // this.showWaitingModal('Staking in process');
 

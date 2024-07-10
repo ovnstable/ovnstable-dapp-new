@@ -193,12 +193,11 @@ export default {
     ...mapGetters('accountData', ['account']),
     ...mapGetters('zapinData', ['getUserPositions']),
     ...mapGetters('poolsData', ['allPoolsMap']),
-    ...mapGetters('odosData', ['allTokensList', 'allTokensMap', 'allTokensLoaded']),
+    ...mapGetters('odosData', ['allTokensMap', 'allTokensLoaded']),
   },
   watch: {
     async allTokensLoaded(val) {
       if (!val) return;
-      console.log(this.allTokensList, '_this.allTokensMap');
       if (!this.isLoaded && this.allTokensMap.size > 0) {
         const posData = await this.getFormatPositions();
         this.positionData = posData;
@@ -246,6 +245,7 @@ export default {
       const poolInfo = this.allPoolsMap;
       const tokensList = this.allTokensMap;
       const posData = await this.loadPositionContract(this.account);
+      console.log(posData, '_this.allTokensMap');
       const fPos = formatPositionData(posData, poolInfo, tokensList);
       return fPos;
     },

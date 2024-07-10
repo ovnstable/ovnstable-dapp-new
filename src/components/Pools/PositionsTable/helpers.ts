@@ -16,6 +16,7 @@ export type TPositionData = [
     rewardAmount1: number,
     tickLower: number,
     tickUpper: number,
+    centerTick: number,
     apr: BN,
   ]
 
@@ -142,7 +143,7 @@ export const formatPositionData = (
   // console.log(tokenMap);
   const fPositions = posDataArr.map((
     [platform, tokenId, poolId, token0, token1, amount0, amount1, rewardAmount0, rewardAmount1,
-      tickLower, tickUpper, apr]: TPositionData,
+      tickLower, tickUpper, centerTick, apr]: TPositionData,
   ) => {
     const pool = poolsMap[poolId];
     const tokenNames = getTokenNames(pool.name);
