@@ -186,36 +186,50 @@ export default {
     },
   },
   data: () => ({
-    isLoaded: false as boolean,
+    isLoaded: false,
     positionData: {} as any,
   }),
   computed: {
     ...mapGetters('accountData', ['account']),
     ...mapGetters('zapinData', ['getUserPositions']),
     ...mapGetters('poolsData', ['allPoolsMap']),
-    ...mapGetters('odosData', ['allTokensMap']),
+    ...mapGetters('odosData', ['allTokensList', 'allTokensMap', 'allTokensLoaded']),
   },
   watch: {
-    async allTokensMap() {
+    async allTokensLoaded(val) {
+      if (!val) return;
+      console.log(this.allTokensList, '_this.allTokensMap');
       if (!this.isLoaded && this.allTokensMap.size > 0) {
         const posData = await this.getFormatPositions();
-        console.log(posData);
         this.positionData = posData;
         this.isLoaded = true;
       }
     },
   },
   async mounted() {
-    await this.initData();
-    await this.loadTokens();
-    await this.loadChains();
-    await this.initContractData();
+    this.$store.commit('odosData/changeState', {
+      field: 'isTokensLoadedAndFiltered',
+      val: false,
+    });
+
+    await this.init();
+
+    this.$store.commit('odosData/changeState', {
+      field: 'isTokensLoadedAndFiltered',
+      val: true,
+    });
   },
   methods: {
     ...mapActions('poolsData', ['openZapIn']),
     ...mapActions('zapinData', ['loadPositionContract']),
     ...mapActions('odosData', ['loadTokens', 'initData', 'loadChains', 'initContractData']),
     formatMoneyComma,
+    async init() {
+      await this.loadTokens();
+      await this.loadChains();
+      await this.initContractData();
+      await this.initData();
+    },
     getTokenNames(pool: any) {
       return pool.name.split('/');
     },

@@ -34,9 +34,99 @@
           />
         </div>
         <div class="zapin-block__row">
+          <div
+          class="zapin-block__content"
+          :class="currentSection === zapMobileSection.TOKEN_FORM && 'mobile-active'"
+          >
+            <div class="zapin-block__wrapper">
+              <h2 v-if="zapPool?.poolVersion === 'v3'">
+                Pool you choose
+              </h2>
+              <PoolLabel
+                :pool="zapPool"
+                class="pool-info"
+              />
+              <div class="zapin-block__swap-wrapper">
+                <div class="out-swap-container pt-5">
+                  <div
+                    v-for="token in (outputTokens as any)"
+                    :key="token.id"
+                    class="input-component-container"
+                  >
+                    <TokenForm
+                      :token-info="token"
+                      :is-token-removable="isOutputTokensRemovable"
+                      :is-input-token="false"
+                      :disabled="true"
+                      :balances-loading="isBalancesLoading"
+                      @select-token="selectOutputToken"
+                      @remove-token="removeOutputToken"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div v-if="sumOfAllSelectedTokensInUsd && ifMoreThanOneSelectedTokensAdded"
+                  class="transaction-info-container"
+            >
+                <div class="transaction-info-body">
+                  <div
+                    class="zap-row"
+                  >
+                    <div class="transaction-info-title">
+                      Slippage
+                    </div>
+                    <div class="transaction-info">
+                      {{ slippagePercent * 1 }}%
+                      <span class="transaction-info-additional">
+                        ({{ formatMoney(getSlippageAmount, 3) }})$
+                      </span>
+                    </div>
+                  </div>
+
+                  <div
+                    v-if="selectedInputTokens?.length > 1"
+                    class="zap-row"
+                  >
+                    <div class="transaction-info-title">
+                      Multi-swap Odos fee
+                    </div>
+                    <div class="transaction-info">
+                      {{ multiSwapOdosFeePercent * 1 }}%
+                      <span class="transaction-info-additional">
+                        ({{ formatMoney(getOdosFee, 3) }})$
+                      </span>
+                    </div>
+                  </div>
+
+                  <div
+                    class="zap-row"
+                  >
+                    <div class="transaction-info-title">
+                      Single-swap Odos fee
+                    </div>
+                    <div class="transaction-info">
+                      0.00% <span class="transaction-info-additional">(0)$</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            <div>
+              <SwapSlippageSettings
+                :selected-input-tokens="selectedInputTokens"
+                :selected-output-tokens="selectedOutputTokens"
+                :zap-pool-data="zapPool"
+                @change-slippage="handleCurrentSlippageChanged"
+              />
+            </div>
+          </div>
           <ZapinV3
+            v-if="zapPool?.poolVersion === 'v3'"
             :zap-pool="zapPool"
             :zap-contract="zapContract"
+            :ticks-init="[zapPool?.ticks?.tickLower, zapPool?.ticks?.tickUpper]"
             :class="currentSection === zapMobileSection.SET_PRICE_RANGE && 'mobile-active'"
             @set-range="setRangeV3"
           />
@@ -52,26 +142,31 @@
           @click="connectWallet"
           @keypress="connectWallet"
         >
-        CONNECT WALLET
+          CONNECT WALLET
         </ButtonComponent>
         <div
           v-else
           class="swap-button-container"
         >
           <ButtonComponent
-            v-if="additionalSwapStepType === 'APPROVE'"
+            v-if="isDisableButton"
+            btn-size="large"
+            full
+            btn-styles="primary"
+            disabled
+          >
+            {{ disableButtonMessage }}
+          </ButtonComponent>
+          <ButtonComponent
+            v-else-if="!isNftApproved"
             btn-size="large"
             btn-styles="primary"
             full
             :loading="approvingPending"
-            @click="
-              toApproveAndDepositSteps(lastZapResponseData, lastPoolInfoData)
-            "
-            @keypress="
-              toApproveAndDepositSteps(lastZapResponseData, lastPoolInfoData)
-            "
+            @click="approveNftPosition"
+            @keypress="approveNftPosition"
           >
-            APPROVE GAUGE
+            APPROVE
           </ButtonComponent>
           <ButtonComponent
             v-else
@@ -79,35 +174,14 @@
             btn-styles="primary"
             full
             :loading="isSwapLoading"
-            @click="stakeTrigger"
-            @keypress="stakeTrigger"
+            @click="rebalanceTrigger"
+            @keypress="rebalanceTrigger"
           >
-            Rebalance
+            REBALANCE
           </ButtonComponent>
         </div>
-        <ZapInStepsRow
-          v-if="zapPool.chain === networkId && isTokensLoadedAndFiltered"
-          class="zapin__modal-steps"
-          :version="zapInType"
-          :type="currentZapPlatformContractType"
-          :current-stage="currentStage"
-        />
       </div>
     </div>
-
-    <SelectTokensModal
-      :is-show="isShowSelectTokensModal"
-      :select-token-input="true"
-      :tokens="zapAllTokens"
-      :is-all-data-loaded="isAllDataLoaded"
-      :selected-tokens="inputTokens"
-      :balances-loading="isBalancesLoading"
-      :user-account="account"
-      remove-native
-      @set-show="showSelectTokensModals"
-      @add-token-to-list="addSelectedTokenToList"
-      @remove-token-from-list="removeSelectedTokenFromList"
-    />
 </div>
 </template>
 <!-- eslint-disable no-restricted-syntax -->
@@ -115,25 +189,18 @@
 <!-- eslint-disable no-param-reassign -->
 <script lang="ts">
 import { useEventBus } from '@vueuse/core';
-import { markRaw } from 'vue';
 import { ethers } from 'ethers';
 import {
   mapActions, mapGetters, mapState, mapMutations,
 } from 'vuex';
 import {
-  updateTokenValue,
   getNewOutputToken,
   getNewInputToken,
   getTokenByAddress,
   WHITE_LIST_ODOS,
 } from '@/store/helpers/index.ts';
 import {
-  getProportion,
-  calculateProportionForPool,
-  depositAllAtGauge,
-  checkApproveForGauge,
-  approveGaugeForStake,
-  getV3Proportion,
+  getV3Rebalance,
 } from '@/store/views/main/zapin/helpers.ts';
 import odosApiService from '@/services/odos-api-service.ts';
 
@@ -142,15 +209,12 @@ import ChangeNetwork from '@/modules/Main/components/ZapModal/ZapForm/ChangeNetw
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { formatMoney } from '@/utils/numbers.ts';
-import PoolLabel from '@/modules/Main/components/ZapModal/PoolLabel.vue';
-import SelectTokensModal from '@/components/TokensModal/Index.vue';
-import ZapInStepsRow from '@/components/StepsRow/ZapinRow/ZapinRow.vue';
+import PoolLabel from '@/modules/PoolsPositions/ZapModal/PoolLabel.vue';
+import SwapSlippageSettings from '@/modules/Main/components/Common/SwapSlippageSettings.vue';
 import ZapinV3 from '@/modules/Main/components/ZapModal/ZapForm/ZapinV3.vue';
 import { poolsInfoMap, poolTokensForZapMap } from '@/store/views/main/zapin/mocks.ts';
 import BN from 'bignumber.js';
-import { getAllowanceValue } from '@/utils/contractApprove.ts';
-import { zapInStep } from '@/store/views/main/zapin/index.ts';
-import { parseLogs } from './helpers.ts';
+import TokenForm from '@/modules/PoolsPositions/ZapModal/TokenForm.vue';
 
 enum zapMobileSection {
   'TOKEN_FORM',
@@ -164,10 +228,10 @@ export default {
     BaseIcon,
     ZapinV3,
     ButtonComponent,
-    SelectTokensModal,
+    SwapSlippageSettings,
+    TokenForm,
     ChangeNetwork,
     Spinner,
-    ZapInStepsRow,
   },
   props: {
     zapPool: {
@@ -190,8 +254,13 @@ export default {
       v3Range: null as any,
       isShowSelectTokensModal: false,
       swapMethod: 'BUY', // BUY (secondTokens) / SELL (secondTokens)
+      selectTokenType: 'OVERNIGHT', // OVERNIGHT / ALL
+
+      isNftApproved: false,
       isSwapLoading: false,
       slippagePercent: 0.5,
+      multiSwapOdosFeePercent: 0.01,
+
       tokensQuotaCounterId: null as any,
       tokensQuotaCheckerSec: 0,
 
@@ -213,7 +282,6 @@ export default {
         // Alienbase: ["Alien Base", "Alien Base Stable"],
         // Convex: ["Curve Crypto Registry", "Curve Factory", "Curve Registry"]
       } as any,
-      currentStage: zapInStep.START,
       // Mobile section switch
       zapMobileSection,
       currentSection: zapMobileSection.TOKEN_FORM,
@@ -222,29 +290,18 @@ export default {
   computed: {
     ...mapState('odosData', [
       'isTokensLoadedAndFiltered',
-      'tokensContractMap',
-      'additionalSwapStepType',
-      'lastZapResponseData',
       'lastPoolInfoData',
       'isBalancesLoading',
-      'lastNftTokenId',
-      'routerContract',
       'odosReferalCode',
     ]),
-
     ...mapState('zapinData', [
-      'currentZapPlatformContractType',
       'zapContract',
-      'gaugeContract',
-      'poolTokenContract',
-      'zapPoolRoot',
+      'poolNftContract',
     ]),
     ...mapGetters('odosData', [
       'allTokensList',
-      'isAllDataLoaded',
       'isAvailableOnNetwork',
     ]),
-
     ...mapGetters('zapinData', [
       'isZapLoaded',
     ]),
@@ -254,15 +311,18 @@ export default {
     zapsLoaded() {
       return this.isTokensLoadedAndFiltered && this.zapPool && this.zapContract && this.isZapLoaded;
     },
-    zapAllTokens() {
-      const selectedAdd = this.inputTokens
-        .map((_) => _.selectedToken?.address?.toLowerCase() ?? null)
-        .filter(Boolean);
-
-      return this.allTokensList.map((item: any) => ({
-        ...item,
-        selected: selectedAdd.includes(item.address?.toLowerCase()) ? item?.selected : false,
-      }));
+    getOdosFee() {
+      return new BN(this.sumOfAllSelectedTokensInUsd)
+        .times(this.multiSwapOdosFeePercent)
+        .div(100)
+        .toNumber();
+    },
+    getSlippageAmount() {
+      return new BN(this.sumOfAllSelectedTokensInUsd)
+        .times(this.slippagePercent).div(100).toNumber();
+    },
+    isOutputTokensRemovable() {
+      return false;
     },
 
     inputTokensWithSelectedTokensCount() {
@@ -271,6 +331,10 @@ export default {
 
     outputTokensWithSelectedTokensCount() {
       return this.outputTokens.filter((item: any) => item.selectedToken).length;
+    },
+
+    ifMoreThanOneSelectedTokensAdded() {
+      return this.selectedInputTokens.length > 0;
     },
 
     selectedInputTokens() {
@@ -289,15 +353,6 @@ export default {
       return this.selectedInputTokens.filter(
         (item: any) => item.selectedToken.symbol !== 'OVN',
       );
-    },
-    totalNoneOvnUsdInputsUsdBalance() {
-      let totalBalance = 0;
-      for (let i = 0; i < this.selectedNoneOvnInputTokens.length; i++) {
-        const token: any = this.selectedNoneOvnInputTokens[i];
-        totalBalance += token.selectedToken.balanceData.balanceInUsd;
-      }
-
-      return totalBalance;
     },
     totalNoneOvnUsdInputsUsdValue() {
       let totalValue = 0;
@@ -326,14 +381,35 @@ export default {
     },
 
     isDisableButton() {
-      return (
+      return (this.outputTokensWithSelectedTokensCount === 0 || !this.isAvailableOnNetwork
+      );
+    },
+
+    disableButtonMessage() {
+      if (
         this.inputTokensWithSelectedTokensCount === 0
         || this.outputTokensWithSelectedTokensCount === 0
-        || !this.isAvailableOnNetwork
-        || !this.isAnyTokensBalanceIsInsufficient
-        || !this.isAmountEntered
-        || this.isOvnValueOverflow
-      );
+      ) {
+        if (this.isAvailableOnNetwork) {
+          return 'SELECT TOKENS';
+        }
+
+        return 'SWITCH CHAIN';
+      }
+
+      if (!this.isAmountEntered) {
+        return 'ENTER AMOUNT';
+      }
+
+      if (!this.isAnyTokensBalanceIsInsufficient) {
+        return 'BALANCE IS INSUFFICIENT';
+      }
+
+      if (this.isOvnValueOverflow) {
+        return 'OVN VALUE IS OVERFLOW';
+      }
+
+      return null;
     },
     isAmountEntered() {
       const tokens = this.selectedInputTokens;
@@ -370,19 +446,8 @@ export default {
 
       return true;
     },
-    zapInType() {
-      if (this.zapPool?.poolVersion === 'v3') return 'V3';
-
-      return 'V2';
-    },
   },
   watch: {
-    currentStage(stage: zapInStep) {
-      this.$store.commit('zapinData/changeState', { field: 'currentStage', val: stage });
-      if (this.currentStage !== zapInStep.START) {
-        this.$store.commit('zapinData/changeState', { field: 'selectedTokens', val: this.inputTokens });
-      }
-    },
     sumOfAllSelectedTokensInUsd() {
       this.recalculateOutputTokensSum();
     },
@@ -420,10 +485,12 @@ export default {
       }
       // this.updateButtonDisabledFunc(val);
     },
+    poolNftContract(val) {
+      if (!val) return;
+      this.checkNftApprove();
+    },
   },
   mounted() {
-    if (this.zapPool.chain !== this.networkId) this.currentStage = zapInStep.START;
-
     this.firstInit();
   },
   created() {
@@ -440,15 +507,13 @@ export default {
     ...mapActions('odosData', [
       'loadTokens',
       'initContractData',
-      'loadBalances',
-      'triggerSuccessZapin',
       'startSwapConfirmTimer',
       'stopSwapConfirmTimer',
     ]),
     ...mapActions('accountData', ['refreshBalance']),
     ...mapActions('zapinData', ['loadZapContract']),
     ...mapActions('errorModal', ['showErrorModalWithMsg']),
-    ...mapActions('waitingModal', ['showWaitingModal', 'closeWaitingModal']),
+    ...mapActions('waitingModal', ['closeWaitingModal']),
     ...mapActions('walletAction', ['connectWallet']),
 
     ...mapMutations('zapinData', ['changeState']),
@@ -464,12 +529,6 @@ export default {
       this.v3Range = v3Data;
       this.updateQuotaInfo();
     },
-    updateTokenState(newToken: any) {
-      const indexOf = this.inputTokens.map((_) => _.id).indexOf(newToken.id);
-      this.inputTokens[indexOf] = newToken;
-      this.updateQuotaInfo();
-    },
-
     mintAction() {
       this.showMintView();
       this.showSwapModal();
@@ -501,7 +560,16 @@ export default {
       this.init();
       this.clearAndInitForm();
 
+      console.log(this.zapPool, 'POOLDATA');
       if (!this.isAvailableOnNetwork) this.mintAction();
+
+      if (this.outputTokens?.length > 0) {
+        const symbName = this.zapPool?.name?.split('/');
+        this.outputTokens.forEach((_, key) => {
+          this.outputTokens[key].value = this.zapPool?.position?.tokens[key][symbName[key]];
+          this.outputTokens[key].sum = this.zapPool?.position?.tokens[key][symbName[key]];
+        });
+      }
     },
 
     async init() {
@@ -536,8 +604,6 @@ export default {
       }
 
       if (this.swapMethod === 'SELL') {
-        this.addSelectedTokenToInputList(poolSelectedToken, true);
-        this.addSelectedTokenToInputList(ovnSelectSelectedToken, true);
         this.addNewOutputToken();
         return;
       }
@@ -550,14 +616,13 @@ export default {
     addNewOutputToken() {
       this.outputTokens.push(getNewOutputToken());
     },
+    removeOutputToken(id: string) {
+      this.removeToken(this.outputTokens, id);
+      this.resetOutputs();
+    },
     addNewInputToken() {
       this.inputTokens.push(getNewInputToken());
     },
-    removeInputToken(id: string) {
-      this.removeToken(this.inputTokens, id);
-      this.recalculateOvnTokenByAnotherTotalBalances();
-    },
-
     removeToken(tokens: any[], id: string) {
       // removing by token.id or token.selectedToken.id
       const index = tokens.findIndex(
@@ -599,6 +664,9 @@ export default {
 
           this.showErrorModalWithMsg({ errorType: 'odos', errorMsg: e });
         });
+    },
+    handleCurrentSlippageChanged(newSlippage: number) {
+      this.slippagePercent = newSlippage;
     },
 
     finishTransaction() {
@@ -643,10 +711,8 @@ export default {
       // init first token value
       this.selectedOutputTokens[0].value = 100;
     },
-    async stakeTrigger() {
-      console.log(this.poolTokenContract, '__this.poolTokenContract');
-      // await this.poolTokenContract.deposit(Number(26997));
-      if (this.zapInType === 'V2') this.currentStage = zapInStep.STAKE_LP;
+    async rebalanceTrigger() {
+      console.log(this.poolNftContract, '__this.poolTokenContract');
       if (!this.zapPool) return;
       this.$store.commit('odosData/changeState', {
         field: 'lastPoolInfoData',
@@ -656,10 +722,7 @@ export default {
       if (!this.lastPoolInfoData) return;
       if (this.isSwapLoading) return;
 
-      if (
-        this.inputTokensWithSelectedTokensCount < 1
-        || this.outputTokensWithSelectedTokensCount < 1
-      ) {
+      if (this.outputTokensWithSelectedTokensCount < 1) {
         return;
       }
 
@@ -667,26 +730,6 @@ export default {
       this.isSwapLoading = true;
 
       const actualGas = await odosApiService.getActualGasPrice(this.networkId);
-      const outputToken0Price = this.selectedOutputTokens[0].selectedToken.price;
-      const outputToken1Price = this.selectedOutputTokens[1].selectedToken.price;
-
-      let reserves = null;
-      let sumReserves = '0';
-
-      if (this.zapPool?.poolVersion === 'v2') {
-        reserves = await getProportion(
-          this.zapPool.address,
-          this.zapPool,
-          this.zapContract,
-        );
-        sumReserves = (
-          new BN(reserves.token0Amount).times(outputToken0Price)
-        )
-          .plus(
-            new BN(reserves.token1Amount).times(outputToken1Price),
-          ).toFixed(0);
-      }
-
       const userInputTokens = this.selectedInputTokens;
       const poolOutputTokens = this.selectedOutputTokens;
 
@@ -777,52 +820,36 @@ export default {
         amountToken1Out: '0',
       };
 
-      if (this.zapPool?.poolVersion === 'v2') {
-        proportions = calculateProportionForPool({
-          inputTokensDecimals: [...inputDecimals],
-          inputTokensAddresses: [...inputAddresses],
-          inputTokensAmounts: [...inputAmounts],
-          inputTokensPrices: [...inputPrices],
-          outputTokensDecimals: [...outputDecimals],
-          outputTokensAddresses: [...outputAddresses],
-          outputTokensAmounts: [...outputAmounts],
-          outputTokensPrices: [...outputPrices],
-          proportion0: new BN(reserves[0])
-            .times(outputPrices[0])
-            .div(sumReserves)
-            .toFixed(),
-        });
-      }
+      const resp = await getV3Rebalance(
+        this.zapPool.tokenId?.toString(),
+        this.zapPool.address,
+        this.v3Range.ticks,
+        this.selectedOutputTokens.map((_) => ({
+          tokenAddress: _?.selectedToken?.address,
+          amount: '0',
+          price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
+        })),
+        this.zapContract,
+      );
 
-      if (this.zapPool?.poolVersion === 'v3') {
-        const resp = await getV3Proportion(
-          this.zapPool.address,
-          this.v3Range.ticks,
-          userInputTokens.map((_) => ({
-            tokenAddress: _?.selectedToken?.address,
-            amount: _?.contractValue,
-            price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
-          })),
-          this.zapContract,
-        );
+      console.log(resp, '__resp1');
 
-        if (!resp) return;
+      if (!resp) return;
 
-        proportions = {
-          inputTokens: userInputTokens.map((_: any, key: number) => ({
-            tokenAddress: _?.selectedToken?.address,
-            amount: resp[1][key]?.toString(),
-          })).filter((_) => new BN(_.amount).gt(0)),
-          outputTokens: resp[2].map((_: any, key: number) => ({
-            tokenAddress: _,
-            proportion: new BN(resp[3][key]?.toString()).div(10 ** 6),
-          })),
-          amountToken0Out: resp[4][0]?.toString(),
-          amountToken1Out: resp[4][1]?.toString(),
-        };
+      proportions = {
+        inputTokens: userInputTokens.map((_: any, key: number) => ({
+          tokenAddress: _?.selectedToken?.address,
+          amount: resp[1][key]?.toString(),
+        })).filter((_) => new BN(_.amount).gt(0)),
+        outputTokens: resp[2].map((_: any, key: number) => ({
+          tokenAddress: _,
+          proportion: new BN(resp[3][key]?.toString()).div(10 ** 6).toFixed(2),
+        })),
+        amountToken0Out: resp[4][0]?.toString(),
+        amountToken1Out: resp[4][1]?.toString(),
+      };
 
-        console.log(resp, '__resp');
-      }
+      console.log(resp, '__resp2');
 
       console.log(proportions, '__proportions');
 
@@ -839,7 +866,7 @@ export default {
         slippageLimitPercent: this.getSlippagePercent(),
       };
 
-      if (proportions.inputTokens?.length === 0 && proportions.outputTokens?.length === 0) {
+      if (proportions.inputTokens?.length === 0) {
         await this.initZapInTransaction(
           null,
           proportions.inputTokens,
@@ -921,281 +948,23 @@ export default {
 
       return sourceBlacklist;
     },
-    commitEventToStore(field: string, value: any) {
-      this.$store.commit('odosData/changeState', {
-        field,
-        val: value,
-      });
-    },
-    async toApproveAndDepositSteps(data: any, lastPoolInfoData: any) {
-      let putIntoPoolEvent;
-      let returnedToUserEvent;
-      const nftId = '';
+    async checkNftApprove() {
+      const isApproved = await this.poolNftContract
+        .getApproved(this.zapPool?.tokenId);
+      console.log(isApproved, '__this.__isApproved');
 
-      console.log(data, '___data');
-      parseLogs(data.logs, this.commitEventToStore);
-
-      this.stopSwapConfirmTimer();
-      this.currentStage = zapInStep.APPROVE_GAUGE;
-
-      this.$store.commit('odosData/changeState', {
-        field: 'additionalSwapStepType',
-        val: 'APPROVE',
-      });
-
-      if (lastPoolInfoData.approveType === 'NFT') {
-        this.approveNftGauge(
-          putIntoPoolEvent,
-          returnedToUserEvent,
-          lastPoolInfoData,
-          nftId,
-        );
-        return;
-      }
-
-      this.approveGauge(
-        putIntoPoolEvent,
-        returnedToUserEvent,
-        lastPoolInfoData,
-      );
-    },
-    async approveNftGauge(
-      putIntoPoolEvent: any,
-      returnedToUserEvent: any,
-      lastPoolInfoData: any,
-      nftId: string,
-    ) {
-      this.showWaitingModal('Approving NFT in process');
-
-      if (!this.lastNftTokenId || nftId) {
-        try {
-          const tokenId = nftId || await this.getLastNftId();
-
-          this.$store.commit('odosData/changeState', {
-            field: 'lastNftTokenId',
-            val: tokenId,
-          });
-          const poolAddress = this.zapPoolRoot.address;
-          const poolInfo = poolsInfoMap[poolAddress];
-
-          if (!poolInfo) throw new Error('No gauge to approve for NFT');
-
-          const params = { from: this.account };
-          const tx = await this.gaugeContract
-            .approve(poolInfo?.gauge, tokenId, params);
-
-          await tx.wait();
-
-          this.$store.commit('odosData/changeState', {
-            field: 'additionalSwapStepType',
-            val: 'DEPOSIT',
-          });
-          this.currentStage = zapInStep.DEPOSIT;
-          this.closeWaitingModal();
-          this.depositGauge(
-            putIntoPoolEvent,
-            returnedToUserEvent,
-            lastPoolInfoData,
-            this.lastNftTokenId,
-          );
-        } catch (e) {
-          console.error('Approve nft gauge failed', e);
-          this.$store.commit('odosData/changeState', {
-            field: 'lastNftTokenId',
-            val: null,
-          });
-          this.closeWaitingModal();
-        }
-      } else {
-        this.$store.commit('odosData/changeState', {
-          field: 'additionalSwapStepType',
-          val: 'DEPOSIT',
-        });
-        this.currentStage = zapInStep.DEPOSIT;
-        this.depositGauge(
-          putIntoPoolEvent,
-          returnedToUserEvent,
-          lastPoolInfoData,
-          this.lastNftTokenId,
-        );
+      if (isApproved?.toLowerCase() === this.zapContract?.target?.toLowerCase()) {
+        this.isNftApproved = true;
       }
     },
-    getLastNftId() {
-      return this.gaugeContract
-        .balanceOf(this.account)
-        .then((count: any) => this.gaugeContract
-          .tokenOfOwnerByIndex(this.account, Number(count) - 1)
-          .then((tokenId: any) => tokenId));
-    },
-    async approveGauge(
-      putIntoPoolEvent: any,
-      returnedToUserEvent: any,
-      lastPoolInfoData: any,
-    ) {
-      this.currentStage = zapInStep.APPROVE_GAUGE;
-      const approveAmount = new BN(10).pow(24).toFixed();
-      const isGaugeApproved = await checkApproveForGauge(
-        this.poolTokenContract,
-        approveAmount,
-        this.routerContract,
-        this.account,
-      );
+    async approveNftPosition() {
+      const tx = await this.poolNftContract
+        .approve(this.zapContract?.target, this.zapPool?.tokenId);
 
-      if (!isGaugeApproved) {
-        this.showWaitingModal('Approving gauge in process');
-        approveGaugeForStake(
-          this.showWaitingModal,
-          this.closeWaitingModal,
-          this.showErrorModalWithMsg,
-          this.gaugeContract,
-          this.poolTokenContract,
-          this.account,
-          this.routerContract,
-        )
-          .then(() => {
-            this.$store.commit('odosData/changeState', {
-              field: 'additionalSwapStepType',
-              val: 'DEPOSIT',
-            });
-            this.currentStage = zapInStep.DEPOSIT;
-            this.closeWaitingModal();
-            this.depositGauge(
-              putIntoPoolEvent,
-              returnedToUserEvent,
-              lastPoolInfoData,
-              this.lastNftTokenId,
-            );
-          })
-          .catch((e: any) => {
-            console.error('Error when gauge approve: ', e);
-            this.closeWaitingModal();
-          });
-      } else {
-        this.$store.commit('odosData/changeState', {
-          field: 'additionalSwapStepType',
-          val: 'DEPOSIT',
-        });
-        this.currentStage = zapInStep.DEPOSIT;
-        this.depositGauge(
-          putIntoPoolEvent,
-          returnedToUserEvent,
-          lastPoolInfoData,
-          this.lastNftTokenId,
-        );
-      }
-    },
-    depositGauge(
-      putIntoPoolEvent: any,
-      returnedToUserEvent: any,
-      lastPoolInfoData: any,
-      lastNftTokenId: any,
-    ) {
-      this.currentStage = zapInStep.STAKE_LP;
-      this.showWaitingModal('Stake LP in process');
+      await tx.wait();
 
-      console.log({
-        acc: this.account,
-        lastPoolInfoData,
-        lastNftTokenId,
-        zap: this.currentZapPlatformContractType,
-        gauge: this.gaugeContract,
-        zaproot: this.zapPoolRoot,
-        token: this.poolTokenContract,
-
-      }, '___DATA1');
-      depositAllAtGauge(
-        this.account,
-        lastPoolInfoData,
-        lastNftTokenId,
-        this.currentZapPlatformContractType,
-        this.gaugeContract,
-        this.zapPoolRoot,
-        this.poolTokenContract,
-      )
-        .then((data: any) => {
-          this.closeWaitingModal();
-
-          const inputTokens = [...this.selectedInputTokens];
-          const outputTokens = [...this.selectedOutputTokens];
-          this.triggerSuccessZapin(
-            {
-              isShow: true,
-              inputTokens,
-              outputTokens,
-              hash: data.hash,
-              putIntoPoolEvent,
-              returnedToUserEvent,
-              pool: this.zapPool,
-            },
-          );
-          // event
-          const bus = useEventBus('zap-transaction-finished');
-          bus.emit(true);
-          this.$store.commit('odosData/changeState', {
-            field: 'additionalSwapStepType',
-            val: null,
-          });
-          this.clearZapData();
-          this.$emit('close-form');
-          this.loadBalances();
-        })
-        .catch((e) => {
-          console.log(e, '---e');
-          this.closeWaitingModal();
-          this.$store.commit('odosData/changeState', {
-            field: 'additionalSwapStepType',
-            val: 'DEPOSIT',
-          });
-        });
-    },
-    clearZapData() {
-      this.inputTokens = [];
-      this.outputTokens = [];
-      this.$store.commit('odosData/changeState', {
-        field: 'lastPutIntoPoolEvent',
-        val: null,
-      });
-      this.$store.commit('odosData/changeState', {
-        field: 'lastReturnedToUserEvent',
-        val: null,
-      });
-      this.$store.commit('odosData/changeState', {
-        field: 'lastZapResponseData',
-        val: null,
-      });
-      this.$store.commit('odosData/changeState', {
-        field: 'lastNftTokenId',
-        val: null,
-      });
-    },
-    finishSingleStepTransaction(data: any) {
-      let putIntoPoolEvent;
-      let returnedToUserEvent;
-
-      parseLogs(data.logs, this.commitEventToStore);
-
-      const inputTokens = [...this.selectedInputTokens];
-      const outputTokens = [...this.selectedOutputTokens];
-      this.triggerSuccessZapin(
-        {
-          isShow: true,
-          inputTokens,
-          outputTokens,
-          hash: data.hash,
-          putIntoPoolEvent,
-          returnedToUserEvent,
-          pool: this.zapPool,
-        },
-      );
-
-      // event
-      const bus = useEventBus('zap-transaction-finished');
-      bus.emit(true);
-
-      this.clearZapData();
-      this.loadBalances();
-      this.closeWaitingModal();
-      this.$emit('close-form');
+      console.log(tx, '__isApproved');
+      this.isNftApproved = true;
     },
     async initZapInTransaction(
       responseData: any,
@@ -1263,12 +1032,12 @@ export default {
         };
       }
 
-      this.showWaitingModal('Staking in process');
+      // this.showWaitingModal('Staking in process');
 
       const params = {
         from: this.account,
-        // gasPrice: ethers.parseUnits('100', 'gwei'),
-        // gasLimit: 1000000,
+        gasPrice: ethers.parseUnits('100', 'gwei'),
+        gasLimit: 1000000,
       };
 
       console.log(zapPool, '----zapPool');
@@ -1279,33 +1048,10 @@ export default {
       console.log((params), 'params');
 
       try {
-        const tx = await this.zapContract.zapIn(txData, gaugeData, params);
-        const receipt = await tx.wait();
+        const tx = await this.zapContract
+          .rebalance(txData, gaugeData, this.zapPool?.tokenId, params);
 
-        this.$store.commit('odosData/changeState', {
-          field: 'lastZapResponseData',
-          val: markRaw(receipt),
-        });
-
-        if (
-          this.currentZapPlatformContractType.type
-            === 'LP_WITH_STAKE_IN_ONE_STEP'
-        ) {
-          this.finishSingleStepTransaction(this.lastZapResponseData);
-          return;
-        }
-
-        if (
-          this.currentZapPlatformContractType.type === 'LP_STAKE_DIFF_STEPS'
-        ) {
-          this.toApproveAndDepositSteps(this.lastZapResponseData, poolInfo);
-          return;
-        }
-
-        console.error(
-          'Error when end of transaction, method type not found. ',
-          this.currentZapPlatformContractType,
-        );
+        await tx.wait();
 
         this.isSwapLoading = false;
       } catch (e: any) {
@@ -1332,111 +1078,39 @@ export default {
       });
     },
     async recalculateProportion() {
-      let reserves = null;
+      console.log(this.selectedOutputTokens, '__this.selectedOutputTokens');
 
-      const outputToken0Price = this.selectedOutputTokens[0].selectedToken.price;
-      const outputToken1Price = this.selectedOutputTokens[1].selectedToken.price;
+      this.isSwapLoading = true;
+      const resp = await getV3Rebalance(
+        this.zapPool.tokenId?.toString(),
+        this.zapPool.address,
+        this.v3Range.ticks,
+        this.selectedOutputTokens.map((_) => ({
+          tokenAddress: _?.selectedToken?.address,
+          amount: '0',
+          price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
+        })),
+        this.zapContract,
+      );
 
-      const emptyVals = this.inputTokens.map((_) => {
-        if (new BN(_?.value).eq(0) || !_?.value) return null;
+      console.log(resp, '__resp');
 
-        return _;
+      if (!resp) return;
+
+      resp[5]?.forEach((_: BigInt, key: number) => {
+        const { price } = this.selectedOutputTokens[key].selectedToken;
+        const val = new BN(_?.toString() ?? 0)
+          .div(10 ** 18)
+          .div(price);
+
+        this.selectedOutputTokens[key].value = val.toFixed();
+        this.selectedOutputTokens[key].sum = val.toFixed(5);
       });
 
-      if (emptyVals.every((_) => !_)) return;
-
-      if (this.zapPool?.poolVersion === 'v3') {
-        const resp = await getV3Proportion(
-          this.zapPool.address,
-          this.v3Range.ticks,
-          this.selectedInputTokens.map((_) => ({
-            tokenAddress: _?.selectedToken?.address,
-            amount: _?.contractValue,
-            price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
-          })),
-          this.zapContract,
-        );
-
-        if (!resp || resp[5]?.length === 0) return;
-
-        resp[5]?.forEach((_: BigInt, key: number) => {
-          const { price } = this.selectedOutputTokens[key].selectedToken;
-          const val = new BN(_?.toString() ?? 0)
-            .div(10 ** 18)
-            .div(price);
-
-          this.selectedOutputTokens[key].value = val.toFixed();
-          this.selectedOutputTokens[key].sum = val.toFixed(5);
-        });
-
-        return;
-      }
-
-      if (this.zapPool?.poolVersion === 'v2') {
-        reserves = await getProportion(
-          this.zapPool.address,
-          this.zapPool,
-          this.zapContract,
-        );
-      }
-
-      const sumReserves = (
-        new BN(reserves.token0Amount).times(outputToken0Price)
-      )
-        .plus(
-          new BN(reserves.token1Amount).times(outputToken1Price),
-        ).toFixed();
-
-      this.selectedOutputTokens[0]
-        .value = new BN(Number(reserves[0]))
-          .times(Number(outputToken0Price)).div(sumReserves).times(100)
-          .toFixed();
-      this.selectedOutputTokens[1]
-        .value = new BN(Number(reserves[1]))
-          .times(Number(outputToken1Price)).div(sumReserves).times(100)
-          .toFixed();
-
-      console.log(this.selectedOutputTokens, '__resp1');
-      this.recalculateOutputTokensSum();
+      this.isSwapLoading = false;
     },
     getSlippagePercent() {
       return this.slippagePercent;
-    },
-    async checkApproveForToken(token: any, checkedAllowanceValue: any) {
-      this.currentStage = zapInStep.APPROVE_TOKENS;
-      // checkedAllowanceValue in wei
-      const { selectedToken } = token;
-      if (
-        selectedToken.address === '0x0000000000000000000000000000000000000000'
-      ) {
-        selectedToken.approveData.approved = true;
-        return;
-      }
-
-      const tokenContract = this.tokensContractMap[selectedToken.address];
-      const allowanceValue = await getAllowanceValue(
-        tokenContract,
-        this.account,
-        this.zapContract.target,
-      );
-
-      selectedToken.approveData.allowanceValue = allowanceValue;
-      if (!selectedToken.approveData.allowanceValue) {
-        selectedToken.approveData.approved = false;
-        return;
-      }
-
-      if (!checkedAllowanceValue) {
-        selectedToken.approveData.approved = true;
-        return;
-      }
-      selectedToken.approveData.approved = new BN(selectedToken.approveData.allowanceValue)
-        .isGreaterThanOrEqualTo(checkedAllowanceValue);
-      if (this.zapInType === 'V2' && selectedToken.approveData.approved) {
-        this.currentStage = zapInStep.STAKE_LP;
-      } else if (selectedToken.approveData.approved) {
-        this.currentStage = zapInStep.DEPOSIT;
-      }
     },
     recalculateOutputTokensSum() {
       for (let i = 0; i < this.selectedOutputTokens.length; i++) {
@@ -1453,92 +1127,7 @@ export default {
         };
       }
     },
-    recalculateOvnTokenByAnotherTotalBalances() {
-      if (!this.selectedOvnInputTokens || !this.selectedOvnInputTokens.length) {
-        return;
-      }
 
-      if (!this.selectedNoneOvnInputTokens.length) {
-        this.clearAllInputSelectedTokens();
-        this.addNewInputToken();
-        return;
-      }
-
-      this.recalcualteOvnInputValue();
-    },
-    recalcualteOvnInputValue() {
-      setTimeout(() => {
-        const ovnToken = this.selectedOvnInputTokens[0];
-        const ovnUsdValue = ovnToken.usdValue;
-
-        const totalBalance = this.totalNoneOvnUsdInputsUsdBalance;
-        if (totalBalance >= ovnUsdValue) {
-          return;
-        }
-
-        const diffInUsd = ovnUsdValue - totalBalance;
-        const diff = diffInUsd / ovnToken.selectedToken.price;
-        const newValue = ovnToken.value - diff;
-
-        if (newValue <= 0) {
-          const newToken = updateTokenValue(
-            ovnToken,
-            0,
-            this.checkApproveForToken,
-          );
-
-          this.updateTokenState(newToken);
-          return;
-        }
-
-        const newToken = updateTokenValue(
-          ovnToken,
-          newValue,
-          this.checkApproveForToken,
-        );
-
-        this.updateTokenState(newToken);
-      }, 30);
-    },
-
-    addSelectedTokenToList(data: any) {
-      console.log(data, 'addSelectedTokenToList');
-      if (data.isInput) {
-        this.addSelectedTokenToInputList(data.tokenData, false);
-        // this.addTokensEmptyIsNeeded();
-        return;
-      }
-
-      this.addSelectedTokenToOutputList(data.tokenData, true, 50);
-    },
-    addSelectedTokenToInputList(selectedToken: any, isAddAllBalance: any) {
-      // todo computed ovn input tokens and logic here
-      const newInputToken = getNewInputToken();
-      newInputToken.selectedToken = selectedToken;
-      this.inputTokens.push(newInputToken);
-      this.removeAllWithoutSelectedTokens(this.inputTokens);
-
-      if (isAddAllBalance) {
-        setTimeout(() => {
-          const newToken = updateTokenValue(
-            newInputToken,
-            newInputToken.selectedToken.balanceData.balance,
-            this.checkApproveForToken,
-          );
-
-          this.updateTokenState(newToken);
-        }, 10);
-      }
-
-      // if (newInputToken.selectedToken.symbol === 'OVN') {
-      //   this.initDefaultTopInputTokensByBalance(this.noneOvnTokens);
-      // }
-
-      this.checkApproveForToken(
-        newInputToken,
-        new BN(10 ** selectedToken.decimals).times(1000000).toFixed(0),
-      );
-    },
     addSelectedTokenToOutputList(selectedToken: any, isLocked: any, startPercent: any) {
       const newOutputToken = getNewOutputToken();
       newOutputToken.locked = isLocked;
@@ -1548,10 +1137,6 @@ export default {
       this.removeAllWithoutSelectedTokens(this.outputTokens);
       this.recalculateOutputTokensSum();
       this.resetOutputs();
-    },
-    removeSelectedTokenFromList(selectedToken: any) {
-      this.removeInputToken(selectedToken.tokenData.id);
-      if (this.inputTokens.length === 0) this.addNewInputToken();
     },
     removeAllWithoutSelectedTokens(tokens: any) {
       const tokensToRemove = [];
@@ -1607,6 +1192,30 @@ export default {
     showSelectTokensModals(isShow: boolean) {
       this.isShowSelectTokensModal = isShow;
     },
+    selectOutputToken() {
+      if (this.swapMethod === 'BUY') {
+        this.openModalWithSelectTokenAndBySwapMethod('OVERNIGHT');
+        return;
+      }
+
+      if (this.swapMethod === 'SELL') {
+        this.openModalWithSelectTokenAndBySwapMethod('ALL');
+        return;
+      }
+
+      console.error(
+        'Swap method type not found when select output tokens. ',
+        this.swapMethod,
+      );
+    },
+    openModalWithSelectTokenAndBySwapMethod(tokenType: any) {
+      this.setSelectTokenType(tokenType);
+      this.showSelectTokensModals(true);
+    },
+    setSelectTokenType(type: any) {
+      this.selectTokenType = type;
+    },
+
     updateQuotaInfo() {
       if (!this.tokensQuotaCounterId) {
         // first call

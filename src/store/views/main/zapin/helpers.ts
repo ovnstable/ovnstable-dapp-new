@@ -11,6 +11,16 @@ interface ISwapData {
   amount: string,
   price: string;
 }
+
+export const getV3Rebalance = async (
+  tokenId: number,
+  poolAddress: string,
+  tickRange: string[],
+  inputSwapTokens: ISwapData[],
+  zapContract: any,
+) => zapContract
+  .getProportionForRebalance(Number(tokenId), poolAddress, tickRange, inputSwapTokens);
+
 export const getV3Proportion = (
   poolAddress: string,
   tickRange: string[],

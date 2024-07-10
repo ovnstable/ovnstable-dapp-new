@@ -6,15 +6,24 @@
     <div class="zapin-v3__chart">
       <div class="zapin-v3__chart-head">
         <div class="zapin-v3__chart-head__col">
+          <div class="zapin-v3__chart-head__row">
+            <h2 v-if="pairSymbols">
+              View prices in:
+            </h2>
+            <ButtonComponent
+              :btn-styles="!reversePrice ? 'grey' : 'primary'"
+              @click="inversePrices"
+            >
+              <BaseIcon
+                class="row-icon"
+                name="SwapIconV3"
+              />
+              {{ activeSymbolPrice }}
+            </ButtonComponent>
+          </div>
           <h2 v-if="pairSymbols">
-            Price:  {{ getCenterPrice }}  {{ getFirstSymbol }} per {{ getSecondSymbol }}
+            Price in:  {{ getCenterPrice }}  {{ getFirstSymbol }} per {{ getSecondSymbol }}
           </h2>
-          <ButtonComponent
-            :btn-styles="!reversePrice ? 'primary' : 'secondary'"
-            @click="inversePrices"
-          >
-            Prices in {{ activeSymbolPrice }}
-          </ButtonComponent>
         </div>
 
         <div
@@ -178,6 +187,7 @@
 <script lang="ts">
 import InputComponent from '@/components/Input/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
+import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import Spinner from '@/components/Spinner/Index.vue';
 import BN from 'bignumber.js';
 import debounce from 'lodash/debounce';
@@ -190,9 +200,15 @@ export default {
   components: {
     InputComponent,
     ButtonComponent,
+    BaseIcon,
     Spinner,
   },
   props: {
+    ticksInit: {
+      type: Array,
+      required: false,
+      default: () => [],
+    },
     zapPool: {
       type: Object,
       required: true,
@@ -484,8 +500,10 @@ export default {
   },
   async mounted() {
     this.pairSymbols = this.zapPool.name.split('/');
-    const currPrice = await this.zapContract.getCurrentPrice(this.zapPool.address);
     const tickSpace = await this.zapContract.getTickSpacing(this.zapPool.address);
+    console.log(this.zapPool.address, '__tickSpace');
+    const currPrice = await this.zapContract.getCurrentPrice(this.zapPool.address);
+    console.log(this.zapPool.address, '__tickSpace2');
     const centerTick = await this.zapContract.getCurrentPoolTick(this.zapPool.address);
     const center = new BN(currPrice).div(10 ** 6);
     const closestTicks = await this.zapContract.closestTicksForCurrentTick(this.zapPool.address);
@@ -493,8 +511,10 @@ export default {
 
     this.closestTicks = [closestTicks[0]?.toString(), closestTicks[1]?.toString()];
     this.tickSpace = tickSpace.toString();
-    this.tickLeft = closestTicks[0]?.toString();
-    this.tickRight = closestTicks[1]?.toString();
+    this.tickLeft = this.ticksInit?.length > 0 ? this.ticksInit[0]?.toString()
+      : closestTicks[0]?.toString();
+    this.tickRight = this.ticksInit?.length > 0 ? this.ticksInit[1]?.toString()
+      : closestTicks[1]?.toString();
     this.ticksAmount = tickSpace.toString();
     this.centerTick = centerTick.toString();
 
@@ -509,6 +529,8 @@ export default {
     this.$emit('set-range', {
       ticks: [this.tickLeft, this.tickRight],
     });
+
+    if (this.ticksInit?.length > 0) this.ticksAmount = '0';
 
     // if center price lower than 2$, doing higher zoom
     if (center.lt(2)) {
@@ -905,8 +927,8 @@ export default {
         this.tickLeft = this.closestTicks[0]?.toString();
         this.tickRight = this.closestTicks[1]?.toString();
       } else {
-        this.tickLeft = new BN(this.closestTicks[0]).minus(tickVal / 2).toFixed(0);
-        this.tickRight = new BN(this.closestTicks[1]).plus(tickVal / 2).toFixed(0);
+        this.tickLeft = new BN(this.closestTicks[0]).minus(tickVal).toFixed(0);
+        this.tickRight = new BN(this.closestTicks[1]).plus(tickVal).toFixed(0);
       }
 
       const tickNumL = await this.zapContract.tickToPrice(this.zapPool.address, this.tickLeft);
@@ -1099,7 +1121,7 @@ export default {
 }
 
 .zapin-v3__chart-range {
-  height: 200px;
+  height: 150px;
 }
 
 .zapin-v3__loader {
@@ -1131,6 +1153,16 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+.zapin-v3__chart-head__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.row-icon {
+  margin-right: 8px;
 }
 
 .zapin-v3__chart-zoom {

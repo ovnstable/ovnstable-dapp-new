@@ -164,6 +164,7 @@ export const formatPositionData = (
         ],
         usdAmount: getUsdTotal(token0Info, token1Info, rewardAmount0, rewardAmount1),
       },
+      tokenId,
       ticks: {
         tickLower,
         tickUpper,
@@ -171,6 +172,5 @@ export const formatPositionData = (
     };
     return positionFullInfo;
   });
-  console.log(fPositions);
   return fPositions;
 };
