@@ -17,15 +17,7 @@
           @keypress="positionSizeSortFunc()"
         >
           Position size, USD
-          <BaseIcon :name="iconNameSort()" />
-        </div>
-        <div
-          class="pools-header__item pools-header__item--hover"
-          @click="setOrderTypeFunc()"
-          @keypress="setOrderTypeFunc()"
-        >
-          APR
-          <BaseIcon :name="iconNameSort()" />
+          <BaseIcon :name="toggleSortIcon()" />
         </div>
         <!-- <div class="pools-header__item">
           Daily rewards
@@ -79,9 +71,6 @@
                     alt="token"
                     :src="pool.token2Icon"
                   />
-                  <span>
-                    {{ getTokenNames(pool)[2] }}
-                  </span>
                 </div>
                 <div
                   v-if="pool.token3Icon"
@@ -104,42 +93,33 @@
                     ID#{{ pool.tokenId }}
                   </div>
                   <div
-                    v-if="isInRange(pool)"
-                    class="in-range"
+                    class="pools-table__tag is-in-range"
+                    :class="{ 'out-range': !pool.position.isInRange }"
                   >
-                    IN RANGE
-                  </div>
-                  <div
-                    v-else
-                    class="out-range"
-                  >
-                    OUT OF RANGE
+                    {{ pool.position.isInRange ? 'IN RANGE' : 'OUT OF RANGE' }}
                   </div>
                 </div>
               </div>
             </div>
             <div class="pools-table__position-size">
-              <div>{{ gtMinimumVal(pool.position.usdAmount) }}$</div>
-              <div>{{ getTokenNames(pool)[0] }} | {{ getTokenNames(pool)[1] }}</div>
+              <div>{{ pool.position.displayedUsdValue }}$</div>
+              <div>{{ pool.tokenNames.token0 }} | {{ pool.tokenNames.token1 }}</div>
             </div>
             <div class="pools-table__apy">
-              {{ formatMoneyComma(pool.apr, 2) }}%
-            </div>
-            <div class="pools-table__apy">
-              {{ gtMinimumVal(pool.rewards.usdAmount) }}$
+              {{ pool.rewards.displayedUsdValue }}$
             </div>
             <div class="pools-table__platform-row center">
               <a
-                v-for="(poolPlat, key) in pool.platform"
-                :key="key"
+                v-for="({ platform, link }, platKey) in pool.platformLinks"
+                :key="platKey"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="pools-table__platform"
-                :href="getPlatformLink(pool, poolPlat)"
+                :href="link"
               >
                 <BaseIcon
                   class="pools-table__platform-icon"
-                  :name="poolPlat"
+                  :name="platform"
                 />
               </a>
             </div>
@@ -175,16 +155,19 @@
 <script lang="ts">
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
-import { formatMoneyComma } from '@/utils/numbers.ts';
-import { buildLink } from '@/store/views/main/pools/helpers.ts';
 import type { PropType } from 'vue';
 import { mapActions, mapGetters } from 'vuex';
-import BN from 'bignumber.js';
-import { formatPositionData } from './helpers.ts';
+import type { IPositionsInfo } from './helpers.ts';
 
-enum APR_ORDER_TYPE {
-  'APR', 'APR_UP', 'APR_DOWN',
+enum POSITION_SIZE_ORDER_TYPE {
+  'VALUE', 'VALUE_UP', 'VALUE_DOWN',
 }
+
+const iconNameSort = (orderTypeStr: string) => {
+  if (orderTypeStr.includes('UP')) return 'ArrowUpSort';
+  if (orderTypeStr.includes('DOWN')) return 'ArrowDownSort';
+  return 'ArrowsFilter';
+};
 
 export default {
   name: 'PositionsTable',
@@ -194,97 +177,26 @@ export default {
   },
   props: {
     pools: {
-      type: Array,
+      type: Array as PropType<IPositionsInfo[]>,
       required: true,
     },
-    apyOrderType: {
-      type: Number as PropType<APR_ORDER_TYPE>,
+    positionSizeOrderType: {
+      type: Number as PropType<POSITION_SIZE_ORDER_TYPE>,
       required: true,
-      default: APR_ORDER_TYPE.APR,
-    },
-    setOrderTypeFunc: {
-      type: Function,
-      required: true,
+      default: POSITION_SIZE_ORDER_TYPE.VALUE,
     },
     positionSizeSortFunc: {
       type: Function,
       required: true,
     },
   },
-  data: () => ({
-    isLoaded: false,
-    positionData: {} as any,
-  }),
   computed: {
-    ...mapGetters('accountData', ['account']),
     ...mapGetters('zapinData', ['getUserPositions']),
-    ...mapGetters('poolsData', ['allPoolsMap']),
-    ...mapGetters('odosData', ['allTokensMap', 'allTokensLoaded']),
-    isInRange() {
-      return (pool: any) => {
-        const lowTick = pool?.ticks?.tickLower;
-        const upTick = pool?.ticks?.tickUpper;
-        const centerTick = new BN(pool?.ticks?.centerTick);
-        return !(centerTick.gt(upTick) || centerTick.lt(lowTick));
-      };
-    },
-    gtMinimumVal() {
-      return (val: string | number) => (new BN(val).gt(0.1) ? new BN(val).toFixed(2) : '< 0.1');
-    },
-  },
-  watch: {
-    async allTokensLoaded(val) {
-      if (!val) return;
-      if (!this.isLoaded && this.allTokensMap.size > 0) {
-        const posData = await this.getFormatPositions();
-        this.positionData = posData;
-        this.isLoaded = true;
-      }
-    },
-  },
-  async mounted() {
-    this.$store.commit('odosData/changeState', {
-      field: 'isTokensLoadedAndFiltered',
-      val: false,
-    });
-
-    await this.init();
-
-    this.$store.commit('odosData/changeState', {
-      field: 'isTokensLoadedAndFiltered',
-      val: true,
-    });
   },
   methods: {
     ...mapActions('poolsData', ['openZapIn']),
-    ...mapActions('zapinData', ['loadPositionContract']),
-    ...mapActions('odosData', ['loadTokens', 'initData', 'loadChains', 'initContractData']),
-    formatMoneyComma,
-    async init() {
-      await this.loadTokens();
-      await this.loadChains();
-      await this.initContractData();
-      await this.initData();
-    },
-    getTokenNames(pool: any) {
-      return pool.name.split('/');
-    },
-    getPlatformLink(pool: any, platform: string) {
-      return buildLink(pool, platform) ?? '';
-    },
-    iconNameSort() {
-      const orderTypeStr = APR_ORDER_TYPE[this.apyOrderType];
-      if (orderTypeStr.includes('UP')) return 'ArrowUpSort';
-      if (orderTypeStr.includes('DOWN')) return 'ArrowDownSort';
-      return 'ArrowsFilter';
-    },
-    async getFormatPositions() {
-      const poolInfo = this.allPoolsMap;
-      const tokensList = this.allTokensMap;
-      const posData = await this.loadPositionContract(this.account);
-      console.log(posData, '_this.allTokensMap');
-      const fPos = formatPositionData(posData, poolInfo, tokensList);
-      return fPos;
+    toggleSortIcon() {
+      return iconNameSort(POSITION_SIZE_ORDER_TYPE[this.positionSizeOrderType]);
     },
   },
 };

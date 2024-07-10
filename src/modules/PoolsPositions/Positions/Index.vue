@@ -16,7 +16,7 @@
         :set-order-type-func="toggleOrderType"
         :position-size-sort-func="togglePositionSizeSort"
         :apy-order-type="orderType"
-        :usd-size-order-type="positionSizeOrder"
+        :position-size-order-type="positionSizeOrder"
       >
         <template
           #filters
@@ -43,8 +43,6 @@ import {
 } from 'vuex';
 import { POOL_TYPES } from '@/store/views/main/pools/index.ts';
 import TableSkeleton from '@/components/TableSkeleton/Index.vue';
-// import { POOL_TAG } from '@/store/views/main/pools/mocks.ts';
-// import { getSortedPools } from '@/store/views/main/pools/helpers.ts';
 import { formatPositionData } from '../../../components/Pools/PositionsTable/helpers.ts';
 
 interface IEnumIterator {
@@ -82,8 +80,6 @@ const sortByTagAndValue = (
   },
 );
 
-// const POOL_SHOW_LIMIT = 10;
-
 enum APR_ORDER_TYPE {
   'APR', 'APR_UP', 'APR_DOWN',
 }
@@ -116,7 +112,7 @@ export default {
     positionSizeSortIterator: {} as IEnumIterator,
     positionSizeOrder: 0 as number,
     isLoaded: false,
-    positionData: {} as any,
+    positionData: [] as any,
   }),
   computed: {
     ...mapGetters('network', ['getParams', 'isShowDeprecated']),
@@ -127,29 +123,18 @@ export default {
       'isPoolsLoading',
     ]),
     filteredPools() {
-      // const tabFilteredPools = getSortedPools(
-      //   this.filteredBySearchQuery,
-      //   true,
-      //   this.poolTabType,
-      // );
-
       const sortByHotTagAndValue = sortByTagAndValue(
-        '',
+        'NEW',
         this.filteredBySearchQuery,
         this.isDefaultOrder,
       );
 
-      // if (this.orderType === APR_ORDER_TYPE.APR_UP) {
-      //   return sortByHotTagAndValue((pool: any) => pool.apr);
-      // }
-      // if (this.orderType === APR_ORDER_TYPE.APR_DOWN) {
-      //   return sortByHotTagAndValue((pool: any) => -pool.apr);
-      // }
       if (this.positionSizeOrder === POSITION_SIZE_ORDER_TYPE.VALUE_UP) {
-        return sortByHotTagAndValue((pool: any) => pool.position.usdAmount);
+        return sortByHotTagAndValue((pool: any) => pool.position.usdValue);
       }
+
       if (this.positionSizeOrder === POSITION_SIZE_ORDER_TYPE.VALUE_DOWN) {
-        return sortByHotTagAndValue((pool: any) => -pool.position.usdAmount);
+        return sortByHotTagAndValue((pool: any) => -pool.position.usdValue);
       }
 
       return this.filteredBySearchQuery;
@@ -229,7 +214,6 @@ export default {
       this.orderType = this.aprSortIterator.next();
     },
     togglePositionSizeSort() {
-      console.log('toggleSizeSort');
       this.positionSizeOrder = this.positionSizeSortIterator.next();
     },
     setSelectedNetwork(selectedChain: number | 'ALL') {
@@ -252,11 +236,8 @@ export default {
     async getFormatPositions() {
       const poolInfo = this.allPoolsMap;
       const tokensList = this.allTokensMap;
-      const posData = await this.loadPositionContract(this.account);
-      console.log(posData, '_this.allTokensMap');
-      const fPos = formatPositionData(posData, poolInfo, tokensList);
-      console.log(fPos);
-      return Array.from(fPos);
+      const positionData = await this.loadPositionContract(this.account);
+      return formatPositionData(positionData, poolInfo, tokensList);
     },
   },
 };

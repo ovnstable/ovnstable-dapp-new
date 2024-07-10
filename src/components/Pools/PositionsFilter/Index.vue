@@ -92,20 +92,7 @@ export default {
       sortedChains: [] as Chain[],
       networksData: appNetworksData,
       poolTypes: POOL_TYPES,
-      filterTabs: [
-        {
-          id: POOL_TYPES.ALL,
-          name: 'ALL',
-        },
-        {
-          id: POOL_TYPES.V2,
-          name: 'V2',
-        },
-        {
-          id: POOL_TYPES.V3,
-          name: 'V3',
-        },
-      ],
+      filterTabs: [],
     };
   },
   watch: {
