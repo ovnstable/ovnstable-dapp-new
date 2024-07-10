@@ -121,11 +121,9 @@ export default {
   computed: {
     ...mapGetters('network', ['getParams', 'isShowDeprecated']),
     ...mapGetters('accountData', ['account']),
-    ...mapGetters('zapinData', ['getUserPositions']),
     ...mapGetters('poolsData', ['allPoolsMap']),
     ...mapGetters('odosData', ['allTokensMap', 'allTokensLoaded']),
     ...mapState('poolsData', [
-      'sortedPoolList',
       'isPoolsLoading',
     ]),
     filteredPools() {
@@ -209,7 +207,6 @@ export default {
   },
   methods: {
     ...mapActions('poolsData', ['loadPools']),
-    ...mapActions('poolsData', ['openZapIn']),
     ...mapActions('zapinData', ['loadPositionContract']),
     ...mapActions('odosData', ['loadTokens', 'initData', 'loadChains', 'initContractData']),
     async init() {
