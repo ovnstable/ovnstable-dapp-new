@@ -141,12 +141,12 @@ export default {
         this.isDefaultOrder,
       );
 
-      if (this.orderType === APR_ORDER_TYPE.APR_UP) {
-        return sortByHotTagAndValue((pool: any) => pool.apr);
-      }
-      if (this.orderType === APR_ORDER_TYPE.APR_DOWN) {
-        return sortByHotTagAndValue((pool: any) => -pool.apr);
-      }
+      // if (this.orderType === APR_ORDER_TYPE.APR_UP) {
+      //   return sortByHotTagAndValue((pool: any) => pool.apr);
+      // }
+      // if (this.orderType === APR_ORDER_TYPE.APR_DOWN) {
+      //   return sortByHotTagAndValue((pool: any) => -pool.apr);
+      // }
       if (this.positionSizeOrder === POSITION_SIZE_ORDER_TYPE.VALUE_UP) {
         return sortByHotTagAndValue((pool: any) => pool.position.usdAmount);
       }
@@ -157,7 +157,8 @@ export default {
       return this.filteredBySearchQuery;
     },
     displayedPools() {
-      return this.filteredPools;
+      if (this.positionData.length > 0) return this.filteredPools;
+      return this.positionData;
     },
     filteredBySearchQuery() {
       if (!this.searchQuery || this.searchQuery.trim().length === 0) return this.filteredByNetwork;

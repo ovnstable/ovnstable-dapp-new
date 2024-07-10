@@ -11,8 +11,13 @@
         <div class="pools-header__item">
           Pool name
         </div>
-        <div class="pools-header__item center">
+        <div
+          class="pools-header__item center pools-header__item--hover"
+          @click="positionSizeSortFunc()"
+          @keypress="positionSizeSortFunc()"
+        >
           Position size, USD
+          <BaseIcon :name="iconNameSort()" />
         </div>
         <div
           class="pools-header__item pools-header__item--hover"
@@ -27,11 +32,8 @@
         </div> -->
         <div
           class="pools-header__item "
-          @click="positionSizeSortFunc()"
-          @keypress="positionSizeSortFunc()"
         >
           Earned
-          <BaseIcon :name="iconNameSort()" />
         </div>
         <div class="pools-header__item center">
           Platforms
