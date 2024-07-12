@@ -20,11 +20,18 @@
             </h1>
           </router-link>
           <router-link
-            to="/"
+            to="/pools"
             class="app-header__dashboard"
             active-class="active-link"
           >
-            MINT
+            POSITIONS
+          </router-link>
+          <router-link
+            to="/market/usd"
+            class="app-header__dashboard"
+            active-class="active-link"
+          >
+            STATS
           </router-link>
           <router-link
             to="/ovn"
@@ -32,20 +39,6 @@
             active-class="active-link"
           >
             OVN
-          </router-link>
-          <router-link
-            to="/market/usd"
-            class="app-header__dashboard"
-            active-class="active-link"
-          >
-            MONEY MARKETS
-          </router-link>
-          <router-link
-            to="/pools"
-            class="app-header__dashboard"
-            active-class="active-link"
-          >
-            POOLS
           </router-link>
           <router-link
             to="/dashboard"
