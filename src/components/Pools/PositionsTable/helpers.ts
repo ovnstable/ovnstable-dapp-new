@@ -153,7 +153,7 @@ const getUsdTotal = (
 const getMinVal = (val: string | number) => (new BN(val).gt(0.1) ? new BN(val).toFixed(2) : '< 0.1');
 
 const isInRange = ({ tickLower, tickUpper, centerTick }: TTicks) => !(
-  new BN(centerTick).gt(new BN(tickUpper)) || new BN(centerTick).lt(new BN(tickLower))
+  new BN(centerTick).gte(new BN(tickUpper)) || new BN(centerTick).lt(new BN(tickLower))
 );
 
 const getPercentage = (value: string, total: string) => new BN((value))

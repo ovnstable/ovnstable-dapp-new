@@ -103,7 +103,10 @@
             </div>
             <div class="pools-table__position-size">
               <div>{{ pool.position.displayedUsdValue }}$</div>
-              <div>{{ pool.tokenNames.token0 }} {{ pool.position.tokenProportions.token0 }} % | {{ pool.tokenNames.token1 }} {{ pool.position.tokenProportions.token1 }} %</div>
+              <div>
+                {{ pool.tokenNames.token0 }} {{ pool.position.tokenProportions.token0 }} % |
+                {{ pool.tokenNames.token1 }} {{ pool.position.tokenProportions.token1 }} %
+              </div>
             </div>
             <div class="pools-table__apy">
               {{ pool.rewards.displayedUsdValue }}$
