@@ -78,6 +78,7 @@ export const WHITE_LIST_ODOS = {
     'Overnight Wrapper',
   ],
   324: [
+    'Velocore Volatile',
     'Overnight Exchange',
     'SyncSwap Stable',
     'PancakeSwap V3',

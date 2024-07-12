@@ -1,17 +1,6 @@
 <template>
   <div class="app-wrapper">
     <HeaderBar />
-    <img
-      class="app-wrapper__img"
-      alt="stars"
-      :src="getImageUrl('assets/images/common/stars_page.png')"
-    />
-    <img
-      class="app-wrapper__img"
-      alt="grid"
-      :src="getImageUrl('assets/images/common/grid.png')"
-    />
-
     <div
       v-if="isShowHackWarning"
       class="container container--main"
@@ -104,7 +93,8 @@ export default {
     ...mapGetters('errorModal', { showErrorModal: 'show' }),
     ...mapGetters('successModal', { showSuccessModal: 'show' }),
     isShowHackWarning() {
-      return [324].includes(this.networkId);
+      return false;
+      // return [324].includes(this.networkId);
     },
   },
   async mounted() {

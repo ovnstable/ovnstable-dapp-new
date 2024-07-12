@@ -245,7 +245,7 @@ const tagIconMap = {
 const getPoolDescStr = (
   isStable: boolean,
   version: string,
-) => `${version.toUpperCase()} Concentrated ${isStable ? 'Stable' : 'Volatile'} pool`;
+) => `${version.toUpperCase()} ${version.includes('3') ? 'Concentrated' : 'Basic'} ${isStable ? 'Stable' : 'Volatile'} pool`;
 
 export default {
   name: 'PoolsTable',

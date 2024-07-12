@@ -116,6 +116,7 @@ table {
 }
 
 body {
+  position: relative;
   min-height: 100vh;
   background-color: var(--color-16);
   color: var(--color-2);
@@ -127,8 +128,30 @@ body {
   -moz-osx-font-smoothing: grayscale;
 
   [data-theme="dark"] & {
-      background-color: var(--color-7);
-  }
+    background-color: var(--color-7);
+}
+
+  /* width */
+::-webkit-scrollbar {
+  width: 10px;
+  z-index: 1000;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: var(--color-6);
+  border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-3);
+}
 }
 
 svg, svg path {

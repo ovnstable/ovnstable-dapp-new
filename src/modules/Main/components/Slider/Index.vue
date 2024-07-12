@@ -38,40 +38,6 @@
           :ref="slideRef"
           :swiper-ref="swiperInstance"
           class="swiper-linea"
-          key="slide-contest"
-        >
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href="https://x.com/overnight_fi/status/1800885269295480989"
-          >
-            <img
-              alt="banner"
-              :src="getImageUrl('assets/images/common/banner_zapin_contest.png')"
-            />
-          </a>
-        </swiper-slide>
-        <swiper-slide
-          :ref="slideRef"
-          :swiper-ref="swiperInstance"
-          class="swiper-linea"
-          key="slide-poll"
-        >
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href="https://forms.gle/BCwwX4yhGW7EadTCA"
-          >
-            <img
-              alt="banner"
-              :src="getImageUrl('assets/images/common/banner_feedback_zapin.png')"
-            />
-          </a>
-        </swiper-slide>
-        <swiper-slide
-          :ref="slideRef"
-          :swiper-ref="swiperInstance"
-          class="swiper-linea"
           key="slide-zapin"
         >
           <a
