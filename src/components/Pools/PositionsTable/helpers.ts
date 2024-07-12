@@ -3,7 +3,7 @@ import { buildLink } from '@/store/views/main/pools/helpers.ts';
 
 const DEFAULT_DECIMALS = 18;
 const BN_STRING_BASE = 10;
-const BN_USD_STRING_BASE = 2;
+// const BN_USD_STRING_BASE = 2;
 
 export type TPositionData = [
     platform: string,
@@ -107,6 +107,10 @@ export interface IPositionsInfo extends TPoolInfo {
     tokens:{ [key: string]: string }[],
     displayedUsdValue: string,
     usdValue: string,
+    tokenProportions: {
+      token0: string,
+      token1: string,
+    },
     isInRange: boolean,
   },
   rewards: {
@@ -139,21 +143,9 @@ const getTokenInfo = (
 ):TSelectedTokenInfo => tokenMap.get(address)!;
 
 const getUsdTotal = (
-  token0Info: TSelectedTokenInfo,
-  token1Info: TSelectedTokenInfo,
-  token0Amount: number,
-  token1Amount: number,
+  token0UsdStr: string,
+  token1UsdStr: string,
 ): string => {
-  const token0UsdStr = formatBN(
-    token0Amount,
-    token0Info!.decimals,
-    token0Info.price,
-  );
-  const token1UsdStr = formatBN(
-    token1Amount,
-    token1Info!.decimals,
-    token1Info.price,
-  );
   const usdTotal = new BN(token0UsdStr).plus(new BN(token1UsdStr)).toString(BN_STRING_BASE);
   return usdTotal.toString();
 };
@@ -163,6 +155,29 @@ const getMinVal = (val: string | number) => (new BN(val).gt(0.1) ? new BN(val).t
 const isInRange = ({ tickLower, tickUpper, centerTick }: TTicks) => !(
   new BN(centerTick).gt(new BN(tickUpper)) || new BN(centerTick).lt(new BN(tickLower))
 );
+
+const getPercentage = (value: string, total: string) => new BN((value))
+  .dividedBy(new BN(total)).multipliedBy(100).toFixed(2);
+
+const getPositionProportion = (
+  token0UsdValue: string,
+  token1UsdValue: string,
+  totalUsdValue: string,
+) => {
+  const tokenProportions = {
+    token0: '0',
+    token1: '0',
+  };
+  if (Number(token0UsdValue) === 0) {
+    tokenProportions.token1 = '100';
+  } else if (Number(token1UsdValue) === 0) {
+    tokenProportions.token0 = '100';
+  } else {
+    tokenProportions.token0 = getPercentage(token0UsdValue, totalUsdValue);
+    tokenProportions.token1 = getPercentage(token1UsdValue, totalUsdValue);
+  }
+  return tokenProportions;
+};
 
 const getPlatformLinks = (
   platforms: string[],
@@ -181,17 +196,29 @@ export const formatPositionData = (
     [platform, tokenId, poolId, token0, token1, amount0, amount1, rewardAmount0, rewardAmount1,
       tickLower, tickUpper, centerTick, apr]: TPositionData,
   ) => {
+    // Pools
     const pool = poolsMap[poolId];
+
+    // Tokens
     const tokenNames = getTokenNames(pool.name);
     const token0Info = getTokenInfo(token0, tokenMap);
     const token1Info = getTokenInfo(token1, tokenMap);
+    // Token usd values
+    const token0UsdStr = formatBN(amount0, token0Info!.decimals, token0Info.price);
+    const token1UsdStr = formatBN(amount1, token1Info!.decimals, token1Info.price);
+    const reward0UsdStr = formatBN(rewardAmount0, token0Info!.decimals, token0Info.price);
+    const reward1UsdStr = formatBN(rewardAmount1, token1Info!.decimals, token1Info.price);
+    const positionUsdTotal = getUsdTotal(token0UsdStr, token1UsdStr);
+    const rewardUsdTotal = getUsdTotal(reward0UsdStr, reward1UsdStr);
+
+    // Ticks
     const ticks = {
       tickLower,
       tickUpper,
       centerTick,
     };
-    const positionUsdValue = getUsdTotal(token0Info, token1Info, amount0, amount1);
-    const rewardUsdValue = getUsdTotal(token0Info, token1Info, rewardAmount0, rewardAmount1);
+
+    // Final data
     const positionFullInfo = {
       ...poolsMap[poolId],
       position: {
@@ -199,8 +226,9 @@ export const formatPositionData = (
           { [tokenNames.token0]: formatBN(amount0, token0Info!.decimals) },
           { [tokenNames.token1]: formatBN(amount1, token1Info!.decimals) },
         ],
-        usdValue: positionUsdValue,
-        displayedUsdValue: getMinVal(positionUsdValue),
+        usdValue: positionUsdTotal,
+        displayedUsdValue: getMinVal(positionUsdTotal),
+        tokenProportions: getPositionProportion(token0UsdStr, token1UsdStr, positionUsdTotal),
         isInRange: isInRange(ticks),
       },
       rewards: {
@@ -208,8 +236,8 @@ export const formatPositionData = (
           { [tokenNames.token0]: formatBN(rewardAmount0, token0Info!.decimals) },
           { [tokenNames.token1]: formatBN(rewardAmount1, token1Info!.decimals) },
         ],
-        usdValue: rewardUsdValue,
-        displayedUsdValue: getMinVal(rewardUsdValue),
+        usdValue: rewardUsdTotal,
+        displayedUsdValue: getMinVal(rewardUsdTotal),
       },
       platformLinks: getPlatformLinks(pool.platform, pool),
       tokenId,
