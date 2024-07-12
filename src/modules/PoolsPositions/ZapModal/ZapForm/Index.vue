@@ -1004,6 +1004,9 @@ export default {
 
         const logsData = await tx.wait();
 
+        const parsedLogs = parseLogs(logsData, this.commitEventToStore);
+        console.log('__parsedLogs', parsedLogs);
+
         for (const item of logsData.logs) {
           const eventName = item?.eventName;
           if (eventName === 'TokenId') {
