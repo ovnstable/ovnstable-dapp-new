@@ -5,9 +5,9 @@
       class="swap-module__form"
     >
       <TabsComponent
+        :key="activeTab"
         :tabs="tabsData"
         :active-tab="activeTab"
-        :key="activeTab"
         @tab-change="changeTab"
       >
         <SwapForm
@@ -63,7 +63,6 @@
           <span>Bridge</span>
         </div>
       </div>
-
     </div>
 
     <SliderComponent
@@ -93,7 +92,7 @@
 </template>
 
 <script lang="ts">
-import { mapActions, mapState, mapGetters } from 'vuex';
+import { mapState, mapGetters } from 'vuex';
 import MintRedeemForm from '@/modules/Main/components/MintRedeem/Index.vue';
 import SliderComponent from '@/modules/Main/components/Slider/Index.vue';
 import TabsComponent from '@/components/Tabs/Index.vue';
@@ -141,7 +140,6 @@ export default {
       ],
       activeTab: 0,
       pathViz: null as any,
-      buttonDisabled: true,
       isLoadingData: true,
       inputTokens: [] as any[],
       outputTokens: [] as any[],
@@ -152,11 +150,14 @@ export default {
       showMobileBridge: false,
     };
   },
-  mounted() {
-    const onTabChange = useEventBus<number>('change-tab-request');
-    onTabChange.on((tabIndex) => {
-      this.activeTab = tabIndex;
-    });
+  computed: {
+    ...mapGetters('network', ['networkName']),
+    ...mapGetters('accountData', ['account']),
+    ...mapGetters('walletAction', ['walletConnected']),
+    ...mapState('odosData', ['availableNetworksList']),
+    deviceSize() {
+      return deviceType();
+    },
   },
   watch: {
     networkName: {
@@ -168,24 +169,15 @@ export default {
       immediate: true,
     },
   },
-  computed: {
-    ...mapGetters('network', ['networkName']),
-    ...mapGetters('accountData', ['account']),
-    ...mapGetters('walletAction', ['walletConnected']),
-    ...mapState('odosData', ['availableNetworksList']),
-    deviceSize() {
-      return deviceType();
-    },
+  mounted() {
+    const onTabChange = useEventBus<number>('change-tab-request');
+    onTabChange.on((tabIndex) => {
+      this.activeTab = tabIndex;
+    });
   },
   methods: {
-    ...mapActions('swapModal', ['showSwapModal', 'showMintView']),
-
     changeTab(id: number) {
       this.activeTab = id;
-    },
-    mintAction() {
-      this.showMintView();
-      this.showSwapModal();
     },
     updatePathView(data: any) {
       this.pathViz = data.path;

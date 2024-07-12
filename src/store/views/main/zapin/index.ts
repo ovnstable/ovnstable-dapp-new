@@ -4,15 +4,8 @@ import { poolsInfoMap, zapPlatformContractTypeMap } from '@/store/views/main/zap
 import { buildEvmContract } from '@/utils/contractsMap.ts';
 import { JSONLoader } from '@/utils/httpUtils.ts';
 
+import { zapInStep } from '@/store/modals/waiting-modal.ts';
 import type { ContractAbi } from '@/types/common/abi';
-
-export enum zapInStep {
-  START,
-  APPROVE_TOKENS,
-  DEPOSIT,
-  APPROVE_GAUGE,
-  STAKE_LP
-}
 
 enum poolVersionList {
   'v2',
@@ -67,6 +60,8 @@ const defaultState = () => ({
   // for v3
   poolNftContract: null,
   gaugeContract: null,
+  // for rebalance on aero currently
+  gaugeContractV3: null,
   currentStage: zapInStep.START,
   zapLoaded: false,
 });
@@ -155,6 +150,18 @@ const actions = {
     const abiFileSrc = gaugeSrcMap[poolVersion as poolVersionList](chainName, contractName);
     const abiGaugeContractFile = await loadAbi(abiFileSrc);
 
+    const abiFileSrcV3 = gaugeSrcMap[poolVersion as poolVersionList](chainName, contractName);
+    const abiGaugeContractFileV3 = await loadAbi(abiFileSrcV3);
+
+    commit('changeState', {
+      field: 'gaugeContractV3',
+      val: buildEvmContract(
+        abiGaugeContractFileV3.abi,
+        rootState.web3.evmSigner,
+        poolInfo.gauge,
+      ),
+    });
+
     commit('changeState', {
       field: 'gaugeContract',
       val: buildEvmContract(
@@ -224,7 +231,10 @@ const actions = {
       rootState.web3.evmSigner,
       abiFile.address,
     );
+
+    console.log(address, '__address');
     const positions = await positionContract.getPositions(address);
+    console.log(positions, '__positionsss');
     commit('changeState', {
       field: 'userPositions',
       val: positions,

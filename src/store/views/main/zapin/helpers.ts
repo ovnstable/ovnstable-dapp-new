@@ -8,7 +8,6 @@ import BN from 'bignumber.js';
 
 interface ISwapData {
   tokenAddress: string,
-  amount: string,
   price: string;
 }
 

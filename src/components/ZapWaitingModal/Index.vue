@@ -1,16 +1,16 @@
 <!-- eslint-disable vuejs-accessibility/anchor-has-content -->
 <template>
   <div class="zap-waiting-content">
-    <h1>ZAP IN</h1>
+    <h1>Transactions</h1>
     <PoolLabel
       v-if="currentZapPool?.address"
       :pool="currentZapPool"
     />
     <div class="stages-container">
       <div
-        class="stage-row"
         v-for="(stageName, index) in stageNames"
-        :key=stageName
+        :key="index"
+        class="stage-row"
       >
         <div class="stage-row-item">
           <div
@@ -41,75 +41,48 @@
           </div>
           <div class="data-container">
             <div>
-              {{stageName}}
+              {{ stageName }}
             </div>
           </div>
-          <!-- <div class="button-container">
-            <a
-              href='https://google.com'
-              target="_blank"
-              rel="noopener noreferrer"
-              class="leave-feedback-link"
-            >
-              <ButtonComponent btn-styles="link">
-                <BaseIcon name="PayoutArrow" />
-              </ButtonComponent>
-            </a>
-          </div> -->
         </div>
       </div>
     </div>
-    <!-- <div class="button-container">
-      <a
-        href='https://google.com'
-        target="_blank"
-        rel="noopener noreferrer"
-        class="leave-feedback-link"
-      >
-        <ButtonComponent btn-styles="link">
-          IN PROGRESS
-        </ButtonComponent>
-      </a>
-    </div> -->
   </div>
 </template>
 
 <script lang="ts">
 import { mapState } from 'vuex';
-import { zapInStep } from '@/store/views/main/zapin/index.ts';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import Spinner from '@/components/Spinner/Index.vue';
-// import ButtonComponent from '@/components/Button/Index.vue';
 import PoolLabel from '@/modules/Main/components/ZapModal/PoolLabel.vue';
-import { defineComponent } from 'vue';
-
-const stagesMap: Record<zapInStep, string> = {
-  [zapInStep.START]: 'Start',
-  [zapInStep.APPROVE_TOKENS]: 'Approve Tokens',
-  [zapInStep.DEPOSIT]: 'Deposit',
-  [zapInStep.APPROVE_GAUGE]: 'Approve Gauge',
-  [zapInStep.STAKE_LP]: 'Stake LP',
-};
+import { defineComponent, type PropType } from 'vue';
+import { type zapInStep, type rebalanceStep, ZAPIN_MAP } from '@/store/modals/waiting-modal.ts';
 
 export default defineComponent({
   name: 'ZapinWaitingModal',
   components: {
-    Spinner, BaseIcon, /* ButtonComponent, */ PoolLabel,
+    Spinner,
+    BaseIcon,
+    PoolLabel,
+  },
+  props: {
+    stageMap: {
+      type: Object as PropType<Record<zapInStep | rebalanceStep, string>>,
+      default: ZAPIN_MAP,
+    },
   },
   data() {
     return {
       // Enum, filtering number keys to get strings
-      stageNames: stagesMap,
+      stageNames: this.stageMap,
     };
   },
   computed: {
     ...mapState('zapinData', [
       'currentStage',
-      'selectedTokens',
     ]),
     ...mapState('poolsData', [
       'currentZapPool',
-      'isZapModalShow',
     ]),
   },
   methods: {
