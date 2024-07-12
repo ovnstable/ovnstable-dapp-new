@@ -24,7 +24,7 @@
             class="app-header__dashboard"
             active-class="active-link"
           >
-            POSITIONS
+            MY POSITIONS
           </router-link>
           <router-link
             to="/market/usd"
