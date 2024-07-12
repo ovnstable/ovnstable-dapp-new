@@ -10,6 +10,7 @@ import type { ContractAbi } from '@/types/common/abi';
 enum poolVersionList {
   'v2',
   'v3',
+  'v3rebalance'
 }
 
 type TSrcMap = {
@@ -29,6 +30,7 @@ const zapAbiSrcMap: TSrcMap = {
 const gaugeSrcMap: TSrcMap = {
   v2: srcStringBuilder('Gauge'),
   v3: srcStringBuilder('V3Gauge'),
+  v3rebalance: srcStringBuilder('V3GaugeRebalance'),
 };
 
 const poolTokenSrcMap: TSrcMap = {
@@ -150,7 +152,7 @@ const actions = {
     const abiFileSrc = gaugeSrcMap[poolVersion as poolVersionList](chainName, contractName);
     const abiGaugeContractFile = await loadAbi(abiFileSrc);
 
-    const abiFileSrcV3 = gaugeSrcMap[poolVersion as poolVersionList](chainName, contractName);
+    const abiFileSrcV3 = gaugeSrcMap[poolVersionList.v3rebalance](chainName, contractName);
     const abiGaugeContractFileV3 = await loadAbi(abiFileSrcV3);
 
     commit('changeState', {

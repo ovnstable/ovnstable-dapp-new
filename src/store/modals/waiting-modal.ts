@@ -72,7 +72,7 @@ const mutations = {
 
   setStagesMap(state: typeof stateData, isZapin: boolean) {
     if (isZapin) state.STAGES_MAP = ZAPIN_MAP;
-    state.STAGES_MAP = REBALANCE_MAP;
+    else state.STAGES_MAP = REBALANCE_MAP;
   },
 };
 
