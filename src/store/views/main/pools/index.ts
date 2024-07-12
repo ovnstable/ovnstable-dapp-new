@@ -14,6 +14,7 @@ import {
 } from '@/store/views/main/pools/mocks.ts';
 import { loadTokenImage } from '@/utils/tokenLogo.ts';
 import { isArray } from 'lodash';
+import BigNumber from 'bignumber.js';
 import { poolTokensForZapMap } from '../zapin/mocks.ts';
 
 // eslint-disable-next-line no-shadow
@@ -42,6 +43,7 @@ const stateData = {
 
   isZapModalShow: false,
   currentZapPool: null,
+  lastParsedBurnedTokenIdEvent: '',
 };
 
 const getters = {
@@ -72,6 +74,12 @@ const actions = {
       field: 'isZapModalShow',
       val: true,
     });
+    if (pool?.tokenId) {
+      commit('changeState', {
+        field: 'lastParsedBurnedTokenIdEvent',
+        val: new BigNumber(pool?.tokenId).toString(10),
+      });
+    }
   },
 
   async loadPools({

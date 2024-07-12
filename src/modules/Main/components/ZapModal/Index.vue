@@ -21,6 +21,8 @@
       :returned-to-user="lastParsedReturnedToUserEvent"
       :put-into-pool="lastParsedPutIntoPoolEvent"
       :input-tokens="lastParsedInputTokensEvent"
+      :burned-nft-id="''"
+      :nft-id="''"
     />
   </div>
 </template>

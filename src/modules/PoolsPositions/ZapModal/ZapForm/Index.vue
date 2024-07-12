@@ -1004,16 +1004,12 @@ export default {
 
         const logsData = await tx.wait();
 
-        const parsedLogs = parseLogs(logsData, this.commitEventToStore);
-
-        console.log('__pasredLogs', parsedLogs);
-
         for (const item of logsData.logs) {
           const eventName = item?.eventName;
           if (eventName === 'TokenId') {
-            console.log(item.data, '__DATA');
             // eslint-disable-next-line prefer-destructuring
             this.newTokenId = item.args[0];
+            this.commitEventToStore('lastParsedTokenIdEvent', new BN(item.args[0]).toString(10));
           }
         }
         console.log(logsData, '__logsData');

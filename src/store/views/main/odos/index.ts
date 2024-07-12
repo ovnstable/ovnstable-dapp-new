@@ -86,6 +86,8 @@ export const stateData = {
   lastParsedPutIntoPoolEvent: {},
   lastParsedReturnedToUserEvent: {},
   lastParsedInputTokensEvent: {},
+  lastParsedTokenIdEvent: '' as string,
+  lastParsedBurnedTokenIdEvent: '' as string,
 
   successData: {
     inputTokens: [] as any[],

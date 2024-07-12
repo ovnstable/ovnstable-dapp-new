@@ -1,11 +1,10 @@
 <template>
   <ModalComponent
+    v-model="showModal"
     custom-class="success-modal"
     type-modal="custom"
-    v-model="showModal"
     @close="closeModal"
   >
-
     <div class="modal-content">
       <BaseIcon
         class="modal-content__icon"
@@ -20,6 +19,20 @@
       <div class="zap-header-container">
         <PoolLabel :pool="successData.pool" />
         <div class="modal-content__data-row">
+          <div class="nft-info">
+            <div
+              v-if="burnedNftId"
+              class="nft-info-row"
+            >
+              <span>Burned NFT:</span><span>ID: #{{ burnedNftId }}</span>
+            </div>
+            <div
+              v-if="nftId"
+              class="nft-info-row"
+            >
+              <span>New NFT:</span><span>ID: #{{ nftId }}</span>
+            </div>
+          </div>
           <a
             :href="openPositionOnPool"
             target="_blank"
@@ -40,7 +53,6 @@
         v-if="successData"
         class="modal-content__data"
       >
-
         <div class="modal-content__data-main">
           <div class="data-row sent">
             <div class="success-row-title">
@@ -59,7 +71,9 @@
           </div>
 
           <div class="data-row returned">
-            <div class="success-row-title">Returned</div>
+            <div class="success-row-title">
+              Returned
+            </div>
             <div class="success-data-list">
               <div
                 v-for="returnData in tokensReturnedList"
@@ -95,7 +109,7 @@
       <div class="zap-modal-footer">
         Leave your feedback on Zap In feature and win $50 reward
         <a
-          href='https://forms.gle/BCwwX4yhGW7EadTCA'
+          href="https://forms.gle/BCwwX4yhGW7EadTCA"
           target="_blank"
           rel="noopener noreferrer"
           class="leave-feedback-link"
@@ -150,6 +164,14 @@ export default defineComponent({
     },
     putIntoPool: {
       type: Object as PropType<TTokenDataList>,
+      required: true,
+    },
+    burnedNftId: {
+      type: String,
+      required: true,
+    },
+    nftId: {
+      type: String,
       required: true,
     },
     inputTokens: {

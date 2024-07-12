@@ -21,6 +21,8 @@
       :returned-to-user="lastParsedReturnedToUserEvent"
       :put-into-pool="lastParsedPutIntoPoolEvent"
       :input-tokens="lastParsedInputTokensEvent"
+      :burned-nft-id="lastParsedBurnedTokenIdEvent"
+      :nft-id="lastParsedTokenIdEvent"
     />
   </div>
 </template>
@@ -65,6 +67,10 @@ export default {
       'lastParsedReturnedToUserEvent',
       'lastParsedPutIntoPoolEvent',
       'lastParsedInputTokensEvent',
+      'lastParsedTokenIdEvent',
+    ]),
+    ...mapState('poolsData', [
+      'lastParsedBurnedTokenIdEvent',
     ]),
   },
   watch: {

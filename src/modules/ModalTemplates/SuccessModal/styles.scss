@@ -199,3 +199,16 @@
       margin-left: 40px;
     }
   }
+
+  .nft-info {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    gap: 15px;
+    font-size: 16px;
+    .nft-info-row {
+      display: flex;
+      justify-content: space-between;
+    }
+  }
