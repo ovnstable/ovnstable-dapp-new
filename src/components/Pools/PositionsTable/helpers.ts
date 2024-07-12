@@ -154,7 +154,7 @@ const getUsdTotal = (
     token1Info!.decimals,
     token1Info.price,
   );
-  const usdTotal = new BN(token0UsdStr).plus(new BN(token1UsdStr)).toString(BN_USD_STRING_BASE);
+  const usdTotal = new BN(token0UsdStr).plus(new BN(token1UsdStr)).toString(BN_STRING_BASE);
   return usdTotal.toString();
 };
 
