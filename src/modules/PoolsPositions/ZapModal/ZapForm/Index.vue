@@ -1004,8 +1004,7 @@ export default {
 
         const logsData = await tx.wait();
 
-        const parsedLogs = parseLogs(logsData, this.commitEventToStore);
-        console.log('__parsedLogs', parsedLogs);
+        parseLogs(logsData, this.commitEventToStore);
 
         for (const item of logsData.logs) {
           const eventName = item?.eventName;
