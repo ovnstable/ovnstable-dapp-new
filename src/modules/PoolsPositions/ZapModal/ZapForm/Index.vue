@@ -199,6 +199,7 @@ import TokenForm from '@/modules/PoolsPositions/ZapModal/TokenForm.vue';
 import { rebalanceStep } from '@/store/modals/waiting-modal.ts';
 import ZapInStepsRow from '@/components/StepsRow/ZapinRow/RebalanceRow.vue';
 import { cloneDeep } from 'lodash';
+import { parseLogs } from './helpers.ts';
 
 enum zapMobileSection {
   'TOKEN_FORM',
@@ -929,6 +930,12 @@ export default {
         this.isSwapLoading = false;
       }
     },
+    commitEventToStore(field: string, value: any) {
+      this.$store.commit('odosData/changeState', {
+        field,
+        val: value,
+      });
+    },
     async initZapInTransaction(
       responseData: any,
       requestInputTokens: any[],
@@ -996,6 +1003,10 @@ export default {
           .rebalance(txData, gaugeData, this.zapPool?.tokenId, params);
 
         const logsData = await tx.wait();
+
+        const parsedLogs = parseLogs(logsData, this.commitEventToStore);
+
+        console.log('__pasredLogs', parsedLogs);
 
         for (const item of logsData.logs) {
           const eventName = item?.eventName;
