@@ -1359,6 +1359,7 @@ export default {
       }
     },
     getLastNftId() {
+      console.log(this.gaugeContract, '__this.gaugeContract');
       return this.gaugeContract
         .balanceOf(this.account)
         .then((count: any) => this.gaugeContract

@@ -30,7 +30,7 @@ const zapAbiSrcMap: TSrcMap = {
 const gaugeSrcMap: TSrcMap = {
   v2: srcStringBuilder('Gauge'),
   v3: srcStringBuilder('V3Gauge'),
-  v3rebalance: srcStringBuilder('V3GaugeRebalance'),
+  [poolVersionList.v3rebalance]: srcStringBuilder('V3GaugeRebalance'),
 };
 
 const poolTokenSrcMap: TSrcMap = {
@@ -163,6 +163,8 @@ const actions = {
         poolInfo.gauge,
       ),
     });
+
+    console.log(abiGaugeContractFile, '__abiGaugeContractFile');
 
     commit('changeState', {
       field: 'gaugeContract',
