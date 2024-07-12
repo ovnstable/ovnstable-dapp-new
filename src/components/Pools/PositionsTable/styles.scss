@@ -506,15 +506,25 @@
   align-items: center;
   margin-bottom: 4px;
   gap: 8px;
+
+  & .in-range {
+    color: green;
+    white-space: nowrap;
+  }
+
+  & .out-range {
+    color: red;
+    white-space: nowrap;
+  }
 }
 
 
 // Position specific
 .positions-header {
-  grid-template-columns: minmax(100px, 0.5fr) minmax(150px, 1.5fr) minmax(100px, 3fr) minmax(140px, 1fr) minmax(140px, .75fr) minmax(140px, .75fr) minmax(140px, 1fr) minmax(140px, 1fr);
+  grid-template-columns: minmax(100px, 0.5fr) minmax(150px, 1.5fr) minmax(100px, 3fr) minmax(140px, 1fr) minmax(140px, .75fr) minmax(140px, .75fr);
 }
 .position-table_row {
-  grid-template-columns: minmax(100px, 0.5fr) minmax(150px, 1.5fr) minmax(100px, 3fr) minmax(140px, 1fr) minmax(140px, .75fr) minmax(140px, .75fr) minmax(140px, 1fr) minmax(140px, 1fr);
+  grid-template-columns: minmax(100px, 0.5fr) minmax(150px, 1.5fr) minmax(100px, 3fr) minmax(140px, 1fr) minmax(140px, .75fr) minmax(140px, .75fr);
 }
 .center {
   display: flex;
@@ -525,4 +535,19 @@
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+}
+
+.pools-table__details-row {
+
+  & .is-in-range {
+    color: green;
+    white-space: nowrap;
+  }
+
+  & .out-range {
+    color: red;
+    white-space: nowrap;
+  }
+
+
 }

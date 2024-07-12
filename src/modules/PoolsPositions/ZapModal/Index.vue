@@ -93,7 +93,7 @@ export default {
 
   &.v3 {
     width: 100vw;
-    max-width: 60vw;
+    max-width: 70vw;
     height: 100%;
   }
 

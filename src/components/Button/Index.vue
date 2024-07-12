@@ -22,7 +22,7 @@ import { type PropType } from 'vue';
 import Spinner from '@/components/Spinner/Index.vue';
 
 type btnTypes = 'button' | 'submit';
-type btnStyles = 'primary' | 'secondary' | 'transparent' | 'standard' | 'link' | 'faded';
+type btnStyles = 'primary' | 'secondary' | 'transparent' | 'standard' | 'link' | 'faded' | 'grey';
 type btnSize = 'large' | 'medium' | 'default' | 'small';
 
 export default {
@@ -54,10 +54,6 @@ export default {
     btnType: {
       type: String as PropType<btnTypes>,
       default: 'button',
-    },
-    buttonHover: {
-      type: String,
-      default: 'blue',
     },
   },
 };
@@ -159,6 +155,17 @@ export default {
       border-color: var(--color-2);
       background-color: var(--color-17);
       box-shadow: 0px 1px 0px 0px var(--color-2);
+    }
+  }
+
+  &.grey {
+    background-color: transparent;
+    border: 1px solid var(--color-2);
+    color: var(--color-2);
+
+    &:hover {
+      color: var(--color-4);
+      background-color: var(--color-3);
     }
   }
 

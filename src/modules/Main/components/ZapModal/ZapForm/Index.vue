@@ -349,7 +349,7 @@ import { poolsInfoMap, poolTokensForZapMap } from '@/store/views/main/zapin/mock
 import BN from 'bignumber.js';
 import { approveToken, getAllowanceValue } from '@/utils/contractApprove.ts';
 import { onLeaveList, onEnterList, beforeEnterList } from '@/utils/animations.ts';
-import { zapInStep } from '@/store/views/main/zapin/index.ts';
+import { zapInStep } from '@/store/modals/waiting-modal.ts';
 import { parseLogs } from './helpers.ts';
 
 enum zapMobileSection {
@@ -715,6 +715,7 @@ export default {
   mounted() {
     if (this.zapPool.chain !== this.networkId) this.currentStage = zapInStep.START;
 
+    this.setStagesMap(true);
     this.firstInit();
   },
   created() {
@@ -742,6 +743,7 @@ export default {
     ...mapActions('waitingModal', ['showWaitingModal', 'closeWaitingModal']),
     ...mapActions('walletAction', ['connectWallet']),
 
+    ...mapMutations('waitingModal', ['setStagesMap']),
     ...mapMutations('zapinData', ['changeState']),
     onLeaveList,
     beforeEnterList,

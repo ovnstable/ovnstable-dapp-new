@@ -11,21 +11,20 @@
         <div class="pools-header__item">
           Pool name
         </div>
-        <div class="pools-header__item center">
-          Position size, USD
-        </div>
         <div
-          class="pools-header__item pools-header__item--hover"
-          @click="setOrderTypeFunc()"
-          @keypress="setOrderTypeFunc()"
+          class="pools-header__item center pools-header__item--hover"
+          @click="positionSizeSortFunc()"
+          @keypress="positionSizeSortFunc()"
         >
-          APR
-          <BaseIcon :name="iconNameSort()" />
+          Position size, USD
+          <BaseIcon :name="toggleSortIcon()" />
         </div>
-        <div class="pools-header__item">
+        <!-- <div class="pools-header__item">
           Daily rewards
-        </div>
-        <div class="pools-header__item">
+        </div> -->
+        <div
+          class="pools-header__item "
+        >
           Earned
         </div>
         <div class="pools-header__item center">
@@ -35,7 +34,7 @@
       </div>
 
       <div class="pools-table__content">
-        <template v-if="pools.length > 0">
+        <template v-if="getUserPositions.length > 0">
           <div
             v-for="(pool, key) in (pools as any)"
             :key="key"
@@ -72,9 +71,6 @@
                     alt="token"
                     :src="pool.token2Icon"
                   />
-                  <span>
-                    {{ getTokenNames(pool)[2] }}
-                  </span>
                 </div>
                 <div
                   v-if="pool.token3Icon"
@@ -92,47 +88,38 @@
                     {{ pool.name }}
                   </div>
                 </div>
-                <div class="pools-table__tokens-details">
-                  ID#34597823
+                <div class="pools-table__details-row">
+                  <div class="pools-table__tokens-details">
+                    ID#{{ pool.tokenId }}
+                  </div>
+                  <div
+                    class="pools-table__tag is-in-range"
+                    :class="{ 'out-range': !pool.position.isInRange }"
+                  >
+                    {{ pool.position.isInRange ? 'IN RANGE' : 'OUT OF RANGE' }}
+                  </div>
                 </div>
               </div>
             </div>
             <div class="pools-table__position-size">
-              <div>1234.5 Mln</div>
-              <div>Ovn 100% | USD+ 46%</div>
+              <div>{{ pool.position.displayedUsdValue }}$</div>
+              <div>{{ pool.tokenNames.token0 }} | {{ pool.tokenNames.token1 }}</div>
             </div>
             <div class="pools-table__apy">
-              34.8 Trln
-            </div>
-            <div class="pools-table__apy">
-              $9000
-            </div>
-            <div class="pools-table__apy">
-              <div
-                v-if="pool.apr"
-                class="card-label text-center"
-              >
-                {{ formatMoneyComma(pool.apr, 2) }}%
-              </div>
-              <div
-                v-else
-                class="card-label see-on-dex-label see-on-dex-another"
-              >
-                see on platform
-              </div>
+              {{ pool.rewards.displayedUsdValue }}$
             </div>
             <div class="pools-table__platform-row center">
               <a
-                v-for="(poolPlat, key) in pool.platform"
-                :key="key"
+                v-for="({ platform, link }, platKey) in pool.platformLinks"
+                :key="platKey"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="pools-table__platform"
-                :href="getPlatformLink(pool, poolPlat)"
+                :href="link"
               >
                 <BaseIcon
                   class="pools-table__platform-icon"
-                  :name="poolPlat"
+                  :name="platform"
                 />
               </a>
             </div>
@@ -150,7 +137,7 @@
           v-else
           class="pools-table__empty"
         >
-          pools not found
+          POSITIONS NOT FOUND
         </div>
       </div>
 
@@ -168,14 +155,19 @@
 <script lang="ts">
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
-import { formatMoneyComma } from '@/utils/numbers.ts';
-import { buildLink } from '@/store/views/main/pools/helpers.ts';
 import type { PropType } from 'vue';
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
+import type { IPositionsInfo } from './helpers.ts';
 
-enum APR_ORDER_TYPE {
-  'APR', 'APR_UP', 'APR_DOWN',
+enum POSITION_SIZE_ORDER_TYPE {
+  'VALUE', 'VALUE_UP', 'VALUE_DOWN',
 }
+
+const iconNameSort = (orderTypeStr: string) => {
+  if (orderTypeStr.includes('UP')) return 'ArrowUpSort';
+  if (orderTypeStr.includes('DOWN')) return 'ArrowDownSort';
+  return 'ArrowsFilter';
+};
 
 export default {
   name: 'PositionsTable',
@@ -185,33 +177,26 @@ export default {
   },
   props: {
     pools: {
-      type: Array,
+      type: Array as PropType<IPositionsInfo[]>,
       required: true,
     },
-    apyOrderType: {
-      type: Number as PropType<APR_ORDER_TYPE>,
+    positionSizeOrderType: {
+      type: Number as PropType<POSITION_SIZE_ORDER_TYPE>,
       required: true,
-      default: APR_ORDER_TYPE.APR,
+      default: POSITION_SIZE_ORDER_TYPE.VALUE,
     },
-    setOrderTypeFunc: {
+    positionSizeSortFunc: {
       type: Function,
       required: true,
     },
   },
+  computed: {
+    ...mapGetters('zapinData', ['getUserPositions']),
+  },
   methods: {
     ...mapActions('poolsData', ['openZapIn']),
-    formatMoneyComma,
-    getTokenNames(pool: any) {
-      return pool.name.split('/');
-    },
-    getPlatformLink(pool: any, platform: string) {
-      return buildLink(pool, platform) ?? '';
-    },
-    iconNameSort() {
-      const orderTypeStr = APR_ORDER_TYPE[this.apyOrderType];
-      if (orderTypeStr.includes('UP')) return 'ArrowUpSort';
-      if (orderTypeStr.includes('DOWN')) return 'ArrowDownSort';
-      return 'ArrowsFilter';
+    toggleSortIcon() {
+      return iconNameSort(POSITION_SIZE_ORDER_TYPE[this.positionSizeOrderType]);
     },
   },
 };

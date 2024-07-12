@@ -113,6 +113,9 @@ const getters = {
   swapResponseConfirmGetter(state: typeof stateData) {
     return state.swapResponseConfirmInfo;
   },
+  allTokensLoaded(state: typeof stateData) {
+    return state.tokens?.length > 0;
+  },
   isAllLoaded(state: typeof stateData, getters: any, rootState: any) {
     // form swap window show
     if (state.baseViewType === 'SWIPE') {
@@ -248,6 +251,7 @@ const actions = {
       }
     });
 
+    console.log('TOKENSLOADED');
     commit('changeState', { field: 'isTokensLoading', val: false });
   },
 

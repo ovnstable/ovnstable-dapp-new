@@ -45,6 +45,13 @@ const stateData = {
 };
 
 const getters = {
+  getAllPools(state: typeof stateData) {
+    return state.allPools;
+  },
+  allPoolsMap(state: typeof stateData) {
+    return state.allPools
+      .reduce((acc, pool: any) => ({ ...acc, [pool.address]: pool }), {});
+  },
 };
 
 const actions = {
@@ -56,6 +63,7 @@ const actions = {
   },
 
   openZapIn({ commit }: any, pool: any) {
+    console.log(pool, '__POOl');
     commit('changeState', {
       field: 'currentZapPool',
       val: pool,

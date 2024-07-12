@@ -7,6 +7,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 20000000,
       "inputs": [
         {
           "type": "bytes32",
@@ -24,6 +25,7 @@
       "name": "grantRole",
       "constant": false,
       "payable": false,
+      "gas": 20000000,
       "inputs": [
         {
           "type": "bytes32",
@@ -42,6 +44,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 20000000,
       "inputs": [
         {
           "type": "bytes32",
@@ -63,6 +66,7 @@
       "name": "revokeRole",
       "constant": false,
       "payable": false,
+      "gas": 20000000,
       "inputs": [
         {
           "type": "bytes32",
@@ -81,6 +85,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 20000000,
       "inputs": [
         {
           "type": "uint160",
@@ -114,6 +119,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 20000000,
       "inputs": [
         {
           "type": "uint160",
@@ -148,6 +154,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 20000000,
       "inputs": [
         {
           "type": "address",
@@ -169,6 +176,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 20000000,
       "inputs": [
         {
           "type": "address",
@@ -188,6 +196,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 20000000,
       "inputs": [
         {
           "type": "address",
@@ -207,6 +216,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 20000000,
       "inputs": [
         {
           "type": "address",
@@ -225,6 +235,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 20000000,
       "inputs": [
         {
           "type": "address",
@@ -246,6 +257,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 20000000,
       "inputs": [
         {
           "type": "int24",
@@ -264,6 +276,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 20000000,
       "inputs": [
         {
           "type": "uint160",
@@ -282,6 +295,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 20000000,
       "inputs": [
         {
           "type": "uint256",
@@ -308,6 +322,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 20000000,
       "inputs": [
         {
           "type": "uint256",
@@ -321,88 +336,12 @@
       ]
     },
     {
-      "type": "event",
-      "anonymous": false,
-      "name": "CollectRewards",
-      "inputs": [
-        {
-          "type": "uint256",
-          "name": "amount0",
-          "indexed": false
-        },
-        {
-          "type": "uint256",
-          "name": "amount1",
-          "indexed": false
-        }
-      ]
-    },
-    {
-      "type": "function",
-      "name": "checkForOwner",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "inputs": [
-        {
-          "type": "uint256",
-          "name": "tokenId"
-        },
-        {
-          "type": "address",
-          "name": "sender"
-        }
-      ],
-      "outputs": []
-    },
-    {
-      "type": "function",
-      "name": "closePosition",
-      "constant": false,
-      "payable": false,
-      "inputs": [
-        {
-          "type": "uint256",
-          "name": "tokenId"
-        },
-        {
-          "type": "address",
-          "name": "recipient"
-        },
-        {
-          "type": "address",
-          "name": "feeRecipient"
-        }
-      ],
-      "outputs": []
-    },
-    {
-      "type": "function",
-      "name": "getPositionVolume",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "inputs": [
-        {
-          "type": "uint256",
-          "name": "tokenId"
-        }
-      ],
-      "outputs": [
-        {
-          "type": "uint256"
-        },
-        {
-          "type": "uint256"
-        }
-      ]
-    },
-    {
       "type": "function",
       "name": "getPositions",
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 20000000,
       "inputs": [
         {
           "type": "address",
@@ -459,10 +398,6 @@
               "name": "tickUpper"
             },
             {
-              "type": "int24",
-              "name": "currentTick"
-            },
-            {
               "type": "uint256",
               "name": "apr"
             }
@@ -475,6 +410,7 @@
       "name": "mintPosition",
       "constant": false,
       "payable": false,
+      "gas": 20000000,
       "inputs": [
         {
           "type": "address",
@@ -495,10 +431,6 @@
         {
           "type": "uint256",
           "name": "amountOut1"
-        },
-        {
-          "type": "address",
-          "name": "recipient"
         }
       ],
       "outputs": [
@@ -514,6 +446,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 20000000,
       "inputs": [
         {
           "type": "address",
@@ -537,6 +470,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 20000000,
       "inputs": [
         {
           "type": "address",
@@ -555,6 +489,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 20000000,
       "inputs": [
         {
           "type": "address",
@@ -573,6 +508,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 20000000,
       "inputs": [
         {
           "type": "address",
@@ -591,6 +527,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 20000000,
       "inputs": [
         {
           "type": "address",
@@ -613,6 +550,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 20000000,
       "inputs": [
         {
           "type": "address",
@@ -631,77 +569,11 @@
     },
     {
       "type": "function",
-      "name": "getProportionForRebalance",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "inputs": [
-        {
-          "type": "uint256",
-          "name": "tokenId"
-        },
-        {
-          "type": "address",
-          "name": "poolId"
-        },
-        {
-          "type": "int24[]",
-          "name": "tickRange"
-        },
-        {
-          "type": "tuple[]",
-          "name": "prices",
-          "components": [
-            {
-              "type": "address",
-              "name": "tokenAddress"
-            },
-            {
-              "type": "uint256",
-              "name": "price"
-            }
-          ]
-        }
-      ],
-      "outputs": [
-        {
-          "type": "tuple",
-          "name": "result",
-          "components": [
-            {
-              "type": "address[]",
-              "name": "inputTokenAddresses"
-            },
-            {
-              "type": "uint256[]",
-              "name": "inputTokenAmounts"
-            },
-            {
-              "type": "address[]",
-              "name": "outputTokenAddresses"
-            },
-            {
-              "type": "uint256[]",
-              "name": "outputTokenProportions"
-            },
-            {
-              "type": "uint256[]",
-              "name": "outputTokenAmounts"
-            },
-            {
-              "type": "uint256[]",
-              "name": "poolProportionsUsd"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "type": "function",
       "name": "getProportionForZap",
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 20000000,
       "inputs": [
         {
           "type": "address",
@@ -769,6 +641,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 20000000,
       "inputs": [],
       "outputs": [
         {
@@ -782,6 +655,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 20000000,
       "inputs": [],
       "outputs": [
         {
@@ -794,6 +668,7 @@
       "name": "setCoreParams",
       "constant": false,
       "payable": false,
+      "gas": 20000000,
       "inputs": [
         {
           "type": "tuple",
@@ -817,6 +692,7 @@
       "name": "setSlippages",
       "constant": false,
       "payable": false,
+      "gas": 20000000,
       "inputs": [
         {
           "type": "uint256",
@@ -831,6 +707,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 20000000,
       "inputs": [],
       "outputs": [
         {
@@ -920,78 +797,10 @@
     },
     {
       "type": "function",
-      "name": "rebalance",
-      "constant": false,
-      "payable": false,
-      "inputs": [
-        {
-          "type": "tuple",
-          "name": "swapData",
-          "components": [
-            {
-              "type": "tuple[]",
-              "name": "inputs",
-              "components": [
-                {
-                  "type": "address",
-                  "name": "tokenAddress"
-                },
-                {
-                  "type": "uint256",
-                  "name": "amountIn"
-                }
-              ]
-            },
-            {
-              "type": "tuple[]",
-              "name": "outputs",
-              "components": [
-                {
-                  "type": "address",
-                  "name": "tokenAddress"
-                },
-                {
-                  "type": "address",
-                  "name": "receiver"
-                }
-              ]
-            },
-            {
-              "type": "bytes",
-              "name": "data"
-            }
-          ]
-        },
-        {
-          "type": "tuple",
-          "name": "paramsData",
-          "components": [
-            {
-              "type": "address",
-              "name": "pair"
-            },
-            {
-              "type": "int24[]",
-              "name": "tickRange"
-            },
-            {
-              "type": "uint256[]",
-              "name": "amountsOut"
-            }
-          ]
-        },
-        {
-          "type": "uint256",
-          "name": "tokenId"
-        }
-      ],
-      "outputs": []
-    },
-    {
-      "type": "function",
       "name": "zapIn",
       "constant": false,
       "payable": false,
+      "gas": 20000000,
       "inputs": [
         {
           "type": "tuple",
@@ -1048,19 +857,6 @@
               "name": "amountsOut"
             }
           ]
-        }
-      ],
-      "outputs": []
-    },
-    {
-      "type": "function",
-      "name": "zapOut",
-      "constant": false,
-      "payable": false,
-      "inputs": [
-        {
-          "type": "uint256",
-          "name": "tokenId"
         }
       ],
       "outputs": []
@@ -1120,6 +916,7 @@
       "name": "diamondCut",
       "constant": false,
       "payable": false,
+      "gas": 20000000,
       "inputs": [
         {
           "type": "tuple[]",
@@ -1156,6 +953,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 20000000,
       "inputs": [
         {
           "type": "bytes4",
@@ -1175,6 +973,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 20000000,
       "inputs": [],
       "outputs": [
         {
@@ -1189,6 +988,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 20000000,
       "inputs": [
         {
           "type": "address",
@@ -1208,6 +1008,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 20000000,
       "inputs": [],
       "outputs": [
         {
@@ -1232,6 +1033,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 20000000,
       "inputs": [
         {
           "type": "bytes4",
@@ -1244,5 +1046,6 @@
         }
       ]
     }
-  ]
+  ],
+  "numDeployments": 1
 }

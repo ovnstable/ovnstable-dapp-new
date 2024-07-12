@@ -14,7 +14,9 @@
       <PoolsTable
         :pools="displayedPools"
         :set-order-type-func="toggleOrderType"
+        :position-size-sort-func="togglePositionSizeSort"
         :apy-order-type="orderType"
+        :position-size-order-type="positionSizeOrder"
       >
         <template
           #filters
@@ -41,8 +43,7 @@ import {
 } from 'vuex';
 import { POOL_TYPES } from '@/store/views/main/pools/index.ts';
 import TableSkeleton from '@/components/TableSkeleton/Index.vue';
-import { POOL_TAG } from '@/store/views/main/pools/mocks.ts';
-import { getSortedPools } from '@/store/views/main/pools/helpers.ts';
+import { formatPositionData } from '../../../components/Pools/PositionsTable/helpers.ts';
 
 interface IEnumIterator {
   next: () => number,
@@ -66,7 +67,7 @@ function iterateEnum(enumObj: any): IEnumIterator {
 }
 
 const sortByTagAndValue = (
-  tag: POOL_TAG,
+  tag: any,
   pools: any[],
   isDefault: boolean = false,
 ) => (valueExtractor: any) => pools.sort(
@@ -79,10 +80,11 @@ const sortByTagAndValue = (
   },
 );
 
-const POOL_SHOW_LIMIT = 10;
-
 enum APR_ORDER_TYPE {
   'APR', 'APR_UP', 'APR_DOWN',
+}
+enum POSITION_SIZE_ORDER_TYPE {
+  'VALUE', 'VALUE_UP', 'VALUE_DOWN',
 }
 
 export default {
@@ -107,39 +109,39 @@ export default {
 
     aprSortIterator: {} as IEnumIterator,
     aprOrder: 0 as number,
+    positionSizeSortIterator: {} as IEnumIterator,
+    positionSizeOrder: 0 as number,
+    isLoaded: false,
+    positionData: [] as any,
   }),
   computed: {
     ...mapGetters('network', ['getParams', 'isShowDeprecated']),
+    ...mapGetters('accountData', ['account']),
+    ...mapGetters('poolsData', ['allPoolsMap']),
+    ...mapGetters('odosData', ['allTokensMap', 'allTokensLoaded']),
     ...mapState('poolsData', [
-      'sortedPoolList',
       'isPoolsLoading',
     ]),
     filteredPools() {
-      const tabFilteredPools = getSortedPools(
-        this.filteredBySearchQuery,
-        true,
-        this.poolTabType,
-      );
-
       const sortByHotTagAndValue = sortByTagAndValue(
-        POOL_TAG.HOT,
-        tabFilteredPools,
+        'NEW',
+        this.filteredBySearchQuery,
         this.isDefaultOrder,
       );
 
-      if (this.orderType === APR_ORDER_TYPE.APR_UP) {
-        return sortByHotTagAndValue((pool: any) => pool.apr);
-      }
-      if (this.orderType === APR_ORDER_TYPE.APR_DOWN) {
-        return sortByHotTagAndValue((pool: any) => -pool.apr);
+      if (this.positionSizeOrder === POSITION_SIZE_ORDER_TYPE.VALUE_UP) {
+        return sortByHotTagAndValue((pool: any) => pool.position.usdValue);
       }
 
-      return sortByHotTagAndValue(() => 0);
+      if (this.positionSizeOrder === POSITION_SIZE_ORDER_TYPE.VALUE_DOWN) {
+        return sortByHotTagAndValue((pool: any) => -pool.position.usdValue);
+      }
+
+      return this.filteredBySearchQuery;
     },
     displayedPools() {
-      return this.isOpenHiddenPools
-        ? this.filteredPools
-        : this.filteredPools.slice(0, POOL_SHOW_LIMIT);
+      if (this.positionData.length > 0) return this.filteredPools;
+      return this.positionData;
     },
     filteredBySearchQuery() {
       if (!this.searchQuery || this.searchQuery.trim().length === 0) return this.filteredByNetwork;
@@ -149,12 +151,22 @@ export default {
           .some((col: any) => col?.toLowerCase()?.includes(this.searchQuery.toLowerCase())));
     },
     filteredByNetwork() {
-      if (this.selectedNetworks.length === 0) return this.sortedPoolList;
+      if (this.selectedNetworks.length === 0) return this.positionData;
 
-      return this.sortedPoolList
+      return this.positionData
         .filter((pool: any) => this.selectedNetworks.includes(
           this.getParams(pool.chain).networkId,
         ));
+    },
+  },
+  watch: {
+    async allTokensLoaded(val) {
+      if (!val) return;
+      if (!this.isLoaded && this.allTokensMap.size > 0) {
+        const posData = await this.getFormatPositions();
+        this.positionData = posData;
+        this.isLoaded = true;
+      }
     },
   },
   async mounted() {
@@ -162,12 +174,32 @@ export default {
     await this.loadPools();
 
     this.aprSortIterator = iterateEnum(APR_ORDER_TYPE);
-
     this.aprOrder = this.aprSortIterator.next();
-  },
+    this.positionSizeSortIterator = iterateEnum(POSITION_SIZE_ORDER_TYPE);
+    this.positionSizeOrder = this.positionSizeSortIterator.next();
 
+    this.$store.commit('odosData/changeState', {
+      field: 'isTokensLoadedAndFiltered',
+      val: false,
+    });
+
+    await this.init();
+
+    this.$store.commit('odosData/changeState', {
+      field: 'isTokensLoadedAndFiltered',
+      val: true,
+    });
+  },
   methods: {
     ...mapActions('poolsData', ['loadPools']),
+    ...mapActions('zapinData', ['loadPositionContract']),
+    ...mapActions('odosData', ['loadTokens', 'initData', 'loadChains', 'initContractData']),
+    async init() {
+      await this.loadTokens();
+      await this.loadChains();
+      await this.initContractData();
+      await this.initData();
+    },
     switchPoolsTab(type: POOL_TYPES) {
       this.isDefaultOrder = true;
       this.isOpenHiddenPools = false;
@@ -180,6 +212,9 @@ export default {
     },
     toggleOrderType() {
       this.orderType = this.aprSortIterator.next();
+    },
+    togglePositionSizeSort() {
+      this.positionSizeOrder = this.positionSizeSortIterator.next();
     },
     setSelectedNetwork(selectedChain: number | 'ALL') {
       this.isOpenHiddenPools = false;
@@ -197,6 +232,12 @@ export default {
       this.selectedTabs = ['ALL'];
       this.selectedNetworks = [];
       this.isDefaultOrder = true;
+    },
+    async getFormatPositions() {
+      const poolInfo = this.allPoolsMap;
+      const tokensList = this.allTokensMap;
+      const positionData = await this.loadPositionContract(this.account);
+      return formatPositionData(positionData, poolInfo, tokensList);
     },
   },
 };
