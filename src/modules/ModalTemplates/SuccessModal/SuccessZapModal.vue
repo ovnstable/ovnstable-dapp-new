@@ -72,6 +72,17 @@
 
           <div class="data-row returned">
             <div class="success-row-title">
+              Claimed
+            </div>
+            <div class="success-data-list">
+              <div class="token-amount">
+                ~ {{ claimedRewards }} USD
+              </div>
+            </div>
+          </div>
+
+          <div class="data-row returned">
+            <div class="success-row-title">
               Returned
             </div>
             <div class="success-data-list">
@@ -171,6 +182,10 @@ export default defineComponent({
       required: true,
     },
     nftId: {
+      type: String,
+      required: true,
+    },
+    claimedRewards: {
       type: String,
       required: true,
     },

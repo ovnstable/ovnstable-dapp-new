@@ -23,6 +23,7 @@
       :input-tokens="lastParsedInputTokensEvent"
       :burned-nft-id="lastParsedBurnedTokenIdEvent"
       :nft-id="lastParsedTokenIdEvent"
+      :claimed-rewards="lastParsedClaimedRewardsEvent"
     />
   </div>
 </template>
@@ -71,6 +72,7 @@ export default {
     ]),
     ...mapState('poolsData', [
       'lastParsedBurnedTokenIdEvent',
+      'lastParsedClaimedRewardsEvent',
     ]),
   },
   watch: {

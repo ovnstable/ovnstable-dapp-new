@@ -1,8 +1,9 @@
-import BN, { BigNumber } from 'bignumber.js';
+import BN from 'bignumber.js';
 import { buildLink } from '@/store/views/main/pools/helpers.ts';
 
 const DEFAULT_DECIMALS = 18;
 const BN_STRING_BASE = 10;
+const AERO_ADDR = '0x940181a94A35A4569E4529A3CDfB74e38FD98631';
 // const BN_USD_STRING_BASE = 2;
 
 export type TPositionData = [
@@ -15,10 +16,10 @@ export type TPositionData = [
     amount1: number,
     rewardAmount0: number,
     rewardAmount1: number,
+    emissions: number,
     tickLower: number,
     tickUpper: number,
     centerTick: number,
-    apr: BN,
   ]
 
 type TPoolInfo = {
@@ -127,7 +128,8 @@ const formatBN = (
   val: string | number,
   decimals: number = DEFAULT_DECIMALS,
   usdValue: string | number = 1,
-): string => new BigNumber(val).div(10 ** decimals).multipliedBy(usdValue).toString(BN_STRING_BASE);
+): string => new BN(val).div(10 ** decimals)
+  .multipliedBy(new BN(usdValue)).toString(BN_STRING_BASE);
 
 const getTokenNames = (poolName: string) => {
   const tokens = poolName.split('/');
@@ -142,7 +144,7 @@ const getTokenInfo = (
   tokenMap: Map<string, TSelectedTokenInfo>,
 ):TSelectedTokenInfo => tokenMap.get(address)!;
 
-const getUsdTotal = (
+const sumBnStr = (
   token0UsdStr: string,
   token1UsdStr: string,
 ): string => {
@@ -194,7 +196,7 @@ export const formatPositionData = (
 ): IPositionsInfo[] => {
   const positionInfo = posDataArr.map((
     [platform, tokenId, poolId, token0, token1, amount0, amount1, rewardAmount0, rewardAmount1,
-      tickLower, tickUpper, centerTick, apr]: TPositionData,
+      emissions, tickLower, tickUpper, centerTick]: TPositionData,
   ) => {
     // Pools
     const pool = poolsMap[poolId];
@@ -208,8 +210,14 @@ export const formatPositionData = (
     const token1UsdStr = formatBN(amount1, token1Info!.decimals, token1Info.price);
     const reward0UsdStr = formatBN(rewardAmount0, token0Info!.decimals, token0Info.price);
     const reward1UsdStr = formatBN(rewardAmount1, token1Info!.decimals, token1Info.price);
-    const positionUsdTotal = getUsdTotal(token0UsdStr, token1UsdStr);
-    const rewardUsdTotal = getUsdTotal(reward0UsdStr, reward1UsdStr);
+    const positionUsdTotal = sumBnStr(token0UsdStr, token1UsdStr);
+    let rewardUsdTotal = sumBnStr(reward0UsdStr, reward1UsdStr);
+
+    if (platform === 'Aerodrome') {
+      const aeroTokenInfo = getTokenInfo(AERO_ADDR, tokenMap);
+      const emissionsUsdVal = formatBN(emissions, aeroTokenInfo!.decimals, aeroTokenInfo.price);
+      rewardUsdTotal = sumBnStr(rewardUsdTotal, emissionsUsdVal);
+    }
 
     // Ticks
     const ticks = {

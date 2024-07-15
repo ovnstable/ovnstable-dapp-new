@@ -43,7 +43,9 @@ const stateData = {
 
   isZapModalShow: false,
   currentZapPool: null,
+
   lastParsedBurnedTokenIdEvent: '',
+  lastParsedClaimedRewardsEvent: '',
 };
 
 const getters = {
@@ -78,6 +80,12 @@ const actions = {
       commit('changeState', {
         field: 'lastParsedBurnedTokenIdEvent',
         val: new BigNumber(pool?.tokenId).toString(10),
+      });
+    }
+    if (pool?.rewards?.usdValue) {
+      commit('changeState', {
+        field: 'lastParsedClaimedRewardsEvent',
+        val: new BigNumber(pool?.rewards?.usdValue).toString(10),
       });
     }
   },
