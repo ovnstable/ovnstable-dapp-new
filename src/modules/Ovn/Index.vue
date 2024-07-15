@@ -24,13 +24,12 @@
       class="ovn__pools"
     >
       <PoolsContainer
-        :poolType="poolTypes.OVN"
-        :isOverview="true"
+        :pool-type="poolTypes.OVN"
+        :is-overview="true"
         class="ovn__pools-inner"
       />
     </div>
   </div>
-
 </template>
 
 <script lang="ts">
@@ -38,8 +37,8 @@ import OvnInfo from '@/modules/Ovn/Info.vue';
 import OvnBenefits from '@/modules/Ovn/Benefits.vue';
 import OvnTokenomics from '@/modules/Ovn/Tokenomics.vue';
 import Spinner from '@/components/Spinner/Index.vue';
-import PoolsContainer from '@/modules/Main/components/PoolsTable/Index.vue';
 import { POOL_TYPES } from '@/store/views/main/pools/index.ts';
+import PoolsContainer from '@/modules/Main/components/Pools/Index.vue';
 
 export default {
   name: 'OvnPage',
@@ -49,11 +48,6 @@ export default {
     OvnTokenomics,
     Spinner,
     PoolsContainer,
-  },
-  data() {
-    return {
-      poolTypes: POOL_TYPES,
-    };
   },
   props: {
     tokenData: {
@@ -68,6 +62,11 @@ export default {
       type: Boolean,
       default: false,
     },
+  },
+  data() {
+    return {
+      poolTypes: POOL_TYPES,
+    };
   },
   computed: {
     insuranceIsMobileMintRedeem() {
@@ -149,7 +148,6 @@ export default {
 }
 
 .ovn__loader {
-  position: absolute;
   left: 10px;
   top: 0;
   margin: auto;

@@ -14,6 +14,7 @@ import {
 } from '@/store/views/main/pools/mocks.ts';
 import { loadTokenImage } from '@/utils/tokenLogo.ts';
 import { isArray } from 'lodash';
+import BigNumber from 'bignumber.js';
 import { poolTokensForZapMap } from '../zapin/mocks.ts';
 
 // eslint-disable-next-line no-shadow
@@ -42,9 +43,19 @@ const stateData = {
 
   isZapModalShow: false,
   currentZapPool: null,
+
+  lastParsedBurnedTokenIdEvent: '',
+  lastParsedClaimedRewardsEvent: '',
 };
 
 const getters = {
+  getAllPools(state: typeof stateData) {
+    return state.allPools;
+  },
+  allPoolsMap(state: typeof stateData) {
+    return state.allPools
+      .reduce((acc, pool: any) => ({ ...acc, [pool.address]: pool }), {});
+  },
 };
 
 const actions = {
@@ -56,6 +67,7 @@ const actions = {
   },
 
   openZapIn({ commit }: any, pool: any) {
+    console.log(pool, '__POOl');
     commit('changeState', {
       field: 'currentZapPool',
       val: pool,
@@ -64,6 +76,18 @@ const actions = {
       field: 'isZapModalShow',
       val: true,
     });
+    if (pool?.tokenId) {
+      commit('changeState', {
+        field: 'lastParsedBurnedTokenIdEvent',
+        val: new BigNumber(pool?.tokenId).toString(10),
+      });
+    }
+    if (pool?.rewards?.usdValue) {
+      commit('changeState', {
+        field: 'lastParsedClaimedRewardsEvent',
+        val: new BigNumber(pool?.rewards?.usdValue).toString(10),
+      });
+    }
   },
 
   async loadPools({

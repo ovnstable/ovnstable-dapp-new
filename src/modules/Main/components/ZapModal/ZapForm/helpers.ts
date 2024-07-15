@@ -6,7 +6,7 @@ const EVENT_SIG = ['uint256[]', 'address[]'];
 enum ZAP_EVENTS {
     'PutIntoPool',
     'ReturnedToUser',
-    'InputTokens'
+    'InputTokens',
 }
 
 const decodeEventData = (eventSignature: string[], eventData: string) => new ethers.AbiCoder()

@@ -166,14 +166,14 @@ export default {
     ...mapGetters('theme', ['light']),
   },
 
-  mounted() {
-    this.updateLink();
-  },
-
   watch: {
     light() {
       this.updateLink();
     },
+  },
+
+  mounted() {
+    this.updateLink();
   },
 
   methods: {

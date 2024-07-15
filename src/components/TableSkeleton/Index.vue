@@ -3,9 +3,9 @@
     <thead>
       <tr>
         <th
-          class="tg-cly1"
           v-for="item in arrayList"
           :key="item"
+          class="tg-cly1"
         >
           <div
             key="item"
@@ -20,9 +20,9 @@
         :key="item"
       >
         <td
-          class="tg-cly1"
           v-for="item in arrayList"
           :key="item"
+          class="tg-cly1"
         >
           <div
             key="item"
@@ -36,7 +36,7 @@
 
 <script lang="ts">
 export default {
-  name: 'tableSkeleton',
+  name: 'TableSkeleton',
   computed: {
     arrayList(): number[] {
       return Array.from({ length: 8 }).map((_, key) => key);

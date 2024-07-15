@@ -20,31 +20,33 @@
             </h1>
           </router-link>
           <router-link
+            to="/pools"
+            class="app-header__dashboard"
+            active-class="active-link"
+          >
+            MY POSITIONS
+          </router-link>
+          <router-link
+            to="/market/usd"
+            class="app-header__dashboard"
+            active-class="active-link"
+          >
+            STATS
+          </router-link>
+          <router-link
+            to="/ovn"
+            class="app-header__dashboard"
+            active-class="active-link"
+          >
+            OVN
+          </router-link>
+          <router-link
             to="/dashboard"
             class="app-header__dashboard"
             active-class="active-link"
           >
-            <p>
-              My dashboard
-            </p>
+            DASHBOARD
           </router-link>
-
-          <a
-            href="https://docs.overnight.fi/"
-            class="app-header__docs"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Docs
-          </a>
-          <a
-            href="https://dev.overnight.fi/swap"
-            target="_blank"
-            class="app-header__docs"
-            rel="noopener noreferrer"
-          >
-            Old Dapp
-          </a>
         </div>
 
         <div class="app-header__content-data">
@@ -242,10 +244,8 @@ export default {
   computed: {
     ...mapState('odosData', ['isBalancesLoading', 'isTokensLoadedAndFiltered', 'firstRenderDone', 'isTokensLoading']),
     ...mapGetters('walletAction', ['walletConnected']),
-    ...mapGetters('accountData', ['originalBalance', 'account', 'isLoadingOvnBalances']),
+    ...mapGetters('accountData', ['account', 'isLoadingOvnBalances']),
     ...mapGetters('network', ['networkId', 'isShowDeprecated']),
-    ...mapGetters('odosData', ['allTokensList']),
-    ...mapGetters('web3', ['evmProvider', 'provider']),
     ...mapGetters('theme', ['light']),
 
     balancesLoading() {
@@ -312,7 +312,9 @@ export default {
 
 <style lang="scss" scoped>
 .app-header {
-  position: fixed;
+  // position: fixed;
+  position: sticky;
+  margin-bottom: auto;
   z-index: 10;
   top: 0;
   left: 0;
@@ -362,6 +364,7 @@ export default {
   font-weight: 600;
 }
 .active-link {
+  color: var(--color-3);
   text-decoration: underline;
 }
 .app-header__docs {
@@ -564,6 +567,7 @@ export default {
 }
 
 .app-header__balances {
+  position: relative;
   @media (max-width: 1024px) {
     order: 3;
   }

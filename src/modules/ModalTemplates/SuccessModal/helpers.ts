@@ -29,10 +29,10 @@ type TSelectedTokenInfo = {
       balance: string,
       balanceInUsd: string,
       originalBalance: string,
-      decimal: 18,
+      decimal: number,
     },
     approveData: {
-      allowanceValue: 0,
+      allowanceValue: number,
       approved: false,
     },
     price: string,

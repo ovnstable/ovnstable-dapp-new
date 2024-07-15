@@ -86,6 +86,8 @@ export const stateData = {
   lastParsedPutIntoPoolEvent: {},
   lastParsedReturnedToUserEvent: {},
   lastParsedInputTokensEvent: {},
+  lastParsedTokenIdEvent: '' as string,
+  lastParsedBurnedTokenIdEvent: '' as string,
 
   successData: {
     inputTokens: [] as any[],
@@ -112,6 +114,9 @@ const getters = {
   },
   swapResponseConfirmGetter(state: typeof stateData) {
     return state.swapResponseConfirmInfo;
+  },
+  allTokensLoaded(state: typeof stateData) {
+    return state.tokens?.length > 0;
   },
   isAllLoaded(state: typeof stateData, getters: any, rootState: any) {
     // form swap window show
@@ -248,6 +253,7 @@ const actions = {
       }
     });
 
+    console.log('TOKENSLOADED');
     commit('changeState', { field: 'isTokensLoading', val: false });
   },
 

@@ -1,39 +1,40 @@
 <template>
   <ModalComponent
-    :modelValue="showModal"
+    :model-value="showModal"
     :show-close="false"
-    overlayModals
+    overlay-modals
     type-modal="custom"
   >
     <div class="modal-content zap-waiting-modal">
       <div
-        class="zap-waiting-modal-container"
         v-if="isZapModalShow"
+        class="zap-waiting-modal-container"
       >
-        <ZapinWaitingModal />
+        <ZapinWaitingModal :stage-map="STAGES_MAP" />
       </div>
       <div v-else>
         <div class="modal-content__spin">
           <Spinner size="90px" />
         </div>
         <h1>Waiting for confirmation</h1>
-        <p class="modal-content__confirm">Confirm this transaction in your wallet</p>
+        <p class="modal-content__confirm">
+          Confirm this transaction in your wallet
+        </p>
         <div class="divider" />
         <div class="modal-content__tips">
           <Carousel />
         </div>
       </div>
-
     </div>
   </ModalComponent>
 </template>
 
 <script lang="ts">
-import { mapActions, mapGetters, mapState } from 'vuex';
+import { mapState } from 'vuex';
 import Carousel from '@/modules/ModalTemplates/components/Carousel.vue';
 import Spinner from '@/components/Spinner/Index.vue';
 import ModalComponent from '@/components/Modal/Index.vue';
-import ZapinWaitingModal from '@/modules/Main/components/ZapModal/ZapWaitingModal/ZapWaitingModal.vue';
+import ZapinWaitingModal from '@/components/ZapWaitingModal/Index.vue';
 
 export default {
   name: 'WaitingModal',
@@ -47,18 +48,8 @@ export default {
     },
   },
   computed: {
-    ...mapGetters('waitingModal', ['show', 'modalText']),
+    ...mapState('waitingModal', ['STAGES_MAP']),
     ...mapState('poolsData', ['isZapModalShow']),
-  },
-  methods: {
-    ...mapActions('waitingModal', ['showWaitingModal', 'closeWaitingModal']),
-
-    close() {
-      this.closeWaitingModal();
-
-      this.$emit('input', false);
-      this.$emit('m-close');
-    },
   },
 };
 </script>

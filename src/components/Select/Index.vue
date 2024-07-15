@@ -1,8 +1,8 @@
 <template>
   <div
-    :class="classObject"
     :id="`select--${selectId}`"
     :ref="`select--${selectId}`"
+    :class="classObject"
   >
     <div v-if="label">
       <span
@@ -44,23 +44,23 @@
 
       <span
         v-else-if="placeholder"
-        v-text="placeholder"
         class="select-placeholder"
+        v-text="placeholder"
       />
     </div>
 
     <!-- List -->
     <ul
+      v-if="isActive"
       :class="[{
         active: isActive,
         top: top,
         bottom: bottom,
       }]"
       class="select-list"
-      v-if="isActive"
     >
       <div
-        v-if="list.length > 10 || searchQuery || autocomplete"
+        v-if="list.length > 20"
         class="select-list__search"
       >
         <input
@@ -114,7 +114,7 @@ import BaseIcon from '../Icon/BaseIcon.vue';
 type selectStyles = 'primary' | 'secondary';
 
 export default {
-  name: 'select-component',
+  name: 'SelectComponent',
   components: {
     BaseIcon,
   },
@@ -231,6 +231,7 @@ export default {
         'is-clearable': this.clearable,
         'is-required': this.required,
         'is-label-editable': this.labelEditable,
+        'select-component': true,
       };
     },
 
@@ -269,13 +270,6 @@ export default {
     isValidValue() {
       return this.value !== null;
     },
-
-    iconSize() {
-      if (this.tiny) return 16;
-      if (this.small) return 20;
-
-      return 20;
-    },
   },
 
   created() {
@@ -287,9 +281,6 @@ export default {
     initClickOutside() {
       const target: any = templateRef(`select--${this.selectId}`);
       onClickOutside(target, () => this.onClickAway());
-    },
-    clearValues() {
-      this.model = null;
     },
     onItemClick(item: any) {
       const readyValue = this.getSelectedValue(item);

@@ -59,7 +59,7 @@
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
-import { zapInStep } from '@/store/views/main/zapin/index.ts';
+import { zapInStep } from '@/store/modals/waiting-modal.ts';
 
 export default defineComponent({
   name: 'ZapInStepsRow',
