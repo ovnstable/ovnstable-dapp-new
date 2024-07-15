@@ -70,7 +70,10 @@
             </div>
           </div>
 
-          <div class="data-row returned">
+          <div
+            v-if="claimedRewards"
+            class="data-row returned"
+          >
             <div class="success-row-title">
               Claimed
             </div>
