@@ -189,13 +189,13 @@
               </a>
             </div>
 
-            <!-- <ButtonComponent
-              :disabled="!pool.zappable"
+            <ButtonComponent
+              :disabled="true"
               btn-styles="faded"
               @click="openZapIn(pool)"
             >
               DEPOSIT
-            </ButtonComponent> -->
+            </ButtonComponent>
           </div>
         </template>
         <div
