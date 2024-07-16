@@ -7,30 +7,35 @@
   </div>
   <div
     v-else
-    class="market-wrapper"
+    class="page-wrapper"
   >
-    <div class="market">
-      <TokenDataPerformance
-        :token-data="tokenData"
-        class="market__token-data"
-      />
-      <GraphicsPerformance
-        :payout-data="payoutData"
-        :token-data="tokenData"
-        :loaded="loaded"
-        class="market__graphics"
-      />
-      <PortfolioPerformance
-        :portfolio-data="portfolioData"
-        :collateral-data="collateralData"
-        class="market__portfolio"
-      />
-    </div>
-    <div class="market__payouts">
-      <PortfolioPayouts
-        :payout-data="payoutData"
-        class="market__payout-inner"
-      />
+    <Sidebar />
+    <div
+      class="market-wrapper"
+    >
+      <div class="market">
+        <TokenDataPerformance
+          :token-data="tokenData"
+          class="market__token-data"
+        />
+        <GraphicsPerformance
+          :payout-data="payoutData"
+          :token-data="tokenData"
+          :loaded="loaded"
+          class="market__graphics"
+        />
+        <PortfolioPerformance
+          :portfolio-data="portfolioData"
+          :collateral-data="collateralData"
+          class="market__portfolio"
+        />
+      </div>
+      <div class="market__payouts">
+        <PortfolioPayouts
+          :payout-data="payoutData"
+          class="market__payout-inner"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -41,6 +46,7 @@ import GraphicsPerformance from '@/modules/Market/Graphics.vue';
 import PortfolioPerformance from '@/modules/Market/Portfolio.vue';
 import PortfolioPayouts from '@/modules/Market/Payouts.vue';
 import Spinner from '@/components/Spinner/Index.vue';
+import Sidebar from '@/components/Layout/Sidebar/Index.vue';
 
 export default {
   name: 'MarketPage',
@@ -50,6 +56,7 @@ export default {
     PortfolioPerformance,
     PortfolioPayouts,
     Spinner,
+    Sidebar,
   },
   props: {
     tokenData: {
@@ -199,5 +206,10 @@ export default {
   .market__graphics{
     margin-top: 24px;
   }
+}
+.page-wrapper {
+  display: flex;
+    flex-direction: row;
+    gap: 50px;
 }
 </style>
