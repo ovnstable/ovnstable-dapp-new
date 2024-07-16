@@ -28,7 +28,7 @@ export const svgIconsMap = (() => {
 // odos do not support currently that networks
 // todo: check, maybe oudated
 export const EMPTY_TOKENS_NETWORKS = [81457, 59144];
-export const DEPRECATED_NETWORKS = [137, 56];
+export const DEPRECATED_NETWORKS = [137, 56, 324];
 
 // Not supported by Odos as for May 24
 export const ODOS_DEPRECATED_NETWORKS = [81457];
