@@ -22,7 +22,7 @@ export const MINTREDEEM_SCHEME = {
   // arbitrum
   42161: [
     {
-      token0: chainContractsMap.arbitrum.usdc,
+      token0: chainContractsMap.arbitrum.usdcNative,
       token1: chainContractsMap.arbitrum.usdPlus.tokenPlus,
       exchange: chainContractsMap.arbitrum.usdPlus.exchange,
       methodName: [mintRedeemTypes.MINT, mintRedeemTypes.REDEEM],
