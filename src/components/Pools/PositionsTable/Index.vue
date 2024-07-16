@@ -127,13 +127,13 @@
               </a>
             </div>
 
-            <ButtonComponent
+            <!-- <ButtonComponent
               :disabled="!pool.zappable"
               btn-styles="faded"
               @click="openZapIn(pool)"
             >
               MANAGE
-            </ButtonComponent>
+            </ButtonComponent> -->
           </div>
         </template>
         <div
