@@ -1,8 +1,8 @@
 <template>
   <div class="performance__graphics">
     <div
-      class="performance__graphics-APY-graphic"
       v-if="!loaded"
+      class="performance__graphics-APY-graphic"
     >
       <div class="graphic__loader">
         <Spinner />
@@ -20,7 +20,7 @@
             btn-styles="secondary"
             class="performance__btn"
           >
-            redeem/unwrap {{tokenSymbol}}+
+            redeem/unwrap {{ tokenSymbol }}+
           </ButtonComponent>
         </router-link>
         <!-- <ButtonComponent
@@ -32,23 +32,23 @@
       </div>
     </div>
     <div
-      class="performance__graphics-APY-graphic"
       v-else-if="loaded"
+      class="performance__graphics-APY-graphic"
     >
       <GraphicComponent
-        :graphicData=payoutData
-        :tokenData="tokenData"
-        type='APY'
+        :graphic-data="payoutData"
+        :token-data="tokenData"
+        type="APY"
       />
     </div>
     <div
-      class="performance__graphics-TVL-graphic"
       v-if="loaded && !isDeprecated"
+      class="performance__graphics-TVL-graphic"
     >
       <GraphicComponent
-        :graphicData=payoutData
-        :tokenData="tokenData"
-        type='TVL'
+        :graphic-data="payoutData"
+        :token-data="tokenData"
+        type="TVL"
       />
     </div>
   </div>
@@ -59,34 +59,38 @@ import GraphicComponent from '@/modules/Market/SingleStatisticGraphic.vue';
 import Spinner from '@/components/Spinner/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 
-const textObj = [
+const deprecatedStringBuilder = (chainStr: string, symbol: string) => `${chainStr} ${symbol} tokens are deprecated. Overnight will no longer support these tokens. there will be no payments, Please <b>redeem</b> or <b>unwrap</b> your funds if you have invested in ${symbol}.`;
+
+const deprecatedTextMap = [
   {
     symbol: 'dai',
-    chain: [42161, 10],
-    text: 'arbitrum and optimism dai+ token are deprecated. Overnight will no longer support this tokens. there will be no payments, Please <b>redeem</b> or <b>unwrap</b> your funds if you have invested in dai+.',
+    chain: [42161, 10, 8453],
+    text: deprecatedStringBuilder('arbitrum, optimism and base', 'dai+'),
   },
   {
     symbol: 'eth',
     chain: [42161],
-    text: 'arbitrum eth+ token are deprecated. Overnight will no longer support this tokens. there will be no payments, Please <b>redeem</b> or <b>unwrap</b> your funds if you have invested in eth+.',
+    text: deprecatedStringBuilder('arbitrum', 'eth+'),
   },
   {
     symbol: 'usdt',
-    chain: [56],
-    text: 'binance usdt+ token are deprecated. Overnight will no longer support this tokens. there will be no payments, Please <b>redeem</b> or <b>unwrap</b> your funds if you have invested in usdt+.',
+    chain: [56, 324],
+    text: deprecatedStringBuilder('binance and zksync', 'usdt+'),
   },
   {
     symbol: 'usd',
-    chain: [137, 56],
-    text: 'polygon and binance usd+ token are deprecated. Overnight will no longer support this tokens. there will be no payments, Please <b>redeem</b> or <b>unwrap</b> your funds if you have invested in usd+.',
+    chain: [137, 56, 324],
+    text: deprecatedStringBuilder('polygon, binance and zksync', 'usd+'),
   },
 ];
 
-const chains = {
+const chains: {[key: string]: number} = {
   arbitrum: 42161,
   bsc: 56,
   optimism: 10,
   polygon: 137,
+  base: 8453,
+  zksync: 324,
 };
 
 export default {
@@ -113,22 +117,23 @@ export default {
   computed: {
     isDeprecated() {
       const marketUrlNetwork = this.$route.query.chain || this.$store.state.network.marketNetwork;
-      const id = chains[marketUrlNetwork as keyof typeof chains];
+      const networkId = chains[marketUrlNetwork];
       const token = this.$route.params.id;
 
-      if (!id || !token) return false;
+      if (!networkId || !token) return false;
 
-      const idNetwork = chains[marketUrlNetwork as keyof typeof chains];
-      const textData = textObj
-        .find((_) => _.symbol === this.$route.params.id && _.chain.includes(idNetwork));
+      const isInDeprecated = deprecatedTextMap
+        .some((_) => _.symbol === token && _.chain.includes(networkId));
 
-      return !!textData;
+      console.log(token, isInDeprecated);
+
+      return isInDeprecated;
     },
 
     deprecatedText() {
       const marketUrlNetwork = this.$route.query.chain || this.$store.state.network.marketNetwork;
-      const idNetwork = chains[marketUrlNetwork as keyof typeof chains];
-      const textData = textObj
+      const idNetwork = chains[marketUrlNetwork];
+      const textData = deprecatedTextMap
         .find((_) => _.symbol === this.$route.params.id && _.chain.includes(idNetwork));
 
       return textData ? textData.text : '';
