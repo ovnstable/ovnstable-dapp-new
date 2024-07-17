@@ -67,7 +67,6 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         plugins: [(nodePolyfills as any)({ crypto: true, http: true })],
         input: {
-          // Production entry point
           main: resolve(__dirname, 'index.prod.html'),
         },
       },
