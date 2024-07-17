@@ -1,5 +1,5 @@
 {
-  "address": "0xB833d7600C494cb2756140556BB3641de64Ec3e8",
+  "address": "0x84130bD2F3f510ffc3d0FE92448B047299789b0A",
   "abi": [
     {
       "anonymous": false,
@@ -567,9 +567,9 @@
       "type": "receive"
     }
   ],
-  "numDeployments": 4,
-  "solcInputHash": "ba6897d8c37cb5d8392651c05070e573",
-  "implementation": "0xaede01019F275Ee9B1CCF7Ad171B1cC42d4343bB",
+  "numDeployments": 1,
+  "solcInputHash": "1e9c8ec9d0fcf7ba31ea628804c34bed",
+  "implementation": "0x65BEBAf04b3Bc943B49a2Ec5727cf991f45C2290",
   "devdoc": {
     "kind": "dev",
     "methods": {
@@ -677,7 +677,7 @@
         "type": "t_array(t_uint256)50_storage"
       },
       {
-        "astId": 43351,
+        "astId": 48037,
         "contract": "contracts/zap/CurveNGZap.sol:CurveNGZap",
         "label": "stakeSlippageBP",
         "offset": 0,
@@ -685,7 +685,7 @@
         "type": "t_uint256"
       },
       {
-        "astId": 43353,
+        "astId": 48039,
         "contract": "contracts/zap/CurveNGZap.sol:CurveNGZap",
         "label": "odosRouter",
         "offset": 0,

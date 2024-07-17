@@ -1,5 +1,5 @@
 {
-  "address": "0x6E4300886a83e5657623bB8Eee3C08e086d3BbEb",
+  "address": "0xf1Df7193140688384f52b9Ca99Fbae64ae585651",
   "abi": [
     {
       "anonymous": false,
@@ -586,8 +586,8 @@
     }
   ],
   "numDeployments": 1,
-  "solcInputHash": "d59373f08248bb642187ee65f16a88ea",
-  "implementation": "0x0928f4c7Fa027b7d980bb1cEaf07D6820661e6C1",
+  "solcInputHash": "1e9c8ec9d0fcf7ba31ea628804c34bed",
+  "implementation": "0x6958c991C80bcDab940b7DEEA7d1E3F0A8DDA1F8",
   "devdoc": {
     "kind": "dev",
     "methods": {
@@ -613,9 +613,11 @@
         "details": "See {IERC165-supportsInterface}."
       },
       "upgradeTo(address)": {
+        "custom:oz-upgrades-unsafe-allow-reachable": "delegatecall",
         "details": "Upgrade the implementation of the proxy to `newImplementation`. Calls {_authorizeUpgrade}. Emits an {Upgraded} event."
       },
       "upgradeToAndCall(address,bytes)": {
+        "custom:oz-upgrades-unsafe-allow-reachable": "delegatecall",
         "details": "Upgrade the implementation of the proxy to `newImplementation`, and subsequently execute the function call encoded in `data`. Calls {_authorizeUpgrade}. Emits an {Upgraded} event."
       }
     },
@@ -629,7 +631,7 @@
   "storageLayout": {
     "storage": [
       {
-        "astId": 804,
+        "astId": 915,
         "contract": "contracts/zap/AerodromeZap.sol:AerodromeZap",
         "label": "_initialized",
         "offset": 0,
@@ -637,7 +639,7 @@
         "type": "t_uint8"
       },
       {
-        "astId": 807,
+        "astId": 918,
         "contract": "contracts/zap/AerodromeZap.sol:AerodromeZap",
         "label": "_initializing",
         "offset": 1,
@@ -645,7 +647,7 @@
         "type": "t_bool"
       },
       {
-        "astId": 2142,
+        "astId": 2807,
         "contract": "contracts/zap/AerodromeZap.sol:AerodromeZap",
         "label": "__gap",
         "offset": 0,
@@ -653,7 +655,7 @@
         "type": "t_array(t_uint256)50_storage"
       },
       {
-        "astId": 2421,
+        "astId": 3191,
         "contract": "contracts/zap/AerodromeZap.sol:AerodromeZap",
         "label": "__gap",
         "offset": 0,
@@ -661,15 +663,15 @@
         "type": "t_array(t_uint256)50_storage"
       },
       {
-        "astId": 39,
+        "astId": 28,
         "contract": "contracts/zap/AerodromeZap.sol:AerodromeZap",
         "label": "_roles",
         "offset": 0,
         "slot": "101",
-        "type": "t_mapping(t_bytes32,t_struct(RoleData)34_storage)"
+        "type": "t_mapping(t_bytes32,t_struct(RoleData)23_storage)"
       },
       {
-        "astId": 334,
+        "astId": 335,
         "contract": "contracts/zap/AerodromeZap.sol:AerodromeZap",
         "label": "__gap",
         "offset": 0,
@@ -677,7 +679,7 @@
         "type": "t_array(t_uint256)49_storage"
       },
       {
-        "astId": 786,
+        "astId": 897,
         "contract": "contracts/zap/AerodromeZap.sol:AerodromeZap",
         "label": "__gap",
         "offset": 0,
@@ -685,7 +687,7 @@
         "type": "t_array(t_uint256)50_storage"
       },
       {
-        "astId": 1101,
+        "astId": 1213,
         "contract": "contracts/zap/AerodromeZap.sol:AerodromeZap",
         "label": "__gap",
         "offset": 0,
@@ -693,7 +695,7 @@
         "type": "t_array(t_uint256)50_storage"
       },
       {
-        "astId": 25822,
+        "astId": 48037,
         "contract": "contracts/zap/AerodromeZap.sol:AerodromeZap",
         "label": "stakeSlippageBP",
         "offset": 0,
@@ -701,7 +703,7 @@
         "type": "t_uint256"
       },
       {
-        "astId": 25824,
+        "astId": 48039,
         "contract": "contracts/zap/AerodromeZap.sol:AerodromeZap",
         "label": "odosRouter",
         "offset": 0,
@@ -709,12 +711,12 @@
         "type": "t_address"
       },
       {
-        "astId": 21355,
+        "astId": 39435,
         "contract": "contracts/zap/AerodromeZap.sol:AerodromeZap",
         "label": "aerodromeRouter",
         "offset": 0,
         "slot": "253",
-        "type": "t_contract(IRouter)4721"
+        "type": "t_contract(IRouter)7360"
       }
     ],
     "types": {
@@ -745,7 +747,7 @@
         "label": "bytes32",
         "numberOfBytes": "32"
       },
-      "t_contract(IRouter)4721": {
+      "t_contract(IRouter)7360": {
         "encoding": "inplace",
         "label": "contract IRouter",
         "numberOfBytes": "20"
@@ -757,19 +759,19 @@
         "numberOfBytes": "32",
         "value": "t_bool"
       },
-      "t_mapping(t_bytes32,t_struct(RoleData)34_storage)": {
+      "t_mapping(t_bytes32,t_struct(RoleData)23_storage)": {
         "encoding": "mapping",
         "key": "t_bytes32",
         "label": "mapping(bytes32 => struct AccessControlUpgradeable.RoleData)",
         "numberOfBytes": "32",
-        "value": "t_struct(RoleData)34_storage"
+        "value": "t_struct(RoleData)23_storage"
       },
-      "t_struct(RoleData)34_storage": {
+      "t_struct(RoleData)23_storage": {
         "encoding": "inplace",
         "label": "struct AccessControlUpgradeable.RoleData",
         "members": [
           {
-            "astId": 31,
+            "astId": 20,
             "contract": "contracts/zap/AerodromeZap.sol:AerodromeZap",
             "label": "members",
             "offset": 0,
@@ -777,7 +779,7 @@
             "type": "t_mapping(t_address,t_bool)"
           },
           {
-            "astId": 33,
+            "astId": 22,
             "contract": "contracts/zap/AerodromeZap.sol:AerodromeZap",
             "label": "adminRole",
             "offset": 0,
