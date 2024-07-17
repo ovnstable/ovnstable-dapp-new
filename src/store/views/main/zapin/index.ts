@@ -149,20 +149,24 @@ const actions = {
     const chainName = state.zapPoolRoot.chainName;
     const contractName = state?.currentZapPlatformContractType?.name;
 
+    console.log('__loadingAbi', chainName, contractName);
+
     const abiFileSrc = gaugeSrcMap[poolVersion as poolVersionList](chainName, contractName);
     const abiGaugeContractFile = await loadAbi(abiFileSrc);
 
     const abiFileSrcV3 = gaugeSrcMap[poolVersionList.v3rebalance](chainName, contractName);
     const abiGaugeContractFileV3 = await loadAbi(abiFileSrcV3);
 
-    commit('changeState', {
-      field: 'gaugeContractV3',
-      val: buildEvmContract(
-        abiGaugeContractFileV3.abi,
-        rootState.web3.evmSigner,
-        poolInfo.gauge,
-      ),
-    });
+    if (abiGaugeContractFileV3) {
+      commit('changeState', {
+        field: 'gaugeContractV3',
+        val: buildEvmContract(
+          abiGaugeContractFileV3.abi,
+          rootState.web3.evmSigner,
+          poolInfo.gauge,
+        ),
+      });
+    }
 
     console.log(abiGaugeContractFile, '__abiGaugeContractFile');
 
@@ -191,11 +195,15 @@ const actions = {
       poolAddress,
     );
 
-    const poolNftContract = buildEvmContract(
-      abiNftContractFile.abi,
-      rootState.web3.evmSigner,
-      abiNftContractFile.address,
-    );
+    let poolNftContract;
+
+    if (abiNftContractFile.address) {
+      poolNftContract = buildEvmContract(
+        abiNftContractFile.abi,
+        rootState.web3.evmSigner,
+        abiNftContractFile.address,
+      );
+    }
 
     if (poolInfo.poolTokenType === 'DIFFERENT') {
       tokenContract = buildEvmContract(
