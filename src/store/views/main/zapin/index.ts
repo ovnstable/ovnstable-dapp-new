@@ -42,6 +42,11 @@ const nftSrcMap: TSrcMap = {
   v3: srcStringBuilder('V3Nft'),
 };
 
+const rebalanceChainMap: {[key: string]: string} = {
+  base: 'Aerodrome',
+  arbitrum: 'Pancake',
+};
+
 export const loadAbi = async (abiFileSrc: string): Promise<ContractAbi> => {
   console.log('__abiSrc', abiFileSrc);
   try {
@@ -91,6 +96,7 @@ const actions = {
     const poolVersion = state.zapPoolRoot?.poolVersion;
     const chainName = state.zapPoolRoot.chainName;
     const address = state.zapPoolRoot.address;
+    const platformName = state.currentZapPlatformContractType?.name;
 
     if (!poolRoot) {
       console.error('Zap Pool Root not found: ', poolRoot);
@@ -102,8 +108,6 @@ const actions = {
       val: zapPlatformContractTypeMap[address]
         ?? zapPlatformContractTypeMap[state.zapPoolRoot.platform[0]],
     });
-
-    const platformName = state.currentZapPlatformContractType?.name;
 
     if (!state.currentZapPlatformContractType) {
       console.error(
@@ -228,16 +232,24 @@ const actions = {
   async loadPositionContract({
     rootState, commit,
   }: any, address: string) {
-    const abiFile = await loadAbi('contracts/base/AerodromeV3Zap.json');
+    const chainName = rootState.network.networkName;
+    const platformName = rebalanceChainMap[chainName];
+    const abiFileSrc = zapAbiSrcMap.v3?.(chainName, platformName);
+
+    const abiFile = await loadAbi(abiFileSrc);
+
     const positionContract = buildEvmContract(
       abiFile.abi,
       rootState.web3.evmSigner,
       abiFile.address,
     );
 
+    console.log('__positionsContract', positionContract);
     console.log(address, '__address');
+
     const positions = await positionContract.getPositions(address);
-    console.log(positions, '__positionsss');
+
+    console.log(positions, '__positions');
     commit('changeState', {
       field: 'userPositions',
       val: positions,
