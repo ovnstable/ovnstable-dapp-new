@@ -199,7 +199,8 @@ export const formatPositionData = (
       emissions, tickLower, tickUpper, centerTick]: TPositionData,
   ) => {
     // Pools
-    const pool = poolsMap[poolId];
+    const pool = poolsMap[poolId]
+    ?? poolsMap[poolId.toUpperCase()] ?? poolsMap[poolId.toLowerCase()];
 
     // Tokens
     const tokenNames = getTokenNames(pool.name);
@@ -227,7 +228,7 @@ export const formatPositionData = (
 
     // Final data
     const positionFullInfo = {
-      ...poolsMap[poolId],
+      ...pool,
       position: {
         tokens: [
           { [tokenNames.token0]: formatBN(amount0, token0Info!.decimals) },
