@@ -1,5 +1,5 @@
 {
-  "address": "0xa50b5B9c19A22E797Dc1f56263e3e364c1C7B642",
+  "address": "0x0E6273D9d54d29B4103e33078F90041D8DD7e2EB",
   "abi": [
     {
       "anonymous": false,
@@ -328,13 +328,6 @@
     },
     {
       "inputs": [],
-      "name": "hotFix",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
       "name": "initialize",
       "outputs": [],
       "stateMutability": "nonpayable",
@@ -579,9 +572,9 @@
       "type": "receive"
     }
   ],
-  "numDeployments": 14,
-  "solcInputHash": "ba6897d8c37cb5d8392651c05070e573",
-  "implementation": "0x7d6B2417856b6492880253B46281C9e393224f82",
+  "numDeployments": 2,
+  "solcInputHash": "1e9c8ec9d0fcf7ba31ea628804c34bed",
+  "implementation": "0xC352822AFcE2aD256326b03ae797cc4F2ec25494",
   "devdoc": {
     "kind": "dev",
     "methods": {
@@ -689,7 +682,7 @@
         "type": "t_array(t_uint256)50_storage"
       },
       {
-        "astId": 43351,
+        "astId": 48037,
         "contract": "contracts/zap/LynexZap.sol:LynexZap",
         "label": "stakeSlippageBP",
         "offset": 0,
@@ -697,7 +690,7 @@
         "type": "t_uint256"
       },
       {
-        "astId": 43353,
+        "astId": 48039,
         "contract": "contracts/zap/LynexZap.sol:LynexZap",
         "label": "odosRouter",
         "offset": 0,
@@ -705,12 +698,12 @@
         "type": "t_address"
       },
       {
-        "astId": 42737,
+        "astId": 47417,
         "contract": "contracts/zap/LynexZap.sol:LynexZap",
         "label": "lynexRouter",
         "offset": 0,
         "slot": "253",
-        "type": "t_contract(IRouterV2)16840"
+        "type": "t_contract(IRouterV2)19399"
       }
     ],
     "types": {
@@ -741,7 +734,7 @@
         "label": "bytes32",
         "numberOfBytes": "32"
       },
-      "t_contract(IRouterV2)16840": {
+      "t_contract(IRouterV2)19399": {
         "encoding": "inplace",
         "label": "contract IRouterV2",
         "numberOfBytes": "20"

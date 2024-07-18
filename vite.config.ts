@@ -1,5 +1,6 @@
 import { fileURLToPath, URL } from 'node:url';
 import { constants } from 'zlib';
+import { resolve } from 'path';
 
 import { defineConfig, loadEnv } from 'vite';
 import compression from 'vite-plugin-compression';
@@ -9,7 +10,7 @@ import svgLoader from 'vite-svg-loader';
 import dynamicImport from 'vite-plugin-dynamic-import';
 
 const MODE = process.env.NODE_ENV;
-const development = MODE === 'development';
+const isDev = MODE === 'development';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -40,7 +41,7 @@ export default defineConfig(({ mode }) => {
         minRatio: 0.8,
         deleteOriginalAssets: false,
       }),
-      development
+      isDev
       && (nodePolyfills as any)({
         include: [
           'node_modules/**/*.js',
@@ -65,6 +66,9 @@ export default defineConfig(({ mode }) => {
     build: {
       rollupOptions: {
         plugins: [(nodePolyfills as any)({ crypto: true, http: true })],
+        input: {
+          main: resolve(__dirname, 'index.prod.html'),
+        },
       },
       commonjsOptions: {
         transformMixedEsModules: true,

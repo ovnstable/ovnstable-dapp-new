@@ -8,9 +8,9 @@ import { zapInStep } from '@/store/modals/waiting-modal.ts';
 import type { ContractAbi } from '@/types/common/abi';
 
 enum poolVersionList {
-  'v2',
-  'v3',
-  'v3rebalance'
+  v2,
+  v3,
+  v3rebalance
 }
 
 type TSrcMap = {
@@ -43,6 +43,7 @@ const nftSrcMap: TSrcMap = {
 };
 
 export const loadAbi = async (abiFileSrc: string): Promise<ContractAbi> => {
+  console.log('__abiSrc', abiFileSrc);
   try {
     const abiFile = await JSONLoader(abiFileSrc);
     if (!abiFile || !abiFile?.abi) return {} as ContractAbi;
@@ -114,7 +115,7 @@ const actions = {
 
     let abiFile = {} as ContractAbi;
     if (chainName && platformName) {
-      const abiFileSrc = zapAbiSrcMap[poolVersion as poolVersionList]?.(chainName, platformName);
+      const abiFileSrc = zapAbiSrcMap[poolVersion]?.(chainName, platformName);
       abiFile = await loadAbi(abiFileSrc);
     }
 
@@ -149,20 +150,24 @@ const actions = {
     const chainName = state.zapPoolRoot.chainName;
     const contractName = state?.currentZapPlatformContractType?.name;
 
-    const abiFileSrc = gaugeSrcMap[poolVersion as poolVersionList](chainName, contractName);
+    const abiFileSrc = gaugeSrcMap[poolVersion](chainName, contractName);
     const abiGaugeContractFile = await loadAbi(abiFileSrc);
+
+    // Rebalance data
 
     const abiFileSrcV3 = gaugeSrcMap[poolVersionList.v3rebalance](chainName, contractName);
     const abiGaugeContractFileV3 = await loadAbi(abiFileSrcV3);
 
-    commit('changeState', {
-      field: 'gaugeContractV3',
-      val: buildEvmContract(
-        abiGaugeContractFileV3.abi,
-        rootState.web3.evmSigner,
-        poolInfo.gauge,
-      ),
-    });
+    if (Object.keys(abiGaugeContractFileV3).length > 0) {
+      commit('changeState', {
+        field: 'gaugeContractV3',
+        val: buildEvmContract(
+          abiGaugeContractFileV3.abi,
+          rootState.web3.evmSigner,
+          poolInfo.gauge,
+        ),
+      });
+    }
 
     console.log(abiGaugeContractFile, '__abiGaugeContractFile');
 
@@ -175,55 +180,49 @@ const actions = {
       ),
     });
 
-    const poolTokenSrc = poolTokenSrcMap[poolVersion as poolVersionList](chainName, contractName);
-    const poolNftSrc = nftSrcMap[poolVersion as poolVersionList](chainName, contractName);
+    const poolTokenSrc = poolTokenSrcMap[poolVersion](chainName, contractName);
     const abiPoolTokenContractFile = await loadAbi(poolTokenSrc);
+
+    // Rebalance data
+
+    const poolNftSrc = nftSrcMap[poolVersion]?.(chainName, contractName);
     const abiNftContractFile = await loadAbi(poolNftSrc);
 
-    console.log(abiFileSrc, '__poolNftSrc1');
-    console.log(abiGaugeContractFile, '__poolNftSrc');
     // exclude _ from pool address (aggregators)
     if (poolAddress.includes('_')) poolAddress = poolAddress.split('_')[0];
 
-    let tokenContract = buildEvmContract(
+    const getPoolTokenContractAddress = (): string => {
+      // if some custom pool contract
+      if (abiPoolTokenContractFile.address) return abiPoolTokenContractFile.address;
+      if (poolInfo.poolTokenType === 'DIFFERENT') return poolInfo.gauge;
+      return poolAddress;
+    };
+
+    const tokenContract = buildEvmContract(
       abiPoolTokenContractFile.abi,
       rootState.web3.evmSigner,
-      poolAddress,
+      getPoolTokenContractAddress(),
     );
 
-    const poolNftContract = buildEvmContract(
-      abiNftContractFile.abi,
-      rootState.web3.evmSigner,
-      abiNftContractFile.address,
-    );
+    // Rebalance
 
-    if (poolInfo.poolTokenType === 'DIFFERENT') {
-      tokenContract = buildEvmContract(
-        abiPoolTokenContractFile.abi,
+    if (abiNftContractFile.address) {
+      const poolNftContract = buildEvmContract(
+        abiNftContractFile.abi,
         rootState.web3.evmSigner,
-        poolInfo.gauge,
+        abiNftContractFile.address,
       );
-    }
+      console.log(poolNftContract, '__poolNftContract');
 
-    // if some custom pool contract, passing it, in other case skip
-    if (abiPoolTokenContractFile.address) {
-      tokenContract = buildEvmContract(
-        abiPoolTokenContractFile.abi,
-        rootState.web3.evmSigner,
-        abiPoolTokenContractFile.address,
-      );
+      commit('changeState', {
+        field: 'poolNftContract',
+        val: poolNftContract,
+      });
     }
 
     commit('changeState', {
       field: 'poolTokenContract',
       val: tokenContract,
-    });
-
-    console.log(poolNftContract, '__poolNftContract');
-
-    commit('changeState', {
-      field: 'poolNftContract',
-      val: poolNftContract,
     });
   },
   async loadPositionContract({

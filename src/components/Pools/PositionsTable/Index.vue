@@ -128,7 +128,7 @@
             </div>
 
             <ButtonComponent
-              :disabled="true"
+              :disabled="!pool.zappable"
               btn-styles="faded"
               @click="openZapIn(pool)"
             >

@@ -1,5 +1,5 @@
 {
-  "address": "0xD752B87c94c3c36A2702350763c669290bE830D2",
+  "address": "0x84130bD2F3f510ffc3d0FE92448B047299789b0A",
   "abi": [
     {
       "anonymous": false,
@@ -405,7 +405,7 @@
               "type": "address"
             }
           ],
-          "internalType": "struct ConvexZap.ZapParams",
+          "internalType": "struct CurveNGZap.ZapParams",
           "name": "params",
           "type": "tuple"
         }
@@ -552,7 +552,7 @@
               "type": "uint256[]"
             }
           ],
-          "internalType": "struct ConvexZap.CurveZapInParams",
+          "internalType": "struct CurveNGZap.CurveZapInParams",
           "name": "curveData",
           "type": "tuple"
         }
@@ -568,8 +568,8 @@
     }
   ],
   "numDeployments": 1,
-  "solcInputHash": "4fdcbe62419eade9d98adc191e4157f8",
-  "implementation": "0xF62D62848a906d825cd9326f92E4EbA9027B2E3F",
+  "solcInputHash": "1e9c8ec9d0fcf7ba31ea628804c34bed",
+  "implementation": "0x65BEBAf04b3Bc943B49a2Ec5727cf991f45C2290",
   "devdoc": {
     "kind": "dev",
     "methods": {
@@ -595,9 +595,11 @@
         "details": "See {IERC165-supportsInterface}."
       },
       "upgradeTo(address)": {
+        "custom:oz-upgrades-unsafe-allow-reachable": "delegatecall",
         "details": "Upgrade the implementation of the proxy to `newImplementation`. Calls {_authorizeUpgrade}. Emits an {Upgraded} event."
       },
       "upgradeToAndCall(address,bytes)": {
+        "custom:oz-upgrades-unsafe-allow-reachable": "delegatecall",
         "details": "Upgrade the implementation of the proxy to `newImplementation`, and subsequently execute the function call encoded in `data`. Calls {_authorizeUpgrade}. Emits an {Upgraded} event."
       }
     },
@@ -611,80 +613,80 @@
   "storageLayout": {
     "storage": [
       {
-        "astId": 804,
-        "contract": "contracts/zap/ConvexZap.sol:ConvexZap",
+        "astId": 915,
+        "contract": "contracts/zap/CurveNGZap.sol:CurveNGZap",
         "label": "_initialized",
         "offset": 0,
         "slot": "0",
         "type": "t_uint8"
       },
       {
-        "astId": 807,
-        "contract": "contracts/zap/ConvexZap.sol:ConvexZap",
+        "astId": 918,
+        "contract": "contracts/zap/CurveNGZap.sol:CurveNGZap",
         "label": "_initializing",
         "offset": 1,
         "slot": "0",
         "type": "t_bool"
       },
       {
-        "astId": 1427,
-        "contract": "contracts/zap/ConvexZap.sol:ConvexZap",
+        "astId": 2807,
+        "contract": "contracts/zap/CurveNGZap.sol:CurveNGZap",
         "label": "__gap",
         "offset": 0,
         "slot": "1",
         "type": "t_array(t_uint256)50_storage"
       },
       {
-        "astId": 1706,
-        "contract": "contracts/zap/ConvexZap.sol:ConvexZap",
+        "astId": 3191,
+        "contract": "contracts/zap/CurveNGZap.sol:CurveNGZap",
         "label": "__gap",
         "offset": 0,
         "slot": "51",
         "type": "t_array(t_uint256)50_storage"
       },
       {
-        "astId": 39,
-        "contract": "contracts/zap/ConvexZap.sol:ConvexZap",
+        "astId": 28,
+        "contract": "contracts/zap/CurveNGZap.sol:CurveNGZap",
         "label": "_roles",
         "offset": 0,
         "slot": "101",
-        "type": "t_mapping(t_bytes32,t_struct(RoleData)34_storage)"
+        "type": "t_mapping(t_bytes32,t_struct(RoleData)23_storage)"
       },
       {
-        "astId": 334,
-        "contract": "contracts/zap/ConvexZap.sol:ConvexZap",
+        "astId": 335,
+        "contract": "contracts/zap/CurveNGZap.sol:CurveNGZap",
         "label": "__gap",
         "offset": 0,
         "slot": "102",
         "type": "t_array(t_uint256)49_storage"
       },
       {
-        "astId": 786,
-        "contract": "contracts/zap/ConvexZap.sol:ConvexZap",
+        "astId": 897,
+        "contract": "contracts/zap/CurveNGZap.sol:CurveNGZap",
         "label": "__gap",
         "offset": 0,
         "slot": "151",
         "type": "t_array(t_uint256)50_storage"
       },
       {
-        "astId": 1101,
-        "contract": "contracts/zap/ConvexZap.sol:ConvexZap",
+        "astId": 1213,
+        "contract": "contracts/zap/CurveNGZap.sol:CurveNGZap",
         "label": "__gap",
         "offset": 0,
         "slot": "201",
         "type": "t_array(t_uint256)50_storage"
       },
       {
-        "astId": 4852,
-        "contract": "contracts/zap/ConvexZap.sol:ConvexZap",
+        "astId": 48037,
+        "contract": "contracts/zap/CurveNGZap.sol:CurveNGZap",
         "label": "stakeSlippageBP",
         "offset": 0,
         "slot": "251",
         "type": "t_uint256"
       },
       {
-        "astId": 4854,
-        "contract": "contracts/zap/ConvexZap.sol:ConvexZap",
+        "astId": 48039,
+        "contract": "contracts/zap/CurveNGZap.sol:CurveNGZap",
         "label": "odosRouter",
         "offset": 0,
         "slot": "252",
@@ -726,28 +728,28 @@
         "numberOfBytes": "32",
         "value": "t_bool"
       },
-      "t_mapping(t_bytes32,t_struct(RoleData)34_storage)": {
+      "t_mapping(t_bytes32,t_struct(RoleData)23_storage)": {
         "encoding": "mapping",
         "key": "t_bytes32",
         "label": "mapping(bytes32 => struct AccessControlUpgradeable.RoleData)",
         "numberOfBytes": "32",
-        "value": "t_struct(RoleData)34_storage"
+        "value": "t_struct(RoleData)23_storage"
       },
-      "t_struct(RoleData)34_storage": {
+      "t_struct(RoleData)23_storage": {
         "encoding": "inplace",
         "label": "struct AccessControlUpgradeable.RoleData",
         "members": [
           {
-            "astId": 31,
-            "contract": "contracts/zap/ConvexZap.sol:ConvexZap",
+            "astId": 20,
+            "contract": "contracts/zap/CurveNGZap.sol:CurveNGZap",
             "label": "members",
             "offset": 0,
             "slot": "0",
             "type": "t_mapping(t_address,t_bool)"
           },
           {
-            "astId": 33,
-            "contract": "contracts/zap/ConvexZap.sol:ConvexZap",
+            "astId": 22,
+            "contract": "contracts/zap/CurveNGZap.sol:CurveNGZap",
             "label": "adminRole",
             "offset": 0,
             "slot": "1",
