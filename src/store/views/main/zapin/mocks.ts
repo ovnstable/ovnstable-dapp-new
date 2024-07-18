@@ -312,60 +312,60 @@ export const poolsInfoMap: any = {
     poolTokenType: 'DIFFERENT',
   },
   // PANCAKE CL
-  // '0x8a06339abd7499af755df585738ebf43d5d62b94': {
-  //   gauge: '0x46a15b0b27311cedf172ab29e4f4766fbe7f4364',
-  //   version: 3,
-  //   approveType: 'NFT',
-  //   poolTokenType: 'TOKEN',
-  // },
-  // '0x714d48cb99b87f274b33a89fbb16ead191b40b6c': {
-  //   gauge: '0x46a15b0b27311cedf172ab29e4f4766fbe7f4364',
-  //   version: 3,
-  //   approveType: 'NFT',
-  //   poolTokenType: 'TOKEN',
-  // },
-  // '0xa1f9159e11ad48524c16c9bf10bf440815b03e6c': {
-  //   gauge: '0x46a15b0b27311cedf172ab29e4f4766fbe7f4364',
-  //   version: 3,
-  //   approveType: 'NFT',
-  //   poolTokenType: 'TOKEN',
-  // },
-  // '0xf92768916015b5ebd9fa54d6ba10da5864e24914': {
-  //   gauge: '0x46a15b0b27311cedf172ab29e4f4766fbe7f4364',
-  //   version: 3,
-  //   approveType: 'NFT',
-  //   poolTokenType: 'TOKEN',
-  // },
-  // '0xe37304f7489ed253b2a46a1d9dabdca3d311d22e': {
-  //   gauge: '0x46a15b0b27311cedf172ab29e4f4766fbe7f4364',
-  //   version: 3,
-  //   approveType: 'NFT',
-  //   poolTokenType: 'TOKEN',
-  // },
+  '0x8a06339abd7499af755df585738ebf43d5d62b94': {
+    gauge: '0x46a15b0b27311cedf172ab29e4f4766fbe7f4364',
+    version: 3,
+    approveType: 'NFT',
+    poolTokenType: 'TOKEN',
+  },
+  '0x714d48cb99b87f274b33a89fbb16ead191b40b6c': {
+    gauge: '0x46a15b0b27311cedf172ab29e4f4766fbe7f4364',
+    version: 3,
+    approveType: 'NFT',
+    poolTokenType: 'TOKEN',
+  },
+  '0xa1f9159e11ad48524c16c9bf10bf440815b03e6c': {
+    gauge: '0x46a15b0b27311cedf172ab29e4f4766fbe7f4364',
+    version: 3,
+    approveType: 'NFT',
+    poolTokenType: 'TOKEN',
+  },
+  '0xf92768916015b5ebd9fa54d6ba10da5864e24914': {
+    gauge: '0x46a15b0b27311cedf172ab29e4f4766fbe7f4364',
+    version: 3,
+    approveType: 'NFT',
+    poolTokenType: 'TOKEN',
+  },
+  '0xe37304f7489ed253b2a46a1d9dabdca3d311d22e': {
+    gauge: '0x46a15b0b27311cedf172ab29e4f4766fbe7f4364',
+    version: 3,
+    approveType: 'NFT',
+    poolTokenType: 'TOKEN',
+  },
 };
 
 export const poolTokensForZapMap = {
   // V3 pancake
-  // '0x714d48cb99b87f274b33a89fbb16ead191b40b6c': [
-  //   {
-  //     name: 'OVN',
-  //     address: chainContractsMap.arbitrum.ovn,
-  //   },
-  //   {
-  //     name: 'USD+',
-  //     address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
-  //   },
-  // ],
-  // '0x8a06339abd7499af755df585738ebf43d5d62b94': [
-  //   {
-  //     name: 'USDT+',
-  //     address: chainContractsMap.arbitrum.usdtPlus.tokenPlus,
-  //   },
-  //   {
-  //     name: 'USD+',
-  //     address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
-  //   },
-  // ],
+  '0x714d48cb99b87f274b33a89fbb16ead191b40b6c': [
+    {
+      name: 'OVN',
+      address: chainContractsMap.arbitrum.ovn,
+    },
+    {
+      name: 'USD+',
+      address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
+    },
+  ],
+  '0x8a06339abd7499af755df585738ebf43d5d62b94': [
+    {
+      name: 'USDT+',
+      address: chainContractsMap.arbitrum.usdtPlus.tokenPlus,
+    },
+    {
+      name: 'USD+',
+      address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
+    },
+  ],
   // v3 base
   '0x0c1A09d5D0445047DA3Ab4994262b22404288A3B': [
     {
@@ -818,36 +818,36 @@ export const poolTokensForZapMap = {
     },
   ],
   // Pancake CL
-  // '0xa1f9159e11ad48524c16c9bf10bf440815b03e6c': [
-  //   {
-  //     name: 'USDC',
-  //     address: chainContractsMap.arbitrum.usdcNative,
-  //   },
-  //   {
-  //     name: 'USD+',
-  //     address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
-  //   },
-  // ],
-  // '0xf92768916015b5ebd9fa54d6ba10da5864e24914': [
-  //   {
-  //     name: 'ARB',
-  //     address: '0x912ce59144191c1204e64559fe8253a0e49e6548',
-  //   },
-  //   {
-  //     name: 'USD+',
-  //     address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
-  //   },
-  // ],
-  // '0xe37304f7489ed253b2a46a1d9dabdca3d311d22e': [
-  //   {
-  //     name: 'WETH',
-  //     address: '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1',
-  //   },
-  //   {
-  //     name: 'USD+',
-  //     address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
-  //   },
-  // ],
+  '0xa1f9159e11ad48524c16c9bf10bf440815b03e6c': [
+    {
+      name: 'USDC',
+      address: chainContractsMap.arbitrum.usdcNative,
+    },
+    {
+      name: 'USD+',
+      address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
+    },
+  ],
+  '0xf92768916015b5ebd9fa54d6ba10da5864e24914': [
+    {
+      name: 'ARB',
+      address: '0x912ce59144191c1204e64559fe8253a0e49e6548',
+    },
+    {
+      name: 'USD+',
+      address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
+    },
+  ],
+  '0xe37304f7489ed253b2a46a1d9dabdca3d311d22e': [
+    {
+      name: 'WETH',
+      address: '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1',
+    },
+    {
+      name: 'USD+',
+      address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
+    },
+  ],
 } as any;
 
 export const zapPlatformContractTypeMap: any = {
@@ -937,29 +937,29 @@ export const zapPlatformContractTypeMap: any = {
     typeOfDepositConstructor: 'CONSTRUCTOR_V3_WITH_TOKEN_ID',
   },
   // Pancake CL
-  // '0x714d48cb99b87f274b33a89fbb16ead191b40b6c': {
-  //   name: 'Pancake',
-  //   type: 'LP_STAKE_DIFF_STEPS',
-  //   typeOfDepositConstructor: 'CONSTRUCTOR_WITH_NFT_ID',
-  // },
-  // '0x8a06339abd7499af755df585738ebf43d5d62b94': {
-  //   name: 'Pancake',
-  //   type: 'LP_STAKE_DIFF_STEPS',
-  //   typeOfDepositConstructor: 'CONSTRUCTOR_WITH_NFT_ID',
-  // },
-  // '0xa1f9159e11ad48524c16c9bf10bf440815b03e6c': {
-  //   name: 'Pancake',
-  //   type: 'LP_STAKE_DIFF_STEPS',
-  //   typeOfDepositConstructor: 'CONSTRUCTOR_WITH_NFT_ID',
-  // },
-  // '0xf92768916015b5ebd9fa54d6ba10da5864e24914': {
-  //   name: 'Pancake',
-  //   type: 'LP_STAKE_DIFF_STEPS',
-  //   typeOfDepositConstructor: 'CONSTRUCTOR_WITH_NFT_ID',
-  // },
-  // '0xe37304f7489ed253b2a46a1d9dabdca3d311d22e': {
-  //   name: 'Pancake',
-  //   type: 'LP_STAKE_DIFF_STEPS',
-  //   typeOfDepositConstructor: 'CONSTRUCTOR_WITH_NFT_ID',
-  // },
+  '0x714d48cb99b87f274b33a89fbb16ead191b40b6c': {
+    name: 'Pancake',
+    type: 'LP_STAKE_DIFF_STEPS',
+    typeOfDepositConstructor: 'CONSTRUCTOR_WITH_NFT_ID',
+  },
+  '0x8a06339abd7499af755df585738ebf43d5d62b94': {
+    name: 'Pancake',
+    type: 'LP_STAKE_DIFF_STEPS',
+    typeOfDepositConstructor: 'CONSTRUCTOR_WITH_NFT_ID',
+  },
+  '0xa1f9159e11ad48524c16c9bf10bf440815b03e6c': {
+    name: 'Pancake',
+    type: 'LP_STAKE_DIFF_STEPS',
+    typeOfDepositConstructor: 'CONSTRUCTOR_WITH_NFT_ID',
+  },
+  '0xf92768916015b5ebd9fa54d6ba10da5864e24914': {
+    name: 'Pancake',
+    type: 'LP_STAKE_DIFF_STEPS',
+    typeOfDepositConstructor: 'CONSTRUCTOR_WITH_NFT_ID',
+  },
+  '0xe37304f7489ed253b2a46a1d9dabdca3d311d22e': {
+    name: 'Pancake',
+    type: 'LP_STAKE_DIFF_STEPS',
+    typeOfDepositConstructor: 'CONSTRUCTOR_WITH_NFT_ID',
+  },
 };
