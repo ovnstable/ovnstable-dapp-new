@@ -160,7 +160,7 @@ export default {
   watch: {
     async isAllDataLoaded(isLoaded: boolean) {
       if (!isLoaded) this.isLoading = true;
-      else if (isLoaded) {
+      else if (isLoaded && this.allTokensMap) {
         const posData = await this.getFormatPositions();
         this.positionData = posData;
         this.isLoading = false;
