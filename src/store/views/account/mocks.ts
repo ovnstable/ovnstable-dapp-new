@@ -8,11 +8,6 @@ const allChainsTokens = [
     isOvnToken: true,
   },
   {
-    symbol: 'DAI+',
-    contractName: 'daiPlus',
-    isOvnToken: true,
-  },
-  {
     symbol: 'DAI',
     contractName: 'dai',
     isOvnToken: true,
@@ -74,11 +69,6 @@ export const USER_BALANCES_SCHEME = {
       isOvnToken: false,
     },
     {
-      symbol: 'ETH+',
-      contractName: 'ethPlus',
-      isOvnToken: false,
-    },
-    {
       symbol: 'wETH+',
       contractName: 'wEthPlus',
       isOvnToken: false,
@@ -92,6 +82,11 @@ export const USER_BALANCES_SCHEME = {
       symbol: 'OVNINS',
       contractName: '',
       isOvnToken: false,
+    },
+    {
+      symbol: 'DAI+',
+      contractName: 'daiPlus',
+      isOvnToken: true,
     },
   ],
   8453: [
@@ -142,6 +137,11 @@ export const USER_BALANCES_SCHEME = {
       symbol: 'OVNINS',
       contractName: '',
       isOvnToken: false,
+    },
+    {
+      symbol: 'DAI+',
+      contractName: 'daiPlus',
+      isOvnToken: true,
     },
   ],
   324: [

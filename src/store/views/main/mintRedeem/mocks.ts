@@ -78,12 +78,12 @@ export const MINTREDEEM_SCHEME = {
       exchange: chainContractsMap.base.market,
       methodName: [mintRedeemTypes.WRAP, mintRedeemTypes.UNWRAP],
     },
-    {
-      token0: chainContractsMap.base.dai,
-      token1: chainContractsMap.base.daiPlus.tokenPlus,
-      exchange: chainContractsMap.base.daiPlus.exchange,
-      methodName: [mintRedeemTypes.MINT, mintRedeemTypes.REDEEM],
-    },
+    // {
+    //   token0: chainContractsMap.base.dai,
+    //   token1: chainContractsMap.base.daiPlus.tokenPlus,
+    //   exchange: chainContractsMap.base.daiPlus.exchange,
+    //   methodName: [mintRedeemTypes.MINT, mintRedeemTypes.REDEEM],
+    // },
   ],
   // optimism
   10: [
