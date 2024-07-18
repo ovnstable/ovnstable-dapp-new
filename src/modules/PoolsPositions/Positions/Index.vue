@@ -1,7 +1,7 @@
 <template>
   <div class="pools-wrap">
     <div
-      v-if="isPoolsLoading"
+      v-if="isLoading"
       class="pools-wrap__loader"
     >
       <TableSkeleton />
@@ -111,16 +111,15 @@ export default {
     aprOrder: 0 as number,
     positionSizeSortIterator: {} as IEnumIterator,
     positionSizeOrder: 0 as number,
-    isLoaded: false,
+    isLoading: true as boolean,
     positionData: [] as any,
   }),
   computed: {
     ...mapGetters('network', ['getParams', 'isShowDeprecated']),
     ...mapGetters('accountData', ['account']),
     ...mapGetters('poolsData', ['allPoolsMap']),
-    ...mapGetters('odosData', ['allTokensMap', 'allTokensLoaded']),
+    ...mapGetters('odosData', ['allTokensMap', 'isAllDataLoaded']),
     ...mapGetters('network', ['networkName']),
-    ...mapState('poolsData', ['isPoolsLoading']),
     filteredPools() {
       const sortByHotTagAndValue = sortByTagAndValue(
         'NEW',
@@ -159,14 +158,17 @@ export default {
     },
   },
   watch: {
-    async allTokensLoaded(val) {
-      if (!val) return;
-      if (!this.isLoaded && this.allTokensMap.size > 0 && this.networkName) {
+    async isAllDataLoaded(isLoaded: boolean) {
+      if (!isLoaded) this.isLoading = true;
+      else if (isLoaded) {
         const posData = await this.getFormatPositions();
         this.positionData = posData;
-        this.isLoaded = true;
+        this.isLoading = false;
       }
     },
+    // async networkName() {
+    //   this.isLoading = true;
+    // },
   },
   async mounted() {
     this.clearAllFilters();
