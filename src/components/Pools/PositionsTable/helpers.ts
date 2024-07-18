@@ -215,8 +215,7 @@ export const formatPositionData = (
 
     if (platform === 'Aerodrome') {
       const aeroTokenInfo = getTokenInfo(AERO_ADDR, tokenMap);
-      const emissionsUsdVal = formatBN(emissions, aeroTokenInfo!.decimals, aeroTokenInfo.price);
-      rewardUsdTotal = sumBnStr(rewardUsdTotal, emissionsUsdVal);
+      rewardUsdTotal = formatBN(emissions, aeroTokenInfo!.decimals, aeroTokenInfo.price);
     }
 
     // Ticks
