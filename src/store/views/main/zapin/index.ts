@@ -96,7 +96,7 @@ const actions = {
     const poolVersion = state.zapPoolRoot?.poolVersion;
     const chainName = state.zapPoolRoot.chainName;
     const address = state.zapPoolRoot.address;
-    const platformName = state.currentZapPlatformContractType?.name;
+    const platformName = state.currentZapPlatformContractType?.name ?? poolRoot?.platform[0];
 
     if (!poolRoot) {
       console.error('Zap Pool Root not found: ', poolRoot);
@@ -105,7 +105,7 @@ const actions = {
 
     commit('changeState', {
       field: 'currentZapPlatformContractType',
-      val: zapPlatformContractTypeMap[address]
+      val: zapPlatformContractTypeMap[address] ?? zapPlatformContractTypeMap[address.toLowerCase()]
         ?? zapPlatformContractTypeMap[state.zapPoolRoot.platform[0]],
     });
 
@@ -118,6 +118,7 @@ const actions = {
     }
 
     let abiFile = {} as ContractAbi;
+    console.log('__chainPlatform', chainName, platformName);
     if (chainName && platformName) {
       const abiFileSrc = zapAbiSrcMap[poolVersion]?.(chainName, platformName);
       abiFile = await loadAbi(abiFileSrc);
@@ -244,12 +245,10 @@ const actions = {
       abiFile.address,
     );
 
-    console.log('__positionsContract', positionContract);
-    console.log(address, '__address');
-
     const positions = await positionContract.getPositions(address);
 
     console.log(positions, '__positions');
+
     commit('changeState', {
       field: 'userPositions',
       val: positions,
