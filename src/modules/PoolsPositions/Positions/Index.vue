@@ -168,9 +168,10 @@ export default {
         }
       }
     },
-    // async networkName() {
-    //   this.isLoading = true;
-    // },
+    async networkName() {
+      this.isLoading = true;
+      await this.init();
+    },
   },
   async mounted() {
     this.clearAllFilters();
@@ -181,27 +182,25 @@ export default {
     this.positionSizeSortIterator = iterateEnum(POSITION_SIZE_ORDER_TYPE);
     this.positionSizeOrder = this.positionSizeSortIterator.next();
 
-    this.$store.commit('odosData/changeState', {
-      field: 'isTokensLoadedAndFiltered',
-      val: false,
-    });
-
     await this.init();
-
-    this.$store.commit('odosData/changeState', {
-      field: 'isTokensLoadedAndFiltered',
-      val: true,
-    });
   },
   methods: {
     ...mapActions('poolsData', ['loadPools']),
     ...mapActions('zapinData', ['loadPositionContract']),
     ...mapActions('odosData', ['loadTokens', 'initData', 'loadChains', 'initContractData']),
     async init() {
+      this.$store.commit('odosData/changeState', {
+        field: 'isTokensLoadedAndFiltered',
+        val: false,
+      });
       await this.loadTokens();
       await this.loadChains();
       await this.initContractData();
       await this.initData();
+      this.$store.commit('odosData/changeState', {
+        field: 'isTokensLoadedAndFiltered',
+        val: true,
+      });
     },
     switchPoolsTab(type: POOL_TYPES) {
       this.isDefaultOrder = true;
