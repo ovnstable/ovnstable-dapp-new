@@ -119,9 +119,8 @@ export default {
     ...mapGetters('accountData', ['account']),
     ...mapGetters('poolsData', ['allPoolsMap']),
     ...mapGetters('odosData', ['allTokensMap', 'allTokensLoaded']),
-    ...mapState('poolsData', [
-      'isPoolsLoading',
-    ]),
+    ...mapGetters('network', ['networkName']),
+    ...mapState('poolsData', ['isPoolsLoading']),
     filteredPools() {
       const sortByHotTagAndValue = sortByTagAndValue(
         'NEW',
@@ -162,7 +161,7 @@ export default {
   watch: {
     async allTokensLoaded(val) {
       if (!val) return;
-      if (!this.isLoaded && this.allTokensMap.size > 0) {
+      if (!this.isLoaded && this.allTokensMap.size > 0 && this.networkName) {
         const posData = await this.getFormatPositions();
         this.positionData = posData;
         this.isLoaded = true;
@@ -236,6 +235,7 @@ export default {
     async getFormatPositions() {
       const poolInfo = this.allPoolsMap;
       const tokensList = this.allTokensMap;
+
       const positionData = await this.loadPositionContract(this.account);
       return formatPositionData(positionData, poolInfo, tokensList);
     },
