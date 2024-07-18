@@ -185,7 +185,7 @@ const actions = {
 
     // Rebalance data
 
-    const poolNftSrc = nftSrcMap[poolVersion]!(chainName, contractName);
+    const poolNftSrc = nftSrcMap[poolVersion]?.(chainName, contractName);
     const abiNftContractFile = await loadAbi(poolNftSrc);
 
     // exclude _ from pool address (aggregators)
