@@ -1,7 +1,7 @@
 <template>
   <div class="pools-wrap">
     <div
-      v-if="isPoolsLoading"
+      v-if="isLoading"
       class="pools-wrap__loader"
     >
       <TableSkeleton />
@@ -111,17 +111,15 @@ export default {
     aprOrder: 0 as number,
     positionSizeSortIterator: {} as IEnumIterator,
     positionSizeOrder: 0 as number,
-    isLoaded: false,
+    isLoading: true as boolean,
     positionData: [] as any,
   }),
   computed: {
     ...mapGetters('network', ['getParams', 'isShowDeprecated']),
     ...mapGetters('accountData', ['account']),
     ...mapGetters('poolsData', ['allPoolsMap']),
-    ...mapGetters('odosData', ['allTokensMap', 'allTokensLoaded']),
-    ...mapState('poolsData', [
-      'isPoolsLoading',
-    ]),
+    ...mapGetters('odosData', ['allTokensMap', 'isAllDataLoaded']),
+    ...mapGetters('network', ['networkName']),
     filteredPools() {
       const sortByHotTagAndValue = sortByTagAndValue(
         'NEW',
@@ -160,13 +158,20 @@ export default {
     },
   },
   watch: {
-    async allTokensLoaded(val) {
-      if (!val) return;
-      if (!this.isLoaded && this.allTokensMap.size > 0) {
+    async isAllDataLoaded(isLoaded: boolean) {
+      console.log(this.allTokensMap);
+      if (!isLoaded) this.isLoading = true;
+      else if (isLoaded && this.allTokensMap.size > 0) {
         const posData = await this.getFormatPositions();
-        this.positionData = posData;
-        this.isLoaded = true;
+        if (posData.length > 0) {
+          this.positionData = posData;
+          this.isLoading = false;
+        }
       }
+    },
+    async networkName() {
+      this.isLoading = true;
+      await this.init();
     },
   },
   async mounted() {
@@ -178,27 +183,25 @@ export default {
     this.positionSizeSortIterator = iterateEnum(POSITION_SIZE_ORDER_TYPE);
     this.positionSizeOrder = this.positionSizeSortIterator.next();
 
-    this.$store.commit('odosData/changeState', {
-      field: 'isTokensLoadedAndFiltered',
-      val: false,
-    });
-
     await this.init();
-
-    this.$store.commit('odosData/changeState', {
-      field: 'isTokensLoadedAndFiltered',
-      val: true,
-    });
   },
   methods: {
     ...mapActions('poolsData', ['loadPools']),
     ...mapActions('zapinData', ['loadPositionContract']),
     ...mapActions('odosData', ['loadTokens', 'initData', 'loadChains', 'initContractData']),
     async init() {
+      this.$store.commit('odosData/changeState', {
+        field: 'isTokensLoadedAndFiltered',
+        val: false,
+      });
       await this.loadTokens();
       await this.loadChains();
       await this.initContractData();
       await this.initData();
+      this.$store.commit('odosData/changeState', {
+        field: 'isTokensLoadedAndFiltered',
+        val: true,
+      });
     },
     switchPoolsTab(type: POOL_TYPES) {
       this.isDefaultOrder = true;
@@ -236,6 +239,7 @@ export default {
     async getFormatPositions() {
       const poolInfo = this.allPoolsMap;
       const tokensList = this.allTokensMap;
+
       const positionData = await this.loadPositionContract(this.account);
       return formatPositionData(positionData, poolInfo, tokensList);
     },
