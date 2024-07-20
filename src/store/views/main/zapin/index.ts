@@ -164,12 +164,13 @@ const actions = {
     const abiGaugeContractFileV3 = await loadAbi(abiFileSrcV3);
 
     if (Object.keys(abiGaugeContractFileV3).length > 0) {
+      console.log('__gaugeV3', abiGaugeContractFileV3);
       commit('changeState', {
         field: 'gaugeContractV3',
         val: buildEvmContract(
           abiGaugeContractFileV3.abi,
           rootState.web3.evmSigner,
-          poolInfo.gauge,
+          abiGaugeContractFileV3.address ?? poolInfo.gauge,
         ),
       });
     }
