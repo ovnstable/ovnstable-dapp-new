@@ -194,7 +194,7 @@ export const formatPositionData = (
   poolsMap: { [key: string]: TPoolInfo },
   tokenMap: Map<string, TSelectedTokenInfo>,
 ): IPositionsInfo[] => {
-  const positionInfo = posDataArr.map((
+  const positionInfo = posDataArr.flatMap((
     [platform, tokenId, poolId, token0, token1, amount0, amount1, rewardAmount0, rewardAmount1,
       emissions, tickLower, tickUpper, centerTick]: TPositionData,
   ) => {
@@ -202,57 +202,60 @@ export const formatPositionData = (
     const pool = poolsMap[poolId]
     ?? poolsMap[poolId.toUpperCase()] ?? poolsMap[poolId.toLowerCase()];
 
-    // Tokens
-    const tokenNames = getTokenNames(pool.name);
-    const token0Info = getTokenInfo(token0, tokenMap);
-    const token1Info = getTokenInfo(token1, tokenMap);
-    // Token usd values
-    const token0UsdStr = formatBN(amount0, token0Info!.decimals, token0Info.price);
-    const token1UsdStr = formatBN(amount1, token1Info!.decimals, token1Info.price);
-    const reward0UsdStr = formatBN(rewardAmount0, token0Info!.decimals, token0Info.price);
-    const reward1UsdStr = formatBN(rewardAmount1, token1Info!.decimals, token1Info.price);
-    const positionUsdTotal = sumBnStr(token0UsdStr, token1UsdStr);
-    let rewardUsdTotal = sumBnStr(reward0UsdStr, reward1UsdStr);
+    if (pool) {
+      // Tokens
+      const tokenNames = getTokenNames(pool.name);
+      const token0Info = getTokenInfo(token0, tokenMap);
+      const token1Info = getTokenInfo(token1, tokenMap);
+      // Token usd values
+      const token0UsdStr = formatBN(amount0, token0Info!.decimals, token0Info.price);
+      const token1UsdStr = formatBN(amount1, token1Info!.decimals, token1Info.price);
+      const reward0UsdStr = formatBN(rewardAmount0, token0Info!.decimals, token0Info.price);
+      const reward1UsdStr = formatBN(rewardAmount1, token1Info!.decimals, token1Info.price);
+      const positionUsdTotal = sumBnStr(token0UsdStr, token1UsdStr);
+      let rewardUsdTotal = sumBnStr(reward0UsdStr, reward1UsdStr);
 
-    if (platform === 'Aerodrome') {
-      const aeroTokenInfo = getTokenInfo(AERO_ADDR, tokenMap);
-      rewardUsdTotal = formatBN(emissions, aeroTokenInfo!.decimals, aeroTokenInfo.price);
+      if (platform === 'Aerodrome') {
+        const aeroTokenInfo = getTokenInfo(AERO_ADDR, tokenMap);
+        rewardUsdTotal = formatBN(emissions, aeroTokenInfo!.decimals, aeroTokenInfo.price);
+      }
+
+      // Ticks
+      const ticks = {
+        tickLower,
+        tickUpper,
+        centerTick,
+      };
+
+      // Final data
+      const positionFullInfo = {
+        ...pool,
+        position: {
+          tokens: [
+            { [tokenNames.token0]: formatBN(amount0, token0Info!.decimals) },
+            { [tokenNames.token1]: formatBN(amount1, token1Info!.decimals) },
+          ],
+          usdValue: positionUsdTotal,
+          displayedUsdValue: getMinVal(positionUsdTotal),
+          tokenProportions: getPositionProportion(token0UsdStr, token1UsdStr, positionUsdTotal),
+          isInRange: isInRange(ticks),
+        },
+        rewards: {
+          tokens: [
+            { [tokenNames.token0]: formatBN(rewardAmount0, token0Info!.decimals) },
+            { [tokenNames.token1]: formatBN(rewardAmount1, token1Info!.decimals) },
+          ],
+          usdValue: rewardUsdTotal,
+          displayedUsdValue: getMinVal(rewardUsdTotal),
+        },
+        platformLinks: getPlatformLinks(pool.platform, pool),
+        tokenId,
+        ticks,
+        tokenNames,
+      };
+      return positionFullInfo;
     }
-
-    // Ticks
-    const ticks = {
-      tickLower,
-      tickUpper,
-      centerTick,
-    };
-
-    // Final data
-    const positionFullInfo = {
-      ...pool,
-      position: {
-        tokens: [
-          { [tokenNames.token0]: formatBN(amount0, token0Info!.decimals) },
-          { [tokenNames.token1]: formatBN(amount1, token1Info!.decimals) },
-        ],
-        usdValue: positionUsdTotal,
-        displayedUsdValue: getMinVal(positionUsdTotal),
-        tokenProportions: getPositionProportion(token0UsdStr, token1UsdStr, positionUsdTotal),
-        isInRange: isInRange(ticks),
-      },
-      rewards: {
-        tokens: [
-          { [tokenNames.token0]: formatBN(rewardAmount0, token0Info!.decimals) },
-          { [tokenNames.token1]: formatBN(rewardAmount1, token1Info!.decimals) },
-        ],
-        usdValue: rewardUsdTotal,
-        displayedUsdValue: getMinVal(rewardUsdTotal),
-      },
-      platformLinks: getPlatformLinks(pool.platform, pool),
-      tokenId,
-      ticks,
-      tokenNames,
-    };
-    return positionFullInfo;
+    return [];
   });
   return positionInfo;
 };

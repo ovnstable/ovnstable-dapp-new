@@ -311,6 +311,13 @@ export const poolsInfoMap: any = {
     approveType: 'NFT',
     poolTokenType: 'DIFFERENT',
   },
+  '0xa01A2513E95263b9BaCe60B573ce874E1e7a5246': {
+    gauge: '0xcC2714BF50F3c7174a868bec8f4D4d284A0b07cc',
+    gaugeForLP: '0x827922686190790b37229fd06084350e74485b72',
+    version: 3,
+    approveType: 'NFT',
+    poolTokenType: 'DIFFERENT',
+  },
   // PANCAKE CL
   '0x8a06339abd7499af755df585738ebf43d5d62b94': {
     gauge: '0x46a15b0b27311cedf172ab29e4f4766fbe7f4364',
@@ -337,6 +344,12 @@ export const poolsInfoMap: any = {
     poolTokenType: 'TOKEN',
   },
   '0xe37304f7489ed253b2a46a1d9dabdca3d311d22e': {
+    gauge: '0x46a15b0b27311cedf172ab29e4f4766fbe7f4364',
+    version: 3,
+    approveType: 'NFT',
+    poolTokenType: 'TOKEN',
+  },
+  '0xa4846201e94d2a5399774926f760a36d52ac22bf': {
     gauge: '0x46a15b0b27311cedf172ab29e4f4766fbe7f4364',
     version: 3,
     approveType: 'NFT',
@@ -848,6 +861,16 @@ export const poolTokensForZapMap = {
       address: chainContractsMap.arbitrum.usdPlus.tokenPlus,
     },
   ],
+  '0xa01A2513E95263b9BaCe60B573ce874E1e7a5246': [
+    {
+      name: 'USD+',
+      address: chainContractsMap.base.usdPlus.tokenPlus,
+    },
+    {
+      name: 'wstETH',
+      address: '0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452',
+    },
+  ],
 } as any;
 
 export const zapPlatformContractTypeMap: any = {
@@ -936,6 +959,11 @@ export const zapPlatformContractTypeMap: any = {
     type: 'LP_STAKE_DIFF_STEPS',
     typeOfDepositConstructor: 'CONSTRUCTOR_V3_WITH_TOKEN_ID',
   },
+  '0xa01A2513E95263b9BaCe60B573ce874E1e7a5246': {
+    name: 'Aerodrome',
+    type: 'LP_STAKE_DIFF_STEPS',
+    typeOfDepositConstructor: 'CONSTRUCTOR_WITH_NFT_ID',
+  },
   // Pancake CL
   '0x714d48cb99b87f274b33a89fbb16ead191b40b6c': {
     name: 'Pancake',
@@ -958,6 +986,11 @@ export const zapPlatformContractTypeMap: any = {
     typeOfDepositConstructor: 'CONSTRUCTOR_WITH_NFT_ID',
   },
   '0xe37304f7489ed253b2a46a1d9dabdca3d311d22e': {
+    name: 'Pancake',
+    type: 'LP_STAKE_DIFF_STEPS',
+    typeOfDepositConstructor: 'CONSTRUCTOR_WITH_NFT_ID',
+  },
+  '0xa4846201e94d2a5399774926f760a36d52ac22bf': {
     name: 'Pancake',
     type: 'LP_STAKE_DIFF_STEPS',
     typeOfDepositConstructor: 'CONSTRUCTOR_WITH_NFT_ID',
