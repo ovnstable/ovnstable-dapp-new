@@ -1,6 +1,9 @@
 <template>
   <div class="pos-wrap">
-    <h1>MY POSITIONS</h1>
+    <div class="heading-row">
+      <h1>MY POSITIONS</h1>
+      <p>View and manage your open V2 and V3 positions.</p>
+    </div>
     <Positions />
 
     <ZapModal
@@ -35,11 +38,23 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-h1 {
-  font-size: 26px;
-  font-weight: 800;
-  color: var(--color-1);
+.heading-row {
   margin-bottom: 35px;
+  color: var(--color-1);
+  font-size: 16px;
+  font-weight: 400;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  p {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+  h1 {
+    font-size: 26px;
+    font-weight: 800;
+  }
 }
 
 .pos-wrap {
