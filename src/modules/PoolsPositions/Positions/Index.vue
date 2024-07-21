@@ -1,36 +1,73 @@
 <template>
   <div class="pools-wrap">
     <div
-      v-if="isLoading"
-      class="pools-wrap__loader"
+      v-if="!walletConnected || !account || !supportedNetworks[networkName]"
+      class="unavailable-container"
     >
-      <TableSkeleton />
-    </div>
-
-    <div
-      v-else
-      class="pools-container"
-    >
-      <PoolsTable
-        :pools="displayedPools"
-        :set-order-type-func="toggleOrderType"
-        :position-size-sort-func="togglePositionSizeSort"
-        :apy-order-type="orderType"
-        :position-size-order-type="positionSizeOrder"
-      >
-        <template
-          #filters
+      <div>
+        <div
+          v-if="!walletConnected || !account"
+          class="unavailable-row"
         >
-          <PoolsFilter
-            :selected-network="selectedNetworks"
-            :is-show-deprecated="isShowDeprecated"
-            :search-query="searchQuery"
-            @change-tab="switchPoolsTab"
-            @change-network="setSelectedNetwork"
-            @search="updateSearch"
-          />
-        </template>
-      </PoolsTable>
+          <p>
+            PLEASE
+          </p>
+          <ButtonComponent
+            class="connect-btn"
+            @on-click="connectWallet"
+          >
+            CONNECT WALLET
+          </ButtonComponent>
+          <p>
+            TO SEE YOUR PROFITS GROW
+          </p>
+        </div>
+        <div
+          v-if="!supportedNetworks[networkName]"
+          class="unavailable-row"
+        >
+          <p>
+            PLEASE SELECT ONE OF THE CURRENTLY SUPPORTED NETWORKS: BASE, ARBITRUM
+          </p>
+        </div>
+      </div>
+      <img
+        alt="sloth"
+        :src="getImageUrl(`assets/icons/common/SlothUnavailable.png`)"
+      />
+    </div>
+    <div v-else>
+      <div
+        v-if="isLoading"
+        class="pools-wrap__loader"
+      >
+        <TableSkeleton />
+      </div>
+      <div
+        v-else
+        class="pools-container"
+      >
+        <PoolsTable
+          :pools="displayedPools"
+          :set-order-type-func="toggleOrderType"
+          :position-size-sort-func="togglePositionSizeSort"
+          :apy-order-type="orderType"
+          :position-size-order-type="positionSizeOrder"
+        >
+          <template
+            #filters
+          >
+            <PoolsFilter
+              :selected-network="selectedNetworks"
+              :is-show-deprecated="isShowDeprecated"
+              :search-query="searchQuery"
+              @change-tab="switchPoolsTab"
+              @change-network="setSelectedNetwork"
+              @search="updateSearch"
+            />
+          </template>
+        </PoolsTable>
+      </div>
     </div>
   </div>
 </template>
@@ -39,10 +76,12 @@
 import PoolsTable from '@/components/Pools/PositionsTable/Index.vue';
 import PoolsFilter from '@/components/Pools/PositionsFilter/Index.vue';
 import {
-  mapActions, mapGetters, mapState,
+  mapActions, mapGetters,
 } from 'vuex';
 import { POOL_TYPES } from '@/store/views/main/pools/index.ts';
 import TableSkeleton from '@/components/TableSkeleton/Index.vue';
+import { getImageUrl } from '@/utils/const.ts';
+import ButtonComponent from '@/components/Button/Index.vue';
 import { formatPositionData } from '../../../components/Pools/PositionsTable/helpers.ts';
 
 interface IEnumIterator {
@@ -86,6 +125,9 @@ enum APR_ORDER_TYPE {
 enum POSITION_SIZE_ORDER_TYPE {
   'VALUE', 'VALUE_UP', 'VALUE_DOWN',
 }
+enum SUPPORTED_REBALANCE_NETWORKS {
+  arbitrum, base,
+}
 
 export default {
   name: 'PositionsTable',
@@ -93,6 +135,7 @@ export default {
     PoolsTable,
     PoolsFilter,
     TableSkeleton,
+    ButtonComponent,
   },
   data: () => ({
     poolTabType: POOL_TYPES.ALL,
@@ -113,6 +156,7 @@ export default {
     positionSizeOrder: 0 as number,
     isLoading: true as boolean,
     positionData: [] as any,
+    supportedNetworks: SUPPORTED_REBALANCE_NETWORKS,
   }),
   computed: {
     ...mapGetters('network', ['getParams', 'isShowDeprecated']),
@@ -120,6 +164,7 @@ export default {
     ...mapGetters('poolsData', ['allPoolsMap']),
     ...mapGetters('odosData', ['allTokensMap', 'isAllDataLoaded']),
     ...mapGetters('network', ['networkName']),
+    ...mapGetters('walletAction', ['walletConnected']),
     filteredPools() {
       const sortByHotTagAndValue = sortByTagAndValue(
         'NEW',
@@ -242,6 +287,11 @@ export default {
       const positionData = await this.loadPositionContract(this.account);
       return formatPositionData(positionData, poolInfo, tokensList);
     },
+    connectWallet() {
+      this.$store.dispatch('walletAction/connectWallet');
+    },
+    getImageUrl,
   },
 };
 </script>
+<style lang="scss" scoped src="./styles.scss" />

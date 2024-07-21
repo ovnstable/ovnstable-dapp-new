@@ -1,0 +1,50 @@
+.unavailable-container {
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    background-color: var(--color-8);
+    padding: 50px;
+  [data-theme="dark"] & {
+    background-color: var(--color-7);
+    color: var(--color-6);
+  }
+    img {
+        transform: scale(70%);
+    }
+    .unavailable-row {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        font-size: 15px;
+        font-weight: 600;
+        text-align: center;
+        span {
+          display: inline-block;
+          margin-top: 10px;
+        }
+        [data-theme="dark"] & {
+          color: var(--color-18);
+        }
+        .connect-btn {
+            background: none;
+            border: none;
+            box-shadow: none;
+            font-size: 15px;
+            font-weight: 500;
+            padding: 0;
+            font-family: 'Red Hat Display';
+            color: var(--color-2);
+            padding-bottom: 1px;
+            text-decoration: underline;
+            cursor: pointer;
+            pointer-events: all;
+            [data-theme="dark"] & {
+              color: var(--color-18);
+              box-shadow: none;
+              background: none;
+            }
+          }
+    }
+}
