@@ -207,7 +207,7 @@ export const depositAllAtGauge = async (
   ) {
     console.log('7');
     const balance = await poolTokenContract.balanceOf(account);
-    return gaugeContract.stake(balance, params);
+    return gaugeContract.stake(Number(balance));
   }
 };
 
