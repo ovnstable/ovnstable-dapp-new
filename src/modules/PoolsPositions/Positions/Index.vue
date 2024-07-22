@@ -1,7 +1,7 @@
 <template>
   <div class="pools-wrap">
     <div
-      v-if="!walletConnected || !account || !supportedNetworks[networkName]"
+      v-if="!walletConnected || !account || !Object.values(supportedNetworks).includes(networkName)"
       class="unavailable-container"
     >
       <div>
@@ -213,8 +213,10 @@ export default {
         }
       }
     },
-    async networkName() {
+    async networkName(networkName) {
       this.isLoading = true;
+      console.log('networkName', networkName);
+      console.log('supported_neworks', SUPPORTED_REBALANCE_NETWORKS[networkName])
       await this.init();
     },
   },
