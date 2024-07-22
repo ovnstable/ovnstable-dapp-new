@@ -7,11 +7,11 @@
     <div
       v-else
       :class="
-        !firstRenderDone ? 'swap-container swap-container-full' : 'swap-container'
+        !isInit ? 'swap-container swap-container-full' : 'swap-container'
       "
     >
       <div
-        v-if="!firstRenderDone"
+        v-if="!isInit"
         class="swap-form__loader"
       >
         <Spinner />
@@ -496,25 +496,24 @@ export default {
     },
   },
   watch: {
-    async isAllDataLoaded(val) {
-      if (this.isAllDataTrigger) return;
-      if (val) {
-        this.isAllDataTrigger = true;
-        this.clearForm('0');
-      }
-    },
-    // Lates addition, rewrite
+    // async isAllDataLoaded(val) {
+    //   if (this.isAllDataTrigger) return;
+    //   if (val) {
+    //     this.isAllDataTrigger = true;
+    //     this.clearForm('0');
+    //   }
+    // },
+    // // Lates addition, rewrite
     async allTokensList(list: any) {
       if (this.isBalancesLoaded && !this.isInit && list.length > 0) {
-        this.clearAllTokens();
-        this.addDefaultOvnToken();
+        this.clearForm('0');
         this.isInit = true;
       }
     },
-    async account(val) {
-      if (!this.isAllDataTrigger) return;
-      if (val) this.clearForm('0');
-    },
+    // async account(val) {
+    //   if (!this.isAllDataTrigger) return;
+    //   if (val) this.clearForm('0');
+    // },
     async networkId(newVal) {
       if (newVal) {
         this.$store.commit('odosData/changeState', {
@@ -555,9 +554,9 @@ export default {
     sumOfAllSelectedTokensInUsd() {
       this.recalculateOutputTokensSum();
     },
-    firstRenderDone(val) {
-      if (val) this.clearForm('3');
-    },
+    // firstRenderDone(val) {
+    //   if (val) this.clearForm('3');
+    // },
     hideSwapButton(val) {
       if (val) {
         this.clearQuotaInfo();
@@ -579,9 +578,9 @@ export default {
       val: false,
     });
 
-    if (this.inputTokens.length === 0 && this.outputTokens.length === 0) {
-      this.clearForm('4');
-    }
+    // if (this.inputTokens.length === 0 && this.outputTokens.length === 0) {
+    //   this.clearForm('4');
+    // }
     await this.init();
 
     this.$store.commit('odosData/changeState', {
@@ -666,17 +665,17 @@ export default {
         listOfBuyTokensAddresses: this.listOfBuyTokensAddresses,
       });
 
-      this.clearForm('8');
-      const bus = useEventBus('odos-transaction-finished');
-      bus.on(() => {
-        this.finishTransaction();
-      });
+      // this.clearForm('8');
+      // const bus = useEventBus('odos-transaction-finished');
+      // bus.on(() => {
+      //   this.finishTransaction();
+      // });
 
-      const busTokens = useEventBus('odos-tokens-loaded');
-      busTokens.on(() => {
-        if (this.firstRenderDone) return;
-        this.finishTransaction();
-      });
+      // const busTokens = useEventBus('odos-tokens-loaded');
+      // busTokens.on(() => {
+      //   if (this.firstRenderDone) return;
+      //   this.finishTransaction();
+      // });
     },
     addDefaultOvnToken() {
       const symbol = this.$route.query.symbol ? this.$route.query.symbol : null;

@@ -134,8 +134,8 @@ const getters = {
     return true;
   },
 
-  isAllDataLoaded(state: typeof stateData) {
-    return !state.isChainsLoading && !state.isTokensLoading && !state.isBalancesLoading;
+  isAllDataLoaded(state: typeof stateData, getters: any, rootState: any) {
+    return !state.isChainsLoading && !state.isTokensLoading && !state.isBalancesLoading && rootState?.balances?.isBalancesLoaded;
   },
   isShowDecreaseAllowance(state: typeof stateData) {
     return (
