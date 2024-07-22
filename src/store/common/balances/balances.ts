@@ -5,6 +5,7 @@ import type { TTokenInfo, TTokenBalanceData } from '@/types/common/token';
 const BALANCE_FETCH_INTERVAL = 30000;
 
 const state = {
+  isBalancesLoaded: false,
   isBalancesLoading: false as boolean,
   tokenBalanceMap: {} as TTokenBalanceData,
   fetchIntervalId: null,
@@ -43,11 +44,11 @@ const actions = {
     const { account } = rootState.accountData;
 
     if (!account || !provider || !allTokenList || allTokenList?.length === 0) {
-      commit('setIsBalanceLoading', false);
+      commit('setIsBalancesLoading', false);
       return;
     }
 
-    commit('setIsBalanceLoading', true);
+    commit('setIsBalancesLoading', true);
 
     const tokenFetchList = allTokenList.map((token: TTokenInfo) => token.address);
     try {
@@ -55,12 +56,15 @@ const actions = {
         .getAllTokenBalance(provider, tokenFetchList, account);
 
       // Only updating if changed
-      if (!isEqual(state.tokenBalanceMap, balanceMap)) commit('setTokenBalances', balanceMap);
+      if (!isEqual(state.tokenBalanceMap, balanceMap)) {
+        commit('setTokenBalances', balanceMap);
+        commit('setIsBalancesLoaded', true);
+      }
     } catch (e) {
       console.error('Error loading balances to store', e);
-      commit('setIsBalanceLoading', false);
+      commit('setIsBalancesLoading', false);
     }
-    commit('setIsBalanceLoading', false);
+    commit('setIsBalancesLoading', false);
   },
 };
 
@@ -71,8 +75,11 @@ const mutations = {
   setFetchIntervalId(state: any, id: string) {
     state.fetchIntervalId = id;
   },
-  setIsBalanceLoading(state: any, val: boolean) {
+  setIsBalancesLoading(state: any, val: boolean) {
     state.isBalancesLoading = val;
+  },
+  setIsBalancesLoaded(state: any, val: boolean) {
+    state.isBalancesLoaded = val;
   },
 };
 

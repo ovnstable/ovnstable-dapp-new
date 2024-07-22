@@ -382,7 +382,7 @@ const actions = {
       const bus = useEventBus('odos-tokens-loaded');
       bus.emit(true);
 
-      await commit('changeBalances', tokenBalanceInfo);
+      commit('changeBalances', tokenBalanceInfo);
 
       commit('changeState', { field: 'isBalancesLoading', val: false });
       commit('changeState', { field: 'firstRenderDone', val: true });

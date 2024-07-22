@@ -300,6 +300,8 @@ export default {
 
       firstSwipeClickOnApprove: false,
       isAllDataTrigger: false,
+
+      isInit: false,
     };
   },
   computed: {
@@ -314,6 +316,7 @@ export default {
       'isBalancesLoading',
       'firstRenderDone',
     ]),
+    ...mapState('balances', ['isBalancesLoaded']),
     ...mapGetters('odosData', [
       'allTokensList',
       'isAvailableOnNetwork',
@@ -500,6 +503,14 @@ export default {
         this.clearForm('0');
       }
     },
+    // Lates addition, rewrite
+    async allTokensList(list: any) {
+      if (this.isBalancesLoaded && !this.isInit && list.length > 0) {
+        this.clearAllTokens();
+        this.addDefaultOvnToken();
+        this.isInit = true;
+      }
+    },
     async account(val) {
       if (!this.isAllDataTrigger) return;
       if (val) this.clearForm('0');
@@ -571,7 +582,6 @@ export default {
     if (this.inputTokens.length === 0 && this.outputTokens.length === 0) {
       this.clearForm('4');
     }
-
     await this.init();
 
     this.$store.commit('odosData/changeState', {
