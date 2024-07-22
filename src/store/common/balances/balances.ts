@@ -1,4 +1,5 @@
 import BalanceService from '@/services/BalanceService/BalanceService.ts';
+import { isEqual } from 'lodash';
 import type { TTokenInfo, TTokenBalanceData } from '@/types/common/token';
 
 const BALANCE_FETCH_INTERVAL = 30000;
@@ -52,7 +53,9 @@ const actions = {
     try {
       const balanceMap: TTokenBalanceData = await BalanceService
         .getAllTokenBalance(provider, tokenFetchList, account);
-      commit('setTokenBalances', balanceMap);
+
+      // Only updating if changed
+      if (!isEqual(state.tokenBalanceMap, balanceMap)) commit('setTokenBalances', balanceMap);
     } catch (e) {
       console.error('Error loading balances to store', e);
       commit('setIsBalanceLoading', false);
