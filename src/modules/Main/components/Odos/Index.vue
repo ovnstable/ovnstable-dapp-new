@@ -504,8 +504,9 @@ export default {
       }
     },
     async account(val) {
-      if (!this.isAllDataTrigger) return;
-      if (val) this.clearForm('0');
+      if (val) {
+        this.isAllDataTrigger = false;
+      }
     },
     async networkId(newVal) {
       if (newVal) {
