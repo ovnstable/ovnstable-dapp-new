@@ -300,6 +300,8 @@ export default {
 
       firstSwipeClickOnApprove: false,
       isAllDataTrigger: false,
+
+      isInit: false,
     };
   },
   computed: {
@@ -314,6 +316,7 @@ export default {
       'isBalancesLoading',
       'firstRenderDone',
     ]),
+    ...mapState('balances', ['isBalancesLoaded']),
     ...mapGetters('odosData', [
       'allTokensList',
       'isAvailableOnNetwork',
@@ -571,7 +574,6 @@ export default {
     if (this.inputTokens.length === 0 && this.outputTokens.length === 0) {
       this.clearForm('4');
     }
-
     await this.init();
 
     this.$store.commit('odosData/changeState', {

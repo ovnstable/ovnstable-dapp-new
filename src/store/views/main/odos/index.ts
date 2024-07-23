@@ -23,6 +23,8 @@ import {
   BLAST_TOKENS, LINEA_TOKENS, OP_TOKENS, SFRAX_TOKEN, ZKSYNC_TOKENS
 } from '@/store/views/main/odos/mocks.ts';
 import _ from 'lodash';
+import BalanceService from '@/services/BalanceService/BalanceService.ts';
+import type { TTokenInfo } from '@/types/common/token';
 // import { succesDataMock, returnedDataMock, allTokens } from './zap_mock_data.ts';
 
 // const KEY = 'REFERRAL_CODE';
@@ -133,7 +135,7 @@ const getters = {
     return true;
   },
 
-  isAllDataLoaded(state: typeof stateData) {
+  isAllDataLoaded(state: typeof stateData, getters: any, rootState: any) {
     return !state.isChainsLoading && !state.isTokensLoading && !state.isBalancesLoading;
   },
   isShowDecreaseAllowance(state: typeof stateData) {
@@ -356,6 +358,7 @@ const actions = {
 
     commit('changeState', { field: 'tokensContractMap', val: tokensList });
   },
+
   initUpdateBalancesInterval({
     commit, state, dispatch
   }: any) {
@@ -367,74 +370,37 @@ const actions = {
     });
   },
 
+  // Logic is removed, method left for compatibility. Todo: remove
   async loadBalances({
     commit, dispatch, state, getters, rootState
   }: any, providerInstance: any) {
-    const provider = providerInstance || rootState.web3.evmProvider;
+    console.log('attemptingLoadingBalances');
 
-    if (!rootState.accountData.account || !provider) {
+    const provider = providerInstance || rootState.web3.evmProvider;
+    const allTokensList = [...getters.allTokensList];
+
+    if (allTokensList.length === 0 || !rootState.accountData.account || !provider) {
       commit('changeState', { field: 'isBalancesLoading', val: false });
       return;
     }
-
-    if (state.isBalancesLoading) return;
-    if (getters.allTokensList.length === 0) return;
-
     commit('changeState', { field: 'isBalancesLoading', val: true });
 
     try {
-      const multicaller = MulticallWrapper.wrap(provider);
-      const requests = getters.allTokensList
-        .map((_: any) => new ethers.Contract(
-          _.address,
-          ERC20_ABI,
-          multicaller,
-        ).balanceOf(rootState.accountData.account).catch(() => '0'));
+      const newBalances: TTokenInfo[] = await BalanceService
+        .getAllTokenBalance(provider, allTokensList, rootState.accountData.account);
 
-      if (!MulticallWrapper.isMulticallProvider(provider)) return;
+      console.log(newBalances);
 
-      const balancesData = await Promise.all(requests);
-
-      const handleNativeBal = async () => (await rootState.web3.evmProvider
-        .getBalance(rootState.accountData.account))
-        .toString();
-
-      const newBalances = await Promise.all(
-        getters.allTokensList.map(async (token: any, key: number) => {
-          let balance = balancesData[key] ? balancesData[key].toString() : '0';
-
-          if (token.address === ZERO_ADDRESS) balance = await handleNativeBal();
-
-          const balanceFormatted = new BigNumber(balance).div(10 ** token.decimals);
-          const fixedBy = balanceFormatted.gt(0) ? fixedByPrice(balanceFormatted.toNumber()) : 2;
-          const tokenPrice = token.price ?? '0';
-
-          return {
-            ...token,
-            balanceData: {
-              name: token.symbol,
-              balance: balanceFormatted.toFixed(fixedBy),
-              balanceInUsd: new BigNumber(balanceFormatted).times(tokenPrice).toFixed(),
-              originalBalance: balance,
-              decimal: token.decimals,
-            }
-          };
-        })
-      );
-
-      // console.log(newBalances, 'newBalances');
-      const bus = useEventBus('odos-tokens-loaded');
-      bus.emit(true);
-
-      await commit('changeBalances', newBalances);
-
-      commit('changeState', { field: 'isBalancesLoading', val: false });
-      commit('changeState', { field: 'firstRenderDone', val: true });
+      if (!_.isEqual(state.tokens, newBalances)) {
+        await commit('changeBalances', newBalances);
+        const bus = useEventBus('odos-tokens-loaded');
+        bus.emit(true);
+      }
     } catch (e) {
       console.error('Error when load balance', e);
-      commit('changeState', { field: 'isBalancesLoading', val: false });
-      commit('changeState', { field: 'firstRenderDone', val: true });
     }
+    commit('changeState', { field: 'isBalancesLoading', val: false });
+    commit('changeState', { field: 'firstRenderDone', val: true });
   },
 
   async initContractData({
@@ -664,14 +630,12 @@ const mutations = {
       state.tokens[index].price = tok.price;
     });
   },
-  changeBalances(state: any, tokensBalances: any[]) {
-    const balancesArr = state.tokens.map((_: any) => _.id);
-    tokensBalances.forEach((tok: any) => {
-      const index = balancesArr.indexOf(tok.id);
-      if (index === -1 || !state.tokens[index]) return;
-
-      state.tokens[index].balanceData = tok.balanceData;
-    });
+  changeBalances(state: any, tokenBalanceInfo: TTokenInfo[]) {
+    console.log('_settingBalances');
+    state.tokens = tokenBalanceInfo;
+  },
+  setFetchIntervalId(state: any, id: string) {
+    state.fetchIntervalId = id;
   },
 };
 
