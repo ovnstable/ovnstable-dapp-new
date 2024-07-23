@@ -33,7 +33,6 @@
     "lodash": "^4.17.21",
     "rollup-plugin-polyfill-node": "^0.13.0",
     "swiper": "^6.8.4",
-    "swrv": "^1.0.4",
     "vite": "^5.0.10",
     "vite-plugin-compression": "^0.5.1",
     "vite-plugin-dynamic-import": "^1.5.0",

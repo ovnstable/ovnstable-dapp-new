@@ -7248,11 +7248,6 @@ swiper@^6.8.4:
     dom7 "^3.0.0"
     ssr-window "^3.0.0"
 
-swrv@^1.0.4:
-  version "1.0.4"
-  resolved "https://registry.npmjs.org/swrv/-/swrv-1.0.4.tgz"
-  integrity sha512-zjEkcP8Ywmj+xOJW3lIT65ciY/4AL4e/Or7Gj0MzU3zBJNMdJiT8geVZhINavnlHRMMCcJLHhraLTAiDOTmQ9g==
-
 terser@^5.4.0:
   version "5.26.0"
   resolved "https://registry.npmjs.org/terser/-/terser-5.26.0.tgz"
@@ -7712,7 +7707,7 @@ vue-yandex-metrika@^1.8.3:
   resolved "https://registry.npmjs.org/vue-yandex-metrika/-/vue-yandex-metrika-1.8.3.tgz"
   integrity sha512-WD/2CPM5NWXg7JdmgfiOq8J5QbidrCDoDAaE0JfE32wceY56ewzERVGnOGS/Tfx+HvarGc+oJsBbZxl/e2BWTA==
 
-vue@^3.0.0, "vue@^3.0.0-0 || ^2.6.0", "vue@^3.0.0-0 || ^2.7.0", vue@^3.0.2, vue@^3.2.0, vue@^3.2.20, vue@^3.2.25, vue@^3.2.41, vue@^3.3.11, "vue@> 3.0.0", vue@>=3.2.13, "vue@>=3.2.26 < 4", vue@3.3.13:
+vue@^3.0.0, "vue@^3.0.0-0 || ^2.6.0", "vue@^3.0.0-0 || ^2.7.0", vue@^3.0.2, vue@^3.2.0, vue@^3.2.20, vue@^3.2.25, vue@^3.2.41, vue@^3.3.11, "vue@> 3.0.0", vue@>=3.2.13, vue@3.3.13:
   version "3.3.13"
   resolved "https://registry.npmjs.org/vue/-/vue-3.3.13.tgz"
   integrity sha512-LDnUpQvDgsfc0u/YgtAgTMXJlJQqjkxW1PVcOnJA5cshPleULDjHi7U45pl2VJYazSSvLH8UKcid/kzH8I0a0Q==
