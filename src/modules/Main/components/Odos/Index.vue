@@ -7,11 +7,11 @@
     <div
       v-else
       :class="
-        !firstRenderDone ? 'swap-container swap-container-full' : 'swap-container'
+        !isAllDataTrigger ? 'swap-container swap-container-full' : 'swap-container'
       "
     >
       <div
-        v-if="!firstRenderDone"
+        v-if="!isAllDataTrigger"
         class="swap-form__loader"
       >
         <Spinner />
@@ -509,6 +509,7 @@ export default {
     },
     async networkId(newVal) {
       if (newVal) {
+        this.isAllDataTrigger = false;
         this.$store.commit('odosData/changeState', {
           field: 'isFirstBalanceLoaded',
           val: false,
@@ -546,9 +547,6 @@ export default {
     },
     sumOfAllSelectedTokensInUsd() {
       this.recalculateOutputTokensSum();
-    },
-    firstRenderDone(val) {
-      if (val) this.clearForm('3');
     },
     hideSwapButton(val) {
       if (val) {
@@ -664,11 +662,11 @@ export default {
         this.finishTransaction();
       });
 
-      const busTokens = useEventBus('odos-tokens-loaded');
-      busTokens.on(() => {
-        if (this.firstRenderDone) return;
-        this.finishTransaction();
-      });
+      // const busTokens = useEventBus('odos-tokens-loaded');
+      // busTokens.on(() => {
+      //   if (this.firstRenderDone) return;
+      //   this.finishTransaction();
+      // });
     },
     addDefaultOvnToken() {
       const symbol = this.$route.query.symbol ? this.$route.query.symbol : null;
@@ -811,7 +809,7 @@ export default {
     },
 
     clearForm(val: string) {
-      console.log(val, 'CLEAFORM');
+      // console.log(val, 'CLEAFORM');
       this.clearAllSelectedTokens();
 
       if (this.swapMethod === 'BUY') {

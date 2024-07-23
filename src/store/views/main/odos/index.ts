@@ -136,7 +136,7 @@ const getters = {
   },
 
   isAllDataLoaded(state: typeof stateData, getters: any, rootState: any) {
-    return !state.isChainsLoading && !state.isTokensLoading && !state.isBalancesLoading;
+    return !state.isChainsLoading && !state.isTokensLoading && !state.isBalancesLoading && state.isFirstBalanceLoaded;
   },
   isShowDecreaseAllowance(state: typeof stateData) {
     return (
@@ -254,8 +254,6 @@ const actions = {
         },
       }
     });
-
-    console.log('TOKENSLOADED');
     commit('changeState', { field: 'isTokensLoading', val: false });
   },
 
@@ -301,7 +299,7 @@ const actions = {
     );
 
     const tokensWithPrices = await loadPriceTrigger(tokensList, networkId);
-    console.log(tokensWithPrices, '---tokensWithPrices');
+
     commit('changeState', {
       field: 'tokens',
       val: tokensWithPrices
@@ -365,16 +363,23 @@ const actions = {
     commit('changeState', {
       field: 'updateBalancesIntervalId',
       val: setInterval(() => {
-        dispatch('loadBalances');
-      }, 30000)
+        dispatch('loadBalancesMethod');
+      }, 3000)
     });
   },
 
-  // Logic is removed, method left for compatibility. Todo: remove
+  // Wrapper for external calls
   async loadBalances({
     commit, dispatch, state, getters, rootState
   }: any, providerInstance: any) {
-    console.log('attemptingLoadingBalances');
+    commit('changeState', { field: 'isBalancesLoading', val: true });
+    dispatch('loadBalancesMethod');
+  },
+
+  // Internal method executed recurrently
+  async loadBalancesMethod({
+    commit, dispatch, state, getters, rootState
+  }: any, providerInstance: any) {
 
     const provider = providerInstance || rootState.web3.evmProvider;
     const allTokensList = [...getters.allTokensList];
@@ -383,18 +388,14 @@ const actions = {
       commit('changeState', { field: 'isBalancesLoading', val: false });
       return;
     }
-    commit('changeState', { field: 'isBalancesLoading', val: true });
 
     try {
       const newBalances: TTokenInfo[] = await BalanceService
         .getAllTokenBalance(provider, allTokensList, rootState.accountData.account);
 
-      console.log(newBalances);
-
       if (!_.isEqual(state.tokens, newBalances)) {
         await commit('changeBalances', newBalances);
-        const bus = useEventBus('odos-tokens-loaded');
-        bus.emit(true);
+        commit('changeState', { field: 'isFirstBalanceLoaded', val: true });
       }
     } catch (e) {
       console.error('Error when load balance', e);
@@ -530,9 +531,6 @@ const actions = {
 
     dispatch('waitingModal/showWaitingModal', 'Swapping in process', { root: true });
 
-    // console.log(rootState.web3, '---rootState.web3');
-    // console.log(transactionData, '---transactionData');
-
     const dataTx = await rootState.web3.evmSigner
       .sendTransaction(transactionData)
       .catch((e: any) => {
@@ -631,7 +629,6 @@ const mutations = {
     });
   },
   changeBalances(state: any, tokenBalanceInfo: TTokenInfo[]) {
-    console.log('_settingBalances');
     state.tokens = tokenBalanceInfo;
   },
   setFetchIntervalId(state: any, id: string) {
