@@ -49,6 +49,7 @@ async function initPosthog() {
   }
 }
 
-initNetwork().then(initPosthog).then(() => app.mount('#app'));
-
-app.mount('#app');
+initNetwork().then(() => {
+  initPosthog();
+  app.mount('#app');
+});
