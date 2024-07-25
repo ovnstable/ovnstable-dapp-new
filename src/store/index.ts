@@ -17,6 +17,7 @@ import supplyData from '@/store/common/supply.ts';
 import referral from '@/store/common/referral.ts';
 import etsAction from '@/store/web3/legacy/ets-action.ts';
 import balances from '@/store/common/balances/balances.ts';
+import posthog from '@/store/common/posthog/posthog.ts';
 
 // views
 import accountData from '@/store/views/account/data.ts';
@@ -84,6 +85,7 @@ const store = new Vuex.Store({
     porfolioBalanceData,
     jackpotData,
     balances,
+    posthog,
   },
 
   plugins: [

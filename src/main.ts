@@ -9,6 +9,7 @@ import router from '@/router/index.ts';
 import store from '@/store/index.ts';
 import App from '@/App.vue';
 import VueApexCharts from 'vue3-apexcharts';
+import PosthogService from './services/PosthogService/PosthogService.ts';
 
 const app = createApp(App);
 
@@ -40,6 +41,15 @@ async function initNetwork() {
   }
 }
 
-initNetwork().then(() => {
-  app.mount('#app');
-});
+async function initPosthog() {
+  try {
+    store.dispatch('posthog/initPosthog', PosthogService.getInstance(), { root: true });
+  } catch (e) {
+    console.log('Error init posthog:', e);
+  }
+}
+
+await initNetwork();
+await initPosthog();
+
+app.mount('#app');

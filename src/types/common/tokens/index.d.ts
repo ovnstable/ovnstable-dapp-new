@@ -8,6 +8,11 @@ export type TBalanceInfo = {
     decimal: number,
   }
 
+  type TApproveData = {
+    allowanceValue: number,
+    approved: false,
+  }
+
 export type TTokenInfo = {
     id: string,
     address: string,
@@ -16,10 +21,21 @@ export type TTokenInfo = {
     name: string,
     symbol: string,
     logoUrl: string,
-    selected: false,
+    selected: boolean,
     price: string,
     balanceData?: TBalanceInfo,
+    approveData?: TApproveData,
   }
+
+  interface ISuccessTokenInfo extends TTokenInfo {
+    value: string,
+  }
+
+  type ISuccessTokenData = {
+    [key: string]: any;
+} & {
+    value: string;
+};
 
 export type TTokenBalanceMap = {
     [key: string]: TBalanceInfo,

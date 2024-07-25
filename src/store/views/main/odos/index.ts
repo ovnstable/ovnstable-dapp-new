@@ -596,11 +596,11 @@ const actions = {
     dispatch('successModal/showSuccessModal', {
       successTxHash: dataTx.hash,
       from: inputTokens.map((_) => ({
-        symbol: _.selectedToken.symbol,
+        ..._.selectedToken,
         value: new BigNumber(_.value).toFixed(5)
       })),
       to: outputTokens.map((_) => ({
-        symbol: _.selectedToken.symbol,
+        ..._.selectedToken,
         value: new BigNumber(_.sum).toFixed(5)
       })),
     }, { root: true });

@@ -15,6 +15,7 @@
     </ModalComponent>
 
     <SuccessZapModal
+      v-if="showSuccessZapin"
       :is-show="showSuccessZapin"
       :success-data="successData"
       :set-show-func="triggerSuccessZapin"

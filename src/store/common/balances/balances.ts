@@ -1,5 +1,5 @@
 import BalanceService from '@/services/BalanceService/BalanceService.ts';
-import type { TTokenInfo, TTokenBalanceData } from '@/types/common/token';
+import type { TTokenInfo, TTokenBalanceData } from '@/types/common/tokens';
 
 const BALANCE_FETCH_INTERVAL = 30000;
 
