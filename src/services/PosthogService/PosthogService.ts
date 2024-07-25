@@ -28,7 +28,7 @@ class PosthogService {
   }
 
   private dispatchToPosthog = debounce((eventName: string, props: Properties) => this.posthog
-    .capture(eventName, props), EVENT_DISPATCH_OFFSET);
+    .capture(eventName, props), EVENT_DISPATCH_OFFSET, { leading: false, trailing: true });
 
   captureEvent(eventName: string, props: Properties) {
     console.log('__PosthogEventCapture', eventName, props);

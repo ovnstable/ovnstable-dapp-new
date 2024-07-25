@@ -2,7 +2,7 @@
 import { getErrorObject } from '@/utils/errors.ts';
 import apiService from './api-service.ts';
 
-const API_URL = 'https://api.overnight.fi/root/odos';
+const API_URL = 'https://api.odos.xyz';
 
 class OdosApiService {
   loadChains() {
