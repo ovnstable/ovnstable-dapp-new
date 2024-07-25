@@ -36,7 +36,7 @@ export type TZapinSuccessTriggerProps = {
 }
 
 export interface IPosthogService {
-    // captureEvent(eventName: string, props: any): void,
+    captureEvent(eventName: string, props: any): void,
     swapSuccessTrigger(props: TSwapSuccessTriggerProps): void
     zapinSuccessTrigger(props: TZapinSuccessTriggerProps): void
     rebalanceSuccessTrigger(props: TZapinSuccessTriggerProps): void
