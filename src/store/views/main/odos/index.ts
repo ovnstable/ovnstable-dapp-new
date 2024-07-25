@@ -24,7 +24,7 @@ import {
 } from '@/store/views/main/odos/mocks.ts';
 import _ from 'lodash';
 import BalanceService from '@/services/BalanceService/BalanceService.ts';
-import type { TTokenInfo } from '@/types/common/token';
+import type { TTokenInfo } from '@/types/common/tokens';
 // import { succesDataMock, returnedDataMock, allTokens } from './zap_mock_data.ts';
 
 // const KEY = 'REFERRAL_CODE';
