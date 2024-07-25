@@ -5,7 +5,7 @@ import { buildEvmContract } from '@/utils/contractsMap.ts';
 import { JSONLoader } from '@/utils/httpUtils.ts';
 
 import { zapInStep } from '@/store/modals/waiting-modal.ts';
-import type { ContractAbi } from '@/types/common/abi';
+import type { ContractAbi } from '@/types/abi';
 
 enum poolVersionList {
   v2,
