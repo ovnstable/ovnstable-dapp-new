@@ -1,5 +1,5 @@
 import Axios from 'axios';
-import type { ContractAbi } from '@/types/common/abi';
+import type { ContractAbi } from '@/types/abi';
 
 // Outdated function. File structure and references left for compatibility
 // Todo: remove

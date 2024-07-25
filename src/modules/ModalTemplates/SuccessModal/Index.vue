@@ -1,8 +1,8 @@
 <template>
   <ModalComponent
-    :modelValue="showModal"
+    :model-value="showModal"
     type-modal="custom"
-    overlayModals
+    overlay-modals
     @close="close"
   >
     <div class="modal-content">
@@ -52,45 +52,6 @@
           Close
         </ButtonComponent>
       </div>
-      <!-- <div class="mt-8 mb-5">
-          <div :cols="$wu.isMobile() ? 12 : 6">
-            <div
-              :justify="$wu.isMobile() ? 'center' : 'start'"
-              align="center"
-              :class="$wu.isMobile() ? '' : 'ml-8'"
-            >
-              <div
-                class="success-link"
-                @click="addTokenAction"
-                @keypress="addTokenAction"
-              >Add {{ actionSuccessToken }} to your
-                wallet
-              </div>
-              <div class="action-icons ml-1">
-                <div :src="require('@/assets/icon/wallet_plus.svg')" />
-              </div>
-            </div>
-          </div>
-          <div :cols="$wu.isMobile() ? 12 : 6">
-            <div
-              :justify="$wu.isMobile() ? 'center' : 'end'"
-              align="center"
-              :class="$wu.isMobile() ? '' : 'mr-8'"
-            >
-              <div
-                class="success-link"
-                @click="openOnExplorer(successTxHash)"
-                @keypress="openOnExplorer(successTxHash)"
-              >View transaction</div>
-              <div class="action-icons ml-1">
-                <div :src="require('@/assets/icon/open_in_new_blue.svg')" />
-              </div>
-            </div>
-          </div>
-        </div> -->
-      <!-- <div v-if="false">
-        <BestAprPromotion :pool="topPool" />
-      </div> -->
     </div>
   </ModalComponent>
 </template>
@@ -98,7 +59,6 @@
 <script lang="ts">
 import { mapActions, mapGetters } from 'vuex';
 import RefundInfo from '@/modules/ModalTemplates/components/RefundInfo.vue';
-// import BestAprPromotion from '@/modules/ModalTemplates/components/BestAprPromotion.vue';
 import ModalComponent from '@/components/Modal/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
@@ -106,7 +66,6 @@ import ButtonComponent from '@/components/Button/Index.vue';
 export default {
   name: 'SuccessModal',
   components: {
-    // BestAprPromotion,
     RefundInfo,
     ModalComponent,
     BaseIcon,
@@ -120,101 +79,14 @@ export default {
     },
   },
   computed: {
-    ...mapGetters('network', ['explorerUrl']),
-    ...mapGetters('theme', ['light']),
-    ...mapGetters('successModal', ['successTxHash', 'swapData', 'successAction', 'etsData', 'zksyncFeeHistory']),
-
-    actionSuccessToken() {
-      switch (this.successAction) {
-        case 'mintUsdPlus':
-          return 'USD+';
-        case 'redeemUsdPlus':
-          return 'USD+';
-        case 'mintDaiPlus':
-          return 'DAI+';
-        case 'redeemDaiPlus':
-          return 'DAI+';
-        case 'mintUsdtPlus':
-          return 'USDT+';
-        case 'redeemUsdtPlus':
-          return 'USDT+';
-        case 'wrapUsdPlus':
-          return 'wUSD+';
-        case 'unwrapUsdPlus':
-          return 'wUSD+';
-        case 'wrapEthPlus':
-          return 'wETH+';
-        case 'unwrapEthPlus':
-          return 'wETH+';
-        case 'mintEts':
-          return `ETS ${this.etsData ? this.etsData.nameToken : ''}`;
-        case 'redeemEts':
-          return `ETS ${this.etsData ? this.etsData.nameToken : ''}`;
-        case 'swapOdosUsdPlus':
-          return 'USD+';
-        default:
-          return '';
-      }
-    },
+    ...mapGetters('successModal', ['swapData', 'zksyncFeeHistory']),
   },
 
   methods: {
     ...mapActions('successModal', ['closeSuccessModal']),
-    ...mapActions('swapModal', ['showSwapModal', 'showMintView']),
-    ...mapActions('tokenAction', ['addUsdPlusToken', 'addDaiPlusToken', 'addUsdtPlusToken', 'addwUsdPlusToken', 'addEthPlusToken', 'addwEthPlusToken', 'addEtsToken', 'addInsuranceToken']),
-
-    addTokenAction() {
-      console.log(this.successAction);
-      switch (this.successAction) {
-        case 'mintUsdPlus':
-        case 'redeemUsdPlus':
-          this.addUsdPlusToken();
-          break;
-        case 'mintDaiPlus':
-        case 'redeemDaiPlus':
-          this.addDaiPlusToken();
-          break;
-        case 'swapOdosUsdPlus':
-          this.addUsdPlusToken();
-          break;
-        case 'mintUsdtPlus':
-        case 'redeemUsdtPlus':
-          this.addUsdtPlusToken();
-          break;
-        case 'mintEthPlus':
-        case 'redeemEthPlus':
-          this.addEthPlusToken();
-          break;
-        case 'wrapUsdPlus':
-        case 'unwrapUsdPlus':
-          this.addwUsdPlusToken();
-          break;
-        case 'wrapEthPlus':
-        case 'unwrapEthPlus':
-          this.addwEthPlusToken();
-          break;
-        case 'mintEts':
-        case 'redeemEts':
-          this.addEtsToken(this.etsData);
-          break;
-        case 'mintInsurance':
-        case 'withdrawInsurance':
-          this.addInsuranceToken();
-          break;
-        default:
-          break;
-      }
-    },
 
     close() {
       this.closeSuccessModal();
-
-      this.$emit('input', false);
-      this.$emit('m-close');
-    },
-
-    dismiss() {
-      this.close();
     },
 
     goToTransactionHistory() {

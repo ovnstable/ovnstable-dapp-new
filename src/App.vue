@@ -2,25 +2,7 @@
   <div class="app-wrapper">
     <HeaderBar />
     <div
-      v-if="isShowHackWarning"
-      class="container container--main"
-    >
-      <div class="app-wrapper__notify">
-        <p>
-          All operations with USD+ on zkSync
-          are currently unavailable.
-          This issue will be fixed soon. We are sorry for the inconvenience.
-        </p>
-        <ButtonComponent
-          btn-styles="transparent"
-          @on-click="handleOutsideLink('https://x.com/overnight_fi/status/1797552748789195237')"
-        >
-          LEARN MORE
-        </ButtonComponent>
-      </div>
-    </div>
-    <div
-      v-else-if="!isShowHackWarning && isShowDeprecated"
+      v-if="isShowDeprecated"
       class="container"
     >
       <div class="app-wrapper__notify">
@@ -46,7 +28,10 @@
 
     <WaitingModal :show-modal="showWaitModal" />
     <ErrorModal :show-modal="showErrorModal" />
-    <SuccessModal :show-modal="showSuccessModal" />
+    <SuccessModal
+      v-if="showSuccessModal"
+      :show-modal="showSuccessModal"
+    />
     <DeprecatedModal
       :show-modal="showDeprecatedModal"
       @close="showDeprecatedModal = false"
@@ -87,14 +72,10 @@ export default {
     };
   },
   computed: {
-    ...mapGetters('network', ['networkId', 'isShowDeprecated']),
+    ...mapGetters('network', ['isShowDeprecated']),
     ...mapGetters('waitingModal', { showWaitModal: 'show' }),
     ...mapGetters('errorModal', { showErrorModal: 'show' }),
     ...mapGetters('successModal', { showSuccessModal: 'show' }),
-    isShowHackWarning() {
-      return false;
-      // return [324].includes(this.networkId);
-    },
   },
   async mounted() {
     await this.$store.dispatch('theme/initTheme');
@@ -107,9 +88,6 @@ export default {
     deviceType,
     toggleDeprectedModal() {
       this.showDeprecatedModal = true;
-    },
-    handleOutsideLink(url: string) {
-      window.open(url, '_blank');
     },
   },
 };

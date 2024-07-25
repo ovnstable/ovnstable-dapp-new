@@ -145,11 +145,20 @@ import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import PoolLabel from '@/modules/Main/components/ZapModal/PoolLabel.vue';
 import { mapGetters } from 'vuex';
-import { formatMoney } from '@/utils/numbers.ts';
 import { defineComponent, type PropType } from 'vue';
+import { getTransactionTotal } from '@/utils/tokens.ts';
+import { checkIsEveryStable } from '@/store/views/main/pools/helpers.ts';
 import {
   mapEventTokenData, mapInputTokenData, getPlatformLink, type TFormatTokenInfo, type TTokenDataList,
+  type TSuccessTokenInfo,
 } from './helpers.ts';
+import type { TPoolInfo } from '@/types/common/pools';
+
+type TSuccessData = {
+    inputTokens: TSuccessTokenInfo[],
+    outputTokens: TSuccessTokenInfo[],
+    pool: TPoolInfo,
+  }
 
 export default defineComponent({
   name: 'SuccessZapModal',
@@ -169,7 +178,7 @@ export default defineComponent({
       required: true,
     },
     successData: {
-      type: Object,
+      type: Object as PropType<TSuccessData>,
       required: true,
     },
     returnedToUser: {
@@ -192,10 +201,6 @@ export default defineComponent({
       type: String,
       required: true,
     },
-    inputTokens: {
-      type: Object as PropType<TTokenDataList>,
-      required: true,
-    },
   },
   data() {
     return {
@@ -204,6 +209,17 @@ export default defineComponent({
       tokensStakedList: [] as TFormatTokenInfo[],
       showModal: false,
     };
+  },
+  computed: {
+    ...mapGetters('odosData', ['allTokensMap']),
+    ...mapGetters('accountData', ['account']),
+    ...mapGetters('posthog', ['posthogService']),
+    openPositionOnPool(): string {
+      // eslint-disable-next-line prefer-destructuring
+      const pool = this.successData.pool;
+      if (pool.address || pool.platform[0]) return getPlatformLink(pool.platform[0], pool.address);
+      return '';
+    },
   },
   watch: {
     isShow(currVal: boolean) {
@@ -221,23 +237,23 @@ export default defineComponent({
     this.initReturnedList();
     this.initStakedList();
     this.initSentList();
-  },
-  computed: {
-    ...mapGetters('network', ['getParams']),
-    ...mapGetters('odosData', ['allTokensMap']),
-    openPositionOnPool(): string {
-      // eslint-disable-next-line prefer-destructuring
-      const pool = this.successData.pool;
-      if (pool.address || pool.platform[0]) return getPlatformLink(pool.platform[0], pool.address);
-      return '';
-    },
-    openOnExplorer() {
-      const { explorerUrl } = this.getParams(this.successData.chain);
-      return `${explorerUrl}tx/${this.successData.hash}`;
-    },
+
+    // TODO: move Posthog logic up to store
+    const posthogEventData = {
+      txUrl: this.openPositionOnPool,
+      poolName: this.successData.pool.name,
+      poolVersion: this.successData.pool.poolVersion,
+      totalAmount: getTransactionTotal(this.tokensSentList),
+      poolType: checkIsEveryStable(this.successData.pool) ? 'Stable' : 'Volatile',
+      walletAddress: this.account,
+      chainName: this.successData.pool.chainName,
+      poolPlatform: this.successData.pool.platform.toString(),
+    };
+
+    if (this.claimedRewards) this.posthogService.rebalanceSuccessTrigger(posthogEventData);
+    this.posthogService.zapinSuccessTrigger(posthogEventData);
   },
   methods: {
-    formatMoney,
     closeModal() {
       this.setShowFunc({ isShow: false });
     },

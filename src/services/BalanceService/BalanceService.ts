@@ -1,12 +1,12 @@
-import type {
-  TTokenBalanceData, TTokenBalanceMap, TTokenInfo,
-} from '@/types/common/token.ts';
 import BigNumber from 'bignumber.js';
 import { fixedByPrice } from '@/utils/numbers.ts';
 import { ethers } from 'ethers';
 import { MulticallWrapper } from 'ethers-multicall-provider';
 import { ZERO_ADDRESS } from '@/utils/const.ts';
 import { ERC20_ABI } from '@/assets/abi/index.ts';
+import type {
+  TTokenBalanceData, TTokenBalanceMap, TTokenInfo,
+} from '@/types/common/tokens';
 
 // Todo rewrite abstractly for any contract method and move to blockchain service
 const fetchTokenBalancesMulticall = async (
