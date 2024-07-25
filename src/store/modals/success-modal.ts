@@ -1,4 +1,3 @@
-import type { mintWrapStatus } from '@/modules/Main/components/MintRedeem/types/index.ts';
 import { getAllTokensString, getTransactionTotal } from '@/utils/tokens.ts';
 import type { ISuccessTokenInfo } from '@/types/common/tokens';
 
@@ -45,7 +44,7 @@ type TSwapSuccessData = {
     successTxHash: string,
     from: ISuccessTokenInfo[],
     to: ISuccessTokenInfo[],
-    type: mintWrapStatus | 'SWAP',
+    type: 'MINT' | 'REDEEM' | 'WRAP' | 'UNWRAP' | 'SWAP';
     successAction?: any,
     etsData?: any,
     zksyncFeeHistory?: any,
@@ -74,7 +73,11 @@ const actions = {
     };
 
     const posthogService = rootGetters['posthog/posthogService'];
-    posthogService.swapSuccessTrigger(posthogEventData);
+
+    const eventType = successParams.type;
+    if (eventType === 'MINT' || eventType === 'REDEEM') posthogService.mintredeemSuccessTrigger(posthogEventData);
+    if (eventType === 'WRAP' || eventType === 'UNWRAP') posthogService.wrapUnwrapSuccessTrigger(posthogEventData);
+    if (eventType === 'SWAP') posthogService.swapSuccessTrigger(posthogEventData);
   },
 
   closeSuccessModal({ commit }: any) {

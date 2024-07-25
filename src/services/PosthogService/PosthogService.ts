@@ -34,20 +34,20 @@ class PosthogService {
     this.captureEvent('Swap success event', props);
   }
 
-  zapinSuccessTrigger(props: TZapinSuccessTriggerProps): void {
-    this.captureEvent('Zapin success event', props);
-  }
-
-  rebalanceSuccessTrigger(props: TZapinSuccessTriggerProps): void {
-    this.captureEvent('Rebalance success event', props);
-  }
-
   mintredeemSuccessTrigger(props: TMintRedeemSuccessTriggerProps): void {
     this.captureEvent('Mintredeem success event', props);
   }
 
   wrapUnwrapSuccessTrigger(props: TMintRedeemSuccessTriggerProps): void {
     this.captureEvent('WrapUnwrap success event', props);
+  }
+
+  zapinSuccessTrigger(props: TZapinSuccessTriggerProps): void {
+    this.captureEvent('Zapin success event', props);
+  }
+
+  rebalanceSuccessTrigger(props: TZapinSuccessTriggerProps): void {
+    this.captureEvent('Rebalance success event', props);
   }
 }
 

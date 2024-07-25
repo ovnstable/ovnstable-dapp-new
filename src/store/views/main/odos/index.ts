@@ -559,6 +559,7 @@ const actions = {
 
     dispatch('successModal/showSuccessModal', {
       successTxHash: dataTx.hash,
+      type: 'SWAP',
       from: inputTokens.map((_) => ({
         ..._.selectedToken,
         value: new BigNumber(_.value).toFixed(5)
