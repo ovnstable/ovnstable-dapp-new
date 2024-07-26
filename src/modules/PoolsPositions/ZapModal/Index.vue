@@ -15,16 +15,7 @@
     </ModalComponent>
 
     <SuccessZapModal
-      v-if="showSuccessZapin"
-      :is-show="showSuccessZapin"
-      :success-data="successData"
       :set-show-func="triggerSuccessZapin"
-      :returned-to-user="lastParsedReturnedToUserEvent"
-      :put-into-pool="lastParsedPutIntoPoolEvent"
-      :input-tokens="lastParsedInputTokensEvent"
-      :burned-nft-id="lastParsedBurnedTokenIdEvent"
-      :nft-id="lastParsedTokenIdEvent"
-      :claimed-rewards="lastParsedClaimedRewardsEvent"
     />
   </div>
 </template>
@@ -64,16 +55,7 @@ export default {
   },
   computed: {
     ...mapState('odosData', [
-      'successData',
       'showSuccessZapin',
-      'lastParsedReturnedToUserEvent',
-      'lastParsedPutIntoPoolEvent',
-      'lastParsedInputTokensEvent',
-      'lastParsedTokenIdEvent',
-    ]),
-    ...mapState('poolsData', [
-      'lastParsedBurnedTokenIdEvent',
-      'lastParsedClaimedRewardsEvent',
     ]),
   },
   watch: {

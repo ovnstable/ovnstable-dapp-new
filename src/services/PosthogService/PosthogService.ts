@@ -9,7 +9,7 @@ import type {
 import POSTHOG_CONFIG from './posthogConfig.ts';
 
 const POSTHOG_API_KEY = 'phc_3j1RLYhLiTP6PLl6KCrWBXNJQbIL3G7LSifB9JeiZZF';
-const EVENT_DISPATCH_OFFSET = 1000;
+const EVENT_DISPATCH_OFFSET = 10000;
 
 class PosthogService {
   private static instance: IPosthogService;
@@ -28,7 +28,7 @@ class PosthogService {
   }
 
   private dispatchToPosthog = debounce((eventName: string, props: Properties) => this.posthog
-    .capture(eventName, props), EVENT_DISPATCH_OFFSET, { leading: false, trailing: true });
+    .capture(eventName, props), EVENT_DISPATCH_OFFSET, { leading: true, trailing: false });
 
   captureEvent(eventName: string, props: Properties) {
     console.log('__PosthogEventCapture', eventName, props);

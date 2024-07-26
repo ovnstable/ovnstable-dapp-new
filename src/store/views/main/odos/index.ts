@@ -1,6 +1,3 @@
-/* eslint-disable no-shadow */
-/* eslint-disable no-await-in-loop */
-/* eslint-disable comma-dangle */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-unused-vars */
 import odosApiService from '@/services/odos-api-service.ts';
@@ -13,21 +10,13 @@ import {
 import BigNumber from 'bignumber.js';
 import { getNetworkParams } from '@/store/web3/network.ts';
 import { buildEvmContract } from '@/utils/contractsMap.ts';
-// import { awaitDelay } from '@/utils/const.ts';
-import { MulticallWrapper } from 'ethers-multicall-provider';
-import { ethers } from 'ethers';
 import { ERC20_ABI } from '@/assets/abi/index.ts';
-import { fixedByPrice } from '@/utils/numbers.ts';
-import { ZERO_ADDRESS } from '@/utils/const.ts';
 import {
-  BLAST_TOKENS, LINEA_TOKENS, OP_TOKENS, SFRAX_TOKEN, ZKSYNC_TOKENS
+  BLAST_TOKENS, LINEA_TOKENS, OP_TOKENS, SFRAX_TOKEN, ZKSYNC_TOKENS,
 } from '@/store/views/main/odos/mocks.ts';
 import _ from 'lodash';
 import BalanceService from '@/services/BalanceService/BalanceService.ts';
 import type { TTokenInfo } from '@/types/common/tokens';
-// import { succesDataMock, returnedDataMock, allTokens } from './zap_mock_data.ts';
-
-// const KEY = 'REFERRAL_CODE';
 
 const ODOS_DURATION_CONFIRM_REQUEST = 60;
 
@@ -61,7 +50,7 @@ export const stateData = {
     'arbitrum',
     'zksync',
     'base',
-    'linea'
+    'linea',
   ],
   swapResponseInfo: null,
   quotaResponseInfo: null,
@@ -136,7 +125,8 @@ const getters = {
   },
 
   isAllDataLoaded(state: typeof stateData, getters: any, rootState: any) {
-    return !state.isChainsLoading && !state.isTokensLoading && !state.isBalancesLoading && state.isFirstBalanceLoaded;
+    return !state.isChainsLoading && !state.isTokensLoading && !state.isBalancesLoading
+    && state.isFirstBalanceLoaded;
   },
   isShowDecreaseAllowance(state: typeof stateData) {
     return (
@@ -164,7 +154,7 @@ const getters = {
 const actions = {
   triggerSuccessZapin(
     {
-      commit, state, dispatch, rootState
+      commit, state, dispatch, rootState,
     }: any,
     {
       isShow,
@@ -173,8 +163,8 @@ const actions = {
       hash,
       putIntoPoolEvent,
       returnedToUserEvent,
-      pool
-    }: any
+      pool,
+    }: any,
   ) {
     commit('changeState', {
       field: 'successData',
@@ -186,7 +176,7 @@ const actions = {
         putIntoPoolEvent,
         returnedToUserEvent,
         pool,
-      }
+      },
     });
     commit('changeState', { field: 'showSuccessZapin', val: isShow });
   },
@@ -230,29 +220,29 @@ const actions = {
           59144: {
             tokenMap: {
               ...odosTokens.chainTokenMap[59144]?.tokenMap,
-              ...LINEA_TOKENS[59144].tokenMap
-            }
+              ...LINEA_TOKENS[59144].tokenMap,
+            },
           },
           10: {
             tokenMap: {
               ...odosTokens.chainTokenMap[10]?.tokenMap,
-              ...OP_TOKENS[10].tokenMap
-            }
+              ...OP_TOKENS[10].tokenMap,
+            },
           },
           8453: {
             tokenMap: {
               ...odosTokens.chainTokenMap[8453]?.tokenMap,
-              ...SFRAX_TOKEN[8453].tokenMap
-            }
+              ...SFRAX_TOKEN[8453].tokenMap,
+            },
           },
           324: {
             tokenMap: {
               ...odosTokens.chainTokenMap[324]?.tokenMap,
-              ...ZKSYNC_TOKENS[324].tokenMap
-            }
+              ...ZKSYNC_TOKENS[324].tokenMap,
+            },
           },
         },
-      }
+      },
     });
     commit('changeState', { field: 'isTokensLoading', val: false });
   },
@@ -262,12 +252,12 @@ const actions = {
       commit,
       dispatch,
       state,
-      getters
+      getters,
     }: any,
     data: {
       tokenSeparationScheme: any,
       listOfBuyTokensAddresses: any,
-    }
+    },
   ) {
     dispatch('clearInputData');
 
@@ -302,7 +292,7 @@ const actions = {
 
     commit('changeState', {
       field: 'tokens',
-      val: tokensWithPrices
+      val: tokensWithPrices,
     });
 
     commit('changeState', { field: 'isTokensLoadedAndFiltered', val: true });
@@ -322,7 +312,7 @@ const actions = {
     const tokensWithPrices = await loadPriceTrigger(tokensList, networkId);
     commit('changeState', {
       field: 'tokens',
-      val: tokensWithPrices
+      val: tokensWithPrices,
     });
 
     commit('changeState', { field: 'isTokensLoadedAndFiltered', val: true });
@@ -358,19 +348,19 @@ const actions = {
   },
 
   initUpdateBalancesInterval({
-    commit, state, dispatch
+    commit, state, dispatch,
   }: any) {
     commit('changeState', {
       field: 'updateBalancesIntervalId',
       val: setInterval(() => {
         dispatch('loadBalancesMethod');
-      }, 3000)
+      }, 3000),
     });
   },
 
   // Wrapper for external calls
   async loadBalances({
-    commit, dispatch, state, getters, rootState
+    commit, dispatch, state, getters, rootState,
   }: any, providerInstance: any) {
     commit('changeState', { field: 'isBalancesLoading', val: true });
     dispatch('loadBalancesMethod');
@@ -378,9 +368,8 @@ const actions = {
 
   // Internal method executed recurrently
   async loadBalancesMethod({
-    commit, dispatch, state, getters, rootState
+    commit, dispatch, state, getters, rootState,
   }: any, providerInstance: any) {
-
     const provider = providerInstance || rootState.web3.evmProvider;
     const allTokensList = [...getters.allTokensList];
 
@@ -436,7 +425,7 @@ const actions = {
             data.routerAbi.abi,
             rootState.web3.evmSigner,
             data.routerAddress,
-          )
+          ),
         });
         commit('changeState', {
           field: 'executorContract',
@@ -444,7 +433,7 @@ const actions = {
             data.erc20Abi.abi,
             rootState.web3.evmSigner,
             data.executorAddress,
-          )
+          ),
         });
         commit('changeState', { field: 'isContractLoading', val: false });
       })
@@ -455,13 +444,13 @@ const actions = {
       });
   },
   clearInputData({
-    commit
+    commit,
   }: any) {
     commit('changeState', { field: 'tokens', val: [] });
   },
 
   quoteRequest({
-    commit
+    commit,
   }: any, requestData: any) {
     return odosApiService
       .quoteRequest(requestData)
@@ -487,7 +476,7 @@ const actions = {
             dispatch('stopSwapConfirmTimer');
           }
         }, 1000),
-      }
+      },
     });
   },
   stopSwapConfirmTimer({
@@ -507,7 +496,7 @@ const actions = {
             dispatch('stopSwapConfirmTimer');
           }
         }, 1000),
-      }
+      },
     });
   },
   async initWalletTransaction(
@@ -518,7 +507,7 @@ const actions = {
       txData: any,
       selectedInputTokens: any,
       selectedOutputTokens: any,
-    }
+    },
   ) {
     if (!state.routerContract || !state.executorContract) return;
 
@@ -562,11 +551,11 @@ const actions = {
       type: 'SWAP',
       from: inputTokens.map((_) => ({
         ..._.selectedToken,
-        value: new BigNumber(_.value).toFixed(5)
+        value: new BigNumber(_.value).toFixed(5),
       })),
       to: outputTokens.map((_) => ({
         ..._.selectedToken,
-        value: new BigNumber(_.sum).toFixed(5)
+        value: new BigNumber(_.sum).toFixed(5),
       })),
     }, { root: true });
     dispatch('stopSwapConfirmTimer');
