@@ -79,6 +79,7 @@ export const stateData = {
   lastParsedInputTokensEvent: {},
   lastParsedTokenIdEvent: '' as string,
   lastParsedBurnedTokenIdEvent: '' as string,
+  lastParsedZapResponseData: {},
 
   successData: {
     inputTokens: [] as any[],

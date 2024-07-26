@@ -72,7 +72,7 @@ export const formatPositionData = (
     const pool = poolsMap[poolId]
     ?? poolsMap[poolId.toUpperCase()] ?? poolsMap[poolId.toLowerCase()];
 
-    if (pool) {
+    if (pool && pool.name) {
       // Tokens
       const tokenNames = getTokenNames(pool.name);
       const token0Info = getTokenInfo(token0, tokenMap);

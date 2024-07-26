@@ -34,7 +34,7 @@ export type TTokenInfo = {
   type ISuccessTokenData = {
     [key: string]: any;
 } & {
-    value: string;
+    usdValue: string;
 };
 
 export type TTokenBalanceMap = {

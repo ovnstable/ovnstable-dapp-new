@@ -146,7 +146,7 @@ import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import PoolLabel from '@/modules/Main/components/ZapModal/PoolLabel.vue';
 import { mapGetters, mapState } from 'vuex';
 import { defineComponent } from 'vue';
-import { getTransactionTotal } from '@/utils/tokens.ts';
+import { getAllTokensString, getTransactionTotal } from '@/utils/tokens.ts';
 import { checkIsEveryStable } from '@/store/views/main/pools/helpers.ts';
 // import _ from 'lodash';
 import {
@@ -186,6 +186,7 @@ export default defineComponent({
       'lastParsedReturnedToUserEvent',
       'lastParsedPutIntoPoolEvent',
       'lastParsedTokenIdEvent',
+      'lastParsedZapResponseData',
     ]),
     ...mapState('poolsData', [
       'lastParsedBurnedTokenIdEvent',
@@ -194,6 +195,7 @@ export default defineComponent({
     ...mapGetters('odosData', ['allTokensMap']),
     ...mapGetters('accountData', ['account']),
     ...mapGetters('posthog', ['posthogService']),
+    ...mapGetters('network', ['explorerUrl']),
     openPositionOnPool(): string {
       // eslint-disable-next-line prefer-destructuring
       const pool = this.successData.pool;
@@ -205,13 +207,16 @@ export default defineComponent({
     showSuccessZapin(currVal: boolean) {
       this.showModal = currVal;
       if (!this.isInit && currVal) {
-        console.log('__triggerModal');
         // TODO: move Posthog logic up to store
         const posthogEventData = {
-          txUrl: this.openPositionOnPool,
+          txUrl: `${this.explorerUrl}tx/${this.lastParsedZapResponseData?.hash || ''}`,
+          token0: getAllTokensString(this.successData.inputTokens
+            .map((token: any) => token.selectedToken)),
+          token1: getAllTokensString(this.successData.outputTokens
+            .map((token: any) => token.selectedToken)),
           poolName: this.successData.pool.name,
           poolVersion: this.successData.pool.poolVersion,
-          totalAmount: getTransactionTotal(this.tokensSentList),
+          totalAmount: getTransactionTotal(this.successData.inputTokens),
           poolType: checkIsEveryStable(this.successData.pool) ? 'Stable' : 'Volatile',
           walletAddress: this.account,
           chainName: this.successData.pool.chainName,

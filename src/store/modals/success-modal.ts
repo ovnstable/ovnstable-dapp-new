@@ -1,4 +1,4 @@
-import { getAllTokensString, getTransactionTotal } from '@/utils/tokens.ts';
+import { getAllTokensString, getTransactionTotal, getUsdStrFromValue } from '@/utils/tokens.ts';
 import type { ISuccessTokenInfo } from '@/types/common/tokens';
 
 const stateData = {
@@ -63,11 +63,16 @@ const actions = {
     commit('setEtsData', successParams?.etsData);
     commit('setZksyncFeeHistory', successParams?.zksyncFeeHistory);
 
+    const calculateTokenUsdValues = (tokens: any) => tokens.map((token: any) => ({
+      ...token,
+      usdValue: getUsdStrFromValue(token.value, token.price),
+    }));
+
     const posthogEventData = {
-      txUrl: successParams.successTxHash,
+      txUrl: `${rootGetters['network/explorerUrl']}tx/${successParams.successTxHash}`,
       token0: getAllTokensString(successParams.from),
       token1: getAllTokensString(successParams.to),
-      totalAmount: getTransactionTotal(successParams.to),
+      totalAmount: getTransactionTotal(calculateTokenUsdValues(successParams.to)),
       chainName: rootState.network.networkName,
       walletAddress: rootState.accountData.account,
     };
