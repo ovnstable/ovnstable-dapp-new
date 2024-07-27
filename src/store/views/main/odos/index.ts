@@ -129,10 +129,8 @@ const getters = {
     return !state.isChainsLoading && !state.isTokensLoading && !state.isBalancesLoading
     && state.isFirstBalanceLoaded;
   },
-  isShowDecreaseAllowance(state: typeof stateData) {
-    return (
-      state.isShowDecreaseAllowanceButton
-    );
+  isTokensLoaded(state: typeof stateData) {
+    return !state.isChainsLoading && !state.isTokensLoading;
   },
   isAvailableOnNetwork(state: typeof stateData, getters: any, rootState: any) {
     return state.availableNetworksList.includes(rootState?.network?.networkName);
@@ -212,39 +210,38 @@ const actions = {
         commit('changeState', { field: 'isTokensLoading', val: false });
       });
 
-    await commit('changeState', {
-      field: 'tokensMap',
-      val: {
-        chainTokenMap: {
-          ...odosTokens.chainTokenMap,
-          ...BLAST_TOKENS,
-          59144: {
-            tokenMap: {
-              ...odosTokens.chainTokenMap[59144]?.tokenMap,
-              ...LINEA_TOKENS[59144].tokenMap,
-            },
+    const tokensMap = {
+      chainTokenMap: {
+        ...odosTokens.chainTokenMap,
+        ...BLAST_TOKENS,
+        59144: {
+          tokenMap: {
+            ...odosTokens.chainTokenMap[59144]?.tokenMap,
+            ...LINEA_TOKENS[59144].tokenMap,
           },
-          10: {
-            tokenMap: {
-              ...odosTokens.chainTokenMap[10]?.tokenMap,
-              ...OP_TOKENS[10].tokenMap,
-            },
+        },
+        10: {
+          tokenMap: {
+            ...odosTokens.chainTokenMap[10]?.tokenMap,
+            ...OP_TOKENS[10].tokenMap,
           },
-          8453: {
-            tokenMap: {
-              ...odosTokens.chainTokenMap[8453]?.tokenMap,
-              ...SFRAX_TOKEN[8453].tokenMap,
-            },
+        },
+        8453: {
+          tokenMap: {
+            ...odosTokens.chainTokenMap[8453]?.tokenMap,
+            ...SFRAX_TOKEN[8453].tokenMap,
           },
-          324: {
-            tokenMap: {
-              ...odosTokens.chainTokenMap[324]?.tokenMap,
-              ...ZKSYNC_TOKENS[324].tokenMap,
-            },
+        },
+        324: {
+          tokenMap: {
+            ...odosTokens.chainTokenMap[324]?.tokenMap,
+            ...ZKSYNC_TOKENS[324].tokenMap,
           },
         },
       },
-    });
+    };
+
+    commit('changeState', { field: 'tokensMap', val: tokensMap });
     commit('changeState', { field: 'isTokensLoading', val: false });
   },
 

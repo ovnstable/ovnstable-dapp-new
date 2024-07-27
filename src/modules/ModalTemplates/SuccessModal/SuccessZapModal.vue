@@ -246,6 +246,16 @@ export default defineComponent({
   methods: {
     closeModal() {
       this.setShowFunc({ isShow: false });
+
+      // Cleaning the state on close
+      this.$store.commit('poolsData/changeState', {
+        field: 'lastParsedBurnedTokenIdEvent',
+        val: '',
+      });
+      this.$store.commit('poolsData/changeState', {
+        field: 'lastParsedClaimedRewardsEvent',
+        val: '',
+      });
     },
     // Comes from values computed locally befor tx
     initSentList() {

@@ -162,7 +162,7 @@ export default {
     ...mapGetters('network', ['getParams', 'isShowDeprecated']),
     ...mapGetters('accountData', ['account']),
     ...mapGetters('poolsData', ['allPoolsMap']),
-    ...mapGetters('odosData', ['allTokensMap', 'isAllDataLoaded']),
+    ...mapGetters('odosData', ['allTokensMap', 'isTokensLoaded']),
     ...mapGetters('network', ['networkName']),
     ...mapGetters('walletAction', ['walletConnected']),
     filteredPools() {
@@ -203,9 +203,9 @@ export default {
     },
   },
   watch: {
-    async isAllDataLoaded(isLoaded: boolean) {
-      if (!isLoaded) this.isLoading = true;
-      else if (isLoaded && this.allTokensMap.size > 0) {
+    async allTokensMap() {
+      if (!this.isTokensLoaded) this.isLoading = true;
+      else if (this.isTokensLoaded && this.allTokensMap.size > 0) {
         const posData = await this.getFormatPositions();
         if (posData.length > 0) {
           this.positionData = posData;
@@ -213,10 +213,8 @@ export default {
         }
       }
     },
-    async networkName(networkName) {
+    async networkName() {
       this.isLoading = true;
-      console.log('networkName', networkName);
-      console.log('supported_neworks', SUPPORTED_REBALANCE_NETWORKS[networkName])
       await this.init();
     },
   },
