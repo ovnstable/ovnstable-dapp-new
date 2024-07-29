@@ -72,7 +72,7 @@ const actions = {
       txUrl: `${rootGetters['network/explorerUrl']}tx/${successParams.successTxHash}`,
       token0: getAllTokensString(successParams.from),
       token1: getAllTokensString(successParams.to),
-      totalAmount: getTransactionTotal(calculateTokenUsdValues(successParams.to)),
+      usdTotal: getTransactionTotal(calculateTokenUsdValues(successParams.to)),
       chainName: rootState.network.networkName,
       walletAddress: rootState.accountData.account,
     };

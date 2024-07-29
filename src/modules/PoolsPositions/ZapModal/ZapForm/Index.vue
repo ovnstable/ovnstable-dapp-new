@@ -199,6 +199,7 @@ import TokenForm from '@/modules/PoolsPositions/ZapModal/TokenForm.vue';
 import { rebalanceStep } from '@/store/modals/waiting-modal.ts';
 import ZapInStepsRow from '@/components/StepsRow/ZapinRow/RebalanceRow.vue';
 import { cloneDeep } from 'lodash';
+import { markRaw } from 'vue';
 import { parseLogs } from './helpers.ts';
 
 enum zapMobileSection {
@@ -1020,6 +1021,11 @@ export default {
           .rebalance(txData, gaugeData, this.zapPool?.tokenId, params);
 
         const logsData = await tx.wait();
+
+        this.$store.commit('odosData/changeState', {
+          field: 'lastParsedZapResponseData',
+          val: markRaw(logsData),
+        });
 
         parseLogs(logsData, this.commitEventToStore);
 

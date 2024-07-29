@@ -216,7 +216,7 @@ export default defineComponent({
             .map((token: any) => token.selectedToken)),
           poolName: this.successData.pool.name,
           poolVersion: this.successData.pool.poolVersion,
-          totalAmount: getTransactionTotal(this.successData.inputTokens),
+          usdTotal: getTransactionTotal(this.successData.inputTokens),
           poolType: checkIsEveryStable(this.successData.pool) ? 'Stable' : 'Volatile',
           walletAddress: this.account,
           chainName: this.successData.pool.chainName,
