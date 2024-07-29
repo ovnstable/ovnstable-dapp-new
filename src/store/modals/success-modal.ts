@@ -1,3 +1,6 @@
+import { getAllTokensString, getTransactionTotal, getUsdStrFromValue } from '@/utils/tokens.ts';
+import type { ISuccessTokenInfo } from '@/types/common/tokens';
+
 const stateData = {
   show: false,
   successTxHash: '',
@@ -37,16 +40,49 @@ const getters = {
   },
 };
 
+type TSwapSuccessData = {
+    successTxHash: string,
+    from: ISuccessTokenInfo[],
+    to: ISuccessTokenInfo[],
+    type: 'MINT' | 'REDEEM' | 'WRAP' | 'UNWRAP' | 'SWAP';
+    successAction?: any,
+    etsData?: any,
+    zksyncFeeHistory?: any,
+}
+
 const actions = {
-  showSuccessModal({ commit }: any, successParams: any) {
+  showSuccessModal({
+    commit, rootState, rootGetters,
+  }: any, successParams: TSwapSuccessData) {
     commit('setShow', true);
     commit('setSwapData', {
       from: successParams.from,
       to: successParams.to,
     });
-    commit('setSuccessAction', successParams.successAction);
-    commit('setEtsData', successParams.etsData);
-    commit('setZksyncFeeHistory', successParams.zksyncFeeHistory);
+    commit('setSuccessAction', successParams?.successAction);
+    commit('setEtsData', successParams?.etsData);
+    commit('setZksyncFeeHistory', successParams?.zksyncFeeHistory);
+
+    const calculateTokenUsdValues = (tokens: any) => tokens.map((token: any) => ({
+      ...token,
+      usdValue: getUsdStrFromValue(token.value, token.price),
+    }));
+
+    const posthogEventData = {
+      txUrl: `${rootGetters['network/explorerUrl']}tx/${successParams.successTxHash}`,
+      token0: getAllTokensString(successParams.from),
+      token1: getAllTokensString(successParams.to),
+      usdTotal: getTransactionTotal(calculateTokenUsdValues(successParams.to)),
+      chainName: rootState.network.networkName,
+      walletAddress: rootState.accountData.account,
+    };
+
+    const posthogService = rootGetters['posthog/posthogService'];
+
+    const eventType = successParams.type;
+    if (eventType === 'MINT' || eventType === 'REDEEM') posthogService.mintredeemSuccessTrigger(posthogEventData);
+    if (eventType === 'WRAP' || eventType === 'UNWRAP') posthogService.wrapUnwrapSuccessTrigger(posthogEventData);
+    if (eventType === 'SWAP') posthogService.swapSuccessTrigger(posthogEventData);
   },
 
   closeSuccessModal({ commit }: any) {

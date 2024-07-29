@@ -2,7 +2,7 @@ import { ethers } from 'ethers';
 
 /* eslint-disable no-unused-vars */
 const POLYGON_PARAMS = {
-  appApiUrl: 'https://app.overnight.fi/api',
+  appApiUrl: 'https://api.overnight.fi/root',
   networkName: 'polygon',
   networkId: 137,
   rpcUrl: 'https://polygon-rpc.com/',

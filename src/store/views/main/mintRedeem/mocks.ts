@@ -82,7 +82,7 @@ export const MINTREDEEM_SCHEME = {
     //   token0: chainContractsMap.base.dai,
     //   token1: chainContractsMap.base.daiPlus.tokenPlus,
     //   exchange: chainContractsMap.base.daiPlus.exchange,
-    //   methodName: [mintRedeemTypes.MINT, mintRedeemTypes.REDEEM],
+    //   methodName: [mintRedeemTypes.REDEEM],
     // },
   ],
   // optimism

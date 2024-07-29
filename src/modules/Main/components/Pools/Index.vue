@@ -252,12 +252,6 @@ export default {
   async mounted() {
     this.clearAllFilters();
 
-    // this.tvlSortIterator = iterateEnum(TVL_ORDER_TYPE);
-    // this.aprSortIterator = iterateEnum(APR_ORDER_TYPE);
-
-    // this.tvlOrder = this.tvlSortIterator.next();
-    // this.aprOrder = this.aprSortIterator.next();
-
     // for main page + ovn pools page
     if (this.poolType !== undefined) {
       this.changeState({

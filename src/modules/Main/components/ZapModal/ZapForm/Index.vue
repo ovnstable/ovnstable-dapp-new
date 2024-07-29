@@ -1626,6 +1626,11 @@ export default {
           val: markRaw(receipt),
         });
 
+        this.$store.commit('odosData/changeState', {
+          field: 'lastParsedZapResponseData',
+          val: markRaw(receipt),
+        });
+
         if (
           this.currentZapPlatformContractType.type
             === 'LP_WITH_STAKE_IN_ONE_STEP'

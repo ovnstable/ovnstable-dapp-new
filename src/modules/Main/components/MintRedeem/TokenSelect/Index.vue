@@ -1,5 +1,4 @@
 <template>
-
   <div
     class="tokens-select"
   >
@@ -68,11 +67,6 @@ export default {
     isLoading: {
       type: Boolean,
       required: false,
-      default: false,
-    },
-    reverseArray: {
-      type: Boolean,
-      required: true,
       default: false,
     },
     isInputToken: {

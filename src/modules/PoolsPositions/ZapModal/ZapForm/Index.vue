@@ -199,6 +199,7 @@ import TokenForm from '@/modules/PoolsPositions/ZapModal/TokenForm.vue';
 import { rebalanceStep } from '@/store/modals/waiting-modal.ts';
 import ZapInStepsRow from '@/components/StepsRow/ZapinRow/RebalanceRow.vue';
 import { cloneDeep } from 'lodash';
+import { markRaw } from 'vue';
 import { parseLogs } from './helpers.ts';
 
 enum zapMobileSection {
@@ -284,6 +285,7 @@ export default {
       'zapContract',
       'poolNftContract',
       'gaugeContractV3',
+      'gaugeContract',
     ]),
     ...mapGetters('odosData', [
       'allTokensList',
@@ -612,7 +614,11 @@ export default {
 
       try {
         this.showWaitingModal('unstaking');
-        const tx = await this.gaugeContractV3.withdraw(this.zapPool.tokenId);
+
+        let tx;
+
+        if (this.zapPool.chainName === 'base') tx = await this.gaugeContractV3.withdraw(this.zapPool.tokenId);
+        else if (this.zapPool.chainName === 'arbitrum') tx = await this.gaugeContractV3.withdraw(this.zapPool.tokenId, this.account);
 
         await tx.wait();
         this.isSwapLoading = false;
@@ -631,7 +637,19 @@ export default {
 
       try {
         this.showWaitingModal('staking');
-        const tx = await this.gaugeContractV3.deposit(this.newTokenId);
+
+        const data = {
+          from: this.account,
+          to: this.gaugeContractV3.target,
+          tokenId: this.newTokenId,
+          _data: '0x0000000000000000000000000000000000000000000000000000000000000000',
+        };
+
+        let tx;
+
+        if (this.zapPool.chainName === 'base') tx = await this.gaugeContractV3.deposit(this.newTokenId);
+        // eslint-disable-next-line no-underscore-dangle
+        else if (this.zapPool.chainName === 'arbitrum') tx = await this.gaugeContract.safeTransferFrom(data.from, data.to, data.tokenId, data._data, { from: this.account });
 
         await tx.wait();
 
@@ -1003,6 +1021,11 @@ export default {
           .rebalance(txData, gaugeData, this.zapPool?.tokenId, params);
 
         const logsData = await tx.wait();
+
+        this.$store.commit('odosData/changeState', {
+          field: 'lastParsedZapResponseData',
+          val: markRaw(logsData),
+        });
 
         parseLogs(logsData, this.commitEventToStore);
 

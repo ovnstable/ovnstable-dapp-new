@@ -39,7 +39,9 @@
       />
     </div>
     <div class="mintredeem-form__inputs">
-      <p v-if="deviceSize.isMobile">You send</p>
+      <p v-if="deviceSize.isMobile">
+        You send
+      </p>
       <TokenForm
         :token-info="inputToken"
         :is-token-removable="true"
@@ -50,7 +52,9 @@
         @add-token="selectFormToken"
         @update-token="updateTokenValueMethod"
       />
-      <p v-if="deviceSize.isMobile">You receive</p>
+      <p v-if="deviceSize.isMobile">
+        You receive
+      </p>
       <TokenForm
         :token-info="outputToken"
         :is-token-removable="true"
@@ -72,7 +76,7 @@
         <span>${{ estimateResultDisplay }}</span>
       </div>
       <div class="mintredeem-form__row-item">
-        <h2>{{ inputToken?.symbol ? `${inputIndex} ${inputToken.symbol} = ${outputIndex} ${outputToken.symbol}` : 'Exchange rates'}}</h2>
+        <h2>{{ inputToken?.symbol ? `${inputIndex} ${inputToken.symbol} = ${outputIndex} ${outputToken.symbol}` : 'Exchange rates' }}</h2>
       </div>
     </div>
 
@@ -83,9 +87,9 @@
     <div class="mintredeem-form__btns">
       <ButtonComponent
         v-if="!account"
-        @on-click="connectWallet"
         btn-size="large"
         full
+        @on-click="connectWallet"
       >
         CONNECT WALLET
       </ButtonComponent>
@@ -99,18 +103,18 @@
       </ButtonComponent>
       <ButtonComponent
         v-else-if="!isApprovedToken"
-        @on-click="approveTrigger"
         btn-size="large"
         full
         :loading="approveLoading"
+        @on-click="approveTrigger"
       >
         APPROVE REQUIRED
       </ButtonComponent>
       <ButtonComponent
         v-else
-        @on-click="swapTokens"
         btn-size="large"
         full
+        @on-click="swapTokens"
       >
         {{ swapMsg.toUpperCase() }}
       </ButtonComponent>
@@ -120,7 +124,6 @@
       <StepsRow :current-stage="currentStage" />
     </div>
   </div>
-
 </template>
 <!-- eslint-disable camelcase -->
 <!-- eslint-disable consistent-return -->
@@ -162,13 +165,10 @@ export default {
   },
   data() {
     return {
-      mintRedeemStep,
       inputToken: getNewInputToken(),
       outputToken: getNewInputToken(),
       activeMintTab: mintWrapStatus.MINT as mintWrapStatus | -1,
       activeWrapTab: -1,
-      allTokensList: [],
-      isAllDataLoaded: false,
       approveLoading: false,
       isApprovedToken: false,
       isLoading: false,
@@ -198,47 +198,10 @@ export default {
       ],
     };
   },
-  watch: {
-    inputToken() {
-      this.checkApprove(this);
-
-      if (this.activeWrapTab > 0) this.previewUnwrap(this);
-    },
-    'inputToken.value': {
-      async handler() {
-        await this.previewUnwrap(this);
-        this.updatingWrapUnwrapAmount = false;
-      },
-    },
-    activeWrapTab() {
-      if (this.inputToken?.symbol) {
-        const input = this.inputToken;
-        const output = this.outputToken;
-        this.inputToken = output;
-        this.outputToken = input;
-        this.checkApprove(this);
-      }
-    },
-    activeMintTab() {
-      if (this.inputToken?.symbol) {
-        const input = this.inputToken;
-        const output = this.outputToken;
-        this.inputToken = output;
-        this.outputToken = input;
-        this.checkApprove(this);
-      }
-    },
-    networkId() {
-      this.initMintRedeem();
-    },
-  },
-  mounted() {
-    this.initMintRedeem();
-  },
   computed: {
-    ...mapGetters('network', ['networkId', 'networkName']),
+    ...mapGetters('network', ['networkId']),
     ...mapGetters('accountData', ['account', 'originalBalance']),
-    ...mapGetters('web3', ['contracts', 'evmProvider', 'evmSigner']),
+    ...mapGetters('web3', ['contracts', 'evmSigner']),
     ...mapState('odosData', ['tokensContractMap']),
 
     getFee() {
@@ -290,15 +253,52 @@ export default {
     },
 
   },
+  watch: {
+    inputToken() {
+      this.checkApprove(this);
+
+      if (this.activeWrapTab > 0) this.previewUnwrap(this);
+    },
+    'inputToken.value': {
+      async handler() {
+        await this.previewUnwrap(this);
+        this.updatingWrapUnwrapAmount = false;
+      },
+    },
+    activeWrapTab() {
+      if (this.inputToken?.symbol) {
+        const input = this.inputToken;
+        const output = this.outputToken;
+        this.inputToken = output;
+        this.outputToken = input;
+        this.checkApprove(this);
+      }
+    },
+    activeMintTab() {
+      if (this.inputToken?.symbol) {
+        const input = this.inputToken;
+        const output = this.outputToken;
+        this.inputToken = output;
+        this.outputToken = input;
+        this.checkApprove(this);
+      }
+    },
+    networkId() {
+      this.initMintRedeem();
+    },
+  },
+  mounted() {
+    this.initMintRedeem();
+  },
   methods: {
     ...mapActions('walletAction', ['connectWallet']),
     ...mapActions('mintRedeem', ['initTokens']),
     ...mapActions('gasPrice', ['refreshGasPrice']),
     ...mapActions('accountData', ['refreshBalance']),
-    ...mapActions('accTransaction', ['putTransaction', 'loadTransaction']),
-    ...mapActions('errorModal', ['showErrorModal', 'showErrorModalWithMsg']),
+    ...mapActions('accTransaction', ['putTransaction']),
+    ...mapActions('errorModal', ['showErrorModalWithMsg']),
     ...mapActions('waitingModal', ['showWaitingModal', 'closeWaitingModal']),
-    ...mapActions('successModal', ['showSuccessModal', 'closeSuccessModal']),
+    ...mapActions('successModal', ['showSuccessModal']),
     ...mapActions('odosData', ['loadChains', 'loadTokens']),
     gasChange() {
       console.log('gasChange');
@@ -423,6 +423,7 @@ export default {
       if (!isAllowedToSwap) self.currentStage = mintRedeemStep.APPROVE;
     }, 250),
     selectFormToken(data: any, isInputToken: boolean) {
+      console.log('__listenInputToken', data);
       if (isInputToken) {
         this.inputToken = data;
         return;
@@ -538,79 +539,6 @@ export default {
 
       return null;
     },
-
-    async estimateGas(
-      account: any,
-      sum: any,
-      productName: any,
-      exchangeContract: any,
-      exchangeMethodName: any,
-      actionContract: any,
-    ) {
-      const from = account;
-      let blockNum = 0;
-      let result = 0;
-
-      try {
-        const estimateOptions = { from };
-        blockNum = await this.evmProvider.getBlockNumber();
-
-        const methodData = this.getContractMethodWithParams(
-          account,
-          sum,
-          exchangeMethodName,
-          actionContract,
-        );
-
-        if (!methodData) {
-          const errorMessage = `Exchange Method type not found when create method params in estimate gas. MethodType: ${
-            exchangeMethodName}`;
-          this.showErrorModalWithMsg({
-            errorType: 'approve',
-            errorMsg: { code: 1, message: errorMessage },
-          });
-          this.closeWaitingModal();
-          return;
-        }
-
-        // if (this.networkName === 'zksync') {
-        //   await this.addedZkSyncGasHistoryData(method, estimateOptions);
-        // }
-
-        if (methodData.iterateArgs) {
-          result = await exchangeContract[methodData.name]
-            .estimateGas(...Object.values(methodData.params), estimateOptions);
-        } else {
-          result = await exchangeContract[methodData.name]
-            .estimateGas(methodData.params, estimateOptions);
-        }
-      } catch (error: any) {
-        this.showErrorModalWithMsg({ errorType: 'estimateGas', errorMsg: error });
-        if (error && error.message) {
-          const msg = error.message.replace(/(?:\r\n|\r|\n)/g, '');
-
-          const errorMsg = {
-            product: productName,
-            data: {
-              from,
-              to: actionContract.target,
-              gas: null,
-              contract: 'ENCODEDABI',
-              message: msg,
-              block: blockNum,
-            },
-          };
-
-          console.error(errorMsg);
-        } else {
-          console.error(error);
-        }
-
-        return -1;
-      }
-
-      return result;
-    },
     async swapTokens() {
       try {
         await this.refreshGasPrice();
@@ -626,11 +554,6 @@ export default {
             if (DUPLICATED_TOKEN_CHAINS.includes(networkId) && !this.isReverseArray) {
               return _.token1.toLowerCase() === this.inputToken.address.toLowerCase();
             }
-
-            // if ([8453].includes(networkId) && !this.isReverseArray) {
-            //   return _.token1.toLowerCase() === this.inputToken.address.toLowerCase();
-            // }
-
             return tokenAddress === this.outputToken.address.toLowerCase();
           });
 
@@ -697,6 +620,7 @@ export default {
             successTxHash: txData.hash,
             from: [this.inputToken],
             to: [this.outputToken],
+            type: this.swapMsg.toUpperCase(),
           });
 
           this.putTransaction(tx);
@@ -751,14 +675,6 @@ export default {
         self.updatingWrapUnwrapAmount = true;
       }
       self.updatingWrapUnwrapAmount = true;
-    },
-    adjustScale(rawValue: any, decimals = 6) {
-      let valueStr = rawValue.toString();
-      while (valueStr.length <= decimals) {
-        valueStr = `0${valueStr}`;
-      }
-      const index = valueStr.length - decimals;
-      return `${valueStr.slice(0, index)}.${valueStr.slice(index)}`;
     },
   },
 };

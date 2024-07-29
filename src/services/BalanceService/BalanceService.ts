@@ -1,12 +1,12 @@
-import type {
-  TTokenBalanceData, TTokenBalanceMap, TTokenInfo,
-} from '@/types/common/token.ts';
 import BigNumber from 'bignumber.js';
 import { fixedByPrice } from '@/utils/numbers.ts';
 import { ethers } from 'ethers';
 import { MulticallWrapper } from 'ethers-multicall-provider';
 import { ZERO_ADDRESS } from '@/utils/const.ts';
 import { ERC20_ABI } from '@/assets/abi/index.ts';
+import type {
+  TTokenBalanceData, TTokenBalanceMap, TTokenInfo,
+} from '@/types/common/tokens';
 
 // Todo rewrite abstractly for any contract method and move to blockchain service
 const fetchTokenBalancesMulticall = async (
@@ -56,13 +56,14 @@ const formatBalanceInUsd = (fBalance: BigNumber, price: string) => new BigNumber
 // Todo get provider from blockchain service, not state
 class BalanceService {
   // Base method for loading balances
-  public static getAllTokenBalance = async (
+  public static async getAllTokenBalance(
     provider: any,
-    tokenList: string[],
+    allTokenList: TTokenInfo[],
     account: string,
   )
-        : Promise<TTokenBalanceData> => {
+        : Promise<TTokenInfo[]> {
     try {
+      const tokenList = allTokenList.map((token: TTokenInfo) => token.address);
       const balancesData = await fetchTokenBalancesMulticall(
         provider,
         tokenList,
@@ -72,19 +73,21 @@ class BalanceService {
       const nativeTokenBalance = await handleNativeBal(provider, account);
       balancesData[ZERO_ADDRESS] = nativeTokenBalance.toString();
 
-      return balancesData;
+      const tokenBalanceMap = this.geTTokenBalanceData(allTokenList, balancesData);
+      const tokenBalanceInfo = this.getTokenBalanceInfo(allTokenList, tokenBalanceMap);
+      return tokenBalanceInfo;
     } catch (e) {
       console.error('Error loading balances', e);
     }
-    return {};
-  };
+    return [];
+  }
 
   // Returns formatted data. Todo remove
 
-  public static geTTokenBalanceData = (
+  public static geTTokenBalanceData(
     tokenList: TTokenInfo[],
     balanceData: TTokenBalanceData,
-  ): TTokenBalanceMap => {
+  ): TTokenBalanceMap {
     if (tokenList.length === 0 || !balanceData) return {};
     try {
       const tokenBalanceMap: TTokenBalanceMap = {};
@@ -104,7 +107,18 @@ class BalanceService {
       console.error('Error formatting balance data', e);
     }
     return {};
-  };
+  }
+
+  public static getTokenBalanceInfo(
+    tokenList: TTokenInfo[],
+    tokenBalanceMap: TTokenBalanceMap,
+  ): TTokenInfo[] {
+    const tokenBalanceInfo: TTokenInfo[] = tokenList.map((token: TTokenInfo) => ({
+      ...token,
+      balanceData: tokenBalanceMap[token.address],
+    }));
+    return tokenBalanceInfo;
+  }
 }
 
 export default BalanceService;

@@ -2,6 +2,7 @@
 /* eslint-disable no-unused-vars */
 
 import BigNumber from 'bignumber.js';
+import type { TTokenInfo } from '@/types/common/tokens';
 
 const DEFAULT_DECIMALS = 18;
 const BN_STRING_BASE = 10;
@@ -15,38 +16,15 @@ export type TTokenDataList = {
     amounts: number[],
 }
 
-type TSelectedTokenInfo = {
-    id: string,
-    address: string,
-    decimals: number,
-    assetType: string,
-    name: string,
-    symbol: string,
-    logoUrl: string,
-    selected: false,
-    balanceData: {
-      name: string,
-      balance: string,
-      balanceInUsd: string,
-      originalBalance: string,
-      decimal: number,
-    },
-    approveData: {
-      allowanceValue: number,
-      approved: false,
-    },
-    price: string,
-}
-
-type TTokenInfo = {
+export type TSuccessTokenInfo = {
     'id': string,
     'value': string,
     'usdValue': string,
     'contractValue': string,
-    'selectedToken': TSelectedTokenInfo
+    'selectedToken': TTokenInfo
 };
 
-type TAllTokenList = Map<string, TSelectedTokenInfo>;
+type TAllTokenList = Map<string, TTokenInfo>;
 
 export type TFormatTokenInfo = {
     id: string,
@@ -108,8 +86,8 @@ export const mapEventTokenData = (
     };
   });
 
-export const mapInputTokenData = (inputTokens: TTokenInfo[]) => inputTokens.map(
-  (token: TTokenInfo) => ({
+export const mapInputTokenData = (inputTokens: TSuccessTokenInfo[]) => inputTokens.map(
+  (token: TSuccessTokenInfo) => ({
     id: `${token.id}_return`,
     symbol: token.selectedToken.symbol,
     value: token.value,
