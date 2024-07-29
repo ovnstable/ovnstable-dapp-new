@@ -66,13 +66,13 @@ export const formatPositionData = (
 ): IPositionsInfo[] => {
   const positionInfo = posDataArr.flatMap((
     [platform, tokenId, poolId, token0, token1, amount0, amount1, rewardAmount0, rewardAmount1,
-      emissions, tickLower, tickUpper, centerTick]: TPositionData,
+      emissions, tickLower, tickUpper, centerTick, isStaked]: TPositionData,
   ) => {
     // Pools
     const pool = poolsMap[poolId]
     ?? poolsMap[poolId.toUpperCase()] ?? poolsMap[poolId.toLowerCase()];
 
-    if (pool && pool.name) {
+    if (isStaked && pool && pool.name) {
       // Tokens
       const tokenNames = getTokenNames(pool.name);
       const token0Info = getTokenInfo(token0, tokenMap);

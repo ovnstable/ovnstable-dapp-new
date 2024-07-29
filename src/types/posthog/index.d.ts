@@ -12,14 +12,14 @@ export type TSwapSuccessTriggerProps = {
     txUrl: string,
     token0: string,
     token1: string,
-    totalAmount: string,
+    usdTotal: string,
     chainName: string,
     walletAddress: string,
 }
 
 export type TMintRedeemSuccessTriggerProps = {
     txUrl: string,
-    totalAmount: string,
+    usdTotal: string,
     chainName: string,
     walletAddress: string,
 }
@@ -28,7 +28,7 @@ export type TZapinSuccessTriggerProps = {
     txUrl: string,
     poolName: string,
     poolVersion: string,
-    totalAmount: string,
+    usdTotal: string,
     poolType: string,
     walletAddress: string,
     chainName: string,
