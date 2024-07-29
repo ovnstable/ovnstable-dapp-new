@@ -8,7 +8,7 @@ import type {
 } from '@/types/posthog';
 import POSTHOG_CONFIG from './posthogConfig.ts';
 
-const POSTHOG_API_KEY = 'phc_3j1RLYhLiTP6PLl6KCrWBXNJQbIL3G7LSifB9JeiZZF';
+const POSTHOG_API_KEY = 'phc_7UWECETbgrUp8dpWHQPBhBanmai75AhVjm4Lb85Iy3y';
 const EVENT_DISPATCH_OFFSET = 10000;
 
 class PosthogService {
