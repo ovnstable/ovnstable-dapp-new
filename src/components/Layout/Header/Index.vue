@@ -24,6 +24,13 @@
             class="app-header__dashboard"
             active-class="active-link"
           >
+            POOLS
+          </router-link>
+          <router-link
+            to="/positions"
+            class="app-header__dashboard"
+            active-class="active-link"
+          >
             MY POSITIONS
           </router-link>
           <router-link

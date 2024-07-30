@@ -35,6 +35,11 @@ const router = createRouter({
       component: () => import('@/views/Pools/Index.vue'),
     },
     {
+      path: '/positions',
+      name: 'positions',
+      component: () => import('@/views/Positions/Index.vue'),
+    },
+    {
       path: '/manage/:id',
       name: '/manage/:id',
       component: () => import('@/views/Manage/Index.vue'),
