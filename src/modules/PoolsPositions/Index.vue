@@ -5,34 +5,16 @@
       <p>View and manage your open V2 and V3 positions.</p>
     </div>
     <Positions />
-
-    <ZapModal
-      :zap-pool="currentZapPool"
-      :is-show="isZapModalShow"
-      @toggle-modal="setIsZapModalShow"
-    />
   </div>
 </template>
 
 <script lang="ts">
 import Positions from '@/modules/PoolsPositions/Positions/Index.vue';
-import ZapModal from '@/modules/PoolsPositions/ZapModal/Index.vue';
-import { mapActions, mapState } from 'vuex';
 
 export default {
   name: 'PoolsPositions',
   components: {
     Positions,
-    ZapModal,
-  },
-  computed: {
-    ...mapState('poolsData', [
-      'currentZapPool',
-      'isZapModalShow',
-    ]),
-  },
-  methods: {
-    ...mapActions('poolsData', ['setIsZapModalShow']),
   },
 };
 </script>

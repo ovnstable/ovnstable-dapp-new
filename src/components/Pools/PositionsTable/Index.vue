@@ -130,7 +130,7 @@
             <ButtonComponent
               :disabled="!pool.zappable"
               btn-styles="faded"
-              @click="openZapIn(pool)"
+              @click="handleOpen(pool)"
             >
               MANAGE
             </ButtonComponent>
@@ -203,6 +203,11 @@ export default {
   },
   methods: {
     ...mapActions('poolsData', ['openZapIn']),
+    handleOpen(pool: any) {
+      console.log(pool, '__pool');
+      this.openZapIn(pool);
+      this.$router.replace(`/manage/${pool?.tokenId?.toString()}`);
+    },
     toggleSortIcon() {
       return iconNameSort(POSITION_SIZE_ORDER_TYPE[this.positionSizeOrderType]);
     },
