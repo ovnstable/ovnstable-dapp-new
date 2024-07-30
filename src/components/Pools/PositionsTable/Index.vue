@@ -206,7 +206,7 @@ export default {
     handleOpen(pool: any) {
       console.log(pool, '__pool');
       this.openZapIn(pool);
-      this.$router.replace(`/manage/${pool?.tokenId?.toString()}`);
+      this.$router.replace(`/positions/${pool?.tokenId?.toString()}`);
     },
     toggleSortIcon() {
       return iconNameSort(POSITION_SIZE_ORDER_TYPE[this.positionSizeOrderType]);

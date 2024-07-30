@@ -40,8 +40,8 @@ const router = createRouter({
       component: () => import('@/views/Positions/Index.vue'),
     },
     {
-      path: '/manage/:id',
-      name: '/manage/:id',
+      path: '/positions/:id',
+      name: '/positions/:id',
       component: () => import('@/views/Manage/Index.vue'),
     },
     {

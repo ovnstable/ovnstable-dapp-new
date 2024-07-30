@@ -1,12 +1,14 @@
 <template>
   <div class="manage-wrap">
     <div class="manage-wrap__title">
-      <ButtonComponent btn-styles="grey">
-        <BaseIcon name="ArrowLeft" />
-        <span>
-          BACK
-        </span>
-      </ButtonComponent>
+      <router-link to="/positions">
+        <ButtonComponent btn-styles="grey">
+          <BaseIcon name="ArrowLeft" />
+          <span>
+            BACK
+          </span>
+        </ButtonComponent>
+      </router-link>
       <h1>Manage position</h1>
     </div>
     <div
