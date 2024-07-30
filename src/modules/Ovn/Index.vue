@@ -38,7 +38,7 @@ import OvnBenefits from '@/modules/Ovn/Benefits.vue';
 import OvnTokenomics from '@/modules/Ovn/Tokenomics.vue';
 import Spinner from '@/components/Spinner/Index.vue';
 import { POOL_TYPES } from '@/store/views/main/pools/index.ts';
-import PoolsContainer from '@/modules/Main/components/Pools/Index.vue';
+import PoolsContainer from '@/modules/PoolsPositions/Pools/Index.vue';
 
 export default {
   name: 'OvnPage',
