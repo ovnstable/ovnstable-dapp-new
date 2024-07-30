@@ -262,7 +262,10 @@ export default {
           id: 6, value: 20, label: '20', tick: false,
         },
         {
-          id: 7, value: 40, label: '40', tick: false,
+          id: 7, value: 50, label: '50', tick: false,
+        },
+        {
+          id: 4, value: 887272, label: 'FULL', tick: true,
         },
       ],
       optionsChart: {
@@ -383,7 +386,7 @@ export default {
       return (range: any) => !!(this.ticksAmount && this.ticksAmount === range.value.toString());
     },
     getPresetsData() {
-      if (!this.isStablePool) return [...this.rangePresetsPercents, ...this.rangePresetsTicks];
+      if (!this.isStablePool) return this.rangePresetsPercents;
       return this.rangePresetsTicks;
     },
     showPresetPlusMinus() {
