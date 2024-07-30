@@ -87,7 +87,6 @@
 </template>
 
 <script lang="ts">
-import { mapGetters } from 'vuex';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { formatMoney, formatNumberToThousands, formatNumberToMln } from '@/utils/numbers.ts';
 
@@ -105,9 +104,6 @@ export default {
       type: Boolean,
       required: false,
     },
-  },
-  computed: {
-    ...mapGetters('network', ['getParams', 'networkColor']),
   },
   methods: {
     formatMoney,

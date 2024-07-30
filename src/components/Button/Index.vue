@@ -65,7 +65,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 5px 20px;
+  padding: 7px 14px;
   border-radius: 10px;
   font-size: 15px;
   font-weight: 500;
@@ -73,7 +73,11 @@ export default {
   background-color: transparent;
   cursor: pointer;
   white-space: nowrap;
-  transition: transform .15s ease, background-color .2s ease, color .2s ease, opacity .2s ease;
+  transition: transform .15s ease, background-color .1s ease, color .1s ease, opacity .1s ease;
+
+  span {
+    transition: color .1s ease;
+  }
 
   &:active {
     transform: scale(0.98);
