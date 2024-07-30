@@ -21,11 +21,6 @@
     </div>
     <div v-if="type === 'POSITIONS'">
       <Positions />
-      <ZapModal
-        :zap-pool="currentZapPool"
-        :is-show="isZapModalShow"
-        @toggle-modal="setIsZapModalShow"
-      />
     </div>
   </div>
 </template>
@@ -33,29 +28,17 @@
 <script lang="ts">
 import Positions from '@/modules/PoolsPositions/Positions/Index.vue';
 import Pools from '@/modules/PoolsPositions/Pools/Index.vue';
-import { mapActions, mapState } from 'vuex';
-import ZapModal from '@/modules/PoolsPositions/ZapModal/Index.vue';
 
 export default {
   name: 'PoolsPositions',
   components: {
     Positions,
-    ZapModal,
     Pools,
   },
   data() {
     return {
       type: window.location.pathname.split('/').pop()?.toUpperCase(),
     };
-  },
-  computed: {
-    ...mapState('poolsData', [
-      'currentZapPool',
-      'isZapModalShow',
-    ]),
-  },
-  methods: {
-    ...mapActions('poolsData', ['setIsZapModalShow']),
   },
 };
 </script>
