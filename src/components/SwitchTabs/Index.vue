@@ -65,18 +65,6 @@ export default {
       this.activeItem = val;
     },
   },
-  computed: {
-    parentId() {
-      return `tabs-${this.uid}`;
-    },
-    visibleId() {
-      return `tabs-list-${this.uid}`;
-    },
-    hiddenId() {
-      return `tabs-hidden-${this.uid}`;
-    },
-  },
-
   created() {
     // this.tabs-header__ul = this.$children;
     this.uid = uniqueId();

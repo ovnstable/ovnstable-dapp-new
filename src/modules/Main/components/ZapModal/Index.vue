@@ -24,7 +24,6 @@
 import {
   mapActions,
   mapMutations,
-  mapState,
 } from 'vuex';
 import ModalComponent from '@/components/Modal/Index.vue';
 import ZapForm from '@/modules/Main/components/ZapModal/ZapForm/Index.vue';
@@ -53,11 +52,6 @@ export default {
       showModal: false,
     };
   },
-  computed: {
-    ...mapState('odosData', [
-      'showSuccessZapin',
-    ]),
-  },
   watch: {
     isShow(currVal: boolean) {
       this.showModal = currVal;
@@ -70,7 +64,6 @@ export default {
     ...mapMutations('zapinData', ['resetStore']),
     closeModal() {
       this.resetStore();
-      this.$emit('toggle-modal');
     },
   },
 };

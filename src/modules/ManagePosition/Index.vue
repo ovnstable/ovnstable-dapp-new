@@ -11,6 +11,17 @@
       </router-link>
       <h1>Manage position</h1>
     </div>
+
+    <div class="manage-wrap__tabs">
+      <SwitchTabs
+        :tabs="filterTabs"
+        :active-tab="activeTab"
+        tab-style="white"
+        type="large"
+        @tab-change="changeTab"
+      />
+    </div>
+
     <div
       v-if="!zapPool"
       class="pools-wrap__loader"
@@ -23,6 +34,7 @@
     >
       <ZapForm
         :zap-pool="zapPool"
+        :active-tab="activeTab"
         @close-form="closeModal"
       />
     </div>
@@ -44,7 +56,14 @@ import ZapForm from '@/modules/ManagePosition/ZapForm/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import TableSkeleton from '@/components/TableSkeleton/Index.vue';
+import SwitchTabs from '@/components/SwitchTabs/Index.vue';
 import { formatPositionData } from '@/components/Pools/PositionsTable/helpers.ts';
+
+export enum MANAGE_TAB {
+  REBALANCE,
+  WITHDRAW,
+  HARVEST
+}
 
 export default {
   name: 'PositionForm',
@@ -54,10 +73,26 @@ export default {
     ButtonComponent,
     BaseIcon,
     TableSkeleton,
+    SwitchTabs,
   },
   data() {
     return {
       zapPool: null as any,
+      activeTab: MANAGE_TAB.REBALANCE,
+      filterTabs: [
+        {
+          id: MANAGE_TAB.REBALANCE,
+          name: 'Rebalance',
+        },
+        {
+          id: MANAGE_TAB.WITHDRAW,
+          name: 'Withdraw',
+        },
+        {
+          id: MANAGE_TAB.HARVEST,
+          name: 'Harvest',
+        },
+      ],
     };
   },
   computed: {
@@ -81,6 +116,9 @@ export default {
     ...mapActions('poolsData', ['loadPools']),
     ...mapActions('zapinData', ['loadPositionContract']),
     ...mapActions('odosData', ['loadTokens', 'initData', 'loadChains', 'initContractData']),
+    changeTab(id: number) {
+      this.activeTab = id;
+    },
     searchPool() {
       const poolInfo = this.allPoolsMap;
       const tokensList = this.allTokensMap;
@@ -127,6 +165,12 @@ export default {
   height: 100%;
   border-radius: 20px;
   border: 2px solid var(--color-1);
+}
+
+.manage-wrap__tabs {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 40px
 }
 
 .manage-wrap__title {

@@ -199,8 +199,9 @@ import TokenForm from '@/modules/ManagePosition/TokenForm.vue';
 import { rebalanceStep } from '@/store/modals/waiting-modal.ts';
 import ZapInStepsRow from '@/components/StepsRow/ZapinRow/RebalanceRow.vue';
 import { cloneDeep } from 'lodash';
-import { markRaw } from 'vue';
+import { markRaw, type PropType } from 'vue';
 import { parseLogs } from './helpers.ts';
+import type { MANAGE_TAB } from '../Index.vue';
 
 enum zapMobileSection {
   'TOKEN_FORM',
@@ -220,6 +221,11 @@ export default {
     ZapInStepsRow,
   },
   props: {
+    activeTab: {
+      type: Number as PropType<MANAGE_TAB>,
+      required: false,
+      default: null,
+    },
     zapPool: {
       type: Object,
       required: false,
