@@ -11,7 +11,7 @@
         name="CommonSuccess"
       />
       <h1>
-        YOU SUCCESSFULLY ZAP IN
+        TRANSACTION SUCCESS
       </h1>
 
       <span class="divider" />

@@ -54,9 +54,7 @@
           :apy-order-type="orderType"
           :position-size-order-type="positionSizeOrder"
         >
-          <template
-            #filters
-          >
+          <template #filters>
             <PoolsFilter
               :selected-network="selectedNetworks"
               :is-show-deprecated="isShowDeprecated"
@@ -285,6 +283,8 @@ export default {
       const tokensList = this.allTokensMap;
 
       const positionData = await this.loadPositionContract(this.account);
+
+      console.log(positionData, '__positionData');
       return formatPositionData(positionData, poolInfo, tokensList);
     },
     connectWallet() {

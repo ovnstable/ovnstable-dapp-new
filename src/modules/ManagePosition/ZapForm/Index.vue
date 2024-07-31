@@ -70,7 +70,7 @@
                     Tokens you get
                   </h2>
                   <div
-                    v-for="token in (outputTokens as any)"
+                    v-for="token in (inputTokens as any)"
                     :key="token.id"
                     class="input-component-container"
                   >
@@ -196,12 +196,11 @@ import ZapinV3 from '@/modules/Main/components/ZapModal/ZapForm/ZapinV3.vue';
 import { poolsInfoMap, poolTokensForZapMap } from '@/store/views/main/zapin/mocks.ts';
 import BN from 'bignumber.js';
 import TokenForm from '@/modules/ManagePosition/TokenForm.vue';
-import { rebalanceStep } from '@/store/modals/waiting-modal.ts';
+import { MANAGE_FUNC, rebalanceStep } from '@/store/modals/waiting-modal.ts';
 import ZapInStepsRow from '@/components/StepsRow/ZapinRow/RebalanceRow.vue';
 import { cloneDeep } from 'lodash';
-import { markRaw, type PropType } from 'vue';
+import { markRaw } from 'vue';
 import { parseLogs } from './helpers.ts';
-import type { MANAGE_TAB } from '../Index.vue';
 
 enum zapMobileSection {
   'TOKEN_FORM',
@@ -221,11 +220,6 @@ export default {
     ZapInStepsRow,
   },
   props: {
-    activeTab: {
-      type: Number as PropType<MANAGE_TAB>,
-      required: false,
-      default: null,
-    },
     zapPool: {
       type: Object,
       required: false,
@@ -368,7 +362,7 @@ export default {
   },
   mounted() {
     this.firstInit();
-    this.setStagesMap(false);
+    this.setStagesMap(MANAGE_FUNC.REBALANCE);
   },
   created() {
     if (this.zapPool.chain !== this.networkId) return;
@@ -424,7 +418,6 @@ export default {
       const isStaked = await this.gaugeContractV3
         .stakedContains(this.account, this.zapPool.tokenId);
 
-      console.log(isStaked, '__isStaked');
       this.positionStaked = isStaked;
 
       if (!isStaked) this.currentStage = rebalanceStep.APPROVE;
@@ -638,7 +631,6 @@ export default {
       }
     },
     async stakeTrigger() {
-      console.log('stakeTrigger');
       this.isSwapLoading = true;
 
       try {

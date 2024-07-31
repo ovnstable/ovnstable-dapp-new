@@ -94,9 +94,9 @@
                   </div>
                   <div
                     class="pools-table__tag is-in-range"
-                    :class="{ 'out-range': !pool.position.isInRange }"
+                    :class="{ 'out-range': !pool.position?.isInRange }"
                   >
-                    {{ pool.position.isInRange ? 'IN RANGE' : 'OUT OF RANGE' }}
+                    {{ pool.position?.isInRange ? 'IN RANGE' : 'OUT OF RANGE' }}
                   </div>
                 </div>
               </div>
@@ -204,7 +204,6 @@ export default {
   methods: {
     ...mapActions('poolsData', ['openZapIn']),
     handleOpen(pool: any) {
-      console.log(pool, '__pool');
       this.openZapIn(pool);
       this.$router.replace(`/positions/${pool?.tokenId?.toString()}`);
     },

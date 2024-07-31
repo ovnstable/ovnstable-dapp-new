@@ -56,7 +56,9 @@ import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import Spinner from '@/components/Spinner/Index.vue';
 import PoolLabel from '@/modules/Main/components/ZapModal/PoolLabel.vue';
 import { defineComponent, type PropType } from 'vue';
-import { type zapInStep, type rebalanceStep, ZAPIN_MAP } from '@/store/modals/waiting-modal.ts';
+import {
+  type zapInStep, type rebalanceStep, type withdrawStep, ZAPIN_MAP,
+} from '@/store/modals/waiting-modal.ts';
 
 export default defineComponent({
   name: 'ZapinWaitingModal',
@@ -67,7 +69,7 @@ export default defineComponent({
   },
   props: {
     stageMap: {
-      type: Object as PropType<Record<zapInStep | rebalanceStep, string>>,
+      type: Object as PropType<Record<zapInStep | rebalanceStep | withdrawStep, string>>,
       default: ZAPIN_MAP,
     },
   },
@@ -84,6 +86,12 @@ export default defineComponent({
     ...mapState('poolsData', [
       'currentZapPool',
     ]),
+  },
+  watch: {
+    stageMap(val) {
+      console.log(val, '_VALL');
+      this.stageNames = val;
+    },
   },
   methods: {
     isPastStage(stage: number) {

@@ -7,9 +7,9 @@
     >
       <div
         v-for="item in tabs"
+        :key="item.id"
         class="switchtabs__inner-text"
         :class="{ active: item.id === activeItem, [type]: !!type }"
-        :key="item.id"
         @click.prevent="onTabClick(item.id)"
       >
         <span>
@@ -34,7 +34,6 @@ type TStyle = 'default' | 'transparent' | 'white'
 
 export default {
   name: 'TabsComponent',
-
   props: {
     tabs: {
       default: () => [],
@@ -53,6 +52,7 @@ export default {
       type: Number,
     },
   },
+  emits: ['tab-change'],
 
   data() {
     return {

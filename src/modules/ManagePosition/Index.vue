@@ -29,13 +29,30 @@
       <TableSkeleton />
     </div>
     <div
-      v-else
+      v-else-if="activeTab === manageTab.REBALANCE"
       class="manage-wrap__content"
     >
-      <ZapForm
+      <RebalanceForm
         :zap-pool="zapPool"
         :active-tab="activeTab"
-        @close-form="closeModal"
+      />
+    </div>
+    <div
+      v-else-if="activeTab === manageTab.WITHDRAW"
+      class="manage-wrap__content"
+    >
+      <WithdrawForm
+        :zap-pool="zapPool"
+        :active-tab="activeTab"
+      />
+    </div>
+    <div
+      v-else-if="activeTab === manageTab.HARVEST"
+      class="manage-wrap__content manage-wrap__content--harvest"
+    >
+      <HarvestForm
+        :zap-pool="zapPool"
+        :active-tab="activeTab"
       />
     </div>
 
@@ -49,10 +66,11 @@
 import {
   mapActions,
   mapGetters,
-  mapMutations,
 } from 'vuex';
 import SuccessZapModal from '@/modules/ModalTemplates/SuccessModal/SuccessZapModal.vue';
-import ZapForm from '@/modules/ManagePosition/ZapForm/Index.vue';
+import RebalanceForm from '@/modules/ManagePosition/ZapForm/Index.vue';
+import WithdrawForm from '@/modules/ManagePosition/ZapForm/Withdraw.vue';
+import HarvestForm from '@/modules/ManagePosition/ZapForm/Harvest.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import TableSkeleton from '@/components/TableSkeleton/Index.vue';
@@ -68,7 +86,9 @@ export enum MANAGE_TAB {
 export default {
   name: 'PositionForm',
   components: {
-    ZapForm,
+    RebalanceForm,
+    HarvestForm,
+    WithdrawForm,
     SuccessZapModal,
     ButtonComponent,
     BaseIcon,
@@ -78,6 +98,7 @@ export default {
   data() {
     return {
       zapPool: null as any,
+      manageTab: MANAGE_TAB,
       activeTab: MANAGE_TAB.REBALANCE,
       filterTabs: [
         {
@@ -112,7 +133,6 @@ export default {
     ...mapActions('odosData', [
       'triggerSuccessZapin',
     ]),
-    ...mapMutations('zapinData', ['resetStore']),
     ...mapActions('poolsData', ['loadPools']),
     ...mapActions('zapinData', ['loadPositionContract']),
     ...mapActions('odosData', ['loadTokens', 'initData', 'loadChains', 'initContractData']),
@@ -149,9 +169,6 @@ export default {
 
       this.searchPool();
     },
-    closeModal() {
-      this.resetStore();
-    },
   },
 };
 </script>
@@ -159,12 +176,16 @@ export default {
 <style lang="scss" scoped>
 .manage-wrap__content {
   padding: 20px;
-  min-width: 400px;
   background-color: var(--color-4);
   width: 100%;
   height: 100%;
   border-radius: 20px;
   border: 2px solid var(--color-1);
+}
+
+.manage-wrap__content--harvest {
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 .manage-wrap__tabs {
