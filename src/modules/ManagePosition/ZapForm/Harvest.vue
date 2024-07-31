@@ -21,7 +21,7 @@
       v-else
       class="swap-block"
     >
-      <div class="swap-block__part">
+      <div class="swap-block__full">
         <h2>
           You have
         </h2>
@@ -67,6 +67,58 @@
             ${{ totalLiq }}
           </div>
         </div>
+        <div class="swap-container__footer">
+          <ButtonComponent
+            v-if="!account"
+            class="swap-button-container"
+            btn-size="large"
+            btn-styles="primary"
+            full
+            @click="connectWallet"
+            @keypress="connectWallet"
+          >
+            CONNECT WALLET
+          </ButtonComponent>
+          <div
+            v-else
+            class="swap-button-container"
+          >
+            <ButtonComponent
+              v-if="!isNftApproved"
+              btn-size="large"
+              btn-styles="primary"
+              full
+              :loading="isSwapLoading"
+              @click="approveNftPosition(false)"
+              @keypress="approveNftPosition(false)"
+            >
+              APPROVE
+            </ButtonComponent>
+            <ButtonComponent
+              v-else-if="!positionFinish"
+              btn-size="large"
+              btn-styles="primary"
+              full
+              :loading="isSwapLoading"
+              @click="claimTrigger"
+              @keypress="claimTrigger"
+            >
+              CLAIM REWARDS
+            </ButtonComponent>
+            <RouterLink
+              v-else-if="positionFinish"
+              to="/positions"
+            >
+              <ButtonComponent
+                btn-size="large"
+                btn-styles="primary"
+                full
+              >
+                RETURN TO POSITIONS
+              </ButtonComponent>
+            </RouterLink>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -89,7 +141,6 @@ import ChangeNetwork from '@/modules/Main/components/ZapModal/ZapForm/ChangeNetw
 import ButtonComponent from '@/components/Button/Index.vue';
 import PoolLabel from '@/modules/ManagePosition/PoolLabel.vue';
 import { poolTokensForZapMap } from '@/store/views/main/zapin/mocks.ts';
-import TokenForm from '@/modules/ManagePosition/TokenForm.vue';
 import { cloneDeep } from 'lodash';
 import { formatMoney } from '@/utils/numbers.ts';
 import BN from 'bignumber.js';
@@ -99,9 +150,8 @@ export default {
   name: 'WithdrawForm',
   components: {
     PoolLabel,
-    ButtonComponent,
-    TokenForm,
     ChangeNetwork,
+    ButtonComponent,
     Spinner,
   },
   props: {
@@ -134,12 +184,12 @@ export default {
   computed: {
     ...mapState('odosData', [
       'isTokensLoadedAndFiltered',
-      'isBalancesLoading',
     ]),
     ...mapState('zapinData', [
       'zapContract',
       'poolNftContract',
       'gaugeContractV3',
+      'positionContract',
     ]),
     ...mapGetters('odosData', [
       'allTokensList',
@@ -430,14 +480,14 @@ export default {
       // init first token value
       this.selectedOutputTokens[0].value = 100;
     },
-    async zapOutTrigger() {
-      console.log(this.gaugeContractV3, 'zapOutTrigger');
+    async claimTrigger() {
+      console.log(this.positionContract, 'claimTrigger');
       this.isSwapLoading = true;
 
       try {
         this.showWaitingModal('unstaking');
 
-        const tx = await this.zapContract.zapOut(this.zapPool.tokenId);
+        const tx = await this.positionContract.collectRewards(this.zapPool.tokenId, this.account);
 
         await tx.wait();
         this.isSwapLoading = false;
@@ -455,29 +505,6 @@ export default {
         );
         this.closeWaitingModal();
         this.positionFinish = true;
-      } catch (e) {
-        console.log(e);
-        this.closeWaitingModal();
-        this.isSwapLoading = false;
-      }
-    },
-    async withdrawTrigger() {
-      console.log('unstakeTrigger');
-      this.isSwapLoading = true;
-
-      try {
-        this.showWaitingModal('unstaking');
-
-        let tx;
-
-        if (this.zapPool.chainName === 'base') tx = await this.gaugeContractV3.withdraw(this.zapPool.tokenId);
-        else if (this.zapPool.chainName === 'arbitrum') tx = await this.gaugeContractV3.withdraw(this.zapPool.tokenId, this.account);
-
-        await tx.wait();
-        this.isSwapLoading = false;
-        this.closeWaitingModal();
-        this.positionStaked = false;
-        this.currentStage = withdrawStep.APPROVE;
       } catch (e) {
         console.log(e);
         this.closeWaitingModal();

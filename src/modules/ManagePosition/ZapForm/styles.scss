@@ -540,6 +540,12 @@
   width: 50%;
 }
 
+.swap-block__full {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
 .swap-block__get-col {
   display: flex;
   flex-direction: column;
@@ -603,6 +609,7 @@
   margin-top: auto;
   display: flex;
   justify-content: space-between;
+  margin-top: 20px;
 
   h2 {
     font-size: 16px;
