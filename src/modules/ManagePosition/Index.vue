@@ -12,6 +12,11 @@
       <h1>MANAGE POSITION</h1>
     </div>
 
+    <PoolData
+      v-if="zapPool"
+      :zap-pool="zapPool"
+    />
+
     <div class="manage-wrap__tabs">
       <SwitchTabs
         :tabs="filterTabs"
@@ -76,6 +81,7 @@ import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import TableSkeleton from '@/components/TableSkeleton/Index.vue';
 import SwitchTabs from '@/components/SwitchTabs/Index.vue';
 import { formatPositionData } from '@/components/Pools/PositionsTable/helpers.ts';
+import PoolData from '@/modules/ManagePosition/PoolData.vue';
 
 export enum MANAGE_TAB {
   REBALANCE,
@@ -86,6 +92,7 @@ export enum MANAGE_TAB {
 export default {
   name: 'PositionForm',
   components: {
+    PoolData,
     RebalanceForm,
     HarvestForm,
     WithdrawForm,

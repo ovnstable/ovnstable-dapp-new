@@ -7,7 +7,6 @@
       class="swap-container"
     >
       <div class="swap-body">
-        <PoolLabel :pool="zapPool" />
         <ChangeNetwork :zap-pool="zapPool" />
       </div>
     </div>
@@ -27,19 +26,18 @@
         </h2>
         <div class="swap-block__item-col--send">
           <h1>
-            LIQUIDITY
+            REWARDS
           </h1>
           <span class="divider" />
           <div
-            v-for="token in (inputTokens as any)"
+            v-for="token in inputTokens"
             :key="token.id"
             class="swap-block__item"
           >
-          <div
-          v-if="token.selectedToken"
-          class="swap-block__item-row"
+            <div
+            v-if="token.selectedToken"
+            class="swap-block__item-row"
           >
-          <div class="swap-block__item-row--percentage">{{ token.proportion }}%</div>
           <div class="swap-block__item-row--token-wrap">
             <img
               :src="token.selectedToken.logoUrl"
@@ -138,13 +136,11 @@ import {
 } from 'vuex';
 import {
   getNewOutputToken,
-  getTokenByAddress,
 } from '@/store/helpers/index.ts';
 
 import Spinner from '@/components/Spinner/Index.vue';
 import ChangeNetwork from '@/modules/Main/components/ZapModal/ZapForm/ChangeNetwork.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
-import PoolLabel from '@/modules/ManagePosition/PoolLabel.vue';
 import { poolTokensForZapMap } from '@/store/views/main/zapin/mocks.ts';
 import { cloneDeep } from 'lodash';
 import BN from 'bignumber.js';
@@ -154,7 +150,6 @@ import { formatInputTokens } from '@/utils/tokens.ts';
 export default {
   name: 'WithdrawForm',
   components: {
-    PoolLabel,
     ChangeNetwork,
     ButtonComponent,
     Spinner,
@@ -190,14 +185,13 @@ export default {
     ...mapState('odosData', [
       'isTokensLoadedAndFiltered',
     ]),
+    ...mapGetters('odosData', ['allTokensMap']),
     ...mapState('zapinData', [
       'zapContract',
       'poolNftContract',
       'gaugeContractV3',
-      'positionContract',
     ]),
     ...mapGetters('odosData', [
-      'allTokensList',
       'isAvailableOnNetwork',
     ]),
     ...mapGetters('zapinData', [
@@ -282,6 +276,7 @@ export default {
     this.setStagesMap(MANAGE_FUNC.WITHDRAW);
     this.firstInit();
     this.setIsZapModalShow(true);
+    console.log(this.zapPool, '__POOL');
   },
   created() {
     if (this.zapPool.chain !== this.networkId) return;
@@ -397,50 +392,28 @@ export default {
       });
     },
     addDefaultPoolToken() {
-      const poolTokens = poolTokensForZapMap[this.zapPool.address];
-      const poolSelectedToken = getTokenByAddress(poolTokens[0].address, this.allTokensList);
-      const ovnSelectSelectedToken = getTokenByAddress(poolTokens[1].address, this.allTokensList);
+      // const info0 = getTokenInfo(token0, tokenMap)
+      const rewardToken = this.zapPool.rewards.tokens.map((_: any) => {
+        const rewardData = Object.entries(_)[0];
+        console.log(rewardData, '__rewardData');
+        const tokenInfo = this.allTokensMap.values().find((_: any) => {
+          const allTokSymbol = _?.symbol;
+          return allTokSymbol === rewardData[0];
+        });
 
-      if (!poolSelectedToken || !ovnSelectSelectedToken) {
-        this.addNewOutputToken();
-        return;
-      }
+        return {
+          displayedValue: rewardData[1],
+          id: Date.now().toString(),
+          locked: true,
+          proportion: 0,
+          selectedToken: tokenInfo,
+          sum: rewardData[1],
+          usdValue: rewardData[1],
+          value: rewardData[1],
+        };
+      });
 
-      poolSelectedToken.selected = true;
-      ovnSelectSelectedToken.selected = true;
-
-      if (this.swapMethod === 'BUY') {
-        this.addSelectedTokenToOutputList(poolSelectedToken, true, 50);
-        this.addSelectedTokenToOutputList(ovnSelectSelectedToken, true, 50);
-        return;
-      }
-
-      if (this.swapMethod === 'SELL') {
-        this.addNewOutputToken();
-        return;
-      }
-
-      console.error(
-        'Error when add default ovn token. Method not found: ',
-        this.swapMethod,
-      );
-    },
-    addNewOutputToken() {
-      this.outputTokens.push(getNewOutputToken());
-    },
-    removeToken(tokens: any[], id: string) {
-      // removing by token.id or token.selectedToken.id
-      const index = tokens.findIndex(
-        (item: any) => item.id === id
-          || (item.selectedToken ? item.selectedToken.id === id : false),
-      );
-      if (index !== -1) {
-        if (tokens[index].selectedToken) {
-          tokens[index].selectedToken.selected = false;
-        }
-
-        tokens.splice(index, 1);
-      }
+      this.inputTokens = rewardToken;
     },
     finishTransaction() {
       this.clearAndInitForm();
@@ -463,35 +436,14 @@ export default {
 
       console.error('Clear form, swap method not found.', this.swapMethod);
     },
-    resetOutputs() {
-      if (!this.selectedOutputTokens.length) {
-        return;
-      }
-
-      if (this.selectedOutputTokens.length === 2) {
-        for (let i = 0; i < this.selectedOutputTokens.length; i++) {
-          const token: any = this.selectedOutputTokens[i];
-          token.value = 50;
-        }
-        return;
-      }
-
-      for (let i = 0; i < this.selectedOutputTokens.length; i++) {
-        const token: any = this.selectedOutputTokens[i];
-        token.value = 0;
-      }
-
-      // init first token value
-      this.selectedOutputTokens[0].value = 100;
-    },
     async claimTrigger() {
-      console.log(this.positionContract, 'claimTrigger');
+      console.log(this.gaugeContractV3, 'claimTrigger');
       this.isSwapLoading = true;
 
       try {
         this.showWaitingModal('unstaking');
 
-        const tx = await this.positionContract.collectRewards(this.zapPool.tokenId, this.account);
+        const tx = await this.gaugeContractV3.getReward(this.zapPool.tokenId);
 
         await tx.wait();
         this.isSwapLoading = false;
@@ -539,26 +491,6 @@ export default {
         val: null,
       });
     },
-    addSelectedTokenToOutputList(selectedToken: any, isLocked: any, startPercent: any) {
-      const newOutputToken = getNewOutputToken();
-      newOutputToken.locked = isLocked;
-      newOutputToken.value = startPercent;
-      newOutputToken.selectedToken = selectedToken;
-      this.outputTokens.push(newOutputToken);
-      this.removeAllWithoutSelectedTokens(this.outputTokens);
-      this.resetOutputs();
-    },
-    removeAllWithoutSelectedTokens(tokens: any) {
-      const tokensToRemove = [];
-      for (let i = 0; i < tokens.length; i++) {
-        if (tokens[i].selectedToken) continue;
-        tokensToRemove.push(tokens[i]);
-      }
-
-      for (let i = 0; i < tokensToRemove.length; i++) {
-        this.removeToken(tokens, tokensToRemove[i].id);
-      }
-    },
     clearAllOutputSelectedTokens() {
       for (let i = 0; i < this.outputTokens.length; i++) {
         if (this.outputTokens[i].selectedToken) {
@@ -581,5 +513,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "./styles.scss"
+@import "./styles.scss";
 </style>

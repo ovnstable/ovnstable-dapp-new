@@ -17,7 +17,7 @@ const getTokenNames = (poolName: string) => {
   };
 };
 
-const getTokenInfo = (
+export const getTokenInfo = (
   address: string,
   tokenMap: Map<string, TTokenInfo>,
 ):TTokenInfo => tokenMap.get(address)!;
@@ -122,6 +122,7 @@ export const formatPositionData = (
           usdValue: rewardUsdTotal,
           displayedUsdValue: getMinVal(rewardUsdTotal),
         },
+        emissions,
         platformLinks: getPlatformLinks(pool.platform, pool),
         tokenId,
         ticks,

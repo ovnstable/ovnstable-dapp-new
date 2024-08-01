@@ -36,7 +36,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters('network', ['getParams', 'networkId']),
+    ...mapGetters('network', ['getParams']),
   },
   methods: {
     ...mapActions('network', ['setWalletNetwork']),

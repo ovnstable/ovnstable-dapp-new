@@ -1,0 +1,286 @@
+<template>
+  <div class="pool-data">
+    <div class="pool-data__title">
+      <div class="pool-data__name">
+        <div class="pool-data__name-imgs">
+          <img
+            alt="token"
+            :src="zapPool.token0Icon"
+          />
+          <img
+            alt="token"
+            :src="zapPool.token1Icon"
+          />
+        </div>
+
+        <h1>
+          {{ zapPool.name }}
+        </h1>
+      </div>
+      <span class="pool-data__divider" />
+      <div class="pool-data__row">
+        <div class="pool-data__plat">
+          <BaseIcon :name="zapPool.platform[0]" />
+          <span>
+            {{ zapPool.platform[0] }}
+          </span>
+        </div>
+
+        <span class="pool-data__id">
+          ID: #{{ zapPool.tokenId?.toString() }}
+        </span>
+      </div>
+    </div>
+    <div class="pool-data__liq swap-block__item-col--send">
+      <h1>
+        LIQUIDITY
+      </h1>
+      <span class="divider" />
+      <div
+        v-for="token in inputTokens"
+        :key="token.id"
+        class="swap-block__item"
+      >
+        <div
+          v-if="token.selectedToken"
+          class="swap-block__item-row"
+        >
+          <div class="swap-block__item-row--percentage">
+            {{ token.proportion }}%
+          </div>
+          <div class="swap-block__item-row--token-wrap">
+            <img
+              :src="token.selectedToken.logoUrl"
+              alt="select-token"
+            >
+            <span>
+              {{ token.selectedToken.symbol }}
+            </span>
+          </div>
+        </div>
+        <div
+          v-if="token.value"
+          class="swap-block__item-bal"
+        >
+          <div v-if="token.value">
+            {{ token.usdValue }}
+          </div>
+          <div>
+            ~ ${{ token.displayedValue }}
+          </div>
+        </div>
+      </div>
+      <!-- <span class="divider" /> -->
+    </div>
+    <div class="pool-data__rewards swap-block__item-col--send">
+      <h1>
+        REWARDS
+      </h1>
+      <span class="divider" />
+      <div
+        v-for="token in rewardTokens"
+        :key="token.id"
+        class="swap-block__item"
+      >
+        <div
+          v-if="token.selectedToken"
+          class="swap-block__item-row"
+        >
+          <div class="swap-block__item-row--token-wrap">
+            <img
+              :src="token.selectedToken.logoUrl"
+              alt="select-token"
+            >
+            <span>
+              {{ token.selectedToken.symbol }}
+            </span>
+          </div>
+        </div>
+        <div
+          v-if="token.value"
+          class="swap-block__item-bal"
+        >
+          <div v-if="token.value">
+            {{ token.usdValue }}
+          </div>
+          <div>
+            ~ ${{ token.displayedValue }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script lang="ts">
+import { mapGetters } from 'vuex';
+import { getNewInputToken, getTokenByAddress } from '@/store/helpers/index.ts';
+import { poolTokensForZapMap } from '@/store/views/main/zapin/mocks.ts';
+import { formatInputTokens } from '@/utils/tokens.ts';
+import BaseIcon from '@/components/Icon/BaseIcon.vue';
+
+export default {
+  name: 'PositionForm',
+  components: {
+    BaseIcon,
+  },
+  props: {
+    zapPool: {
+      type: Object,
+      required: false,
+      default: null,
+    },
+  },
+  data() {
+    return {
+      rewardTokens: [] as any,
+      inputTokens: [] as any,
+    };
+  },
+  computed: {
+    ...mapGetters('odosData', ['allTokensMap', 'allTokensList']),
+  },
+  mounted() {
+    console.log(this.zapPool, '__POOL');
+    this.initRewardTokens();
+    this.initLiqTokens();
+  },
+  methods: {
+    initLiqTokens() {
+      const poolTokens = poolTokensForZapMap[this.zapPool.address];
+      const token0 = getTokenByAddress(poolTokens[0].address, this.allTokensList);
+      const token1 = getTokenByAddress(poolTokens[1].address, this.allTokensList);
+
+      console.log(token0, '__token0');
+      const tokenFull0 = {
+        ...getNewInputToken(),
+        locked: false,
+        selectedToken: token0,
+      };
+      const tokenFull1 = {
+        ...getNewInputToken(),
+        locked: false,
+        selectedToken: token1,
+      };
+
+      let arrTokens = [tokenFull0, tokenFull1];
+
+      const symbName = this.zapPool?.name?.split('/');
+      arrTokens = arrTokens.map((_: any, key: number) => ({
+        ..._,
+        value: this.zapPool?.position?.tokens[key][symbName[key]],
+        sum: this.zapPool?.position?.tokens[key][symbName[key]],
+      }));
+
+      const inputTokenInfo = formatInputTokens(arrTokens);
+      this.inputTokens = inputTokenInfo;
+    },
+    initRewardTokens() {
+      const rewardToken = this.zapPool.rewards.tokens.map((_: any) => {
+        const rewardData = Object.entries(_)[0];
+        console.log(rewardData, '__rewardData');
+        const tokenInfo = this.allTokensMap.values().find((_: any) => {
+          const allTokSymbol = _?.symbol;
+          return allTokSymbol === rewardData[0];
+        });
+
+        return {
+          displayedValue: rewardData[1],
+          id: Date.now().toString(),
+          locked: true,
+          proportion: 0,
+          selectedToken: tokenInfo,
+          sum: rewardData[1],
+          usdValue: rewardData[1],
+          value: rewardData[1],
+        };
+      });
+
+      this.rewardTokens = rewardToken;
+    },
+  },
+};
+</script>
+
+<style lang="scss" scoped>
+@import "./ZapForm/styles.scss";
+
+.pool-data {
+  display: flex;
+  gap: 40px;
+  border: 1px solid var(--color-1);
+  background-color: var(--color-4);
+  padding: 30px;
+  border-radius: 20px;
+  margin-bottom: 34px;
+
+  h1 {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--color-1);
+  }
+}
+
+.pool-data__name {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pool-data__name-imgs {
+  display: flex;
+
+  img {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+.pool-data__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  svg {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+.pool-data__id {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-2);
+}
+
+.pool-data__plat {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.pool-data__divider {
+  display: block;
+  width: 100%;
+  height: 1px;
+  background-color: var(--color-6);
+  margin: 20px 0;
+}
+
+.pool-data__liq {
+  width: 100%;
+}
+
+.pool-data__title {
+  width: 100%;
+  padding: 30px;
+  border-radius: 20px;
+  background-color: var(--color-8);
+  border: 1px solid var(--color-6);
+}
+
+.pool-data__rewards {
+  width: 100%;
+}
+</style>

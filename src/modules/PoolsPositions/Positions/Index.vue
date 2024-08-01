@@ -209,7 +209,9 @@ export default {
   watch: {
     async allTokensMap() {
       if (!this.isTokensLoaded) this.isLoading = true;
-      else if (this.isTokensLoaded && this.allTokensMap.size > 0 && this.allTokensMap.size !== this.tokensLength && !this.isInit) {
+      else if (this.isTokensLoaded
+      && this.allTokensMap.size > 0
+      && this.allTokensMap.size !== this.tokensLength && !this.isInit) {
         const posData = await this.getFormatPositions();
         if (posData.length > 0) {
           this.positionData = posData;

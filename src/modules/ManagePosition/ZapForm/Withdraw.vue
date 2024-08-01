@@ -7,7 +7,6 @@
       class="swap-container"
     >
       <div class="swap-body">
-        <PoolLabel :pool="zapPool" />
         <ChangeNetwork :zap-pool="zapPool" />
       </div>
     </div>
@@ -31,15 +30,17 @@
           </h1>
           <span class="divider" />
           <div
-            v-for="token in (inputTokens as any)"
+            v-for="token in inputTokens"
             :key="token.id"
             class="swap-block__item"
           >
-          <div
-          v-if="token.selectedToken"
-          class="swap-block__item-row"
+            <div
+            v-if="token.selectedToken"
+            class="swap-block__item-row"
           >
-          <div class="swap-block__item-row--percentage">{{ token.proportion }}%</div>
+          <div class="swap-block__item-row--percentage">
+{{ token.proportion }}%
+</div>
           <div class="swap-block__item-row--token-wrap">
             <img
               :src="token.selectedToken.logoUrl"
@@ -175,7 +176,6 @@ import {
 import Spinner from '@/components/Spinner/Index.vue';
 import ChangeNetwork from '@/modules/Main/components/ZapModal/ZapForm/ChangeNetwork.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
-import PoolLabel from '@/modules/ManagePosition/PoolLabel.vue';
 import { poolTokensForZapMap } from '@/store/views/main/zapin/mocks.ts';
 import TokenForm from '@/modules/ManagePosition/TokenForm.vue';
 import { cloneDeep } from 'lodash';
@@ -186,7 +186,6 @@ import { formatInputTokens } from '@/utils/tokens.ts';
 export default {
   name: 'WithdrawForm',
   components: {
-    PoolLabel,
     ButtonComponent,
     TokenForm,
     ChangeNetwork,

@@ -7,7 +7,6 @@
       class="swap-container"
     >
       <div class="swap-body">
-        <PoolLabel :pool="zapPool" />
         <ChangeNetwork :zap-pool="zapPool" />
       </div>
     </div>
@@ -191,7 +190,6 @@ import Spinner from '@/components/Spinner/Index.vue';
 import ChangeNetwork from '@/modules/Main/components/ZapModal/ZapForm/ChangeNetwork.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
-import PoolLabel from '@/modules/ManagePosition/PoolLabel.vue';
 import ZapinV3 from '@/modules/Main/components/ZapModal/ZapForm/ZapinV3.vue';
 import { poolsInfoMap, poolTokensForZapMap } from '@/store/views/main/zapin/mocks.ts';
 import BN from 'bignumber.js';
@@ -210,7 +208,6 @@ enum zapMobileSection {
 export default {
   name: 'ZapForm',
   components: {
-    PoolLabel,
     BaseIcon,
     ZapinV3,
     ButtonComponent,
