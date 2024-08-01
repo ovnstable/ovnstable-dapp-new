@@ -152,6 +152,15 @@ import { checkIsEveryStable } from '@/store/views/main/pools/helpers.ts';
 import {
   mapEventTokenData, mapInputTokenData, getPlatformLink, type TFormatTokenInfo,
 } from './helpers.ts';
+import type { TPoolInfo } from '@/types/common/pools';
+
+type TSuccessData = {
+    inputTokens: TSuccessTokenInfo[],
+    outputTokens: TSuccessTokenInfo[],
+    pool: TPoolInfo,
+  }
+
+// const EVENT_DISPATCH_OFFSET = 3000;
 
 // const EVENT_DISPATCH_OFFSET = 3000;
 

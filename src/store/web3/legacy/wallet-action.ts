@@ -144,7 +144,7 @@ const actions = {
         commit('accountData/setUns', wallet.instance.cacheOptions.getDefaultUsername(), { root: true });
       }
 
-      commit('accountData/setAccount', userAddress, { root: true });
+      dispatch('accountData/handleSwitchAccount', userAddress, { root: true });
 
       await dispatch('odosData/loadChains', null, { root: true });
       await dispatch('odosData/loadTokens', null, { root: true });
@@ -386,7 +386,7 @@ const actions = {
         }
       }
 
-      commit('accountData/setAccount', account, { root: true });
+      dispatch('accountData/handleSwitchAccount', account, { root: true });
 
       if (account) {
         dispatch('dappDataAction/updateUserData', null, { root: true });
@@ -395,7 +395,7 @@ const actions = {
       }
     } else {
       dispatch('dappDataAction/resetUserData', null, { root: true });
-      commit('accountData/setAccount', null, { root: true });
+      dispatch('accountData/handleSwitchAccount', null, { root: true });
       dispatch('insuranceData/refreshInsurance', null, { root: true });
     }
   },

@@ -2,13 +2,15 @@ import posthog, { type PostHog, type Properties } from 'posthog-js';
 import { debounce } from 'lodash';
 import type {
   IPosthogService,
+  TIdentyfyByWalletTriggerProps,
+  TLinkWalletTriggerProps,
   TMintRedeemSuccessTriggerProps,
   TSwapSuccessTriggerProps,
   TZapinSuccessTriggerProps,
 } from '@/types/posthog';
 import POSTHOG_CONFIG from './posthogConfig.ts';
 
-const POSTHOG_API_KEY = 'phc_3j1RLYhLiTP6PLl6KCrWBXNJQbIL3G7LSifB9JeiZZF';
+const { POSTHOG_API_KEY } = process.env;
 const EVENT_DISPATCH_OFFSET = 10000;
 
 class PosthogService {
@@ -17,7 +19,7 @@ class PosthogService {
   private posthog: PostHog;
 
   private constructor() {
-    this.posthog = posthog.init(POSTHOG_API_KEY, POSTHOG_CONFIG)!;
+    this.posthog = posthog.init(POSTHOG_API_KEY!, POSTHOG_CONFIG)!;
   }
 
   public static getInstance(): IPosthogService {
@@ -29,6 +31,11 @@ class PosthogService {
 
   private dispatchToPosthog = debounce((eventName: string, props: Properties) => this.posthog
     .capture(eventName, props), EVENT_DISPATCH_OFFSET, { leading: true, trailing: false });
+
+  private identifyUser = (address: string) => this.posthog.identify(address);
+
+  private linkWallets = (address0: string, address1: string) => this.posthog
+    .alias(address0, address1);
 
   captureEvent(eventName: string, props: Properties) {
     console.log('__PosthogEventCapture', eventName, props);
@@ -53,6 +60,14 @@ class PosthogService {
 
   rebalanceSuccessTrigger(props: TZapinSuccessTriggerProps): void {
     this.captureEvent('Rebalance success event', props);
+  }
+
+  identyfyByWalletTrigger({ address }: TIdentyfyByWalletTriggerProps): void {
+    this.identifyUser(address);
+  }
+
+  linkWalletsTrigger({ address0, address1 }: TLinkWalletTriggerProps): void {
+    this.linkWallets(address0, address1);
   }
 }
 

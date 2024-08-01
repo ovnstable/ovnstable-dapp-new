@@ -15,6 +15,7 @@ module.exports = {
     '@vue/eslint-config-airbnb',
   ],
   rules: {
+    'linebreak-style': 0,
     '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     'vue/no-unused-properties': ['error', {
       groups: ['props', 'methods', 'data', 'computed'],

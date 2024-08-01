@@ -66,13 +66,13 @@ export const formatPositionData = (
 ): IPositionsInfo[] => {
   const positionInfo = posDataArr.flatMap((
     [platform, tokenId, poolId, token0, token1, amount0, amount1, rewardAmount0, rewardAmount1,
-      emissions, tickLower, tickUpper, centerTick]: TPositionData,
+      emissions, tickLower, tickUpper, centerTick, isStaked]: TPositionData,
   ) => {
     // Pools
     const pool = poolsMap[poolId]
     ?? poolsMap[poolId.toUpperCase()] ?? poolsMap[poolId.toLowerCase()];
 
-    console.log('__1');
+    // console.log('__1');
 
     if (pool && pool.name) {
       // Tokens
@@ -99,7 +99,7 @@ export const formatPositionData = (
         centerTick,
       };
 
-      console.log(ticks, '__ticks');
+      // console.log(ticks, '__ticks');
 
       // Final data
       const positionFullInfo = {
@@ -128,13 +128,13 @@ export const formatPositionData = (
         tokenNames,
       };
 
-      console.log(positionFullInfo, '__positionFullInfo');
+      // console.log(positionFullInfo, '__positionFullInfo');
 
       return positionFullInfo;
     }
     return [];
   });
 
-  console.log(positionInfo, '__positionInfo');
+  // console.log(positionInfo, '__positionInfo');
   return positionInfo;
 };

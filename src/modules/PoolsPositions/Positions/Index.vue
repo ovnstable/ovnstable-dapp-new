@@ -284,7 +284,7 @@ export default {
 
       const positionData = await this.loadPositionContract(this.account);
 
-      console.log(positionData, '__positionData');
+      // console.log(positionData, '__positionData');
       return formatPositionData(positionData, poolInfo, tokensList);
     },
     connectWallet() {
