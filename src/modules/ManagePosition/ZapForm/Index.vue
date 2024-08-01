@@ -70,7 +70,7 @@
                     Tokens you get
                   </h2>
                   <div
-                    v-for="token in (outputTokens as any)"
+                    v-for="token in (inputTokens as any)"
                     :key="token.id"
                     class="input-component-container"
                   >
@@ -191,14 +191,15 @@ import Spinner from '@/components/Spinner/Index.vue';
 import ChangeNetwork from '@/modules/Main/components/ZapModal/ZapForm/ChangeNetwork.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
-import PoolLabel from '@/modules/PoolsPositions/ZapModal/PoolLabel.vue';
+import PoolLabel from '@/modules/ManagePosition/PoolLabel.vue';
 import ZapinV3 from '@/modules/Main/components/ZapModal/ZapForm/ZapinV3.vue';
 import { poolsInfoMap, poolTokensForZapMap } from '@/store/views/main/zapin/mocks.ts';
 import BN from 'bignumber.js';
-import TokenForm from '@/modules/PoolsPositions/ZapModal/TokenForm.vue';
-import { rebalanceStep } from '@/store/modals/waiting-modal.ts';
+import TokenForm from '@/modules/ManagePosition/TokenForm.vue';
+import { MANAGE_FUNC, rebalanceStep } from '@/store/modals/waiting-modal.ts';
 import ZapInStepsRow from '@/components/StepsRow/ZapinRow/RebalanceRow.vue';
 import { cloneDeep } from 'lodash';
+import { markRaw } from 'vue';
 import { parseLogs } from './helpers.ts';
 
 enum zapMobileSection {
@@ -361,7 +362,7 @@ export default {
   },
   mounted() {
     this.firstInit();
-    this.setStagesMap(false);
+    this.setStagesMap(MANAGE_FUNC.REBALANCE);
   },
   created() {
     if (this.zapPool.chain !== this.networkId) return;
@@ -417,7 +418,6 @@ export default {
       const isStaked = await this.gaugeContractV3
         .stakedContains(this.account, this.zapPool.tokenId);
 
-      console.log(isStaked, '__isStaked');
       this.positionStaked = isStaked;
 
       if (!isStaked) this.currentStage = rebalanceStep.APPROVE;
@@ -631,7 +631,6 @@ export default {
       }
     },
     async stakeTrigger() {
-      console.log('stakeTrigger');
       this.isSwapLoading = true;
 
       try {
@@ -1020,6 +1019,11 @@ export default {
           .rebalance(txData, gaugeData, this.zapPool?.tokenId, params);
 
         const logsData = await tx.wait();
+
+        this.$store.commit('odosData/changeState', {
+          field: 'lastParsedZapResponseData',
+          val: markRaw(logsData),
+        });
 
         parseLogs(logsData, this.commitEventToStore);
 

@@ -10,7 +10,7 @@
         v-if="isZapModalShow"
         class="zap-waiting-modal-container"
       >
-        <ZapinWaitingModal :stage-map="STAGES_MAP" />
+        <ZapinWaitingModal :stage-map="STAGES_MAP_GET" />
       </div>
       <div v-else>
         <div class="modal-content__spin">
@@ -30,7 +30,7 @@
 </template>
 
 <script lang="ts">
-import { mapState } from 'vuex';
+import { mapState, mapGetters } from 'vuex';
 import Carousel from '@/modules/ModalTemplates/components/Carousel.vue';
 import Spinner from '@/components/Spinner/Index.vue';
 import ModalComponent from '@/components/Modal/Index.vue';
@@ -48,7 +48,7 @@ export default {
     },
   },
   computed: {
-    ...mapState('waitingModal', ['STAGES_MAP']),
+    ...mapGetters('waitingModal', ['STAGES_MAP_GET']),
     ...mapState('poolsData', ['isZapModalShow']),
   },
 };

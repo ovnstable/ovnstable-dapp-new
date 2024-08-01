@@ -620,7 +620,7 @@ export default {
             successTxHash: txData.hash,
             from: [this.inputToken],
             to: [this.outputToken],
-            type: mintWrapStatus[this.activeWrapTab],
+            type: this.swapMsg.toUpperCase(),
           });
 
           this.putTransaction(tx);

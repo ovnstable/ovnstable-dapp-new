@@ -1,21 +1,16 @@
 <template>
   <div class="main-module">
     <MainModule />
-    <PoolsContainer
-      :is-overview="false"
-    />
   </div>
 </template>
 
 <script lang="ts">
 import MainModule from '@/modules/Main/Index.vue';
-import PoolsContainer from '@/modules/Main/components/Pools/Index.vue';
 
 export default {
   name: 'MainView',
   components: {
     MainModule,
-    PoolsContainer,
   },
 };
 </script>

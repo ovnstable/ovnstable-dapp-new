@@ -61,6 +61,7 @@ export const loadAbi = async (abiFileSrc: string): Promise<ContractAbi> => {
 
 const defaultState = () => ({
   zapPoolRoot: null,
+  positionContract: null,
   currentZapPlatformContractType: null,
   zapContract: null,
   // for v2
@@ -249,6 +250,11 @@ const actions = {
     const positions = await positionContract.getPositions(address);
 
     console.log(positions, '__positions');
+
+    commit('changeState', {
+      field: 'positionContract',
+      val: positionContract,
+    });
 
     commit('changeState', {
       field: 'userPositions',

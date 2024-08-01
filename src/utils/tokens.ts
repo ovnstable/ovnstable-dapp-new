@@ -7,9 +7,15 @@ const BN_STRING_BASE = 10;
 export const getUsdStr = (
   val: string | number,
   decimals: number = DEFAULT_DECIMALS,
-  usdValue: string | number = 1,
+  usdPrice: string | number = 1,
 ): string => new BN(val).div(10 ** decimals)
-  .multipliedBy(new BN(usdValue)).toString(BN_STRING_BASE);
+  .multipliedBy(new BN(usdPrice)).toString(BN_STRING_BASE);
+
+export const getUsdStrFromValue = (
+  val: string | number,
+  usdPrice: string | number = 1,
+): string => new BN(val)
+  .multipliedBy(new BN(usdPrice)).toString(BN_STRING_BASE);
 
 export const sumBnStr = (
   token0UsdStr: string,
@@ -22,4 +28,4 @@ export const sumBnStr = (
 export const getAllTokensString = (tokens: ISuccessTokenInfo[]) => tokens
   .map((token) => token.symbol).toString();
 
-export const getTransactionTotal = (tokens:ISuccessTokenData[]): string => tokens.reduce((acc: string, token: ISuccessTokenData) => sumBnStr(acc, token.value), '0');
+export const getTransactionTotal = (tokens:ISuccessTokenData[]): string => tokens.reduce((acc: string, token: ISuccessTokenData) => sumBnStr(acc, token?.usdValue || token?.value || '0'), '0');

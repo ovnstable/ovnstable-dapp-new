@@ -14,6 +14,7 @@ export type TPositionData = [
     tickLower: number,
     tickUpper: number,
     centerTick: number,
+    isStaked: boolean,
   ]
 
 type TTicks = {

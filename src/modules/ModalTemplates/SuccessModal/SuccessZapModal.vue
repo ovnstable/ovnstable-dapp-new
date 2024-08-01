@@ -11,7 +11,7 @@
         name="CommonSuccess"
       />
       <h1>
-        YOU SUCCESSFULLY ZAP IN
+        TRANSACTION SUCCESS
       </h1>
 
       <span class="divider" />
@@ -21,16 +21,16 @@
         <div class="modal-content__data-row">
           <div class="nft-info">
             <div
-              v-if="burnedNftId"
+              v-if="lastParsedBurnedTokenIdEvent"
               class="nft-info-row"
             >
-              <span>Burned NFT:</span><span>ID: #{{ burnedNftId }}</span>
+              <span>Burned NFT:</span><span>ID: #{{ lastParsedBurnedTokenIdEvent }}</span>
             </div>
             <div
-              v-if="nftId"
+              v-if="lastParsedTokenIdEvent"
               class="nft-info-row"
             >
-              <span>New NFT:</span><span>ID: #{{ nftId }}</span>
+              <span>New NFT:</span><span>ID: #{{ lastParsedTokenIdEvent }}</span>
             </div>
           </div>
           <a
@@ -71,7 +71,7 @@
           </div>
 
           <div
-            v-if="claimedRewards"
+            v-if="lastParsedClaimedRewardsEvent"
             class="data-row returned"
           >
             <div class="success-row-title">
@@ -79,7 +79,7 @@
             </div>
             <div class="success-data-list">
               <div class="token-amount">
-                ~ {{ claimedRewards }} USD
+                ~ {{ lastParsedClaimedRewardsEvent }} USD
               </div>
             </div>
           </div>
@@ -144,13 +144,13 @@ import ModalComponent from '@/components/Modal/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import PoolLabel from '@/modules/Main/components/ZapModal/PoolLabel.vue';
-import { mapGetters } from 'vuex';
-import { defineComponent, type PropType } from 'vue';
-import { getTransactionTotal } from '@/utils/tokens.ts';
+import { mapGetters, mapState } from 'vuex';
+import { defineComponent } from 'vue';
+import { getAllTokensString, getTransactionTotal } from '@/utils/tokens.ts';
 import { checkIsEveryStable } from '@/store/views/main/pools/helpers.ts';
+// import _ from 'lodash';
 import {
-  mapEventTokenData, mapInputTokenData, getPlatformLink, type TFormatTokenInfo, type TTokenDataList,
-  type TSuccessTokenInfo,
+  mapEventTokenData, mapInputTokenData, getPlatformLink, type TFormatTokenInfo,
 } from './helpers.ts';
 import type { TPoolInfo } from '@/types/common/pools';
 
@@ -159,6 +159,8 @@ type TSuccessData = {
     outputTokens: TSuccessTokenInfo[],
     pool: TPoolInfo,
   }
+
+// const EVENT_DISPATCH_OFFSET = 3000;
 
 export default defineComponent({
   name: 'SuccessZapModal',
@@ -169,36 +171,8 @@ export default defineComponent({
     BaseIcon,
   },
   props: {
-    isShow: {
-      type: Boolean,
-      default: false,
-    },
     setShowFunc: {
       type: Function,
-      required: true,
-    },
-    successData: {
-      type: Object as PropType<TSuccessData>,
-      required: true,
-    },
-    returnedToUser: {
-      type: Object as PropType<TTokenDataList>,
-      required: true,
-    },
-    putIntoPool: {
-      type: Object as PropType<TTokenDataList>,
-      required: true,
-    },
-    burnedNftId: {
-      type: String,
-      required: true,
-    },
-    nftId: {
-      type: String,
-      required: true,
-    },
-    claimedRewards: {
-      type: String,
       required: true,
     },
   },
@@ -208,12 +182,27 @@ export default defineComponent({
       tokensReturnedList: [] as TFormatTokenInfo[],
       tokensStakedList: [] as TFormatTokenInfo[],
       showModal: false,
+      isInit: false,
     };
   },
   computed: {
+    ...mapState('odosData', [
+      'allTokensMap',
+      'successData',
+      'showSuccessZapin',
+      'lastParsedReturnedToUserEvent',
+      'lastParsedPutIntoPoolEvent',
+      'lastParsedTokenIdEvent',
+      'lastParsedZapResponseData',
+    ]),
+    ...mapState('poolsData', [
+      'lastParsedBurnedTokenIdEvent',
+      'lastParsedClaimedRewardsEvent',
+    ]),
     ...mapGetters('odosData', ['allTokensMap']),
     ...mapGetters('accountData', ['account']),
     ...mapGetters('posthog', ['posthogService']),
+    ...mapGetters('network', ['explorerUrl']),
     openPositionOnPool(): string {
       // eslint-disable-next-line prefer-destructuring
       const pool = this.successData.pool;
@@ -222,8 +211,31 @@ export default defineComponent({
     },
   },
   watch: {
-    isShow(currVal: boolean) {
+    showSuccessZapin(currVal: boolean) {
       this.showModal = currVal;
+      if (!this.isInit && currVal) {
+        // TODO: move Posthog logic up to store
+        const posthogEventData = {
+          txUrl: `${this.explorerUrl}tx/${this.lastParsedZapResponseData?.hash || ''}`,
+          token0: getAllTokensString(this.successData.inputTokens
+            .map((token: any) => token.selectedToken)),
+          token1: getAllTokensString(this.successData.outputTokens
+            .map((token: any) => token.selectedToken)),
+          poolName: this.successData.pool.name,
+          poolVersion: this.successData.pool.poolVersion,
+          usdTotal: getTransactionTotal(this.successData.inputTokens),
+          poolType: checkIsEveryStable(this.successData.pool) ? 'Stable' : 'Volatile',
+          walletAddress: this.account,
+          chainName: this.successData.pool.chainName,
+          poolPlatform: this.successData.pool.platform.toString(),
+        };
+
+        if (this.lastParsedClaimedRewardsEvent) {
+          this.posthogService
+            .rebalanceSuccessTrigger(posthogEventData);
+        }
+        this.posthogService.zapinSuccessTrigger(posthogEventData);
+      }
     },
     successData(val) {
       if (val) {
@@ -237,25 +249,20 @@ export default defineComponent({
     this.initReturnedList();
     this.initStakedList();
     this.initSentList();
-
-    // TODO: move Posthog logic up to store
-    const posthogEventData = {
-      txUrl: this.openPositionOnPool,
-      poolName: this.successData.pool.name,
-      poolVersion: this.successData.pool.poolVersion,
-      totalAmount: getTransactionTotal(this.tokensSentList),
-      poolType: checkIsEveryStable(this.successData.pool) ? 'Stable' : 'Volatile',
-      walletAddress: this.account,
-      chainName: this.successData.pool.chainName,
-      poolPlatform: this.successData.pool.platform.toString(),
-    };
-
-    if (this.claimedRewards) this.posthogService.rebalanceSuccessTrigger(posthogEventData);
-    this.posthogService.zapinSuccessTrigger(posthogEventData);
   },
   methods: {
     closeModal() {
       this.setShowFunc({ isShow: false });
+
+      // Cleaning the state on close
+      this.$store.commit('poolsData/changeState', {
+        field: 'lastParsedBurnedTokenIdEvent',
+        val: '',
+      });
+      this.$store.commit('poolsData/changeState', {
+        field: 'lastParsedClaimedRewardsEvent',
+        val: '',
+      });
     },
     // Comes from values computed locally befor tx
     initSentList() {
@@ -267,18 +274,18 @@ export default defineComponent({
     },
     // Comes from contract event log
     initReturnedList(): void {
-      if (this.returnedToUser?.amounts) {
+      if (this.lastParsedReturnedToUserEvent?.amounts) {
         this.tokensReturnedList = mapEventTokenData(
-          this.returnedToUser,
+          this.lastParsedReturnedToUserEvent,
           this.allTokensMap,
         );
       }
     },
     // Comes from contract event log
     initStakedList(): void {
-      if (this.putIntoPool?.amounts) {
+      if (this.lastParsedPutIntoPoolEvent?.amounts) {
         this.tokensStakedList = mapEventTokenData(
-          this.putIntoPool,
+          this.lastParsedPutIntoPoolEvent,
           this.allTokensMap,
         );
       }

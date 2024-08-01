@@ -349,7 +349,7 @@ import { poolsInfoMap, poolTokensForZapMap } from '@/store/views/main/zapin/mock
 import BN from 'bignumber.js';
 import { approveToken, getAllowanceValue } from '@/utils/contractApprove.ts';
 import { onLeaveList, onEnterList, beforeEnterList } from '@/utils/animations.ts';
-import { zapInStep } from '@/store/modals/waiting-modal.ts';
+import { MANAGE_FUNC, zapInStep } from '@/store/modals/waiting-modal.ts';
 import { parseLogs } from './helpers.ts';
 
 enum zapMobileSection {
@@ -715,7 +715,7 @@ export default {
   mounted() {
     if (this.zapPool.chain !== this.networkId) this.currentStage = zapInStep.START;
 
-    this.setStagesMap(true);
+    this.setStagesMap(MANAGE_FUNC.ZAPIN);
     this.firstInit();
   },
   created() {
@@ -1623,6 +1623,11 @@ export default {
 
         this.$store.commit('odosData/changeState', {
           field: 'lastZapResponseData',
+          val: markRaw(receipt),
+        });
+
+        this.$store.commit('odosData/changeState', {
+          field: 'lastParsedZapResponseData',
           val: markRaw(receipt),
         });
 

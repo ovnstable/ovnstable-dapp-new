@@ -27,7 +27,7 @@
       </InputComponent>
     </div>
 
-    <div class="pools-wrap__filters-networks">
+    <!-- <div class="pools-wrap__filters-networks">
       <div
         :class="selectedNetwork.length === 0 ? 'pools-wrap__filters-item--selected' : ''"
         class="pools-wrap__filters-item"
@@ -46,7 +46,7 @@
       >
         <BaseIcon :name="networkConfig.name.toLowerCase()" />
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 

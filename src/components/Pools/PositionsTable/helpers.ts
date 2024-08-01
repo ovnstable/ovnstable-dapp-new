@@ -72,7 +72,9 @@ export const formatPositionData = (
     const pool = poolsMap[poolId]
     ?? poolsMap[poolId.toUpperCase()] ?? poolsMap[poolId.toLowerCase()];
 
-    if (pool) {
+    console.log('__1');
+
+    if (pool && pool.name) {
       // Tokens
       const tokenNames = getTokenNames(pool.name);
       const token0Info = getTokenInfo(token0, tokenMap);
@@ -96,6 +98,8 @@ export const formatPositionData = (
         tickUpper,
         centerTick,
       };
+
+      console.log(ticks, '__ticks');
 
       // Final data
       const positionFullInfo = {
@@ -123,9 +127,14 @@ export const formatPositionData = (
         ticks,
         tokenNames,
       };
+
+      console.log(positionFullInfo, '__positionFullInfo');
+
       return positionFullInfo;
     }
     return [];
   });
+
+  console.log(positionInfo, '__positionInfo');
   return positionInfo;
 };
