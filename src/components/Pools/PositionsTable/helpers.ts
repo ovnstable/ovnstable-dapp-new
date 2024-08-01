@@ -29,9 +29,9 @@ const isInRange = ({ tickLower, tickUpper, centerTick }: TTicks) => !(
 );
 
 const getPercentage = (value: string, total: string) => new BN((value))
-  .dividedBy(new BN(total)).multipliedBy(100).toFixed(2);
+  .dividedBy(new BN(total)).multipliedBy(100).toFixed(0);
 
-const getPositionProportion = (
+export const getPositionProportion = (
   token0UsdValue: string,
   token1UsdValue: string,
   totalUsdValue: string,

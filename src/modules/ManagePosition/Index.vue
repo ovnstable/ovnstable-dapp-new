@@ -9,7 +9,7 @@
           </span>
         </ButtonComponent>
       </router-link>
-      <h1>Manage position</h1>
+      <h1>MANAGE POSITION</h1>
     </div>
 
     <div class="manage-wrap__tabs">
@@ -201,8 +201,8 @@ export default {
   color: var(--color-1);
 
   h1 {
-    font-size: 28px;
-    font-weight: 700;
+    font-size: 26px;
+    font-weight: 800;
   }
 
   span {

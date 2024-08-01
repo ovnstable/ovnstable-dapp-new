@@ -1,5 +1,9 @@
 import BN from 'bignumber.js';
-import type { ISuccessTokenData, ISuccessTokenInfo } from '@/types/common/tokens';
+import { getPositionProportion } from '@/components/Pools/PositionsTable/helpers.ts';
+import type {
+  IInputTokenInfo, ISuccessTokenData, ISuccessTokenInfo, TInputToken,
+} from '@/types/common/tokens';
+import { formatMoney } from './numbers.ts';
 
 const DEFAULT_DECIMALS = 18;
 const BN_STRING_BASE = 10;
@@ -29,3 +33,27 @@ export const getAllTokensString = (tokens: ISuccessTokenInfo[]) => tokens
   .map((token) => token.symbol).toString();
 
 export const getTransactionTotal = (tokens:ISuccessTokenData[]): string => tokens.reduce((acc: string, token: ISuccessTokenData) => sumBnStr(acc, token?.usdValue || token?.value || '0'), '0');
+
+export const formatInputTokens = (tokens: TInputToken[]): IInputTokenInfo[] => {
+  const tokensInfo = tokens
+    .map((token) => {
+      const usdValue = getUsdStrFromValue(token.value, token.selectedToken.price);
+      return {
+        ...token,
+        usdValue: formatMoney(Number(usdValue), 6),
+        displayedValue: formatMoney(Number(token.value), 6),
+        proportion: '',
+      };
+    });
+
+  const proportion = Object.values(getPositionProportion(
+    tokensInfo[0].usdValue,
+    tokensInfo[1].usdValue,
+    sumBnStr(tokensInfo[0].usdValue, tokensInfo[1].usdValue),
+  ));
+
+  return tokensInfo.map((token, n) => ({
+    ...token,
+    proportion: proportion[n],
+  }));
+};

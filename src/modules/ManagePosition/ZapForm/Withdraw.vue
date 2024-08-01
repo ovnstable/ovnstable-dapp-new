@@ -27,37 +27,42 @@
         </h2>
         <div class="swap-block__item-col--send">
           <h1>
-            Liquidity
+            LIQUIDITY
           </h1>
+          <span class="divider" />
           <div
             v-for="token in (inputTokens as any)"
             :key="token.id"
             class="swap-block__item"
           >
-            <div
-              v-if="token.selectedToken"
-              class="swap-block__item-row"
+          <div
+          v-if="token.selectedToken"
+          class="swap-block__item-row"
+          >
+          <div class="swap-block__item-row--percentage">{{ token.proportion }}%</div>
+          <div class="swap-block__item-row--token-wrap">
+            <img
+              :src="token.selectedToken.logoUrl"
+              alt="select-token"
             >
-              <img
-                :src="token.selectedToken.logoUrl"
-                alt="select-token"
-              >
-              <span>
-                {{ token.selectedToken.symbol }}
-              </span>
+            <span>
+              {{ token.selectedToken.symbol }}
+            </span>
+          </div>
             </div>
             <div
               v-if="token.value"
               class="swap-block__item-bal"
             >
               <div v-if="token.value">
-                {{ formatMoney(token.value, 6) }}
+                {{ token.usdValue }}
               </div>
               <div>
-                ~ ${{ getUsdPrice(token) }}
+                ~ ${{ token.displayedValue }}
               </div>
             </div>
           </div>
+          <!-- <span class="divider" /> -->
         </div>
         <div class="swap-block__part-total">
           <h2>
@@ -174,9 +179,9 @@ import PoolLabel from '@/modules/ManagePosition/PoolLabel.vue';
 import { poolTokensForZapMap } from '@/store/views/main/zapin/mocks.ts';
 import TokenForm from '@/modules/ManagePosition/TokenForm.vue';
 import { cloneDeep } from 'lodash';
-import { formatMoney } from '@/utils/numbers.ts';
 import BN from 'bignumber.js';
 import { MANAGE_FUNC, withdrawStep } from '@/store/modals/waiting-modal.ts';
+import { formatInputTokens } from '@/utils/tokens.ts';
 
 export default {
   name: 'WithdrawForm',
@@ -246,9 +251,6 @@ export default {
       if (res.lt(0.01)) return '0.01';
 
       return res.toFixed(4);
-    },
-    getUsdPrice() {
-      return (token: any) => new BN(token.value).times(token.selectedToken.price).toFixed(6);
     },
     zapsLoaded() {
       return this.isTokensLoadedAndFiltered && this.zapPool && this.zapContract && this.isZapLoaded;
@@ -338,7 +340,6 @@ export default {
 
     ...mapMutations('zapinData', ['changeState']),
     ...mapMutations('waitingModal', ['setStagesMap']),
-    formatMoney,
     async approveNftPosition(approveToGauge: boolean) {
       this.isSwapLoading = true;
 
@@ -409,7 +410,10 @@ export default {
           this.outputTokens[key].sum = this.zapPool?.position?.tokens[key][symbName[key]];
         });
 
-        this.inputTokens = cloneDeep(this.outputTokens);
+        const inputTokens = cloneDeep(this.outputTokens);
+
+        const inputTokenInfo = formatInputTokens(inputTokens);
+        this.inputTokens = inputTokenInfo;
       }
 
       console.log(this.inputTokens, '__TOKENS');
