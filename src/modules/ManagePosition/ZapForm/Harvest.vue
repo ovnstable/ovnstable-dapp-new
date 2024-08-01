@@ -393,7 +393,7 @@ export default {
     },
     addDefaultPoolToken() {
       // const info0 = getTokenInfo(token0, tokenMap)
-      const rewardToken = this.zapPool.rewards.tokens.map((_: any) => {
+      const rewardToken = this.zapPool.rewards.tokens.map((_: any, key: number) => {
         const rewardData = Object.entries(_)[0];
         console.log(rewardData, '__rewardData');
         const tokenInfo = this.allTokensMap.values().find((_: any) => {
@@ -403,7 +403,7 @@ export default {
 
         return {
           displayedValue: rewardData[1],
-          id: Date.now().toString(),
+          id: Date.now().toString() + key,
           locked: true,
           proportion: 0,
           selectedToken: tokenInfo,
