@@ -35,6 +35,15 @@ export type TZapinSuccessTriggerProps = {
     poolPlatform: string
 }
 
+export type TIdentyfyByWalletTriggerProps = {
+    address: string,
+}
+
+export type TLinkWalletTriggerProps = {
+    address0: string,
+    address1: string,
+}
+
 export interface IPosthogService {
     captureEvent(eventName: string, props: any): void,
     swapSuccessTrigger(props: TSwapSuccessTriggerProps): void
@@ -42,4 +51,6 @@ export interface IPosthogService {
     rebalanceSuccessTrigger(props: TZapinSuccessTriggerProps): void
     mintredeemSuccessTrigger(props: TMintRedeemSuccessTriggerProps): void
     wrapUnwrapSuccessTrigger(props: TMintRedeemSuccessTriggerProps): void
+    identyfyByWalletTrigger(props: TIdentyfyByWalletTriggerProps): void
+    linkWalletsTrigger(props: TLinkWalletTriggerProps): void
 }
