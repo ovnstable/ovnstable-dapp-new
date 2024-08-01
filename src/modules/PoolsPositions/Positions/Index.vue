@@ -1,7 +1,7 @@
 <template>
   <div class="pools-wrap">
     <div
-      v-if="!walletConnected || !account || !Object.values(supportedNetworks).includes(networkName)"
+      v-if="!walletConnected || !account || !isSupportedNetwork"
       class="unavailable-container"
     >
       <div>
@@ -155,6 +155,9 @@ export default {
     isLoading: true as boolean,
     positionData: [] as any,
     supportedNetworks: SUPPORTED_REBALANCE_NETWORKS,
+
+    isInit: false as boolean,
+    tokensLength: 0 as number,
   }),
   computed: {
     ...mapGetters('network', ['getParams', 'isShowDeprecated']),
@@ -199,21 +202,29 @@ export default {
           this.getParams(pool.chain).networkId,
         ));
     },
+    isSupportedNetwork() {
+      return Object.values(this.supportedNetworks).includes(this.networkName);
+    },
   },
   watch: {
     async allTokensMap() {
       if (!this.isTokensLoaded) this.isLoading = true;
-      else if (this.isTokensLoaded && this.allTokensMap.size > 0) {
+      else if (this.isTokensLoaded && this.allTokensMap.size > 0 && this.allTokensMap.size !== this.tokensLength && !this.isInit) {
         const posData = await this.getFormatPositions();
         if (posData.length > 0) {
           this.positionData = posData;
           this.isLoading = false;
+          this.isInit = true;
+          this.tokensLength = this.allTokensMap.size;
         }
       }
     },
     async networkName() {
-      this.isLoading = true;
-      await this.init();
+      if (this.isSupportedNetwork) {
+        this.isLoading = true;
+        this.isInit = false;
+        await this.init();
+      }
     },
   },
   async mounted() {
@@ -224,6 +235,9 @@ export default {
     this.aprOrder = this.aprSortIterator.next();
     this.positionSizeSortIterator = iterateEnum(POSITION_SIZE_ORDER_TYPE);
     this.positionSizeOrder = this.positionSizeSortIterator.next();
+
+    await this.initContractData();
+    await this.loadChains();
 
     await this.init();
   },
@@ -236,10 +250,10 @@ export default {
         field: 'isTokensLoadedAndFiltered',
         val: false,
       });
+
       await this.loadTokens();
-      await this.loadChains();
-      await this.initContractData();
       await this.initData();
+
       this.$store.commit('odosData/changeState', {
         field: 'isTokensLoadedAndFiltered',
         val: true,
