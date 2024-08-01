@@ -35,18 +35,18 @@
             class="swap-block__item"
           >
             <div
-            v-if="token.selectedToken"
-            class="swap-block__item-row"
-          >
-          <div class="swap-block__item-row--token-wrap">
-            <img
-              :src="token.selectedToken.logoUrl"
-              alt="select-token"
+              v-if="token.selectedToken"
+              class="swap-block__item-row"
             >
-            <span>
-              {{ token.selectedToken.symbol }}
-            </span>
-          </div>
+            <div class="swap-block__item-row--token-wrap">
+              <img
+                :src="token.selectedToken.logoUrl"
+                alt="select-token"
+              >
+              <span>
+                {{ token.selectedToken.symbol }}
+              </span>
+            </div>
             </div>
             <div
               v-if="token.value"
@@ -58,9 +58,7 @@
               <div>
                 ~ ${{ token.displayedValue }}
               </div>
-            </div>
           </div>
-          <!-- <span class="divider" /> -->
         </div>
         <div class="swap-block__part-total">
           <h2>
@@ -87,18 +85,7 @@
             class="swap-button-container"
           >
             <ButtonComponent
-              v-if="!isNftApproved"
-              btn-size="large"
-              btn-styles="primary"
-              full
-              :loading="isSwapLoading"
-              @click="approveNftPosition(false)"
-              @keypress="approveNftPosition(false)"
-            >
-              APPROVE
-            </ButtonComponent>
-            <ButtonComponent
-              v-else-if="!positionFinish"
+              v-if="!positionFinish"
               btn-size="large"
               btn-styles="primary"
               full
@@ -125,6 +112,7 @@
       </div>
     </div>
   </div>
+</div>
 </template>
 <!-- eslint-disable no-restricted-syntax -->
 <!-- eslint-disable no-continue -->
@@ -144,7 +132,6 @@ import ButtonComponent from '@/components/Button/Index.vue';
 import { poolTokensForZapMap } from '@/store/views/main/zapin/mocks.ts';
 import { cloneDeep } from 'lodash';
 import BN from 'bignumber.js';
-import { MANAGE_FUNC, withdrawStep } from '@/store/modals/waiting-modal.ts';
 import { formatInputTokens } from '@/utils/tokens.ts';
 
 export default {
@@ -171,12 +158,10 @@ export default {
   data() {
     return {
       positionFinish: false,
-      positionStaked: true,
       inputTokens: [] as any[],
       outputTokens: [] as any[],
       swapMethod: 'BUY', // BUY (secondTokens) / SELL (secondTokens)
 
-      currentStage: withdrawStep.WITHDRAW,
       isNftApproved: false,
       isSwapLoading: false,
     };
@@ -230,9 +215,6 @@ export default {
     },
   },
   watch: {
-    currentStage(stage: withdrawStep) {
-      this.$store.commit('zapinData/changeState', { field: 'currentStage', val: stage });
-    },
     // on wallet connect
     async account(val) {
       if (val) this.clearAndInitForm();
@@ -268,14 +250,12 @@ export default {
     },
     async poolNftContract(val) {
       if (!val) return;
-      await this.checkIsStaked();
       this.checkNftApprove();
     },
   },
   mounted() {
-    this.setStagesMap(MANAGE_FUNC.WITHDRAW);
     this.firstInit();
-    this.setIsZapModalShow(true);
+    this.setIsZapModalShow(false);
     console.log(this.zapPool, '__POOL');
   },
   created() {
@@ -301,37 +281,26 @@ export default {
     ...mapActions('walletAction', ['connectWallet']),
 
     ...mapMutations('zapinData', ['changeState']),
-    ...mapMutations('waitingModal', ['setStagesMap']),
-    async approveNftPosition(approveToGauge: boolean) {
-      this.isSwapLoading = true;
+    // async approveNftPosition(approveToGauge: boolean) {
+    //   this.isSwapLoading = true;
 
-      try {
-        console.log(approveToGauge, '__isApproved');
-        this.showWaitingModal('Approve');
-        const tx = await this.poolNftContract
-          .approve(this.zapContract?.target, this.zapPool.tokenId);
+    //   try {
+    //     console.log(approveToGauge, '__isApproved');
+    //     this.showWaitingModal('Approve');
+    //     const tx = await this.poolNftContract
+    //       .approve(this.zapContract?.target, this.zapPool.tokenId);
 
-        await tx.wait();
-        this.isNftApproved = true;
-        this.isSwapLoading = false;
-        this.closeWaitingModal();
-        this.currentStage = withdrawStep.ZAPOUT;
-      } catch (e) {
-        console.log(e);
-        this.closeWaitingModal('Approve');
-        this.isSwapLoading = false;
-      }
-    },
-    async checkIsStaked() {
-      // only for base
-      console.log(this.gaugeContractV3, '__gaugeContractV3');
-      if (!this.gaugeContractV3) return;
-      const isStaked = await this.gaugeContractV3
-        .stakedContains(this.account, this.zapPool.tokenId);
-
-      console.log(isStaked, '__isStaked');
-      this.positionStaked = isStaked;
-    },
+    //     await tx.wait();
+    //     this.isNftApproved = true;
+    //     this.isSwapLoading = false;
+    //     this.closeWaitingModal();
+    //     this.currentStage = withdrawStep.ZAPOUT;
+    //   } catch (e) {
+    //     console.log(e);
+    //     this.closeWaitingModal('Approve');
+    //     this.isSwapLoading = false;
+    //   }
+    // },
     mintAction() {
       this.showMintView();
       this.showSwapModal();
@@ -437,19 +406,28 @@ export default {
       console.error('Clear form, swap method not found.', this.swapMethod);
     },
     async claimTrigger() {
-      console.log(this.gaugeContractV3, 'claimTrigger');
+      console.log(this.zapPool, 'claimTrigger');
       this.isSwapLoading = true;
 
       try {
         this.showWaitingModal('unstaking');
 
-        const tx = await this.gaugeContractV3.getReward(this.zapPool.tokenId);
-
-        await tx.wait();
-        this.isSwapLoading = false;
-        this.closeWaitingModal();
         const inputTokens = [...this.inputTokens];
         const outputTokens = [...this.selectedOutputTokens];
+
+        let tx;
+
+        if (this.zapPool.isStaked) {
+          tx = await this.gaugeContractV3.getReward(this.zapPool.tokenId);
+        } else {
+          // const params = {
+
+          // }
+          tx = await this.poolNftContract.collect(this.zapPool.tokenId);
+        }
+
+        await tx.wait();
+
         this.triggerSuccessZapin(
           {
             isShow: true,
@@ -459,6 +437,8 @@ export default {
             pool: this.zapPool,
           },
         );
+        this.isSwapLoading = false;
+        this.closeWaitingModal();
         this.closeWaitingModal();
         this.positionFinish = true;
       } catch (e) {

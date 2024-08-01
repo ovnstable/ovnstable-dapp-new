@@ -127,6 +127,7 @@ export const formatPositionData = (
         tokenId,
         ticks,
         tokenNames,
+        isStaked,
       };
 
       // console.log(positionFullInfo, '__positionFullInfo');

@@ -38,13 +38,6 @@
           :class="currentSection === zapMobileSection.TOKEN_FORM && 'mobile-active'"
           >
             <div class="zapin-block__wrapper">
-              <h2>
-                Position you choose: #{{ zapPool.tokenId }}
-              </h2>
-              <PoolLabel
-                :pool="zapPool"
-                class="pool-info"
-              />
               <div class="zapin-block__swap-wrapper">
                 <div class="out-swap-container pt-5">
                   <h2>
@@ -353,12 +346,12 @@ export default {
     },
     async poolNftContract(val) {
       if (!val) return;
-      await this.checkIsStaked();
       this.checkNftApprove();
     },
   },
   mounted() {
     this.firstInit();
+    this.setIsZapModalShow(true);
     this.setStagesMap(MANAGE_FUNC.REBALANCE);
   },
   created() {
@@ -372,6 +365,7 @@ export default {
   },
   methods: {
     ...mapActions('swapModal', ['showSwapModal', 'showMintView']),
+    ...mapActions('poolsData', ['setIsZapModalShow']),
     ...mapActions('odosData', [
       'loadTokens',
       'initContractData',
@@ -408,16 +402,6 @@ export default {
         field: 'lastNftTokenId',
         val: null,
       });
-    },
-    async checkIsStaked() {
-      // only for base
-      if (!this.gaugeContractV3) return;
-      const isStaked = await this.gaugeContractV3
-        .stakedContains(this.account, this.zapPool.tokenId);
-
-      this.positionStaked = isStaked;
-
-      if (!isStaked) this.currentStage = rebalanceStep.APPROVE;
     },
     // Mobile section switcher
     toggleMobileSection() {
@@ -471,6 +455,7 @@ export default {
 
         this.inputTokens = cloneDeep(this.outputTokens);
       }
+      this.positionStaked = this.zapPool.isStaked;
     },
 
     async init() {

@@ -38,9 +38,7 @@
             v-if="token.selectedToken"
             class="swap-block__item-row"
           >
-          <div class="swap-block__item-row--percentage">
-{{ token.proportion }}%
-</div>
+          <div class="swap-block__item-row--percentage">{{ token.proportion }}%</div>
           <div class="swap-block__item-row--token-wrap">
             <img
               :src="token.selectedToken.logoUrl"
@@ -361,12 +359,10 @@ export default {
     },
     async checkIsStaked() {
       // only for base
-      console.log(this.gaugeContractV3, '__gaugeContractV3');
       if (!this.gaugeContractV3) return;
       const isStaked = await this.gaugeContractV3
         .stakedContains(this.account, this.zapPool.tokenId);
 
-      console.log(isStaked, '__isStaked');
       this.positionStaked = isStaked;
     },
     mintAction() {

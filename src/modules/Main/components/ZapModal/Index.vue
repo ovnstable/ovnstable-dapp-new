@@ -47,6 +47,7 @@ export default {
       default: null,
     },
   },
+  emits: ['toggle-modal'],
   data() {
     return {
       showModal: false,
@@ -64,6 +65,7 @@ export default {
     ...mapMutations('zapinData', ['resetStore']),
     closeModal() {
       this.resetStore();
+      this.$emit('toggle-modal');
     },
   },
 };

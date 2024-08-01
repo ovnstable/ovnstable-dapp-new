@@ -484,6 +484,10 @@
             {
               "type": "int24",
               "name": "currentTick"
+            },
+            {
+              "type": "bool",
+              "name": "isStaked"
             }
           ]
         }
