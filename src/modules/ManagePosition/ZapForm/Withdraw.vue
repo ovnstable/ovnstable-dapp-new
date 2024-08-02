@@ -38,7 +38,9 @@
             v-if="token.selectedToken"
             class="swap-block__item-row"
           >
-          <div class="swap-block__item-row--percentage">{{ token.proportion }}%</div>
+          <div class="swap-block__item-row--percentage">
+{{ token.proportion }}%
+</div>
           <div class="swap-block__item-row--token-wrap">
             <img
               :src="token.selectedToken.logoUrl"
@@ -309,6 +311,7 @@ export default {
     },
   },
   mounted() {
+    this.$store.commit('zapinData/changeState', { field: 'currentStage', val: withdrawStep.WITHDRAW });
     this.setStagesMap(MANAGE_FUNC.WITHDRAW);
     this.firstInit();
     this.setIsZapModalShow(true);

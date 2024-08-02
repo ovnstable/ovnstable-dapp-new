@@ -256,7 +256,6 @@ export default {
   mounted() {
     this.firstInit();
     this.setIsZapModalShow(false);
-    console.log(this.zapPool, '__POOL');
   },
   created() {
     if (this.zapPool.chain !== this.networkId) return;
@@ -364,7 +363,6 @@ export default {
       // const info0 = getTokenInfo(token0, tokenMap)
       const rewardToken = this.zapPool.rewards.tokens.map((_: any, key: number) => {
         const rewardData = Object.entries(_)[0];
-        console.log(rewardData, '__rewardData');
         const tokenInfo = this.allTokensMap.values().find((_: any) => {
           const allTokSymbol = _?.symbol;
           return allTokSymbol === rewardData[0];

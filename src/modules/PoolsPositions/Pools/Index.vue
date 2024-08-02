@@ -258,11 +258,11 @@ export default {
         field: 'typeOfPool',
         val: this.poolType,
       });
-      console.log(this.poolType, '__poolType');
       this.poolTabType = this.poolType;
     }
 
     await this.loadPools();
+    this.setIsZapModalShow(false);
   },
 
   methods: {

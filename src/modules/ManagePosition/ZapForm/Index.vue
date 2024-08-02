@@ -1046,8 +1046,6 @@ export default {
       });
     },
     async recalculateProportion() {
-      console.log(this.selectedOutputTokens, '__this.selectedOutputTokens');
-
       const resp = await getV3Rebalance(
         this.zapPool.tokenId?.toString(),
         this.zapPool.address,
@@ -1058,8 +1056,6 @@ export default {
         })),
         this.zapContract,
       );
-
-      console.log(resp, '__resp');
 
       if (!resp) return;
 

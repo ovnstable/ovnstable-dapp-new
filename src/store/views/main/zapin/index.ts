@@ -48,7 +48,6 @@ const rebalanceChainMap: {[key: string]: string} = {
 };
 
 export const loadAbi = async (abiFileSrc: string): Promise<ContractAbi> => {
-  console.log('__abiSrc', abiFileSrc);
   try {
     const abiFile = await JSONLoader(abiFileSrc);
     if (!abiFile || !abiFile?.abi) return {} as ContractAbi;
@@ -165,7 +164,6 @@ const actions = {
     const abiGaugeContractFileV3 = await loadAbi(abiFileSrcV3);
 
     if (Object.keys(abiGaugeContractFileV3).length > 0) {
-      console.log('__gaugeV3', abiGaugeContractFileV3);
       commit('changeState', {
         field: 'gaugeContractV3',
         val: buildEvmContract(
@@ -175,8 +173,6 @@ const actions = {
         ),
       });
     }
-
-    console.log(abiGaugeContractFile, '__abiGaugeContractFile');
 
     commit('changeState', {
       field: 'gaugeContract',
@@ -219,7 +215,6 @@ const actions = {
         rootState.web3.evmSigner,
         abiNftContractFile.address,
       );
-      console.log(poolNftContract, '__poolNftContract');
 
       commit('changeState', {
         field: 'poolNftContract',

@@ -32,9 +32,15 @@
       </div>
     </div>
     <div class="pool-data__liq swap-block__item-col--send">
-      <h1>
-        LIQUIDITY
-      </h1>
+      <div class="pool-data__header">
+        <h1>
+          LIQUIDITY
+        </h1>
+
+        <div>
+          ${{ totalLiq }}
+        </div>
+      </div>
       <span class="divider" />
       <div
         v-for="token in inputTokens"
@@ -73,9 +79,15 @@
       <!-- <span class="divider" /> -->
     </div>
     <div class="pool-data__rewards swap-block__item-col--send">
-      <h1>
-        REWARDS
-      </h1>
+      <div class="pool-data__header">
+        <h1>
+          REWARDS
+        </h1>
+
+        <div>
+          ${{ totalRewards }}
+        </div>
+      </div>
       <span class="divider" />
       <div
         v-for="token in rewardTokens"
@@ -118,6 +130,7 @@ import { getNewInputToken, getTokenByAddress } from '@/store/helpers/index.ts';
 import { poolTokensForZapMap } from '@/store/views/main/zapin/mocks.ts';
 import { formatInputTokens } from '@/utils/tokens.ts';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import BN from 'bignumber.js';
 
 export default {
   name: 'PositionForm',
@@ -139,9 +152,34 @@ export default {
   },
   computed: {
     ...mapGetters('odosData', ['allTokensMap', 'allTokensList']),
+    totalRewards() {
+      if (this.inputTokens.length === 0) return 0;
+
+      const res: BN = this.rewardTokens.reduce((acc: BN, curr: any) => {
+        const val = new BN(curr.value).times(curr.selectedToken.price).toFixed(6);
+
+        return acc.plus(val);
+      }, new BN(0));
+
+      if (res.lt(0.01)) return '0.01';
+
+      return res.toFixed(4);
+    },
+    totalLiq() {
+      if (this.inputTokens.length === 0) return 0;
+
+      const res: BN = this.inputTokens.reduce((acc: BN, curr: any) => {
+        const val = new BN(curr.value).times(curr.selectedToken.price).toFixed(6);
+
+        return acc.plus(val);
+      }, new BN(0));
+
+      if (res.lt(0.01)) return '0.01';
+
+      return res.toFixed(4);
+    },
   },
   mounted() {
-    console.log(this.zapPool, '__POOL');
     this.initRewardTokens();
     this.initLiqTokens();
   },
@@ -151,7 +189,6 @@ export default {
       const token0 = getTokenByAddress(poolTokens[0].address, this.allTokensList);
       const token1 = getTokenByAddress(poolTokens[1].address, this.allTokensList);
 
-      console.log(token0, '__token0');
       const tokenFull0 = {
         ...getNewInputToken(),
         locked: false,
@@ -178,7 +215,6 @@ export default {
     initRewardTokens() {
       const rewardToken = this.zapPool.rewards.tokens.map((_: any) => {
         const rewardData = Object.entries(_)[0];
-        console.log(rewardData, '__rewardData');
         const tokenInfo = this.allTokensMap.values().find((_: any) => {
           const allTokSymbol = _?.symbol;
           return allTokSymbol === rewardData[0];
@@ -208,7 +244,7 @@ export default {
 .pool-data {
   display: flex;
   gap: 40px;
-  border: 1px solid var(--color-1);
+  border: 2px solid var(--color-1);
   background-color: var(--color-4);
   padding: 30px;
   border-radius: 20px;
@@ -273,8 +309,21 @@ export default {
   margin: 20px 0;
 }
 
+.pool-data__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  div {
+    color: var(--color-3);
+    font-size: 20px;
+    font-weight: 600;
+  }
+}
+
 .pool-data__liq {
   width: 100%;
+  margin-top: 0;
 }
 
 .pool-data__title {
@@ -287,5 +336,6 @@ export default {
 
 .pool-data__rewards {
   width: 100%;
+  margin-top: 0;
 }
 </style>
