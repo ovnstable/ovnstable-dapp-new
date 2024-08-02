@@ -101,13 +101,16 @@ export default {
   background: var(--color-5);
   border-radius: 30px;
 
+  &.white {
+    background: var(--color-4);
+  }
+
   [data-theme="dark"] & {
     color: var(--color-18);
     background: var(--color-6);
+    &.white {
+    background: var(--color-6);
   }
-
-  &.white {
-    background: var(--color-4);
   }
 
   &.transparent {
@@ -130,14 +133,17 @@ export default {
   text-transform: uppercase;
   transition: opacity .2s ease, color .2s ease;
 
-  [data-theme="dark"] & {
-    background-color: var(--color-6);
-  }
-
   .white & {
     background: var(--color-4);
   }
 
+  [data-theme="dark"] & {
+    color: var(--color-18);
+    background: var(--color-6);
+    &.white {
+    background: var(--color-6);
+  }
+  }
   .transparent & {
     background: transparent;
   }
@@ -201,6 +207,10 @@ export default {
   }
   .switchtabs__inner-text {
     background: none;
+    [data-theme="dark"] & {
+      background-color: var(--color-6);
+      color: var(--color-4);
+    }
   }
   .switchtabs__inner-text:hover {
     color: var(--color-1);

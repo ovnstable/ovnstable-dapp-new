@@ -260,7 +260,7 @@ export default {
       });
       this.poolTabType = this.poolType;
     }
-
+    await this.loadTokens();
     await this.loadPools();
     this.setIsZapModalShow(false);
   },
@@ -268,6 +268,7 @@ export default {
   methods: {
     ...mapActions('poolsData', ['loadPools', 'openZapIn', 'setIsZapModalShow']),
     ...mapMutations('poolsData', ['changeState']),
+    ...mapActions('odosData', ['loadTokens']),
 
     switchPoolsTab(type: POOL_TYPES) {
       this.isDefaultOrder = true;
