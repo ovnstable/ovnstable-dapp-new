@@ -188,6 +188,10 @@ export default {
   height: 100%;
   border-radius: 20px;
   border: 2px solid var(--color-1);
+  [data-theme="dark"] & {
+        background-color: var(--color-6);
+        background-blend-mode: unset;
+    }
 }
 
 .manage-wrap__content--harvest {

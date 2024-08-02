@@ -219,6 +219,11 @@ export default {
     font-weight: 600;
     color: var(--color-1);
   }
+
+  [data-theme="dark"] & {
+        background-color: var(--color-6);
+        background-blend-mode: unset;
+    }
 }
 
 .pool-data__name {
