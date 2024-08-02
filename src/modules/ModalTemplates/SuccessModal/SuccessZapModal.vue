@@ -245,15 +245,23 @@ export default defineComponent({
     closeModal() {
       this.setShowFunc({ isShow: false });
 
-      // Cleaning the state on close
-      this.$store.commit('poolsData/changeState', {
-        field: 'lastParsedBurnedTokenIdEvent',
-        val: '',
-      });
-      this.$store.commit('poolsData/changeState', {
-        field: 'lastParsedClaimedRewardsEvent',
-        val: '',
-      });
+      // If rebalance modal
+      if (this.lastParsedClaimedRewardsEvent && this.lastParsedBurnedTokenIdEvent) {
+        this.$router.replace('/positions');
+        // Cleaning the state on close
+        this.$store.commit('poolsData/changeState', {
+          field: 'lastParsedBurnedTokenIdEvent',
+          val: '',
+        });
+        this.$store.commit('poolsData/changeState', {
+          field: 'lastParsedTokenIdEvent',
+          val: '',
+        });
+        this.$store.commit('poolsData/changeState', {
+          field: 'lastParsedClaimedRewardsEvent',
+          val: '',
+        });
+      }
     },
     // Comes from values computed locally befor tx
     initSentList() {
