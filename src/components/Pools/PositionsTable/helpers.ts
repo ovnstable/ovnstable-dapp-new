@@ -24,7 +24,7 @@ export const getTokenInfo = (
 
 const getMinVal = (val: string | number) => (new BN(val).gt(0.1) ? new BN(val).toFixed(2) : '< 0.1');
 
-const isInRange = ({ tickLower, tickUpper, centerTick }: TTicks) => !(
+export const isInRange = ({ tickLower, tickUpper, centerTick }: TTicks) => !(
   new BN(centerTick).gte(new BN(tickUpper)) || new BN(centerTick).lt(new BN(tickLower))
 );
 

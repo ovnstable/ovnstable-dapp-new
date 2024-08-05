@@ -141,7 +141,7 @@
 
     <div class="range-presets-wrap">
       <h2>
-        Range presets:
+        {{ isStablePool ? "Tick" : "Percent" }} presets:
       </h2>
       <div class="range-presets">
         <div

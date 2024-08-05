@@ -350,6 +350,7 @@ import BN from 'bignumber.js';
 import { approveToken, getAllowanceValue } from '@/utils/contractApprove.ts';
 import { onLeaveList, onEnterList, beforeEnterList } from '@/utils/animations.ts';
 import { MANAGE_FUNC, zapInStep } from '@/store/modals/waiting-modal.ts';
+import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
 import { parseLogs } from './helpers.ts';
 
 enum zapMobileSection {
@@ -1465,6 +1466,7 @@ export default {
               putIntoPoolEvent,
               returnedToUserEvent,
               pool: this.zapPool,
+              modalType: MODAL_TYPE.ZAPIN,
             },
           );
           // event
@@ -1524,6 +1526,7 @@ export default {
           putIntoPoolEvent,
           returnedToUserEvent,
           pool: this.zapPool,
+          modalType: MODAL_TYPE.ZAPIN,
         },
       );
 

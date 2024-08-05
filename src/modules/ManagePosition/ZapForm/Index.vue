@@ -62,7 +62,7 @@
                     Tokens you get
                   </h2>
                   <div
-                    v-for="token in (inputTokens as any)"
+                    v-for="token in (outputTokens as any)"
                     :key="token.id"
                     class="input-component-container"
                   >
@@ -191,6 +191,7 @@ import { MANAGE_FUNC, rebalanceStep } from '@/store/modals/waiting-modal.ts';
 import ZapInStepsRow from '@/components/StepsRow/ZapinRow/RebalanceRow.vue';
 import { cloneDeep } from 'lodash';
 import { markRaw } from 'vue';
+import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
 import { parseLogs } from './helpers.ts';
 
 enum zapMobileSection {
@@ -643,6 +644,7 @@ export default {
             outputTokens,
             hash: tx.hash,
             pool: this.zapPool,
+            modalType: MODAL_TYPE.REBALANCE,
           },
         );
         this.clearZapData();

@@ -312,7 +312,7 @@ export const poolsInfoMap: any = {
     poolTokenType: 'DIFFERENT',
   },
   '0xa01A2513E95263b9BaCe60B573ce874E1e7a5246': {
-    gauge: '0xcC2714BF50F3c7174a868bec8f4D4d284A0b07cc',
+    gauge: '0xa53bA46F4F0280b42575A3BaadAC54a61DB578d0',
     gaugeForLP: '0x827922686190790b37229fd06084350e74485b72',
     version: 3,
     approveType: 'NFT',
@@ -962,7 +962,7 @@ export const zapPlatformContractTypeMap: any = {
   '0xa01A2513E95263b9BaCe60B573ce874E1e7a5246': {
     name: 'Aerodrome',
     type: 'LP_STAKE_DIFF_STEPS',
-    typeOfDepositConstructor: 'CONSTRUCTOR_WITH_NFT_ID',
+    typeOfDepositConstructor: 'CONSTRUCTOR_V3_WITH_TOKEN_ID',
   },
   // Pancake CL
   '0x714d48cb99b87f274b33a89fbb16ead191b40b6c': {

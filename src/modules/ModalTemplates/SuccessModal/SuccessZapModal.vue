@@ -10,116 +10,30 @@
         class="modal-content__icon"
         name="CommonSuccess"
       />
-      <h1>
-        TRANSACTION SUCCESS
+      <h1 v-if="successData">
+        YOU SUCCESSFULLY {{ getName }}
       </h1>
 
-      <span class="divider" />
-
-      <div class="zap-header-container">
-        <PoolLabel :pool="successData.pool" />
-        <div class="modal-content__data-row">
-          <div class="nft-info">
-            <div
-              v-if="lastParsedBurnedTokenIdEvent"
-              class="nft-info-row"
-            >
-              <span>Burned NFT:</span><span>ID: #{{ lastParsedBurnedTokenIdEvent }}</span>
-            </div>
-            <div
-              v-if="lastParsedTokenIdEvent"
-              class="nft-info-row"
-            >
-              <span>New NFT:</span><span>ID: #{{ lastParsedTokenIdEvent }}</span>
-            </div>
-          </div>
-          <a
-            :href="openPositionOnPool"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="view-position-link"
-          >
-            <ButtonComponent btn-styles="link">
-              VIEW POSITION
-              <BaseIcon name="PayoutArrow" />
-            </ButtonComponent>
-          </a>
-        </div>
-      </div>
-
-      <span class="divider" />
-
-      <div
-        v-if="successData"
-        class="modal-content__data"
-      >
-        <div class="modal-content__data-main">
-          <div class="data-row sent">
-            <div class="success-row-title">
-              Sent
-            </div>
-            <div class="success-data-list">
-              <div
-                v-for="sentData in tokensSentList"
-                :key="sentData.id"
-                class="token-amount"
-              >
-                - {{ sentData.value }}
-                {{ sentData.symbol }}
-              </div>
-            </div>
-          </div>
-
-          <div
-            v-if="lastParsedClaimedRewardsEvent"
-            class="data-row returned"
-          >
-            <div class="success-row-title">
-              Claimed
-            </div>
-            <div class="success-data-list">
-              <div class="token-amount">
-                ~ {{ lastParsedClaimedRewardsEvent }} USD
-              </div>
-            </div>
-          </div>
-
-          <div class="data-row returned">
-            <div class="success-row-title">
-              Returned
-            </div>
-            <div class="success-data-list">
-              <div
-                v-for="returnData in tokensReturnedList"
-                :key="returnData.id"
-                class="token-amount"
-              >
-                + {{ returnData.value }}
-                {{ returnData.symbol }}
-              </div>
-            </div>
-          </div>
-
-          <div class="data-row staked">
-            <div class="success-row-title">
-              Staked
-            </div>
-            <div class="success-data-list">
-              <div
-                v-for="stakeData in tokensStakedList"
-                :key="stakeData.id"
-                class="token-amount"
-              >
-                + {{ stakeData.value }}
-                {{ stakeData.symbol }}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <span class="divider" />
-
+      <template v-if="successData">
+        <ZapinContent
+          v-if="[modalType.ZAPIN, modalType.REBALANCE].includes(successData.modalType)"
+          :tokens-staked-list="tokensStakedList"
+          :tokens-sent-list="tokensSentList"
+          :tokens-returned-list="tokensReturnedList"
+        />
+        <WithdrawContent
+          v-else-if="successData.modalType === modalType.WITHDRAW"
+          :tokens-staked-list="tokensStakedList"
+          :tokens-sent-list="tokensSentList"
+          :tokens-returned-list="tokensReturnedList"
+        />
+        <CompoundContent
+          v-else-if="successData.modalType === modalType.COMPOUND"
+        />
+        <HarvestContent
+          v-else-if="successData.modalType === modalType.HARVEST"
+        />
+      </template>
       <div class="zap-modal-footer">
         Leave your feedback on Zap In feature and win $50 reward
         <a
@@ -143,14 +57,17 @@
 import ModalComponent from '@/components/Modal/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
-import PoolLabel from '@/modules/Main/components/ZapModal/PoolLabel.vue';
 import { mapGetters, mapState } from 'vuex';
 import { defineComponent } from 'vue';
 import { getAllTokensString, getTransactionTotal } from '@/utils/tokens.ts';
 import { checkIsEveryStable } from '@/store/views/main/pools/helpers.ts';
-// import _ from 'lodash';
+import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
+import ZapinContent from './components/zapin.vue';
+import WithdrawContent from './components/withdraw.vue';
+import HarvestContent from './components/harvest.vue';
+import CompoundContent from './components/compound.vue';
 import {
-  mapEventTokenData, mapInputTokenData, getPlatformLink, type TFormatTokenInfo,
+  mapEventTokenData, mapInputTokenData, type TFormatTokenInfo,
 } from './helpers.ts';
 
 export default defineComponent({
@@ -158,8 +75,11 @@ export default defineComponent({
   components: {
     ModalComponent,
     ButtonComponent,
-    PoolLabel,
     BaseIcon,
+    ZapinContent,
+    WithdrawContent,
+    HarvestContent,
+    CompoundContent,
   },
   props: {
     setShowFunc: {
@@ -174,6 +94,7 @@ export default defineComponent({
       tokensStakedList: [] as TFormatTokenInfo[],
       showModal: false,
       isInit: false,
+      modalType: MODAL_TYPE,
     };
   },
   computed: {
@@ -183,7 +104,6 @@ export default defineComponent({
       'showSuccessZapin',
       'lastParsedReturnedToUserEvent',
       'lastParsedPutIntoPoolEvent',
-      'lastParsedTokenIdEvent',
       'lastParsedZapResponseData',
     ]),
     ...mapState('poolsData', [
@@ -194,16 +114,16 @@ export default defineComponent({
     ...mapGetters('accountData', ['account']),
     ...mapGetters('posthog', ['posthogService']),
     ...mapGetters('network', ['explorerUrl']),
-    openPositionOnPool(): string {
-      // eslint-disable-next-line prefer-destructuring
-      const pool = this.successData.pool;
-      if (pool.address || pool.platform[0]) return getPlatformLink(pool.platform[0], pool.address);
-      return '';
+
+    getName() {
+      if (this.successData.modalType === MODAL_TYPE.WITHDRAW) return 'WITHDRAW';
+      if (this.successData.modalType === MODAL_TYPE.COMPOUND) return 'COMPOUND';
+      return 'ZAPIN';
     },
   },
   watch: {
     showSuccessZapin(currVal: boolean) {
-      this.showModal = currVal;
+      this.showModal = true;
       if (!this.isInit && currVal) {
         // TODO: move Posthog logic up to store
         const posthogEventData = {

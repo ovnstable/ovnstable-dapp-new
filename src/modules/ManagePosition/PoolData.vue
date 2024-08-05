@@ -18,17 +18,27 @@
         </h1>
       </div>
       <span class="pool-data__divider" />
-      <div class="pool-data__row">
-        <div class="pool-data__plat">
-          <BaseIcon :name="zapPool.platform[0]" />
-          <span>
-            {{ zapPool.platform[0] }}
+      <div>
+        <span>
+          <div
+            class="pools-data__range"
+            :class="{ 'out-range': !zapPool?.isInRange }"
+          >
+            {{ zapPool?.isInRange ? 'IN RANGE' : 'OUT OF RANGE' }}
+          </div>
+        </span>
+        <div class="pool-data__row">
+          <div class="pool-data__plat">
+            <BaseIcon :name="zapPool.platform[0]" />
+            <span>
+              {{ zapPool.platform[0] }}
+            </span>
+          </div>
+
+          <span class="pool-data__id">
+            ID: #{{ zapPool.tokenId?.toString() }}
           </span>
         </div>
-
-        <span class="pool-data__id">
-          ID: #{{ zapPool.tokenId?.toString() }}
-        </span>
       </div>
     </div>
     <div class="pool-data__liq swap-block__item-col--send">
@@ -148,12 +158,13 @@ export default {
     return {
       rewardTokens: [] as any,
       inputTokens: [] as any,
+      isLoaded: false,
     };
   },
   computed: {
     ...mapGetters('odosData', ['allTokensMap', 'allTokensList']),
     totalRewards() {
-      if (this.inputTokens.length === 0) return 0;
+      if (this.allTokensList === 0) return 0;
 
       const res: BN = this.rewardTokens.reduce((acc: BN, curr: any) => {
         const val = new BN(curr.value).times(curr.selectedToken.price).toFixed(6);
@@ -166,7 +177,7 @@ export default {
       return res.toFixed(4);
     },
     totalLiq() {
-      if (this.inputTokens.length === 0) return 0;
+      if (this.allTokensList.length === 0) return 0;
 
       const res: BN = this.inputTokens.reduce((acc: BN, curr: any) => {
         const val = new BN(curr.value).times(curr.selectedToken.price).toFixed(6);
@@ -179,11 +190,20 @@ export default {
       return res.toFixed(4);
     },
   },
+  watch: {
+    allTokensMap() {
+      this.init();
+    },
+  },
   mounted() {
-    this.initRewardTokens();
-    this.initLiqTokens();
+    this.init();
   },
   methods: {
+    init() {
+      if (this.isLoaded) return;
+      this.initLiqTokens();
+      this.initRewardTokens();
+    },
     initLiqTokens() {
       const poolTokens = poolTokensForZapMap[this.zapPool.address];
       const token0 = getTokenByAddress(poolTokens[0].address, this.allTokensList);
@@ -216,8 +236,8 @@ export default {
       const rewardToken = this.zapPool.rewards.tokens.map((_: any) => {
         const rewardData = Object.entries(_)[0];
         const tokenInfo = this.allTokensMap.values().find((_: any) => {
-          const allTokSymbol = _?.symbol;
-          return allTokSymbol === rewardData[0];
+          const allTokSymbol = _?.symbol?.toLowerCase();
+          return allTokSymbol === rewardData[0]?.toLowerCase();
         });
 
         return {
@@ -299,6 +319,17 @@ export default {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
+}
+
+.pools-data__range {
+  text-align: right;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-12);
+
+  &.out-range {
+    color: red;
+  }
 }
 
 .pool-data__divider {

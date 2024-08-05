@@ -133,6 +133,7 @@ import { poolTokensForZapMap } from '@/store/views/main/zapin/mocks.ts';
 import { cloneDeep } from 'lodash';
 import BN from 'bignumber.js';
 import { formatInputTokens } from '@/utils/tokens.ts';
+import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
 
 export default {
   name: 'WithdrawForm',
@@ -433,6 +434,7 @@ export default {
             outputTokens,
             hash: tx.hash,
             pool: this.zapPool,
+            modalType: MODAL_TYPE.HARVEST,
           },
         );
         this.isSwapLoading = false;

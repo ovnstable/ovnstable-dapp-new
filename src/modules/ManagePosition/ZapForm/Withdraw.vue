@@ -182,6 +182,7 @@ import { cloneDeep } from 'lodash';
 import BN from 'bignumber.js';
 import { MANAGE_FUNC, withdrawStep } from '@/store/modals/waiting-modal.ts';
 import { formatInputTokens } from '@/utils/tokens.ts';
+import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
 
 export default {
   name: 'WithdrawForm',
@@ -306,7 +307,6 @@ export default {
     },
     async poolNftContract(val) {
       if (!val) return;
-      await this.checkIsStaked();
       this.checkNftApprove();
     },
   },
@@ -315,6 +315,11 @@ export default {
     this.setStagesMap(MANAGE_FUNC.WITHDRAW);
     this.firstInit();
     this.setIsZapModalShow(true);
+    this.positionStaked = this.zapPool.isStaked;
+
+    if (this.zapPool.isStaked) {
+      this.currentStage = withdrawStep.APPROVE;
+    }
   },
   created() {
     if (this.zapPool.chain !== this.networkId) return;
@@ -359,14 +364,6 @@ export default {
         this.closeWaitingModal('Approve');
         this.isSwapLoading = false;
       }
-    },
-    async checkIsStaked() {
-      // only for base
-      if (!this.gaugeContractV3) return;
-      const isStaked = await this.gaugeContractV3
-        .stakedContains(this.account, this.zapPool.tokenId);
-
-      this.positionStaked = isStaked;
     },
     mintAction() {
       this.showMintView();
@@ -536,6 +533,7 @@ export default {
             outputTokens,
             hash: tx.hash,
             pool: this.zapPool,
+            modalType: MODAL_TYPE.REBALANCE,
           },
         );
         this.closeWaitingModal();
