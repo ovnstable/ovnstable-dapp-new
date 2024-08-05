@@ -365,8 +365,8 @@ export default {
       const rewardToken = this.zapPool.rewards.tokens.map((_: any, key: number) => {
         const rewardData = Object.entries(_)[0];
         const tokenInfo = this.allTokensMap.values().find((_: any) => {
-          const allTokSymbol = _?.symbol;
-          return allTokSymbol === rewardData[0];
+          const allTokSymbol = _?.symbol?.toLowerCase();
+          return allTokSymbol === rewardData[0]?.toLowerCase();
         });
 
         return {
