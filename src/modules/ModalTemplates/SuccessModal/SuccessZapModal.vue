@@ -120,6 +120,7 @@ export default defineComponent({
       if (this.successData.modalType === MODAL_TYPE.HARVEST) return 'HARVEST';
       if (this.successData.modalType === MODAL_TYPE.WITHDRAW) return 'WITHDRAW';
       if (this.successData.modalType === MODAL_TYPE.COMPOUND) return 'COMPOUND';
+      if (this.successData.modalType === MODAL_TYPE.REBALANCE) return 'REBALANCE';
       return 'ZAPIN';
     },
   },
