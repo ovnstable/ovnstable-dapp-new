@@ -220,7 +220,7 @@ export default {
       if (this.allTokensList === 0) return 0;
 
       const res: BN = this.rewardTokens.reduce((acc: BN, curr: any) => {
-        const val = new BN(curr.value).times(curr.selectedToken.price).toFixed(6);
+        const val = new BN(curr.value).times(curr.selectedToken?.price).toFixed(6);
 
         return acc.plus(val);
       }, new BN(0));
@@ -233,7 +233,7 @@ export default {
       if (this.allTokensList.length === 0) return 0;
 
       const res: BN = this.inputTokens.reduce((acc: BN, curr: any) => {
-        const val = new BN(curr.value).times(curr.selectedToken.price).toFixed(6);
+        const val = new BN(curr.value).times(curr.selectedToken?.price).toFixed(6);
 
         return acc.plus(val);
       }, new BN(0));

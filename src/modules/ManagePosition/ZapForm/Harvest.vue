@@ -243,7 +243,7 @@ export default {
       if (this.inputTokens.length === 0) return 0;
 
       const res: BN = this.inputTokens.reduce((acc, curr) => {
-        const val = new BN(curr.value).times(curr.selectedToken.price).toFixed(6);
+        const val = new BN(curr.value).times(curr.selectedToken?.price).toFixed(6);
 
         return acc.plus(val);
       }, new BN(0));
