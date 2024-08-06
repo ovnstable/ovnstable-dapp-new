@@ -22,9 +22,9 @@
         <span>
           <div
             class="pools-data__range"
-            :class="{ 'out-range': !zapPool?.isInRange }"
+            :class="{ 'out-range': !zapPool?.position?.isInRange }"
           >
-            {{ zapPool?.isInRange ? 'IN RANGE' : 'OUT OF RANGE' }}
+            {{ zapPool?.position?.isInRange ? 'IN RANGE' : 'OUT OF RANGE' }}
           </div>
         </span>
         <div class="pool-data__row">
