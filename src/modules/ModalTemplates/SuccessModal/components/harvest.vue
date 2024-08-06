@@ -33,13 +33,6 @@
           </div>
           <div class="success-data-list">
             <div
-              v-for="sentData in successData.inputTokens"
-              :key="sentData.id"
-              class="token-amount token-amount--green"
-            >
-              {{ sentData.selectedToken.symbol }}
-            </div>
-            <div
               class="token-amount token-amount--green"
             >
               {{ getSymbolToken }}
