@@ -84,9 +84,6 @@ export default {
       'lastParsedBurnedTokenIdEvent',
     ]),
   },
-  mounted() {
-    console.log(this.successData, '__successData');
-  },
   methods: {
     openPositionOnPool(): string {
       // eslint-disable-next-line prefer-destructuring

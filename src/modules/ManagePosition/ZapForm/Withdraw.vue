@@ -39,8 +39,8 @@
             class="swap-block__item-row"
           >
           <div class="swap-block__item-row--percentage">
-{{ token.proportion }}%
-</div>
+            {{ token.proportion }}%
+          </div>
           <div class="swap-block__item-row--token-wrap">
             <img
               :src="token.selectedToken.logoUrl"
@@ -56,10 +56,10 @@
               class="swap-block__item-bal"
             >
               <div v-if="token.value">
-                {{ token.usdValue }}
+                {{ token.displayedValue }}
               </div>
               <div>
-                ~ ${{ token.displayedValue }}
+                ~ ${{ token.usdValue }}
               </div>
             </div>
           </div>
