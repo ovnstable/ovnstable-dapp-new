@@ -39,8 +39,8 @@
             class="swap-block__item-row"
           >
           <div class="swap-block__item-row--percentage">
-{{ token.proportion }}%
-</div>
+            {{ token.proportion }}%
+          </div>
           <div class="swap-block__item-row--token-wrap">
             <img
               :src="token.selectedToken.logoUrl"
@@ -56,10 +56,10 @@
               class="swap-block__item-bal"
             >
               <div v-if="token.value">
-                {{ token.usdValue }}
+                {{ token.displayedValue }}
               </div>
               <div>
-                ~ ${{ token.displayedValue }}
+                ~ ${{ token.usdValue }}
               </div>
             </div>
           </div>
@@ -317,7 +317,7 @@ export default {
     this.setIsZapModalShow(true);
     this.positionStaked = this.zapPool.isStaked;
 
-    if (this.zapPool.isStaked) {
+    if (!this.zapPool.isStaked) {
       this.currentStage = withdrawStep.APPROVE;
     }
   },
@@ -531,7 +531,7 @@ export default {
             outputTokens,
             hash: tx.hash,
             pool: this.zapPool,
-            modalType: MODAL_TYPE.REBALANCE,
+            modalType: MODAL_TYPE.WITHDRAW,
           },
         );
         this.closeWaitingModal();

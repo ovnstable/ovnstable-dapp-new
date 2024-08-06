@@ -87,6 +87,7 @@ export default defineComponent({
       required: true,
     },
   },
+  emits: ['close'],
   data() {
     return {
       tokensSentList: [] as TFormatTokenInfo[],
@@ -116,14 +117,17 @@ export default defineComponent({
     ...mapGetters('network', ['explorerUrl']),
 
     getName() {
+      if (this.successData.modalType === MODAL_TYPE.HARVEST) return 'HARVEST';
       if (this.successData.modalType === MODAL_TYPE.WITHDRAW) return 'WITHDRAW';
       if (this.successData.modalType === MODAL_TYPE.COMPOUND) return 'COMPOUND';
+      if (this.successData.modalType === MODAL_TYPE.REBALANCE) return 'REBALANCE';
       return 'ZAPIN';
     },
   },
   watch: {
     showSuccessZapin(currVal: boolean) {
-      this.showModal = true;
+      this.showModal = currVal;
+
       if (!this.isInit && currVal) {
         // TODO: move Posthog logic up to store
         const posthogEventData = {
@@ -164,6 +168,7 @@ export default defineComponent({
   methods: {
     closeModal() {
       this.setShowFunc({ isShow: false });
+      this.$emit('close');
 
       // If rebalance modal
       if (this.lastParsedClaimedRewardsEvent && this.lastParsedBurnedTokenIdEvent) {

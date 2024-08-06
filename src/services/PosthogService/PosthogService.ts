@@ -10,9 +10,8 @@ import type {
 } from '@/types/posthog';
 import POSTHOG_CONFIG from './posthogConfig.ts';
 
-// const { POSTHOG_API_KEY } = process.env;
-const POSTHOG_API_KEY = 'phc_EViBfC9BogEqkanJEfbHPCsz3vA1KYICYhcbTeIA4hT';
-const EVENT_DISPATCH_OFFSET = 10000;
+const { POSTHOG_API_KEY } = process.env;
+const EVENT_DISPATCH_OFFSET = 5000;
 
 class PosthogService {
   private static instance: IPosthogService;

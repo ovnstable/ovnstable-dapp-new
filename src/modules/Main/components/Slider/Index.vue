@@ -180,7 +180,7 @@ const sliderDescriptionForWrapped = (tokenName: string) => `An index-adjusted wr
 Your w${tokenName} balance won't increase over time. 
 When w${tokenName} will unwrap, you receive ${tokenName} based on the latest index.`;
 
-const MANUAL_SLIDES = 3;
+const MANUAL_SLIDES = 1;
 
 export default {
   name: 'MainSlider',
