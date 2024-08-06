@@ -20,6 +20,14 @@ import type { TTokenInfo } from '@/types/common/tokens';
 
 const ODOS_DURATION_CONFIRM_REQUEST = 60;
 
+export enum MODAL_TYPE {
+  ZAPIN,
+  WITHDRAW,
+  HARVEST,
+  REBALANCE,
+  COMPOUND
+}
+
 export const stateData = {
   baseViewType: 'SWAP',
   isChainsLoading: false,
@@ -163,6 +171,7 @@ const actions = {
       putIntoPoolEvent,
       returnedToUserEvent,
       pool,
+      modalType,
     }: any,
   ) {
     commit('changeState', {
@@ -175,6 +184,7 @@ const actions = {
         putIntoPoolEvent,
         returnedToUserEvent,
         pool,
+        modalType,
       },
     });
     commit('changeState', { field: 'showSuccessZapin', val: isShow });

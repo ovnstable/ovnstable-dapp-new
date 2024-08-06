@@ -80,7 +80,7 @@ export const mapEventTokenData = (
     const token = allTokenMap.get(addr.toString())!;
     const value = formatBN(tokenList.amounts[index], token?.decimals);
     return {
-      id: `${token.id}_return`,
+      id: `${token?.id}_return`,
       symbol: token.symbol,
       value,
     };
@@ -88,7 +88,7 @@ export const mapEventTokenData = (
 
 export const mapInputTokenData = (inputTokens: TSuccessTokenInfo[]) => inputTokens.map(
   (token: TSuccessTokenInfo) => ({
-    id: `${token.id}_return`,
+    id: `${token?.id}_return`,
     symbol: token.selectedToken.symbol,
     value: token.value,
   }),

@@ -3,7 +3,7 @@
   <div class="input-tokens">
     <div class="input-tokens__row">
       <InputComponent
-        customClass="input-tokens__field"
+        custom-class="input-tokens__field"
         :value="isInputToken ? tokenInfo.value : tokenInfo.sum"
         is-custom
         placeholder="0"
@@ -14,23 +14,23 @@
 
       <div
         v-if="tokenInfo.selectedToken"
+        class="input-tokens__selected"
         @click="selectTokenFunc(isInputToken)"
         @keypress="selectTokenFunc(isInputToken)"
-        class="input-tokens__selected"
       >
         <img
           :src="tokenInfo.selectedToken.logoUrl"
           alt="select-token"
         >
         <span>
-          {{tokenInfo.selectedToken.symbol}}
+          {{ tokenInfo.selectedToken.symbol }}
         </span>
       </div>
       <div
         v-else
+        class="input-tokens__select"
         @click="selectTokenFunc(isInputToken)"
         @keypress="selectTokenFunc(isInputToken)"
-        class="input-tokens__select"
       >
         Select token
       </div>
@@ -55,12 +55,12 @@
         <div
           v-else-if="isInputToken && tokenInfo.selectedToken"
         >
-          ~ ${{formatMoney(tokenInfo.usdValue, 2)}}
+          ~ ${{ formatMoney(tokenInfo.usdValue, 2) }}
         </div>
         <div
           v-else-if="!isInputToken && tokenInfo.sum && tokenInfo.selectedToken"
         >
-          ~ ${{formatMoney(tokenInfo.sum * tokenInfo.selectedToken.price, 2)}}
+          ~ ${{ formatMoney(tokenInfo.sum * tokenInfo.selectedToken.price, 2) }}
         </div>
         <div v-else>
           $0
@@ -81,11 +81,10 @@
               Max&nbsp;
             </p>
             <span>
-              {{formatMoney(tokenInfo.selectedToken.balanceData.balance,
-                            fixedByPrice(tokenInfo.selectedToken.price))}}
+              {{ formatMoney(tokenInfo.selectedToken.balanceData.balance,
+                             fixedByPrice(tokenInfo.selectedToken.price)) }}
             </span>
           </div>
-
         </div>
       </div>
     </div>

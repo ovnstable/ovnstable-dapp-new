@@ -44,3 +44,17 @@ export type TTokenBalanceMap = {
 export type TTokenBalanceData = {
     [key: string]: BigNumber,
 }
+
+export type TInputToken = {
+    id: string,
+    value: string,
+    sum: string,
+    locked: boolean,
+    selectedToken: TTokenInfo,
+}
+
+export interface IInputTokenInfo extends TInputToken {
+  usdValue: string,
+  proportion: string,
+  displayedValue: string,
+}

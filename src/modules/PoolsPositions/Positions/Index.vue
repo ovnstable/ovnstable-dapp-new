@@ -1,10 +1,19 @@
 <template>
   <div class="pools-wrap">
     <div
-      v-if="!walletConnected || !account || !Object.values(supportedNetworks).includes(networkName)"
+      v-if="!isLoading && (!walletConnected
+        || !account
+        || !isSupportedNetwork
+        || !displayedPools
+        || displayedPools?.length === 0
+        || displayedPools?.[0] === 0)"
       class="unavailable-container"
     >
-      <div>
+      <div
+        v-if="!walletConnected
+          || !account
+          || !isSupportedNetwork"
+      >
         <div
           v-if="!walletConnected || !account"
           class="unavailable-row"
@@ -31,6 +40,16 @@
           </p>
         </div>
       </div>
+      <div
+        v-else-if="(!displayedPools
+          || displayedPools.length === 0
+          || displayedPools?.[0] === 0)"
+        class="unavailable-row"
+      >
+        <p>
+          NO POSITIONS TO DISPLAY YET
+        </p>
+      </div>
       <img
         alt="sloth"
         :src="getImageUrl(`assets/icons/common/SlothUnavailable.png`)"
@@ -54,9 +73,7 @@
           :apy-order-type="orderType"
           :position-size-order-type="positionSizeOrder"
         >
-          <template
-            #filters
-          >
+          <template #filters>
             <PoolsFilter
               :selected-network="selectedNetworks"
               :is-show-deprecated="isShowDeprecated"
@@ -77,6 +94,7 @@ import PoolsTable from '@/components/Pools/PositionsTable/Index.vue';
 import PoolsFilter from '@/components/Pools/PositionsFilter/Index.vue';
 import {
   mapActions, mapGetters,
+  mapMutations,
 } from 'vuex';
 import { POOL_TYPES } from '@/store/views/main/pools/index.ts';
 import TableSkeleton from '@/components/TableSkeleton/Index.vue';
@@ -157,12 +175,15 @@ export default {
     isLoading: true as boolean,
     positionData: [] as any,
     supportedNetworks: SUPPORTED_REBALANCE_NETWORKS,
+
+    isInit: false as boolean,
+    tokensLength: 0 as number,
   }),
   computed: {
     ...mapGetters('network', ['getParams', 'isShowDeprecated']),
     ...mapGetters('accountData', ['account']),
     ...mapGetters('poolsData', ['allPoolsMap']),
-    ...mapGetters('odosData', ['allTokensMap', 'isTokensLoaded']),
+    ...mapGetters('odosData', ['allTokensMap']),
     ...mapGetters('network', ['networkName']),
     ...mapGetters('walletAction', ['walletConnected']),
     filteredPools() {
@@ -201,26 +222,41 @@ export default {
           this.getParams(pool.chain).networkId,
         ));
     },
+    isSupportedNetwork() {
+      return Object.values(this.supportedNetworks).includes(this.networkName);
+    },
   },
   watch: {
     async allTokensMap() {
-      if (!this.isTokensLoaded) this.isLoading = true;
-      else if (this.isTokensLoaded && this.allTokensMap.size > 0) {
+      if (this.allTokensMap.size > 0
+      && !this.isInit) {
         const posData = await this.getFormatPositions();
         if (posData.length > 0) {
           this.positionData = posData;
           this.isLoading = false;
+          this.isInit = true;
+          this.tokensLength = this.allTokensMap.size;
         }
       }
     },
     async networkName() {
-      this.isLoading = true;
-      await this.init();
+      if (this.isSupportedNetwork) {
+        this.isLoading = true;
+        this.isInit = false;
+        this.resetStore();
+        await this.init();
+      }
+    },
+    async account(account: string) {
+      this.isInit = false;
+      if (this.isSupportedNetwork && account) {
+        this.isLoading = true;
+      }
+      this.isLoading = false;
     },
   },
   async mounted() {
     this.clearAllFilters();
-    await this.loadPools();
 
     this.aprSortIterator = iterateEnum(APR_ORDER_TYPE);
     this.aprOrder = this.aprSortIterator.next();
@@ -233,15 +269,20 @@ export default {
     ...mapActions('poolsData', ['loadPools']),
     ...mapActions('zapinData', ['loadPositionContract']),
     ...mapActions('odosData', ['loadTokens', 'initData', 'loadChains', 'initContractData']),
+    ...mapMutations('zapinData', ['resetStore']),
     async init() {
+      await this.loadPools();
+      await this.initContractData();
+      await this.loadChains();
+
       this.$store.commit('odosData/changeState', {
         field: 'isTokensLoadedAndFiltered',
         val: false,
       });
+
       await this.loadTokens();
-      await this.loadChains();
-      await this.initContractData();
       await this.initData();
+
       this.$store.commit('odosData/changeState', {
         field: 'isTokensLoadedAndFiltered',
         val: true,
@@ -285,6 +326,8 @@ export default {
       const tokensList = this.allTokensMap;
 
       const positionData = await this.loadPositionContract(this.account);
+
+      // console.log(positionData, '__positionData');
       return formatPositionData(positionData, poolInfo, tokensList);
     },
     connectWallet() {

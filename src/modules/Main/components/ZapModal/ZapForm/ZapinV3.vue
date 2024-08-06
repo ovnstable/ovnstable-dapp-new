@@ -141,7 +141,7 @@
 
     <div class="range-presets-wrap">
       <h2>
-        Range presets:
+        {{ isStablePool ? "Tick" : "Percent" }} presets:
       </h2>
       <div class="range-presets">
         <div
@@ -256,13 +256,19 @@ export default {
       ],
       rangePresetsPercents: [
         {
-          id: 5, value: 10, label: '10', tick: false,
+          id: 5, value: 4, label: '2', tick: false,
         },
         {
-          id: 6, value: 20, label: '20', tick: false,
+          id: 6, value: 6, label: '3', tick: false,
         },
         {
-          id: 7, value: 40, label: '40', tick: false,
+          id: 7, value: 10, label: '5', tick: false,
+        },
+        {
+          id: 8, value: 20, label: '10', tick: false,
+        },
+        {
+          id: 4, value: 887272, label: 'FULL', tick: true,
         },
       ],
       optionsChart: {
@@ -383,7 +389,7 @@ export default {
       return (range: any) => !!(this.ticksAmount && this.ticksAmount === range.value.toString());
     },
     getPresetsData() {
-      if (!this.isStablePool) return [...this.rangePresetsPercents, ...this.rangePresetsTicks];
+      if (!this.isStablePool) return this.rangePresetsPercents;
       return this.rangePresetsTicks;
     },
     showPresetPlusMinus() {
@@ -499,6 +505,7 @@ export default {
     },
   },
   async mounted() {
+    console.log(this.zapContract, '___this.zapContract');
     this.pairSymbols = this.zapPool.name.split('/');
     const tickSpace = await this.zapContract.getTickSpacing(this.zapPool.address);
     const currPrice = await this.zapContract.getCurrentPrice(this.zapPool.address);

@@ -349,7 +349,8 @@ import { poolsInfoMap, poolTokensForZapMap } from '@/store/views/main/zapin/mock
 import BN from 'bignumber.js';
 import { approveToken, getAllowanceValue } from '@/utils/contractApprove.ts';
 import { onLeaveList, onEnterList, beforeEnterList } from '@/utils/animations.ts';
-import { zapInStep } from '@/store/modals/waiting-modal.ts';
+import { MANAGE_FUNC, zapInStep } from '@/store/modals/waiting-modal.ts';
+import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
 import { parseLogs } from './helpers.ts';
 
 enum zapMobileSection {
@@ -701,7 +702,7 @@ export default {
 
           setTimeout(() => {
             this.loadZapContract();
-          }, 300);
+          }, 500);
         }
       }
     },
@@ -715,7 +716,7 @@ export default {
   mounted() {
     if (this.zapPool.chain !== this.networkId) this.currentStage = zapInStep.START;
 
-    this.setStagesMap(true);
+    this.setStagesMap(MANAGE_FUNC.ZAPIN);
     this.firstInit();
   },
   created() {
@@ -736,6 +737,7 @@ export default {
       'triggerSuccessZapin',
       'startSwapConfirmTimer',
       'stopSwapConfirmTimer',
+      'initAccountData',
     ]),
     ...mapActions('accountData', ['refreshBalance']),
     ...mapActions('zapinData', ['loadZapContract']),
@@ -831,12 +833,12 @@ export default {
 
       this.init();
       this.clearAndInitForm();
+      this.initAccountData();
 
       if (!this.isAvailableOnNetwork) this.mintAction();
     },
 
     async init() {
-      // await this.loadChains();
       await this.loadTokens();
       await this.initContractData();
 
@@ -1465,6 +1467,7 @@ export default {
               putIntoPoolEvent,
               returnedToUserEvent,
               pool: this.zapPool,
+              modalType: MODAL_TYPE.ZAPIN,
             },
           );
           // event
@@ -1524,6 +1527,7 @@ export default {
           putIntoPoolEvent,
           returnedToUserEvent,
           pool: this.zapPool,
+          modalType: MODAL_TYPE.ZAPIN,
         },
       );
 

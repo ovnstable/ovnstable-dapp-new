@@ -7,9 +7,9 @@
     >
       <div
         v-for="item in tabs"
+        :key="item.id"
         class="switchtabs__inner-text"
         :class="{ active: item.id === activeItem, [type]: !!type }"
-        :key="item.id"
         @click.prevent="onTabClick(item.id)"
       >
         <span>
@@ -34,7 +34,6 @@ type TStyle = 'default' | 'transparent' | 'white'
 
 export default {
   name: 'TabsComponent',
-
   props: {
     tabs: {
       default: () => [],
@@ -53,6 +52,7 @@ export default {
       type: Number,
     },
   },
+  emits: ['tab-change'],
 
   data() {
     return {
@@ -65,18 +65,6 @@ export default {
       this.activeItem = val;
     },
   },
-  computed: {
-    parentId() {
-      return `tabs-${this.uid}`;
-    },
-    visibleId() {
-      return `tabs-list-${this.uid}`;
-    },
-    hiddenId() {
-      return `tabs-hidden-${this.uid}`;
-    },
-  },
-
   created() {
     // this.tabs-header__ul = this.$children;
     this.uid = uniqueId();
@@ -113,13 +101,16 @@ export default {
   background: var(--color-5);
   border-radius: 30px;
 
+  &.white {
+    background: var(--color-4);
+  }
+
   [data-theme="dark"] & {
     color: var(--color-18);
     background: var(--color-6);
+    &.white {
+    background: var(--color-6);
   }
-
-  &.white {
-    background: var(--color-4);
   }
 
   &.transparent {
@@ -142,14 +133,17 @@ export default {
   text-transform: uppercase;
   transition: opacity .2s ease, color .2s ease;
 
-  [data-theme="dark"] & {
-    background-color: var(--color-6);
-  }
-
   .white & {
     background: var(--color-4);
   }
 
+  [data-theme="dark"] & {
+    color: var(--color-18);
+    background: var(--color-6);
+    &.white {
+    background: var(--color-6);
+  }
+  }
   .transparent & {
     background: transparent;
   }
@@ -213,6 +207,10 @@ export default {
   }
   .switchtabs__inner-text {
     background: none;
+    [data-theme="dark"] & {
+      background-color: var(--color-6);
+      color: var(--color-4);
+    }
   }
   .switchtabs__inner-text:hover {
     color: var(--color-1);

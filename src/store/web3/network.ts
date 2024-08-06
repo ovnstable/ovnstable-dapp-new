@@ -336,7 +336,7 @@ const actions = {
     commit('setShowDepracated', !state.showDeprecated);
   },
   changeDappNetwork({
-    commit, dispatch, getters, rootState,
+    commit, dispatch,
   }: any, networkName: any) {
     commit('setAppApiUrl', getNetworkParams(networkName).appApiUrl);
     commit('setNetworkName', getNetworkParams(networkName).networkName);
@@ -354,9 +354,7 @@ const actions = {
   },
 
   // TODO refactore it to array
-  saveNetworkToLocalStore({
-    commit, dispatch, getters, rootState,
-  }: any, network: any) {
+  saveNetworkToLocalStore(network: any) {
     const networkId = `${network}`;
     switch (networkId) {
       case 'blast':
@@ -403,7 +401,7 @@ const actions = {
   },
 
   async setWalletNetwork({
-    commit, dispatch, getters, rootState,
+    commit, dispatch, rootState,
   }: any, network: any) {
     if (rootState.web3.provider) {
       dispatch('saveNetworkToLocalStore', network);
@@ -561,9 +559,7 @@ const actions = {
     }
   },
 
-  async addTokenToWallet({
-    commit, dispatch, getters, rootState,
-  }: any, {
+  async addTokenToWallet({ rootState }: any, {
     address, symbol, decimals, image,
   }: any) {
     const option = {

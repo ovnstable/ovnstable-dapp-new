@@ -7,27 +7,34 @@
   </div>
   <div
     v-else
-    class="ovn-wrapper"
+    class="page-wrapper"
   >
+    <Sidebar
+      sidebar-contents="ovn"
+    />
     <div
-      class="ovn"
+      class="ovn-wrapper"
     >
-      <OvnInfo
-        :token-data="tokenData"
-        :loaded="loaded"
-      />
-      <OvnBenefits v-if="!insuranceIsMobileOvnDashboard && !insuranceIsMobileMintRedeem" />
-      <OvnTokenomics v-if="!insuranceIsMobileOvnDashboard && !insuranceIsMobileMintRedeem" />
-    </div>
-    <div
-      v-if="!insuranceIsMobileOvnDashboard && !insuranceIsMobileMintRedeem"
-      class="ovn__pools"
-    >
-      <PoolsContainer
-        :pool-type="poolTypes.OVN"
-        :is-overview="true"
-        class="ovn__pools-inner"
-      />
+      <div
+        class="ovn"
+      >
+        <OvnInfo
+          :token-data="tokenData"
+          :loaded="loaded"
+        />
+        <OvnBenefits v-if="!insuranceIsMobileOvnDashboard && !insuranceIsMobileMintRedeem" />
+        <OvnTokenomics v-if="!insuranceIsMobileOvnDashboard && !insuranceIsMobileMintRedeem" />
+      </div>
+      <div
+        v-if="!insuranceIsMobileOvnDashboard && !insuranceIsMobileMintRedeem"
+        class="ovn__pools"
+      >
+        <PoolsContainer
+          :pool-type="poolTypes.OVN"
+          :is-overview="true"
+          class="ovn__pools-inner"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -38,7 +45,8 @@ import OvnBenefits from '@/modules/Ovn/Benefits.vue';
 import OvnTokenomics from '@/modules/Ovn/Tokenomics.vue';
 import Spinner from '@/components/Spinner/Index.vue';
 import { POOL_TYPES } from '@/store/views/main/pools/index.ts';
-import PoolsContainer from '@/modules/Main/components/Pools/Index.vue';
+import PoolsContainer from '@/modules/PoolsPositions/Pools/Index.vue';
+import Sidebar from '@/components/Layout/Sidebar/Index.vue';
 
 export default {
   name: 'OvnPage',
@@ -48,6 +56,7 @@ export default {
     OvnTokenomics,
     Spinner,
     PoolsContainer,
+    Sidebar,
   },
   props: {
     tokenData: {
@@ -187,6 +196,11 @@ export default {
     border: 2px solid var(--color-1);
     border-top: 0;
   }
+}
+
+.page-wrapper {
+  display: flex;
+  gap: 50px;
 }
 
 </style>

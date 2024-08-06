@@ -1,9 +1,11 @@
 <template>
   <div class="app-sidebar">
     <ul class="sidebar__top">
-      <div class="market-container">
+      <div
+        v-if="sidebarContents === 'market'"
+        class="market-container"
+      >
         <div class="sidebar__divider-top" />
-
         <p
           class="sidebar__text-top sidebar__text-top--markets"
         >
@@ -20,6 +22,28 @@
           {{ link.name }}
         </router-link>
       </div>
+
+      <div
+        v-if="sidebarContents === 'ovn'"
+        class="market-container"
+      >
+        <div class="sidebar__divider-top" />
+        <p
+          class="sidebar__text-top sidebar__text-top--ovn"
+        >
+          OVN
+        </p>
+
+        <router-link
+          v-for="(link, index) in ovnAndInsuranceLinks"
+          :key="index"
+          :to="link.to"
+          class="sidebar__text-top"
+          active-class="active-link"
+        >
+          {{ link.name }}
+        </router-link>
+      </div>
       <div class="sidebar__divider-top" />
     </ul>
   </div>
@@ -28,6 +52,12 @@
 
 export default {
   name: 'SideBar',
+  props: {
+    sidebarContents: {
+      type: String,
+      default: 'market', // market | ovn
+    },
+  },
   data() {
     return {
       linksData: [
@@ -36,6 +66,10 @@ export default {
         { name: 'ETH+', to: '/market/eth' },
         { name: 'USDT+', to: '/market/usdt' },
         { name: 'DAI+', to: '/market/dai' },
+      ],
+      ovnAndInsuranceLinks: [
+        { name: 'OVN overview', to: '/ovn' },
+        { name: 'Insurance', to: '/insurance' },
       ],
     };
   },

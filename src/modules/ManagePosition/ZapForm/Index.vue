@@ -7,7 +7,6 @@
       class="swap-container"
     >
       <div class="swap-body">
-        <PoolLabel :pool="zapPool" />
         <ChangeNetwork :zap-pool="zapPool" />
       </div>
     </div>
@@ -39,13 +38,6 @@
           :class="currentSection === zapMobileSection.TOKEN_FORM && 'mobile-active'"
           >
             <div class="zapin-block__wrapper">
-              <h2>
-                Position you choose: #{{ zapPool.tokenId }}
-              </h2>
-              <PoolLabel
-                :pool="zapPool"
-                class="pool-info"
-              />
               <div class="zapin-block__swap-wrapper">
                 <div class="out-swap-container pt-5">
                   <h2>
@@ -191,15 +183,15 @@ import Spinner from '@/components/Spinner/Index.vue';
 import ChangeNetwork from '@/modules/Main/components/ZapModal/ZapForm/ChangeNetwork.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
-import PoolLabel from '@/modules/PoolsPositions/ZapModal/PoolLabel.vue';
 import ZapinV3 from '@/modules/Main/components/ZapModal/ZapForm/ZapinV3.vue';
 import { poolsInfoMap, poolTokensForZapMap } from '@/store/views/main/zapin/mocks.ts';
 import BN from 'bignumber.js';
-import TokenForm from '@/modules/PoolsPositions/ZapModal/TokenForm.vue';
-import { rebalanceStep } from '@/store/modals/waiting-modal.ts';
+import TokenForm from '@/modules/ManagePosition/TokenForm.vue';
+import { MANAGE_FUNC, rebalanceStep } from '@/store/modals/waiting-modal.ts';
 import ZapInStepsRow from '@/components/StepsRow/ZapinRow/RebalanceRow.vue';
 import { cloneDeep } from 'lodash';
 import { markRaw } from 'vue';
+import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
 import { parseLogs } from './helpers.ts';
 
 enum zapMobileSection {
@@ -208,9 +200,8 @@ enum zapMobileSection {
 }
 
 export default {
-  name: 'ZapForm',
+  name: 'ZapFormManage',
   components: {
-    PoolLabel,
     BaseIcon,
     ZapinV3,
     ButtonComponent,
@@ -356,13 +347,13 @@ export default {
     },
     async poolNftContract(val) {
       if (!val) return;
-      await this.checkIsStaked();
       this.checkNftApprove();
     },
   },
   mounted() {
     this.firstInit();
-    this.setStagesMap(false);
+    this.setIsZapModalShow(true);
+    this.setStagesMap(MANAGE_FUNC.REBALANCE);
   },
   created() {
     if (this.zapPool.chain !== this.networkId) return;
@@ -375,6 +366,7 @@ export default {
   },
   methods: {
     ...mapActions('swapModal', ['showSwapModal', 'showMintView']),
+    ...mapActions('poolsData', ['setIsZapModalShow']),
     ...mapActions('odosData', [
       'loadTokens',
       'initContractData',
@@ -411,17 +403,6 @@ export default {
         field: 'lastNftTokenId',
         val: null,
       });
-    },
-    async checkIsStaked() {
-      // only for base
-      if (!this.gaugeContractV3) return;
-      const isStaked = await this.gaugeContractV3
-        .stakedContains(this.account, this.zapPool.tokenId);
-
-      console.log(isStaked, '__isStaked');
-      this.positionStaked = isStaked;
-
-      if (!isStaked) this.currentStage = rebalanceStep.APPROVE;
     },
     // Mobile section switcher
     toggleMobileSection() {
@@ -475,6 +456,7 @@ export default {
 
         this.inputTokens = cloneDeep(this.outputTokens);
       }
+      this.positionStaked = this.zapPool.isStaked;
     },
 
     async init() {
@@ -632,7 +614,6 @@ export default {
       }
     },
     async stakeTrigger() {
-      console.log('stakeTrigger');
       this.isSwapLoading = true;
 
       try {
@@ -663,6 +644,7 @@ export default {
             outputTokens,
             hash: tx.hash,
             pool: this.zapPool,
+            modalType: MODAL_TYPE.REBALANCE,
           },
         );
         this.clearZapData();
@@ -1066,8 +1048,6 @@ export default {
       });
     },
     async recalculateProportion() {
-      console.log(this.selectedOutputTokens, '__this.selectedOutputTokens');
-
       const resp = await getV3Rebalance(
         this.zapPool.tokenId?.toString(),
         this.zapPool.address,
@@ -1078,8 +1058,6 @@ export default {
         })),
         this.zapContract,
       );
-
-      console.log(resp, '__resp');
 
       if (!resp) return;
 

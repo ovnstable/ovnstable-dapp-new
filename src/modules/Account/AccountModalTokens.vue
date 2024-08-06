@@ -17,7 +17,6 @@
 </template>
 
 <script lang="ts">
-import { appNetworksData } from '@/utils/const.ts';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { mapActions, mapGetters } from 'vuex';
 import { chainContractsMap } from '@/utils/contractsMap.ts';
@@ -63,7 +62,6 @@ export default {
           name: 'WETH+', iconName: 'wETH+_Account', image: wEthPlus.image,
         },
       },
-      networksData: appNetworksData,
     };
   },
   computed: {

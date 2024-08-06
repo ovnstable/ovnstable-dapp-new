@@ -34,11 +34,16 @@ const router = createRouter({
       name: 'pools',
       component: () => import('@/views/Pools/Index.vue'),
     },
-    // {
-    //   path: '/blastquest',
-    //   name: 'blastquest',
-    //   component: () => import('@/views/BlastQuest/Index.vue'),
-    // },
+    {
+      path: '/positions',
+      name: 'positions',
+      component: () => import('@/views/Positions/Index.vue'),
+    },
+    {
+      path: '/positions/:id',
+      name: '/positions/:id',
+      component: () => import('@/views/Manage/Index.vue'),
+    },
     {
       path: '/:pathMatch(.*)*',
       redirect: '/',

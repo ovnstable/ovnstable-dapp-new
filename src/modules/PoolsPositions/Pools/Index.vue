@@ -17,6 +17,7 @@
       class="pools-container"
     >
       <PoolsTable
+        v-if="isInit"
         :pools="displayedPools"
         :is-show-only-zap="isShowOnlyZap"
         :is-show-apr-limit="isShowAprLimit"
@@ -175,6 +176,8 @@ export default {
     // tvlOrder: 0 as number,
     // aprOrder: 0 as number,
     isDefaultOrder: true as boolean,
+
+    isInit: true as boolean,
   }),
   computed: {
     ...mapGetters('network', ['getParams', 'isShowDeprecated']),
@@ -246,6 +249,7 @@ export default {
   },
   watch: {
     filteredPools(arr: any[]) {
+      if (arr.length > 0) this.isInit = true;
       this.isMorePoolsToShow = this.showingPools <= (arr?.length ?? 0);
     },
   },
@@ -258,16 +262,17 @@ export default {
         field: 'typeOfPool',
         val: this.poolType,
       });
-      console.log(this.poolType, '__poolType');
       this.poolTabType = this.poolType;
     }
-
+    await this.loadTokens();
     await this.loadPools();
+    this.setIsZapModalShow(false);
   },
 
   methods: {
     ...mapActions('poolsData', ['loadPools', 'openZapIn', 'setIsZapModalShow']),
     ...mapMutations('poolsData', ['changeState']),
+    ...mapActions('odosData', ['loadTokens']),
 
     switchPoolsTab(type: POOL_TYPES) {
       this.isDefaultOrder = true;

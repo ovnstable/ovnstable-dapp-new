@@ -186,6 +186,8 @@ export const depositAllAtGauge = async (
     return poolTokenContract.deposit(Number(lastNftTokenId));
   }
 
+  console.log(currentZapPlatformContractType, '__currentZapPlatformContractType');
+
   if (
     currentZapPlatformContractType.typeOfDepositConstructor
     === 'CONSTRUCTOR_WITH_NFT_ID'

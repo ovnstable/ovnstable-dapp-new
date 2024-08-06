@@ -94,9 +94,9 @@
                   </div>
                   <div
                     class="pools-table__tag is-in-range"
-                    :class="{ 'out-range': !pool.position.isInRange }"
+                    :class="{ 'out-range': !pool.position?.isInRange }"
                   >
-                    {{ pool.position.isInRange ? 'IN RANGE' : 'OUT OF RANGE' }}
+                    {{ pool.position?.isInRange ? 'IN RANGE' : 'OUT OF RANGE' }}
                   </div>
                 </div>
               </div>
@@ -130,7 +130,7 @@
             <ButtonComponent
               :disabled="!pool.zappable"
               btn-styles="faded"
-              @click="openZapIn(pool)"
+              @click="handleOpen(pool)"
             >
               MANAGE
             </ButtonComponent>
@@ -203,6 +203,10 @@ export default {
   },
   methods: {
     ...mapActions('poolsData', ['openZapIn']),
+    handleOpen(pool: any) {
+      this.openZapIn(pool);
+      this.$router.replace(`/positions/${pool?.tokenId?.toString()}`);
+    },
     toggleSortIcon() {
       return iconNameSort(POSITION_SIZE_ORDER_TYPE[this.positionSizeOrderType]);
     },

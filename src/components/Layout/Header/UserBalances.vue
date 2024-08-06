@@ -56,7 +56,7 @@ import { mapGetters, mapState } from 'vuex';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { deviceType } from '@/utils/deviceType.ts';
-import { OVN_TOKENS, appNetworksData, EMPTY_TOKENS_NETWORKS } from '@/utils/const.ts';
+import { OVN_TOKENS, EMPTY_TOKENS_NETWORKS } from '@/utils/const.ts';
 import { isEmpty } from 'lodash';
 import BigNumber from 'bignumber.js';
 
@@ -66,14 +66,8 @@ export default {
     ButtonComponent,
     BaseIcon,
   },
-  data() {
-    return {
-      networksData: appNetworksData,
-      showModalAccount: false,
-    };
-  },
   computed: {
-    ...mapGetters('accountData', ['account', 'isLoadingOvnBalances']),
+    ...mapGetters('accountData', ['isLoadingOvnBalances']),
     ...mapGetters('network', ['networkId']),
     ...mapGetters('accountData', ['originalBalance']),
     ...mapGetters('odosData', ['allTokensList']),

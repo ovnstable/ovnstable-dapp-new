@@ -5,65 +5,74 @@
   >
     <Spinner />
   </div>
+
   <div
     v-else-if="device.isDesktop"
-    class="insurance-wrapper"
+    class="page-wrapper"
   >
-    <div
-      class="insurance"
-    >
-      <TokenDataInsurance
-        :tokenData="tokenData"
-        class="insurance__token-data"
-      />
-      <GraphicsInsurance
+    <Sidebar
+      sidebar-contents="ovn"
+    />
+    <div>
+      <div
+        class="insurance-wrapper"
+      >
+        <div
+          class="insurance"
+        >
+          <TokenDataInsurance
+            :token-data="tokenData"
+            class="insurance__token-data"
+          />
+          <GraphicsInsurance
+            v-if="!insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem
+              && !insuranceIsMobileOvnDashboard"
+            :payout-data="payoutData"
+            :loaded="loaded"
+            class="insurance__graphics"
+          />
+          <InsurancePremiums
+            v-if="!insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem
+              && !insuranceIsMobileOvnDashboard"
+            :premiums-data="premiumsData"
+            class="insurance__premiums"
+          />
+        </div>
+      </div>
+      <div
         v-if="!insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem
           && !insuranceIsMobileOvnDashboard"
-        :payoutData="payoutData"
-        :loaded="loaded"
-        class="insurance__graphics"
-      />
-      <InsurancePremiums
-        v-if="!insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem
-          && !insuranceIsMobileOvnDashboard"
-        :premiums-data="premiumsData"
-        class="insurance__premiums"
-      />
-    </div>
-    <div
-      v-if="!insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem
-        && !insuranceIsMobileOvnDashboard"
-      class="insurance__payouts"
-    >
-      <InsurancePayouts
-        :payout-data="reversedPayoutData"
-        class="insurance__payout-inner"
-      />
+        class="insurance__payouts"
+      >
+        <InsurancePayouts
+          :payout-data="reversedPayoutData"
+          class="insurance__payout-inner"
+        />
+      </div>
     </div>
   </div>
   <div
     v-else-if="!device.isDesktop"
     class="insurance-wrapper"
   >
-
     <TabsComponent
       :tabs="tabsData"
       :active-tab="activeTab"
-      @tab-change="changeTab"
       class="insurance-tabs"
+      @tab-change="changeTab"
     >
       <div
         v-if="activeTab === 0"
         class="insurance"
       >
         <TokenDataInsurance
-          :tokenData="tokenData"
+          :token-data="tokenData"
           class="insurance__token-data"
         />
         <GraphicsInsurance
           v-if="!insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem
             && !insuranceIsMobileOvnDashboard"
-          :payoutData="payoutData"
+          :payout-data="payoutData"
           :loaded="loaded"
           class="insurance__graphics"
         />
@@ -95,9 +104,7 @@
         />
       </div>
     </TabsComponent>
-
   </div>
-
 </template>
 
 <script lang="ts">
@@ -109,6 +116,7 @@ import OvnPage from '@/modules/Ovn/Index.vue';
 import InsurancePremiums from '@/modules/Insurance/Premiums.vue';
 import { deviceType } from '@/utils/deviceType.ts';
 import InsurancePayouts from '@/modules/Insurance/InsurancePayouts.vue';
+import Sidebar from '@/components/Layout/Sidebar/Index.vue';
 
 export default {
   name: 'InsurancePage',
@@ -120,6 +128,7 @@ export default {
     Spinner,
     TabsComponent,
     OvnPage,
+    Sidebar,
   },
   props: {
     tokenData: {
@@ -179,6 +188,16 @@ export default {
       return this.$store.state.insuranceTokenData.isMobileOvnDashboard.value;
     },
   },
+  watch: {
+    '$store.state.network.ovnNetwork': {
+      immediate: true,
+      handler: function handleNetworkNameChange(newVal, oldVal) {
+        if (newVal !== oldVal) {
+          this.fetchDataForOVN(this.$store.state.network.ovnNetwork);
+        }
+      },
+    },
+  },
   methods: {
     changeTab(id: number) {
       this.activeTab = id;
@@ -194,16 +213,6 @@ export default {
         this.loadedDataDashboard = false;
         console.error('Error fetching data:', error);
       }
-    },
-  },
-  watch: {
-    '$store.state.network.ovnNetwork': {
-      immediate: true,
-      handler: function handleNetworkNameChange(newVal, oldVal) {
-        if (newVal !== oldVal) {
-          this.fetchDataForOVN(this.$store.state.network.ovnNetwork);
-        }
-      },
     },
   },
 };
@@ -253,7 +262,7 @@ export default {
   position: relative;
   display: flex;
   flex-direction: column;
-  margin-bottom: 50px;
+  // margin-bottom: 50px;
   width: 100%;
   z-index: 1;
 }
@@ -340,6 +349,16 @@ export default {
     padding-right: 20px;
     border-radius: 0;
   }
+}
+
+.page-wrapper {
+  display: flex;
+  gap: 50px;
+}
+
+.page-wrapper {
+  display: flex;
+  gap: 50px;
 }
 
 </style>

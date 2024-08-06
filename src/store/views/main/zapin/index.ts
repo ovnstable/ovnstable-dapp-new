@@ -7,6 +7,11 @@ import { JSONLoader } from '@/utils/httpUtils.ts';
 import { zapInStep } from '@/store/modals/waiting-modal.ts';
 import type { ContractAbi } from '@/types/abi';
 
+export enum REWARD_TOKEN {
+  AERO = 'AERO',
+  CAKE = 'Cake'
+}
+
 enum poolVersionList {
   v2,
   v3,
@@ -48,7 +53,6 @@ const rebalanceChainMap: {[key: string]: string} = {
 };
 
 export const loadAbi = async (abiFileSrc: string): Promise<ContractAbi> => {
-  console.log('__abiSrc', abiFileSrc);
   try {
     const abiFile = await JSONLoader(abiFileSrc);
     if (!abiFile || !abiFile?.abi) return {} as ContractAbi;
@@ -61,6 +65,7 @@ export const loadAbi = async (abiFileSrc: string): Promise<ContractAbi> => {
 
 const defaultState = () => ({
   zapPoolRoot: null,
+  positionContract: null,
   currentZapPlatformContractType: null,
   zapContract: null,
   // for v2
@@ -118,7 +123,6 @@ const actions = {
     }
 
     let abiFile = {} as ContractAbi;
-    console.log('__chainPlatform', chainName, platformName);
     if (chainName && platformName) {
       const abiFileSrc = zapAbiSrcMap[poolVersion]?.(chainName, platformName);
       abiFile = await loadAbi(abiFileSrc);
@@ -164,7 +168,6 @@ const actions = {
     const abiGaugeContractFileV3 = await loadAbi(abiFileSrcV3);
 
     if (Object.keys(abiGaugeContractFileV3).length > 0) {
-      console.log('__gaugeV3', abiGaugeContractFileV3);
       commit('changeState', {
         field: 'gaugeContractV3',
         val: buildEvmContract(
@@ -174,8 +177,6 @@ const actions = {
         ),
       });
     }
-
-    console.log(abiGaugeContractFile, '__abiGaugeContractFile');
 
     commit('changeState', {
       field: 'gaugeContract',
@@ -218,7 +219,6 @@ const actions = {
         rootState.web3.evmSigner,
         abiNftContractFile.address,
       );
-      console.log(poolNftContract, '__poolNftContract');
 
       commit('changeState', {
         field: 'poolNftContract',
@@ -248,7 +248,10 @@ const actions = {
 
     const positions = await positionContract.getPositions(address);
 
-    console.log(positions, '__positions');
+    commit('changeState', {
+      field: 'positionContract',
+      val: positionContract,
+    });
 
     commit('changeState', {
       field: 'userPositions',

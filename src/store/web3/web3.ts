@@ -46,7 +46,7 @@ const getters = {
 
 const actions = {
   initDefaultProvider({
-    commit, dispatch, getters, rootState,
+    commit, rootState,
   }: any) {
     const { rpcUrl } = rootState.network;
 
@@ -62,7 +62,7 @@ const actions = {
   },
 
   async initCustomProvider({
-    commit, dispatch, getters, rootState,
+    commit, dispatch,
   }: any, provider: any) {
     const evmProvider = new ethers.BrowserProvider(provider, 'any');
     const signer = await evmProvider.getSigner();
@@ -80,7 +80,7 @@ const actions = {
   },
 
   async initWeb3({
-    commit, dispatch, getters, rootState,
+    commit, dispatch, getters,
   }: any) {
     commit('setLoadingWeb3', true);
     // await dispatch('initDefaultProvider');
@@ -95,25 +95,6 @@ const actions = {
 
     dispatch('gasPrice/refreshGasPrice', null, { root: true });
     dispatch('insuranceData/refreshInsurance', null, { root: true });
-
-    // const networkId = await getters.web3.eth.net.getId();
-    // if (!getters.isProviderDefault) {
-    //   let currentWalletNetworkId = await getters.web3.eth.net.getId();
-    //   // eslint-disable-next-line radix
-    //   currentWalletNetworkId = parseInt(currentWalletNetworkId);
-
-    //   if (SUPPORTED_NETWORKS.includes(currentWalletNetworkId)) {
-    //     commit('network/setSwitchToOtherNetwork', false, { root: true });
-
-    //     if (currentWalletNetworkId !== rootState.network.networkId) {
-    //       dispatch('network/changeDappNetwork',
-    // currentWalletNetworkId.toString(), { root: true });
-    //     }
-    //   } else {
-    //     commit('network/setSwitchToOtherNetwork', true, { root: true });
-    //   }
-    // }
-
     commit('setLoadingWeb3', false);
   },
 };

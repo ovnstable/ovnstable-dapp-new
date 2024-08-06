@@ -24,7 +24,7 @@
           :class="isShort ? 'short-title platform-name-short' : ''"
           class="platform-name pt-1"
         >
-          {{pool.name}}
+          {{ pool.name }}
         </span>
       </div>
       <div class="zap-header__col">
@@ -53,10 +53,10 @@
           class="pool-detail-item"
         >
           <span v-if="pool.apr < 10000">
-            {{formatMoney(pool.apr, 2)}}%
+            {{ formatMoney(pool.apr, 2) }}%
           </span>
           <span v-else>
-            {{formatNumberToThousands(pool.apr, 0)}}K %
+            {{ formatNumberToThousands(pool.apr, 0) }}K %
           </span>
         </div>
       </div>
@@ -72,14 +72,14 @@
           :class="isShort ? 'pool-detail-item-short' : ''"
           class="pool-detail-item"
         >
-          {{('$' + formatNumberToMln(pool.tvl, 0))}}M
+          {{ ('$' + formatNumberToMln(pool.tvl, 0)) }}M
         </span>
         <span
           v-if="pool.tvl < 1000000"
           :class="isShort ? 'pool-detail-item-short' : ''"
           class="pool-detail-item"
         >
-          ${{ formatNumberToThousands(pool.tvl, 0)}}K
+          ${{ formatNumberToThousands(pool.tvl, 0) }}K
         </span>
       </div>
     </div>
@@ -87,7 +87,6 @@
 </template>
 
 <script lang="ts">
-import { mapGetters } from 'vuex';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { formatMoney, formatNumberToThousands, formatNumberToMln } from '@/utils/numbers.ts';
 
@@ -105,9 +104,6 @@ export default {
       type: Boolean,
       required: false,
     },
-  },
-  computed: {
-    ...mapGetters('network', ['getParams', 'networkColor']),
   },
   methods: {
     formatMoney,
