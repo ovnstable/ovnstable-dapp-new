@@ -250,7 +250,6 @@ export default {
   },
   mounted() {
     this.init();
-    console.log(this.zapPool, '___POOL');
   },
   methods: {
     init() {

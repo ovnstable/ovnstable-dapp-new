@@ -16,20 +16,6 @@
             <BaseIcon name="PayoutArrow" />
           </ButtonComponent>
         </a>
-        <div class="nft-info">
-          <div
-            v-if="lastParsedBurnedTokenIdEvent"
-            class="nft-info-row"
-          >
-            <span>Burned NFT:</span><span>ID: #{{ lastParsedBurnedTokenIdEvent }}</span>
-          </div>
-          <div
-            v-if="lastParsedTokenIdEvent"
-            class="nft-info-row"
-          >
-            <span>New NFT:</span><span>ID: #{{ lastParsedTokenIdEvent }}</span>
-          </div>
-        </div>
       </div>
     </div>
 
@@ -53,6 +39,11 @@
             >
               {{ sentData.selectedToken.symbol }}
             </div>
+            <div
+              class="token-amount token-amount--green"
+            >
+              {{ getSymbolToken }}
+            </div>
           </div>
         </div>
       </div>
@@ -66,6 +57,7 @@ import { mapState } from 'vuex';
 import PoolLabel from '@/modules/Main/components/ZapModal/PoolLabel.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import { REWARD_TOKEN } from '@/store/views/main/zapin/index.ts';
 import getPlatformLink from '../helpers.ts';
 
 export default {
@@ -78,14 +70,15 @@ export default {
   computed: {
     ...mapState('odosData', [
       'successData',
-      'lastParsedTokenIdEvent',
     ]),
-    ...mapState('poolsData', [
-      'lastParsedBurnedTokenIdEvent',
-    ]),
+    getSymbolToken() {
+      const { pool } = this.successData;
+      if (pool.platform[0] === 'Pancake') return REWARD_TOKEN.CAKE;
+      if (pool.platform[0] === 'Aerodrome') return REWARD_TOKEN.AERO;
+      return '';
+    },
     openPositionOnPool(): string {
-      // eslint-disable-next-line prefer-destructuring
-      const pool = this.successData.pool;
+      const { pool } = this.successData;
       if (pool.address || pool.platform[0]) return getPlatformLink(pool.platform[0], pool.address);
       return '';
     },
