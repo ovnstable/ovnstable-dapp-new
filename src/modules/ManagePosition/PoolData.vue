@@ -123,10 +123,10 @@
           class="swap-block__item-bal"
         >
           <div v-if="token.value">
-            {{ token.usdValue }}
+            {{ token.displayedValue }}
           </div>
           <div>
-            ~ ${{ token.displayedValue }}
+            ~ ${{ token.usdValue }}
           </div>
         </div>
       </div>
