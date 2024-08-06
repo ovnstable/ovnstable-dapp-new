@@ -107,6 +107,15 @@
           class="swap-button-container"
         >
           <ButtonComponent
+            v-if="isDisabled"
+            btn-size="large"
+            btn-styles="primary"
+            full
+            disabled
+          >
+            Something wrong
+          </ButtonComponent>
+          <ButtonComponent
             v-if="positionStaked"
             btn-size="large"
             btn-styles="primary"
@@ -288,6 +297,10 @@ export default {
     ...mapGetters('network', ['networkId']),
     ...mapGetters('accountData', ['account']),
 
+    isDisabled() {
+      // if (this.currentStage === rebalanceStep.UNSTAKE && !this.positionStaked) return true;
+      return false;
+    },
     zapsLoaded() {
       return this.isTokensLoadedAndFiltered && this.zapPool && this.zapContract && this.isZapLoaded;
     },
@@ -456,7 +469,11 @@ export default {
 
         this.inputTokens = cloneDeep(this.outputTokens);
       }
-      this.positionStaked = this.zapPool.isStaked;
+
+      if (!this.zapPool.isStaked) {
+        this.positionStaked = this.zapPool.isStaked;
+        this.currentStage = rebalanceStep.APPROVE;
+      }
     },
 
     async init() {
