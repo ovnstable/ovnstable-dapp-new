@@ -157,9 +157,10 @@ export default defineComponent({
     ButtonComponent,
   },
   setup() {
+    const anyStore = store as any;
     const {
       isLoading, isError, data, error, isFetching,
-    } = useQuery('positions', async () => store._actions['zapinData/loadPositionContract'][0]());
+    } = useQuery('positions', async () => anyStore._actions['zapinData/loadPositionContract'][0]());
 
     const queryClient = useQueryClient();
     const invalidateQuery = async () => queryClient.invalidateQueries({ queryKey: ['positions'] });
