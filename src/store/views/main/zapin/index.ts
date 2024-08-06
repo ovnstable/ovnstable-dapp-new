@@ -118,7 +118,6 @@ const actions = {
     }
 
     let abiFile = {} as ContractAbi;
-    console.log('__chainPlatform', chainName, platformName);
     if (chainName && platformName) {
       const abiFileSrc = zapAbiSrcMap[poolVersion]?.(chainName, platformName);
       abiFile = await loadAbi(abiFileSrc);
@@ -243,8 +242,6 @@ const actions = {
     );
 
     const positions = await positionContract.getPositions(address);
-
-    console.log(positions, '__positions');
 
     commit('changeState', {
       field: 'positionContract',

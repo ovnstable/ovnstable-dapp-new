@@ -93,7 +93,6 @@ const mutations = {
   },
 
   setStagesMap(state: typeof stateData, func: MANAGE_FUNC) {
-    console.log(func, '__STAGES');
     if (func === MANAGE_FUNC.ZAPIN) state.STAGES_MAP = ZAPIN_MAP;
     if (func === MANAGE_FUNC.WITHDRAW) state.STAGES_MAP = WITHDRAW_MAP;
     if (func === MANAGE_FUNC.REBALANCE) state.STAGES_MAP = REBALANCE_MAP;

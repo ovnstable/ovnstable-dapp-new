@@ -23,8 +23,9 @@ const getters = {};
 
 const actions = {
   async initContracts({
-    commit, dispatch, getters, rootState,
+    commit, rootState,
   }: any, evmSigner: any) {
+    console.log('__initContracts');
     const network = rootState.network.networkName;
     const contracts: any = {};
 

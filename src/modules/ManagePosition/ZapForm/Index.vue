@@ -200,7 +200,7 @@ enum zapMobileSection {
 }
 
 export default {
-  name: 'ZapForm',
+  name: 'ZapFormManage',
   components: {
     BaseIcon,
     ZapinV3,
