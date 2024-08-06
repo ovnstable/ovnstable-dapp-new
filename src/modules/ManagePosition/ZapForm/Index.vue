@@ -364,10 +364,10 @@ export default {
     },
   },
   mounted() {
+    this.currentStage = rebalanceStep.UNSTAKE;
     this.firstInit();
     this.setIsZapModalShow(true);
     this.setStagesMap(MANAGE_FUNC.REBALANCE);
-    this.currentStage = rebalanceStep.REBALANCE;
   },
   created() {
     if (this.zapPool.chain !== this.networkId) return;
@@ -752,29 +752,6 @@ export default {
       // formulaOutputTokens sorted by pool pair and with zero for not exist in output formula.
       formulaOutputTokens = formulaResultOutputWithZero;
 
-      const inputDecimals = formulaInputTokens.map((token: any) => token.decimals);
-      const inputAddresses = formulaInputTokens.map((token: any) => token.address);
-      const inputAmounts = formulaInputTokens.map((token: any) => token.contractValue);
-      const inputPrices = formulaInputTokens.map((token: any) => token.price);
-
-      // (!) List - formulaOutputTokens with 0 amount and sort like in pool pair.
-      const outputDecimals = formulaOutputTokens.map((token: any) => token.decimals);
-      const outputAddresses = formulaOutputTokens.map((token: any) => token.address);
-      const outputAmounts = formulaOutputTokens.map((token: any) => token.contractValue);
-      const outputPrices = formulaOutputTokens.map((token: any) => token.price);
-
-      console.log(JSON.stringify({
-        inputTokensDecimals: [...inputDecimals],
-        inputTokensAddresses: [...inputAddresses],
-        inputTokensAmounts: [...inputAmounts],
-        inputTokensPrices: [...inputPrices],
-        outputTokensDecimals: [...outputDecimals],
-        outputTokensAddresses: [...outputAddresses],
-        outputTokensAmounts: [...outputAmounts],
-        outputTokensPrices: [...outputPrices],
-      }), '__PARAMS');
-
-      console.log(userInputTokens, '__userInputTokens');
       let proportions: any = {
         inputTokens: [],
         outputTokens: [],
@@ -793,8 +770,6 @@ export default {
         this.zapContract,
       );
 
-      console.log(resp, '__resp1');
-
       if (!resp) return;
 
       proportions = {
@@ -810,9 +785,6 @@ export default {
         amountToken1Out: resp[4][1]?.toString(),
       };
 
-      console.log(resp, '__resp2');
-      console.log(proportions, '__proportions');
-
       proportions.outputTokens = proportions.outputTokens.filter(
         (item: any) => new BN(item.proportion).gt(0),
       );
@@ -825,8 +797,6 @@ export default {
         userAddr: this.zapContract.target,
         slippageLimitPercent: this.getSlippagePercent(),
       };
-
-      console.log(request, '__request');
 
       if (proportions.inputTokens?.length === 0) {
         await this.initZapInTransaction(
@@ -909,11 +879,10 @@ export default {
 
       const isApproved = await this.poolNftContract
         .getApproved(this.zapPool?.tokenId);
-      console.log(isApproved, '__this.__isApproved');
 
       if (isApproved?.toLowerCase() === this.zapContract?.target?.toLowerCase()) {
         this.isNftApproved = true;
-        this.currentStage = rebalanceStep.REBALANCE;
+        // this.currentStage = rebalanceStep.REBALANCE;
       }
 
       this.isSwapLoading = false;
@@ -922,7 +891,6 @@ export default {
       this.isSwapLoading = true;
 
       try {
-        console.log(approveToGauge, '__isApproved');
         this.showWaitingModal('Approve');
         const tx = approveToGauge
           ? await this.poolNftContract.approve(this.gaugeContractV3?.target, this.newTokenId)
