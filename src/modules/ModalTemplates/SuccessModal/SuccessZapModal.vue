@@ -125,7 +125,8 @@ export default defineComponent({
   },
   watch: {
     showSuccessZapin(currVal: boolean) {
-      this.showModal = true;
+      this.showModal = currVal;
+
       if (!this.isInit && currVal) {
         // TODO: move Posthog logic up to store
         const posthogEventData = {
