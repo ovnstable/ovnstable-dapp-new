@@ -79,17 +79,18 @@ export const formatPositionData = (
       const tokenNames = getTokenNames(pool.name);
       const token0Info = getTokenInfo(token0, tokenMap);
       const token1Info = getTokenInfo(token1, tokenMap);
+
       // Token usd values
-      const token0UsdStr = getUsdStr(amount0, token0Info!.decimals, token0Info.price);
-      const token1UsdStr = getUsdStr(amount1, token1Info!.decimals, token1Info.price);
-      const reward0UsdStr = getUsdStr(rewardAmount0, token0Info!.decimals, token0Info.price);
-      const reward1UsdStr = getUsdStr(rewardAmount1, token1Info!.decimals, token1Info.price);
+      const token0UsdStr = getUsdStr(amount0, token0Info?.decimals, token0Info?.price);
+      const token1UsdStr = getUsdStr(amount1, token1Info?.decimals, token1Info?.price);
+      const reward0UsdStr = getUsdStr(rewardAmount0, token0Info?.decimals, token0Info?.price);
+      const reward1UsdStr = getUsdStr(rewardAmount1, token1Info?.decimals, token1Info?.price);
       const positionUsdTotal = sumBnStr(token0UsdStr, token1UsdStr);
       let rewardUsdTotal = sumBnStr(reward0UsdStr, reward1UsdStr);
 
       if (platform === 'Aerodrome') {
         const aeroTokenInfo = getTokenInfo(AERO_ADDR, tokenMap);
-        rewardUsdTotal = getUsdStr(emissions, aeroTokenInfo!.decimals, aeroTokenInfo.price);
+        rewardUsdTotal = getUsdStr(emissions, aeroTokenInfo?.decimals, aeroTokenInfo?.price);
       }
 
       // Ticks
@@ -106,8 +107,8 @@ export const formatPositionData = (
         ...pool,
         position: {
           tokens: [
-            { [tokenNames.token0]: getUsdStr(amount0, token0Info!.decimals) },
-            { [tokenNames.token1]: getUsdStr(amount1, token1Info!.decimals) },
+            { [tokenNames.token0]: getUsdStr(amount0, token0Info?.decimals) },
+            { [tokenNames.token1]: getUsdStr(amount1, token1Info?.decimals) },
           ],
           usdValue: positionUsdTotal,
           displayedUsdValue: getMinVal(positionUsdTotal),
@@ -116,8 +117,8 @@ export const formatPositionData = (
         },
         rewards: {
           tokens: [
-            { [tokenNames.token0]: getUsdStr(rewardAmount0, token0Info!.decimals) },
-            { [tokenNames.token1]: getUsdStr(rewardAmount1, token1Info!.decimals) },
+            { [tokenNames.token0]: getUsdStr(rewardAmount0, token0Info?.decimals) },
+            { [tokenNames.token1]: getUsdStr(rewardAmount1, token1Info?.decimals) },
           ],
           usdValue: rewardUsdTotal,
           displayedUsdValue: getMinVal(rewardUsdTotal),

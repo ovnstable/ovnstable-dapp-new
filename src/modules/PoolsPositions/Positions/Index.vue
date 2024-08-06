@@ -1,10 +1,19 @@
 <template>
   <div class="pools-wrap">
     <div
-      v-if="!walletConnected || !account || !isSupportedNetwork"
+      v-if="!isLoading && (!walletConnected
+        || !account
+        || !isSupportedNetwork
+        || !displayedPools
+        || displayedPools?.length === 0
+        || displayedPools?.[0] === 0)"
       class="unavailable-container"
     >
-      <div>
+      <div
+        v-if="!walletConnected
+          || !account
+          || !isSupportedNetwork"
+      >
         <div
           v-if="!walletConnected || !account"
           class="unavailable-row"
@@ -30,6 +39,16 @@
             PLEASE SELECT ONE OF THE CURRENTLY SUPPORTED NETWORKS: BASE, ARBITRUM
           </p>
         </div>
+      </div>
+      <div
+        v-else-if="(!displayedPools
+          || displayedPools.length === 0
+          || displayedPools?.[0] === 0)"
+        class="unavailable-row"
+      >
+        <p>
+          NO POSITIONS TO DISPLAY YET
+        </p>
       </div>
       <img
         alt="sloth"
@@ -163,7 +182,7 @@ export default {
     ...mapGetters('network', ['getParams', 'isShowDeprecated']),
     ...mapGetters('accountData', ['account']),
     ...mapGetters('poolsData', ['allPoolsMap']),
-    ...mapGetters('odosData', ['allTokensMap', 'isTokensLoaded']),
+    ...mapGetters('odosData', ['allTokensMap']),
     ...mapGetters('network', ['networkName']),
     ...mapGetters('walletAction', ['walletConnected']),
     filteredPools() {
@@ -208,10 +227,8 @@ export default {
   },
   watch: {
     async allTokensMap() {
-      if (!this.isTokensLoaded) this.isLoading = true;
-      else if (this.isTokensLoaded
-      && this.allTokensMap.size > 0
-      && this.allTokensMap.size !== this.tokensLength && !this.isInit) {
+      if (this.allTokensMap.size > 0
+      && !this.isInit) {
         const posData = await this.getFormatPositions();
         if (posData.length > 0) {
           this.positionData = posData;
@@ -227,6 +244,13 @@ export default {
         this.isInit = false;
         await this.init();
       }
+    },
+    async account(account: string) {
+      this.isInit = false;
+      if (this.isSupportedNetwork && account) {
+        this.isLoading = true;
+      }
+      this.isLoading = false;
     },
   },
   async mounted() {
