@@ -367,6 +367,7 @@ export default {
     this.firstInit();
     this.setIsZapModalShow(true);
     this.setStagesMap(MANAGE_FUNC.REBALANCE);
+    this.currentStage = rebalanceStep.REBALANCE;
   },
   created() {
     if (this.zapPool.chain !== this.networkId) return;

@@ -110,12 +110,16 @@
 import { mapState } from 'vuex';
 import PoolLabel from '@/modules/Main/components/ZapModal/PoolLabel.vue';
 import { type PropType } from 'vue';
+import ButtonComponent from '@/components/Button/Index.vue';
+import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import getPlatformLink from '../helpers.ts';
 
 export default {
   name: 'ZapinContent',
   components: {
     PoolLabel,
+    BaseIcon,
+    ButtonComponent,
   },
   props: {
     tokensSentList: {
@@ -140,8 +144,6 @@ export default {
       'lastParsedBurnedTokenIdEvent',
       'lastParsedClaimedRewardsEvent',
     ]),
-  },
-  methods: {
     openPositionOnPool(): string {
       // eslint-disable-next-line prefer-destructuring
       const pool = this.successData.pool;

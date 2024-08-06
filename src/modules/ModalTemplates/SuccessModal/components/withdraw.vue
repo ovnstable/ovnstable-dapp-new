@@ -83,8 +83,6 @@ export default {
     ...mapState('poolsData', [
       'lastParsedBurnedTokenIdEvent',
     ]),
-  },
-  methods: {
     openPositionOnPool(): string {
       // eslint-disable-next-line prefer-destructuring
       const pool = this.successData.pool;
