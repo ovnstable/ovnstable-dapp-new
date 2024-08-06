@@ -87,6 +87,7 @@ export default defineComponent({
       required: true,
     },
   },
+  emits: ['close'],
   data() {
     return {
       tokensSentList: [] as TFormatTokenInfo[],
@@ -116,6 +117,7 @@ export default defineComponent({
     ...mapGetters('network', ['explorerUrl']),
 
     getName() {
+      if (this.successData.modalType === MODAL_TYPE.HARVEST) return 'HARVEST';
       if (this.successData.modalType === MODAL_TYPE.WITHDRAW) return 'WITHDRAW';
       if (this.successData.modalType === MODAL_TYPE.COMPOUND) return 'COMPOUND';
       return 'ZAPIN';
@@ -164,6 +166,7 @@ export default defineComponent({
   methods: {
     closeModal() {
       this.setShowFunc({ isShow: false });
+      this.$emit('close');
 
       // If rebalance modal
       if (this.lastParsedClaimedRewardsEvent && this.lastParsedBurnedTokenIdEvent) {

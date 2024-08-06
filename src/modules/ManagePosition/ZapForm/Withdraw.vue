@@ -317,7 +317,7 @@ export default {
     this.setIsZapModalShow(true);
     this.positionStaked = this.zapPool.isStaked;
 
-    if (this.zapPool.isStaked) {
+    if (!this.zapPool.isStaked) {
       this.currentStage = withdrawStep.APPROVE;
     }
   },
@@ -531,7 +531,7 @@ export default {
             outputTokens,
             hash: tx.hash,
             pool: this.zapPool,
-            modalType: MODAL_TYPE.REBALANCE,
+            modalType: MODAL_TYPE.WITHDRAW,
           },
         );
         this.closeWaitingModal();
