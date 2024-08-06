@@ -60,6 +60,33 @@
               </div>
           </div>
         </div>
+        <div
+          class="swap-block__item"
+        >
+          <div
+            class="swap-block__item-row"
+          >
+            <div class="swap-block__item-row--token-wrap">
+              <img
+                :src="getImgToken"
+                alt="select-token"
+              >
+              <span>
+                {{ getSymbolToken?.toUpperCase() }}
+              </span>
+            </div>
+          </div>
+          <div
+            class="swap-block__item-bal"
+          >
+            <div>
+              {{ getRewardEmm }}
+            </div>
+            <div v-if="getRewardUsd">
+              ~ ${{ getRewardUsd }}
+            </div>
+          </div>
+        </div>
         <div class="swap-block__part-total">
           <h2>
             Total amount
@@ -134,6 +161,8 @@ import { cloneDeep } from 'lodash';
 import BN from 'bignumber.js';
 import { formatInputTokens } from '@/utils/tokens.ts';
 import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
+import { REWARD_TOKEN } from '@/store/views/main/zapin/index.ts';
+import { loadTokenImage } from '@/utils/tokenLogo.ts';
 
 export default {
   name: 'WithdrawForm',
@@ -186,6 +215,30 @@ export default {
     ...mapGetters('network', ['networkId']),
     ...mapGetters('accountData', ['account']),
 
+    getSymbolToken() {
+      if (this.zapPool.platform[0] === 'Pancake') return REWARD_TOKEN.CAKE;
+      if (this.zapPool.platform[0] === 'Aerodrome') return REWARD_TOKEN.AERO;
+      return '';
+    },
+    getImgToken() {
+      return loadTokenImage(this.getSymbolToken).href;
+    },
+    getRewardUsd() {
+      if (!this.getRewardTokenInfo) return 0;
+      return this.getRewardEmm ? new BN(this.getRewardEmm)
+        .times(this.getRewardTokenInfo?.price).toFixed(6) : 0;
+    },
+    getRewardEmm() {
+      return new BN(this.zapPool.emissions).div(10 ** 18).toFixed(6);
+    },
+    getRewardTokenInfo() {
+      const tokenInfo = this.allTokensMap.values().find((_: any) => {
+        const allTokSymbol = _?.symbol?.toLowerCase();
+        return allTokSymbol === this.getSymbolToken?.toLowerCase();
+      });
+
+      return tokenInfo || null;
+    },
     totalLiq() {
       if (this.inputTokens.length === 0) return 0;
 
@@ -346,8 +399,6 @@ export default {
         const inputTokenInfo = formatInputTokens(inputTokens);
         this.inputTokens = inputTokenInfo;
       }
-
-      console.log(this.inputTokens, '__TOKENS');
     },
 
     async init() {

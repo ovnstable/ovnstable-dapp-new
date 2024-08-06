@@ -130,6 +130,33 @@
           </div>
         </div>
       </div>
+      <div
+        class="swap-block__item"
+      >
+        <div
+          class="swap-block__item-row"
+        >
+          <div class="swap-block__item-row--token-wrap">
+            <img
+              :src="getImgToken"
+              alt="select-token"
+            >
+            <span>
+              {{ getSymbolToken?.toUpperCase() }}
+            </span>
+          </div>
+        </div>
+        <div
+          class="swap-block__item-bal"
+        >
+          <div>
+            {{ getRewardEmm }}
+          </div>
+          <div v-if="getRewardUsd">
+            ~ ${{ getRewardUsd }}
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -141,6 +168,8 @@ import { poolTokensForZapMap } from '@/store/views/main/zapin/mocks.ts';
 import { formatInputTokens } from '@/utils/tokens.ts';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import BN from 'bignumber.js';
+import { REWARD_TOKEN } from '@/store/views/main/zapin/index.ts';
+import { loadTokenImage } from '@/utils/tokenLogo.ts';
 
 export default {
   name: 'PositionForm',
@@ -163,6 +192,30 @@ export default {
   },
   computed: {
     ...mapGetters('odosData', ['allTokensMap', 'allTokensList']),
+    getSymbolToken() {
+      if (this.zapPool.platform[0] === 'Pancake') return REWARD_TOKEN.CAKE;
+      if (this.zapPool.platform[0] === 'Aerodrome') return REWARD_TOKEN.AERO;
+      return '';
+    },
+    getImgToken() {
+      return loadTokenImage(this.getSymbolToken).href;
+    },
+    getRewardUsd() {
+      if (!this.getRewardTokenInfo) return 0;
+      return this.getRewardEmm ? new BN(this.getRewardEmm)
+        .times(this.getRewardTokenInfo?.price).toFixed(6) : 0;
+    },
+    getRewardEmm() {
+      return new BN(this.zapPool.emissions).div(10 ** 18).toFixed(6);
+    },
+    getRewardTokenInfo() {
+      const tokenInfo = this.allTokensMap.values().find((_: any) => {
+        const allTokSymbol = _?.symbol?.toLowerCase();
+        return allTokSymbol === this.getSymbolToken?.toLowerCase();
+      });
+
+      return tokenInfo || null;
+    },
     totalRewards() {
       if (this.allTokensList === 0) return 0;
 
@@ -197,6 +250,7 @@ export default {
   },
   mounted() {
     this.init();
+    console.log(this.zapPool, '___POOL');
   },
   methods: {
     init() {

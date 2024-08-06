@@ -410,8 +410,6 @@ export default {
         const inputTokenInfo = formatInputTokens(inputTokens);
         this.inputTokens = inputTokenInfo;
       }
-
-      console.log(this.inputTokens, '__TOKENS');
     },
 
     async init() {

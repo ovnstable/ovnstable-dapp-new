@@ -7,6 +7,11 @@ import { JSONLoader } from '@/utils/httpUtils.ts';
 import { zapInStep } from '@/store/modals/waiting-modal.ts';
 import type { ContractAbi } from '@/types/abi';
 
+export enum REWARD_TOKEN {
+  AERO = 'AERO',
+  CAKE = 'Cake'
+}
+
 enum poolVersionList {
   v2,
   v3,
