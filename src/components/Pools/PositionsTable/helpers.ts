@@ -74,7 +74,7 @@ export const formatPositionData = (
 
     // console.log('__1');
 
-    if (pool && pool.name) {
+    if (pool && pool.name && isStaked) {
       // Tokens
       const tokenNames = getTokenNames(pool.name);
       const token0Info = getTokenInfo(token0, tokenMap);
