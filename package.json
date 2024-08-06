@@ -40,6 +40,7 @@
     "vite-svg-loader": "^5.1.0",
     "vue": "^3.3.11",
     "vue-chartjs": "^5.3.0",
+    "vue-query": "^1.26.0",
     "vue-router": "^4.2.5",
     "vue-toastification": "^2.0.0-rc.5",
     "vue-yandex-metrika": "^1.8.3",
