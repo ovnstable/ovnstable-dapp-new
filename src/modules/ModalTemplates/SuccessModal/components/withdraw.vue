@@ -65,12 +65,14 @@
 import { mapState } from 'vuex';
 import PoolLabel from '@/modules/Main/components/ZapModal/PoolLabel.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
+import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import getPlatformLink from '../helpers.ts';
 
 export default {
   name: 'ZapinContent',
   components: {
     PoolLabel,
+    BaseIcon,
     ButtonComponent,
   },
   computed: {
