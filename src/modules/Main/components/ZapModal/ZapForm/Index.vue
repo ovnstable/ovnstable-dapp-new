@@ -702,7 +702,7 @@ export default {
 
           setTimeout(() => {
             this.loadZapContract();
-          }, 300);
+          }, 500);
         }
       }
     },
@@ -737,6 +737,7 @@ export default {
       'triggerSuccessZapin',
       'startSwapConfirmTimer',
       'stopSwapConfirmTimer',
+      'initAccountData',
     ]),
     ...mapActions('accountData', ['refreshBalance']),
     ...mapActions('zapinData', ['loadZapContract']),
@@ -832,12 +833,12 @@ export default {
 
       this.init();
       this.clearAndInitForm();
+      this.initAccountData();
 
       if (!this.isAvailableOnNetwork) this.mintAction();
     },
 
     async init() {
-      // await this.loadChains();
       await this.loadTokens();
       await this.initContractData();
 
