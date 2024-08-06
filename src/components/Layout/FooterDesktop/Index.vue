@@ -69,7 +69,7 @@
           :is-checked="isDarkTheme"
           @change-switch="toggleTheme"
         />
-        <div style="position: relative;">
+        <div style="position: relative; height: 27px;">
           <div
             id="google_translate_element"
             style="position: relative; opacity: 0;"
