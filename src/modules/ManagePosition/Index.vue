@@ -63,6 +63,7 @@
 
     <SuccessZapModal
       :set-show-func="triggerSuccessZapin"
+      @close="redirect"
     />
   </div>
 </template>
@@ -143,6 +144,9 @@ export default {
     ...mapActions('poolsData', ['loadPools']),
     ...mapActions('zapinData', ['loadPositionContract']),
     ...mapActions('odosData', ['loadTokens', 'initData', 'initContractData']),
+    redirect() {
+      this.$router.push('/positions');
+    },
     changeTab(id: number) {
       this.activeTab = id;
     },

@@ -22,9 +22,9 @@
         <span>
           <div
             class="pools-data__range"
-            :class="{ 'out-range': !zapPool?.isInRange }"
+            :class="{ 'out-range': !zapPool?.position?.isInRange }"
           >
-            {{ zapPool?.isInRange ? 'IN RANGE' : 'OUT OF RANGE' }}
+            {{ zapPool?.position?.isInRange ? 'IN RANGE' : 'OUT OF RANGE' }}
           </div>
         </span>
         <div class="pool-data__row">
@@ -79,10 +79,10 @@
           class="swap-block__item-bal"
         >
           <div v-if="token.value">
-            {{ token.usdValue }}
+            {{ token.displayedValue }}
           </div>
           <div>
-            ~ ${{ token.displayedValue }}
+            ~ ${{ token.usdValue }}
           </div>
         </div>
       </div>
@@ -123,10 +123,10 @@
           class="swap-block__item-bal"
         >
           <div v-if="token.value">
-            {{ token.usdValue }}
+            {{ token.displayedValue }}
           </div>
           <div>
-            ~ ${{ token.displayedValue }}
+            ~ ${{ token.usdValue }}
           </div>
         </div>
       </div>
@@ -288,21 +288,21 @@ export default {
     },
     initRewardTokens() {
       const rewardToken = this.zapPool.rewards.tokens.map((_: any) => {
-        const rewardData = Object.entries(_)[0];
+        const rewardData: any = Object.entries(_)[0];
         const tokenInfo = this.allTokensMap.values().find((_: any) => {
           const allTokSymbol = _?.symbol?.toLowerCase();
           return allTokSymbol === rewardData[0]?.toLowerCase();
         });
 
         return {
-          displayedValue: rewardData[1],
+          displayedValue: new BN(rewardData[1] ?? 0).toFixed(8),
           id: Date.now().toString(),
           locked: true,
           proportion: 0,
           selectedToken: tokenInfo,
-          sum: rewardData[1],
-          usdValue: rewardData[1],
-          value: rewardData[1],
+          sum: new BN(rewardData[1] ?? 0).toFixed(6),
+          usdValue: new BN(rewardData[1] ?? 0).times(tokenInfo.price).toFixed(6),
+          value: new BN(rewardData[1] ?? 0).toFixed(6),
         };
       });
 

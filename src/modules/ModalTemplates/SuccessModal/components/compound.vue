@@ -65,6 +65,7 @@
 import { mapState } from 'vuex';
 import PoolLabel from '@/modules/Main/components/ZapModal/PoolLabel.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
+import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import getPlatformLink from '../helpers.ts';
 
 export default {
@@ -72,6 +73,7 @@ export default {
   components: {
     PoolLabel,
     ButtonComponent,
+    BaseIcon,
   },
   computed: {
     ...mapState('odosData', [
