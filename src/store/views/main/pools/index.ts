@@ -3,20 +3,12 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
 
-import { poolApiService } from '@/services/pool-api-service.ts';
 import {
   getSortedPools,
-  initAggregators,
   initReversePools,
 } from '@/store/views/main/pools/helpers.ts';
-import {
-  HOT_POOLS, NEW_POOLS, POOL_TAG, zapPlatformSupportList,
-} from '@/store/views/main/pools/mocks.ts';
-import { loadTokenImage } from '@/utils/tokenLogo.ts';
-import { isArray } from 'lodash';
 import BigNumber from 'bignumber.js';
-import { PromisePool } from '@supercharge/promise-pool';
-import { poolTokensForZapMap } from '../zapin/mocks.ts';
+import PoolService from '@/services/PoolService/PoolsService.ts'
 
 // eslint-disable-next-line no-shadow
 export enum POOL_TYPES {
@@ -100,90 +92,9 @@ const actions = {
     });
     const networkConfigList = [...rootState.network.allNetworkConfigs];
 
-    const getFormatPools = async (data: any, networkConfig: any): Promise<[]> => {
-      if (data) {
-        const poolsList = data.map((pool: any) => {
-          let tokenNames = pool.id.name.split('/');
-          let poolTag = null;
+    const poolsList = await PoolService.getPoolsInfo(networkConfigList);
 
-          if (pool?.id?.name === 'Convex USD+FRAXBP') {
-            tokenNames = ['USD+', 'FRAX'];
-            pool.id.name = 'USD+/FRAXBP';
-          }
-
-          const token0Icon = loadTokenImage(tokenNames[0]);
-          const token1Icon = loadTokenImage(tokenNames[1]);
-          const token2Icon = tokenNames[2] ? loadTokenImage(tokenNames[2]) : null;
-          const token3Icon = tokenNames[3] ? loadTokenImage(tokenNames[3]) : null;
-
-          if (
-            pool
-            && zapPlatformSupportList?.includes(pool.platform)
-            && Object.keys(poolTokensForZapMap).some(
-              (item) => item.toLowerCase() === pool.id.address.toLowerCase(),
-            )
-          ) {
-            pool.zappable = true;
-          }
-
-          if (pool && pool?.tvl >= 0) {
-            pool = initAggregators(pool);
-
-            const newName = pool.id.name.toUpperCase();
-
-            if (HOT_POOLS.includes(pool.id.address)) poolTag = POOL_TAG.HOT;
-            if (NEW_POOLS.includes(pool.id.address)) poolTag = POOL_TAG.NEW;
-            // if (LOW_TVL_PROMOTE.includes(pool.id.address)) poolTag = POOL_TAG.NEW;
-
-            return {
-              id: pool.id.name + pool.tvl + pool.platform,
-              name: newName,
-              token0Icon,
-              token1Icon,
-              token2Icon,
-              token3Icon,
-              poolVersion: pool.pool_version,
-              chain: networkConfig.networkId,
-              chainName: networkConfig.networkName,
-              address: pool.id.address,
-              platform: isArray(pool.platform) ? pool.platform : [pool.platform],
-              tvl: pool.tvl,
-              apr: pool.apr,
-              poolTag,
-              skimEnabled: pool.skimEnabled,
-              explorerUrl: networkConfig.explorerUrl,
-              zappable: pool.zappable,
-              cardOpened: false,
-              data: pool,
-              aggregators: pool.aggregators,
-              promoted: pool.promoted,
-              poolNameForAgregator: pool.poolNameForAgregator,
-              isOpened:
-                !(pool.aggregators && pool.aggregators.length),
-              stableFishUrl: null,
-            };
-          }
-
-          return [];
-        });
-
-        return poolsList;
-      }
-      return [];
-    };
-
-    const { errors, results } = await PromisePool
-      .for(networkConfigList)
-      .process(async (networkConfig: any) => {
-        const networkPools = await poolApiService.getAllPools(networkConfig.appApiUrl);
-        return getFormatPools(networkPools, networkConfig);
-      });
-
-    if (errors.length > 0) {
-      console.log(`Error get pools data: ${errors}`);
-    } else {
-      const poolsList = results.flat();
-
+    if (poolsList.length > 0) {
       commit('changeState', {
         field: 'allPools',
         val: poolsList,
