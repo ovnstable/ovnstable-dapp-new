@@ -158,6 +158,8 @@ export default defineComponent({
   },
   setup() {
     const anyStore = store as any;
+
+    // TODO: rewrite store access
     const {
       isLoading, isError, data, error, isFetching,
     } = useQuery('positions', async () => anyStore._actions['zapinData/loadPositionContract'][0]());

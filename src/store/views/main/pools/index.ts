@@ -8,7 +8,7 @@ import {
   initReversePools,
 } from '@/store/views/main/pools/helpers.ts';
 import BigNumber from 'bignumber.js';
-import PoolService from '@/services/PoolService/PoolsService.ts'
+import PoolService from '@/services/PoolService/PoolService.ts';
 
 // eslint-disable-next-line no-shadow
 export enum POOL_TYPES {
@@ -79,7 +79,7 @@ const actions = {
   },
 
   async loadPools({
-    commit, rootState,
+    commit,
   }: any) {
     commit('changeState', {
       field: 'isPoolsLoading',
@@ -90,9 +90,8 @@ const actions = {
       field: 'allPools',
       val: [],
     });
-    const networkConfigList = [...rootState.network.allNetworkConfigs];
 
-    const poolsList = await PoolService.getPoolsInfo(networkConfigList);
+    const poolsList = await PoolService.getPoolsInfo();
 
     if (poolsList.length > 0) {
       commit('changeState', {
