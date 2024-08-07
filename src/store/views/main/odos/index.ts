@@ -13,7 +13,7 @@ import { buildEvmContract } from '@/utils/contractsMap.ts';
 import { ERC20_ABI } from '@/assets/abi/index.ts';
 import {
   BLAST_TOKENS, LINEA_TOKENS, OP_TOKENS, SFRAX_TOKEN, ZKSYNC_TOKENS,
-} from '@/store/views/main/odos/mocks.ts';
+} from '@/constants/tokens/manualTokensMap.ts';
 import _ from 'lodash';
 import BalanceService from '@/services/BalanceService/BalanceService.ts';
 import type { TTokenInfo } from '@/types/common/tokens';
