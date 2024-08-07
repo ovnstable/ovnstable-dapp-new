@@ -7,7 +7,7 @@ import { loadTokenImage, loadOvernightTokenImage } from '@/utils/tokenLogo.ts';
 import odosApiService from '@/services/odos-api-service.ts';
 import SliderApiService from '@/services/slider-api-service.ts';
 import { DEPRECATED_NETWORKS, ODOS_DEPRECATED_NETWORKS } from '@/utils/const.ts';
-import { BLAST_TOKENS_PRICES } from '@/store/views/main/odos/mocks.ts';
+import { BLAST_TOKENS_PRICES } from '@/constants/tokens/manualTokensMap.ts';
 import type { stateData } from '@/store/views/main/odos/index';
 
 const SECONDTOKEN_SECOND_DEFAULT_SYMBOL = 'DAI+';

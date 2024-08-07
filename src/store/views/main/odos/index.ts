@@ -13,9 +13,10 @@ import { buildEvmContract } from '@/utils/contractsMap.ts';
 import { ERC20_ABI } from '@/assets/abi/index.ts';
 import {
   BLAST_TOKENS, LINEA_TOKENS, OP_TOKENS, SFRAX_TOKEN, ZKSYNC_TOKENS,
-} from '@/store/views/main/odos/mocks.ts';
+} from '@/constants/tokens/manualTokensMap.ts';
 import _ from 'lodash';
 import BalanceService from '@/services/BalanceService/BalanceService.ts';
+import TokenService from '@/services/TokenService/TokenService.ts';
 import type { TTokenInfo } from '@/types/common/tokens';
 
 const ODOS_DURATION_CONFIRM_REQUEST = 60;
@@ -189,23 +190,6 @@ const actions = {
     });
     commit('changeState', { field: 'showSuccessZapin', val: isShow });
   },
-  async loadChains({
-    commit, state,
-  }: any) {
-    if (state.isChainsLoading) return;
-
-    commit('changeState', { field: 'isChainsLoading', val: true });
-
-    const data: any = await odosApiService
-      .loadChains()
-      .catch((e) => {
-        console.log('Error load chains', e);
-        commit('changeState', { field: 'isChainsLoading', val: false });
-      });
-
-    commit('changeState', { field: 'chains', val: data.chains });
-    commit('changeState', { field: 'isChainsLoading', val: false });
-  },
   async loadTokens({
     commit, state,
   }: any) {
@@ -213,43 +197,7 @@ const actions = {
 
     commit('changeState', { field: 'isTokensLoading', val: true });
 
-    const odosTokens: any = await odosApiService
-      .loadTokens()
-      .catch((e) => {
-        console.log('Error load tokens', e);
-        commit('changeState', { field: 'isTokensLoading', val: false });
-      });
-
-    const tokensMap = {
-      chainTokenMap: {
-        ...odosTokens.chainTokenMap,
-        ...BLAST_TOKENS,
-        59144: {
-          tokenMap: {
-            ...odosTokens.chainTokenMap[59144]?.tokenMap,
-            ...LINEA_TOKENS[59144].tokenMap,
-          },
-        },
-        10: {
-          tokenMap: {
-            ...odosTokens.chainTokenMap[10]?.tokenMap,
-            ...OP_TOKENS[10].tokenMap,
-          },
-        },
-        8453: {
-          tokenMap: {
-            ...odosTokens.chainTokenMap[8453]?.tokenMap,
-            ...SFRAX_TOKEN[8453].tokenMap,
-          },
-        },
-        324: {
-          tokenMap: {
-            ...odosTokens.chainTokenMap[324]?.tokenMap,
-            ...ZKSYNC_TOKENS[324].tokenMap,
-          },
-        },
-      },
-    };
+    const tokensMap = await TokenService.getTokenInfo();
 
     commit('changeState', { field: 'tokensMap', val: tokensMap });
     commit('changeState', { field: 'isTokensLoading', val: false });

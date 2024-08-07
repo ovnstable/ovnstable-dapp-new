@@ -586,7 +586,6 @@ export default {
     ...mapActions(
       'odosData',
       [
-        'loadChains',
         'loadTokens',
         'initContractData',
         'getActualGasPrice',
@@ -648,7 +647,6 @@ export default {
       this.updateQuotaInfo();
     },
     async init() {
-      await this.loadChains();
       await this.loadTokens();
       await this.initContractData();
 
