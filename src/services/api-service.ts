@@ -67,7 +67,7 @@ const transformRequest = function (obj: any) {
   return str.join('&');
 };
 
-class ApiService {
+export class ApiService {
   get(url: any) {
     return wrapPromise(axios.get(url));
   }

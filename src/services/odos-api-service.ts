@@ -1,116 +1,42 @@
-/* eslint-disable class-methods-use-this */
-import { getErrorObject } from '@/utils/errors.ts';
-import apiService from './api-service.ts';
+import { ApiService } from './api-service.ts';
 
 const API_URL = 'https://bsc.overnight.fi/api/odos';
 
-class OdosApiService {
-  loadChains() {
-    return new Promise((resolve, reject) => {
-      apiService.get(`${API_URL}/info/chains`)
-        .then((data) => {
-          resolve(data);
-        })
-        .catch((e) => {
-          reject(getErrorObject(e));
-        });
-    });
+class OdosApiService extends ApiService {
+  public async loadChains() {
+    return this.get(`${API_URL}/info/chains`);
   }
 
-  loadTokens() {
-    return new Promise((resolve, reject) => {
-      apiService.get(`${API_URL}/info/tokens`)
-        .then((data) => {
-          resolve(data);
-        })
-        .catch((e) => {
-          reject(getErrorObject(e));
-        });
-    });
+  public async loadTokens() {
+    return this.get(`${API_URL}/info/tokens`);
   }
 
-  async loadContractData(chainId: string | number): Promise<any> {
-    return new Promise((resolve, reject) => {
-      apiService.get(`${API_URL}/info/contract-info/v2/${chainId}`)
-        .then((data) => {
-          resolve(data);
-        })
-        .catch((e) => {
-          reject(getErrorObject(e));
-        });
-    });
+  public async loadContractData(chainId: string | number) {
+    return this.get(`${API_URL}/info/contract-info/v2/${chainId}`);
   }
 
-  loadPrices(chainId: any) {
-    return new Promise((resolve, reject) => {
-      apiService.get(`${API_URL}/pricing/token/${chainId}`)
-        .then((data) => {
-          resolve(data);
-        })
-        .catch((e) => {
-          reject(getErrorObject(e));
-        });
-    });
+  public async loadPrices(chainId: any) {
+    return this.get(`${API_URL}/pricing/token/${chainId}`);
   }
 
-  loadPriceOfToken(chainId: any, tokenAddr: any) {
-    return new Promise((resolve, reject) => {
-      apiService.get(`${API_URL}/pricing/token/${chainId}/${tokenAddr}`)
-        .then((data) => {
-          resolve(data);
-        })
-        .catch((e) => {
-          reject(getErrorObject(e));
-        });
-    });
+  public async loadPriceOfToken(chainId: any, tokenAddr: any) {
+    return this.get(`${API_URL}/pricing/token/${chainId}/${tokenAddr}`);
   }
 
-  getActualGasPrice(chainId: any) {
-    return new Promise((resolve, reject) => {
-      apiService.get(`${API_URL}/gas/price/${chainId}`)
-        .then((data) => {
-          resolve(data);
-        })
-        .catch((e) => {
-          reject(getErrorObject(e));
-        });
-    });
+  public async getActualGasPrice(chainId: any) {
+    return this.get(`${API_URL}/gas/price/${chainId}`);
   }
 
-  quoteRequest(requestData: any) {
-    return new Promise((resolve, reject) => {
-      apiService.postJson(`${API_URL}/sor/quote/v2`, requestData)
-        .then((data) => {
-          resolve(data);
-        })
-        .catch((e) => {
-          reject(getErrorObject(e));
-        });
-    });
+  public async quoteRequest(requestData: any) {
+    return this.postJson(`${API_URL}/sor/quote/v2`, requestData);
   }
 
-  assembleRequest(requestData: any) {
-    return new Promise((resolve, reject) => {
-      apiService.postJson(`${API_URL}/sor/assemble`, requestData)
-        .then((data) => {
-          resolve(data);
-        })
-        .catch((e) => {
-          reject(getErrorObject(e));
-        });
-    });
+  public async assembleRequest(requestData: any) {
+    return this.postJson(`${API_URL}/sor/assemble`, requestData);
   }
 
-  swapRequest(requestData: any) {
-    return new Promise((resolve, reject) => {
-      apiService.postJson(`${API_URL}/sor/swap`, requestData)
-        .then((data) => {
-          resolve(data);
-        })
-        .catch((e) => {
-          reject(getErrorObject(e));
-        });
-    });
+  public async swapRequest(requestData: any) {
+    return this.postJson(`${API_URL}/sor/swap`, requestData);
   }
 }
 export default new OdosApiService();
