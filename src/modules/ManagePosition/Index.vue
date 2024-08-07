@@ -81,7 +81,6 @@ import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import TableSkeleton from '@/components/TableSkeleton/Index.vue';
 import SwitchTabs from '@/components/SwitchTabs/Index.vue';
-import { formatPositionData } from '@/components/Pools/PositionsTable/helpers.ts';
 import PoolData from '@/modules/ManagePosition/PoolData.vue';
 
 export enum MANAGE_TAB {
@@ -128,8 +127,6 @@ export default {
     ...mapGetters('zapinData', [
       'getUserPositions',
     ]),
-    ...mapGetters('poolsData', ['allPoolsMap']),
-    ...mapGetters('odosData', ['allTokensMap']),
     ...mapGetters('accountData', ['account']),
   },
   async mounted() {
@@ -151,13 +148,9 @@ export default {
       this.activeTab = id;
     },
     searchPool() {
-      const poolInfo = this.allPoolsMap;
-      const tokensList = this.allTokensMap;
-
       console.log(this.getUserPositions, '__foundPool1');
-      const formatPos = formatPositionData(this.getUserPositions, poolInfo, tokensList);
 
-      const foundPool = formatPos
+      const foundPool = this.getUserPositions
         .find((_: any) => _?.tokenId?.toString() === this.$route?.params?.id);
 
       if (foundPool) this.zapPool = foundPool;
