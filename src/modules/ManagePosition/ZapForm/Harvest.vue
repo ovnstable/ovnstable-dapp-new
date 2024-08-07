@@ -52,11 +52,11 @@
               v-if="token.value"
               class="swap-block__item-bal"
             >
-              <div v-if="token.value">
-                {{ token.usdValue }}
+              <div>
+                {{ token.displayedValue }}
               </div>
               <div>
-                ~ ${{ token.displayedValue }}
+                ~ ${{ token.usdValue }}
               </div>
           </div>
         </div>
@@ -411,23 +411,22 @@ export default {
       });
     },
     addDefaultPoolToken() {
-      // const info0 = getTokenInfo(token0, tokenMap)
-      const rewardToken = this.zapPool.rewards.tokens.map((_: any, key: number) => {
-        const rewardData = Object.entries(_)[0];
+      const rewardToken = this.zapPool.rewards.tokens.map((_: any) => {
+        const rewardData: any = Object.entries(_)[0];
         const tokenInfo = this.allTokensMap.values().find((_: any) => {
           const allTokSymbol = _?.symbol?.toLowerCase();
           return allTokSymbol === rewardData[0]?.toLowerCase();
         });
 
         return {
-          displayedValue: rewardData[1],
-          id: Date.now().toString() + key,
+          displayedValue: new BN(rewardData[1] ?? 0).toFixed(8),
+          id: Date.now().toString(),
           locked: true,
           proportion: 0,
           selectedToken: tokenInfo,
-          sum: rewardData[1],
-          usdValue: rewardData[1],
-          value: rewardData[1],
+          sum: new BN(rewardData[1] ?? 0).toFixed(6),
+          usdValue: new BN(rewardData[1] ?? 0).times(tokenInfo.price).toFixed(6),
+          value: new BN(rewardData[1] ?? 0).toFixed(6),
         };
       });
 
