@@ -299,7 +299,7 @@ export default {
     ...mapActions('errorModal', ['showErrorModalWithMsg']),
     ...mapActions('waitingModal', ['showWaitingModal', 'closeWaitingModal']),
     ...mapActions('successModal', ['showSuccessModal']),
-    ...mapActions('odosData', ['loadChains', 'loadTokens']),
+    ...mapActions('odosData', ['loadTokens']),
     gasChange() {
       console.log('gasChange');
     },
@@ -309,7 +309,6 @@ export default {
     },
     async initMintRedeem() {
       this.isLoading = true;
-      await this.loadChains();
       await this.loadTokens();
 
       this.initForm();

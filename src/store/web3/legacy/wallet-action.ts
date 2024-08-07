@@ -146,7 +146,6 @@ const actions = {
 
       dispatch('accountData/handleSwitchAccount', userAddress, { root: true });
 
-      await dispatch('odosData/loadChains', null, { root: true });
       await dispatch('odosData/loadTokens', null, { root: true });
       await dispatch('odosData/initContractData', null, { root: true });
       dispatch('odosData/initData', null, { root: true });

@@ -142,7 +142,7 @@ export default {
     ]),
     ...mapActions('poolsData', ['loadPools']),
     ...mapActions('zapinData', ['loadPositionContract']),
-    ...mapActions('odosData', ['loadTokens', 'initData', 'loadChains', 'initContractData']),
+    ...mapActions('odosData', ['loadTokens', 'initData', 'initContractData']),
     changeTab(id: number) {
       this.activeTab = id;
     },
@@ -165,7 +165,6 @@ export default {
       });
       await this.loadPools();
       await this.loadTokens();
-      await this.loadChains();
       await this.initContractData();
       await this.initData();
       await this.loadPositionContract(this.account);

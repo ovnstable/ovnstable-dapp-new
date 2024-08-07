@@ -460,7 +460,6 @@ export default {
     },
 
     async init() {
-      // await this.loadChains();
       await this.loadTokens();
       await this.initContractData();
 

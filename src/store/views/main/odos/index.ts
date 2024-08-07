@@ -189,23 +189,6 @@ const actions = {
     });
     commit('changeState', { field: 'showSuccessZapin', val: isShow });
   },
-  async loadChains({
-    commit, state,
-  }: any) {
-    if (state.isChainsLoading) return;
-
-    commit('changeState', { field: 'isChainsLoading', val: true });
-
-    const data: any = await odosApiService
-      .loadChains()
-      .catch((e) => {
-        console.log('Error load chains', e);
-        commit('changeState', { field: 'isChainsLoading', val: false });
-      });
-
-    commit('changeState', { field: 'chains', val: data.chains });
-    commit('changeState', { field: 'isChainsLoading', val: false });
-  },
   async loadTokens({
     commit, state,
   }: any) {
