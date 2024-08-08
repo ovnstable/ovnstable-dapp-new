@@ -95,41 +95,10 @@
         </h1>
 
         <div>
-          ${{ totalRewards }}
+          ${{ getRewardUsd }}
         </div>
       </div>
       <span class="divider" />
-      <div
-        v-for="token in rewardTokens"
-        :key="token.id"
-        class="swap-block__item"
-      >
-        <div
-          v-if="token.selectedToken"
-          class="swap-block__item-row"
-        >
-          <div class="swap-block__item-row--token-wrap">
-            <img
-              :src="token.selectedToken.logoUrl"
-              alt="select-token"
-            >
-            <span>
-              {{ token.selectedToken.symbol }}
-            </span>
-          </div>
-        </div>
-        <div
-          v-if="token.value"
-          class="swap-block__item-bal"
-        >
-          <div v-if="token.value">
-            {{ token.displayedValue }}
-          </div>
-          <div>
-            ~ ${{ token.usdValue }}
-          </div>
-        </div>
-      </div>
       <div
         class="swap-block__item"
       >
@@ -215,19 +184,6 @@ export default {
       });
 
       return tokenInfo || null;
-    },
-    totalRewards() {
-      if (this.allTokensList === 0) return 0;
-
-      const res: BN = this.rewardTokens.reduce((acc: BN, curr: any) => {
-        const val = new BN(curr.value).times(curr.selectedToken?.price).toFixed(6);
-
-        return acc.plus(val);
-      }, new BN(0));
-
-      if (res.lt(0.01)) return '0.01';
-
-      return res.toFixed(4);
     },
     totalLiq() {
       if (this.allTokensList.length === 0) return 0;

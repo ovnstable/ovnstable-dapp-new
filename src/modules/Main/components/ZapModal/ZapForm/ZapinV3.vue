@@ -615,12 +615,14 @@ export default {
   methods: {
     initTicks(tSpace: string) {
       this.rangePresetsTicks = this.rangePresetsTicks.map((item, key) => {
+        let labelDiv = '1';
         if (item.label === 'FULL') return item;
+        if (new BN(tSpace).gt(1)) labelDiv = tSpace;
 
         return {
           id: key,
           value: new BN(item.value).times(tSpace).toNumber(),
-          label: new BN(item.label).times(tSpace).toFixed(),
+          label: new BN(item.label).times(tSpace).div(labelDiv).toFixed(),
           tick: item.tick,
         };
       });
@@ -929,7 +931,7 @@ export default {
         tickVal = Number(new BN(tickVal).div(this.tickSpace).toFixed(0)) * Number(this.tickSpace);
       }
 
-      if (tickVal === 1) {
+      if (new BN(tickVal).div(this.tickSpace).eq(1)) {
         this.tickLeft = this.closestTicks[0]?.toString();
         this.tickRight = this.closestTicks[1]?.toString();
       } else {
