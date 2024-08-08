@@ -907,9 +907,11 @@ export default {
     }, 500),
     setMinPrice(val: string) {
       this.minPrice = val;
+      this.debouncePriceChange(this, val, this.maxPrice);
     },
     setMaxPrice(val: string) {
       this.maxPrice = val;
+      this.debouncePriceChange(this, this.minPrice, val);
     },
     async setRange(val: number, isTick: boolean) {
       let tickVal = isTick ? val : 0;
