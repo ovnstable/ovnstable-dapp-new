@@ -156,7 +156,7 @@
             v-if="showPresetPlusMinus(range)"
             class="range-presets__plusmin"
           >
-            {{ range.tick ? "+-" : "" }}
+            +-
           </div>
 
           {{ range.label }}
