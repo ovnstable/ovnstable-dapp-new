@@ -93,15 +93,15 @@
 import PoolsTable from '@/components/Pools/PositionsTable/Index.vue';
 import PoolsFilter from '@/components/Pools/PositionsFilter/Index.vue';
 import {
-  mapActions, mapGetters,
+  mapActions, mapGetters, useStore,
 } from 'vuex';
 import { POOL_TYPES } from '@/store/views/main/pools/index.ts';
 import TableSkeleton from '@/components/TableSkeleton/Index.vue';
 import { getImageUrl } from '@/utils/const.ts';
 import ButtonComponent from '@/components/Button/Index.vue';
-import { useQuery, useQueryClient } from 'vue-query';
+import { useQuery, useQueryClient } from '@tanstack/vue-query';
 import { defineComponent } from 'vue';
-import store from '@/store';
+import { useTokenInfo } from '@/hooks/fetch/useTokensQuery.ts';
 
 interface IEnumIterator {
   next: () => number,
@@ -156,23 +156,30 @@ export default defineComponent({
     TableSkeleton,
     ButtonComponent,
   },
+  // Using new Composition API for hooks compatibility
   setup() {
-    const anyStore = store as any;
+    const store = useStore() as any;
 
-    // TODO: rewrite store access
-    const {
-      isLoading, isError, data, error, isFetching,
-    } = useQuery('positions', async () => anyStore._actions['zapinData/loadPositionContract'][0]());
+    console.log(store);
+
+    const { networkId } = store.state.network;
+    const { account } = store.state.accountData;
+
+    const { data: tokens } = useTokenInfo(store.state);
+
+    const { data: positionData, isLoading } = useQuery({
+      queryKey: ['positions', networkId, account],
+      // eslint-disable-next-line no-underscore-dangle
+      queryFn: async () => store._actions['zapinData/loadPositionContract'][0](),
+    });
 
     const queryClient = useQueryClient();
     const invalidateQuery = async () => queryClient.invalidateQueries({ queryKey: ['positions'] });
 
     return {
       isLoading,
-      isError,
-      positionData: data,
-      error,
-      isFetching,
+      tokens,
+      positionData,
 
       resetData: invalidateQuery,
 
@@ -223,6 +230,7 @@ export default defineComponent({
       return this.filteredBySearchQuery;
     },
     displayedPools() {
+      // console.log(this.tokens);
       if (this.positionData.length > 0) return this.filteredPools;
       return this.positionData;
     },
@@ -269,10 +277,9 @@ export default defineComponent({
   },
   methods: {
     ...mapActions('poolsData', ['loadPools']),
-    ...mapActions('odosData', ['loadTokens', 'initContractData']),
+    ...mapActions('odosData', ['loadTokens']),
     async init() {
       await this.loadPools();
-      await this.initContractData();
 
       await this.loadTokens();
     },

@@ -9,7 +9,7 @@ import router from '@/router/index.ts';
 import store from '@/store/index.ts';
 import App from '@/App.vue';
 import VueApexCharts from 'vue3-apexcharts';
-import { VueQueryPlugin } from 'vue-query';
+import { VueQueryPlugin } from '@tanstack/vue-query';
 import PosthogService from './services/PosthogService/PosthogService.ts';
 
 const app = createApp(App);

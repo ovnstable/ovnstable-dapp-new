@@ -11,9 +11,6 @@ import BigNumber from 'bignumber.js';
 import { getNetworkParams } from '@/store/web3/network.ts';
 import { buildEvmContract } from '@/utils/contractsMap.ts';
 import { ERC20_ABI } from '@/assets/abi/index.ts';
-import {
-  BLAST_TOKENS, LINEA_TOKENS, OP_TOKENS, SFRAX_TOKEN, ZKSYNC_TOKENS,
-} from '@/constants/tokens/manualTokensMap.ts';
 import _ from 'lodash';
 import BalanceService from '@/services/BalanceService/BalanceService.ts';
 import TokenService from '@/services/TokenService/TokenService.ts';
@@ -197,9 +194,9 @@ const actions = {
 
     commit('changeState', { field: 'isTokensLoading', val: true });
 
-    const tokensMap = await TokenService.getTokenInfo();
+    const tokenNetworkMap = await TokenService.getTokenNetworkMap();
 
-    commit('changeState', { field: 'tokensMap', val: tokensMap });
+    commit('changeState', { field: 'tokensMap', val: tokenNetworkMap });
     commit('changeState', { field: 'isTokensLoading', val: false });
   },
 
