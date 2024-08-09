@@ -93,15 +93,15 @@
 import PoolsTable from '@/components/Pools/PositionsTable/Index.vue';
 import PoolsFilter from '@/components/Pools/PositionsFilter/Index.vue';
 import {
-  mapActions, mapGetters, useStore,
+  mapGetters, useStore,
 } from 'vuex';
 import { POOL_TYPES } from '@/store/views/main/pools/index.ts';
 import TableSkeleton from '@/components/TableSkeleton/Index.vue';
 import { getImageUrl } from '@/utils/const.ts';
 import ButtonComponent from '@/components/Button/Index.vue';
-import { useQuery, useQueryClient } from '@tanstack/vue-query';
+import { useQueryClient } from '@tanstack/vue-query';
 import { defineComponent } from 'vue';
-import { useTokenInfo } from '@/hooks/fetch/useTokensQuery.ts';
+import { usePositionsQuery } from '@/hooks/fetch/usePositionsQuery.ts';
 
 interface IEnumIterator {
   next: () => number,
@@ -160,25 +160,13 @@ export default defineComponent({
   setup() {
     const store = useStore() as any;
 
-    console.log(store);
-
-    const { networkId } = store.state.network;
-    const { account } = store.state.accountData;
-
-    const { data: tokens } = useTokenInfo(store.state);
-
-    const { data: positionData, isLoading } = useQuery({
-      queryKey: ['positions', networkId, account],
-      // eslint-disable-next-line no-underscore-dangle
-      queryFn: async () => store._actions['zapinData/loadPositionContract'][0](),
-    });
+    const { data: positionData, isLoading } = usePositionsQuery(store.state);
 
     const queryClient = useQueryClient();
     const invalidateQuery = async () => queryClient.invalidateQueries({ queryKey: ['positions'] });
 
     return {
       isLoading,
-      tokens,
       positionData,
 
       resetData: invalidateQuery,
@@ -272,17 +260,8 @@ export default defineComponent({
     this.aprOrder = this.aprSortIterator.next();
     this.positionSizeSortIterator = iterateEnum(POSITION_SIZE_ORDER_TYPE);
     this.positionSizeOrder = this.positionSizeSortIterator.next();
-
-    await this.init();
   },
   methods: {
-    ...mapActions('poolsData', ['loadPools']),
-    ...mapActions('odosData', ['loadTokens']),
-    async init() {
-      await this.loadPools();
-
-      await this.loadTokens();
-    },
     switchPoolsTab(type: POOL_TYPES) {
       this.isDefaultOrder = true;
       this.isOpenHiddenPools = false;

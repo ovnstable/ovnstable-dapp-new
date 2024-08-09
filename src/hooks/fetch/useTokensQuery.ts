@@ -5,7 +5,7 @@ import { computed } from 'vue';
 import BalanceService from '@/services/BalanceService/BalanceService.ts';
 import { mergeTokenLists } from '@/services/TokenService/utils/index.ts';
 
-export const useTokenInfo = (stateData: any) => {
+export const useTokensQuery = (stateData: any) => {
   const networkId = computed(() => stateData.network.networkId);
   const address = computed(() => stateData.accountData.account);
   const provider = computed(() => stateData.web3.evmProvider);
@@ -14,6 +14,7 @@ export const useTokenInfo = (stateData: any) => {
     {
       queryKey: ['tokens'],
       queryFn: TokenService.fetchTokens,
+      refetchInterval: false,
     },
   );
 
@@ -38,7 +39,7 @@ export const useTokenInfo = (stateData: any) => {
 
   const balancesQuery = useQuery(
     {
-      queryKey: ['balances', address.value],
+      queryKey: ['balances', address.value, networkId.value],
       queryFn: () => BalanceService.fetchTokenBalances(
         provider.value,
         address.value,
