@@ -12,9 +12,11 @@ class PoolService {
         return getFormatPools(networkPools, networkConfig);
       });
 
-    if (errors.length > 0) {
+    if (errors.length === allNetworkConfigs.length) {
+      // If all requests returned errors
       console.log(`Error get pools data: ${JSON.stringify(errors)}`);
     } else {
+      // Else return something
       const poolsList = results.flat();
       return poolsList;
     }

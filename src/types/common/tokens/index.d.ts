@@ -10,7 +10,7 @@ export type TBalanceInfo = {
 
   type TApproveData = {
     allowanceValue: number,
-    approved: false,
+    approved: boolean,
   }
 
 export type TTokenInfo = {
