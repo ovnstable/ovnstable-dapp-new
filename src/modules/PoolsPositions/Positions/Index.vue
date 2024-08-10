@@ -93,15 +93,15 @@
 import PoolsTable from '@/components/Pools/PositionsTable/Index.vue';
 import PoolsFilter from '@/components/Pools/PositionsFilter/Index.vue';
 import {
-  mapActions, mapGetters,
+  mapGetters, useStore,
 } from 'vuex';
 import { POOL_TYPES } from '@/store/views/main/pools/index.ts';
 import TableSkeleton from '@/components/TableSkeleton/Index.vue';
 import { getImageUrl } from '@/utils/const.ts';
 import ButtonComponent from '@/components/Button/Index.vue';
-import { useQuery, useQueryClient } from 'vue-query';
+import { useQueryClient } from '@tanstack/vue-query';
 import { defineComponent } from 'vue';
-import store from '@/store';
+import { usePositionsQuery } from '@/hooks/fetch/usePositionsQuery.ts';
 
 interface IEnumIterator {
   next: () => number,
@@ -156,23 +156,18 @@ export default defineComponent({
     TableSkeleton,
     ButtonComponent,
   },
+  // Using new Composition API for hooks compatibility
   setup() {
-    const anyStore = store as any;
+    const store = useStore() as any;
 
-    // TODO: rewrite store access
-    const {
-      isLoading, isError, data, error, isFetching,
-    } = useQuery('positions', async () => anyStore._actions['zapinData/loadPositionContract'][0]());
+    const { data: positionData, isLoading } = usePositionsQuery(store.state);
 
     const queryClient = useQueryClient();
     const invalidateQuery = async () => queryClient.invalidateQueries({ queryKey: ['positions'] });
 
     return {
       isLoading,
-      isError,
-      positionData: data,
-      error,
-      isFetching,
+      positionData,
 
       resetData: invalidateQuery,
 
@@ -223,6 +218,7 @@ export default defineComponent({
       return this.filteredBySearchQuery;
     },
     displayedPools() {
+      // console.log(this.tokens);
       if (this.positionData.length > 0) return this.filteredPools;
       return this.positionData;
     },
@@ -264,18 +260,8 @@ export default defineComponent({
     this.aprOrder = this.aprSortIterator.next();
     this.positionSizeSortIterator = iterateEnum(POSITION_SIZE_ORDER_TYPE);
     this.positionSizeOrder = this.positionSizeSortIterator.next();
-
-    await this.init();
   },
   methods: {
-    ...mapActions('poolsData', ['loadPools']),
-    ...mapActions('odosData', ['loadTokens', 'initContractData']),
-    async init() {
-      await this.loadPools();
-      await this.initContractData();
-
-      await this.loadTokens();
-    },
     switchPoolsTab(type: POOL_TYPES) {
       this.isDefaultOrder = true;
       this.isOpenHiddenPools = false;
