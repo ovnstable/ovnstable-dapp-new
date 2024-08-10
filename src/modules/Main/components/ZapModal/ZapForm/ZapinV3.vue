@@ -156,7 +156,7 @@
             v-if="showPresetPlusMinus(range)"
             class="range-presets__plusmin"
           >
-            +-
+            {{ range.tick ? "+-" : "" }}
           </div>
 
           {{ range.label }}
@@ -505,6 +505,7 @@ export default {
     },
   },
   async mounted() {
+    console.log(this.zapContract, '___this.zapContract');
     this.pairSymbols = this.zapPool.name.split('/');
     const tickSpace = await this.zapContract.getTickSpacing(this.zapPool.address);
     const currPrice = await this.zapContract.getCurrentPrice(this.zapPool.address);
@@ -513,6 +514,9 @@ export default {
     const closestTicks = await this.zapContract.closestTicksForCurrentTick(this.zapPool.address);
     this.initTicks(tickSpace);
 
+    console.log(center.toString(), '___this.center');
+    console.log(tickSpace.toString(), '___this.tickSpace');
+    console.log(centerTick.toString(), '___this.centerTick');
     this.closestTicks = [closestTicks[0]?.toString(), closestTicks[1]?.toString()];
     this.tickSpace = tickSpace.toString();
     this.tickLeft = this.ticksInit?.length > 0 ? this.ticksInit[0]?.toString()
@@ -615,14 +619,12 @@ export default {
   methods: {
     initTicks(tSpace: string) {
       this.rangePresetsTicks = this.rangePresetsTicks.map((item, key) => {
-        let labelDiv = '1';
         if (item.label === 'FULL') return item;
-        if (new BN(tSpace).gt(1)) labelDiv = tSpace;
 
         return {
           id: key,
           value: new BN(item.value).times(tSpace).toNumber(),
-          label: new BN(item.label).times(tSpace).div(labelDiv).toFixed(),
+          label: new BN(item.label).times(tSpace).toFixed(),
           tick: item.tick,
         };
       });
@@ -909,11 +911,9 @@ export default {
     }, 500),
     setMinPrice(val: string) {
       this.minPrice = val;
-      this.debouncePriceChange(this, val, this.maxPrice);
     },
     setMaxPrice(val: string) {
       this.maxPrice = val;
-      this.debouncePriceChange(this, this.minPrice, val);
     },
     async setRange(val: number, isTick: boolean) {
       let tickVal = isTick ? val : 0;
@@ -931,12 +931,12 @@ export default {
         tickVal = Number(new BN(tickVal).div(this.tickSpace).toFixed(0)) * Number(this.tickSpace);
       }
 
-      if (new BN(tickVal).div(this.tickSpace).eq(1)) {
+      if (tickVal === 1) {
         this.tickLeft = this.closestTicks[0]?.toString();
         this.tickRight = this.closestTicks[1]?.toString();
       } else {
-        this.tickLeft = new BN(this.closestTicks[0]).minus(tickVal).toFixed(0);
-        this.tickRight = new BN(this.closestTicks[1]).plus(tickVal).toFixed(0);
+        this.tickLeft = new BN(this.centerTick).minus(tickVal / 2).toFixed(0);
+        this.tickRight = new BN(this.centerTick).plus(tickVal / 2).toFixed(0);
       }
 
       const tickNumL = await this.zapContract.tickToPrice(this.zapPool.address, this.tickLeft);
