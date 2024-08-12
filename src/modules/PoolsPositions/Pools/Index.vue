@@ -18,14 +18,14 @@
         :is-show-apr-limit="isShowAprLimit"
         :open-zap-in-func="openZapIn"
         :set-order-type-func="setOrderType"
-        :order-type="orderType"
+        :order-type="ORDER_TYPE[orderType]"
       >
         <template
           v-if="!isOverview"
           #filters
         >
           <PoolsFilter
-            :selected-network="selectedNetworks"
+            :selected-network="networkIds"
             :is-show-deprecated="isShowDeprecated"
             :search-query="searchQuery"
             @change-tab="switchPoolsTab"
@@ -86,7 +86,7 @@ import { POOL_CATEGORIES } from '@/types/common/pools/index.ts';
 import PoolService from '@/services/PoolService/PoolService.ts';
 import { ORDER_TYPE } from '@/services/PoolService/utils/poolsSort.ts';
 
-const POOL_SHOW_LIMIT = 10;
+// const POOL_SHOW_LIMIT = 10;
 
 export default defineComponent({
   name: 'PoolsContainer',
@@ -121,9 +121,6 @@ export default defineComponent({
     isMorePoolsToShow: true,
     isOpenHiddenPools: false,
 
-    selectedTabs: ['ALL'],
-
-    selectedNetworks: [] as number[], // [] for ALL or networks,
     isShowOnlyZap: false,
     isShowAprLimit: false,
 
@@ -131,18 +128,14 @@ export default defineComponent({
     category: POOL_CATEGORIES.ALL as POOL_CATEGORIES,
     searchQuery: '',
 
-    orderType: 'TVL_UP', // APR, APR_UP, APR_DOWN, TVL, TVL_UP, TVL_DOWN
-    newOrderType: ORDER_TYPE.TVL_UP,
+    orderType: ORDER_TYPE.TVL_UP,
     isDefaultOrder: true as boolean,
-    // displayedPools: [] as TPoolInfo[],
+    ORDER_TYPE,
   }),
 
   computed: {
     ...mapGetters('network', ['isShowDeprecated']),
-    ...mapState('poolsData', [
-      'currentZapPool',
-      'isZapModalShow',
-    ]),
+    ...mapState('poolsData', ['currentZapPool', 'isZapModalShow']),
     displayedPools() {
       const filterParams = {
         networkIds: this.networkIds,
@@ -150,12 +143,14 @@ export default defineComponent({
         searchQuery: this.searchQuery,
       };
 
+      console.log('__changeFilter', filterParams);
+
       const displayedPools = PoolService
         .getDisplayedPool(this.poolList!, false);
       const filteredPools = PoolService
         .filterPools(displayedPools, filterParams);
       const sortedPools = PoolService
-        .sortPools(filteredPools, this.newOrderType, this.isDefaultOrder);
+        .sortPools(filteredPools, this.orderType, this.isDefaultOrder);
 
       const pools = sortedPools;
 
@@ -168,25 +163,6 @@ export default defineComponent({
       return pools;
     },
   },
-
-  // watch: {
-  //   filterParams() {
-  //     console.log('__watchPrams');
-  //     this.getDisplayedPools();
-  //   },
-  //   newOrderType() {
-  //     console.log('__watchOrderType');
-  //     this.getDisplayedPools();
-  //   },
-  //   isDefaultOrder() {
-  //     console.log('__watchOrderDef');
-  //     this.getDisplayedPools();
-  //   },
-  //   isOpenHiddenPools() {
-  //     console.log('__watchIsOpen');
-  //     this.getDisplayedPools();
-  //   },
-  // },
 
   async mounted() {
     this.clearAllFilters();
@@ -208,7 +184,6 @@ export default defineComponent({
     switchPoolsTab(type: POOL_CATEGORIES) {
       this.isDefaultOrder = true;
       this.isOpenHiddenPools = false;
-      console.log('__switchTab', type);
       this.category = type;
     },
     updateSearch(searchQuery: string) {
@@ -218,30 +193,21 @@ export default defineComponent({
     },
     setOrderType(orderType: keyof typeof ORDER_TYPE) {
       this.isDefaultOrder = false;
-      // ?
-      this.newOrderType = ORDER_TYPE[orderType];
-      console.log('__switchOrder', this.newOrderType);
+      this.orderType = ORDER_TYPE[orderType];
     },
     setSelectedNetwork(selectedChain: number | 'ALL') {
       this.isOpenHiddenPools = false;
       this.isDefaultOrder = true;
-      if (selectedChain === 'ALL') this.selectedNetworks = [];
-      else if (this.selectedNetworks.includes(selectedChain)) {
-        this.selectedNetworks = this.selectedNetworks
-          .filter((network) => network !== selectedChain);
-        // ?
+      if (selectedChain === 'ALL') this.networkIds = [];
+      else if (this.networkIds.includes(selectedChain)) {
         this.networkIds = this.networkIds
           .filter((network) => network !== selectedChain);
-      } else this.selectedNetworks.push(selectedChain);
-      // ?
-      this.networkIds.push(selectedChain as number);
+      } this.networkIds.push(selectedChain as number);
     },
     clearAllFilters() {
       this.isOpenHiddenPools = false;
       this.isShowOnlyZap = false;
       this.isShowAprLimit = false;
-      this.selectedTabs = ['ALL'];
-      this.selectedNetworks = [];
       this.isDefaultOrder = true;
 
       this.networkIds = [];
