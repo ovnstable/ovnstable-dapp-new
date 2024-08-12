@@ -473,11 +473,6 @@ export default defineComponent({
     ...mapGetters('accountData', ['account']),
 
     zapsLoaded() {
-      console.log(this.allTokensList?.length, '__this.allTokensList?.length');
-      console.log(this.outputTokens?.length, '__this.outputTokens?.length');
-      console.log(this.zapPool?.length, '__this.zapPool?.length');
-      console.log(this.zapContract?.length, '__this.zapContract?.length');
-      console.log(this.isZapLoaded?.length, '__this.isZapLoaded?.length');
       return this.allTokensList?.length > 0
         && this.outputTokens?.length > 0
         && this.zapPool
@@ -538,7 +533,6 @@ export default defineComponent({
       return this.inputTokens.filter((item: any) => item.selectedToken);
     },
     selectedOutputTokens() {
-      console.log(this.outputTokens, '__TOKENS');
       return this.outputTokens.filter((item: any) => item.selectedToken);
     },
 
@@ -761,7 +755,6 @@ export default defineComponent({
     },
     setRangeV3(v3Data: any) {
       this.v3Range = v3Data;
-      console.log('___updateQuotaInfo');
       this.updateQuotaInfo();
     },
     updateTokenState(newToken: any) {
@@ -849,7 +842,6 @@ export default defineComponent({
       const ovnSelectSelectedToken = getTokenByAddress(poolTokens[1].address, this.allTokensList);
 
       if (!poolSelectedToken || !ovnSelectSelectedToken) return;
-      console.log(poolSelectedToken, ovnSelectSelectedToken, '__poolSelectedToken');
       poolSelectedToken.selected = true;
       ovnSelectSelectedToken.selected = true;
 
@@ -859,9 +851,8 @@ export default defineComponent({
       this.outputTokens = [tokenA, tokenB];
       this.addNewInputToken();
 
-      console.log(this.outputTokens, 'OUTPU__');
       this.$forceUpdate();
-      // this.recalculateProportion();
+      this.recalculateProportion();
     },
     removeOutputToken(id: string) {
       this.removeToken(this.outputTokens, id);
@@ -1650,7 +1641,6 @@ export default defineComponent({
     async recalculateProportion() {
       let reserves = null;
 
-      console.log(this.selectedOutputTokens, '__selectedOutputTokens');
       const outputToken0Price = this.selectedOutputTokens[0].selectedToken.price;
       const outputToken1Price = this.selectedOutputTokens[1].selectedToken.price;
 
@@ -1909,7 +1899,6 @@ export default defineComponent({
       this.outputTokens = [];
     },
     showSelectTokensModals(isShow: boolean) {
-      console.log(isShow, '___SHOW');
       this.isShowSelectTokensModal = isShow;
     },
     selectOutputToken() {
