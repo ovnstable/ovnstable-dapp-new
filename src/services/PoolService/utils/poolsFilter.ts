@@ -39,14 +39,16 @@ const searchPoolByCategory = (
 );
 
 const filterByNetwork = (pool: TPoolInfo, selectedNetworkIds: number[]): boolean => (
-  selectedNetworkIds.includes(getNetworkParams(pool.chainName).networkId)
+  selectedNetworkIds.length > 0
+    ? selectedNetworkIds.includes(getNetworkParams(pool.chainName).networkId)
+    : true
 );
 
 export const poolsFilter = (poolsList: TPoolInfo[], params: TFilterPoolsParams): TPoolInfo[] => {
   const filteredPools = poolsList.filter((pool: TPoolInfo) => (
     searchPoolByQuery(pool, params.searchQuery)
-    || searchPoolByCategory(pool, params.category)
-    || filterByNetwork(pool, params.networkIds)
+    && searchPoolByCategory(pool, params.category)
+    && filterByNetwork(pool, params.networkIds)
   ));
   return filteredPools;
 };

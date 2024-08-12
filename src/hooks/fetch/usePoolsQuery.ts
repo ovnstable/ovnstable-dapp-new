@@ -6,5 +6,6 @@ export const usePoolsQuery = () => useQuery(
   {
     queryKey: ['pools'],
     queryFn: PoolService.getPoolsInfo,
+    refetchInterval: false,
   },
 );

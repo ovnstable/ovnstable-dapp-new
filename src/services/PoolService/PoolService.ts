@@ -22,7 +22,6 @@ class PoolService {
     } else {
       // Else return something
       const poolsList = results.flat();
-      console.log(poolsList);
       return poolsList;
     }
     return [];

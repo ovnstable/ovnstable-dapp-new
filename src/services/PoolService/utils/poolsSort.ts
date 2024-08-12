@@ -40,11 +40,7 @@ export const poolsSort: TPoolsSort = (poolList, orderType, isDefaultOrder) => {
     isDefaultOrder,
   );
 
-  console.log('__sortingPools', orderType, orderTypeSortMap[orderType as keyof typeof orderTypeSortMap]);
+  const sortFn = orderTypeSortMap[orderType as keyof typeof orderTypeSortMap] ?? null;
 
-  const sortedPools = sortByHotTagAndValue(
-    orderTypeSortMap[orderType as keyof typeof orderTypeSortMap],
-  );
-
-  return sortedPools;
+  return sortFn ? sortByHotTagAndValue(sortFn) : poolList;
 };
