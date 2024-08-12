@@ -3,10 +3,6 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
 
-import {
-  getSortedPools,
-  initReversePools,
-} from '@/store/views/main/pools/helpers.ts';
 import BigNumber from 'bignumber.js';
 import PoolService from '@/services/PoolService/PoolService.ts';
 
@@ -22,7 +18,6 @@ export enum POOL_TYPES {
 }
 
 const stateData = {
-  sortedPoolList: [],
   allPools: [],
   isPoolsLoading: true,
 
@@ -91,22 +86,12 @@ const actions = {
       val: [],
     });
 
-    const poolsList = await PoolService.getPoolsInfo();
+    const poolList = await PoolService.getPoolsInfo();
 
-    if (poolsList.length > 0) {
+    if (poolList.length > 0) {
       commit('changeState', {
         field: 'allPools',
-        val: poolsList,
-      });
-
-      // TODO: Create Map and call initReversePools once accessing by address
-      poolsList.forEach((pool: any) => initReversePools(pool, poolsList));
-
-      const sortedPools = getSortedPools(poolsList, false);
-
-      commit('changeState', {
-        field: 'sortedPoolList',
-        val: sortedPools,
+        val: poolList,
       });
 
       commit('changeState', {
