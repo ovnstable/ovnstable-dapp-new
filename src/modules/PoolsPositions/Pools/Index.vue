@@ -85,8 +85,7 @@ import { usePoolsQuery } from '@/hooks/fetch/usePoolsQuery.ts';
 import { POOL_CATEGORIES } from '@/types/common/pools/index.ts';
 import PoolService from '@/services/PoolService/PoolService.ts';
 import { ORDER_TYPE } from '@/services/PoolService/utils/poolsSort.ts';
-
-const POOL_SHOW_LIMIT = 10;
+import { POOL_SHOW_LIMIT } from '@/constants/pools/index.ts';
 
 export default defineComponent({
   name: 'PoolsContainer',

@@ -1,5 +1,11 @@
+// Pools display settings
+
+// Minimal TVL to display
 export const FIRST_MIN_AMOUNT = 300000;
 export const SECOND_MIN_AMOUNT = 20000;
+
+// Pools table initial pool display limit
+export const POOL_SHOW_LIMIT = 10;
 
 export enum POOL_TAG {
     NEW = '0',
