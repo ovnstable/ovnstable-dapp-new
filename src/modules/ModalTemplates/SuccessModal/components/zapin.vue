@@ -108,7 +108,7 @@
 
 <script lang="ts">
 import { mapState } from 'vuex';
-import PoolLabel from '@/modules/Main/components/ZapModal/PoolLabel.vue';
+import PoolLabel from '@/components/ZapModal/PoolLabel.vue';
 import { type PropType } from 'vue';
 import getPlatformLink from '../helpers.ts';
 

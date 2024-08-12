@@ -243,7 +243,7 @@ import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import NetworkNotAvailable from '@/modules/Main/components/Odos/network-not-available.vue';
 import SelectTokensModal from '@/components/TokensModal/Index.vue';
 import SelectTokensModalMobile from '@/modules/Main/components/MobileModals/TokenSelect.vue';
-import SwapSlippageSettings from '@/modules/Main/components/Common/SwapSlippageSettings.vue';
+import SwapSlippageSettings from '@/components/SwapSlippage/Index.vue';
 import { deviceType } from '@/utils/deviceType.ts';
 import { fixedByPrice } from '@/utils/numbers.ts';
 import { getRandomString } from '@/utils/strings.ts';
@@ -300,8 +300,6 @@ export default {
 
       firstSwipeClickOnApprove: false,
       isAllDataTrigger: false,
-
-      isInit: false,
     };
   },
   computed: {
@@ -314,9 +312,7 @@ export default {
       'tokenSeparationScheme',
       'listOfBuyTokensAddresses',
       'isBalancesLoading',
-      'firstRenderDone',
     ]),
-    ...mapState('balances', ['isBalancesLoaded']),
     ...mapGetters('odosData', [
       'allTokensList',
       'isAvailableOnNetwork',
@@ -500,7 +496,7 @@ export default {
       if (this.isAllDataTrigger) return;
       if (val) {
         this.isAllDataTrigger = true;
-        this.clearForm('0');
+        this.clearForm();
       }
     },
     async account(val) {
@@ -524,7 +520,7 @@ export default {
           tokenSeparationScheme: this.tokenSeparationScheme,
           listOfBuyTokensAddresses: this.listOfBuyTokensAddresses,
         });
-        this.clearForm('1');
+        this.clearForm();
       }
     },
     outputTokensWithSelectedTokensCount(val, oldVal) {
@@ -571,7 +567,7 @@ export default {
     });
 
     if (this.inputTokens.length === 0 && this.outputTokens.length === 0) {
-      this.clearForm('4');
+      this.clearForm();
     }
     await this.init();
 
@@ -655,7 +651,7 @@ export default {
         listOfBuyTokensAddresses: this.listOfBuyTokensAddresses,
       });
 
-      this.clearForm('8');
+      this.clearForm();
       const bus = useEventBus('odos-transaction-finished');
       bus.on(() => {
         this.finishTransaction();
@@ -803,11 +799,11 @@ export default {
     },
 
     finishTransaction() {
-      this.clearForm('5');
+      this.clearForm();
       this.refreshBalance();
     },
 
-    clearForm(val: string) {
+    clearForm() {
       // console.log(val, 'CLEAFORM');
       this.clearAllSelectedTokens();
 

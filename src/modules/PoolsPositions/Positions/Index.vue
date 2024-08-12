@@ -156,7 +156,6 @@ export default defineComponent({
     TableSkeleton,
     ButtonComponent,
   },
-  // Using new Composition API for hooks compatibility
   setup() {
     const store = useStore() as any;
 

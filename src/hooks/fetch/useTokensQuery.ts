@@ -79,7 +79,7 @@ export const useTokensQuery = (stateData: any) => {
   };
 
   return {
-    isLoading: isAnyLoading,
+    isLoading: isAnyLoading.value,
     isError: isAnyError,
     data: computed(getTokenInfo),
     error: allErrors,

@@ -75,7 +75,7 @@ import {
 } from 'vuex';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 
-import ZapModal from '@/modules/Main/components/ZapModal/Index.vue';
+import ZapModal from '@/components/ZapModal/Index.vue';
 import PoolsFilter from '@/components/Pools/PoolsFilter/Index.vue';
 import PoolsTable from '@/components/Pools/PoolsTable/Index.vue';
 import TableSkeleton from '@/components/TableSkeleton/Index.vue';
@@ -85,8 +85,6 @@ import { usePoolsQuery } from '@/hooks/fetch/usePoolsQuery.ts';
 import { POOL_CATEGORIES } from '@/types/common/pools/index.ts';
 import PoolService from '@/services/PoolService/PoolService.ts';
 import { ORDER_TYPE } from '@/services/PoolService/utils/poolsSort.ts';
-
-const POOL_SHOW_LIMIT = 10;
 
 export default defineComponent({
   name: 'PoolsContainer',

@@ -96,7 +96,6 @@
 </template>
 <!-- eslint-disable no-param-reassign -->
 <script lang="ts">
-import { mapGetters } from 'vuex';
 import { onLeaveList, onEnterList, beforeEnterList } from '@/utils/animations.ts';
 import { deviceType } from '@/utils/deviceType.ts';
 import ButtonComponent from '@/components/Button/Index.vue';
@@ -120,11 +119,6 @@ export default {
       type: Array,
       required: true,
     },
-    zapPoolData: {
-      type: Object,
-      default: () => {},
-      required: false,
-    },
   },
   data() {
     return {
@@ -147,12 +141,7 @@ export default {
       ],
     };
   },
-  mounted() {
-    this.autoUpdateSlippage();
-  },
   computed: {
-    ...mapGetters('theme', ['light']),
-
     deviceSize() {
       return deviceType();
     },
@@ -165,6 +154,9 @@ export default {
     selectedInputTokens() {
       this.autoUpdateSlippage();
     },
+  },
+  mounted() {
+    this.autoUpdateSlippage();
   },
   methods: {
     closeModal() {

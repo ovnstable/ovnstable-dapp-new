@@ -1,7 +1,7 @@
 <template>
   <ModalComponent
-    type-modal="custom"
     v-model="showModal"
+    type-modal="custom"
     @close="closeModal"
   >
     <div
@@ -62,14 +62,13 @@
           <SelectTokenWithSearch
             :tokens="tokens"
             :selected-tokens="selectedTokens"
-            :removeNative="removeNative"
+            :remove-native="removeNative"
             :is-input-tokens="selectTokenInput"
             @add-token="selectToken"
             @remove-token="removeToken"
           />
         </div>
       </div>
-
     </div>
   </ModalComponent>
 </template>
@@ -88,7 +87,6 @@ export default {
     Spinner,
     ButtonComponent,
   },
-  emits: ['set-show', 'add-token-to-list', 'remove-token-from-list', 'connect-wallet', 'reload'],
   props: {
     isShow: {
       type: Boolean,
@@ -125,6 +123,8 @@ export default {
       required: true,
     },
   },
+  emits: ['set-show', 'add-token-to-list', 'remove-token-from-list', 'connect-wallet', 'reload'],
+
   data() {
     return {
       showModal: false,
