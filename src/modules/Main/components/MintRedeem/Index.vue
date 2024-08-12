@@ -205,7 +205,7 @@ export default {
     ...mapState('odosData', ['tokensContractMap']),
 
     getFee() {
-      return this.networkId === 8453 ? 0.01 : 0.04;
+      return this.networkId === 0.01;
     },
     inputIndex() {
       return '1';
