@@ -86,7 +86,7 @@ import { POOL_CATEGORIES } from '@/types/common/pools/index.ts';
 import PoolService from '@/services/PoolService/PoolService.ts';
 import { ORDER_TYPE } from '@/services/PoolService/utils/poolsSort.ts';
 
-// const POOL_SHOW_LIMIT = 10;
+const POOL_SHOW_LIMIT = 10;
 
 export default defineComponent({
   name: 'PoolsContainer',
@@ -143,8 +143,6 @@ export default defineComponent({
         searchQuery: this.searchQuery,
       };
 
-      console.log('__changeFilter', filterParams);
-
       const displayedPools = PoolService
         .getDisplayedPool(this.poolList!, false);
       const filteredPools = PoolService
@@ -152,13 +150,9 @@ export default defineComponent({
       const sortedPools = PoolService
         .sortPools(filteredPools, this.orderType, this.isDefaultOrder);
 
-      const pools = sortedPools;
-
-      // const pools = this.isOpenHiddenPools
-      //   ? sortedPools
-      //   : sortedPools.slice(0, POOL_SHOW_LIMIT);
-
-      console.log('__poolsMethod', pools, this.isOpenHiddenPools);
+      const pools = this.isOpenHiddenPools
+        ? sortedPools
+        : sortedPools.slice(0, POOL_SHOW_LIMIT);
 
       return pools;
     },
@@ -202,7 +196,7 @@ export default defineComponent({
       else if (this.networkIds.includes(selectedChain)) {
         this.networkIds = this.networkIds
           .filter((network) => network !== selectedChain);
-      } this.networkIds.push(selectedChain as number);
+      } else this.networkIds.push(selectedChain as number);
     },
     clearAllFilters() {
       this.isOpenHiddenPools = false;
