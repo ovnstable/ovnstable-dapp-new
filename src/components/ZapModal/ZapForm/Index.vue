@@ -122,7 +122,6 @@
                       :is-input-token="false"
                       :disabled="true"
                       :balances-loading="isBalancesLoading"
-                      @select-token="selectOutputToken"
                       @remove-token="removeOutputToken"
                     />
                   </div>
@@ -298,7 +297,7 @@
       :tokens="zapAllTokens"
       :is-all-data-loaded="zapsLoaded"
       :selected-tokens="inputTokens"
-      :balances-loading="isTokensLoading"
+      :balances-loading="isTokensLoading.value"
       :user-account="account"
       remove-native
       @set-show="showSelectTokensModals"
@@ -408,7 +407,6 @@ export default defineComponent({
     v3Range: null as any,
     isShowSelectTokensModal: false,
     swapMethod: 'BUY', // BUY (secondTokens) / SELL (secondTokens)
-    selectTokenType: 'OVERNIGHT', // OVERNIGHT / ALL
 
     isSwapLoading: false,
     slippagePercent: 0.5,
@@ -1811,10 +1809,8 @@ export default defineComponent({
     },
 
     addSelectedTokenToList(data: any) {
-      console.log(data, 'addSelectedTokenToList');
       if (data.isInput) {
         this.addSelectedTokenToInputList(data.tokenData, false);
-        // this.addTokensEmptyIsNeeded();
         return;
       }
 
@@ -1824,7 +1820,7 @@ export default defineComponent({
       // todo computed ovn input tokens and logic here
       const newInputToken = getNewInputToken();
       newInputToken.selectedToken = selectedToken;
-      this.inputTokens.push(newInputToken);
+      this.inputTokens.unshift(newInputToken);
 
       if (isAddAllBalance) {
         setTimeout(() => {
@@ -1847,51 +1843,19 @@ export default defineComponent({
         new BN(10 ** selectedToken.decimals).times(1000000).toFixed(0),
       );
     },
-    addSelectedTokenToOutputList(selectedToken: any, isLocked: any, startPercent: any) {
-      const newOutputToken = getNewOutputToken();
-      newOutputToken.locked = isLocked;
-      newOutputToken.value = startPercent;
-      newOutputToken.selectedToken = selectedToken;
-      return newOutputToken;
+    addSelectedTokenToOutputList(selectedToken: any, locked: any, startPercent: any) {
+      return {
+        ...getNewOutputToken(),
+        locked,
+        value: startPercent,
+        selectedToken,
+      };
     },
     removeSelectedTokenFromList(selectedToken: any) {
       this.removeInputToken(selectedToken.tokenData.id);
       if (this.inputTokens.length === 0) this.addNewInputToken();
     },
-    clearAllInputSelectedTokens(exclude?: any) {
-      for (let i = 0; i < this.inputTokens.length; i++) {
-        if (this.inputTokens[i].selectedToken) {
-          if (
-            exclude
-            && this.inputTokens[i].selectedToken.symbol
-              === exclude.selectedToken.symbol
-          ) {
-            continue;
-          }
-
-          this.inputTokens[i].selectedToken.selected = false;
-        }
-      }
-
-      if (exclude) {
-        this.inputTokens = [exclude];
-        return;
-      }
-
-      this.inputTokens = [];
-    },
-    clearAllOutputSelectedTokens() {
-      for (let i = 0; i < this.outputTokens.length; i++) {
-        if (this.outputTokens[i].selectedToken) {
-          this.outputTokens[i].selectedToken.selected = false;
-        }
-      }
-
-      this.outputTokens = [];
-    },
     clearAllSelectedTokens() {
-      this.clearAllInputSelectedTokens();
-      this.clearAllOutputSelectedTokens();
       this.clearAllTokens();
     },
     clearAllTokens() {
@@ -1901,30 +1865,6 @@ export default defineComponent({
     showSelectTokensModals(isShow: boolean) {
       this.isShowSelectTokensModal = isShow;
     },
-    selectOutputToken() {
-      if (this.swapMethod === 'BUY') {
-        this.openModalWithSelectTokenAndBySwapMethod('OVERNIGHT');
-        return;
-      }
-
-      if (this.swapMethod === 'SELL') {
-        this.openModalWithSelectTokenAndBySwapMethod('ALL');
-        return;
-      }
-
-      console.error(
-        'Swap method type not found when select output tokens. ',
-        this.swapMethod,
-      );
-    },
-    openModalWithSelectTokenAndBySwapMethod(tokenType: any) {
-      this.setSelectTokenType(tokenType);
-      this.showSelectTokensModals(true);
-    },
-    setSelectTokenType(type: any) {
-      this.selectTokenType = type;
-    },
-
     updateQuotaInfo() {
       if (!this.tokensQuotaCounterId) {
         // first call

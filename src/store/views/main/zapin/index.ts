@@ -241,6 +241,7 @@ const actions = {
 
     const abiFile = await loadAbi(abiFileSrc);
 
+    console.log(abiFile, '__abiFile');
     const positionContract = buildEvmContract(
       abiFile.abi,
       rootState.web3.evmSigner,
