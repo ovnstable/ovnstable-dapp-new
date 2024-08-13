@@ -5,6 +5,9 @@ import { computed } from 'vue';
 import BalanceService from '@/services/BalanceService/BalanceService.ts';
 import { mergeTokenLists } from '@/services/TokenService/utils/index.ts';
 
+export const allTokensMap = (tokensList: any[]): any => new Map(tokensList
+  .map((token) => [token.address, token]));
+
 export const useTokensQuery = (stateData: any) => {
   const networkId = computed(() => stateData.network.networkId);
   const address = computed(() => stateData.accountData.account);

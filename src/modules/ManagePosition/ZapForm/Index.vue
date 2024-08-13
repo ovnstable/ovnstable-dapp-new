@@ -177,7 +177,6 @@ import { useEventBus } from '@vueuse/core';
 import { ethers } from 'ethers';
 import {
   mapActions, mapGetters, mapState, mapMutations,
-  useStore,
 } from 'vuex';
 import {
   getNewOutputToken,
@@ -202,7 +201,6 @@ import ZapInStepsRow from '@/components/StepsRow/ZapinRow/RebalanceRow.vue';
 import { cloneDeep } from 'lodash';
 import { markRaw } from 'vue';
 import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
-import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
 import { parseLogs } from './helpers.ts';
 
 enum zapMobileSection {
@@ -222,6 +220,11 @@ export default {
     ZapInStepsRow,
   },
   props: {
+    allTokensList: {
+      type: Array,
+      required: true,
+      default: () => [],
+    },
     zapPool: {
       type: Object,
       required: false,
@@ -235,16 +238,6 @@ export default {
     },
   },
   emits: ['close-form'],
-  setup: () => {
-    const store = useStore() as any;
-
-    const { data: allTokensList, isLoading: isTokensLoading } = useTokensQuery(store.state);
-
-    return {
-      allTokensList,
-      isTokensLoading,
-    };
-  },
   data() {
     return {
       positionStaked: true,
@@ -313,6 +306,11 @@ export default {
       return false;
     },
     zapsLoaded() {
+      console.log(this.allTokensList, '__this.allTokensList');
+      console.log(this.outputTokens, '__this.outputTokens');
+      console.log(this.zapPool, '__this.zapPool');
+      console.log(this.zapContract, '__this.zapContract');
+      console.log(this.isZapLoaded, '__this.isZapLoaded');
       return this.allTokensList?.length > 0
         && this.outputTokens?.length > 0
         && this.zapPool
@@ -493,6 +491,9 @@ export default {
       const poolSelectedToken = getTokenByAddress(poolTokens[0].address, this.allTokensList);
       const ovnSelectSelectedToken = getTokenByAddress(poolTokens[1].address, this.allTokensList);
 
+      console.log(this.allTokensList, 'this.allTokensList');
+      console.log(poolSelectedToken, 'poolSelectedToken');
+      console.log(ovnSelectSelectedToken, 'ovnSelectSelectedToken');
       if (!poolSelectedToken || !ovnSelectSelectedToken) return;
       poolSelectedToken.selected = true;
       ovnSelectSelectedToken.selected = true;
@@ -500,6 +501,8 @@ export default {
       const tokenA = this.addSelectedTokenToOutputList(poolSelectedToken, true, 50);
       const tokenB = this.addSelectedTokenToOutputList(ovnSelectSelectedToken, true, 50);
 
+      console.log(tokenA, '__tokenA');
+      console.log(tokenB, 'tokenB');
       this.outputTokens = [tokenA, tokenB];
 
       this.$forceUpdate();
@@ -1051,6 +1054,7 @@ export default {
       });
     },
     async recalculateProportion() {
+      if (!this.v3Range) return;
       const resp = await getV3Rebalance(
         this.zapPool.tokenId?.toString(),
         this.zapPool.address,
