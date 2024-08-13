@@ -335,12 +335,6 @@ export default {
     },
   },
   watch: {
-    async allTokensList(val: any[]) {
-      if (this.zapPool.chain !== this.networkId) return;
-      if (val.length === 0) return;
-
-      this.firstInit();
-    },
     currentStage(stage: rebalanceStep) {
       this.$store.commit('zapinData/changeState', { field: 'currentStage', val: stage });
     },
@@ -382,11 +376,15 @@ export default {
       this.checkNftApprove();
     },
   },
-  mounted() {
+  async mounted() {
     // for modal
     this.setIsZapModalShow(true);
     this.setStagesMap(MANAGE_FUNC.REBALANCE);
-    this.initContracts();
+    await this.initContracts();
+
+    if (this.zapPool.chain !== this.networkId) return;
+
+    this.firstInit();
   },
   methods: {
     ...mapActions('swapModal', ['showSwapModal', 'showMintView']),
@@ -443,7 +441,7 @@ export default {
       this.showSwapModal();
     },
 
-    initContracts() {
+    async initContracts() {
       this.changeState({
         field: 'zapPoolRoot',
         val: this.zapPool,
@@ -464,8 +462,8 @@ export default {
         field: 'listOfBuyTokensAddresses',
         val: [poolTokens[0].address, poolTokens[1].address],
       });
-      this.initContractData();
-      this.loadZapContract();
+      await this.initContractData();
+      await this.loadZapContract();
 
       if (!this.isAvailableOnNetwork) this.mintAction();
       if (!this.zapPool.isStaked) {
