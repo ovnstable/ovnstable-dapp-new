@@ -233,7 +233,9 @@
 <!-- eslint-disable no-param-reassign -->
 <!-- eslint-disable no-continue -->
 <script lang="ts">
-import { mapActions, mapGetters, mapState } from 'vuex';
+import {
+  mapActions, mapGetters, mapState, useStore,
+} from 'vuex';
 import { useEventBus } from '@vueuse/core';
 import { ethers } from 'ethers';
 import TokenForm from '@/modules/Main/components/Odos/TokenForm.vue';
@@ -259,8 +261,11 @@ import {
   WHITE_LIST_ODOS,
 } from '@/store/helpers/index.ts';
 import BigNumber from 'bignumber.js';
+import { computed, defineComponent } from 'vue';
+import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
+import TokenService from '@/services/TokenService/TokenService.ts';
 
-export default {
+export default defineComponent({
   name: 'SwapForm',
   components: {
     ButtonComponent,
@@ -278,6 +283,22 @@ export default {
       required: true,
     },
   },
+  setup: () => {
+    const store = useStore() as any;
+
+    const {
+      data: allTokensList,
+      isLoading,
+      isBalancesLoading,
+    } = useTokensQuery(store.state);
+
+    return {
+      allTokensList,
+      isAllDataLoaded: computed(() => !isLoading.value),
+      isAllDataTrigger: computed(() => !isLoading.value),
+      isBalancesLoading,
+    };
+  },
   data() {
     return {
       inputTokens: [] as any[],
@@ -294,29 +315,19 @@ export default {
       isSumulateSwapLoading: false,
       isSumulateIntervalStarted: false,
       slippagePercent: 0.05,
-
-      tokensQuotaCounterId: null as any,
-      tokensQuotaCheckerSec: 0,
-
       firstSwipeClickOnApprove: false,
-      isAllDataTrigger: false,
     };
   },
   computed: {
     ...mapState('odosData', [
-      'tokensContractMap',
       'routerContract',
       'swapSessionId',
       'odosReferalCode',
       'isShowDecreaseAllowance',
       'tokenSeparationScheme',
-      'listOfBuyTokensAddresses',
-      'isBalancesLoading',
     ]),
     ...mapGetters('odosData', [
-      'allTokensList',
       'isAvailableOnNetwork',
-      'isAllDataLoaded',
     ]),
     ...mapGetters('accountData', ['account']),
     ...mapGetters('network', ['networkId', 'networkName']),
@@ -492,37 +503,6 @@ export default {
     },
   },
   watch: {
-    async isAllDataLoaded(val) {
-      if (this.isAllDataTrigger) return;
-      if (val) {
-        this.isAllDataTrigger = true;
-        this.clearForm();
-      }
-    },
-    async account(val) {
-      if (val) {
-        this.isAllDataTrigger = false;
-      }
-    },
-    async networkId(newVal) {
-      if (newVal) {
-        this.isAllDataTrigger = false;
-        this.$store.commit('odosData/changeState', {
-          field: 'isFirstBalanceLoaded',
-          val: false,
-        });
-        this.$store.commit('odosData/changeState', {
-          field: 'quotaResponseInfo',
-          val: null,
-        });
-        await this.initContractData();
-        await this.initData({
-          tokenSeparationScheme: this.tokenSeparationScheme,
-          listOfBuyTokensAddresses: this.listOfBuyTokensAddresses,
-        });
-        this.clearForm();
-      }
-    },
     outputTokensWithSelectedTokensCount(val, oldVal) {
       // lock first
       if (val === 1) {
@@ -582,11 +562,10 @@ export default {
     ...mapActions(
       'odosData',
       [
-        'loadTokens',
-        'initContractData',
         'getActualGasPrice',
         'initWalletTransaction',
-        'initData',
+        // 'loadContractsForTokens',
+        // 'initContractData',
       ],
     ),
     ...mapActions('errorModal', ['showErrorModalWithMsg']),
@@ -599,11 +578,7 @@ export default {
     onEnterList,
     async reloadList() {
       try {
-        await this.initData({
-          tokenSeparationScheme: this.tokenSeparationScheme,
-          listOfBuyTokensAddresses: this.listOfBuyTokensAddresses,
-        });
-        this.init();
+        this.clearForm();
       } catch (e) {
         console.log(e, 'reloadList');
       }
@@ -643,25 +618,14 @@ export default {
       this.updateQuotaInfo();
     },
     async init() {
-      await this.loadTokens();
-      await this.initContractData();
-
-      await this.initData({
-        tokenSeparationScheme: this.tokenSeparationScheme,
-        listOfBuyTokensAddresses: this.listOfBuyTokensAddresses,
-      });
-
-      this.clearForm();
+      // await this.loadContractsForTokens(this.allTokensList);
+      // await this.initContractData();
       const bus = useEventBus('odos-transaction-finished');
       bus.on(() => {
         this.finishTransaction();
       });
 
-      // const busTokens = useEventBus('odos-tokens-loaded');
-      // busTokens.on(() => {
-      //   if (this.firstRenderDone) return;
-      //   this.finishTransaction();
-      // });
+      useEventBus('odos-tokens-loaded');
     },
     addDefaultOvnToken() {
       const symbol = this.$route.query.symbol ? this.$route.query.symbol : null;
@@ -1104,7 +1068,8 @@ export default {
         return;
       }
 
-      const tokenContract = this.tokensContractMap[selectedToken.address];
+      const tokenContract = TokenService
+        .loadTokenContract(selectedToken.address, this.$store.state.web3.evmSigner);
       clearApproveToken(
         tokenContract,
         this.routerContract.target,
@@ -1134,7 +1099,8 @@ export default {
         return;
       }
 
-      const tokenContract = this.tokensContractMap[selectedToken.address];
+      const tokenContract = TokenService
+        .loadTokenContract(selectedToken.address, this.$store.state.web3.evmSigner);
       const allowanceValue = await getAllowanceValue(
         tokenContract,
         this.account,
@@ -1168,7 +1134,8 @@ export default {
         return;
       }
 
-      const tokenContract = this.tokensContractMap[selectedToken.address];
+      const tokenContract = TokenService
+        .loadTokenContract(selectedToken.address, this.$store.state.web3.evmSigner);
       const approveValue = new BigNumber(10)
         .pow(selectedToken.decimals)
         .times(10 ** 18)
@@ -1352,38 +1319,7 @@ export default {
     },
 
     updateQuotaInfo() {
-      if (!this.tokensQuotaCounterId) {
-        // first call
-        this.tokensQuotaCounterId = -1;
-        // update
-        this.simulateSwap();
-        return;
-      }
-
-      this.tokensQuotaCheckerSec = 0;
-      const intervalId = setInterval(async () => {
-        this.isSumulateIntervalStarted = true;
-        this.tokensQuotaCheckerSec++;
-
-        if (this.tokensQuotaCheckerSec >= 3) {
-          if (this.tokensQuotaCounterId === intervalId) {
-            this.tokensQuotaCheckerSec = 0;
-            try {
-              // update
-              this.simulateSwap();
-            } catch (e) {
-              console.error(e);
-              clearInterval(intervalId);
-            } finally {
-              clearInterval(intervalId);
-            }
-          } else {
-            clearInterval(intervalId);
-          }
-        }
-      }, 1000);
-
-      this.tokensQuotaCounterId = intervalId;
+      this.simulateSwap();
     },
 
     initTabName(path: any, queryParams: any) {
@@ -1393,7 +1329,7 @@ export default {
       });
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

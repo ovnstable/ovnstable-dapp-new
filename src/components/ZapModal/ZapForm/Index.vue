@@ -297,7 +297,7 @@
       :tokens="zapAllTokens"
       :is-all-data-loaded="zapsLoaded"
       :selected-tokens="inputTokens"
-      :balances-loading="isTokensLoading.value"
+      :balances-loading="isTokensLoading"
       :user-account="account"
       remove-native
       @set-show="showSelectTokensModals"
@@ -353,6 +353,7 @@ import { MANAGE_FUNC, zapInStep } from '@/store/modals/waiting-modal.ts';
 import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
 import SwapSlippageSettings from '@/components/SwapSlippage/Index.vue';
 import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
+import TokenService from '@/services/TokenService/TokenService.ts';
 import { parseLogs } from './helpers.ts';
 
 enum zapMobileSection {
@@ -441,7 +442,6 @@ export default defineComponent({
   computed: {
     ...mapState('odosData', [
       'isTokensLoadedAndFiltered',
-      'tokensContractMap',
       'additionalSwapStepType',
       'lastZapResponseData',
       'lastPoolInfoData',
@@ -1718,7 +1718,8 @@ export default defineComponent({
         return;
       }
 
-      const tokenContract = this.tokensContractMap[selectedToken.address];
+      const tokenContract = TokenService
+        .loadTokenContract(selectedToken.address, this.$store.state.web3.evmSigner);
       const allowanceValue = await getAllowanceValue(
         tokenContract,
         this.account,
@@ -1762,7 +1763,8 @@ export default defineComponent({
         return;
       }
 
-      const tokenContract = this.tokensContractMap[selectedToken.address];
+      const tokenContract = TokenService
+        .loadTokenContract(selectedToken.address, this.$store.state.web3.evmSigner);
 
       const tx = await approveToken(
         tokenContract,

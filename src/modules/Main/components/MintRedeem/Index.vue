@@ -130,12 +130,12 @@
 <!-- eslint-disable no-underscore-dangle -->
 <!-- eslint-disable no-param-reassign -->
 <script lang="ts">
-import { mapActions, mapGetters, mapState } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import { deviceType } from '@/utils/deviceType.ts';
 import SwitchTabs from '@/components/SwitchTabs/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import TokenForm from '@/modules/Main/components/MintRedeem/TokenForm.vue';
-import { buildEvmContract, buildEvmContractForChain } from '@/utils/contractsMap.ts';
+import { buildEvmContract } from '@/utils/contractsMap.ts';
 import { MINTREDEEM_SCHEME } from '@/store/views/main/mintRedeem/mocks.ts';
 import debounce from 'lodash/debounce';
 import StepsRow, { mintRedeemStep } from '@/components/StepsRow/Index.vue';
@@ -151,8 +151,9 @@ import {
 } from '@/store/helpers/index.ts';
 import GasSettings from '@/modules/Main/components/MintRedeem/GasSettings.vue';
 import BigNumber from 'bignumber.js';
-import { ABI_Exchange, ABI_Market, ERC20_ABI } from '@/assets/abi/index.ts';
+import { ABI_Exchange, ABI_Market } from '@/assets/abi/index.ts';
 import { getAllowanceValue, approveToken } from '@/utils/contractApprove.ts';
+import TokenService from '@/services/TokenService/TokenService.ts';
 
 export default {
   name: 'MintRedeem',
@@ -202,7 +203,6 @@ export default {
     ...mapGetters('network', ['networkId']),
     ...mapGetters('accountData', ['account', 'originalBalance']),
     ...mapGetters('web3', ['contracts', 'evmSigner']),
-    ...mapState('odosData', ['tokensContractMap']),
 
     getFee() {
       return this.networkId === 8453 ? 0.01 : 0.04;
@@ -320,19 +320,12 @@ export default {
       this.currentStage = mintRedeemStep.APPROVE;
 
       const tokenData = this.inputToken;
-      let tokenContract = this.tokensContractMap[tokenData.address];
+      const tokenContract = TokenService
+        .loadTokenContract(tokenData.address, this.$store.state.web3.evmSigner);
       const approveValue = new BigNumber(10)
         .pow(this.inputToken.decimals)
         .times(10 ** 18)
         .toFixed(0);
-
-      if (!tokenContract) {
-        tokenContract = buildEvmContractForChain(
-          ERC20_ABI,
-          this.evmSigner,
-          tokenData.address,
-        );
-      }
 
       const networkId = this.networkId as keyof typeof MINTREDEEM_SCHEME;
       const pairData = MINTREDEEM_SCHEME[networkId]

@@ -26,6 +26,7 @@ export const useTokensQuery = (stateData: any) => {
       queryKey: ['tokenPrices', networkId.value],
       queryFn: () => TokenService.fetchTokenPricesByNetworkId(networkId.value),
       enabled: !!networkId.value,
+      refetchInterval: false,
     },
   );
 
@@ -87,5 +88,6 @@ export const useTokensQuery = (stateData: any) => {
     data: computed(getTokenInfo),
     error: allErrors,
     isFetching: isAnyFetching,
+    isBalancesLoading: balancesQuery.isLoading,
   };
 };

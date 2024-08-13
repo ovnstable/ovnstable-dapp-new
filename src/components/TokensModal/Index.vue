@@ -74,6 +74,7 @@
 </template>
 
 <script lang="ts">
+import { type PropType, type Ref } from 'vue';
 import SelectTokenWithSearch from '@/components/TokensModal/SelectTokenWithSearch.vue';
 import ModalComponent from '@/components/Modal/Index.vue';
 import Spinner from '@/components/Spinner/Index.vue';
@@ -115,11 +116,12 @@ export default {
       required: true,
     },
     balancesLoading: {
-      type: Boolean,
+      type: Boolean as PropType<boolean | Ref<boolean>>,
       required: false,
+      default: false,
     },
     isAllDataLoaded: {
-      type: Boolean,
+      type: Boolean as PropType<boolean | Ref<boolean>>,
       required: true,
     },
   },

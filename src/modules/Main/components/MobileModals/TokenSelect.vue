@@ -1,8 +1,8 @@
 <template>
   <ModalComponent
-    :customClass="'mob-menu'"
-    type-modal="custom"
     v-model="showModal"
+    :custom-class="'mob-menu'"
+    type-modal="custom"
     @close="closeModal"
   >
     <div
@@ -73,14 +73,13 @@
           <SelectTokenWithSearch
             :tokens="tokens"
             :selected-tokens="selectedTokens"
-            :removeNative="removeNative"
+            :remove-native="removeNative"
             :is-input-tokens="selectTokenInput"
             @add-token="selectToken"
             @remove-token="removeToken"
           />
         </div>
       </div>
-
     </div>
   </ModalComponent>
 </template>
@@ -91,6 +90,7 @@ import ModalComponent from '@/components/Modal/Index.vue';
 import Spinner from '@/components/Spinner/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
+import type { PropType, Ref } from 'vue';
 
 export default {
   name: 'SelectTokensModalMobile',
@@ -101,7 +101,6 @@ export default {
     ButtonComponent,
     BaseIcon,
   },
-  emits: ['set-show', 'add-token-to-list', 'remove-token-from-list', 'connect-wallet', 'reload'],
   props: {
     isShow: {
       type: Boolean,
@@ -134,10 +133,11 @@ export default {
       required: false,
     },
     isAllDataLoaded: {
-      type: Boolean,
+      type: Boolean as PropType<boolean | Ref<boolean>>,
       required: true,
     },
   },
+  emits: ['set-show', 'add-token-to-list', 'remove-token-from-list', 'connect-wallet', 'reload'],
   data() {
     return {
       showModal: false,
