@@ -7,6 +7,7 @@ import { ERC20_ABI } from '@/assets/abi/index.ts';
 import type {
   TTokenBalanceData, TTokenBalanceMap, TTokenInfo,
 } from '@/types/common/tokens';
+import { getTotalUserBalance } from './utils/index.ts';
 
 // Todo rewrite abstractly for any contract method and move to blockchain service
 const fetchTokenBalancesMulticall = async (
@@ -135,6 +136,10 @@ class BalanceService {
       balanceData: tokenBalanceMap[token.address],
     }));
     return tokenBalanceInfo;
+  }
+
+  public static getTotalOvnBalance(tokenList: TTokenInfo[]) {
+    return getTotalUserBalance(tokenList);
   }
 }
 

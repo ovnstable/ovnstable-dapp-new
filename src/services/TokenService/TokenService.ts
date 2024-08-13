@@ -1,7 +1,8 @@
 import odosApiService from '@/services/odos-api-service.ts';
-import { ODOS_DEPRECATED_NETWORKS } from '@/utils/const.ts';
+import { ODOS_DEPRECATED_NETWORKS, OVN_TOKENS } from '@/utils/const.ts';
 import { BLAST_TOKENS_PRICES } from '@/constants/tokens/manualTokensMap.ts';
 import { formatTokenInfo, loadContractForToken, mergeTokenLists } from './utils/index.ts';
+import type { TTokenInfo } from '@/types/common/tokens/index.ts';
 
 class TokenService {
   public static fetchTokens = async () => odosApiService.loadTokens();
@@ -38,6 +39,10 @@ class TokenService {
 
   public static loadTokenContract(tokenAddress: string, evmSigner: any) {
     return loadContractForToken(tokenAddress, evmSigner);
+  }
+
+  public static getFilterOvnTokens(tokenList: TTokenInfo[]) {
+    return tokenList.filter((token: TTokenInfo) => OVN_TOKENS.includes(token.symbol));
   }
 }
 
