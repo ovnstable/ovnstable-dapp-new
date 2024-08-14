@@ -324,8 +324,8 @@ export default {
     ...mapActions('swapModal', ['showSwapModal', 'showMintView']),
     ...mapActions('poolsData', ['setIsZapModalShow']),
     ...mapActions('odosData', [
-      'loadTokens',
-      'initContractData',
+      // 'loadTokens',
+      // 'initContractData',
       'triggerSuccessZapin',
     ]),
     ...mapActions('accountData', ['refreshBalance']),
@@ -402,8 +402,8 @@ export default {
     },
 
     async init() {
-      await this.loadTokens();
-      await this.initContractData();
+      // await this.loadTokens();
+      // await this.initContractData();
 
       const bus = useEventBus('odos-transaction-finished');
       bus.on(() => {

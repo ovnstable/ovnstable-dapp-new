@@ -264,6 +264,7 @@ import BigNumber from 'bignumber.js';
 import { computed, defineComponent } from 'vue';
 import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
 import TokenService from '@/services/TokenService/TokenService.ts';
+import type { TTokenInfo } from '@/types/common/tokens';
 
 export default defineComponent({
   name: 'SwapForm',
@@ -316,6 +317,8 @@ export default defineComponent({
       isSumulateIntervalStarted: false,
       slippagePercent: 0.05,
       firstSwipeClickOnApprove: false,
+
+      isInit: false as boolean,
     };
   },
   computed: {
@@ -503,6 +506,12 @@ export default defineComponent({
     },
   },
   watch: {
+    allTokensList(tokens: TTokenInfo[]) {
+      if (!this.isInit && tokens.length > 0) {
+        this.clearForm();
+        this.isInit = true;
+      }
+    },
     outputTokensWithSelectedTokensCount(val, oldVal) {
       // lock first
       if (val === 1) {
