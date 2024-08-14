@@ -5,6 +5,8 @@ import {
 import { loadOvernightTokenImage, loadTokenImage } from '@/utils/tokenLogo.ts';
 import BigNumber from 'bignumber.js';
 import { fixedByPrice } from '@/utils/numbers.ts';
+import { buildEvmContract } from '@/utils/contractsMap.ts';
+import { ERC20_ABI } from '@/assets/abi/index.ts';
 import type { TTokenBalanceData, TTokenInfo } from '@/types/common/tokens';
 
 export const mergeTokenLists = (fetchedTokens: any) => {
@@ -126,3 +128,9 @@ export const formatTokenInfoPrices = (tokens: any[], tokenPricesMap: any[]) => t
     ...data,
     price: new BigNumber(tokenPricesMap[data.address] ?? 0).toFixed(20),
   }));
+
+export const loadContractForToken = (tokenAddress: string, evmSigner: any) => buildEvmContract(
+  ERC20_ABI,
+  evmSigner,
+  tokenAddress,
+);

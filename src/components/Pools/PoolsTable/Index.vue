@@ -224,7 +224,7 @@ import { mapActions } from 'vuex';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import { formatMoneyComma, formatNumberToMln, formatNumberToThousands } from '@/utils/numbers.ts';
-import ZapInComponent from '@/modules/Main/components/ZapModal/Index.vue';
+import ZapInComponent from '@/components/ZapModal/Index.vue';
 import { buildLink, checkIsEveryStable } from '@/store/views/main/pools/helpers.ts';
 import { APY_POOLS } from '@/store/views/main/pools/mocks.ts';
 

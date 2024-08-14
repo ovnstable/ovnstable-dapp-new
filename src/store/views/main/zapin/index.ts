@@ -237,10 +237,12 @@ const actions = {
   }: any) {
     const chainName = rootState.network.networkName;
     const platformName = rebalanceChainMap[chainName];
+    console.log(chainName, platformName, '__abiFile1');
     const abiFileSrc = zapAbiSrcMap.v3?.(chainName, platformName);
 
     const abiFile = await loadAbi(abiFileSrc);
 
+    console.log(abiFile, '__abiFile2');
     const positionContract = buildEvmContract(
       abiFile.abi,
       rootState.web3.evmSigner,

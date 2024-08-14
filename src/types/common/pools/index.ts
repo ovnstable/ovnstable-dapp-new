@@ -41,3 +41,19 @@ export type TPoolInfo = {
     isOpened: true,
     stableFishUrl: null
 }
+
+export enum POOL_CATEGORIES {
+    ALL,
+    VOLATILE,
+    STABLE,
+    V2,
+    V3,
+    TOKENPLUS,
+    OVN,
+  }
+
+export type TFilterPoolsParams = {
+    networkIds: number[],
+    category: POOL_CATEGORIES,
+    searchQuery: string,
+}

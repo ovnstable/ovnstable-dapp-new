@@ -162,7 +162,6 @@
 </template>
 
 <script lang="ts">
-import { mapGetters } from 'vuex';
 import { getNewInputToken, getTokenByAddress } from '@/store/helpers/index.ts';
 import { poolTokensForZapMap } from '@/store/views/main/zapin/mocks.ts';
 import { formatInputTokens } from '@/utils/tokens.ts';
@@ -170,6 +169,7 @@ import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import BN from 'bignumber.js';
 import { REWARD_TOKEN } from '@/store/views/main/zapin/index.ts';
 import { loadTokenImage } from '@/utils/tokenLogo.ts';
+import { allTokensMap } from '@/hooks/fetch/useTokensQuery.ts';
 
 export default {
   name: 'PositionForm',
@@ -177,6 +177,11 @@ export default {
     BaseIcon,
   },
   props: {
+    allTokensList: {
+      type: Array,
+      required: false,
+      default: null,
+    },
     zapPool: {
       type: Object,
       required: false,
@@ -191,7 +196,6 @@ export default {
     };
   },
   computed: {
-    ...mapGetters('odosData', ['allTokensMap', 'allTokensList']),
     getSymbolToken() {
       if (this.zapPool.platform[0] === 'Pancake') return REWARD_TOKEN.CAKE;
       if (this.zapPool.platform[0] === 'Aerodrome') return REWARD_TOKEN.AERO;
@@ -209,7 +213,7 @@ export default {
       return new BN(this.zapPool.emissions).div(10 ** 18).toFixed(6);
     },
     getRewardTokenInfo() {
-      const tokenInfo = this.allTokensMap.values().find((_: any) => {
+      const tokenInfo = allTokensMap(this.allTokensList).values().find((_: any) => {
         const allTokSymbol = _?.symbol?.toLowerCase();
         return allTokSymbol === this.getSymbolToken?.toLowerCase();
       });
@@ -217,7 +221,7 @@ export default {
       return tokenInfo || null;
     },
     totalRewards() {
-      if (this.allTokensList === 0) return 0;
+      if (this.allTokensList.length === 0) return 0;
 
       const res: BN = this.rewardTokens.reduce((acc: BN, curr: any) => {
         const val = new BN(curr.value).times(curr.selectedToken?.price).toFixed(6);
@@ -289,7 +293,7 @@ export default {
     initRewardTokens() {
       const rewardToken = this.zapPool.rewards.tokens.map((_: any) => {
         const rewardData: any = Object.entries(_)[0];
-        const tokenInfo = this.allTokensMap.values().find((_: any) => {
+        const tokenInfo = allTokensMap(this.allTokensList).values().find((_: any) => {
           const allTokSymbol = _?.symbol?.toLowerCase();
           return allTokSymbol === rewardData[0]?.toLowerCase();
         });

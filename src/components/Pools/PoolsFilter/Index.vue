@@ -140,7 +140,6 @@ export default {
       this.$emit('search', val);
     },
     changeNetwork(val: number | string) {
-      console.log(val);
       this.$emit('change-network', val);
     },
   },

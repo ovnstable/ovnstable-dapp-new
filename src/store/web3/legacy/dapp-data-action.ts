@@ -5,16 +5,12 @@ const getters = {};
 
 const actions = {
 
-  async resetUserData({
-    commit, dispatch, getters, rootState,
-  }: any) {
+  async resetUserData({ dispatch }: any) {
     dispatch('accountData/resetBalance', null, { root: true });
     dispatch('accountData/resetUns', null, { root: true });
   },
 
-  async updateUserData({
-    commit, dispatch, getters, rootState,
-  }: any) {
+  async updateUserData({ dispatch }: any) {
     console.log('REFRESHUSER');
     await dispatch('web3/initWeb3', null, { root: true });
     dispatch('accountData/refreshBalance', null, { root: true });

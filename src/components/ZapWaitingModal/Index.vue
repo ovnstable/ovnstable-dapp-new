@@ -54,7 +54,7 @@
 import { mapState } from 'vuex';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import Spinner from '@/components/Spinner/Index.vue';
-import PoolLabel from '@/modules/Main/components/ZapModal/PoolLabel.vue';
+import PoolLabel from '@/components/ZapModal/PoolLabel.vue';
 import { defineComponent, type PropType } from 'vue';
 import {
   type zapInStep, type rebalanceStep, type withdrawStep, ZAPIN_MAP,

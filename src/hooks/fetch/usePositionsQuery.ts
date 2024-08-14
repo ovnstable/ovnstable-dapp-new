@@ -50,10 +50,8 @@ export const usePositionsQuery = (stateData: any) => {
     return [];
   });
 
-  console.log(isAnyLoading);
-
   return {
-    isLoading: isAnyLoading.value,
+    isLoading: isAnyLoading,
     // isError: isAnyError,
     data: positionData,
     // error: allErrors,

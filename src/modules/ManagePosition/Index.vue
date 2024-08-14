@@ -13,7 +13,8 @@
     </div>
 
     <PoolData
-      v-if="zapPool"
+      v-if="zapPool && allTokensList.length > 0"
+      :all-tokens-list="allTokensList"
       :zap-pool="zapPool"
     />
 
@@ -40,6 +41,7 @@
       <RebalanceForm
         :zap-pool="zapPool"
         :active-tab="activeTab"
+        :all-tokens-list="allTokensList"
       />
     </div>
     <div
@@ -72,6 +74,7 @@
 import {
   mapActions,
   mapGetters,
+  useStore,
 } from 'vuex';
 import SuccessZapModal from '@/modules/ModalTemplates/SuccessModal/SuccessZapModal.vue';
 import RebalanceForm from '@/modules/ManagePosition/ZapForm/Index.vue';
@@ -82,6 +85,8 @@ import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import TableSkeleton from '@/components/TableSkeleton/Index.vue';
 import SwitchTabs from '@/components/SwitchTabs/Index.vue';
 import PoolData from '@/modules/ManagePosition/PoolData.vue';
+import { usePositionsQuery } from '@/hooks/fetch/usePositionsQuery.ts';
+import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
 
 export enum MANAGE_TAB {
   REBALANCE,
@@ -101,6 +106,17 @@ export default {
     BaseIcon,
     TableSkeleton,
     SwitchTabs,
+  },
+  setup() {
+    const store = useStore() as any;
+
+    const { data: getUserPositions } = usePositionsQuery(store.state);
+    const { data: allTokensList } = useTokensQuery(store.state);
+
+    return {
+      allTokensList,
+      getUserPositions,
+    };
   },
   data() {
     return {
@@ -124,13 +140,17 @@ export default {
     };
   },
   computed: {
-    ...mapGetters('zapinData', [
-      'getUserPositions',
-    ]),
     ...mapGetters('accountData', ['account']),
   },
+  watch: {
+    account() {
+      this.loadPositionContract(this.account);
+    },
+    getUserPositions() {
+      this.searchPool();
+    },
+  },
   async mounted() {
-    console.log(this.$route, '__zapPool');
     if (this.getUserPositions?.length === 0) this.init();
     else this.searchPool();
   },
@@ -148,8 +168,6 @@ export default {
       this.activeTab = id;
     },
     searchPool() {
-      console.log(this.getUserPositions, '__foundPool1');
-
       const foundPool = this.getUserPositions
         .find((_: any) => _?.tokenId?.toString() === this.$route?.params?.id);
 
@@ -164,13 +182,10 @@ export default {
       await this.loadTokens();
       await this.initContractData();
       await this.initData();
-      await this.loadPositionContract(this.account);
       this.$store.commit('odosData/changeState', {
         field: 'isTokensLoadedAndFiltered',
         val: true,
       });
-
-      this.searchPool();
     },
   },
 };

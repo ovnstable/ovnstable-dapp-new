@@ -1,83 +1,39 @@
-/* eslint-disable import/prefer-default-export */
-import { isArray } from 'lodash';
-import {
-  zapPlatformSupportList, HOT_POOLS, POOL_TAG, NEW_POOLS,
-} from '@/store/views/main/pools/mocks.ts';
-import { initAggregators } from '@/store/views/main/pools/helpers.ts';
-import { poolTokensForZapMap } from '@/store/views/main/zapin/mocks.ts';
-import { loadTokenImage } from '@/utils/tokenLogo.ts';
+import { ALL_STABLE_TOKENS } from '@/constants/tokens/index.ts';
+import { POOL_WHITE_LIST, SECOND_MIN_AMOUNT } from '@/constants/pools/index.ts';
 
-// TODO: check and remove unnecessary conditions
-export const getFormatPools = async (data: any, networkConfig: any): Promise<[]> => {
-  if (data) {
-    const poolsList = data.map((poolInfo: any) => {
-      let pool = poolInfo;
+export const getFilterDisplayedPools = (
+  pools: any[],
+  filterByTvl: boolean,
+) => {
+  const minTvl = filterByTvl ? SECOND_MIN_AMOUNT : 0;
 
-      let tokenNames = pool.id.name.split('/');
-      let poolTag = null;
+  const displayedPools = pools.filter((pool) => {
+    if (!!POOL_WHITE_LIST[pool?.address.toLowerCase()] || pool.tvl >= minTvl) return true;
+    return false;
+  });
 
-      if (pool?.id?.name === 'Convex USD+FRAXBP') {
-        tokenNames = ['USD+', 'FRAX'];
-        pool.id.name = 'USD+/FRAXBP';
-      }
+  return displayedPools;
+};
 
-      const token0Icon = loadTokenImage(tokenNames[0]);
-      const token1Icon = loadTokenImage(tokenNames[1]);
-      const token2Icon = tokenNames[2] ? loadTokenImage(tokenNames[2]) : null;
-      const token3Icon = tokenNames[3] ? loadTokenImage(tokenNames[3]) : null;
+export const checkIsEveryStableToken = (tokenSymbols: string[]) => {
+  if (tokenSymbols.every((id: string) => ALL_STABLE_TOKENS.includes(id.toUpperCase()))) return true;
+  return false;
+};
 
-      if (
-        pool
-          && zapPlatformSupportList?.includes(pool.platform)
-          && Object.keys(poolTokensForZapMap).some(
-            (item) => item.toLowerCase() === pool.id.address.toLowerCase(),
-          )
-      ) {
-        pool.zappable = true;
-      }
+export const checkIsEveryStable = (pool: any) => {
+  const poolTokens = pool.name.split('/');
+  if (poolTokens.every((id: string) => ALL_STABLE_TOKENS.includes(id))) return true;
+  return false;
+};
 
-      if (pool && pool?.tvl >= 0) {
-        pool = initAggregators(pool);
+export const checkIsUsdPlusStable = (pool: any) => {
+  const poolTokens = pool.name.split('/');
+  if (poolTokens.some((id: string) => ['USD+'].includes(id))) return true;
+  return false;
+};
 
-        const newName = pool.id.name.toUpperCase();
-
-        if (HOT_POOLS.includes(pool.id.address)) poolTag = POOL_TAG.HOT;
-        if (NEW_POOLS.includes(pool.id.address)) poolTag = POOL_TAG.NEW;
-        // if (LOW_TVL_PROMOTE.includes(pool.id.address)) poolTag = POOL_TAG.NEW;
-
-        return {
-          id: pool.id.name + pool.tvl + pool.platform,
-          name: newName,
-          token0Icon,
-          token1Icon,
-          token2Icon,
-          token3Icon,
-          poolVersion: pool.pool_version,
-          chain: networkConfig.networkId,
-          chainName: networkConfig.networkName,
-          address: pool.id.address,
-          platform: isArray(pool.platform) ? pool.platform : [pool.platform],
-          tvl: pool.tvl,
-          apr: pool.apr,
-          poolTag,
-          skimEnabled: pool.skimEnabled,
-          explorerUrl: networkConfig.explorerUrl,
-          zappable: pool.zappable,
-          cardOpened: false,
-          data: pool,
-          aggregators: pool.aggregators,
-          promoted: pool.promoted,
-          poolNameForAgregator: pool.poolNameForAgregator,
-          isOpened:
-              !(pool.aggregators && pool.aggregators.length),
-          stableFishUrl: null,
-        };
-      }
-
-      return [];
-    });
-
-    return poolsList;
-  }
-  return [];
+export const checkIsOVNVolatile = (pool: any) => {
+  const poolTokens = pool.name.split('/');
+  if (poolTokens.some((id: string) => ['OVN'].includes(id))) return true;
+  return false;
 };

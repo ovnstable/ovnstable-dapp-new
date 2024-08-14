@@ -7,6 +7,7 @@ import { ERC20_ABI } from '@/assets/abi/index.ts';
 import type {
   TTokenBalanceData, TTokenBalanceMap, TTokenInfo,
 } from '@/types/common/tokens';
+import { getTotalUserBalance } from './utils/index.ts';
 
 // Todo rewrite abstractly for any contract method and move to blockchain service
 const fetchTokenBalancesMulticall = async (
@@ -51,7 +52,10 @@ const handleNativeBal = async (provider: any, account: string) => (await provide
   .getBalance(account))
   .toString();
 
-const formatBalanceInUsd = (fBalance: BigNumber, price: string) => new BigNumber(fBalance).times(price ?? '0').toFixed();
+const getHandleNoPrice = (price: string) => (!price || Number(price) === 0 ? '1' : price);
+
+const formatBalanceInUsd = (fBalance: BigNumber, price: string) => new BigNumber(fBalance)
+  .times(getHandleNoPrice(price)).toFixed();
 
 export const getFormatTokenBalance = (token: TTokenInfo, balanceData: TTokenBalanceData) => {
   const balance = balanceData[token.address]?.toString() ?? '0';
@@ -135,6 +139,10 @@ class BalanceService {
       balanceData: tokenBalanceMap[token.address],
     }));
     return tokenBalanceInfo;
+  }
+
+  public static getTotalOvnBalance(tokenList: TTokenInfo[]) {
+    return getTotalUserBalance(tokenList);
   }
 }
 
