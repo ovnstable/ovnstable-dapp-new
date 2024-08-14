@@ -24,7 +24,7 @@
         class="popper-list"
       >
         <div
-          v-for="(item, key) in (userBalancesList as any)"
+          v-for="(item, key) in userBalancesList"
           :key="key"
           class="networks-list__item app-header__balance-item"
           @click="close"

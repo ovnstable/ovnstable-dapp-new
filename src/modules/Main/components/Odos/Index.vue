@@ -294,7 +294,7 @@ export default defineComponent({
     } = useTokensQuery(store.state);
 
     return {
-      allTokensList,
+      allTokensList: computed(() => allTokensList).value,
       isAllDataLoaded: computed(() => !isLoading.value),
       isAllDataTrigger: computed(() => !isLoading.value),
       isBalancesLoading,
@@ -506,6 +506,12 @@ export default defineComponent({
     },
   },
   watch: {
+    networkId() {
+      this.clearForm();
+    },
+    account() {
+      this.clearForm();
+    },
     allTokensList(tokens: TTokenInfo[]) {
       if (!this.isInit && tokens.length > 0) {
         this.clearForm();
