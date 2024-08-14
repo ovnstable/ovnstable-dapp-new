@@ -64,7 +64,7 @@ const getters = {
 
 const actions = {
 
-  async resetBalance({ commit, dispatch, getters }: any) {
+  async resetBalance({ commit }: any) {
     console.log('AccountData: resetBalance');
 
     commit('setOriginalBalance', []);
@@ -74,14 +74,14 @@ const actions = {
     commit('setActionAssetBalance', {});
   },
 
-  async resetUns({ commit, dispatch, getters }: any) {
+  async resetUns({ commit }: any) {
     console.log('AccountData: resetUns');
 
     commit('setUns', null);
   },
 
   async refreshBalance({
-    commit, dispatch, getters, rootState,
+    commit, getters, rootState,
   }: any) {
     if (!getters.account) return;
 
