@@ -390,8 +390,8 @@ export default {
     ...mapActions('swapModal', ['showSwapModal', 'showMintView']),
     ...mapActions('poolsData', ['setIsZapModalShow']),
     ...mapActions('odosData', [
-      'initContractData',
-      'initAccountData',
+      // 'initContractData',
+      // 'initAccountData',
       'startSwapConfirmTimer',
       'stopSwapConfirmTimer',
       'triggerSuccessZapin',
@@ -462,7 +462,7 @@ export default {
         field: 'listOfBuyTokensAddresses',
         val: [poolTokens[0].address, poolTokens[1].address],
       });
-      await this.initContractData();
+      // await this.initContractData();
       await this.loadZapContract();
 
       if (!this.isAvailableOnNetwork) this.mintAction();
@@ -475,7 +475,7 @@ export default {
     firstInit() {
       this.initEvent();
       this.clearAndInitForm();
-      this.initAccountData();
+      // this.initAccountData();
     },
 
     async initEvent() {
