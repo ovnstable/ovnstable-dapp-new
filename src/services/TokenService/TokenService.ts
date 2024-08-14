@@ -9,7 +9,11 @@ class TokenService {
 
   public static async fetchTokenPricesByNetworkId(chainId: number | string): Promise<any> {
     if (ODOS_DEPRECATED_NETWORKS.includes(Number(chainId))) {
-      return { ...BLAST_TOKENS_PRICES }[chainId];
+      console.log('__tokenService', { ...BLAST_TOKENS_PRICES }[chainId]);
+      return {
+        currencyId: 'USD',
+        tokenPrices: { ...BLAST_TOKENS_PRICES }[chainId],
+      };
     }
     return odosApiService.loadPrices(chainId);
   }
