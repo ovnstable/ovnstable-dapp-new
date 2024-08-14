@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { getFilteredPoolTokens, loadPriceTrigger } from '@/store/helpers/index.ts';
 import { MINTREDEEM_SCHEME } from '@/store/views/main/mintRedeem/mocks.ts';
+import type { TTokenInfo } from '@/types/common/tokens';
 
 type TTokensList = Record<number, any[][]>
 
@@ -17,6 +18,32 @@ const getters = {
 };
 
 const actions = {
+  // Legacy methods. TODO remove
+
+  // Modified method
+  async initTokenSchema({ commit }: any, props: { tokenList: TTokenInfo[], networkId: number }) {
+    const { tokenList, networkId } = props;
+    const networkMintRedeemScheme = MINTREDEEM_SCHEME[networkId as keyof typeof MINTREDEEM_SCHEME];
+
+    if (!networkMintRedeemScheme || tokenList.length === 0) return;
+
+    const tokenMap: {[key: string]: TTokenInfo} = tokenList.reduce((acc, token) => (
+      { ...acc, [token.address]: token }
+    ), {});
+
+    // eslint-disable-next-line array-callback-return, consistent-return
+    const mintRedeemList = networkMintRedeemScheme.map((pair: any) => {
+      if (tokenMap[pair.token0] && tokenMap[pair.token1]) {
+        return [tokenMap[pair.token0], tokenMap[pair.token1]];
+      }
+    });
+
+    commit('changeTokenList', {
+      [networkId]: mintRedeemList,
+    });
+  },
+
+  // Original legacy method
   async initTokens({ commit, rootState }: any) {
     const networkId = rootState.network.networkId as keyof typeof MINTREDEEM_SCHEME;
 

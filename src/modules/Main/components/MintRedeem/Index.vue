@@ -130,7 +130,7 @@
 <!-- eslint-disable no-underscore-dangle -->
 <!-- eslint-disable no-param-reassign -->
 <script lang="ts">
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, useStore } from 'vuex';
 import { deviceType } from '@/utils/deviceType.ts';
 import SwitchTabs from '@/components/SwitchTabs/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
@@ -154,8 +154,11 @@ import BigNumber from 'bignumber.js';
 import { ABI_Exchange, ABI_Market } from '@/assets/abi/index.ts';
 import { getAllowanceValue, approveToken } from '@/utils/contractApprove.ts';
 import TokenService from '@/services/TokenService/TokenService.ts';
+import { defineComponent } from 'vue';
+import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
+import type { TTokenInfo } from '@/types/common/tokens';
 
-export default {
+export default defineComponent({
   name: 'MintRedeem',
   components: {
     SwitchTabs,
@@ -163,6 +166,19 @@ export default {
     TokenForm,
     GasSettings,
     ButtonComponent,
+  },
+  setup: () => {
+    const store = useStore() as any;
+
+    const {
+      data: allTokensList,
+      isLoading,
+    } = useTokensQuery(store.state);
+
+    return {
+      allTokensList,
+      isLoading,
+    };
   },
   data() {
     return {
@@ -172,7 +188,6 @@ export default {
       activeWrapTab: -1,
       approveLoading: false,
       isApprovedToken: false,
-      isLoading: false,
       wrapVal: 1,
       updatingWrapUnwrapAmount: false,
       currentStage: mintRedeemStep.START,
@@ -283,37 +298,30 @@ export default {
         this.checkApprove(this);
       }
     },
-    networkId() {
-      this.initMintRedeem();
+    allTokensList(tokenList: TTokenInfo[]) {
+      console.log('__watchAllTokenList', this.networkId);
+      const params = {
+        tokenList,
+        networkId: this.networkId,
+      };
+      if (tokenList.length > 0) this.initTokenSchema(params);
     },
-  },
-  mounted() {
-    this.initMintRedeem();
   },
   methods: {
     ...mapActions('walletAction', ['connectWallet']),
-    ...mapActions('mintRedeem', ['initTokens']),
+    ...mapActions('mintRedeem', ['initTokenSchema']),
     ...mapActions('gasPrice', ['refreshGasPrice']),
     ...mapActions('accountData', ['refreshBalance']),
     ...mapActions('accTransaction', ['putTransaction']),
     ...mapActions('errorModal', ['showErrorModalWithMsg']),
     ...mapActions('waitingModal', ['showWaitingModal', 'closeWaitingModal']),
     ...mapActions('successModal', ['showSuccessModal']),
-    ...mapActions('odosData', ['loadTokens']),
     gasChange() {
       console.log('gasChange');
     },
     initForm() {
       this.inputToken = getNewInputToken();
       this.outputToken = getNewInputToken();
-    },
-    async initMintRedeem() {
-      this.isLoading = true;
-      await this.loadTokens();
-
-      this.initForm();
-      this.initTokens();
-      this.isLoading = false;
     },
     async approveTrigger() {
       this.showWaitingModal('Approving in process');
@@ -617,7 +625,6 @@ export default {
 
           this.putTransaction(tx);
           this.closeWaitingModal();
-          this.initMintRedeem();
         }
 
         this.refreshBalance();
@@ -669,7 +676,7 @@ export default {
       self.updatingWrapUnwrapAmount = true;
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

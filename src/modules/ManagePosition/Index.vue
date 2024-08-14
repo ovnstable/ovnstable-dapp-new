@@ -158,9 +158,7 @@ export default {
     ...mapActions('odosData', [
       'triggerSuccessZapin',
     ]),
-    ...mapActions('poolsData', ['loadPools']),
     ...mapActions('zapinData', ['loadPositionContract']),
-    ...mapActions('odosData', ['loadTokens', 'initData', 'initContractData']),
     redirect() {
       this.$router.push('/positions');
     },
@@ -177,14 +175,6 @@ export default {
       this.$store.commit('odosData/changeState', {
         field: 'isTokensLoadedAndFiltered',
         val: false,
-      });
-      await this.loadPools();
-      await this.loadTokens();
-      await this.initContractData();
-      await this.initData();
-      this.$store.commit('odosData/changeState', {
-        field: 'isTokensLoadedAndFiltered',
-        val: true,
       });
     },
   },

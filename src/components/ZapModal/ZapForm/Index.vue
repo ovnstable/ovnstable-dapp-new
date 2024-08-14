@@ -725,12 +725,10 @@ export default defineComponent({
   },
   methods: {
     ...mapActions('odosData', [
-      'initContractData',
       'loadBalances',
       'triggerSuccessZapin',
       'startSwapConfirmTimer',
       'stopSwapConfirmTimer',
-      'initAccountData',
     ]),
     ...mapActions('accountData', ['refreshBalance']),
     ...mapActions('zapinData', ['loadZapContract']),
@@ -818,14 +816,12 @@ export default defineComponent({
         field: 'listOfBuyTokensAddresses',
         val: [poolTokens[0].address, poolTokens[1].address],
       });
-      this.initContractData();
       this.loadZapContract();
     },
 
     firstInit() {
       this.initEvent();
       this.clearAndInitForm();
-      this.initAccountData();
     },
 
     async initEvent() {
