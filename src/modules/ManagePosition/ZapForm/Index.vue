@@ -162,7 +162,7 @@
         </div>
       </div>
       <ZapInStepsRow
-        v-if="zapPool.chain === networkId && isTokensLoadedAndFiltered"
+        v-if="zapPool.chain === networkId"
         class="zapin__modal-steps"
         :current-stage="currentStage"
       />
@@ -177,6 +177,7 @@ import { useEventBus } from '@vueuse/core';
 import { ethers } from 'ethers';
 import {
   mapActions, mapGetters, mapState, mapMutations,
+  useStore,
 } from 'vuex';
 import {
   getNewOutputToken,
@@ -201,6 +202,7 @@ import ZapInStepsRow from '@/components/StepsRow/ZapinRow/RebalanceRow.vue';
 import { cloneDeep } from 'lodash';
 import { markRaw } from 'vue';
 import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
+import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
 import { parseLogs } from './helpers.ts';
 
 enum zapMobileSection {
@@ -237,7 +239,17 @@ export default {
       default: 'ALL',
     },
   },
-  emits: ['close-form'],
+  setup: () => {
+    const store = useStore() as any;
+
+    const {
+      isBalancesLoading,
+    } = useTokensQuery(store.state);
+
+    return {
+      isBalancesLoading,
+    };
+  },
   data() {
     return {
       positionStaked: true,
@@ -281,9 +293,7 @@ export default {
   },
   computed: {
     ...mapState('odosData', [
-      'isTokensLoadedAndFiltered',
       'lastPoolInfoData',
-      'isBalancesLoading',
       'odosReferalCode',
     ]),
     ...mapState('zapinData', [
@@ -343,16 +353,8 @@ export default {
       if (val) this.clearAndInitForm();
       if (!val) this.outputTokens = [getNewOutputToken()];
     },
-
-    isTokensLoadedAndFiltered(val) {
-      if (val) {
-        this.clearAndInitForm();
-      }
-    },
     networkId(newVal) {
       if (newVal) {
-        this.$store.commit('odosData/changeState', { field: 'isTokensLoadedAndFiltered', val: false });
-
         if (!this.isAvailableOnNetwork) {
           this.mintAction();
         }

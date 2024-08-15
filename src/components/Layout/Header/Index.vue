@@ -73,12 +73,12 @@
             </h1>
           </router-link>
           <div
-            v-if="account && balancesLoading && !deviceSize.isMobile"
+            v-if="account && isBalancesLoading && !deviceSize.isMobile"
             :class="['lineLoader', 'app-header__balance-loader']"
           />
 
           <div
-            v-if="account && balancesLoading && deviceSize.isDesktop"
+            v-if="account && isBalancesLoading && deviceSize.isDesktop"
             :class="['lineLoader']"
           />
           <UserBalances
@@ -98,12 +98,12 @@
             @close="showMobMenu = false"
           />
           <div
-            v-if="account && accountRenderLoading"
+            v-if="account && isBalancesLoading"
             class="lineLoader"
           />
 
           <ButtonComponent
-            v-else-if="walletConnected && account && !accountRenderLoading"
+            v-else-if="walletConnected && account"
             class="app-header__content-account"
             btn-styles="secondary"
             @click="openAccountModal"
@@ -204,7 +204,7 @@
 </template>
 
 <script lang="ts">
-import { mapGetters, mapActions, mapState } from 'vuex';
+import { mapGetters, mapActions, useStore } from 'vuex';
 import SwitchComponent from '@/components/Switch/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import SpinnerComponent from '@/components/Spinner/Index.vue';
@@ -217,6 +217,7 @@ import { sortedChainsByTVL } from '@/store/helpers/index.ts';
 import AccountModal from '@/modules/Account/Index.vue';
 import { deviceType } from '@/utils/deviceType.ts';
 import { useEventBus } from '@vueuse/core';
+import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
 import UserBalances from './UserBalances.vue';
 import MobileMenu from './MobileMenu.vue';
 
@@ -238,6 +239,17 @@ export default {
     AccountModal,
     BaseIcon,
   },
+  setup: () => {
+    const store = useStore() as any;
+
+    const {
+      isBalancesLoading,
+    } = useTokensQuery(store.state);
+
+    return {
+      isBalancesLoading,
+    };
+  },
   data() {
     return {
       selectedProfileColor: localStorage.getItem('selectedProfileColor'),
@@ -249,20 +261,10 @@ export default {
     };
   },
   computed: {
-    ...mapState('odosData', ['isBalancesLoading', 'isTokensLoadedAndFiltered', 'firstRenderDone', 'isTokensLoading']),
     ...mapGetters('walletAction', ['walletConnected']),
     ...mapGetters('accountData', ['account']),
     ...mapGetters('network', ['networkId', 'isShowDeprecated']),
     ...mapGetters('theme', ['light']),
-
-    balancesLoading() {
-      if (this.isTokensLoading) return true;
-      return false;
-    },
-    accountRenderLoading() {
-      if (this.firstRenderDone) return false;
-      return (this.account && this.isBalancesLoading) || !this.isTokensLoadedAndFiltered;
-    },
     activeNetworkData() {
       const data = appNetworksData.find((_) => _.chain === this.networkId);
       return data || appNetworksData[0];
