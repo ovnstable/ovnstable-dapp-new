@@ -6,7 +6,7 @@
     >
       <div class="input-tokens__row">
         <InputComponent
-          customClass="input-tokens__field"
+          custom-class="input-tokens__field"
           :value="tokenInfo.value"
           is-custom
           placeholder="0"
@@ -17,23 +17,23 @@
 
         <div
           v-if="tokenInfo.selected"
+          class="input-tokens__selected"
           @click="toggleSelect"
           @keypress="toggleSelect"
-          class="input-tokens__selected"
         >
           <img
             :src="tokenInfo?.logoUrl"
             alt="select-token"
           >
           <span>
-            {{tokenInfo?.symbol}}
+            {{ tokenInfo?.symbol }}
           </span>
         </div>
         <div
           v-else
+          class="input-tokens__select"
           @click="toggleSelect"
           @keypress="toggleSelect"
-          class="input-tokens__select"
         >
           Select token
         </div>
@@ -43,7 +43,7 @@
           <div
             v-if="tokenInfo.value && tokenInfo.price"
           >
-            ~ ${{formatMoney(tokenInfo.value * tokenInfo.price, 2)}}
+            ~ ${{ formatMoney(tokenInfo.value * tokenInfo.price, 2) }}
           </div>
           <div v-else>
             $0
@@ -57,7 +57,7 @@
           <div class="select-token-balance-text">
             <div v-if="tokenInfo && tokenInfo.symbol">
               <span class="select-token-balance-text-enabled">
-                <span v-if="isInputToken">Max</span> {{tokenBalance}}
+                <span v-if="isInputToken">Max</span> {{ tokenBalance }}
               </span>
             </div>
           </div>
@@ -73,15 +73,13 @@
         :tokens-list="tokensList"
         :reverse-array="reverseArray"
         :is-input-token="isInputToken"
-        :selected-token="tokenFullData.symbol"
+        :selected-token="tokenInfo.symbol"
         :active-wrap="activeWrap"
         :is-loading="isLoading"
         @add-token="addSelectedTokenToList"
-        @remove-token="removeSelectedTokenFromList"
         @close-select="toggleSelect"
       />
     </Transition>
-
   </div>
 </template>
 
@@ -91,17 +89,10 @@ import { mapGetters } from 'vuex';
 import InputComponent from '@/components/Input/Index.vue';
 import { formatMoney, fixedByPrice } from '@/utils/numbers.ts';
 import TokensChooseForm from '@/modules/Main/components/MintRedeem/TokenSelect/Index.vue';
-import { deviceType } from '@/utils/deviceType.ts';
-import BigNumber from 'bignumber.js';
 import { MINTREDEEM_SCHEME } from '@/store/views/main/mintRedeem/mocks.ts';
 import { mintRedeemTypes, mintWrapStatus } from './types/index.ts';
 
 const wrapStatusArr = [mintWrapStatus.WRAP, mintWrapStatus.UNWRAP];
-
-// import {
-//   wrapStatus,
-// } from '@/modules/Main/components/MintRedeem/types/index.ts';
-// import { MINTREDEEM_SCHEME } from '@/store/views/main/mintRedeem/mocks';
 
 export default {
   name: 'TokenForm',
@@ -120,16 +111,7 @@ export default {
       required: true,
       default: () => {},
     },
-    isTokenRemovable: {
-      type: Boolean,
-      required: true,
-    },
     isLoading: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-    disabled: {
       type: Boolean,
       required: false,
       default: false,
@@ -145,6 +127,7 @@ export default {
       default: true,
     },
   },
+  emits: { 'update-token': null, 'add-token': null },
   data() {
     return {
       showTokenSelect: false,
@@ -153,22 +136,14 @@ export default {
   computed: {
     ...mapGetters('network', ['networkId']),
     ...mapGetters('mintRedeem', ['tokensListGetter']),
-    ...mapGetters('accountData', ['account', 'originalBalance']),
-    deviceSize() {
-      return deviceType();
-    },
     tokenBalance() {
-      if (!this.originalBalance) return '0';
-      const balanceData = this.originalBalance.find((_: any) => _.symbol === this.tokenInfo.symbol);
-      if (!balanceData) return '0';
-
-      const formattedBalance = new BigNumber(balanceData.balance)
-        .div(10 ** this.tokenInfo.decimals)
-        .toNumber();
-      return formatMoney(formattedBalance, fixedByPrice(formattedBalance));
+      if (!this.tokenInfo.balanceData.balanceInUsd) return '0';
+      const usdBalance = Number(this.tokenInfo.balanceData.balanceInUsd);
+      return formatMoney(usdBalance, fixedByPrice(usdBalance));
     },
     tokensList() {
       let list = this.tokensListGetter[this.networkId];
+      console.log('__tokensListGetter', list);
       const networkId = this.networkId as keyof typeof MINTREDEEM_SCHEME;
       const wrapUnwrapPairs = MINTREDEEM_SCHEME[networkId]
         .filter((_) => _.methodName[0] === mintRedeemTypes.WRAP);
@@ -196,10 +171,6 @@ export default {
 
       return [];
     },
-
-    tokenFullData() {
-      return this.tokenInfo;
-    },
   },
   methods: {
     formatMoney,
@@ -225,9 +196,6 @@ export default {
       });
 
       return arr;
-    },
-    removeSelectedTokenFromList() {
-      console.log('removeSelectedTokenFromList');
     },
     addSelectedTokenToList(token: any, isInputToken: boolean) {
       this.$emit('add-token', token, isInputToken);
@@ -276,14 +244,14 @@ export default {
     inputUpdate(value: any) {
       // todo rates pair
       this.$emit('update-token', {
-        ...this.tokenFullData,
+        ...this.tokenInfo,
         value,
       }, this.isInputToken, false);
     },
     maxUpdate() {
       // todo rates pair
       this.$emit('update-token', {
-        ...this.tokenFullData,
+        ...this.tokenInfo,
       }, this.isInputToken, true);
     },
   },

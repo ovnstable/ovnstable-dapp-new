@@ -65,7 +65,6 @@
 
     <SuccessZapModal
       :set-show-func="triggerSuccessZapin"
-      @close="redirect"
     />
   </div>
 </template>
@@ -73,7 +72,6 @@
 <script lang="ts">
 import {
   mapActions,
-  mapGetters,
   useStore,
 } from 'vuex';
 import SuccessZapModal from '@/modules/ModalTemplates/SuccessModal/SuccessZapModal.vue';
@@ -139,13 +137,7 @@ export default {
       ],
     };
   },
-  computed: {
-    ...mapGetters('accountData', ['account']),
-  },
   watch: {
-    account() {
-      this.loadPositionContract(this.account);
-    },
     getUserPositions() {
       this.searchPool();
     },
@@ -158,12 +150,6 @@ export default {
     ...mapActions('odosData', [
       'triggerSuccessZapin',
     ]),
-    ...mapActions('poolsData', ['loadPools']),
-    ...mapActions('zapinData', ['loadPositionContract']),
-    ...mapActions('odosData', ['loadTokens', 'initData', 'initContractData']),
-    redirect() {
-      this.$router.push('/positions');
-    },
     changeTab(id: number) {
       this.activeTab = id;
     },
@@ -177,14 +163,6 @@ export default {
       this.$store.commit('odosData/changeState', {
         field: 'isTokensLoadedAndFiltered',
         val: false,
-      });
-      await this.loadPools();
-      await this.loadTokens();
-      await this.initContractData();
-      await this.initData();
-      this.$store.commit('odosData/changeState', {
-        field: 'isTokensLoadedAndFiltered',
-        val: true,
       });
     },
   },

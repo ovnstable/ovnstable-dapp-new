@@ -1,4 +1,5 @@
-/* eslint-disable import/prefer-default-export */
+export const INSURANCE_AVAILABLE_NETWORKS = ['arbitrum'];
+
 const POLYGON_PARAMS = {
   appApiUrl: 'https://api.overnight.fi/root',
   networkName: 'polygon',

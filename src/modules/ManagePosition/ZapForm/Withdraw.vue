@@ -167,6 +167,7 @@
 import { useEventBus } from '@vueuse/core';
 import {
   mapActions, mapGetters, mapState, mapMutations,
+  useStore,
 } from 'vuex';
 import {
   getNewOutputToken,
@@ -177,14 +178,16 @@ import Spinner from '@/components/Spinner/Index.vue';
 import ChangeNetwork from '@/components/ZapModal/ZapForm/ChangeNetwork.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import { poolTokensForZapMap } from '@/store/views/main/zapin/mocks.ts';
-import TokenForm from '@/modules/ManagePosition/TokenForm.vue';
+import TokenForm from '@/modules/Main/components/Odos/TokenForm.vue';
 import { cloneDeep } from 'lodash';
 import BN from 'bignumber.js';
 import { MANAGE_FUNC, withdrawStep } from '@/store/modals/waiting-modal.ts';
 import { formatInputTokens } from '@/utils/tokens.ts';
 import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
+import { defineComponent } from 'vue';
+import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
 
-export default {
+export default defineComponent({
   name: 'WithdrawForm',
   components: {
     ButtonComponent,
@@ -205,7 +208,16 @@ export default {
       default: 'ALL',
     },
   },
-  emits: ['close-form'],
+  setup() {
+    const store = useStore() as any;
+
+    const { data: allTokensList, isBalancesLoading } = useTokensQuery(store.state);
+
+    return {
+      allTokensList,
+      isBalancesLoading,
+    };
+  },
   data() {
     return {
       positionFinish: false,
@@ -220,17 +232,12 @@ export default {
     };
   },
   computed: {
-    ...mapState('odosData', [
-      'isTokensLoadedAndFiltered',
-      'isBalancesLoading',
-    ]),
     ...mapState('zapinData', [
       'zapContract',
       'poolNftContract',
       'gaugeContractV3',
     ]),
     ...mapGetters('odosData', [
-      'allTokensList',
       'isAvailableOnNetwork',
     ]),
     ...mapGetters('zapinData', [
@@ -253,7 +260,7 @@ export default {
       return res.toFixed(4);
     },
     zapsLoaded() {
-      return this.isTokensLoadedAndFiltered && this.zapPool && this.zapContract && this.isZapLoaded;
+      return this.zapPool && this.zapContract && this.isZapLoaded;
     },
     outputTokensWithSelectedTokensCount() {
       return this.outputTokens.filter((item: any) => item.selectedToken).length;
@@ -271,34 +278,6 @@ export default {
   watch: {
     currentStage(stage: withdrawStep) {
       this.$store.commit('zapinData/changeState', { field: 'currentStage', val: stage });
-    },
-    // on wallet connect
-    async account(val) {
-      if (val) this.clearAndInitForm();
-      if (!val) this.outputTokens = [getNewOutputToken()];
-    },
-
-    isTokensLoadedAndFiltered(val) {
-      if (val) {
-        this.clearAndInitForm();
-      }
-    },
-    networkId(newVal) {
-      if (newVal) {
-        this.$store.commit('odosData/changeState', { field: 'isTokensLoadedAndFiltered', val: false });
-
-        if (!this.isAvailableOnNetwork) {
-          this.mintAction();
-        }
-
-        if (this.zapPool.chain === this.networkId) {
-          this.firstInit();
-
-          setTimeout(() => {
-            this.loadZapContract();
-          }, 300);
-        }
-      }
     },
     isDisableButton(val) {
       if (val) {
@@ -334,8 +313,6 @@ export default {
     ...mapActions('swapModal', ['showSwapModal', 'showMintView']),
     ...mapActions('poolsData', ['setIsZapModalShow']),
     ...mapActions('odosData', [
-      // 'loadTokens',
-      // 'initContractData',
       'triggerSuccessZapin',
     ]),
     ...mapActions('accountData', ['refreshBalance']),
@@ -413,9 +390,6 @@ export default {
     },
 
     async init() {
-      // await this.loadTokens();
-      // await this.initContractData();
-
       const bus = useEventBus('odos-transaction-finished');
       bus.on(() => {
         this.finishTransaction();
@@ -626,7 +600,7 @@ export default {
       this.outputTokens = [];
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

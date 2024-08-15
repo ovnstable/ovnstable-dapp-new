@@ -5,7 +5,6 @@ import { buildEvmContract } from '@/utils/contractsMap.ts';
 import { JSONLoader } from '@/utils/httpUtils.ts';
 
 import { zapInStep } from '@/store/modals/waiting-modal.ts';
-import { formatPositionData } from '@/components/Pools/PositionsTable/helpers.ts';
 import type { ContractAbi } from '@/types/abi';
 
 export enum REWARD_TOKEN {
@@ -231,47 +230,6 @@ const actions = {
       field: 'poolTokenContract',
       val: tokenContract,
     });
-  },
-  async loadPositionContract({
-    rootState, commit, rootGetters,
-  }: any) {
-    const chainName = rootState.network.networkName;
-    const platformName = rebalanceChainMap[chainName];
-    console.log(chainName, platformName, '__abiFile1');
-    const abiFileSrc = zapAbiSrcMap.v3?.(chainName, platformName);
-
-    const abiFile = await loadAbi(abiFileSrc);
-
-    console.log(abiFile, '__abiFile2');
-    const positionContract = buildEvmContract(
-      abiFile.abi,
-      rootState.web3.evmSigner,
-      abiFile.address,
-    );
-
-    const rawPositionData = await positionContract.getPositions(rootState.accountData.account);
-
-    // console.log('__rawPositionData', rawPositionData);
-
-    const poolsMap = rootGetters['poolsData/allPoolsMap'];
-    const tokenMap = rootGetters['odosData/allTokensMap'];
-
-    // console.log('__poolsTokens', poolsMap, tokenMap);
-
-    const positionInfo = formatPositionData(rawPositionData, poolsMap, tokenMap);
-
-    // console.log('__positionInfo', positionInfo);
-
-    commit('changeState', {
-      field: 'positionContract',
-      val: positionContract,
-    });
-
-    commit('changeState', {
-      field: 'userPositions',
-      val: positionInfo,
-    });
-    return positionInfo;
   },
 };
 

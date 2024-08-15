@@ -294,7 +294,7 @@ export default defineComponent({
     } = useTokensQuery(store.state);
 
     return {
-      allTokensList: computed(() => allTokensList).value,
+      allTokensList,
       isAllDataLoaded: computed(() => !isLoading.value),
       isAllDataTrigger: computed(() => !isLoading.value),
       isBalancesLoading,
@@ -548,10 +548,6 @@ export default defineComponent({
   },
   async mounted() {
     this.$store.commit('odosData/changeState', {
-      field: 'baseViewType',
-      val: this.viewType,
-    });
-    this.$store.commit('odosData/changeState', {
       field: 'tokenSeparationScheme',
       val: 'OVERNIGHT_SWAP',
     });
@@ -579,8 +575,6 @@ export default defineComponent({
       [
         'getActualGasPrice',
         'initWalletTransaction',
-        // 'loadContractsForTokens',
-        // 'initContractData',
       ],
     ),
     ...mapActions('errorModal', ['showErrorModalWithMsg']),
@@ -633,8 +627,6 @@ export default defineComponent({
       this.updateQuotaInfo();
     },
     async init() {
-      // await this.loadContractsForTokens(this.allTokensList);
-      // await this.initContractData();
       const bus = useEventBus('odos-transaction-finished');
       bus.on(() => {
         this.finishTransaction();

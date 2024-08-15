@@ -195,7 +195,7 @@ import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ZapinV3 from '@/components/ZapModal/ZapForm/ZapinV3.vue';
 import { poolsInfoMap, poolTokensForZapMap } from '@/store/views/main/zapin/mocks.ts';
 import BN from 'bignumber.js';
-import TokenForm from '@/modules/ManagePosition/TokenForm.vue';
+import TokenForm from '@/modules/Main/components/Odos/TokenForm.vue';
 import { MANAGE_FUNC, rebalanceStep } from '@/store/modals/waiting-modal.ts';
 import ZapInStepsRow from '@/components/StepsRow/ZapinRow/RebalanceRow.vue';
 import { cloneDeep } from 'lodash';
@@ -306,11 +306,11 @@ export default {
       return false;
     },
     zapsLoaded() {
-      console.log(this.allTokensList, '__this.allTokensList');
-      console.log(this.outputTokens, '__this.outputTokens');
-      console.log(this.zapPool, '__this.zapPool');
-      console.log(this.zapContract, '__this.zapContract');
-      console.log(this.isZapLoaded, '__this.isZapLoaded');
+      // console.log(this.allTokensList, '__this.allTokensList');
+      // console.log(this.outputTokens, '__this.outputTokens');
+      // console.log(this.zapPool, '__this.zapPool');
+      // console.log(this.zapContract, '__this.zapContract');
+      // console.log(this.isZapLoaded, '__this.isZapLoaded');
       return this.allTokensList?.length > 0
         && this.outputTokens?.length > 0
         && this.zapPool
@@ -390,8 +390,6 @@ export default {
     ...mapActions('swapModal', ['showSwapModal', 'showMintView']),
     ...mapActions('poolsData', ['setIsZapModalShow']),
     ...mapActions('odosData', [
-      // 'initContractData',
-      // 'initAccountData',
       'startSwapConfirmTimer',
       'stopSwapConfirmTimer',
       'triggerSuccessZapin',
@@ -462,7 +460,6 @@ export default {
         field: 'listOfBuyTokensAddresses',
         val: [poolTokens[0].address, poolTokens[1].address],
       });
-      // await this.initContractData();
       await this.loadZapContract();
 
       if (!this.isAvailableOnNetwork) this.mintAction();
@@ -475,7 +472,6 @@ export default {
     firstInit() {
       this.initEvent();
       this.clearAndInitForm();
-      // this.initAccountData();
     },
 
     async initEvent() {

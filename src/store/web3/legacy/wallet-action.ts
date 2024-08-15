@@ -146,9 +146,6 @@ const actions = {
 
       dispatch('accountData/handleSwitchAccount', userAddress, { root: true });
 
-      await dispatch('odosData/loadTokens', null, { root: true });
-      await dispatch('odosData/initContractData', null, { root: true });
-      dispatch('odosData/initData', null, { root: true });
       dispatch('checkAccount', userAddress);
     });
 
@@ -343,14 +340,6 @@ const actions = {
   }: any, newNetworkId: any) {
     try {
       dispatch('setNetwork', newNetworkId);
-
-      if (rootState.odosData.firstRenderDone) {
-        // evmProvider changing actual network with delay
-        // in other case balances wont be loaded correctly
-        setTimeout(() => {
-          dispatch('odosData/loadBalances', rootState.web3.evmProvider, { root: true });
-        }, 500);
-      }
     } catch (e) {
       console.error('Error when on chainChanged');
     }

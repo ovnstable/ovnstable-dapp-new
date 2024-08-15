@@ -76,7 +76,6 @@ const actions = {
       provider: markRaw(evmProvider),
       signer: markRaw(signer),
     });
-    dispatch('contractAction/initContracts', markRaw(signer), { root: true });
   },
 
   async initWeb3({

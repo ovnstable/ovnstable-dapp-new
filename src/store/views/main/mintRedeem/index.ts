@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
-import { getFilteredPoolTokens, loadPriceTrigger } from '@/store/helpers/index.ts';
 import { MINTREDEEM_SCHEME } from '@/store/views/main/mintRedeem/mocks.ts';
+import type { TTokenInfo } from '@/types/common/tokens';
 
 type TTokensList = Record<number, any[][]>
 
@@ -17,33 +17,27 @@ const getters = {
 };
 
 const actions = {
-  async initTokens({ commit, rootState }: any) {
-    const networkId = rootState.network.networkId as keyof typeof MINTREDEEM_SCHEME;
+  // Legacy methods. TODO remove
+  // Modified method
+  async initTokenSchema({ commit }: any, props: { tokenList: TTokenInfo[], networkId: number }) {
+    const { tokenList, networkId } = props;
+    const networkMintRedeemScheme = MINTREDEEM_SCHEME[networkId as keyof typeof MINTREDEEM_SCHEME];
 
-    if (!MINTREDEEM_SCHEME[networkId]) return;
+    if (!networkMintRedeemScheme || tokenList.length === 0) return;
 
-    // todo: init lists for every networkId on first render
-    // currently its init on networkId change
-    const list = MINTREDEEM_SCHEME[networkId].map((_) => getFilteredPoolTokens(
-      networkId,
-      true,
-      [_.token0, _.token1],
-      true,
-      rootState.odosData,
-    ));
-
-    const tokensList = list.flat(1);
-    const tokensWithPrices = await loadPriceTrigger(tokensList, networkId);
-    const tokenPricesMap = tokensWithPrices.reduce((acc, token) => (
-      { ...acc, [token.id]: token.price }
+    const tokenMap: {[key: string]: TTokenInfo} = tokenList.reduce((acc, token) => (
+      { ...acc, [token.address]: token }
     ), {});
 
-    const listWithPrices = list.map((pair) => pair.map((token) => (
-      { ...token, price: tokenPricesMap[token.id] }
-    )));
+    // eslint-disable-next-line array-callback-return, consistent-return
+    const mintRedeemList = networkMintRedeemScheme.map((pair: any) => {
+      if (tokenMap[pair.token0] && tokenMap[pair.token1]) {
+        return [tokenMap[pair.token0], tokenMap[pair.token1]];
+      }
+    }).filter(Boolean);
 
     commit('changeTokenList', {
-      [networkId]: listWithPrices,
+      [networkId]: mintRedeemList,
     });
   },
 };
