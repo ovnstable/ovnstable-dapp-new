@@ -8,7 +8,6 @@ import theme from '@/store/theme/index.ts';
 import createPersistedState from 'vuex-persistedstate';
 import network from '@/store/web3/network.ts';
 import walletAction from '@/store/web3/legacy/wallet-action.ts';
-import contractAction from '@/store/web3/legacy/contract-action.ts';
 import web3 from '@/store/web3/web3.ts';
 
 // Common
@@ -64,7 +63,6 @@ const store = new Vuex.Store({
     // web3
     network,
     walletAction,
-    contractAction,
     web3,
     dappDataAction,
     etsAction,

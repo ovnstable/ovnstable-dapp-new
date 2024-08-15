@@ -306,11 +306,11 @@ export default {
       return false;
     },
     zapsLoaded() {
-      console.log(this.allTokensList, '__this.allTokensList');
-      console.log(this.outputTokens, '__this.outputTokens');
-      console.log(this.zapPool, '__this.zapPool');
-      console.log(this.zapContract, '__this.zapContract');
-      console.log(this.isZapLoaded, '__this.isZapLoaded');
+      // console.log(this.allTokensList, '__this.allTokensList');
+      // console.log(this.outputTokens, '__this.outputTokens');
+      // console.log(this.zapPool, '__this.zapPool');
+      // console.log(this.zapContract, '__this.zapContract');
+      // console.log(this.isZapLoaded, '__this.isZapLoaded');
       return this.allTokensList?.length > 0
         && this.outputTokens?.length > 0
         && this.zapPool
