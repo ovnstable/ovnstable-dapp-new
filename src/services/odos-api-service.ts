@@ -1,6 +1,6 @@
 import { ApiService } from './api-service.ts';
 
-const API_URL = 'https://bsc.overnight.fi/api/odos';
+const API_URL = 'https://api.overnight.fi/root/odos';
 
 class OdosApiService extends ApiService {
   // public async loadChains() {

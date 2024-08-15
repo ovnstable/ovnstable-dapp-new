@@ -393,7 +393,10 @@ export default defineComponent({
   setup: () => {
     const store = useStore() as any;
 
-    const { data: allTokensList, isLoading: isTokensLoading, isBalancesLoading } = useTokensQuery(store.state);
+    const {
+      data: allTokensList,
+      isLoading: isTokensLoading, isBalancesLoading,
+    } = useTokensQuery(store.state);
 
     return {
       allTokensList,
@@ -697,6 +700,7 @@ export default defineComponent({
     },
   },
   mounted() {
+    this.currentStage = zapInStep.START;
     if (this.zapPool.chain !== this.networkId) this.currentStage = zapInStep.START;
 
     // for modal

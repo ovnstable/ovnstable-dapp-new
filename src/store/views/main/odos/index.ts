@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-unused-vars */
 import odosApiService from '@/services/odos-api-service.ts';
+import { buildEvmContract } from '@/utils/contractsMap.ts';
 import { useEventBus } from '@vueuse/core';
 import BigNumber from 'bignumber.js';
 import _ from 'lodash';
@@ -67,6 +68,7 @@ export const stateData = {
   odosZapReferalCode: 7777777, // test account
 
   swapSessionId: null,
+  routerContract: null,
 };
 
 const getters = {
@@ -79,6 +81,41 @@ const getters = {
 };
 
 const actions = {
+  async loadRouterContract({
+    commit, state, rootState,
+  }: any, chainId: string | number) {
+    if (state.isContractLoading) return;
+    commit('changeState', { field: 'isContractLoading', val: true });
+
+    // eslint-disable-next-line consistent-return
+    return odosApiService
+      .loadContractData(chainId)
+      .then((data: any) => {
+        commit('changeState', { field: 'contractData', val: data });
+        commit('changeState', {
+          field: 'routerContract',
+          val: buildEvmContract(
+            data.routerAbi.abi,
+            rootState.web3.evmSigner,
+            data.routerAddress,
+          ),
+        });
+        commit('changeState', {
+          field: 'executorContract',
+          val: buildEvmContract(
+            data.erc20Abi.abi,
+            rootState.web3.evmSigner,
+            data.executorAddress,
+          ),
+        });
+        commit('changeState', { field: 'isContractLoading', val: false });
+      })
+      .catch((e) => {
+        console.log('Error load contract', e);
+        commit('changeState', { field: 'isContractLoading', val: false });
+        throw e;
+      });
+  },
   triggerSuccessZapin(
     {
       commit, state, dispatch, rootState,

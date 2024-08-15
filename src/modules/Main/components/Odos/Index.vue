@@ -34,6 +34,7 @@
               </div>
             </div>
             <TransitionGroup
+              key="1"
               name="staggered-fade"
               tag="div"
               :class="{ 'swap-form__body-block__inputs': true, 'block-inputs--scroll': inputTokens?.length > 3 }"
@@ -95,6 +96,7 @@
               You receive
             </h3>
             <TransitionGroup
+              key="2"
               name="staggered-fade"
               tag="div"
               :class="{ 'swap-form__body-block__inputs': true, 'block-inputs--scroll': outputTokens?.length > 3 }"
@@ -506,8 +508,9 @@ export default defineComponent({
     },
   },
   watch: {
-    networkId() {
+    networkId(val) {
       this.clearForm();
+      this.loadRouterContract(val);
     },
     account() {
       this.clearForm();
@@ -564,6 +567,7 @@ export default defineComponent({
       'odosData',
       [
         'getActualGasPrice',
+        'loadRouterContract',
         'initWalletTransaction',
       ],
     ),

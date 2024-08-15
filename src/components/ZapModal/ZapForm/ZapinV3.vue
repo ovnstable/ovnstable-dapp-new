@@ -513,6 +513,9 @@ export default {
     const closestTicks = await this.zapContract.closestTicksForCurrentTick(this.zapPool.address);
     this.initTicks(tickSpace);
 
+    console.log(center.toString(), '___this.center');
+    console.log(tickSpace.toString(), '___this.tickSpace');
+    console.log(centerTick.toString(), '___this.centerTick');
     this.closestTicks = [closestTicks[0]?.toString(), closestTicks[1]?.toString()];
     this.tickSpace = tickSpace.toString();
     this.tickLeft = this.ticksInit?.length > 0 ? this.ticksInit[0]?.toString()
@@ -931,8 +934,8 @@ export default {
         this.tickLeft = this.closestTicks[0]?.toString();
         this.tickRight = this.closestTicks[1]?.toString();
       } else {
-        this.tickLeft = new BN(this.closestTicks[0]).minus(tickVal).toFixed(0);
-        this.tickRight = new BN(this.closestTicks[1]).plus(tickVal).toFixed(0);
+        this.tickLeft = new BN(this.centerTick).minus(tickVal / 2).toFixed(0);
+        this.tickRight = new BN(this.centerTick).plus(tickVal / 2).toFixed(0);
       }
 
       const tickNumL = await this.zapContract.tickToPrice(this.zapPool.address, this.tickLeft);
