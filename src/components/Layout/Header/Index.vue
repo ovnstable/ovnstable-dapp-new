@@ -251,13 +251,12 @@ export default {
   computed: {
     ...mapState('odosData', ['isBalancesLoading', 'isTokensLoadedAndFiltered', 'firstRenderDone', 'isTokensLoading']),
     ...mapGetters('walletAction', ['walletConnected']),
-    ...mapGetters('accountData', ['account', 'isLoadingOvnBalances']),
+    ...mapGetters('accountData', ['account']),
     ...mapGetters('network', ['networkId', 'isShowDeprecated']),
     ...mapGetters('theme', ['light']),
 
     balancesLoading() {
       if (this.isTokensLoading) return true;
-      if (this.isLoadingOvnBalances || this.isBalancesLoading) return true;
       return false;
     },
     accountRenderLoading() {

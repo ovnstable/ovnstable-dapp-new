@@ -67,7 +67,6 @@ const actions = {
     for (const insuranceChain of insuranceChainList) {
       dispatch('refreshClientData', { chain: insuranceChain });
     }
-    dispatch('accountData/refreshBalance', null, { root: true });
     // dispatch('supplyData/refreshInsuranceSupply', null, { root: true });
   },
 
