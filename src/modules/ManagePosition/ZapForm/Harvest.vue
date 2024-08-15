@@ -29,37 +29,6 @@
             REWARDS
           </h1>
           <span class="divider" />
-          <div
-            v-for="token in inputTokens"
-            :key="token.id"
-            class="swap-block__item"
-          >
-            <div
-              v-if="token.selectedToken"
-              class="swap-block__item-row"
-            >
-            <div class="swap-block__item-row--token-wrap">
-              <img
-                :src="token.selectedToken.logoUrl"
-                alt="select-token"
-              >
-              <span>
-                {{ token.selectedToken.symbol }}
-              </span>
-            </div>
-            </div>
-            <div
-              v-if="token.value"
-              class="swap-block__item-bal"
-            >
-              <div>
-                {{ token.displayedValue }}
-              </div>
-              <div>
-                ~ ${{ token.usdValue }}
-              </div>
-          </div>
-        </div>
         <div
           class="swap-block__item"
         >

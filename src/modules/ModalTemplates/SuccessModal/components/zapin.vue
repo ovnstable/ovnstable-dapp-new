@@ -118,8 +118,8 @@ export default {
   name: 'ZapinContent',
   components: {
     PoolLabel,
-    ButtonComponent,
     BaseIcon,
+    ButtonComponent,
   },
   props: {
     tokensSentList: {
@@ -144,8 +144,6 @@ export default {
       'lastParsedBurnedTokenIdEvent',
       'lastParsedClaimedRewardsEvent',
     ]),
-  },
-  methods: {
     openPositionOnPool(): string {
       // eslint-disable-next-line prefer-destructuring
       const pool = this.successData.pool;
