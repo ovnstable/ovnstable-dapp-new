@@ -340,7 +340,7 @@ import ChangeNetwork from '@/components/ZapModal/ZapForm/ChangeNetwork.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { formatMoney } from '@/utils/numbers.ts';
-import TokenForm from '@/components/ZapModal/TokenForm.vue';
+import TokenForm from '@/modules/Main/components/Odos/TokenForm.vue';
 import PoolLabel from '@/components/ZapModal/PoolLabel.vue';
 import SelectTokensModal from '@/components/TokensModal/Index.vue';
 import ZapInStepsRow from '@/components/StepsRow/ZapinRow/ZapinRow.vue';
@@ -1818,18 +1818,17 @@ export default defineComponent({
       // todo computed ovn input tokens and logic here
       const newInputToken = getNewInputToken();
       newInputToken.selectedToken = selectedToken;
+      this.removeAllWithoutSelectedTokens(this.inputTokens);
       this.inputTokens.unshift(newInputToken);
 
       if (isAddAllBalance) {
-        setTimeout(() => {
-          const newToken = updateTokenValue(
-            newInputToken,
-            newInputToken.selectedToken.balanceData.balance,
-            this.checkApproveForToken,
-          );
+        const newToken = updateTokenValue(
+          newInputToken,
+          newInputToken.selectedToken.balanceData.balance,
+          this.checkApproveForToken,
+        );
 
-          this.updateTokenState(newToken);
-        }, 10);
+        this.updateTokenState(newToken);
       }
 
       // if (newInputToken.selectedToken.symbol === 'OVN') {
@@ -1840,6 +1839,20 @@ export default defineComponent({
         newInputToken,
         new BN(10 ** selectedToken.decimals).times(1000000).toFixed(0),
       );
+    },
+    removeAllWithoutSelectedTokens(tokens: any) {
+      const tokensToRemove = [];
+      for (let i = 0; i < tokens.length; i++) {
+        if (tokens[i].selectedToken) {
+          continue;
+        }
+
+        tokensToRemove.push(tokens[i]);
+      }
+
+      for (let i = 0; i < tokensToRemove.length; i++) {
+        this.removeToken(tokens, tokensToRemove[i].id);
+      }
     },
     addSelectedTokenToOutputList(selectedToken: any, locked: any, startPercent: any) {
       return {
