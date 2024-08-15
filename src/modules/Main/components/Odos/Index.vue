@@ -548,10 +548,6 @@ export default defineComponent({
   },
   async mounted() {
     this.$store.commit('odosData/changeState', {
-      field: 'baseViewType',
-      val: this.viewType,
-    });
-    this.$store.commit('odosData/changeState', {
       field: 'tokenSeparationScheme',
       val: 'OVERNIGHT_SWAP',
     });

@@ -725,7 +725,6 @@ export default defineComponent({
   },
   methods: {
     ...mapActions('odosData', [
-      'loadBalances',
       'triggerSuccessZapin',
       'startSwapConfirmTimer',
       'stopSwapConfirmTimer',
@@ -1432,7 +1431,6 @@ export default defineComponent({
           });
           this.clearZapData();
           this.$emit('close-form');
-          this.loadBalances();
         })
         .catch((e) => {
           console.log(e, '---e');
@@ -1489,7 +1487,6 @@ export default defineComponent({
       bus.emit(true);
 
       this.clearZapData();
-      this.loadBalances();
       this.closeWaitingModal();
       this.$emit('close-form');
     },
