@@ -217,7 +217,6 @@ export default defineComponent({
       return this.filteredBySearchQuery;
     },
     displayedPools() {
-      // console.log(this.tokens);
       if (this.positionData.length > 0) return this.filteredPools;
       return this.positionData;
     },
