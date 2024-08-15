@@ -37,7 +37,6 @@
 </template>
 
 <script lang="ts">
-import { mapActions } from 'vuex';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import { useEventBus } from '@vueuse/core';
@@ -50,15 +49,15 @@ export default {
     ButtonComponent,
     BaseIcon,
   },
-  props: ['networkName'],
+  props: {
+    networkName: {
+      type: String,
+      default: '',
+    },
+  },
   methods: {
-    ...mapActions('swapModal', ['showSwapModal', 'showMintView']),
     changeTab(tabIndex: number) {
       emitTabChange.emit(tabIndex);
-    },
-    mintAction() {
-      this.showMintView();
-      this.showSwapModal();
     },
   },
 };

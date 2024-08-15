@@ -30,7 +30,6 @@ import insurancePayouts from '@/store/views/insurance/InsurancePayouts.ts';
 import insurancePremiums from '@/store/views/insurance/InsurancePremiums.ts';
 import intervalDashboard from '@/store/views/dashboard/intervalDashboard.ts';
 import porfolioBalanceData from '@/store/views/dashboard/porfolioBalanceData.ts';
-import jackpotData from '@/store/views/blastQuest/data.ts';
 
 // modals
 import errorModal from '@/store/modals/error-modal.ts';
@@ -77,7 +76,6 @@ const store = new Vuex.Store({
     insurancePremiums,
     intervalDashboard,
     porfolioBalanceData,
-    jackpotData,
     // balances,
     posthog,
   },
