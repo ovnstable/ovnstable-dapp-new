@@ -245,7 +245,7 @@ export default defineComponent({
       return new BN(this.zapPool.emissions).div(10 ** 18).toFixed(6);
     },
     getRewardTokenInfo() {
-      const tokenInfo = this.allTokensMap.values().find((_: any) => {
+      const tokenInfo = Object.values(this.allTokensMap).find((_: any) => {
         const allTokSymbol = _?.symbol?.toLowerCase();
         return allTokSymbol === this.getSymbolToken?.toLowerCase();
       });
@@ -401,7 +401,7 @@ export default defineComponent({
     addDefaultPoolToken() {
       const rewardToken = this.zapPool.rewards.tokens.map((_: any) => {
         const rewardData: any = Object.entries(_)[0];
-        const tokenInfo = this.allTokensMap.values().find((_: any) => {
+        const tokenInfo = Object.values(this.allTokensMap).find((_: any) => {
           const allTokSymbol = _?.symbol?.toLowerCase();
           return allTokSymbol === rewardData[0]?.toLowerCase();
         });

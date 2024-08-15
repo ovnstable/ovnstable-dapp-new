@@ -589,7 +589,7 @@ export default defineComponent({
     async sendRedemptionRequest() {
       if (!INSURANCE_AVAILABLE_NETWORKS.includes(this.networkName)) return;
 
-      const estimateResult = await this.estimateRedemptionRequest();
+      const estimateResult = await this.estimateRedemptionRequest() as any;
 
       if (estimateResult?.haveError) {
         this.showErrorModalWithMsg({
