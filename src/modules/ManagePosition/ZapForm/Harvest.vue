@@ -148,6 +148,7 @@
 import { useEventBus } from '@vueuse/core';
 import {
   mapActions, mapGetters, mapState, mapMutations,
+  useStore,
 } from 'vuex';
 import {
   getNewOutputToken,
@@ -163,8 +164,11 @@ import { formatInputTokens } from '@/utils/tokens.ts';
 import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
 import { REWARD_TOKEN } from '@/store/views/main/zapin/index.ts';
 import { loadTokenImage } from '@/utils/tokenLogo.ts';
+import { computed, defineComponent, type ComputedRef } from 'vue';
+import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
+import type { TTokenInfo } from '@/types/common/tokens';
 
-export default {
+export default defineComponent({
   name: 'WithdrawForm',
   components: {
     ChangeNetwork,
@@ -184,7 +188,17 @@ export default {
       default: 'ALL',
     },
   },
-  emits: ['close-form'],
+  setup() {
+    const store = useStore() as any;
+
+    const { data: allTokensList } = useTokensQuery(store.state);
+
+    return {
+      allTokensMap: computed(() => new Map(
+        allTokensList.value.map((token) => [token.address, token]),
+      )) as ComputedRef<Map<string, TTokenInfo>>,
+    };
+  },
   data() {
     return {
       positionFinish: false,
@@ -200,7 +214,6 @@ export default {
     ...mapState('odosData', [
       'isTokensLoadedAndFiltered',
     ]),
-    ...mapGetters('odosData', ['allTokensMap']),
     ...mapState('zapinData', [
       'zapContract',
       'poolNftContract',
@@ -332,26 +345,6 @@ export default {
     ...mapActions('walletAction', ['connectWallet']),
 
     ...mapMutations('zapinData', ['changeState']),
-    // async approveNftPosition(approveToGauge: boolean) {
-    //   this.isSwapLoading = true;
-
-    //   try {
-    //     console.log(approveToGauge, '__isApproved');
-    //     this.showWaitingModal('Approve');
-    //     const tx = await this.poolNftContract
-    //       .approve(this.zapContract?.target, this.zapPool.tokenId);
-
-    //     await tx.wait();
-    //     this.isNftApproved = true;
-    //     this.isSwapLoading = false;
-    //     this.closeWaitingModal();
-    //     this.currentStage = withdrawStep.ZAPOUT;
-    //   } catch (e) {
-    //     console.log(e);
-    //     this.closeWaitingModal('Approve');
-    //     this.isSwapLoading = false;
-    //   }
-    // },
     mintAction() {
       this.showMintView();
       this.showSwapModal();
@@ -533,7 +526,7 @@ export default {
       this.outputTokens = [];
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>
