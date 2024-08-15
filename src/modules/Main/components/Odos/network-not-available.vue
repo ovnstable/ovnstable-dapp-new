@@ -5,11 +5,10 @@
         name="CommonWarning"
       />
       <div class="not-available-container-chain">
-        SWAP WILL BE AVAILABLE ON <span class="network-name">{{networkName.toUpperCase()}}</span> SOON.
+        SWAP WILL BE AVAILABLE ON <span class="network-name">{{ networkName.toUpperCase() }}</span> SOON.
       </div>
       <div class="not-available-container-divider" />
       <div class="not-available-container-mint-redeem-text">
-
         Now you can <span
           class="not-available-container-chain-mint-redeem"
           @click="changeTab(1)"
@@ -24,7 +23,7 @@
         >
           redeem
         </span> <br>
-        Tokens+ on <span class="network-name">{{networkName}}</span> chain
+        Tokens+ on <span class="network-name">{{ networkName }}</span> chain
       </div>
       <ButtonComponent
         @click="changeTab(1)"
@@ -46,7 +45,7 @@ import { useEventBus } from '@vueuse/core';
 const emitTabChange = useEventBus<number>('change-tab-request');
 
 export default {
-  name: 'network-not-available',
+  name: 'NetworkNotAvailable',
   components: {
     ButtonComponent,
     BaseIcon,

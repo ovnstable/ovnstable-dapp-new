@@ -506,8 +506,9 @@ export default defineComponent({
     },
   },
   watch: {
-    networkId() {
+    networkId(val) {
       this.clearForm();
+      this.loadRouterContract(val);
     },
     account() {
       this.clearForm();
@@ -564,6 +565,7 @@ export default defineComponent({
       'odosData',
       [
         'getActualGasPrice',
+        'loadRouterContract',
         'initWalletTransaction',
       ],
     ),
