@@ -211,9 +211,6 @@ export default defineComponent({
     };
   },
   computed: {
-    ...mapState('odosData', [
-      'isTokensLoadedAndFiltered',
-    ]),
     ...mapState('zapinData', [
       'zapContract',
       'poolNftContract',
@@ -266,7 +263,7 @@ export default defineComponent({
       return res.toFixed(4);
     },
     zapsLoaded() {
-      return this.isTokensLoadedAndFiltered && this.zapPool && this.zapContract && this.isZapLoaded;
+      return this.zapPool && this.zapContract && this.isZapLoaded;
     },
     outputTokensWithSelectedTokensCount() {
       return this.outputTokens.filter((item: any) => item.selectedToken).length;
@@ -287,16 +284,8 @@ export default defineComponent({
       if (val) this.clearAndInitForm();
       if (!val) this.outputTokens = [getNewOutputToken()];
     },
-
-    isTokensLoadedAndFiltered(val) {
-      if (val) {
-        this.clearAndInitForm();
-      }
-    },
     networkId(newVal) {
       if (newVal) {
-        this.$store.commit('odosData/changeState', { field: 'isTokensLoadedAndFiltered', val: false });
-
         if (!this.isAvailableOnNetwork) {
           this.mintAction();
         }

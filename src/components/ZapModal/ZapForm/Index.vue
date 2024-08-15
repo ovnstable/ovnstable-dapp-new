@@ -282,7 +282,7 @@
           </ButtonComponent>
         </div>
         <ZapInStepsRow
-          v-if="zapPool.chain === networkId && isTokensLoadedAndFiltered"
+          v-if="zapPool.chain === networkId"
           class="zapin__modal-steps"
           :version="zapInType"
           :type="currentZapPlatformContractType"
@@ -393,11 +393,12 @@ export default defineComponent({
   setup: () => {
     const store = useStore() as any;
 
-    const { data: allTokensList, isLoading: isTokensLoading } = useTokensQuery(store.state);
+    const { data: allTokensList, isLoading: isTokensLoading, isBalancesLoading } = useTokensQuery(store.state);
 
     return {
       allTokensList,
       isTokensLoading,
+      isBalancesLoading,
     };
   },
   data: () => ({
@@ -441,13 +442,11 @@ export default defineComponent({
   }),
   computed: {
     ...mapState('odosData', [
-      'isTokensLoadedAndFiltered',
       'additionalSwapStepType',
       'lastZapResponseData',
       'lastPoolInfoData',
       'lastPutIntoPoolEvent',
       'lastReturnedToUserEvent',
-      'isBalancesLoading',
       'lastNftTokenId',
       'routerContract',
       'odosReferalCode',
@@ -690,25 +689,6 @@ export default defineComponent({
     async account(val) {
       if (val) this.clearAndInitForm();
       if (!val) this.outputTokens = [getNewOutputToken()];
-    },
-
-    isTokensLoadedAndFiltered(val) {
-      if (val) {
-        this.clearAndInitForm();
-      }
-    },
-    networkId(newVal) {
-      if (newVal) {
-        this.$store.commit('odosData/changeState', { field: 'isTokensLoadedAndFiltered', val: false });
-
-        if (this.zapPool.chain === this.networkId) {
-          this.firstInit();
-
-          setTimeout(() => {
-            this.loadZapContract();
-          }, 500);
-        }
-      }
     },
     isDisableButton(val) {
       if (val) {
