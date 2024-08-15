@@ -5404,7 +5404,7 @@ export const ABI_Mark2market = [
     type: 'function',
   },
 ];
-export const ABI_Ovn = [
+export const ABI_OVN = [
   {
     inputs: [],
     stateMutability: 'nonpayable',
