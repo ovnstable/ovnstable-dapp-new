@@ -9,8 +9,8 @@
 
     <Transition name="slide-fade">
       <div
-        class="path-wrap__animation"
         v-if="!isLoadingData && isAllDataLoaded"
+        class="path-wrap__animation"
       >
         <h1>
           Routing plan
@@ -26,15 +26,14 @@
         </div>
 
         <div
-          class="path-wrap__overflow"
           v-if="root"
+          class="path-wrap__overflow"
         >
           <div
             v-for="(branch, index) in (Array.from(root.values()) as any)"
             :key="index"
             class="path-wrap__branch"
           >
-
             <div class="path-wrap__branch-row">
               <div class="path-wrap__branch-row-tokens">
                 <div
@@ -78,7 +77,7 @@
                 class="path-wrap__branch-row__pool"
               >
                 <span class="pools-name">
-                  {{pool}}
+                  {{ pool }}
                 </span>
                 <span
                   v-if="index < getUniquePools(branch).length - 1"
@@ -125,16 +124,6 @@ export default {
       required: false,
       default: null,
     },
-    inputTokens: {
-      type: Array,
-      required: true,
-      default: () => [],
-    },
-    outputTokens: {
-      type: Array,
-      required: true,
-      default: () => [],
-    },
     isLoadingData: {
       type: Boolean,
       required: true,
@@ -148,15 +137,10 @@ export default {
       pathViz: null as any,
       isRootLoading: true,
       isImagesLoading: true,
-      poolLabelsMap: {}, // key = set() (unique values)
 
       ovnMarkers: ['USD+', 'DAI+', 'USDT+', 'wUSD+', 'OVN', 'ETH+'],
       isPoolOpenMap: {} as any,
     };
-  },
-
-  mounted() {
-    this.init();
   },
   computed: {
     isAllDataLoaded() {
@@ -170,6 +154,10 @@ export default {
         this.init();
       }
     },
+  },
+
+  mounted() {
+    this.init();
   },
   methods: {
     async init() {
@@ -278,31 +266,6 @@ export default {
 
       return newRoot;
     },
-    getFilteredRoot(root: any, inputTokens: any, outputTokens: any) {
-      if (!root) {
-        return root;
-      }
-
-      const newRoot = new Map();
-      const branches = Array.from(root.values());
-      for (let i = 0; i < inputTokens.length; i++) {
-        const token = inputTokens[i].selectedToken;
-        const branchInfo = this.findBranchWithFirstToken(root, branches, token);
-        if (branchInfo && branchInfo.branch.length < 6) {
-          newRoot.set(branchInfo.key, branchInfo.branch);
-        }
-      }
-
-      for (let i = 0; i < outputTokens.length; i++) {
-        const token = outputTokens[i].selectedToken;
-        const branchInfo = this.findBranchWithLastToken(root, branches, token);
-        if (branchInfo && branchInfo.branch.length < 6) {
-          newRoot.set(branchInfo.key, branchInfo.branch);
-        }
-      }
-
-      return newRoot;
-    },
     getMergedBranches(root: any) {
       if (!root) {
         return root;
@@ -360,21 +323,6 @@ export default {
       for (let i = 0; i < branches.length; i++) {
         const tokens = branches[i];
         const token = tokens[0];
-        if (token.symbol === searchToken.symbol) {
-          const key = this.getKeyByValue(root, tokens);
-          return {
-            key,
-            branch: tokens,
-          };
-        }
-      }
-
-      return null;
-    },
-    findBranchWithLastToken(root: any, branches: any, searchToken: any) {
-      for (let i = 0; i < branches.length; i++) {
-        const tokens = branches[i];
-        const token = tokens[tokens.length - 1];
         if (token.symbol === searchToken.symbol) {
           const key = this.getKeyByValue(root, tokens);
           return {
