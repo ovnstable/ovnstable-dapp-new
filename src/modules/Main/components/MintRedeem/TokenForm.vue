@@ -73,7 +73,7 @@
         :tokens-list="tokensList"
         :reverse-array="reverseArray"
         :is-input-token="isInputToken"
-        :selected-token="tokenFullData.symbol"
+        :selected-token="tokenInfo.symbol"
         :active-wrap="activeWrap"
         :is-loading="isLoading"
         @add-token="addSelectedTokenToList"
@@ -143,6 +143,7 @@ export default {
     },
     tokensList() {
       let list = this.tokensListGetter[this.networkId];
+      console.log('__tokensListGetter', list);
       const networkId = this.networkId as keyof typeof MINTREDEEM_SCHEME;
       const wrapUnwrapPairs = MINTREDEEM_SCHEME[networkId]
         .filter((_) => _.methodName[0] === mintRedeemTypes.WRAP);
@@ -169,10 +170,6 @@ export default {
       }
 
       return [];
-    },
-
-    tokenFullData() {
-      return this.tokenInfo;
     },
   },
   methods: {
@@ -247,14 +244,14 @@ export default {
     inputUpdate(value: any) {
       // todo rates pair
       this.$emit('update-token', {
-        ...this.tokenFullData,
+        ...this.tokenInfo,
         value,
       }, this.isInputToken, false);
     },
     maxUpdate() {
       // todo rates pair
       this.$emit('update-token', {
-        ...this.tokenFullData,
+        ...this.tokenInfo,
       }, this.isInputToken, true);
     },
   },

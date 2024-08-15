@@ -2,19 +2,8 @@
 /* eslint-disable no-unused-vars */
 import odosApiService from '@/services/odos-api-service.ts';
 import { useEventBus } from '@vueuse/core';
-import {
-  getFilteredOvernightTokens,
-  getFilteredPoolTokens,
-  loadPriceTrigger,
-} from '@/store/helpers/index.ts';
 import BigNumber from 'bignumber.js';
-import { getNetworkParams } from '@/store/web3/network.ts';
-import { buildEvmContract } from '@/utils/contractsMap.ts';
-import { ERC20_ABI } from '@/assets/abi/index.ts';
 import _ from 'lodash';
-import BalanceService from '@/services/BalanceService/BalanceService.ts';
-import TokenService from '@/services/TokenService/TokenService.ts';
-import type { TTokenInfo } from '@/types/common/tokens';
 
 const ODOS_DURATION_CONFIRM_REQUEST = 60;
 

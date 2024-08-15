@@ -1,5 +1,4 @@
 /* eslint-disable no-unused-vars */
-import { getFilteredPoolTokens, loadPriceTrigger } from '@/store/helpers/index.ts';
 import { MINTREDEEM_SCHEME } from '@/store/views/main/mintRedeem/mocks.ts';
 import type { TTokenInfo } from '@/types/common/tokens';
 
@@ -19,7 +18,6 @@ const getters = {
 
 const actions = {
   // Legacy methods. TODO remove
-
   // Modified method
   async initTokenSchema({ commit }: any, props: { tokenList: TTokenInfo[], networkId: number }) {
     const { tokenList, networkId } = props;
@@ -36,41 +34,10 @@ const actions = {
       if (tokenMap[pair.token0] && tokenMap[pair.token1]) {
         return [tokenMap[pair.token0], tokenMap[pair.token1]];
       }
-    });
+    }).filter(Boolean);
 
     commit('changeTokenList', {
       [networkId]: mintRedeemList,
-    });
-  },
-
-  // Original legacy method
-  async initTokens({ commit, rootState }: any) {
-    const networkId = rootState.network.networkId as keyof typeof MINTREDEEM_SCHEME;
-
-    if (!MINTREDEEM_SCHEME[networkId]) return;
-
-    // todo: init lists for every networkId on first render
-    // currently its init on networkId change
-    const list = MINTREDEEM_SCHEME[networkId].map((_) => getFilteredPoolTokens(
-      networkId,
-      true,
-      [_.token0, _.token1],
-      true,
-      rootState.odosData,
-    ));
-
-    const tokensList = list.flat(1);
-    const tokensWithPrices = await loadPriceTrigger(tokensList, networkId);
-    const tokenPricesMap = tokensWithPrices.reduce((acc, token) => (
-      { ...acc, [token.id]: token.price }
-    ), {});
-
-    const listWithPrices = list.map((pair) => pair.map((token) => (
-      { ...token, price: tokenPricesMap[token.id] }
-    )));
-
-    commit('changeTokenList', {
-      [networkId]: listWithPrices,
     });
   },
 };
