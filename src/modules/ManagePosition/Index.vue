@@ -72,7 +72,6 @@
 <script lang="ts">
 import {
   mapActions,
-  mapGetters,
   useStore,
 } from 'vuex';
 import SuccessZapModal from '@/modules/ModalTemplates/SuccessModal/SuccessZapModal.vue';
@@ -138,13 +137,7 @@ export default {
       ],
     };
   },
-  computed: {
-    ...mapGetters('accountData', ['account']),
-  },
   watch: {
-    account() {
-      this.loadPositionContract(this.account);
-    },
     getUserPositions() {
       this.searchPool();
     },
@@ -157,7 +150,6 @@ export default {
     ...mapActions('odosData', [
       'triggerSuccessZapin',
     ]),
-    ...mapActions('zapinData', ['loadPositionContract']),
     changeTab(id: number) {
       this.activeTab = id;
     },
