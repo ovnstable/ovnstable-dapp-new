@@ -143,8 +143,7 @@ export default {
     },
   },
   async mounted() {
-    if (this.getUserPositions?.length === 0) this.init();
-    else this.searchPool();
+    if (this.getUserPositions?.length > 0) this.searchPool();
   },
   methods: {
     ...mapActions('odosData', [
@@ -158,12 +157,6 @@ export default {
         .find((_: any) => _?.tokenId?.toString() === this.$route?.params?.id);
 
       if (foundPool) this.zapPool = foundPool;
-    },
-    async init() {
-      this.$store.commit('odosData/changeState', {
-        field: 'isTokensLoadedAndFiltered',
-        val: false,
-      });
     },
   },
 };

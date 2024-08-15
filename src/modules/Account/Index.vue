@@ -11,10 +11,6 @@
       <div class="account__modal-divider" />
       <AddTokensAccount />
       <div class="account__modal-divider" />
-      <AccountTransactions
-        :isOvnTrxs="false"
-        class="account__modal-trxs"
-      />
       <ButtonComponent
         @click="logout"
         @keypress="logout"
@@ -34,7 +30,6 @@ import ButtonComponent from '@/components/Button/Index.vue';
 import ProfilePicture from '@/modules/Account/ProfilePicture.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import AddTokensAccount from '@/modules/Account/AddTokens.vue';
-import AccountTransactions from '@/modules/Account/AccountTransactions.vue';
 
 export default {
   name: 'AccountModal',
@@ -43,7 +38,6 @@ export default {
     ModalComponent,
     ProfilePicture,
     AddTokensAccount,
-    AccountTransactions,
     ButtonComponent,
     BaseIcon,
   },

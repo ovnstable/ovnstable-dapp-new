@@ -552,20 +552,10 @@ export default defineComponent({
       val: 'OVERNIGHT_SWAP',
     });
 
-    this.$store.commit('odosData/changeState', {
-      field: 'isTokensLoadedAndFiltered',
-      val: false,
-    });
-
     if (this.inputTokens.length === 0 && this.outputTokens.length === 0) {
       this.clearForm();
     }
     await this.init();
-
-    this.$store.commit('odosData/changeState', {
-      field: 'isTokensLoadedAndFiltered',
-      val: true,
-    });
 
     if (this.$route.query.action === 'swap-out') this.changeSwap();
   },
