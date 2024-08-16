@@ -185,7 +185,7 @@ import { MANAGE_FUNC, withdrawStep } from '@/store/modals/waiting-modal.ts';
 import { formatInputTokens } from '@/utils/tokens.ts';
 import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
 import { defineComponent } from 'vue';
-import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
+import { useTokensQuery, useRefreshBalances } from '@/hooks/fetch/useTokensQuery.ts';
 
 export default defineComponent({
   name: 'WithdrawForm',
@@ -216,6 +216,7 @@ export default defineComponent({
     return {
       allTokensList,
       isBalancesLoading,
+      refreshBalances: useRefreshBalances(),
     };
   },
   data() {
@@ -315,7 +316,6 @@ export default defineComponent({
     ...mapActions('odosData', [
       'triggerSuccessZapin',
     ]),
-    ...mapActions('accountData', ['refreshBalance']),
     ...mapActions('zapinData', ['loadZapContract']),
     ...mapActions('waitingModal', ['closeWaitingModal', 'showWaitingModal']),
     ...mapActions('walletAction', ['connectWallet']),
@@ -444,7 +444,7 @@ export default defineComponent({
     finishTransaction() {
       this.clearAndInitForm();
       this.closeWaitingModal();
-      this.refreshBalance();
+      this.refreshBalances();
     },
 
     clearAndInitForm() {

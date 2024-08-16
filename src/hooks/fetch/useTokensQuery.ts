@@ -1,5 +1,4 @@
-/* eslint-disable import/prefer-default-export */
-import { useQuery } from '@tanstack/vue-query';
+import { useQuery, useQueryClient } from '@tanstack/vue-query';
 import TokenService from '@/services/TokenService/TokenService.ts';
 import { computed } from 'vue';
 import BalanceService from '@/services/BalanceService/BalanceService.ts';
@@ -50,6 +49,7 @@ export const useTokensQuery = (stateData: any) => {
         tokenList.value,
       ),
       enabled: isBalancesQueryEnabled,
+      refetchInterval: 3000,
     },
   );
 
@@ -82,6 +82,8 @@ export const useTokensQuery = (stateData: any) => {
     return [];
   };
 
+  console.log('__tokenQUery', balancesQuery.data.value);
+
   return {
     isLoading: isAnyLoading.value,
     isError: isAnyError,
@@ -90,4 +92,13 @@ export const useTokensQuery = (stateData: any) => {
     isFetching: isAnyFetching,
     isBalancesLoading: balancesQuery.isLoading,
   };
+};
+
+export const useRefreshBalances = () => () => {
+  console.log('__queryRefreshBalances');
+  const queryClient = useQueryClient();
+  queryClient.invalidateQueries({
+    queryKey: ['balances'],
+    refetchType: 'all',
+  });
 };

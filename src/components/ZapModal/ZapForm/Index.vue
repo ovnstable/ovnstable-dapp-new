@@ -352,7 +352,7 @@ import { onLeaveList, onEnterList, beforeEnterList } from '@/utils/animations.ts
 import { MANAGE_FUNC, zapInStep } from '@/store/modals/waiting-modal.ts';
 import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
 import SwapSlippageSettings from '@/components/SwapSlippage/Index.vue';
-import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
+import { useTokensQuery, useRefreshBalances } from '@/hooks/fetch/useTokensQuery.ts';
 import TokenService from '@/services/TokenService/TokenService.ts';
 import { parseLogs } from './helpers.ts';
 
@@ -402,6 +402,7 @@ export default defineComponent({
       allTokensList,
       isTokensLoading,
       isBalancesLoading,
+      refreshBalances: useRefreshBalances(),
     };
   },
   data: () => ({
@@ -713,7 +714,6 @@ export default defineComponent({
       'startSwapConfirmTimer',
       'stopSwapConfirmTimer',
     ]),
-    ...mapActions('accountData', ['refreshBalance']),
     ...mapActions('zapinData', ['loadZapContract']),
     ...mapActions('errorModal', ['showErrorModalWithMsg']),
     ...mapActions('waitingModal', ['showWaitingModal', 'closeWaitingModal']),
@@ -891,7 +891,7 @@ export default defineComponent({
     finishTransaction() {
       this.clearAndInitForm();
       this.closeWaitingModal();
-      this.refreshBalance();
+      this.refreshBalances();
     },
 
     clearAndInitForm() {

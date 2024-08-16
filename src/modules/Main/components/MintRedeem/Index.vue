@@ -155,7 +155,7 @@ import { ABI_Exchange, ABI_Market } from '@/assets/abi/index.ts';
 import { getAllowanceValue, approveToken } from '@/utils/contractApprove.ts';
 import TokenService from '@/services/TokenService/TokenService.ts';
 import { defineComponent } from 'vue';
-import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
+import { useTokensQuery, useRefreshBalances } from '@/hooks/fetch/useTokensQuery.ts';
 import type { TTokenInfo } from '@/types/common/tokens';
 
 export default defineComponent({
@@ -178,6 +178,7 @@ export default defineComponent({
     return {
       allTokensList,
       isLoading,
+      refreshBalances: useRefreshBalances(),
     };
   },
   data() {
@@ -311,15 +312,19 @@ export default defineComponent({
         tokenList,
         networkId: this.networkId,
       };
-      if (tokenList.length > 0) this.initTokenSchema(params);
+      if (tokenList.length > 0) {
+        this.initTokenSchema(params);
+        // this.initForm();
+      }
     },
+  },
+  networkId(val: number | string) {
+    if (val) this.initForm();
   },
   methods: {
     ...mapActions('walletAction', ['connectWallet']),
     ...mapActions('mintRedeem', ['initTokenSchema']),
     ...mapActions('gasPrice', ['refreshGasPrice']),
-    ...mapActions('accountData', ['refreshBalance']),
-    ...mapActions('accTransaction', ['putTransaction']),
     ...mapActions('errorModal', ['showErrorModalWithMsg']),
     ...mapActions('waitingModal', ['showWaitingModal', 'closeWaitingModal']),
     ...mapActions('successModal', ['showSuccessModal']),
@@ -612,10 +617,6 @@ export default defineComponent({
 
         if (txData) {
           await txData.wait();
-          const tx = {
-            hash: txData.hash,
-            amount: this.inputToken.value,
-          };
 
           this.showSuccessModal({
             successTxHash: txData.hash,
@@ -623,12 +624,12 @@ export default defineComponent({
             to: [this.outputToken],
             type: this.swapMsg.toUpperCase(),
           });
-
-          this.putTransaction(tx);
           this.closeWaitingModal();
         }
 
-        this.refreshBalance();
+        console.log('__mintRedeemRefresh');
+        // this.refreshBalances();
+        // this.initForm();
       } catch (e) {
         console.log(e, '-e');
         this.closeWaitingModal();

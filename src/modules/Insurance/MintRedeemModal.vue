@@ -253,7 +253,7 @@ import { buildInsuranceContract, buildOvnContract, chainContractsMap } from '@/u
 import StepsRow, { mintRedeemStep } from '@/components/StepsRow/Index.vue';
 import { computed, defineComponent } from 'vue';
 import { INSURANCE_AVAILABLE_NETWORKS } from '@/constants/networks/index.ts';
-import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
+import { useTokensQuery, useRefreshBalances } from '@/hooks/fetch/useTokensQuery.ts';
 
 export default defineComponent({
   name: 'MintRedeemModal',
@@ -280,6 +280,7 @@ export default defineComponent({
       isAllDataLoaded: computed(() => !isLoading.value),
       isAllDataTrigger: computed(() => !isLoading.value),
       isBalancesLoading,
+      refreshBalances: useRefreshBalances(),
     };
   },
   data() {
@@ -371,7 +372,6 @@ export default defineComponent({
   mounted() {
   },
   methods: {
-    ...mapActions('account', ['refreshBalance']),
     ...mapActions('gasPrice', ['refreshGasPrice']),
     ...mapActions('errorModal', ['showErrorModalWithMsg']),
     ...mapActions('insuranceData', ['refreshInsurance', 'refreshClientData']),
@@ -513,7 +513,7 @@ export default defineComponent({
 
             await tx.wait();
 
-            self.refreshBalance();
+            // self.refreshBalances();
             self.showSuccessModal({
               successTxHash: tx.hash,
               successAction: 'mintInsurance',

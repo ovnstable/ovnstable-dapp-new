@@ -134,7 +134,7 @@ import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
 import { REWARD_TOKEN } from '@/store/views/main/zapin/index.ts';
 import { loadTokenImage } from '@/utils/tokenLogo.ts';
 import { computed, defineComponent, type ComputedRef } from 'vue';
-import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
+import { useTokensQuery, useRefreshBalances } from '@/hooks/fetch/useTokensQuery.ts';
 import type { TTokenInfo } from '@/types/common/tokens';
 
 export default defineComponent({
@@ -166,6 +166,7 @@ export default defineComponent({
       allTokensMap: computed(() => new Map(
         allTokensList.value.map((token) => [token.address, token]),
       )) as ComputedRef<Map<string, TTokenInfo>>,
+      refreshBalances: useRefreshBalances(),
     };
   },
   data() {
@@ -297,7 +298,6 @@ export default defineComponent({
     ...mapActions('odosData', [
       'triggerSuccessZapin',
     ]),
-    ...mapActions('accountData', ['refreshBalance']),
     ...mapActions('zapinData', ['loadZapContract']),
     ...mapActions('waitingModal', ['closeWaitingModal', 'showWaitingModal']),
     ...mapActions('walletAction', ['connectWallet']),
@@ -381,7 +381,7 @@ export default defineComponent({
     finishTransaction() {
       this.clearAndInitForm();
       this.closeWaitingModal();
-      this.refreshBalance();
+      this.refreshBalances();
     },
 
     clearAndInitForm() {

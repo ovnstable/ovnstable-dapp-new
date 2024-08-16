@@ -202,7 +202,7 @@ import ZapInStepsRow from '@/components/StepsRow/ZapinRow/RebalanceRow.vue';
 import { cloneDeep } from 'lodash';
 import { markRaw } from 'vue';
 import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
-import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
+import { useTokensQuery, useRefreshBalances } from '@/hooks/fetch/useTokensQuery.ts';
 import { parseLogs } from './helpers.ts';
 
 enum zapMobileSection {
@@ -248,6 +248,7 @@ export default {
 
     return {
       isBalancesLoading,
+      refreshBalances: useRefreshBalances(),
     };
   },
   data() {
@@ -397,7 +398,6 @@ export default {
       'stopSwapConfirmTimer',
       'triggerSuccessZapin',
     ]),
-    ...mapActions('accountData', ['refreshBalance']),
     ...mapActions('zapinData', ['loadZapContract']),
     ...mapActions('errorModal', ['showErrorModalWithMsg']),
     ...mapActions('waitingModal', ['closeWaitingModal']),
@@ -565,7 +565,7 @@ export default {
     finishTransaction() {
       this.clearAndInitForm();
       this.closeWaitingModal();
-      this.refreshBalance();
+      this.refreshBalances();
     },
 
     clearAndInitForm() {

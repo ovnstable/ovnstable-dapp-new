@@ -264,7 +264,7 @@ import {
 } from '@/store/helpers/index.ts';
 import BigNumber from 'bignumber.js';
 import { computed, defineComponent } from 'vue';
-import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
+import { useTokensQuery, useRefreshBalances } from '@/hooks/fetch/useTokensQuery.ts';
 import TokenService from '@/services/TokenService/TokenService.ts';
 import type { TTokenInfo } from '@/types/common/tokens';
 
@@ -300,6 +300,7 @@ export default defineComponent({
       isAllDataLoaded: computed(() => !isLoading.value),
       isAllDataTrigger: computed(() => !isLoading.value),
       isBalancesLoading,
+      refreshBalances: useRefreshBalances(),
     };
   },
   data() {
@@ -516,7 +517,7 @@ export default defineComponent({
       this.clearForm();
     },
     allTokensList(tokens: TTokenInfo[]) {
-      if (!this.isInit && tokens.length > 0) {
+      if (tokens.length > 0) {
         this.clearForm();
         this.isInit = true;
       }
@@ -572,7 +573,6 @@ export default defineComponent({
       ],
     ),
     ...mapActions('errorModal', ['showErrorModalWithMsg']),
-    ...mapActions('accountData', ['refreshBalance']),
     ...mapActions('waitingModal', ['showWaitingModal', 'closeWaitingModal']),
     ...mapActions('walletAction', ['connectWallet']),
 
@@ -765,7 +765,7 @@ export default defineComponent({
 
     finishTransaction() {
       this.clearForm();
-      this.refreshBalance();
+      this.refreshBalances();
     },
 
     clearForm() {

@@ -143,7 +143,6 @@ export default {
     },
     tokensList() {
       let list = this.tokensListGetter[this.networkId];
-      console.log('__tokensListGetter', list);
       const networkId = this.networkId as keyof typeof MINTREDEEM_SCHEME;
       const wrapUnwrapPairs = MINTREDEEM_SCHEME[networkId]
         .filter((_) => _.methodName[0] === mintRedeemTypes.WRAP);
