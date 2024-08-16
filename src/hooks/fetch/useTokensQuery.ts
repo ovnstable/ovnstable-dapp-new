@@ -82,8 +82,6 @@ export const useTokensQuery = (stateData: any) => {
     return [];
   };
 
-  console.log('__tokenQUery', balancesQuery.data.value);
-
   return {
     isLoading: isAnyLoading.value,
     isError: isAnyError,

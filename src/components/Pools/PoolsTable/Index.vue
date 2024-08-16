@@ -42,8 +42,6 @@
               'pools-table__new': key === indexOfLastNewPool,
               'pools-table__blast': pool.platform[0] === 'Thruster',
             }"
-            @click="toggleDetails(pool)"
-            @keypress="toggleDetails(pool)"
           >
             <div class="pools-table__chain">
               <BaseIcon :name="pool.chainName" />
@@ -307,15 +305,6 @@ export default {
     },
     getPlatformLink(pool: any, platform: string) {
       return buildLink(pool, platform) ?? '';
-    },
-    toggleDetails(pool: any) {
-      if (this.pools && this.pools.length) {
-        pool.isOpened = !pool.isOpened;
-        return;
-      }
-
-      // pools without aggregators always is opened
-      pool.isOpened = true;
     },
     toggleOrderType(type: string) {
       if (type === 'APR') {

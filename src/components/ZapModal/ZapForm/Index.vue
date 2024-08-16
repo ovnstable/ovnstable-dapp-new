@@ -474,11 +474,11 @@ export default defineComponent({
     ...mapGetters('accountData', ['account']),
 
     zapsLoaded() {
-      return this.allTokensList?.length > 0
+      return (this.allTokensList?.length > 0
         && this.outputTokens?.length > 0
         && this.zapPool
         && this.zapContract
-        && this.isZapLoaded;
+        && this.isZapLoaded) ?? false;
     },
     getOdosFee() {
       return new BN(this.sumOfAllSelectedTokensInUsd)
@@ -674,12 +674,6 @@ export default defineComponent({
     },
   },
   watch: {
-    async allTokensList(val: any[]) {
-      if (this.zapPool.chain !== this.networkId) return;
-      if (val.length === 0) return;
-
-      this.firstInit();
-    },
     currentStage(stage: zapInStep) {
       this.$store.commit('zapinData/changeState', { field: 'currentStage', val: stage });
       if (this.currentStage !== zapInStep.START) {
@@ -707,6 +701,8 @@ export default defineComponent({
     // for modal
     this.setStagesMap(MANAGE_FUNC.ZAPIN);
     this.initContracts();
+
+    this.firstInit();
   },
   methods: {
     ...mapActions('odosData', [

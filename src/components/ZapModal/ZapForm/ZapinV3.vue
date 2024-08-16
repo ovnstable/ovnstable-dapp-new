@@ -413,8 +413,8 @@ export default {
           .map((_) => [Number(new BN(1).div(_[0]).toFixed(6)), _[1]]);
       }
 
-      if (val) {
-        (this.$refs?.zapinChart as any).updateSeries([{
+      if (val && this?.$refs?.zapinChart) {
+        (this.$refs?.zapinChart as any)!.updateSeries([{
           data: buildData,
         }], false, true);
 
@@ -513,9 +513,9 @@ export default {
     const closestTicks = await this.zapContract.closestTicksForCurrentTick(this.zapPool.address);
     this.initTicks(tickSpace);
 
-    console.log(center.toString(), '___this.center');
-    console.log(tickSpace.toString(), '___this.tickSpace');
-    console.log(centerTick.toString(), '___this.centerTick');
+    // console.log(center.toString(), '___this.center');
+    // console.log(tickSpace.toString(), '___this.tickSpace');
+    // console.log(centerTick.toString(), '___this.centerTick');
     this.closestTicks = [closestTicks[0]?.toString(), closestTicks[1]?.toString()];
     this.tickSpace = tickSpace.toString();
     this.tickLeft = this.ticksInit?.length > 0 ? this.ticksInit[0]?.toString()
@@ -678,7 +678,7 @@ export default {
       if (this.isStablePool || this.lowPoolPrice) {
         const buildData = Array.from({ length: 22 }).map((_, key) => [key / 10, 0]);
 
-        (this.$refs?.zapinChart as any).updateSeries([{
+        (this.$refs?.zapinChart as any)!.updateSeries([{
           data: buildData,
         }], false, true);
 
@@ -775,7 +775,7 @@ export default {
 
       if (buildData?.length === 0) return;
 
-      (this.$refs?.zapinChart as any).updateSeries([{
+      (this.$refs?.zapinChart as any)!.updateSeries([{
         data: buildData,
       }], false, true);
 
