@@ -81,7 +81,7 @@ import PoolsTable from '@/components/Pools/PoolsTable/Index.vue';
 import TableSkeleton from '@/components/TableSkeleton/Index.vue';
 import { POOL_TYPES } from '@/store/views/main/pools/index.ts';
 import { defineComponent, type PropType } from 'vue';
-import { usePoolsQuery } from '@/hooks/fetch/usePoolsQuery.ts';
+import { usePoolsQueryNew } from '@/hooks/fetch/usePoolsQuery.ts';
 import { POOL_CATEGORIES } from '@/types/common/pools/index.ts';
 import PoolService from '@/services/PoolService/PoolService.ts';
 import { ORDER_TYPE } from '@/services/PoolService/utils/poolsSort.ts';
@@ -109,7 +109,7 @@ export default defineComponent({
   },
 
   setup: () => {
-    const { data: poolList, isLoading: isPoolsLoading } = usePoolsQuery();
+    const { data: poolList, isLoading: isPoolsLoading } = usePoolsQueryNew();
     return {
       poolList,
       isPoolsLoading,
@@ -126,6 +126,16 @@ export default defineComponent({
     networkIds: [] as number[], // [] for ALL or networks,
     category: POOL_CATEGORIES.ALL as POOL_CATEGORIES,
     searchQuery: '',
+
+    // New filter
+    // token0: '' as string,
+    // token1: '' as string,
+    // chain: [] as number[],
+    // minTvl: 0 as number,
+    // protocol: [] as string[],
+    // page: 0 as number,
+    // limit: 0 as number,
+    // sort: '' as string,
 
     orderType: ORDER_TYPE.TVL_UP,
     isDefaultOrder: true as boolean,

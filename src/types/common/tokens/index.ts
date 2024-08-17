@@ -27,16 +27,6 @@ export type TTokenInfo = {
     approveData?: TApproveData,
   }
 
-  interface ISuccessTokenInfo extends TTokenInfo {
-    value: string,
-  }
-
-  type ISuccessTokenData = {
-    [key: string]: any;
-} & {
-    usdValue: string;
-};
-
 export type TTokenBalanceMap = {
     [key: string]: TBalanceInfo,
   }

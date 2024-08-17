@@ -161,23 +161,22 @@
             </div>
             <div class="pools-table__platform-row">
               <a
-                v-for="(poolPlat, key) in pool.platform"
                 :key="key"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="pools-table__platform"
-                :href="getPlatformLink(pool, poolPlat)"
+                :href="getPlatformLink(pool, pool.platform)"
               >
                 <BaseIcon
                   class="pools-table__platform-icon"
-                  :name="poolPlat"
+                  :name="pool.platform"
                 />
 
                 <span v-if="pool.poolNameForAgregator">
                   {{ pool.poolNameForAgregator.toUpperCase() }}
                 </span>
                 <span v-else>
-                  {{ poolPlat.toUpperCase() }}
+                  {{ pool.platform.toUpperCase() }}
                 </span>
                 <div class="button-link">
                   <BaseIcon
