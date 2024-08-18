@@ -35,7 +35,7 @@
           {{ selectedText }}
         </span>
         <span
-          v-if="selectStyles === 'primary'"
+          v-if="['primary', 'transparent'].includes(selectStyles)"
           class="select-icon"
         >
           <BaseIcon name="ArrowRight" />
@@ -109,9 +109,9 @@
 import uniqueId from 'lodash/uniqueId';
 import { onClickOutside, templateRef } from '@vueuse/core';
 import type { PropType } from 'vue';
-import BaseIcon from '../Icon/BaseIcon.vue';
+import BaseIcon from '@/components/Icon/BaseIcon.vue';
 
-type selectStyles = 'primary' | 'secondary';
+type selectStyles = 'primary' | 'secondary' | 'transparent';
 
 export default {
   name: 'SelectComponent',
@@ -205,6 +205,10 @@ export default {
       default: false,
     },
     tiny: {
+      type: Boolean,
+      default: false,
+    },
+    defaultPosTop: {
       type: Boolean,
       default: false,
     },
@@ -346,6 +350,12 @@ export default {
           const rect = el.getBoundingClientRect();
           const windowHeight = window.innerHeight;
 
+          if (this.defaultPosTop) {
+            this.bottom = false;
+            this.top = true;
+            return;
+          }
+
           if (windowHeight - rect.bottom < 290) {
             this.bottom = false;
             this.top = true;
@@ -471,7 +481,7 @@ export default {
     justify-content: center;
     align-items: center;
     gap: 8px;
-    font-size: 12px;
+    font-size: 15px;
     padding: 2px 6px;
     min-width: 40px;
     font-weight: 500;
@@ -492,6 +502,18 @@ export default {
       background: var(--color-5);
       color: var(--color-1);
       border: 1px solid var(--color-6);
+
+      [data-theme="dark"] & {
+        background: var(--color-17);
+      }
+    }
+  }
+
+  &.transparent {
+    .select-selected {
+      background: var(--color-8);
+      color: var(--color-1);
+      border: 1px solid var(--color-4);
 
       [data-theme="dark"] & {
         background: var(--color-17);
@@ -637,7 +659,11 @@ export default {
 
 .select-icon {
   svg {
-    width: 8px;
+    position: relative;
+    width: 5px;
+    top: -6px;
+    margin-left: 3px;
+    transform: rotate(90deg)
   }
 }
 </style>

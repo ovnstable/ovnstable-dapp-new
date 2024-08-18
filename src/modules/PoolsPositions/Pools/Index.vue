@@ -37,25 +37,13 @@
           v-if="!isPoolsLoading && isMorePoolsToShow"
           #footer
         >
-          <div
-            class="table-extend"
-            @click="isOpenHiddenPools = !isOpenHiddenPools"
-            @keypress="isOpenHiddenPools = !isOpenHiddenPools"
-          >
-            <div
-              class="table-extend__arrow"
-            >
-              <BaseIcon name="ArrowDown" />
-            </div>
-            <h1>
-              {{ isOpenHiddenPools ? "CLOSE POOLS" : "OPEN HIDDEN POOLS" }}
-            </h1>
-            <div
-              class="table-extend__arrow"
-            >
-              <BaseIcon name="ArrowDown" />
-            </div>
-          </div>
+          <pagination-component
+            :page="tableSettings.page"
+            :per-page="tableSettings.perPage"
+            :total="tableSettings.total || displayedPools.length"
+            @change-page="changePage"
+            @change-per-page="changePerPage"
+          />
         </template>
       </PoolsTable>
     </div>
@@ -73,9 +61,9 @@
 import {
   mapActions, mapGetters, mapState, mapMutations,
 } from 'vuex';
-import BaseIcon from '@/components/Icon/BaseIcon.vue';
 
 import ZapModal from '@/components/ZapModal/Index.vue';
+import PaginationComponent from '@/components/Pagination/Index.vue';
 import PoolsFilter from '@/components/Pools/PoolsFilter/Index.vue';
 import PoolsTable from '@/components/Pools/PoolsTable/Index.vue';
 import TableSkeleton from '@/components/TableSkeleton/Index.vue';
@@ -90,7 +78,7 @@ import { POOL_SHOW_LIMIT } from '@/constants/pools/index.ts';
 export default defineComponent({
   name: 'PoolsContainer',
   components: {
-    BaseIcon,
+    PaginationComponent,
     PoolsFilter,
     TableSkeleton,
     PoolsTable,
@@ -119,6 +107,11 @@ export default defineComponent({
     poolTabType: POOL_TYPES.ALL,
     isMorePoolsToShow: true,
     isOpenHiddenPools: false,
+    tableSettings: {
+      page: 1,
+      perPage: 10,
+      total: null,
+    },
 
     isShowOnlyZap: false,
     isShowAprLimit: false,
@@ -184,6 +177,12 @@ export default defineComponent({
     ...mapActions('poolsData', ['openZapIn', 'setIsZapModalShow']),
     ...mapMutations('poolsData', ['changeState']),
 
+    changePerPage() {
+      console.log('changePerPage');
+    },
+    changePage() {
+      console.log('changePage');
+    },
     switchPoolsTab(type: POOL_CATEGORIES) {
       this.isDefaultOrder = true;
       this.isOpenHiddenPools = false;
