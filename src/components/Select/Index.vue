@@ -661,7 +661,7 @@ export default {
   svg {
     position: relative;
     width: 5px;
-    top: -6px;
+    top: -2px;
     margin-left: 3px;
     transform: rotate(90deg)
   }

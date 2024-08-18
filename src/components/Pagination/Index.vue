@@ -1,5 +1,5 @@
 <template>
-  <nav :class="classObject">
+  <nav class="pagination">
     <div
       v-show="pagesCount > 1"
       class="pagination-left"
@@ -111,21 +111,10 @@ export default {
       type: Boolean,
       default: false,
     },
-    small: {
-      type: Boolean,
-      default: false,
-    },
   },
   emits: ['changePage', 'changePerPage'],
 
   computed: {
-    classObject() {
-      return [
-        this.$options.name,
-        { small: this.small },
-      ];
-    },
-
     pagesCount() {
       return Math.ceil(this.total / this.perPage, 10);
     },
@@ -209,9 +198,10 @@ export default {
 $pagination-background-active: #edf1f7;
 $pagination-text: #555a63;
 
-.PaginationComponent {
+.pagination {
   display: flex;
   align-items: center;
+  margin-top: 10px;
 }
 
 .pagination-left {
