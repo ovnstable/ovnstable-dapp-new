@@ -13,7 +13,6 @@ export const useTokensQuery = (stateData: any) => {
   const address = computed(() => stateData.accountData.account);
   const provider = computed(() => stateData.web3.evmProvider);
 
-  console.log(networkLoaded.value, '___networkLoaded');
   const tokensQuery = useQuery(
     {
       queryKey: ['tokens'],
@@ -73,9 +72,6 @@ export const useTokensQuery = (stateData: any) => {
     const tokensData = tokensQuery.data.value;
     const pricesData = pricesQuery.data.value;
     const balancesData = balancesQuery.data.value;
-
-    console.log(isAnyLoading.value, '___isAnyLoading1')
-    console.log(networkId.value, '___isAnyLoading2')
 
     if (isAnyLoading.value) return [];
 
