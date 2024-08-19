@@ -17,7 +17,7 @@ export const useTokensQuery = (stateData: any) => {
     {
       queryKey: ['tokens'],
       queryFn: TokenService.fetchTokens,
-      refetchInterval: false,
+      refetchInterval: 24 * 60 * 60 * 1000,
     },
   );
 
@@ -26,7 +26,7 @@ export const useTokensQuery = (stateData: any) => {
       queryKey: ['tokenPrices', networkId.value, networkLoaded.value],
       queryFn: () => TokenService.fetchTokenPricesByNetworkId(networkId.value),
       enabled: !!networkId.value,
-      refetchInterval: false,
+      refetchInterval: 5 * 60 * 60 * 1000,
     },
   );
 

@@ -31,18 +31,6 @@ app.use(
 );
 app.component('PopperComponent', Popper);
 
-async function initNetwork() {
-  try {
-    if (!window?.ethereum.chainId) return;
-    const chainId = Number(window.ethereum.chainId)?.toString();
-    store.dispatch('theme/initTheme');
-    store.dispatch('network/saveNetworkToLocalStore', chainId, { root: true });
-  } catch (e) {
-    console.log('Error when init network:', e);
-    // ignore
-  }
-}
-
 async function initPosthog() {
   try {
     store.dispatch('posthog/initPosthog', PosthogService.getInstance(), { root: true });
@@ -51,7 +39,5 @@ async function initPosthog() {
   }
 }
 
-initNetwork().then(() => {
-  initPosthog();
-  app.mount('#app');
-});
+initPosthog();
+app.mount('#app');
