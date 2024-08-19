@@ -63,9 +63,9 @@ import TokenService from '@/services/TokenService/TokenService.ts';
 import type { TTokenInfo } from '@/types/common/tokens/index.ts';
 
 type TBalanceList = {
-          balance: string,
-          symbol: string,
-    }
+  balance: string,
+  symbol: string,
+}
 
 export default defineComponent({
   name: 'UserBalances',

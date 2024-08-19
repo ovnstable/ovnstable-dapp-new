@@ -158,7 +158,7 @@ export function getNetworkParams(networkName: string | number | null): any {
     case 59144:
       return LINEA_PARAMS;
     default:
-      return null; // BASE_PARAMS;
+      return BASE_PARAMS; // BASE_PARAMS;
   }
 }
 
