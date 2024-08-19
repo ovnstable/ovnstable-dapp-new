@@ -57,11 +57,12 @@
 import ModalComponent from '@/components/Modal/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
-import { mapGetters, mapState } from 'vuex';
-import { defineComponent } from 'vue';
+import { mapGetters, mapState, useStore } from 'vuex';
+import { computed, defineComponent, type ComputedRef } from 'vue';
 import { getAllTokensString, getTransactionTotal } from '@/utils/tokens.ts';
 import { checkIsEveryStable } from '@/store/views/main/pools/helpers.ts';
 import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
+import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
 import ZapinContent from './components/zapin.vue';
 import WithdrawContent from './components/withdraw.vue';
 import HarvestContent from './components/harvest.vue';
@@ -69,6 +70,7 @@ import CompoundContent from './components/compound.vue';
 import {
   mapEventTokenData, mapInputTokenData, type TFormatTokenInfo,
 } from './helpers.ts';
+import type { TTokenInfo } from '@/types/common/tokens/index.ts';
 
 export default defineComponent({
   name: 'SuccessZapModal',
@@ -88,6 +90,24 @@ export default defineComponent({
     },
   },
   emits: ['close'],
+  setup() {
+    const store = useStore() as any;
+
+    const {
+      data: allTokensList,
+      isLoading,
+      isBalancesLoading,
+    } = useTokensQuery(store.state);
+
+    return {
+      allTokensMap: computed(() => new Map(
+        allTokensList.value.map((token) => [token.address, token]),
+      )) as ComputedRef<Map<string, TTokenInfo>>,
+      isAllDataLoaded: computed(() => !isLoading.value),
+      isAllDataTrigger: computed(() => !isLoading.value),
+      isBalancesLoading,
+    };
+  },
   data() {
     return {
       tokensSentList: [] as TFormatTokenInfo[],
@@ -100,7 +120,6 @@ export default defineComponent({
   },
   computed: {
     ...mapState('odosData', [
-      'allTokensMap',
       'successData',
       'showSuccessZapin',
       'lastParsedReturnedToUserEvent',
@@ -111,7 +130,6 @@ export default defineComponent({
       'lastParsedBurnedTokenIdEvent',
       'lastParsedClaimedRewardsEvent',
     ]),
-    ...mapGetters('odosData', ['allTokensMap']),
     ...mapGetters('accountData', ['account']),
     ...mapGetters('posthog', ['posthogService']),
     ...mapGetters('network', ['explorerUrl']),
@@ -168,7 +186,6 @@ export default defineComponent({
   methods: {
     closeModal() {
       this.setShowFunc({ isShow: false });
-      this.$emit('close');
 
       // If rebalance modal
       if (this.lastParsedClaimedRewardsEvent && this.lastParsedBurnedTokenIdEvent) {

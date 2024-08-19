@@ -388,43 +388,6 @@ export const getSortedPools = (
   return filterByPoolType(poolsList, filterByType);
 };
 
-export const initReversePools = (pool: any, pools: any[]) => {
-  pool.aggregators = [];
-  const poolAddress = pool.address;
-
-  if (
-    poolAddress === '0x61366A4e6b1DB1b85DD701f2f4BFa275EF271197_Aerodrome'
-  ) {
-    const findedPool = pools.find(
-      (data) => data.address === '0x61366A4e6b1DB1b85DD701f2f4BFa275EF271197',
-    );
-    if (!pool) {
-      console.error('Pool not found for aggregation reverse', poolAddress);
-      return;
-    }
-
-    pool.aggregators.push({
-      ...findedPool,
-    });
-  }
-
-  if (
-    poolAddress === '0x844D7d2fCa6786Be7De6721AabdfF6957ACE73a0_Velodrome'
-  ) {
-    const findedPool = pools.find(
-      (data) => data.address === '0x844D7d2fCa6786Be7De6721AabdfF6957ACE73a0',
-    );
-    if (!pool) {
-      console.error('Pool not found for aggregation reverse', poolAddress);
-      return;
-    }
-
-    pool.aggregators.push({
-      ...findedPool,
-    });
-  }
-};
-
 export const initAggregators = (pool: any) => {
   pool.aggregators = [];
   const poolAddress = pool.id.address;

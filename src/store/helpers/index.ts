@@ -6,9 +6,7 @@ import BigNumber from 'bignumber.js';
 import { loadTokenImage, loadOvernightTokenImage } from '@/utils/tokenLogo.ts';
 import odosApiService from '@/services/odos-api-service.ts';
 import SliderApiService from '@/services/slider-api-service.ts';
-import { DEPRECATED_NETWORKS, ODOS_DEPRECATED_NETWORKS } from '@/utils/const.ts';
-import { BLAST_TOKENS_PRICES } from '@/store/views/main/odos/mocks.ts';
-import type { stateData } from '@/store/views/main/odos/index';
+import { DEPRECATED_NETWORKS } from '@/utils/const.ts';
 
 const SECONDTOKEN_SECOND_DEFAULT_SYMBOL = 'DAI+';
 const SECONDTOKEN_DEFAULT_SYMBOL = 'USD+';
@@ -126,106 +124,6 @@ export const addItemToFilteredTokens = (
     },
     price: 0,
   });
-};
-
-export const getFilteredPoolTokens = (
-  chainId: string | number,
-  isIncludeInListAddresses: boolean,
-  listTokensAddresses: string[],
-  ignoreBaseNetworkCurrency: boolean,
-  state: typeof stateData,
-): any[] => {
-  if (!state.tokensMap || !state.tokensMap.chainTokenMap) return [];
-  let tokens: any = [];
-  const { tokenMap } = state.tokensMap.chainTokenMap[`${chainId}`];
-  let leftListTokensAddresses = listTokensAddresses;
-  const keys = Object.keys(tokenMap);
-
-  for (let i = 0; i < keys.length; i++) {
-    const key = keys[i];
-    const item = tokenMap[key];
-
-    const isKeyIncludeList = leftListTokensAddresses.some(
-      (address: string) => address.toLowerCase() === key.toLowerCase(),
-    );
-
-    const isNeedTokenIgnore = false;
-    const isNeedIgnore = key === '0x0000000000000000000000000000000000000000'
-        || isNeedTokenIgnore;
-    if (ignoreBaseNetworkCurrency && isNeedIgnore) continue;
-
-    // add only included in list
-    if (isIncludeInListAddresses && isKeyIncludeList) {
-      addItemToFilteredTokens(tokens, key, item);
-      leftListTokensAddresses = leftListTokensAddresses.filter(
-        (address: string) => address.toLowerCase() !== key.toLowerCase(),
-      );
-      continue;
-    }
-
-    // add only non-list
-    if (!isIncludeInListAddresses && !isKeyIncludeList) {
-      addItemToFilteredTokens(tokens, key, item);
-    }
-  }
-
-  // order tokens like as list addresses.
-  if (isIncludeInListAddresses) {
-    if (listTokensAddresses.length === tokens.length) {
-      tokens = tokens.sort((a: any, b: any) => {
-        const indexA = listTokensAddresses.findIndex(
-          (item: any) => item.toLowerCase() === a.address.toLowerCase(),
-        );
-        const indexB = listTokensAddresses.findIndex(
-          (item: any) => item.toLowerCase() === b.address.toLowerCase(),
-        );
-        return indexA - indexB;
-      });
-    } else {
-      console.error(
-        'Error when order token by list of addresses.',
-        listTokensAddresses,
-        tokens,
-      );
-    }
-  }
-
-  return tokens;
-};
-
-export const getFilteredOvernightTokens = (
-  state: typeof stateData,
-  chainId: number,
-  isOnlyOvnToken: any,
-) => {
-  if (!state.tokensMap || !state.tokensMap.chainTokenMap) return [];
-
-  const tokens: any = [];
-  const { tokenMap } = state.tokensMap.chainTokenMap[chainId];
-  const keys = Object.keys(tokenMap);
-  for (let i = 0; i < keys.length; i++) {
-    const key = keys[i];
-    const item = tokenMap[key];
-
-    // add only overnight
-    if (
-      (isOnlyOvnToken && item.protocolId === 'overnight')
-        || item.symbol === 'USD+'
-        || item.symbol === 'DAI+'
-        || item.symbol === 'USDT+'
-    ) {
-      addItemToFilteredTokens(tokens, key, item);
-      continue;
-    }
-
-    // add only overnight
-    if (!isOnlyOvnToken) {
-      addItemToFilteredTokens(tokens, key, item);
-      continue;
-    }
-  }
-
-  return tokens;
 };
 
 export const innerGetDefaultSecondtokenBySymobl = (tokensList: any[], symbolName: string) => {
@@ -468,25 +366,13 @@ export const loadPrices = async (chainId: number | string) => odosApiService
     console.error('Error load contract', e);
   });
 
-export const loadPriceTrigger = async (tokens: any[], chainId: number | string) => {
-  const isDeprecated = ODOS_DEPRECATED_NETWORKS.includes(Number(chainId));
-
-  const getPrices = async () => loadPrices(chainId)
-    .catch((e) => {
-      console.error('Error when load prices info', e);
-    });
-
-  const tokenPricesMap = isDeprecated ? { ...BLAST_TOKENS_PRICES }[chainId] : await getPrices();
-
-  return tokens.map((data: any) => ({
-    ...data,
-    price: new BigNumber(tokenPricesMap[data.address] ?? 0).toFixed(20),
-  }));
-};
-
-export const sortedChainsByTVL = async (chains: any, showDeprecated: boolean) => {
+export const sortedChainsByTVL = async (
+  chains: any,
+  showDeprecated: boolean,
+  networkId: number,
+) => {
   const tvl = await SliderApiService.loadTVL();
-  const response = await odosApiService.loadPrices(10);
+  const response = await odosApiService.loadPrices(networkId);
   const ethPrice = (response as any).tokenPrices['0x0000000000000000000000000000000000000000'];
 
   const filterDeprecated = chains.filter((_: any) => {

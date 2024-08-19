@@ -42,8 +42,6 @@
               'pools-table__new': key === indexOfLastNewPool,
               'pools-table__blast': pool.platform[0] === 'Thruster',
             }"
-            @click="toggleDetails(pool)"
-            @keypress="toggleDetails(pool)"
           >
             <div class="pools-table__chain">
               <BaseIcon :name="pool.chainName" />
@@ -224,7 +222,7 @@ import { mapActions } from 'vuex';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import { formatMoneyComma, formatNumberToMln, formatNumberToThousands } from '@/utils/numbers.ts';
-import ZapInComponent from '@/modules/Main/components/ZapModal/Index.vue';
+import ZapInComponent from '@/components/ZapModal/Index.vue';
 import { buildLink, checkIsEveryStable } from '@/store/views/main/pools/helpers.ts';
 import { APY_POOLS } from '@/store/views/main/pools/mocks.ts';
 
@@ -307,15 +305,6 @@ export default {
     },
     getPlatformLink(pool: any, platform: string) {
       return buildLink(pool, platform) ?? '';
-    },
-    toggleDetails(pool: any) {
-      if (this.pools && this.pools.length) {
-        pool.isOpened = !pool.isOpened;
-        return;
-      }
-
-      // pools without aggregators always is opened
-      pool.isOpened = true;
     },
     toggleOrderType(type: string) {
       if (type === 'APR') {

@@ -13,7 +13,8 @@
     </div>
 
     <PoolData
-      v-if="zapPool"
+      v-if="zapPool && !tokensLoading"
+      :all-tokens-list="allTokensList"
       :zap-pool="zapPool"
     />
 
@@ -40,6 +41,7 @@
       <RebalanceForm
         :zap-pool="zapPool"
         :active-tab="activeTab"
+        :all-tokens-list="allTokensList"
       />
     </div>
     <div
@@ -63,7 +65,6 @@
 
     <SuccessZapModal
       :set-show-func="triggerSuccessZapin"
-      @close="redirect"
     />
   </div>
 </template>
@@ -71,7 +72,7 @@
 <script lang="ts">
 import {
   mapActions,
-  mapGetters,
+  useStore,
 } from 'vuex';
 import SuccessZapModal from '@/modules/ModalTemplates/SuccessModal/SuccessZapModal.vue';
 import RebalanceForm from '@/modules/ManagePosition/ZapForm/Index.vue';
@@ -81,8 +82,9 @@ import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import TableSkeleton from '@/components/TableSkeleton/Index.vue';
 import SwitchTabs from '@/components/SwitchTabs/Index.vue';
-import { formatPositionData } from '@/components/Pools/PositionsTable/helpers.ts';
 import PoolData from '@/modules/ManagePosition/PoolData.vue';
+import { usePositionsQuery } from '@/hooks/fetch/usePositionsQuery.ts';
+import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
 
 export enum MANAGE_TAB {
   REBALANCE,
@@ -102,6 +104,18 @@ export default {
     BaseIcon,
     TableSkeleton,
     SwitchTabs,
+  },
+  setup() {
+    const store = useStore() as any;
+
+    const { data: getUserPositions } = usePositionsQuery(store.state);
+    const { data: allTokensList, isLoading: tokensLoading } = useTokensQuery(store.state);
+
+    return {
+      allTokensList,
+      tokensLoading,
+      getUserPositions,
+    };
   },
   data() {
     return {
@@ -124,61 +138,26 @@ export default {
       ],
     };
   },
-  computed: {
-    ...mapGetters('zapinData', [
-      'getUserPositions',
-    ]),
-    ...mapGetters('poolsData', ['allPoolsMap']),
-    ...mapGetters('odosData', ['allTokensMap']),
-    ...mapGetters('accountData', ['account']),
+  watch: {
+    getUserPositions() {
+      this.searchPool();
+    },
   },
   async mounted() {
-    console.log(this.$route, '__zapPool');
-    if (this.getUserPositions?.length === 0) this.init();
-    else this.searchPool();
+    if (this.getUserPositions?.length > 0) this.searchPool();
   },
   methods: {
     ...mapActions('odosData', [
       'triggerSuccessZapin',
     ]),
-    ...mapActions('poolsData', ['loadPools']),
-    ...mapActions('zapinData', ['loadPositionContract']),
-    ...mapActions('odosData', ['loadTokens', 'initData', 'loadChains', 'initContractData']),
-    redirect() {
-      this.$router.push('/positions');
-    },
     changeTab(id: number) {
       this.activeTab = id;
     },
     searchPool() {
-      const poolInfo = this.allPoolsMap;
-      const tokensList = this.allTokensMap;
-
-      console.log(this.getUserPositions, '__foundPool1');
-      const formatPos = formatPositionData(this.getUserPositions, poolInfo, tokensList);
-
-      const foundPool = formatPos
+      const foundPool = this.getUserPositions
         .find((_: any) => _?.tokenId?.toString() === this.$route?.params?.id);
 
       if (foundPool) this.zapPool = foundPool;
-    },
-    async init() {
-      this.$store.commit('odosData/changeState', {
-        field: 'isTokensLoadedAndFiltered',
-        val: false,
-      });
-      await this.loadPools();
-      await this.loadTokens();
-      await this.loadChains();
-      await this.initContractData();
-      await this.initData();
-      await this.loadPositionContract(this.account);
-      this.$store.commit('odosData/changeState', {
-        field: 'isTokensLoadedAndFiltered',
-        val: true,
-      });
-
-      this.searchPool();
     },
   },
 };

@@ -31,3 +31,4 @@ coverage
 *.tsbuildinfo
 
 vite.config.ts.*
+package.json

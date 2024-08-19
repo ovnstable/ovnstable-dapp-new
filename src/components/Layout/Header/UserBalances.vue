@@ -4,8 +4,8 @@
     placement="bottom-end"
   >
     <div
+      v-if="isBalancesLoading && !device.isDesktop"
       class="lineLoaderMobile"
-      v-if="balancesLoading && !device.isDesktop"
     />
     <ButtonComponent
       v-else
@@ -24,9 +24,9 @@
         class="popper-list"
       >
         <div
-          class="networks-list__item app-header__balance-item"
-          v-for="(item, key) in (userBalancesList as any)"
+          v-for="(item, key) in userBalancesList"
           :key="key"
+          class="networks-list__item app-header__balance-item"
           @click="close"
           @keypress="close"
         >
@@ -52,91 +52,70 @@
 </template>
 
 <script lang="ts">
-import { mapGetters, mapState } from 'vuex';
+import { useStore } from 'vuex';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { deviceType } from '@/utils/deviceType.ts';
-import { OVN_TOKENS, EMPTY_TOKENS_NETWORKS } from '@/utils/const.ts';
-import { isEmpty } from 'lodash';
-import BigNumber from 'bignumber.js';
+import BN from 'bignumber.js';
+import { computed, defineComponent } from 'vue';
+import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
+import TokenService from '@/services/TokenService/TokenService.ts';
+import type { TTokenInfo } from '@/types/common/tokens/index.ts';
 
-export default {
+type TBalanceList = {
+  balance: string,
+  symbol: string,
+}
+
+export default defineComponent({
   name: 'UserBalances',
   components: {
     ButtonComponent,
     BaseIcon,
   },
-  computed: {
-    ...mapGetters('accountData', ['isLoadingOvnBalances']),
-    ...mapGetters('network', ['networkId']),
-    ...mapGetters('accountData', ['originalBalance']),
-    ...mapGetters('odosData', ['allTokensList']),
-    ...mapState('odosData', ['tokensMap', 'isBalancesLoading', 'isTokensLoading']),
+  setup: () => {
+    const store = useStore() as any;
 
+    const {
+      data: allTokensList,
+      isLoading,
+      isBalancesLoading,
+    } = useTokensQuery(store.state);
+
+    return {
+      allTokensList,
+      isAllDataLoaded: computed(() => !isLoading.value),
+      isAllDataTrigger: computed(() => !isLoading.value),
+      isBalancesLoading,
+    };
+  },
+  computed: {
     device() {
       return deviceType();
     },
-    balancesLoading() {
-      if (this.isTokensLoading) return true;
-      if (this.isLoadingOvnBalances || this.isBalancesLoading) return true;
-      return false;
-    },
     totalUserBalance() {
-      if (isEmpty(this.allTokensList) && isEmpty(this.tokensMap)) return '0';
-      const total: BigNumber = this.originalBalance
-        .filter((_: any) => OVN_TOKENS.includes(_.symbol))
-        .reduce((acc: BigNumber, curr: any) => {
-        // linea/blast doesnt have token from ODOS, so we using our schemas values
-          const tokensForChain = !(EMPTY_TOKENS_NETWORKS.includes(this.networkId))
-            ? this.allTokensList
-            : Object.values(this.tokensMap?.chainTokenMap[this.networkId]?.tokenMap ?? {});
-          const tokenData = tokensForChain.find((_: any) => _.symbol === curr.symbol);
-
-          // todo: load tokens prices if needed, linea/blast
-          const tokenPrice = EMPTY_TOKENS_NETWORKS.includes(this.networkId) ? 1 : tokenData?.price;
-
-          if (!tokenData || !curr.isOvnToken || !tokenPrice) return acc;
-
-          const fixedBalance = new BigNumber(curr.balance)
-            .div(10 ** tokenData.decimals)
-            .times(tokenPrice);
-
-          return acc.plus(fixedBalance);
-        }, BigNumber(0));
+      const total = this.userBalancesList
+        .reduce((acc: BN, token: TBalanceList) => acc
+          .plus(BN(token.balance)), BN(0));
 
       return total.toFixed(2);
     },
 
     userBalancesList() {
-      if (this.originalBalance.length === 0) return [];
-      if (isEmpty(this.allTokensList) && isEmpty(this.tokensMap)) return [];
+      const ovnTokens = TokenService.getFilterOvnTokens(this.allTokensList as TTokenInfo[]);
 
-      const balances = this.originalBalance
-        .filter((_: any) => OVN_TOKENS.includes(_.symbol))
-        .map((bal: any) => {
-          const tokensForChain = !(EMPTY_TOKENS_NETWORKS.includes(this.networkId))
-            ? this.allTokensList
-            : Object.values(this.tokensMap?.chainTokenMap[this.networkId]?.tokenMap ?? {});
-          const tokenData = tokensForChain.find((_: any) => _.symbol === bal.symbol);
-
-          return {
-            balance: tokenData ? new BigNumber(bal.balance).div(10 ** tokenData.decimals).toFixed(2) : '0',
-            symbol: tokenData?.symbol,
-          };
-        });
-
-      const uniqueBalances = balances.reduce(
-        (acc: any, current: any) => ({
-          ...acc,
-          [current.symbol]: current,
+      const uniqueBalances = ovnTokens.map(
+        (token: TTokenInfo) => ({
+          balance: BN(token.balanceData!.balanceInUsd).toFixed(2),
+          symbol: token.symbol,
         }),
-        {},
       );
-      return Object.values(uniqueBalances);
+
+      return uniqueBalances;
     },
 
   },
-};
+});
 </script>
 <style lang="scss">
 .app-header__balance-account {

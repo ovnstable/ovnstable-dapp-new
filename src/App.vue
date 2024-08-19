@@ -81,8 +81,6 @@ export default {
     await this.$store.dispatch('theme/initTheme');
     await this.$store.dispatch('web3/initWeb3');
     await this.$store.dispatch('walletAction/dappInitWalletConnect');
-
-    this.$store.dispatch('odosData/initUpdateBalancesInterval');
   },
   methods: {
     deviceType,

@@ -34,7 +34,7 @@
       </div>
 
       <div class="pools-table__content">
-        <template v-if="getUserPositions.length > 0">
+        <template v-if="pools.length > 0">
           <div
             v-for="(pool, key) in (pools as any)"
             :key="key"
@@ -163,9 +163,9 @@
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import type { PropType } from 'vue';
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions } from 'vuex';
 import { getImageUrl } from '@/utils/const.ts';
-import type { IPositionsInfo } from '@/types/positions';
+import type { IPositionsInfo } from '@/types/positions/index.ts';
 
 enum POSITION_SIZE_ORDER_TYPE {
   'VALUE', 'VALUE_UP', 'VALUE_DOWN',
@@ -197,9 +197,6 @@ export default {
       type: Function,
       required: true,
     },
-  },
-  computed: {
-    ...mapGetters('zapinData', ['getUserPositions']),
   },
   methods: {
     ...mapActions('poolsData', ['openZapIn']),

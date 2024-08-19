@@ -1,6 +1,7 @@
+import { ABI_OVN, ERC20_ABI, EXCHANGER_INSURANCE_ABI, INSURANCE_TOKEN_ABI } from '@/assets/abi/index.ts';
 import { ethers } from 'ethers';
 
-export const chainContractsMap = {
+export const chainContractsMap: {[key: string]: any} = {
   optimism: {
     usdPlus: {
       tokenPlus: '0x73cb180bf0521828d8849bc8CF2B920918e23032',
@@ -197,6 +198,15 @@ export const buildEvmContract = (abi: any, signer: any, address: string) => {
   );
 };
 
+export const buildERC20Contract = (signer: any, address: string) => {
+  if (!address) return null;
+  return new ethers.Contract(
+    address,
+    ERC20_ABI,
+    signer,
+  );
+};
+
 export function buildEvmContractForChain(abi: any, signer: any, address: string) {
   if (!address) return null;
   return new ethers.Contract(
@@ -205,3 +215,23 @@ export function buildEvmContractForChain(abi: any, signer: any, address: string)
     signer,
   );
 }
+
+export const buildInsuranceContract = (signer: any, networkName: string) => (
+  {
+    exchanger: buildEvmContractForChain(
+      EXCHANGER_INSURANCE_ABI,
+      signer,
+      chainContractsMap[networkName]?.exchange_insurance ?? null,
+    ),
+    token: buildEvmContractForChain(
+      INSURANCE_TOKEN_ABI,
+      signer,
+      chainContractsMap[networkName]?.token_insurance ?? null,
+    ),
+  }
+);
+
+export const buildOvnContract = (
+  signer: any,
+  networkName: string,
+) => buildEvmContractForChain(ABI_OVN, signer, chainContractsMap[networkName]?.ovn ?? null);

@@ -1,8 +1,8 @@
 <template>
   <ModalComponent
     v-if="!insuranceIsMobileMintRedeem && !device.isMobile"
-    type-modal="custom"
     v-model="showModal"
+    type-modal="custom"
     @close="closeModal"
   >
     <SwitchChainInsurance
@@ -32,7 +32,9 @@
             <p>REDEEM</p>
           </ButtonComponent>
         </div>
-        <p class="insurance__modal-mint-redeem-mint-text">You {{selectedAction === 'mint' ? "Mint" : "Redeem"}}</p>
+        <p class="insurance__modal-mint-redeem-mint-text">
+          You {{ selectedAction === 'mint' ? "Mint" : "Redeem" }}
+        </p>
         <div class="insurance__modal-input-group">
           <InputTokenInsurance
             :is-mint="selectedAction === 'mint'"
@@ -87,19 +89,19 @@
           Wait for redeem ({{ insuranceRedemptionData?.hours?.toFixed(2) }} hours)
         </ButtonComponent>
         <ButtonComponent
+          v-else-if="!tokenApproved"
           btn-styles="primary"
           btn-size="medium"
-          v-else-if="!tokenApproved"
           class="insurance__modal-mint-button"
           @on-click="triggerApprove"
         >
           APPROVE
         </ButtonComponent>
         <ButtonComponent
+          v-else
           btn-size="medium"
           btn-styles="primary"
           class="insurance__modal-mint-button"
-          v-else
           @on-click="confirmSwapAction"
         >
           {{ selectedAction === 'mint' ? 'MINT' : 'REDEEM' }}
@@ -110,15 +112,14 @@
         :current-stage="currentStage"
       />
     </div>
-
   </ModalComponent>
   <div
-    class="insurance__modal-mint-redeem"
     v-else-if="insuranceIsMobileMintRedeem"
+    class="insurance__modal-mint-redeem"
   >
     <SwitchChainInsurance
-      @closeModal="toggleModalMintRedeem"
       v-if="!isAvailableChain"
+      @close-modal="toggleModalMintRedeem"
     />
     <div v-else>
       <div class="insurance__modal-mint-redeem-buttons">
@@ -127,7 +128,7 @@
           @keydown.enter="toggleModalMintRedeem()"
         >
           <BaseIcon
-            name='ArrowExitMobile'
+            name="ArrowExitMobile"
           />
         </ButtonComponent>
         <ButtonComponent
@@ -156,8 +157,9 @@
         :current-stage="currentStage"
       />
       <div class="insurance__modal-mint-redeem">
-
-        <p class="insurance__modal-mint-redeem-mint-text">You {{selectedAction === 'mint' ? "Mint" : "Redeem"}}</p>
+        <p class="insurance__modal-mint-redeem-mint-text">
+          You {{ selectedAction === 'mint' ? "Mint" : "Redeem" }}
+        </p>
         <div class="insurance__modal-input-group">
           <InputTokenInsurance
             :is-mint="selectedAction === 'mint'"
@@ -212,19 +214,19 @@
           Wait for redeem ({{ insuranceRedemptionData?.hours?.toFixed(2) }} hours)
         </ButtonComponent>
         <ButtonComponent
+          v-else-if="!tokenApproved"
           btn-styles="primary"
           btn-size="medium"
-          v-else-if="!tokenApproved"
           class="insurance__modal-mint-button"
           @on-click="triggerApprove"
         >
           APPROVE
         </ButtonComponent>
         <ButtonComponent
+          v-else
           btn-size="medium"
           btn-styles="primary"
           class="insurance__modal-mint-button"
-          v-else
           @on-click="confirmSwapAction"
         >
           {{ selectedAction === 'mint' ? 'MINT' : 'REDEEM' }}
@@ -236,7 +238,7 @@
 
 <!-- eslint-disable no-param-reassign -->
 <script lang="ts">
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, useStore } from 'vuex';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import ModalComponent from '@/components/Modal/Index.vue';
@@ -247,10 +249,13 @@ import BigNumber from 'bignumber.js';
 import { approveToken, getAllowanceValue } from '@/utils/contractApprove.ts';
 import { debounce } from 'lodash';
 import { deviceType } from '@/utils/deviceType.ts';
-import { chainContractsMap } from '@/utils/contractsMap.ts';
+import { buildInsuranceContract, buildOvnContract, chainContractsMap } from '@/utils/contractsMap.ts';
 import StepsRow, { mintRedeemStep } from '@/components/StepsRow/Index.vue';
+import { computed, defineComponent } from 'vue';
+import { INSURANCE_AVAILABLE_NETWORKS } from '@/constants/networks/index.ts';
+import { useTokensQuery, useRefreshBalances } from '@/hooks/fetch/useTokensQuery.ts';
 
-export default {
+export default defineComponent({
   name: 'MintRedeemModal',
   components: {
     BaseIcon,
@@ -261,14 +266,29 @@ export default {
     InputTokenInsurance,
     SwitchChainInsurance,
   },
+  setup: () => {
+    const store = useStore() as any;
+
+    const {
+      data: allTokensList,
+      isLoading,
+      isBalancesLoading,
+    } = useTokensQuery(store.state);
+
+    return {
+      allTokensList,
+      isAllDataLoaded: computed(() => !isLoading.value),
+      isAllDataTrigger: computed(() => !isLoading.value),
+      isBalancesLoading,
+      refreshBalances: useRefreshBalances(),
+    };
+  },
   data() {
     return {
       showModal: false,
-      ovnAmount: 0,
       ovnDecimals: 18,
       selectedAction: 'mint',
       currentStage: mintRedeemStep.START,
-      isShowSelectTokensModal: false,
       tokenApproved: false,
       fromValue: '',
       toValue: '',
@@ -280,25 +300,11 @@ export default {
       ovnPrice: '',
     };
   },
-  mounted() {
-  },
-  watch: {
-    fromValue() {
-      if (!this.fromValue) this.currentStage = mintRedeemStep.START;
-      this.checkApprove(this);
-      this.checkOvnPrice();
-    },
-    account(val) {
-      if (val) this.refreshClientData();
-      // this.ovnDecimals = this.networkId === 10 ? 6 : 18;
-    },
-  },
   computed: {
-    ...mapGetters('odosData', ['allTokensList']),
-    ...mapGetters('network', ['networkName', 'networkId']),
+    ...mapGetters('network', ['networkName']),
     ...mapGetters('insuranceData', ['insuranceRedemptionData']),
     ...mapGetters('accountData', ['account', 'originalBalance']),
-    ...mapGetters('web3', ['contracts', 'evmProvider', 'evmSigner']),
+    ...mapGetters('web3', ['contracts', 'evmSigner']),
     ...mapGetters('gasPrice', ['gasPrice', 'gasPriceStation']),
 
     insuranceIsMobileMintRedeem() {
@@ -344,13 +350,32 @@ export default {
         .toUpperCase() + this.networkName.slice(1);
       return availableNetworks.includes(currentNetworkFormatted);
     },
+    contracts() {
+      return {
+        insurance: buildInsuranceContract(this.evmSigner, this.networkName),
+        ovn: buildOvnContract(this.evmSigner, this.networkName),
+
+      };
+    },
+  },
+  watch: {
+    fromValue() {
+      if (!this.fromValue) this.currentStage = mintRedeemStep.START;
+      this.checkApprove(this);
+      this.checkOvnPrice();
+    },
+    account(val) {
+      if (val) this.refreshClientData();
+      // this.ovnDecimals = this.networkId === 10 ? 6 : 18;
+    },
+  },
+  mounted() {
   },
   methods: {
-    ...mapActions('account', ['refreshBalance']),
     ...mapActions('gasPrice', ['refreshGasPrice']),
-    ...mapActions('errorModal', ['showErrorModal', 'showErrorModalWithMsg']),
+    ...mapActions('errorModal', ['showErrorModalWithMsg']),
     ...mapActions('insuranceData', ['refreshInsurance', 'refreshClientData']),
-    ...mapActions('successModal', ['showSuccessModal', 'closeSuccessModal']),
+    ...mapActions('successModal', ['showSuccessModal']),
     ...mapActions('waitingModal', ['showWaitingModal', 'closeWaitingModal']),
     closeModal() {
       this.showModal = false;
@@ -369,9 +394,6 @@ export default {
     changeInput(val: string) {
       this.fromValue = val;
     },
-    showSelectTokensModals(isShow: any) {
-      this.isShowSelectTokensModal = isShow;
-    },
     async estimateGas(sum: string) {
       const from = this.account;
       let result;
@@ -381,7 +403,7 @@ export default {
         const params = {
           amount: sum,
         };
-        const methodEstimate = this.contracts.insurance[`${this.networkName}_exchanger`].mint;
+        const methodEstimate = this.contracts.insurance!.exchanger!.mint;
 
         const gasVal = await methodEstimate
           .estimateGas(params, estimateOptions)
@@ -408,11 +430,11 @@ export default {
         const approveSum = new BigNumber(10 ** 25).toFixed(0);
         const ovnContract = this.selectedAction === 'mint'
           ? this.contracts.ovn
-          : this.contracts.insurance[`${this.networkName}_token`];
+          : this.contracts.insurance!.token;
 
         const tx = await approveToken(
           ovnContract,
-          this.contracts.insurance[`${this.networkName}_exchanger`].target,
+          this.contracts.insurance!.exchanger!.target as string,
           approveSum,
           this.evmSigner,
         );
@@ -441,15 +463,14 @@ export default {
           return;
         }
 
-        const contractToApprove = self.contracts.insurance[`${self.networkName}_exchanger`].target;
         const ovnContract = self.selectedAction === 'mint'
           ? self.contracts.ovn
-          : self.contracts.insurance[`${self.networkName}_token`];
+          : self!.insurance!.token;
 
         const allowanceValue = await getAllowanceValue(
           ovnContract,
           self.account,
-          contractToApprove,
+          self.insurance!.exchanger!.target,
         );
 
         if (!allowanceValue || new BigNumber(allowanceValue).lt(sum)) {
@@ -473,7 +494,6 @@ export default {
         const sum = new BigNumber(this.fromValue).times(10 ** this.ovnDecimals).toFixed(0);
         await this.checkApprove(this);
 
-        const { contracts } = this;
         const from = this.account;
         const self = this;
 
@@ -489,19 +509,18 @@ export default {
           };
 
           if (this.selectedAction === 'mint') {
-            const tx = await contracts.insurance[`${this.networkName}_exchanger`].mint(params, gasParams);
+            const tx = await this.contracts.insurance!.exchanger!.mint(params, gasParams);
 
             await tx.wait();
 
-            self.refreshBalance();
+            // self.refreshBalances();
             self.showSuccessModal({
               successTxHash: tx.hash,
               successAction: 'mintInsurance',
             });
           } else {
-            const tx = await contracts.insurance[
-              `${this.networkName}_exchanger`
-            ].redeem(params, gasParams);
+            const tx = await this.contracts.insurance!.exchanger!
+              .redeem(params, gasParams);
 
             await tx.wait();
 
@@ -542,7 +561,7 @@ export default {
 
           await this.buyAction();
         } else {
-          this.estimatedGas = estimatedGasValue;
+          this.estimatedGas = estimatedGasValue.toString();
 
           this.gas = new BigNumber(this.estimatedGas)
             .multipliedBy(1.1)
@@ -568,13 +587,9 @@ export default {
     },
 
     async sendRedemptionRequest() {
-      const insurance = {
-        chainName: ['optimism', 'arbitrum'],
-      };
+      if (!INSURANCE_AVAILABLE_NETWORKS.includes(this.networkName)) return;
 
-      const estimateResult = await this.estimateRedemptionRequest();
-
-      if (!insurance.chainName.includes(this.networkName)) return;
+      const estimateResult = await this.estimateRedemptionRequest() as any;
 
       if (estimateResult?.haveError) {
         this.showErrorModalWithMsg({
@@ -587,14 +602,12 @@ export default {
         const requestParams = { from: this.account };
 
         try {
-          const tx = await this.contracts.insurance[
-            `${this.networkName}_exchanger`
-          ].requestWithdraw(requestParams);
-
-          await tx.wait();
-          this.refreshInsurance();
-          this.redemptionRequestSent = true;
-          alert('success');
+          if (this.contracts.insurance) {
+            const tx = await this.contracts.insurance!.exchanger!.requestWithdraw(requestParams);
+            await tx.wait();
+            this.refreshInsurance();
+            this.redemptionRequestSent = true;
+          }
         } catch (e) {
           this.redemptionRequestSent = false;
         }
@@ -605,14 +618,11 @@ export default {
       let result;
 
       try {
-        const contract = this.contracts.insurance[
-          `${this.networkName}_exchanger`
-        ];
         const estimateOptions = {
           from: this.account,
         };
 
-        const tx = await contract
+        const tx = await this.contracts!.insurance!.exchanger!
           .requestWithdraw
           .estimateGas(estimateOptions)
           .catch((e: any) => {
@@ -630,7 +640,7 @@ export default {
       return result;
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>
