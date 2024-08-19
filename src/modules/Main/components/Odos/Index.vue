@@ -516,12 +516,12 @@ export default defineComponent({
     account() {
       this.clearForm();
     },
-    allTokensList(tokens: TTokenInfo[]) {
-      if (tokens.length > 0) {
-        this.clearForm();
-        this.isInit = true;
-      }
-    },
+    // allTokensList(tokens: TTokenInfo[]) {
+    //   if (tokens.length > 0) {
+    //     this.clearForm();
+    //     this.isInit = true;
+    //   }
+    // },
     outputTokensWithSelectedTokensCount(val, oldVal) {
       // lock first
       if (val === 1) {

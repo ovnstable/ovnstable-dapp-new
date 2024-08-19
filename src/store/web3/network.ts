@@ -113,7 +113,7 @@ const BLAST_PARAMS = {
   isDeprecated: false,
 };
 
-const dbNetworkName = localStorage.getItem('selectedNetwork');
+const dbNetworkName = Number(window.ethereum.chainId)?.toString();
 
 export function getNetworkParams(networkName: string | number | null): any {
   switch (networkName) {
@@ -339,6 +339,7 @@ const actions = {
   changeDappNetwork({
     commit, dispatch,
   }: any, networkName: any) {
+    console.log('__changeDappNetwork');
     commit('setAppApiUrl', getNetworkParams(networkName).appApiUrl);
     commit('setNetworkName', getNetworkParams(networkName).networkName);
     commit('setNetworkId', getNetworkParams(networkName).networkId);
@@ -351,12 +352,13 @@ const actions = {
     commit('setNetworkColor', getNetworkParams(networkName).networkColor);
     commit('setIsDeprecated', getNetworkParams(networkName).isDeprecated);
 
-    dispatch('web3/initWeb3', null, { root: true });
+    // dispatch('web3/initWeb3', null, { root: true });
   },
 
   // TODO refactore it to array
   saveNetworkToLocalStore(network: any) {
     const networkId = `${network}`;
+    console.log('_SetNetworkToLocalStorage', network);
     switch (networkId) {
       case 'blast':
       case '81457':
