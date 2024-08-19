@@ -546,7 +546,6 @@ export default {
   height: 100%;
 }
 .slider-info-blast-points {
-  background-image: url('/blastQuest/blastPointsSlider.png');
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
@@ -571,7 +570,6 @@ export default {
 }
 
 .slider-info-blast-lootbox {
-  background-image: url('/blastQuest/blastLootboxSlider.png');
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
