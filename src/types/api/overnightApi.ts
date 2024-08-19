@@ -7,7 +7,9 @@ type TPoolTokenData = {
     price: string
 }
 export type TPoolData = {
-    chain: string,
+    chainName: string,
+    chainId: number,
+    poolVersion: string,
     name: string,
     poolAddress: string,
     platform: string,

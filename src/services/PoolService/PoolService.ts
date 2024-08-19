@@ -1,7 +1,7 @@
 import type { TFilterPoolsParams, TPool, TPoolInfo } from '@/types/common/pools/index.ts';
 import { allNetworkConfigs } from '@/constants/networks/index.ts';
 import PromisePool from '@supercharge/promise-pool';
-import { poolFilterParams } from './mockRequests.ts';
+// import { poolFilterParams } from './mockRequests.ts';
 import { type IOvernightApi } from '../ApiService/OvernightApi.ts';
 import { getFormatPools } from './utils/formatPools.ts';
 import { getFilterDisplayedPools } from './utils/index.ts';
@@ -63,7 +63,6 @@ class PoolService implements IPoolService {
     const pools = await this.overnightApi.getFilteredPools(filterParams);
     try {
       const poolInfoList = await formatPools(pools);
-      console.log('__formattedPools', poolInfoList);
       return poolInfoList;
     } catch (error) {
       console.error('Error formatting pools');
@@ -72,8 +71,8 @@ class PoolService implements IPoolService {
   }
 
   // Mock method, remove
-  public sendMockRequest() {
-    return this.getFilterPools(poolFilterParams);
+  public async sendMockRequest() {
+    return this.getFilterPools({});
   }
 }
 

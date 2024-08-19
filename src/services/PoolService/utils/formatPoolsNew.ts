@@ -20,10 +20,10 @@ export const formatPools = async (poolData: TPoolData[]): Promise<TPool[]> => {
       token0Icon,
       token1Icon,
       // Pool version not available
-      poolVersion: '2',
+      poolVersion: `v${pool.poolVersion}`,
       // Chain ID not available
-      chain: 10,
-      chainName: pool.chain,
+      chain: pool.chainId,
+      chainName: pool.chainName,
       address: pool.poolAddress,
       platform: pool.platform,
       tvl: pool.tvl,
