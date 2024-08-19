@@ -12,9 +12,9 @@
     <div
       class="slider__arrow-wrapper"
       :class="{ 'slider__arrow-disabled': currentIndex === 0 }"
+      tabindex="0"
       @click="currentIndex > 0 && prevSlide()"
       @keydown.enter="currentIndex > 0 && prevSlide()"
-      tabindex="0"
     >
       <BaseIcon
         v-if="!deviceSize.isMobile"
@@ -25,20 +25,20 @@
 
     <div class="swiper-container">
       <swiper
+        ref="mySwiper"
         :slides-per-view="1"
         :space-between="10"
         :autoplay="{
           delay: 5000,
         }"
         @swiper="onSwiper"
-        @transitionEnd="handleSlideChange"
-        ref="mySwiper"
+        @transition-end="handleSlideChange"
       >
         <swiper-slide
           :ref="slideRef"
+          key="slide-zapin"
           :swiper-ref="swiperInstance"
           class="swiper-linea"
-          key="slide-zapin"
         >
           <a
             target="_blank"
@@ -54,8 +54,8 @@
         <swiper-slide
           v-for="(slide, index) in sliderData"
           :ref="slideRef"
-          :swiper-ref="swiperInstance"
           :key="index"
+          :swiper-ref="swiperInstance"
         >
           <div class="slider__info">
             <div class="slider__token-overview">
@@ -64,8 +64,12 @@
                 :src="getImageSrc(slide.tokenName, 1)"
                 :alt="formatSecondTokenIconName(slide.tokenName)"
               />
-              <p class="slider__token-title">{{ slide.tokenName }}</p>
-              <p class="slider__overview-title">OVERVIEW</p>
+              <p class="slider__token-title">
+                {{ slide.tokenName }}
+              </p>
+              <p class="slider__overview-title">
+                OVERVIEW
+              </p>
             </div>
             <div
               class="slider__divider"
@@ -73,13 +77,19 @@
             />
             <div class="slider__data">
               <div class="slider__apy-info">
-                <p class="slider__apy-title">Average APY:</p>
+                <p class="slider__apy-title">
+                  Average APY:
+                </p>
                 <div class="slider__apy-numbers">
-                  <p class="slider__data-total-number">{{ slide.apy }}<span class="slider__data-apy-percent">%</span></p>
+                  <p class="slider__data-total-number">
+                    {{ slide.apy }}<span class="slider__data-apy-percent">%</span>
+                  </p>
                 </div>
               </div>
               <div class="slider__tvl-info">
-                <p class="slider__tvl-title">TVL:</p>
+                <p class="slider__tvl-title">
+                  TVL:
+                </p>
                 <div class="slider__tvl-numbers">
                   <p class="slider__data-total-number">
                     {{ slide.tokenName === 'ETH+' ? slide.tvl : ((Number(slide.tvl) / 1e6).toFixed(2)) }}
@@ -95,10 +105,16 @@
                 </div>
               </div>
               <div class="slider__payout-info">
-                <p class="slider__payout-title">Last payout:</p>
+                <p class="slider__payout-title">
+                  Last payout:
+                </p>
                 <div class="slider__payout-numbers">
-                  <p class="slider__data-total-number">{{ slide.payoutAgoTime }}</p>
-                  <p class="slider__data-growth-number">{{ slide.payoutAgoText }}</p>
+                  <p class="slider__data-total-number">
+                    {{ slide.payoutAgoTime }}
+                  </p>
+                  <p class="slider__data-growth-number">
+                    {{ slide.payoutAgoText }}
+                  </p>
                 </div>
               </div>
             </div>
@@ -110,9 +126,13 @@
                   :src="getImageSrc(slide.tokenName, 2)"
                   :alt="formatSecondTokenIconName(slide.tokenName)"
                 />
-                <p class="slider__second-token-title-text">{{ slide.tokenWrappedName }}</p>
+                <p class="slider__second-token-title-text">
+                  {{ slide.tokenWrappedName }}
+                </p>
               </div>
-              <p class="slider__second-token-description">{{ slide.description }}</p>
+              <p class="slider__second-token-description">
+                {{ slide.description }}
+              </p>
             </div>
           </div>
         </swiper-slide>
@@ -122,9 +142,9 @@
     <div
       class="slider__arrow-wrapper"
       :class="{ 'slider__arrow-disabled': currentIndex === maxIndex }"
+      tabindex="0"
       @click="nextSlide()"
       @keydown.enter="nextSlide()"
-      tabindex="0"
     >
       <BaseIcon
         v-if="!deviceSize.isMobile"
@@ -135,13 +155,13 @@
   </div>
   <div class="slider__pagination">
     <div
-      class="slider__dot"
       v-for="index in sliderData.length"
       :key="index"
+      class="slider__dot"
       :class="{ 'slider__dot--active': currentIndex === index - 1 }"
+      tabindex="0"
       @click="goToSlide(index - 1)"
       @keydown.enter="goToSlide(index - 1)"
-      tabindex="0"
     />
   </div>
 </template>
@@ -157,7 +177,6 @@ import {
 
 // import { Autoplay } from 'swiper/modules';
 import { deviceType } from '@/utils/deviceType.ts';
-import { mapGetters } from 'vuex';
 import Spinner from '@/components/Spinner/Index.vue';
 import SliderApiService from '@/services/slider-api-service.ts';
 import 'swiper/swiper.min.css';
@@ -200,18 +219,16 @@ export default {
       sliderLoaded: false,
     };
   },
+  computed: {
+    deviceSize() {
+      return deviceType();
+    },
+  },
   async mounted() {
     this.sliderLoaded = false;
     await this.loadDataSlider();
     this.maxIndex = MANUAL_SLIDES + this.sliderData.length - 1;
     this.sliderLoaded = true;
-  },
-  computed: {
-    ...mapGetters('network', ['networkName']),
-    ...mapGetters('jackpotData', ['jackpotData', 'jackpotDataLoaded']),
-    deviceSize() {
-      return deviceType();
-    },
   },
   methods: {
     getImageUrl,
@@ -311,9 +328,6 @@ export default {
       const iconName = numberOfToken === 1 ? this
         .formatFirstTokenIconName(tokenName) : this.formatSecondTokenIconName(tokenName);
       return getImageUrl(`assets/icons/currencies/main/${iconName}.svg`);
-    },
-    getImageUrlSlider(addr: string) {
-      return getImageUrl(addr);
     },
   },
 };
