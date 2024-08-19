@@ -104,9 +104,10 @@ export default defineComponent({
     userBalancesList() {
       const ovnTokens = TokenService.getFilterOvnTokens(this.allTokensList as TTokenInfo[]);
 
+      console.log(ovnTokens, '__ovnTokens');
       const uniqueBalances = ovnTokens.map(
         (token: TTokenInfo) => ({
-          balance: BN(token.balanceData!.balanceInUsd).toFixed(2),
+          balance: BN(token.balanceData!.balance).toFixed(2),
           symbol: token.symbol,
         }),
       );
