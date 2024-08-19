@@ -8,6 +8,7 @@ export const allTokensMap = (tokensList: any[]): any => new Map(tokensList
   .map((token) => [token.address, token]));
 
 export const useTokensQuery = (stateData: any) => {
+  const networkLoaded = computed(() => stateData.network.networkLoaded);
   const networkId = computed(() => stateData.network.networkId);
   const address = computed(() => stateData.accountData.account);
   const provider = computed(() => stateData.web3.evmProvider);
@@ -22,14 +23,12 @@ export const useTokensQuery = (stateData: any) => {
 
   const pricesQuery = useQuery(
     {
-      queryKey: ['tokenPrices', networkId.value],
+      queryKey: ['tokenPrices', networkId.value, networkLoaded.value],
       queryFn: () => TokenService.fetchTokenPricesByNetworkId(networkId.value),
       enabled: !!networkId.value,
       refetchInterval: false,
     },
   );
-
-  console.log(pricesQuery, '__pricesQuery');
 
   const isBalancesQueryEnabled = computed(
     () => !!tokensQuery.data.value && !!networkId.value && !!provider.value,

@@ -115,7 +115,7 @@ const BLAST_PARAMS = {
 
 const dbNetworkName = localStorage.getItem('selectedNetwork');
 
-export function getNetworkParams(networkName: string | number | null) {
+export function getNetworkParams(networkName: string | number | null): any {
   switch (networkName) {
     case 'blast':
     case '81457':
@@ -158,11 +158,12 @@ export function getNetworkParams(networkName: string | number | null) {
     case 59144:
       return LINEA_PARAMS;
     default:
-      return OPTIMISM_PARAMS; // BASE_PARAMS;
+      return null; // BASE_PARAMS;
   }
 }
 
 const state = {
+  networkLoaded: false,
   appApiUrl: getNetworkParams(dbNetworkName).appApiUrl,
   apiUrl: 'https://api.overnight.fi',
   networkName: getNetworkParams(dbNetworkName).networkName,
@@ -395,7 +396,7 @@ const actions = {
         localStorage.setItem('selectedNetwork', 'linea');
         break;
       default:
-        localStorage.setItem('selectedNetwork', 'op');
+        localStorage.setItem('selectedNetwork', 'base');
         break;
     }
   },
@@ -623,6 +624,7 @@ const mutations = {
 
   setNetworkId(state: any, value: any) {
     state.networkId = value;
+    state.networkLoaded = true;
   },
 
   setRpcUrl(state: any, value: any) {
