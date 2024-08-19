@@ -221,7 +221,7 @@ export default defineComponent({
     ...mapGetters('web3', ['evmSigner']),
 
     getFee() {
-      return this.networkId === 0.01;
+      return this.networkId === 8453 ? 0.01 : 0.04;
     },
     inputIndex() {
       return '1';
