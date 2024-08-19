@@ -7,7 +7,6 @@ import BigNumber from 'bignumber.js';
 import { fixedByPrice } from '@/utils/numbers.ts';
 import { buildEvmContract } from '@/utils/contractsMap.ts';
 import { ERC20_ABI } from '@/assets/abi/index.ts';
-import { cloneDeep } from 'lodash';
 import type { TTokenBalanceData, TTokenInfo } from '@/types/common/tokens';
 
 export const mergeTokenLists = (fetchedTokens: any) => {
@@ -107,7 +106,7 @@ export const getFormatTokenInfo = (
     price: tokenPricesMap ? formatTokenPrice(tokenPricesMap[address]) : '0',
   };
 
-  return cloneDeep({
+  return ({
     ...tokenInfo,
     balanceData: tokenBalanceMap ? getFormatTokenBalance(tokenInfo, tokenBalanceMap) : {},
   });
