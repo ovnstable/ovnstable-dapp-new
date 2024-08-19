@@ -13,7 +13,7 @@
     </div>
 
     <PoolData
-      v-if="zapPool && allTokensList.length > 0"
+      v-if="zapPool && !tokensLoading"
       :all-tokens-list="allTokensList"
       :zap-pool="zapPool"
     />
@@ -109,10 +109,11 @@ export default {
     const store = useStore() as any;
 
     const { data: getUserPositions } = usePositionsQuery(store.state);
-    const { data: allTokensList } = useTokensQuery(store.state);
+    const { data: allTokensList, isLoading: tokensLoading } = useTokensQuery(store.state);
 
     return {
       allTokensList,
+      tokensLoading,
       getUserPositions,
     };
   },

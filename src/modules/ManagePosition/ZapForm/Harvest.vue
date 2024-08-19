@@ -135,7 +135,7 @@ import { REWARD_TOKEN } from '@/store/views/main/zapin/index.ts';
 import { loadTokenImage } from '@/utils/tokenLogo.ts';
 import { computed, defineComponent, type ComputedRef } from 'vue';
 import { useTokensQuery, useRefreshBalances } from '@/hooks/fetch/useTokensQuery.ts';
-import type { TTokenInfo } from '@/types/common/tokens';
+import type { TTokenInfo } from '@/types/common/tokens/index.ts';
 
 export default defineComponent({
   name: 'WithdrawForm',

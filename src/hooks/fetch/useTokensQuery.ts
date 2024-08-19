@@ -29,6 +29,8 @@ export const useTokensQuery = (stateData: any) => {
     },
   );
 
+  console.log(pricesQuery, '__pricesQuery');
+
   const isBalancesQueryEnabled = computed(
     () => !!tokensQuery.data.value && !!networkId.value && !!provider.value,
   );

@@ -273,12 +273,6 @@ const actions = {
     const actualGasPriceObject: any = await odosApiService.getActualGasPrice(
       networkId,
     );
-    console.log({
-      message: 'Actual price for gas.',
-      swapSession: state.swapSessionId,
-      data: actualGasPriceObject,
-    });
-
     if (
       (rootState.network.networkName === 'polygon' || rootState.network.networkName === 'bsc')
       && actualGasPriceObject.prices
@@ -293,11 +287,6 @@ const actions = {
       && actualGasPriceObject.prices
       && actualGasPriceObject.prices.length
     ) {
-      console.log({
-        message: 'Actual price for gas when not found base fee.',
-        swapSession: state.swapSessionId,
-        data: actualGasPriceObject,
-      });
       return actualGasPriceObject.prices[0].fee;
     }
 

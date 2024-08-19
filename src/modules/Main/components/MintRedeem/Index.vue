@@ -156,7 +156,7 @@ import { getAllowanceValue, approveToken } from '@/utils/contractApprove.ts';
 import TokenService from '@/services/TokenService/TokenService.ts';
 import { defineComponent } from 'vue';
 import { useTokensQuery, useRefreshBalances } from '@/hooks/fetch/useTokensQuery.ts';
-import type { TTokenInfo } from '@/types/common/tokens';
+import type { TTokenInfo } from '@/types/common/tokens/index.ts';
 
 export default defineComponent({
   name: 'MintRedeem',
@@ -628,12 +628,12 @@ export default defineComponent({
         }
 
         console.log('__mintRedeemRefresh');
-        // this.refreshBalances();
-        // this.initForm();
+        this.initForm();
+        this.refreshBalances();
       } catch (e) {
         console.log(e, '-e');
         this.closeWaitingModal();
-        this.showErrorModalWithMsg({ errorType: 'approve', errorMsg: e });
+        // this.showErrorModalWithMsg({ errorType: 'approve', errorMsg: e });
       }
     },
     async previewUnwrap(self: any) {

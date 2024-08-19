@@ -266,7 +266,7 @@ import BigNumber from 'bignumber.js';
 import { computed, defineComponent } from 'vue';
 import { useTokensQuery, useRefreshBalances } from '@/hooks/fetch/useTokensQuery.ts';
 import TokenService from '@/services/TokenService/TokenService.ts';
-import type { TTokenInfo } from '@/types/common/tokens';
+import type { TTokenInfo } from '@/types/common/tokens/index.ts';
 
 export default defineComponent({
   name: 'SwapForm',
@@ -764,6 +764,12 @@ export default defineComponent({
     },
 
     finishTransaction() {
+      this.$emit('update-path-view', {
+        path: null,
+        input: this.selectedInputTokens,
+        output: this.selectedOutputTokens,
+      });
+
       this.clearForm();
       this.refreshBalances();
     },
@@ -919,11 +925,6 @@ export default defineComponent({
                 },
               );
 
-              this.$emit('update-path-view', {
-                path: null,
-                input: this.selectedInputTokens,
-                output: this.selectedOutputTokens,
-              });
               this.isSwapLoading = false;
             })
             .catch((e) => {

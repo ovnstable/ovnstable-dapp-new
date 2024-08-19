@@ -82,7 +82,7 @@
             {{ token.displayedValue }}
           </div>
           <div>
-            ~ ${{ token.usdValue }}
+            ~ ${{ getFixedVal(token.usdValue) }}
           </div>
         </div>
       </div>
@@ -119,10 +119,10 @@
           class="swap-block__item-bal"
         >
           <div>
-            {{ getRewardEmm }}
+            {{ getFixedVal(getRewardEmm) }}
           </div>
           <div v-if="getRewardUsd">
-            ~ ${{ getRewardUsd }}
+            ~ ${{ getFixedVal(getRewardUsd) }}
           </div>
         </div>
       </div>
@@ -139,6 +139,7 @@ import BN from 'bignumber.js';
 import { REWARD_TOKEN } from '@/store/views/main/zapin/index.ts';
 import { loadTokenImage } from '@/utils/tokenLogo.ts';
 import { allTokensMap } from '@/hooks/fetch/useTokensQuery.ts';
+import { fixedByPrice } from '@/utils/numbers.ts';
 
 export default {
   name: 'PositionForm',
@@ -165,6 +166,12 @@ export default {
     };
   },
   computed: {
+    getFixedVal() {
+      return (price: string) => {
+        if (new BN(price).eq(0)) return 0;
+        return new BN(price).toFixed(fixedByPrice(+price));
+      };
+    },
     getSymbolToken() {
       if (this.zapPool.platform[0] === 'Pancake') return REWARD_TOKEN.CAKE;
       if (this.zapPool.platform[0] === 'Aerodrome') return REWARD_TOKEN.AERO;
@@ -219,6 +226,7 @@ export default {
     },
     initLiqTokens() {
       const poolTokens = poolTokensForZapMap[this.zapPool.address];
+      console.log(this.allTokensList, '__this.allTokensList');
       const token0 = getTokenByAddress(poolTokens[0].address, this.allTokensList);
       const token1 = getTokenByAddress(poolTokens[1].address, this.allTokensList);
 
@@ -236,12 +244,19 @@ export default {
       let arrTokens = [tokenFull0, tokenFull1];
 
       const symbName = this.zapPool?.name?.split('/');
-      arrTokens = arrTokens.map((_: any, key: number) => ({
-        ..._,
-        value: this.zapPool?.position?.tokens[key][symbName[key]],
-        sum: this.zapPool?.position?.tokens[key][symbName[key]],
-      }));
 
+      console.log(this.zapPool?.position?.tokens, '__this.zapPool?.position?.tokens');
+      arrTokens = arrTokens.map((_: any, key: number) => {
+        const price = this.zapPool?.position?.tokens[key][symbName[key]];
+
+        return {
+          ..._,
+          value: new BN(price).toFixed(fixedByPrice(price)),
+          sum: new BN(price).toFixed(fixedByPrice(price)),
+        };
+      });
+
+      console.log(arrTokens, '__arrTokens');
       const inputTokenInfo = formatInputTokens(arrTokens);
       this.inputTokens = inputTokenInfo;
     },
