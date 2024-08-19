@@ -42,6 +42,7 @@ export const useTokensQuery = (stateData: any) => {
 
   const balancesQuery = useQuery(
     {
+      // eslint-disable-next-line @tanstack/query/exhaustive-deps
       queryKey: ['balances', address.value, networkId.value],
       queryFn: () => BalanceService.fetchTokenBalances(
         provider.value,

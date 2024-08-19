@@ -10,6 +10,7 @@ import store from '@/store/index.ts';
 import App from '@/App.vue';
 import VueApexCharts from 'vue3-apexcharts';
 import { VueQueryPlugin } from '@tanstack/vue-query';
+import { createContext } from '@/context.ts';
 import PosthogService from './services/PosthogService/PosthogService.ts';
 
 const app = createApp(App);
@@ -42,6 +43,9 @@ async function initNetwork() {
     // ignore
   }
 }
+
+const ctx = createContext();
+app.provide('poolService', ctx.PoolService);
 
 async function initPosthog() {
   try {

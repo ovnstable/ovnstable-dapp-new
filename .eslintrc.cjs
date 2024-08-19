@@ -9,10 +9,12 @@ const isProd = process.env.NODE_ENV === 'production';
 module.exports = {
   root: true,
   parser: 'vue-eslint-parser',
+  plugins: ['@tanstack/query'],
   extends: [
     'plugin:vue/vue3-recommended',
     '@vue/eslint-config-typescript',
     '@vue/eslint-config-airbnb',
+    'plugin:@tanstack/eslint-plugin-query/recommended',
   ],
   rules: {
     'linebreak-style': 0,

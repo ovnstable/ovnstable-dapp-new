@@ -23,6 +23,7 @@ export const usePositionsQuery = (stateData: any) => {
 
   const positionsQuery = useQuery(
     {
+      // eslint-disable-next-line @tanstack/query/exhaustive-deps
       queryKey: ['positions', networkId, address],
       queryFn: async () => PositionsService.fetchPositions(stateData),
       enabled: !!networkId && !!address,
