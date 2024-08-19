@@ -117,13 +117,14 @@
 import { useEventBus } from '@vueuse/core';
 import {
   mapActions, mapGetters, mapState, mapMutations,
+  useStore,
 } from 'vuex';
 import {
   getNewOutputToken,
 } from '@/store/helpers/index.ts';
 
 import Spinner from '@/components/Spinner/Index.vue';
-import ChangeNetwork from '@/modules/Main/components/ZapModal/ZapForm/ChangeNetwork.vue';
+import ChangeNetwork from '@/components/ZapModal/ZapForm/ChangeNetwork.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import { poolTokensForZapMap } from '@/store/views/main/zapin/mocks.ts';
 import { cloneDeep } from 'lodash';
@@ -132,8 +133,11 @@ import { formatInputTokens } from '@/utils/tokens.ts';
 import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
 import { REWARD_TOKEN } from '@/store/views/main/zapin/index.ts';
 import { loadTokenImage } from '@/utils/tokenLogo.ts';
+import { computed, defineComponent, type ComputedRef } from 'vue';
+import { useTokensQuery, useRefreshBalances } from '@/hooks/fetch/useTokensQuery.ts';
+import type { TTokenInfo } from '@/types/common/tokens/index.ts';
 
-export default {
+export default defineComponent({
   name: 'WithdrawForm',
   components: {
     ChangeNetwork,
@@ -153,7 +157,18 @@ export default {
       default: 'ALL',
     },
   },
-  emits: ['close-form'],
+  setup() {
+    const store = useStore() as any;
+
+    const { data: allTokensList } = useTokensQuery(store.state);
+
+    return {
+      allTokensMap: computed(() => new Map(
+        allTokensList.value.map((token) => [token.address, token]),
+      )) as ComputedRef<Map<string, TTokenInfo>>,
+      refreshBalances: useRefreshBalances(),
+    };
+  },
   data() {
     return {
       positionFinish: false,
@@ -166,10 +181,6 @@ export default {
     };
   },
   computed: {
-    ...mapState('odosData', [
-      'isTokensLoadedAndFiltered',
-    ]),
-    ...mapGetters('odosData', ['allTokensMap']),
     ...mapState('zapinData', [
       'zapContract',
       'poolNftContract',
@@ -201,7 +212,7 @@ export default {
       return new BN(this.zapPool.emissions).div(10 ** 18).toFixed(6);
     },
     getRewardTokenInfo() {
-      const tokenInfo = this.allTokensMap.values().find((_: any) => {
+      const tokenInfo = Object.values(this.allTokensMap).find((_: any) => {
         const allTokSymbol = _?.symbol?.toLowerCase();
         return allTokSymbol === this.getSymbolToken?.toLowerCase();
       });
@@ -222,7 +233,7 @@ export default {
       return res.toFixed(4);
     },
     zapsLoaded() {
-      return this.isTokensLoadedAndFiltered && this.zapPool && this.zapContract && this.isZapLoaded;
+      return this.zapPool && this.zapContract && this.isZapLoaded;
     },
     outputTokensWithSelectedTokensCount() {
       return this.outputTokens.filter((item: any) => item.selectedToken).length;
@@ -243,16 +254,8 @@ export default {
       if (val) this.clearAndInitForm();
       if (!val) this.outputTokens = [getNewOutputToken()];
     },
-
-    isTokensLoadedAndFiltered(val) {
-      if (val) {
-        this.clearAndInitForm();
-      }
-    },
     networkId(newVal) {
       if (newVal) {
-        this.$store.commit('odosData/changeState', { field: 'isTokensLoadedAndFiltered', val: false });
-
         if (!this.isAvailableOnNetwork) {
           this.mintAction();
         }
@@ -293,36 +296,13 @@ export default {
     ...mapActions('swapModal', ['showSwapModal', 'showMintView']),
     ...mapActions('poolsData', ['setIsZapModalShow']),
     ...mapActions('odosData', [
-      'loadTokens',
-      'initContractData',
       'triggerSuccessZapin',
     ]),
-    ...mapActions('accountData', ['refreshBalance']),
     ...mapActions('zapinData', ['loadZapContract']),
     ...mapActions('waitingModal', ['closeWaitingModal', 'showWaitingModal']),
     ...mapActions('walletAction', ['connectWallet']),
 
     ...mapMutations('zapinData', ['changeState']),
-    // async approveNftPosition(approveToGauge: boolean) {
-    //   this.isSwapLoading = true;
-
-    //   try {
-    //     console.log(approveToGauge, '__isApproved');
-    //     this.showWaitingModal('Approve');
-    //     const tx = await this.poolNftContract
-    //       .approve(this.zapContract?.target, this.zapPool.tokenId);
-
-    //     await tx.wait();
-    //     this.isNftApproved = true;
-    //     this.isSwapLoading = false;
-    //     this.closeWaitingModal();
-    //     this.currentStage = withdrawStep.ZAPOUT;
-    //   } catch (e) {
-    //     console.log(e);
-    //     this.closeWaitingModal('Approve');
-    //     this.isSwapLoading = false;
-    //   }
-    // },
     mintAction() {
       this.showMintView();
       this.showSwapModal();
@@ -371,10 +351,6 @@ export default {
     },
 
     async init() {
-      // await this.loadChains();
-      await this.loadTokens();
-      await this.initContractData();
-
       const bus = useEventBus('odos-transaction-finished');
       bus.on(() => {
         this.finishTransaction();
@@ -383,7 +359,7 @@ export default {
     addDefaultPoolToken() {
       const rewardToken = this.zapPool.rewards.tokens.map((_: any) => {
         const rewardData: any = Object.entries(_)[0];
-        const tokenInfo = this.allTokensMap.values().find((_: any) => {
+        const tokenInfo = Object.values(this.allTokensMap).find((_: any) => {
           const allTokSymbol = _?.symbol?.toLowerCase();
           return allTokSymbol === rewardData[0]?.toLowerCase();
         });
@@ -405,7 +381,7 @@ export default {
     finishTransaction() {
       this.clearAndInitForm();
       this.closeWaitingModal();
-      this.refreshBalance();
+      this.refreshBalances();
     },
 
     clearAndInitForm() {
@@ -508,7 +484,7 @@ export default {
       this.outputTokens = [];
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

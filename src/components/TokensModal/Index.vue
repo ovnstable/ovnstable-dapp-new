@@ -1,7 +1,7 @@
 <template>
   <ModalComponent
-    type-modal="custom"
     v-model="showModal"
+    type-modal="custom"
     @close="closeModal"
   >
     <div
@@ -62,19 +62,19 @@
           <SelectTokenWithSearch
             :tokens="tokens"
             :selected-tokens="selectedTokens"
-            :removeNative="removeNative"
+            :remove-native="removeNative"
             :is-input-tokens="selectTokenInput"
             @add-token="selectToken"
             @remove-token="removeToken"
           />
         </div>
       </div>
-
     </div>
   </ModalComponent>
 </template>
 
 <script lang="ts">
+import { type PropType, type Ref } from 'vue';
 import SelectTokenWithSearch from '@/components/TokensModal/SelectTokenWithSearch.vue';
 import ModalComponent from '@/components/Modal/Index.vue';
 import Spinner from '@/components/Spinner/Index.vue';
@@ -88,7 +88,6 @@ export default {
     Spinner,
     ButtonComponent,
   },
-  emits: ['set-show', 'add-token-to-list', 'remove-token-from-list', 'connect-wallet', 'reload'],
   props: {
     isShow: {
       type: Boolean,
@@ -117,14 +116,17 @@ export default {
       required: true,
     },
     balancesLoading: {
-      type: Boolean,
+      type: Boolean as PropType<boolean | Ref<boolean>>,
       required: false,
+      default: false,
     },
     isAllDataLoaded: {
-      type: Boolean,
+      type: Boolean as PropType<boolean | Ref<boolean>>,
       required: true,
     },
   },
+  emits: ['set-show', 'add-token-to-list', 'remove-token-from-list', 'connect-wallet', 'reload'],
+
   data() {
     return {
       showModal: false,

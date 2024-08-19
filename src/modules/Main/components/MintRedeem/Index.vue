@@ -80,9 +80,7 @@
       </div>
     </div>
 
-    <GasSettings
-      @gas-change="gasChange"
-    />
+    <GasSettings />
 
     <div class="mintredeem-form__btns">
       <ButtonComponent
@@ -130,12 +128,14 @@
 <!-- eslint-disable no-underscore-dangle -->
 <!-- eslint-disable no-param-reassign -->
 <script lang="ts">
-import { mapActions, mapGetters, mapState } from 'vuex';
+import { mapActions, mapGetters, useStore } from 'vuex';
 import { deviceType } from '@/utils/deviceType.ts';
 import SwitchTabs from '@/components/SwitchTabs/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import TokenForm from '@/modules/Main/components/MintRedeem/TokenForm.vue';
-import { buildEvmContract, buildEvmContractForChain } from '@/utils/contractsMap.ts';
+import {
+  buildERC20Contract, buildEvmContract, buildInsuranceContract, buildOvnContract,
+} from '@/utils/contractsMap.ts';
 import { MINTREDEEM_SCHEME } from '@/store/views/main/mintRedeem/mocks.ts';
 import debounce from 'lodash/debounce';
 import StepsRow, { mintRedeemStep } from '@/components/StepsRow/Index.vue';
@@ -151,10 +151,14 @@ import {
 } from '@/store/helpers/index.ts';
 import GasSettings from '@/modules/Main/components/MintRedeem/GasSettings.vue';
 import BigNumber from 'bignumber.js';
-import { ABI_Exchange, ABI_Market, ERC20_ABI } from '@/assets/abi/index.ts';
+import { ABI_Exchange, ABI_Market } from '@/assets/abi/index.ts';
 import { getAllowanceValue, approveToken } from '@/utils/contractApprove.ts';
+import TokenService from '@/services/TokenService/TokenService.ts';
+import { defineComponent } from 'vue';
+import { useTokensQuery, useRefreshBalances } from '@/hooks/fetch/useTokensQuery.ts';
+import type { TTokenInfo } from '@/types/common/tokens/index.ts';
 
-export default {
+export default defineComponent({
   name: 'MintRedeem',
   components: {
     SwitchTabs,
@@ -162,6 +166,20 @@ export default {
     TokenForm,
     GasSettings,
     ButtonComponent,
+  },
+  setup: () => {
+    const store = useStore() as any;
+
+    const {
+      data: allTokensList,
+      isLoading,
+    } = useTokensQuery(store.state);
+
+    return {
+      allTokensList,
+      isLoading,
+      refreshBalances: useRefreshBalances(),
+    };
   },
   data() {
     return {
@@ -171,7 +189,6 @@ export default {
       activeWrapTab: -1,
       approveLoading: false,
       isApprovedToken: false,
-      isLoading: false,
       wrapVal: 1,
       updatingWrapUnwrapAmount: false,
       currentStage: mintRedeemStep.START,
@@ -199,10 +216,9 @@ export default {
     };
   },
   computed: {
-    ...mapGetters('network', ['networkId']),
-    ...mapGetters('accountData', ['account', 'originalBalance']),
-    ...mapGetters('web3', ['contracts', 'evmSigner']),
-    ...mapState('odosData', ['tokensContractMap']),
+    ...mapGetters('network', ['networkId', 'networkName']),
+    ...mapGetters('accountData', ['account']),
+    ...mapGetters('web3', ['evmSigner']),
 
     getFee() {
       return this.networkId === 0.01;
@@ -251,7 +267,15 @@ export default {
     mintWrapTab() {
       return this.activeMintTab >= 0 ? this.activeMintTab : this.activeWrapTab;
     },
+    // If looks unused, check again before removing
+    // eslint-disable-next-line vue/no-unused-properties
+    contracts() {
+      return {
+        insurance: buildInsuranceContract(this.evmSigner, this.networkName),
+        ovn: buildOvnContract(this.evmSigner, this.networkName),
 
+      };
+    },
   },
   watch: {
     inputToken() {
@@ -283,57 +307,42 @@ export default {
         this.checkApprove(this);
       }
     },
-    networkId() {
-      this.initMintRedeem();
+    allTokensList(tokenList: TTokenInfo[]) {
+      const params = {
+        tokenList,
+        networkId: this.networkId,
+      };
+      if (tokenList.length > 0) {
+        this.initTokenSchema(params);
+        // this.initForm();
+      }
     },
   },
-  mounted() {
-    this.initMintRedeem();
+  networkId(val: number | string) {
+    if (val) this.initForm();
   },
   methods: {
     ...mapActions('walletAction', ['connectWallet']),
-    ...mapActions('mintRedeem', ['initTokens']),
+    ...mapActions('mintRedeem', ['initTokenSchema']),
     ...mapActions('gasPrice', ['refreshGasPrice']),
-    ...mapActions('accountData', ['refreshBalance']),
-    ...mapActions('accTransaction', ['putTransaction']),
     ...mapActions('errorModal', ['showErrorModalWithMsg']),
     ...mapActions('waitingModal', ['showWaitingModal', 'closeWaitingModal']),
     ...mapActions('successModal', ['showSuccessModal']),
-    ...mapActions('odosData', ['loadChains', 'loadTokens']),
-    gasChange() {
-      console.log('gasChange');
-    },
     initForm() {
       this.inputToken = getNewInputToken();
       this.outputToken = getNewInputToken();
-    },
-    async initMintRedeem() {
-      this.isLoading = true;
-      await this.loadChains();
-      await this.loadTokens();
-
-      this.initForm();
-      this.initTokens();
-      this.isLoading = false;
     },
     async approveTrigger() {
       this.showWaitingModal('Approving in process');
       this.currentStage = mintRedeemStep.APPROVE;
 
       const tokenData = this.inputToken;
-      let tokenContract = this.tokensContractMap[tokenData.address];
+      const tokenContract = TokenService
+        .loadTokenContract(tokenData.address, this.$store.state.web3.evmSigner);
       const approveValue = new BigNumber(10)
         .pow(this.inputToken.decimals)
         .times(10 ** 18)
         .toFixed(0);
-
-      if (!tokenContract) {
-        tokenContract = buildEvmContractForChain(
-          ERC20_ABI,
-          this.evmSigner,
-          tokenData.address,
-        );
-      }
 
       const networkId = this.networkId as keyof typeof MINTREDEEM_SCHEME;
       const pairData = MINTREDEEM_SCHEME[networkId]
@@ -397,10 +406,10 @@ export default {
           return tokenAddress === self.outputToken.address.toLowerCase();
         });
 
-      const tokenСontract = Object.values(self.contracts)
-        .find((cData: any) => (
-          cData ? cData.target.toLowerCase() === self.inputToken.address.toLowerCase() : false
-        ));
+      const tokenСontract = buildERC20Contract(
+        self.evmSigner,
+        self.inputToken.address.toLowerCase(),
+      );
 
       if (!exchangeContract || !tokenСontract) return;
 
@@ -423,7 +432,6 @@ export default {
       if (!isAllowedToSwap) self.currentStage = mintRedeemStep.APPROVE;
     }, 250),
     selectFormToken(data: any, isInputToken: boolean) {
-      console.log('__listenInputToken', data);
       if (isInputToken) {
         this.inputToken = data;
         return;
@@ -434,11 +442,10 @@ export default {
     updateTokenValueMethod(token: any, isInputToken: boolean, isMaxBal: boolean) {
       if (isInputToken && !isMaxBal) this.inputToken = { ...token, originalVal: 0 };
       if (isInputToken && isMaxBal) {
-        const balData = this.originalBalance.find((_: any) => _.symbol === token.symbol);
         this.inputToken = {
           ...token,
-          value: new BigNumber(balData.balance).div(10 ** token.decimals).toFixed(4),
-          originalVal: balData.balance,
+          value: token.balanceData.balance,
+          originalVal: token.balanceData.originalBalance,
         };
       }
 
@@ -570,12 +577,11 @@ export default {
 
         if (!exchangeContract) return;
 
-        const actionContract = Object.values(this.contracts)
-          .find((cData: any) => {
-            const tokenAddress = this.isReverseArray
-              ? this.inputToken.address : this.outputToken.address;
-            return cData ? cData.target.toLowerCase() === tokenAddress.toLowerCase() : false;
-          });
+        const tokenAddress = this.isReverseArray
+          ? this.inputToken.address
+          : this.outputToken.address;
+
+        const actionContract = buildERC20Contract(this.evmSigner, tokenAddress.toLowerCase());
 
         // if mint active, using 1st method, else 2nd
         const exchangeMethodName = this.isReverseArray
@@ -611,10 +617,6 @@ export default {
 
         if (txData) {
           await txData.wait();
-          const tx = {
-            hash: txData.hash,
-            amount: this.inputToken.value,
-          };
 
           this.showSuccessModal({
             successTxHash: txData.hash,
@@ -622,17 +624,16 @@ export default {
             to: [this.outputToken],
             type: this.swapMsg.toUpperCase(),
           });
-
-          this.putTransaction(tx);
           this.closeWaitingModal();
-          this.initMintRedeem();
         }
 
-        this.refreshBalance();
+        console.log('__mintRedeemRefresh');
+        this.initForm();
+        this.refreshBalances();
       } catch (e) {
         console.log(e, '-e');
         this.closeWaitingModal();
-        this.showErrorModalWithMsg({ errorType: 'approve', errorMsg: e });
+        // this.showErrorModalWithMsg({ errorType: 'approve', errorMsg: e });
       }
     },
     async previewUnwrap(self: any) {
@@ -676,8 +677,18 @@ export default {
       }
       self.updatingWrapUnwrapAmount = true;
     },
+    // If seems unused - double check, uses self
+    // eslint-disable-next-line vue/no-unused-properties
+    adjustScale(rawValue: any, decimals = 6) {
+      let valueStr = rawValue.toString();
+      while (valueStr.length <= decimals) {
+        valueStr = `0${valueStr}`;
+      }
+      const index = valueStr.length - decimals;
+      return `${valueStr.slice(0, index)}.${valueStr.slice(index)}`;
+    },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

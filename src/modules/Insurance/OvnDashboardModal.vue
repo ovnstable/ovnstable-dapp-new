@@ -105,10 +105,6 @@
         </div>
       </div>
       <div class="insurance__modal-divider" />
-      <AccountTransactions
-        :isOvnTrxs="true"
-        class="insurance__modal-ovn-dashboard-trxs"
-      />
     </div>
     <MintRedeemModal
       v-model="showModalMintRedeem"
@@ -227,11 +223,6 @@
       </div>
     </div>
     <div class="insurance__modal-divider" />
-    <AccountTransactions
-      :isOvnTrxs="true"
-      class="insurance__modal-ovn-dashboard-trxs"
-    />
-
   </div>
 </template>
 
@@ -242,7 +233,6 @@ import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ModalComponent from '@/components/Modal/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import MintRedeemModal from '@/modules/Insurance/MintRedeemModal.vue';
-import AccountTransactions from '@/modules/Account/AccountTransactions.vue';
 import NoOvnInsBalance from '@/modules/Insurance/NoOnvInsBalance.vue';
 
 export default {
@@ -251,14 +241,12 @@ export default {
     ModalComponent,
     ButtonComponent,
     BaseIcon,
-    AccountTransactions,
     MintRedeemModal,
     NoOvnInsBalance,
   },
   data() {
     return {
       showModal: false,
-      ovnAmount: 0,
       ovnDecimals: 18,
       costOvn: 0,
       costOvnINS: 0,

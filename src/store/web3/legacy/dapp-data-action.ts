@@ -5,28 +5,12 @@ const getters = {};
 
 const actions = {
 
-  async resetUserData({
-    commit, dispatch, getters, rootState,
-  }: any) {
-    dispatch('accountData/resetBalance', null, { root: true });
+  async resetUserData({ dispatch }: any) {
     dispatch('accountData/resetUns', null, { root: true });
   },
 
-  async updateUserData({
-    commit, dispatch, getters, rootState,
-  }: any) {
-    console.log('REFRESHUSER');
+  async updateUserData({ dispatch }: any) {
     await dispatch('web3/initWeb3', null, { root: true });
-    dispatch('accountData/refreshBalance', null, { root: true });
-    // possibly remove, only for account change
-
-    await dispatch('odosData/loadTokens', null, { root: true });
-    await dispatch('odosData/loadBalances', null, { root: true });
-    dispatch('odosData/loadContractsForTokens', null, { root: true });
-    // dispatch('supplyData/refreshInsuranceSupply', null, { root: true });
-    // dispatch('swapData/refreshSwap', null, { root: true });
-    // dispatch('marketData/refreshClientData', null, { root: true });
-    // dispatch('insuranceData/refreshInsurance', null, { root: true });
   },
 
 };

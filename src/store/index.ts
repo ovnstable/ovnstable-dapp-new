@@ -8,14 +8,12 @@ import theme from '@/store/theme/index.ts';
 import createPersistedState from 'vuex-persistedstate';
 import network from '@/store/web3/network.ts';
 import walletAction from '@/store/web3/legacy/wallet-action.ts';
-import contractAction from '@/store/web3/legacy/contract-action.ts';
 import web3 from '@/store/web3/web3.ts';
 
 // Common
 import gasPrice from '@/store/common/gas-price.ts';
 import supplyData from '@/store/common/supply.ts';
 import referral from '@/store/common/referral.ts';
-import etsAction from '@/store/web3/legacy/ets-action.ts';
 // import balances from '@/store/common/balances/balances.ts';
 import posthog from '@/store/common/posthog/posthog.ts';
 
@@ -32,13 +30,11 @@ import insurancePayouts from '@/store/views/insurance/InsurancePayouts.ts';
 import insurancePremiums from '@/store/views/insurance/InsurancePremiums.ts';
 import intervalDashboard from '@/store/views/dashboard/intervalDashboard.ts';
 import porfolioBalanceData from '@/store/views/dashboard/porfolioBalanceData.ts';
-import jackpotData from '@/store/views/blastQuest/data.ts';
 
 // modals
 import errorModal from '@/store/modals/error-modal.ts';
 import waitingModal from '@/store/modals/waiting-modal.ts';
 import successModal from '@/store/modals/success-modal.ts';
-import accTransaction from '@/store/views/account/transaction.ts';
 import dappDataAction from '@/store/web3/legacy/dapp-data-action.ts';
 import mintRedeem from '@/store/views/main/mintRedeem/index.ts';
 import odosData from '@/store/views/main/odos/index.ts';
@@ -58,16 +54,13 @@ const store = new Vuex.Store({
     // views
     accountData,
     poolsData,
-    accTransaction,
     insuranceData,
 
     // web3
     network,
     walletAction,
-    contractAction,
     web3,
     dappDataAction,
-    etsAction,
 
     // common
     gasPrice,
@@ -83,7 +76,6 @@ const store = new Vuex.Store({
     insurancePremiums,
     intervalDashboard,
     porfolioBalanceData,
-    jackpotData,
     // balances,
     posthog,
   },

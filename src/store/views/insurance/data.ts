@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 import { axios } from '@/utils/httpUtils.ts';
 import duration from 'dayjs/plugin/duration';
 import BigNumber from 'bignumber.js';
+import { buildInsuranceContract } from '@/utils/contractsMap.ts';
 
 dayjs.extend(duration);
 
@@ -66,7 +67,6 @@ const actions = {
     for (const insuranceChain of insuranceChainList) {
       dispatch('refreshClientData', { chain: insuranceChain });
     }
-    dispatch('accountData/refreshBalance', null, { root: true });
     // dispatch('supplyData/refreshInsuranceSupply', null, { root: true });
   },
 
@@ -189,7 +189,8 @@ const actions = {
         return;
       }
 
-      const contract = web3.contracts.insurance[`${rootState.network.networkName}_exchanger`];
+      const contract = buildInsuranceContract(web3.evmSigner, rootState.network.networkName)!
+        .exchanger;
       if (!contract) {
         console.log('Insurance/redemptionCheck: contract not found');
         return;
@@ -218,9 +219,9 @@ const actions = {
           const currentDate = new Date();
 
           if (currentDate.getTime() > date.getTime()) {
-            const withdrawPeriod = await web3.contracts.insurance[
-              `${rootState.network.networkName}_exchanger`
-            ].withdrawPeriod();
+            const contract = buildInsuranceContract(web3.evmSigner, rootState.network.networkName)!
+              .exchanger;
+            const withdrawPeriod = await contract!.withdrawPeriod();
             const withdrawDate = new Date(
               new BigNumber(
                 date.getTime(),

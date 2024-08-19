@@ -150,7 +150,7 @@
   </div>
 </template>
 <script lang="ts">
-import { formatMoney, fixedByPrice } from '@/utils/numbers.ts';
+import { formatMoney } from '@/utils/numbers.ts';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import InputComponent from '@/components/Input/Index.vue';
 import { OVN_TOKENS } from '@/utils/const.ts';
@@ -176,10 +176,6 @@ export default {
       type: Array,
       required: true,
     },
-    isInputTokens: {
-      type: Boolean,
-      required: true,
-    },
     removeNative: {
       type: Boolean,
       required: false,
@@ -188,7 +184,6 @@ export default {
   },
   data() {
     return {
-      maxTokenSelectCount: MAX_TOKEN_COUNT,
       searchQuery: '',
     };
   },
@@ -273,7 +268,6 @@ export default {
   },
   methods: {
     formatMoney,
-    fixedByPrice,
     searchTokens(val: string) {
       this.searchQuery = val;
     },

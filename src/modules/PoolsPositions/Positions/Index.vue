@@ -93,14 +93,15 @@
 import PoolsTable from '@/components/Pools/PositionsTable/Index.vue';
 import PoolsFilter from '@/components/Pools/PositionsFilter/Index.vue';
 import {
-  mapActions, mapGetters,
-  mapMutations,
+  mapGetters, useStore,
 } from 'vuex';
 import { POOL_TYPES } from '@/store/views/main/pools/index.ts';
 import TableSkeleton from '@/components/TableSkeleton/Index.vue';
 import { getImageUrl } from '@/utils/const.ts';
 import ButtonComponent from '@/components/Button/Index.vue';
-import { formatPositionData } from '../../../components/Pools/PositionsTable/helpers.ts';
+import { useQueryClient } from '@tanstack/vue-query';
+import { defineComponent } from 'vue';
+import { usePositionsQuery } from '@/hooks/fetch/usePositionsQuery.ts';
 
 interface IEnumIterator {
   next: () => number,
@@ -147,7 +148,7 @@ enum SUPPORTED_REBALANCE_NETWORKS {
   arbitrum, base,
 }
 
-export default {
+export default defineComponent({
   name: 'PositionsTable',
   components: {
     PoolsTable,
@@ -155,35 +156,48 @@ export default {
     TableSkeleton,
     ButtonComponent,
   },
-  data: () => ({
-    poolTabType: POOL_TYPES.ALL,
-    isOpenHiddenPools: false,
+  // Using new Composition API for hooks compatibility
+  setup() {
+    const store = useStore() as any;
 
-    selectedTabs: ['ALL'],
-    selectedNetworks: [] as number[], // [] for ALL or networks,
-    isShowOnlyZap: false,
-    isShowAprLimit: false,
-    searchQuery: '',
+    const { data: positionData, isLoading } = usePositionsQuery(store.state);
 
-    orderType: APR_ORDER_TYPE.APR_UP,
-    isDefaultOrder: true as boolean,
+    const queryClient = useQueryClient();
+    const invalidateQuery = async () => queryClient.invalidateQueries({ queryKey: ['positions'] });
 
-    aprSortIterator: {} as IEnumIterator,
-    aprOrder: 0 as number,
-    positionSizeSortIterator: {} as IEnumIterator,
-    positionSizeOrder: 0 as number,
-    isLoading: true as boolean,
-    positionData: [] as any,
-    supportedNetworks: SUPPORTED_REBALANCE_NETWORKS,
+    return {
+      isLoading,
+      positionData,
 
-    isInit: false as boolean,
-    tokensLength: 0 as number,
-  }),
+      resetData: invalidateQuery,
+
+      poolTabType: POOL_TYPES.ALL,
+      isOpenHiddenPools: false,
+
+      selectedTabs: ['ALL'],
+      selectedNetworks: [] as number[], // [] for ALL or networks,
+      isShowOnlyZap: false,
+      isShowAprLimit: false,
+      searchQuery: '',
+
+      orderType: APR_ORDER_TYPE.APR_UP,
+      isDefaultOrder: true as boolean,
+
+      aprSortIterator: {} as IEnumIterator,
+      aprOrder: 0 as number,
+      positionSizeSortIterator: {} as IEnumIterator,
+      positionSizeOrder: 0 as number,
+      isManualLoading: false as boolean,
+      // positionData: [] as any,
+      supportedNetworks: SUPPORTED_REBALANCE_NETWORKS,
+
+      isInit: false as boolean,
+    // tokensLength: 0 as number,
+    };
+  },
   computed: {
     ...mapGetters('network', ['getParams', 'isShowDeprecated']),
     ...mapGetters('accountData', ['account']),
-    ...mapGetters('poolsData', ['allPoolsMap']),
-    ...mapGetters('odosData', ['allTokensMap']),
     ...mapGetters('network', ['networkName']),
     ...mapGetters('walletAction', ['walletConnected']),
     filteredPools() {
@@ -227,32 +241,15 @@ export default {
     },
   },
   watch: {
-    async allTokensMap() {
-      if (this.allTokensMap.size > 0
-      && !this.isInit) {
-        const posData = await this.getFormatPositions();
-        if (posData.length > 0) {
-          this.positionData = posData;
-          this.isLoading = false;
-          this.isInit = true;
-          this.tokensLength = this.allTokensMap.size;
-        }
-      }
-    },
     async networkName() {
       if (this.isSupportedNetwork) {
-        this.isLoading = true;
-        this.isInit = false;
-        this.resetStore();
-        await this.init();
+        await this.resetData();
       }
     },
     async account(account: string) {
-      this.isInit = false;
       if (this.isSupportedNetwork && account) {
-        this.isLoading = true;
+        await this.resetData();
       }
-      this.isLoading = false;
     },
   },
   async mounted() {
@@ -262,32 +259,8 @@ export default {
     this.aprOrder = this.aprSortIterator.next();
     this.positionSizeSortIterator = iterateEnum(POSITION_SIZE_ORDER_TYPE);
     this.positionSizeOrder = this.positionSizeSortIterator.next();
-
-    await this.init();
   },
   methods: {
-    ...mapActions('poolsData', ['loadPools']),
-    ...mapActions('zapinData', ['loadPositionContract']),
-    ...mapActions('odosData', ['loadTokens', 'initData', 'loadChains', 'initContractData']),
-    ...mapMutations('zapinData', ['resetStore']),
-    async init() {
-      await this.loadPools();
-      await this.initContractData();
-      await this.loadChains();
-
-      this.$store.commit('odosData/changeState', {
-        field: 'isTokensLoadedAndFiltered',
-        val: false,
-      });
-
-      await this.loadTokens();
-      await this.initData();
-
-      this.$store.commit('odosData/changeState', {
-        field: 'isTokensLoadedAndFiltered',
-        val: true,
-      });
-    },
     switchPoolsTab(type: POOL_TYPES) {
       this.isDefaultOrder = true;
       this.isOpenHiddenPools = false;
@@ -321,20 +294,11 @@ export default {
       this.selectedNetworks = [];
       this.isDefaultOrder = true;
     },
-    async getFormatPositions() {
-      const poolInfo = this.allPoolsMap;
-      const tokensList = this.allTokensMap;
-
-      const positionData = await this.loadPositionContract(this.account);
-
-      // console.log(positionData, '__positionData');
-      return formatPositionData(positionData, poolInfo, tokensList);
-    },
     connectWallet() {
       this.$store.dispatch('walletAction/connectWallet');
     },
     getImageUrl,
   },
-};
+});
 </script>
 <style lang="scss" scoped src="./styles.scss" />

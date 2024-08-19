@@ -162,7 +162,7 @@
         </div>
       </div>
       <ZapInStepsRow
-        v-if="zapPool.chain === networkId && isTokensLoadedAndFiltered"
+        v-if="zapPool.chain === networkId"
         class="zapin__modal-steps"
         :current-stage="currentStage"
       />
@@ -177,6 +177,7 @@ import { useEventBus } from '@vueuse/core';
 import { ethers } from 'ethers';
 import {
   mapActions, mapGetters, mapState, mapMutations,
+  useStore,
 } from 'vuex';
 import {
   getNewOutputToken,
@@ -189,18 +190,19 @@ import {
 import odosApiService from '@/services/odos-api-service.ts';
 
 import Spinner from '@/components/Spinner/Index.vue';
-import ChangeNetwork from '@/modules/Main/components/ZapModal/ZapForm/ChangeNetwork.vue';
+import ChangeNetwork from '@/components/ZapModal/ZapForm/ChangeNetwork.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
-import ZapinV3 from '@/modules/Main/components/ZapModal/ZapForm/ZapinV3.vue';
+import ZapinV3 from '@/components/ZapModal/ZapForm/ZapinV3.vue';
 import { poolsInfoMap, poolTokensForZapMap } from '@/store/views/main/zapin/mocks.ts';
 import BN from 'bignumber.js';
-import TokenForm from '@/modules/ManagePosition/TokenForm.vue';
+import TokenForm from '@/modules/Main/components/Odos/TokenForm.vue';
 import { MANAGE_FUNC, rebalanceStep } from '@/store/modals/waiting-modal.ts';
 import ZapInStepsRow from '@/components/StepsRow/ZapinRow/RebalanceRow.vue';
 import { cloneDeep } from 'lodash';
 import { markRaw } from 'vue';
 import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
+import { useTokensQuery, useRefreshBalances } from '@/hooks/fetch/useTokensQuery.ts';
 import { parseLogs } from './helpers.ts';
 
 enum zapMobileSection {
@@ -220,6 +222,11 @@ export default {
     ZapInStepsRow,
   },
   props: {
+    allTokensList: {
+      type: Array,
+      required: true,
+      default: () => [],
+    },
     zapPool: {
       type: Object,
       required: false,
@@ -232,7 +239,18 @@ export default {
       default: 'ALL',
     },
   },
-  emits: ['close-form'],
+  setup: () => {
+    const store = useStore() as any;
+
+    const {
+      isBalancesLoading,
+    } = useTokensQuery(store.state);
+
+    return {
+      isBalancesLoading,
+      refreshBalances: useRefreshBalances(),
+    };
+  },
   data() {
     return {
       positionStaked: true,
@@ -276,9 +294,7 @@ export default {
   },
   computed: {
     ...mapState('odosData', [
-      'isTokensLoadedAndFiltered',
       'lastPoolInfoData',
-      'isBalancesLoading',
       'odosReferalCode',
     ]),
     ...mapState('zapinData', [
@@ -288,7 +304,6 @@ export default {
       'gaugeContract',
     ]),
     ...mapGetters('odosData', [
-      'allTokensList',
       'isAvailableOnNetwork',
     ]),
     ...mapGetters('zapinData', [
@@ -302,7 +317,16 @@ export default {
       return false;
     },
     zapsLoaded() {
-      return this.isTokensLoadedAndFiltered && this.zapPool && this.zapContract && this.isZapLoaded;
+      // console.log(this.allTokensList, '__this.allTokensList');
+      // console.log(this.outputTokens, '__this.outputTokens');
+      // console.log(this.zapPool, '__this.zapPool');
+      // console.log(this.zapContract, '__this.zapContract');
+      // console.log(this.isZapLoaded, '__this.isZapLoaded');
+      return this.allTokensList?.length > 0
+        && this.outputTokens?.length > 0
+        && this.zapPool
+        && this.zapContract
+        && this.isZapLoaded;
     },
     isOutputTokensRemovable() {
       return false;
@@ -330,16 +354,8 @@ export default {
       if (val) this.clearAndInitForm();
       if (!val) this.outputTokens = [getNewOutputToken()];
     },
-
-    isTokensLoadedAndFiltered(val) {
-      if (val) {
-        this.clearAndInitForm();
-      }
-    },
     networkId(newVal) {
       if (newVal) {
-        this.$store.commit('odosData/changeState', { field: 'isTokensLoadedAndFiltered', val: false });
-
         if (!this.isAvailableOnNetwork) {
           this.mintAction();
         }
@@ -363,32 +379,25 @@ export default {
       this.checkNftApprove();
     },
   },
-  mounted() {
+  async mounted() {
+    // for modal
     this.currentStage = rebalanceStep.UNSTAKE;
-    this.firstInit();
     this.setIsZapModalShow(true);
     this.setStagesMap(MANAGE_FUNC.REBALANCE);
-  },
-  created() {
+    await this.initContracts();
+
     if (this.zapPool.chain !== this.networkId) return;
 
     this.firstInit();
-
-    setTimeout(() => {
-      this.loadZapContract();
-    }, 300);
   },
   methods: {
     ...mapActions('swapModal', ['showSwapModal', 'showMintView']),
     ...mapActions('poolsData', ['setIsZapModalShow']),
     ...mapActions('odosData', [
-      'loadTokens',
-      'initContractData',
       'startSwapConfirmTimer',
       'stopSwapConfirmTimer',
       'triggerSuccessZapin',
     ]),
-    ...mapActions('accountData', ['refreshBalance']),
     ...mapActions('zapinData', ['loadZapContract']),
     ...mapActions('errorModal', ['showErrorModalWithMsg']),
     ...mapActions('waitingModal', ['closeWaitingModal']),
@@ -433,7 +442,7 @@ export default {
       this.showSwapModal();
     },
 
-    async firstInit() {
+    async initContracts() {
       this.changeState({
         field: 'zapPoolRoot',
         val: this.zapPool,
@@ -447,7 +456,6 @@ export default {
         val: this.typeOfPool,
       });
 
-      // todo: move to backend
       const poolTokens = poolTokensForZapMap[this.zapPool.address];
       if (!poolTokens) return;
 
@@ -455,33 +463,21 @@ export default {
         field: 'listOfBuyTokensAddresses',
         val: [poolTokens[0].address, poolTokens[1].address],
       });
-
-      await this.init();
-      this.clearAndInitForm();
+      await this.loadZapContract();
 
       if (!this.isAvailableOnNetwork) this.mintAction();
-
-      if (this.outputTokens?.length > 0) {
-        const symbName = this.zapPool?.name?.split('/');
-        this.outputTokens.forEach((_, key) => {
-          this.outputTokens[key].value = this.zapPool?.position?.tokens[key][symbName[key]];
-          this.outputTokens[key].sum = this.zapPool?.position?.tokens[key][symbName[key]];
-        });
-
-        this.inputTokens = cloneDeep(this.outputTokens);
-      }
-
       if (!this.zapPool.isStaked) {
         this.positionStaked = this.zapPool.isStaked;
         this.currentStage = rebalanceStep.APPROVE;
       }
     },
 
-    async init() {
-      // await this.loadChains();
-      await this.loadTokens();
-      await this.initContractData();
+    firstInit() {
+      this.initEvent();
+      this.clearAndInitForm();
+    },
 
+    async initEvent() {
       const bus = useEventBus('odos-transaction-finished');
       bus.on(() => {
         this.finishTransaction();
@@ -492,32 +488,32 @@ export default {
       const poolSelectedToken = getTokenByAddress(poolTokens[0].address, this.allTokensList);
       const ovnSelectSelectedToken = getTokenByAddress(poolTokens[1].address, this.allTokensList);
 
-      if (!poolSelectedToken || !ovnSelectSelectedToken) {
-        this.addNewOutputToken();
-        return;
-      }
-
+      console.log(this.allTokensList, 'this.allTokensList');
+      console.log(poolSelectedToken, 'poolSelectedToken');
+      console.log(ovnSelectSelectedToken, 'ovnSelectSelectedToken');
+      if (!poolSelectedToken || !ovnSelectSelectedToken) return;
       poolSelectedToken.selected = true;
       ovnSelectSelectedToken.selected = true;
 
-      if (this.swapMethod === 'BUY') {
-        this.addSelectedTokenToOutputList(poolSelectedToken, true, 50);
-        this.addSelectedTokenToOutputList(ovnSelectSelectedToken, true, 50);
-        return;
-      }
+      const tokenA = this.addSelectedTokenToOutputList(poolSelectedToken, true, 50);
+      const tokenB = this.addSelectedTokenToOutputList(ovnSelectSelectedToken, true, 50);
 
-      if (this.swapMethod === 'SELL') {
-        this.addNewOutputToken();
-        return;
-      }
+      console.log(tokenA, '__tokenA');
+      console.log(tokenB, 'tokenB');
+      this.outputTokens = [tokenA, tokenB];
 
-      console.error(
-        'Error when add default ovn token. Method not found: ',
-        this.swapMethod,
-      );
-    },
-    addNewOutputToken() {
-      this.outputTokens.push(getNewOutputToken());
+      this.$forceUpdate();
+      this.recalculateProportion();
+
+      if (this.outputTokens?.length > 0) {
+        const symbName = this.zapPool?.name?.split('/');
+        this.outputTokens.forEach((_, key) => {
+          this.outputTokens[key].value = this.zapPool?.position?.tokens[key][symbName[key]];
+          this.outputTokens[key].sum = this.zapPool?.position?.tokens[key][symbName[key]];
+        });
+
+        this.inputTokens = cloneDeep(this.outputTokens);
+      }
     },
     removeOutputToken(id: string) {
       this.removeToken(this.outputTokens, id);
@@ -569,23 +565,12 @@ export default {
     finishTransaction() {
       this.clearAndInitForm();
       this.closeWaitingModal();
-      this.refreshBalance();
+      this.refreshBalances();
     },
 
     clearAndInitForm() {
       this.clearAllSelectedTokens();
-
-      if (this.swapMethod === 'BUY') {
-        this.addDefaultPoolToken();
-        return;
-      }
-
-      if (this.swapMethod === 'SELL') {
-        this.addDefaultPoolToken();
-        return;
-      }
-
-      console.error('Clear form, swap method not found.', this.swapMethod);
+      this.addDefaultPoolToken();
     },
     resetOutputs() {
       if (!this.selectedOutputTokens.length) {
@@ -972,8 +957,8 @@ export default {
 
       const params = {
         from: this.account,
-        // gasPrice: ethers.parseUnits('100', 'gwei'),
-        // gasLimit: 1000000,
+        gasPrice: ethers.parseUnits('100', 'gwei'),
+        gasLimit: 1000000,
       };
 
       console.log(zapPool, '----zapPool');
@@ -1034,6 +1019,7 @@ export default {
       });
     },
     async recalculateProportion() {
+      if (!this.v3Range) return;
       const resp = await getV3Rebalance(
         this.zapPool.tokenId?.toString(),
         this.zapPool.address,
@@ -1061,25 +1047,13 @@ export default {
       return this.slippagePercent;
     },
 
-    addSelectedTokenToOutputList(selectedToken: any, isLocked: any, startPercent: any) {
-      const newOutputToken = getNewOutputToken();
-      newOutputToken.locked = isLocked;
-      newOutputToken.value = startPercent;
-      newOutputToken.selectedToken = selectedToken;
-      this.outputTokens.push(newOutputToken);
-      this.removeAllWithoutSelectedTokens(this.outputTokens);
-      this.resetOutputs();
-    },
-    removeAllWithoutSelectedTokens(tokens: any) {
-      const tokensToRemove = [];
-      for (let i = 0; i < tokens.length; i++) {
-        if (tokens[i].selectedToken) continue;
-        tokensToRemove.push(tokens[i]);
-      }
-
-      for (let i = 0; i < tokensToRemove.length; i++) {
-        this.removeToken(tokens, tokensToRemove[i].id);
-      }
+    addSelectedTokenToOutputList(selectedToken: any, locked: any, startPercent: any) {
+      return {
+        ...getNewOutputToken(),
+        locked,
+        value: startPercent,
+        selectedToken,
+      };
     },
     clearAllOutputSelectedTokens() {
       for (let i = 0; i < this.outputTokens.length; i++) {

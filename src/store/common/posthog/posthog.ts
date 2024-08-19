@@ -18,7 +18,6 @@ const actions = {
 
 const mutations = {
   setPosthogInstance(state: any, posthogService: IPosthogService) {
-    console.log('__settingPosthogInstance', posthogService);
     state.posthogService = posthogService;
   },
 };

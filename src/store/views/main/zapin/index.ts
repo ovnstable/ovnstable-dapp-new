@@ -22,32 +22,32 @@ type TSrcMap = {
   [key: string]: (chainName: string, platformName: string) => string;
 }
 
-const srcStringBuilder = (fileType: string) => (
+export const srcStringBuilder = (fileType: string) => (
   chainName: string,
   fileName: string,
 ): string => `contracts/${chainName}/${fileName}${fileType}.json`;
 
-const zapAbiSrcMap: TSrcMap = {
+export const zapAbiSrcMap: TSrcMap = {
   v2: srcStringBuilder('Zap'),
   v3: srcStringBuilder('V3Zap'),
 };
 
-const gaugeSrcMap: TSrcMap = {
+export const gaugeSrcMap: TSrcMap = {
   v2: srcStringBuilder('Gauge'),
   v3: srcStringBuilder('V3Gauge'),
   [poolVersionList.v3rebalance]: srcStringBuilder('V3GaugeRebalance'),
 };
 
-const poolTokenSrcMap: TSrcMap = {
+export const poolTokenSrcMap: TSrcMap = {
   v2: srcStringBuilder('PoolToken'),
   v3: srcStringBuilder('V3PoolToken'),
 };
 
-const nftSrcMap: TSrcMap = {
+export const nftSrcMap: TSrcMap = {
   v3: srcStringBuilder('V3Nft'),
 };
 
-const rebalanceChainMap: {[key: string]: string} = {
+export const rebalanceChainMap: {[key: string]: string} = {
   base: 'Aerodrome',
   arbitrum: 'Pancake',
 };
@@ -230,34 +230,6 @@ const actions = {
       field: 'poolTokenContract',
       val: tokenContract,
     });
-  },
-  async loadPositionContract({
-    rootState, commit,
-  }: any, address: string) {
-    const chainName = rootState.network.networkName;
-    const platformName = rebalanceChainMap[chainName];
-    const abiFileSrc = zapAbiSrcMap.v3?.(chainName, platformName);
-
-    const abiFile = await loadAbi(abiFileSrc);
-
-    const positionContract = buildEvmContract(
-      abiFile.abi,
-      rootState.web3.evmSigner,
-      abiFile.address,
-    );
-
-    const positions = await positionContract.getPositions(address);
-
-    commit('changeState', {
-      field: 'positionContract',
-      val: positionContract,
-    });
-
-    commit('changeState', {
-      field: 'userPositions',
-      val: positions,
-    });
-    return positions;
   },
 };
 
