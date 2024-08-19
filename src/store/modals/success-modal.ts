@@ -54,6 +54,7 @@ const actions = {
   showSuccessModal({
     commit, rootState, rootGetters,
   }: any, successParams: TSwapSuccessData) {
+    console.log(successParams, '_showSuccessModal');
     commit('setShow', true);
     commit('setSwapData', {
       from: successParams.from,

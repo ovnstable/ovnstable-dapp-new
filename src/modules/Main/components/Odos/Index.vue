@@ -266,7 +266,7 @@ import BigNumber from 'bignumber.js';
 import { computed, defineComponent } from 'vue';
 import { useTokensQuery, useRefreshBalances } from '@/hooks/fetch/useTokensQuery.ts';
 import TokenService from '@/services/TokenService/TokenService.ts';
-import type { TTokenInfo } from '@/types/common/tokens';
+import type { TTokenInfo } from '@/types/common/tokens/index.ts';
 
 export default defineComponent({
   name: 'SwapForm',
@@ -509,19 +509,19 @@ export default defineComponent({
     },
   },
   watch: {
-    networkId(val) {
+    async networkId(val) {
+      await this.loadRouterContract(val);
       this.clearForm();
-      this.loadRouterContract(val);
     },
     account() {
       this.clearForm();
     },
-    allTokensList(tokens: TTokenInfo[]) {
-      if (tokens.length > 0) {
-        this.clearForm();
-        this.isInit = true;
-      }
-    },
+    // allTokensList(tokens: TTokenInfo[]) {
+    //   if (tokens.length > 0) {
+    //     this.clearForm();
+    //     this.isInit = true;
+    //   }
+    // },
     outputTokensWithSelectedTokensCount(val, oldVal) {
       // lock first
       if (val === 1) {
@@ -560,7 +560,7 @@ export default defineComponent({
       this.clearForm();
     }
     await this.init();
-
+    await this.loadRouterContract(this.networkId);
     if (this.$route.query.action === 'swap-out') this.changeSwap();
   },
   methods: {
@@ -764,6 +764,12 @@ export default defineComponent({
     },
 
     finishTransaction() {
+      this.$emit('update-path-view', {
+        path: null,
+        input: this.selectedInputTokens,
+        output: this.selectedOutputTokens,
+      });
+
       this.clearForm();
       this.refreshBalances();
     },
@@ -911,6 +917,7 @@ export default defineComponent({
                 return;
               }
 
+              console.log('INIT');
               await this.initWalletTransaction(
                 {
                   txData: responseAssembleData,
@@ -919,11 +926,6 @@ export default defineComponent({
                 },
               );
 
-              this.$emit('update-path-view', {
-                path: null,
-                input: this.selectedInputTokens,
-                output: this.selectedOutputTokens,
-              });
               this.isSwapLoading = false;
             })
             .catch((e) => {

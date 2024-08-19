@@ -113,9 +113,9 @@ const BLAST_PARAMS = {
   isDeprecated: false,
 };
 
-const dbNetworkName = localStorage.getItem('selectedNetwork');
+const dbNetworkName = Number(window.ethereum.chainId)?.toString();
 
-export function getNetworkParams(networkName: string | number | null) {
+export function getNetworkParams(networkName: string | number | null): any {
   switch (networkName) {
     case 'blast':
     case '81457':
@@ -158,11 +158,12 @@ export function getNetworkParams(networkName: string | number | null) {
     case 59144:
       return LINEA_PARAMS;
     default:
-      return OPTIMISM_PARAMS; // BASE_PARAMS;
+      return BASE_PARAMS; // BASE_PARAMS;
   }
 }
 
 const state = {
+  networkLoaded: false,
   appApiUrl: getNetworkParams(dbNetworkName).appApiUrl,
   apiUrl: 'https://api.overnight.fi',
   networkName: getNetworkParams(dbNetworkName).networkName,
@@ -338,6 +339,7 @@ const actions = {
   changeDappNetwork({
     commit, dispatch,
   }: any, networkName: any) {
+    console.log('__changeDappNetwork');
     commit('setAppApiUrl', getNetworkParams(networkName).appApiUrl);
     commit('setNetworkName', getNetworkParams(networkName).networkName);
     commit('setNetworkId', getNetworkParams(networkName).networkId);
@@ -350,12 +352,13 @@ const actions = {
     commit('setNetworkColor', getNetworkParams(networkName).networkColor);
     commit('setIsDeprecated', getNetworkParams(networkName).isDeprecated);
 
-    dispatch('web3/initWeb3', null, { root: true });
+    // dispatch('web3/initWeb3', null, { root: true });
   },
 
   // TODO refactore it to array
   saveNetworkToLocalStore(network: any) {
     const networkId = `${network}`;
+    console.log('_SetNetworkToLocalStorage', network);
     switch (networkId) {
       case 'blast':
       case '81457':
@@ -395,7 +398,7 @@ const actions = {
         localStorage.setItem('selectedNetwork', 'linea');
         break;
       default:
-        localStorage.setItem('selectedNetwork', 'op');
+        localStorage.setItem('selectedNetwork', 'base');
         break;
     }
   },
@@ -623,6 +626,7 @@ const mutations = {
 
   setNetworkId(state: any, value: any) {
     state.networkId = value;
+    state.networkLoaded = true;
   },
 
   setRpcUrl(state: any, value: any) {

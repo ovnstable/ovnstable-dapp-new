@@ -6,8 +6,7 @@ import BigNumber from 'bignumber.js';
 import { loadTokenImage, loadOvernightTokenImage } from '@/utils/tokenLogo.ts';
 import odosApiService from '@/services/odos-api-service.ts';
 import SliderApiService from '@/services/slider-api-service.ts';
-import { DEPRECATED_NETWORKS, ODOS_DEPRECATED_NETWORKS } from '@/utils/const.ts';
-import { BLAST_TOKENS_PRICES } from '@/constants/tokens/manualTokensMap.ts';
+import { DEPRECATED_NETWORKS } from '@/utils/const.ts';
 
 const SECONDTOKEN_SECOND_DEFAULT_SYMBOL = 'DAI+';
 const SECONDTOKEN_DEFAULT_SYMBOL = 'USD+';
@@ -367,25 +366,13 @@ export const loadPrices = async (chainId: number | string) => odosApiService
     console.error('Error load contract', e);
   });
 
-export const loadPriceTrigger = async (tokens: any[], chainId: number | string) => {
-  const isDeprecated = ODOS_DEPRECATED_NETWORKS.includes(Number(chainId));
-
-  const getPrices = async () => loadPrices(chainId)
-    .catch((e) => {
-      console.error('Error when load prices info', e);
-    });
-
-  const tokenPricesMap = isDeprecated ? { ...BLAST_TOKENS_PRICES }[chainId] : await getPrices();
-
-  return tokens.map((data: any) => ({
-    ...data,
-    price: new BigNumber(tokenPricesMap[data.address] ?? 0).toFixed(20),
-  }));
-};
-
-export const sortedChainsByTVL = async (chains: any, showDeprecated: boolean) => {
+export const sortedChainsByTVL = async (
+  chains: any,
+  showDeprecated: boolean,
+  networkId: number,
+) => {
   const tvl = await SliderApiService.loadTVL();
-  const response = await odosApiService.loadPrices(10);
+  const response = await odosApiService.loadPrices(networkId);
   const ethPrice = (response as any).tokenPrices['0x0000000000000000000000000000000000000000'];
 
   const filterDeprecated = chains.filter((_: any) => {

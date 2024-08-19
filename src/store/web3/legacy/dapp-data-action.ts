@@ -10,7 +10,7 @@ const actions = {
   },
 
   async updateUserData({ dispatch }: any) {
-    await dispatch('web3/initWeb3', null, { root: true });
+    // await dispatch('web3/initWeb3', null, { root: true });
   },
 
 };

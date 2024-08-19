@@ -4,6 +4,9 @@ import { computed } from 'vue';
 import BalanceService from '@/services/BalanceService/BalanceService.ts';
 import { mergeTokenLists } from '@/services/TokenService/utils/index.ts';
 
+const REFETCH_INTERVAL = 5 * 60 * 60 * 1000; // 5h
+const BALANCE_REFETCH_INTERVAL = 3000;
+
 export const allTokensMap = (tokensList: any[]): any => new Map(tokensList
   .map((token) => [token.address, token]));
 
@@ -16,7 +19,7 @@ export const useTokensQuery = (stateData: any) => {
     {
       queryKey: ['tokens'],
       queryFn: TokenService.fetchTokens,
-      refetchInterval: false,
+      refetchInterval: REFETCH_INTERVAL,
     },
   );
 
@@ -24,8 +27,8 @@ export const useTokensQuery = (stateData: any) => {
     {
       queryKey: ['tokenPrices', networkId.value],
       queryFn: () => TokenService.fetchTokenPricesByNetworkId(networkId.value),
-      enabled: !!networkId.value,
-      refetchInterval: false,
+      enabled: !!networkId.value && !!provider.value,
+      refetchInterval: REFETCH_INTERVAL,
     },
   );
 
@@ -50,7 +53,7 @@ export const useTokensQuery = (stateData: any) => {
         tokenList.value,
       ),
       enabled: isBalancesQueryEnabled,
-      refetchInterval: 3000,
+      refetchInterval: BALANCE_REFETCH_INTERVAL,
     },
   );
 

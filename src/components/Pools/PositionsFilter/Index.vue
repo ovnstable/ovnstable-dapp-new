@@ -39,7 +39,6 @@
       <div
         v-for="networkConfig in sortedChains"
         :key="networkConfig.chain"
-        :class="selectedNetwork.includes(networkConfig.chain) || selectedNetwork.length === 0 ? 'pools-wrap__filters-item--selected' : ''"
         class="pools-wrap__filters-item"
         @click="changeNetwork(networkConfig.chain)"
         @keypress="changeNetwork(networkConfig.chain)"
@@ -57,6 +56,7 @@ import SwitchTabs from '@/components/SwitchTabs/Index.vue';
 import { appNetworksData } from '@/utils/const.ts';
 import { sortedChainsByTVL } from '@/store/helpers/index.ts';
 import { POOL_TYPES } from '@/store/views/main/pools/index.ts';
+import { mapGetters } from 'vuex';
 
 interface Chain {
   chainName: string;
@@ -73,11 +73,6 @@ export default {
     SwitchTabs,
   },
   props: {
-    selectedNetwork: {
-      type: Array,
-      required: false,
-      default: () => [],
-    },
     isShowDeprecated: {
       type: Boolean,
       required: true,
@@ -95,13 +90,20 @@ export default {
       filterTabs: [],
     };
   },
-  watch: {
-    async isShowDeprecated() {
-      this.sortedChains = await sortedChainsByTVL(this.networksData, this.isShowDeprecated);
-    },
+  // watch: {
+  //   async isShowDeprecated() {
+  //     this.sortedChains = await sortedChainsByTVL(this.networksData, this.isShowDeprecated);
+  //   },
+  // },
+  computed: {
+    ...mapGetters('network', ['networkId']),
   },
   async mounted() {
-    this.sortedChains = await sortedChainsByTVL(this.networksData, this.isShowDeprecated);
+    this.sortedChains = await sortedChainsByTVL(
+      this.networksData,
+      this.isShowDeprecated,
+      this.networkId,
+    );
   },
   methods: {
     changeTab(val: string) {
@@ -109,10 +111,6 @@ export default {
     },
     updateInputSearch(val: string) {
       this.$emit('search', val);
-    },
-    changeNetwork(val: number | string) {
-      console.log(val);
-      this.$emit('change-network', val);
     },
   },
 };

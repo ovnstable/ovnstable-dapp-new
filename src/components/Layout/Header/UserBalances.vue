@@ -56,16 +56,16 @@ import { useStore } from 'vuex';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { deviceType } from '@/utils/deviceType.ts';
-import BigNumber from 'bignumber.js';
+import BN from 'bignumber.js';
 import { computed, defineComponent } from 'vue';
 import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
 import TokenService from '@/services/TokenService/TokenService.ts';
-import type { TTokenInfo } from '@/types/common/tokens';
+import type { TTokenInfo } from '@/types/common/tokens/index.ts';
 
 type TBalanceList = {
-          balance: string,
-          symbol: string,
-    }
+  balance: string,
+  symbol: string,
+}
 
 export default defineComponent({
   name: 'UserBalances',
@@ -95,8 +95,8 @@ export default defineComponent({
     },
     totalUserBalance() {
       const total = this.userBalancesList
-        .reduce((acc: BigNumber, token: TBalanceList) => acc
-          .plus(BigNumber(token.balance)), BigNumber(0));
+        .reduce((acc: BN, token: TBalanceList) => acc
+          .plus(BN(token.balance)), BN(0));
 
       return total.toFixed(2);
     },
@@ -106,7 +106,7 @@ export default defineComponent({
 
       const uniqueBalances = ovnTokens.map(
         (token: TTokenInfo) => ({
-          balance: BigNumber(token.balanceData!.balanceInUsd).toFixed(2),
+          balance: BN(token.balanceData!.balanceInUsd).toFixed(2),
           symbol: token.symbol,
         }),
       );
