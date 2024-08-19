@@ -52,7 +52,7 @@
 </template>
 
 <script lang="ts">
-import { useStore } from 'vuex';
+import { mapGetters, useStore } from 'vuex';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { deviceType } from '@/utils/deviceType.ts';
@@ -79,18 +79,23 @@ export default defineComponent({
 
     const {
       data: allTokensList,
-      isLoading,
       isBalancesLoading,
+      changeQueryData
     } = useTokensQuery(store.state);
 
     return {
       allTokensList,
-      isAllDataLoaded: computed(() => !isLoading.value),
-      isAllDataTrigger: computed(() => !isLoading.value),
       isBalancesLoading,
+      changeQueryData
     };
   },
+  watch: {
+    networkId(val: number) {
+      this.changeQueryData(val);
+    },
+  },
   computed: {
+    ...mapGetters('network', ['networkId']),
     device() {
       return deviceType();
     },

@@ -163,7 +163,6 @@ export function getNetworkParams(networkName: string | number | null): any {
 }
 
 const state = {
-  networkLoaded: false,
   appApiUrl: getNetworkParams(dbNetworkName).appApiUrl,
   apiUrl: 'https://api.overnight.fi',
   networkName: getNetworkParams(dbNetworkName).networkName,
@@ -208,12 +207,13 @@ const state = {
   marketExplorerURL: 'https://arbiscan.io/',
   insuranceNetwork: 'arbitrum',
   dashboardNetwork: 'arbitrum',
-  accountModalNetwork: 'arbitrum',
   ovnNetwork: 'base',
   insuranceExplorerURL: 'https://optimistic.etherscan.io/',
   dashboardExplorerURL: 'https://arbiscan.io/',
   ovnExplorerURL: 'https://basescan.org/',
   showDeprecated: false,
+  network: null,
+  networkLoaded: false
 };
 
 const getters = {
@@ -604,9 +604,6 @@ const actions = {
     commit('setDashboardExplorerURL', getNetworkParams(network).explorerUrl);
     commit('setDashboardNetwork', network);
   },
-  changeAccountModalNetwork({ commit }: any, network: any) {
-    commit('setAccountModalNetwork', network);
-  },
 };
 
 const mutations = {
@@ -685,9 +682,6 @@ const mutations = {
 
   setDashboardNetwork(state: any, value: any) {
     state.dashboardNetwork = value;
-  },
-  setAccountModalNetwork(state: any, value: any) {
-    state.accountModalNetwork = value;
   },
 
   setDashboardExplorerURL(state: any, value: any) {

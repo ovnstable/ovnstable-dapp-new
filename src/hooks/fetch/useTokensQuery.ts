@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/vue-query';
 import TokenService from '@/services/TokenService/TokenService.ts';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import BalanceService from '@/services/BalanceService/BalanceService.ts';
 import { mergeTokenLists } from '@/services/TokenService/utils/index.ts';
 
@@ -8,11 +8,13 @@ export const allTokensMap = (tokensList: any[]): any => new Map(tokensList
   .map((token) => [token.address, token]));
 
 export const useTokensQuery = (stateData: any) => {
-  const networkLoaded = computed(() => stateData.network.networkLoaded);
-  const networkId = computed(() => stateData.network.networkId);
+  let networkId = ref(stateData.network.networkId);
+  const networkLoaded = ref(stateData.network.networkLoaded);
   const address = computed(() => stateData.accountData.account);
   const provider = computed(() => stateData.web3.evmProvider);
 
+  // console.log(networkId.value, '___networkId');
+  // console.log(networkLoaded.value, '___networkLoaded');
   const tokensQuery = useQuery(
     {
       queryKey: ['tokens'],
@@ -43,7 +45,7 @@ export const useTokensQuery = (stateData: any) => {
 
   const balancesQuery = useQuery(
     {
-      queryKey: ['balances', address.value, networkId.value],
+      queryKey: ['balances', address.value, networkId.value, networkLoaded.value],
       queryFn: () => BalanceService.fetchTokenBalances(
         provider.value,
         address.value,
@@ -55,7 +57,7 @@ export const useTokensQuery = (stateData: any) => {
   );
 
   const isAnyLoading = computed(
-    () => tokensQuery.isLoading || pricesQuery.isLoading || balancesQuery.isLoading,
+    () => tokensQuery.isLoading || pricesQuery.isLoading || balancesQuery.isLoading || !networkLoaded.value,
   );
   const isAnyError = computed(
     () => tokensQuery.isError || pricesQuery.isError || balancesQuery.isError,
@@ -83,13 +85,18 @@ export const useTokensQuery = (stateData: any) => {
     return [];
   };
 
+  const changeQueryData = (networkIdVal: number) => {
+    networkId.value = networkIdVal
+  }
+
   return {
-    isLoading: isAnyLoading.value,
-    isError: isAnyError,
     data: computed(getTokenInfo),
     error: allErrors,
     isFetching: isAnyFetching,
+    isLoading: isAnyLoading.value,
+    isError: isAnyError,
     isBalancesLoading: balancesQuery.isLoading,
+    changeQueryData
   };
 };
 

@@ -7,11 +7,11 @@
     <div
       v-else
       :class="
-        !isAllDataTrigger ? 'swap-container swap-container-full' : 'swap-container'
+        !isAllDataLoaded ? 'swap-container swap-container-full' : 'swap-container'
       "
     >
       <div
-        v-if="!isAllDataTrigger"
+        v-if="!isAllDataLoaded"
         class="swap-form__loader"
       >
         <Spinner />
@@ -297,8 +297,7 @@ export default defineComponent({
 
     return {
       allTokensList,
-      isAllDataLoaded: computed(() => !isLoading.value),
-      isAllDataTrigger: computed(() => !isLoading.value),
+      isAllDataLoaded: isLoading.value,
       isBalancesLoading,
       refreshBalances: useRefreshBalances(),
     };
