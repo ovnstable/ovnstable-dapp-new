@@ -64,6 +64,7 @@ import type { TTokenInfo } from '@/types/common/tokens/index.ts';
 
 type TBalanceList = {
   balance: string,
+  balanceInUsd: string,
   symbol: string,
 }
 
@@ -96,7 +97,7 @@ export default defineComponent({
     totalUserBalance() {
       const total = this.userBalancesList
         .reduce((acc: BN, token: TBalanceList) => acc
-          .plus(BN(token.balance)), BN(0));
+          .plus(BN(token.balanceInUsd)), BN(0));
 
       return total.toFixed(2);
     },
@@ -104,9 +105,9 @@ export default defineComponent({
     userBalancesList() {
       const ovnTokens = TokenService.getFilterOvnTokens(this.allTokensList as TTokenInfo[]);
 
-      console.log(ovnTokens, '__ovnTokens');
       const uniqueBalances = ovnTokens.map(
         (token: TTokenInfo) => ({
+          balanceInUsd: BN(token.balanceData!.balanceInUsd).toFixed(2),
           balance: BN(token.balanceData!.balance).toFixed(2),
           symbol: token.symbol,
         }),
