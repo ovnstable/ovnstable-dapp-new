@@ -165,43 +165,6 @@ const actions = {
         console.log('Quota request error: ', e);
       });
   },
-  startSwapConfirmTimer({
-    commit, state, dispatch, rootState,
-  }: any) {
-    commit('changeState', {
-      field: 'swapResponseConfirmInfo',
-      val: {
-        duration: ODOS_DURATION_CONFIRM_REQUEST,
-        waitingConformation: true,
-        counterId: setInterval(() => {
-          state.swapResponseConfirmInfo.duration--;
-          if (state.swapResponseConfirmInfo.duration <= 0) {
-            dispatch('stopSwapConfirmTimer');
-          }
-        }, 1000),
-      },
-    });
-  },
-  stopSwapConfirmTimer({
-    commit, state, dispatch, rootState,
-  }: any) {
-    state.swapResponseConfirmInfo.waitingConformation = false;
-    clearInterval(state.swapResponseConfirmInfo.counterId);
-    dispatch('waitingModal/closeWaitingModal', null, { root: true });
-    commit('changeState', {
-      field: 'swapResponseConfirmInfo',
-      val: {
-        duration: ODOS_DURATION_CONFIRM_REQUEST,
-        waitingConformation: false,
-        counterId: setInterval(() => {
-          state.swapResponseConfirmInfo.duration--;
-          if (state.swapResponseConfirmInfo.duration <= 0) {
-            dispatch('stopSwapConfirmTimer');
-          }
-        }, 1000),
-      },
-    });
-  },
   async initWalletTransaction(
     {
       commit, state, dispatch, rootState,
@@ -213,8 +176,6 @@ const actions = {
     },
   ) {
     if (!state.routerContract || !state.executorContract) return;
-
-    dispatch('startSwapConfirmTimer');
 
     const transactionData = {
       ...data.txData.transaction,
@@ -232,22 +193,10 @@ const actions = {
       });
 
     await dataTx.wait();
-
-    console.log('Call result: ', dataTx);
-
-    console.log({
-      message: 'Odos response from transaction',
-      swapSession: state.swapSessionId,
-      data: dataTx,
-    });
     dispatch('waitingModal/closeWaitingModal', null, { root: true });
 
     const inputTokens = [...data.selectedInputTokens];
     const outputTokens = [...data.selectedOutputTokens];
-
-    // event
-    const bus = useEventBus('odos-transaction-finished');
-    bus.emit(true);
 
     dispatch('successModal/showSuccessModal', {
       successTxHash: dataTx.hash,
@@ -261,11 +210,10 @@ const actions = {
         value: new BigNumber(_.sum).toFixed(5),
       })),
     }, { root: true });
-    dispatch('stopSwapConfirmTimer');
 
-    setTimeout(() => {
-      dispatch('loadBalances');
-    }, 2000);
+    // event
+    const bus = useEventBus('odos-transaction-finished');
+    bus.emit(true);
   },
   async getActualGasPrice({
     commit, state, dispatch, rootState,

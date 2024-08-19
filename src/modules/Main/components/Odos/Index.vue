@@ -509,9 +509,9 @@ export default defineComponent({
     },
   },
   watch: {
-    networkId(val) {
+    async networkId(val) {
+      await this.loadRouterContract(val);
       this.clearForm();
-      this.loadRouterContract(val);
     },
     account() {
       this.clearForm();
@@ -560,7 +560,7 @@ export default defineComponent({
       this.clearForm();
     }
     await this.init();
-
+    await this.loadRouterContract(this.networkId);
     if (this.$route.query.action === 'swap-out') this.changeSwap();
   },
   methods: {
@@ -917,6 +917,7 @@ export default defineComponent({
                 return;
               }
 
+              console.log('INIT');
               await this.initWalletTransaction(
                 {
                   txData: responseAssembleData,
