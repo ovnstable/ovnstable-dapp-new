@@ -7,11 +7,11 @@
     <div
       v-else
       :class="
-        !isAllDataLoaded ? 'swap-container swap-container-full' : 'swap-container'
+        !isLoaded ? 'swap-container swap-container-full' : 'swap-container'
       "
     >
       <div
-        v-if="!isAllDataLoaded"
+        v-if="!isLoaded"
         class="swap-form__loader"
       >
         <Spinner />
@@ -335,8 +335,11 @@ export default defineComponent({
       'isAvailableOnNetwork',
     ]),
     ...mapGetters('accountData', ['account']),
-    ...mapGetters('network', ['networkId', 'networkName']),
+    ...mapGetters('network', ['networkId', 'networkName', 'networkLoaded']),
 
+    isLoaded() {
+      return this.isAllDataLoaded;
+    },
     deviceSize() {
       return deviceType();
     },
@@ -508,9 +511,12 @@ export default defineComponent({
     },
   },
   watch: {
-    async networkId(val) {
-      await this.loadRouterContract(val);
+    networkLoaded() {
+      this.loadRouterContract(this.networkId);
       this.clearForm();
+    },
+    async networkId(val) {
+      if (this.networkLoaded) await this.loadRouterContract(val);
     },
     account() {
       this.clearForm();
@@ -558,8 +564,8 @@ export default defineComponent({
     if (this.inputTokens.length === 0 && this.outputTokens.length === 0) {
       this.clearForm();
     }
+
     await this.init();
-    await this.loadRouterContract(this.networkId);
     if (this.$route.query.action === 'swap-out') this.changeSwap();
   },
   methods: {
@@ -634,6 +640,7 @@ export default defineComponent({
         this.allTokensList,
         symbol as string | null,
       );
+      console.log(this.allTokensList, "___TOKENLIST")
 
       if (!ovnSelectedToken) {
         this.addNewInputToken();

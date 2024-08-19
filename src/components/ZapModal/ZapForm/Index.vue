@@ -400,7 +400,7 @@ export default defineComponent({
 
     return {
       allTokensList,
-      isAnyLoading,
+      isAnyLoading: computed(() => isAnyLoading.value),
       changeQueryData,
       refreshBalances: useRefreshBalances(),
     };

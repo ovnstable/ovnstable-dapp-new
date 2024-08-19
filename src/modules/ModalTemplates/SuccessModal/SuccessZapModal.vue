@@ -63,6 +63,7 @@ import { getAllTokensString, getTransactionTotal } from '@/utils/tokens.ts';
 import { checkIsEveryStable } from '@/store/views/main/pools/helpers.ts';
 import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
 import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
+import type { TTokenInfo } from '@/types/common/tokens/index.d.ts';
 import ZapinContent from './components/zapin.vue';
 import WithdrawContent from './components/withdraw.vue';
 import HarvestContent from './components/harvest.vue';
@@ -70,7 +71,6 @@ import CompoundContent from './components/compound.vue';
 import {
   mapEventTokenData, mapInputTokenData, type TFormatTokenInfo,
 } from './helpers.ts';
-import type { TTokenInfo } from '@/types/common/tokens/index.ts';
 
 export default defineComponent({
   name: 'SuccessZapModal',

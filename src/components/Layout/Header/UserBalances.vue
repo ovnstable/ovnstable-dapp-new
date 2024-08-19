@@ -89,11 +89,11 @@ export default defineComponent({
       changeQueryData
     };
   },
-  watch: {
-    networkId(val: number) {
-      this.changeQueryData(val);
-    },
-  },
+  // watch: {
+  //   networkId(val: number) {
+  //     this.changeQueryData(val);
+  //   },
+  // },
   computed: {
     ...mapGetters('network', ['networkId']),
     device() {

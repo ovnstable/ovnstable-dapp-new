@@ -237,6 +237,10 @@ const getters = {
     return state.networkId;
   },
 
+  networkLoaded(state: any) {
+    return state.networkLoaded;
+  },
+
   rpcUrl(state: any) {
     return state.rpcUrl;
   },
@@ -339,6 +343,7 @@ const actions = {
   changeDappNetwork({
     commit, dispatch,
   }: any, networkName: any) {
+    console.log(networkName, "__changeDappNetwork")
     commit('setAppApiUrl', getNetworkParams(networkName).appApiUrl);
     commit('setNetworkName', getNetworkParams(networkName).networkName);
     commit('setNetworkId', getNetworkParams(networkName).networkId);
@@ -620,8 +625,12 @@ const mutations = {
   },
 
   setNetworkId(state: any, value: any) {
+    console.log("___setNetworkId")
     state.networkId = value;
-    state.networkLoaded = true;
+
+    setTimeout(() => {
+      state.networkLoaded = true;
+    }, 200)
   },
 
   setRpcUrl(state: any, value: any) {

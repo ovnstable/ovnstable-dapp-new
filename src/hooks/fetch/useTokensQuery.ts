@@ -8,13 +8,12 @@ export const allTokensMap = (tokensList: any[]): any => new Map(tokensList
   .map((token) => [token.address, token]));
 
 export const useTokensQuery = (stateData: any) => {
-  let networkId = ref(stateData.network.networkId);
-  const networkLoaded = ref(stateData.network.networkLoaded);
+  const networkId = computed(() => stateData.network.networkId);
+  const networkLoaded = computed(() => stateData.network.networkLoaded);
   const address = computed(() => stateData.accountData.account);
   const provider = computed(() => stateData.web3.evmProvider);
 
-  // console.log(networkId.value, '___networkId');
-  // console.log(networkLoaded.value, '___networkLoaded');
+  console.log(networkLoaded.value, '___networkLoaded');
   const tokensQuery = useQuery(
     {
       queryKey: ['tokens'],
@@ -57,7 +56,7 @@ export const useTokensQuery = (stateData: any) => {
   );
 
   const isAnyLoading = computed(
-    () => tokensQuery.isLoading || pricesQuery.isLoading || balancesQuery.isLoading || !networkLoaded.value,
+    () => tokensQuery.isLoading.value || pricesQuery.isLoading.value || balancesQuery.isLoading.value || !networkLoaded.value,
   );
   const isAnyError = computed(
     () => tokensQuery.isError || pricesQuery.isError || balancesQuery.isError,
@@ -69,10 +68,16 @@ export const useTokensQuery = (stateData: any) => {
     () => tokensQuery.isFetching || pricesQuery.isFetching || balancesQuery.isFetching,
   );
 
+  
   const getTokenInfo = () => {
     const tokensData = tokensQuery.data.value;
     const pricesData = pricesQuery.data.value;
     const balancesData = balancesQuery.data.value;
+
+    console.log(isAnyLoading.value, '___isAnyLoading1')
+    console.log(networkId.value, '___isAnyLoading2')
+
+    if (isAnyLoading.value) return [];
 
     if (tokensData && pricesData && balancesData) {
       return TokenService.getTokenInfo(
@@ -85,15 +90,15 @@ export const useTokensQuery = (stateData: any) => {
     return [];
   };
 
-  const changeQueryData = (networkIdVal: number) => {
-    networkId.value = networkIdVal
+  const changeQueryData = (val: number) => {
+    console.log(val, "changeQueryData")
   }
 
   return {
     data: computed(getTokenInfo),
     error: allErrors,
     isFetching: isAnyFetching,
-    isLoading: isAnyLoading.value,
+    isLoading: isAnyLoading,
     isError: isAnyError,
     isBalancesLoading: balancesQuery.isLoading,
     changeQueryData
