@@ -1,18 +1,11 @@
 <template>
   <div>
-    <ModalComponent
-      v-model="showModal"
-      type-modal="custom"
-      :custom-class="zapPool?.poolVersion ?? ''"
-      @close="closeModal"
-    >
-      <div :class="['modal-content', { v3: zapPool?.poolVersion === 'v3' }, { v2: zapPool?.poolVersion === 'v2' }]">
-        <ZapForm
-          :zap-pool="zapPool"
-          @close-form="closeModal"
-        />
-      </div>
-    </ModalComponent>
+    <div>
+      <ZapForm
+        :zap-pool="zapPool"
+        @close-form="closeModal"
+      />
+    </div>
 
     <SuccessZapModal
       :set-show-func="triggerSuccessZapin"
@@ -25,16 +18,14 @@ import {
   mapActions,
   mapMutations,
 } from 'vuex';
-import ModalComponent from '@/components/Modal/Index.vue';
 import ZapForm from '@/components/ZapForm/Index.vue';
 import SuccessZapModal from '@/modules/ModalTemplates/SuccessModal/SuccessZapModal.vue';
 
 export default {
-  name: 'ZapModal',
+  name: 'ZapFormPage',
   components: {
     ZapForm,
     SuccessZapModal,
-    ModalComponent,
   },
   props: {
     isShow: {

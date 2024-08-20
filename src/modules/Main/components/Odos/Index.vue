@@ -266,7 +266,7 @@ import BigNumber from 'bignumber.js';
 import { defineComponent } from 'vue';
 import { useTokensQuery, useRefreshBalances } from '@/hooks/fetch/useTokensQuery.ts';
 import TokenService from '@/services/TokenService/TokenService.ts';
-import type { TTokenInfo } from '@/types/common/tokens/index.ts';
+import type { TTokenInfo } from '@/types/common/tokens/index.d.ts';
 
 export default defineComponent({
   name: 'SwapForm',

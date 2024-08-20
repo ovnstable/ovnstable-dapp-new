@@ -175,7 +175,7 @@ import {
 } from '@/store/helpers/index.ts';
 
 import Spinner from '@/components/Spinner/Index.vue';
-import ChangeNetwork from '@/components/ZapModal/ZapForm/ChangeNetwork.vue';
+import ChangeNetwork from '@/components/ZapForm/ChangeNetwork.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import { poolTokensForZapMap } from '@/store/views/main/zapin/mocks.ts';
 import TokenForm from '@/modules/Main/components/Odos/TokenForm.vue';

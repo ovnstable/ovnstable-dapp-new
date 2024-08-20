@@ -45,6 +45,11 @@ const router = createRouter({
       component: () => import('@/views/Manage/Index.vue'),
     },
     {
+      path: '/zapin/:id',
+      name: '/zapin/:id',
+      component: () => import('@/views/Zapin/Index.vue'),
+    },
+    {
       path: '/:pathMatch(.*)*',
       redirect: '/',
     },

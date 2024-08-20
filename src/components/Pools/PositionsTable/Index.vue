@@ -165,7 +165,7 @@ import ButtonComponent from '@/components/Button/Index.vue';
 import type { PropType } from 'vue';
 import { mapActions } from 'vuex';
 import { getImageUrl } from '@/utils/const.ts';
-import type { IPositionsInfo } from '@/types/positions/index.ts';
+import type { IPositionsInfo } from '@/types/positions/index.d.ts';
 
 enum POSITION_SIZE_ORDER_TYPE {
   'VALUE', 'VALUE_UP', 'VALUE_DOWN',

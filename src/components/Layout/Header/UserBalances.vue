@@ -60,7 +60,7 @@ import BN from 'bignumber.js';
 import { defineComponent } from 'vue';
 import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
 import TokenService from '@/services/TokenService/TokenService.ts';
-import type { TTokenInfo } from '@/types/common/tokens/index.ts';
+import type { TTokenInfo } from '@/types/common/tokens/index.d.ts';
 
 type TBalanceList = {
   balance: string,
