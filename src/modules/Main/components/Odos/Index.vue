@@ -266,6 +266,7 @@ import BigNumber from 'bignumber.js';
 import { defineComponent } from 'vue';
 import { useTokensQuery, useRefreshBalances } from '@/hooks/fetch/useTokensQuery.ts';
 import TokenService from '@/services/TokenService/TokenService.ts';
+import type { TTokenInfo } from '@/types/common/tokens/index.ts';
 
 export default defineComponent({
   name: 'SwapForm',
@@ -508,22 +509,22 @@ export default defineComponent({
     },
   },
   watch: {
-    // networkLoaded() {
-    //   this.loadRouterContract(this.networkId);
-    //   this.clearForm();
-    // },
+    networkLoaded() {
+      this.loadRouterContract(this.networkId);
+      this.clearForm();
+    },
     async networkId(val) {
       await this.loadRouterContract(val);
+      this.clearForm();
     },
     account() {
       this.clearForm();
     },
-    // allTokensList(tokens: TTokenInfo[]) {
-    //   if (tokens.length > 0) {
-    //     this.clearForm();
-    //     this.isInit = true;
-    //   }
-    // },
+    allTokensList(tokens: TTokenInfo[]) {
+      if (tokens.length > 0) {
+        this.clearForm();
+      }
+    },
     outputTokensWithSelectedTokensCount(val, oldVal) {
       // lock first
       if (val === 1) {

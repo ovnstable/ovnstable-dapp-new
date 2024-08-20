@@ -244,22 +244,9 @@ export default {
   setup: () => {
     const store = useStore() as any;
 
-    const networkId = computed(() => store.state.network.networkId);
-    const address = computed(() => store.state.accountData.account);
     const {
       isBalancesLoading,
     } = useTokensQuery(store.state);
-
-    // const queryClient = useQueryClient();
-
-    watch([networkId, address], () => {
-      try {
-        // queryClient.resetQueries({ queryKey: ['balances'] });
-        // queryClient.resetQueries({ queryKey: ['prices'] });
-      } catch (error) {
-        console.log(error);
-      }
-    });
 
     return {
       isBalancesLoading,
