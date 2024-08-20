@@ -325,7 +325,6 @@ const actions = {
 
         dispatch('dappDataAction/updateUserData', null, { root: true });
       } else {
-        dispatch('dappDataAction/resetUserData', null, { root: true });
         commit('network/setSwitchToOtherNetwork', true, { root: true });
       }
     }
@@ -373,11 +372,8 @@ const actions = {
 
       if (account) {
         dispatch('dappDataAction/updateUserData', null, { root: true });
-      } else {
-        dispatch('dappDataAction/resetUserData', null, { root: true });
       }
     } else {
-      dispatch('dappDataAction/resetUserData', null, { root: true });
       dispatch('accountData/handleSwitchAccount', null, { root: true });
       dispatch('insuranceData/refreshInsurance', null, { root: true });
     }

@@ -27,6 +27,7 @@ export const usePositionsQuery = (stateData: any) => {
       queryKey: ['positions', networkId, address],
       queryFn: async () => PositionsService.fetchPositions(stateData),
       enabled: !!networkId && !!address,
+      staleTime: 0,
     },
   );
 
