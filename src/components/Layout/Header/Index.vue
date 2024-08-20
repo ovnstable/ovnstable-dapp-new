@@ -218,6 +218,8 @@ import AccountModal from '@/modules/Account/Index.vue';
 import { deviceType } from '@/utils/deviceType.ts';
 import { useEventBus } from '@vueuse/core';
 import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
+import { useQueryClient } from '@tanstack/vue-query';
+import { computed, watch } from 'vue';
 import UserBalances from './UserBalances.vue';
 import MobileMenu from './MobileMenu.vue';
 
@@ -242,9 +244,21 @@ export default {
   setup: () => {
     const store = useStore() as any;
 
+    const networkId = computed(() => store.state.network.networkId);
+    const address = computed(() => store.state.accountData.account);
     const {
       isBalancesLoading,
     } = useTokensQuery(store.state);
+
+    const queryClient = useQueryClient();
+
+    watch([networkId, address], () => {
+      try {
+        queryClient.resetQueries({ queryKey: ['balances'] });
+      } catch (error) {
+        console.log(error);
+      }
+    });
 
     return {
       isBalancesLoading,
