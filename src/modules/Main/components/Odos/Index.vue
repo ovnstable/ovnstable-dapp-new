@@ -507,9 +507,13 @@ export default defineComponent({
     allTokensList() {
       this.clearForm();
     },
+    // withour router, swaps do not gonna work
     async networkId(val) {
       await this.loadRouterContract(val);
       this.clearForm();
+    },
+    async account() {
+      await this.loadRouterContract(this.networkId);
     },
     outputTokensWithSelectedTokensCount(val, oldVal) {
       // lock first
