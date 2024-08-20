@@ -81,10 +81,9 @@ export const useTokensQuery = (stateData: any) => {
     const tokensData = tokensQuery.data.value;
     const pricesData = pricesQuery.data.value;
     const balancesData = balancesQuery.data.value;
+    const isLoaded = !isAnyLoading.value;
 
-    if (isAnyLoading.value) return [];
-
-    if (tokensData && pricesData && balancesData) {
+    if (isLoaded && tokensData && pricesData && balancesData) {
       const tokenInfo = TokenService.getTokenInfo(
         tokensData,
         pricesData,
