@@ -7,11 +7,11 @@
     <div
       v-else
       :class="
-        !isLoaded ? 'swap-container swap-container-full' : 'swap-container'
+        !isAllDataLoaded ? 'swap-container swap-container-full' : 'swap-container'
       "
     >
       <div
-        v-if="!isLoaded"
+        v-if="!isAllDataLoaded"
         class="swap-form__loader"
       >
         <Spinner />
@@ -263,10 +263,9 @@ import {
   WHITE_LIST_ODOS,
 } from '@/store/helpers/index.ts';
 import BigNumber from 'bignumber.js';
-import { defineComponent } from 'vue';
+import { computed, defineComponent } from 'vue';
 import { useTokensQuery, useRefreshBalances } from '@/hooks/fetch/useTokensQuery.ts';
 import TokenService from '@/services/TokenService/TokenService.ts';
-import type { TTokenInfo } from '@/types/common/tokens/index.ts';
 
 export default defineComponent({
   name: 'SwapForm',
@@ -297,7 +296,7 @@ export default defineComponent({
 
     return {
       allTokensList,
-      isAllDataLoaded: isLoading.value,
+      isAllDataLoaded: computed(() => !isLoading.value),
       isBalancesLoading,
       refreshBalances: useRefreshBalances(),
     };
@@ -327,7 +326,6 @@ export default defineComponent({
       'swapSessionId',
       'odosReferalCode',
       'isShowDecreaseAllowance',
-      'tokenSeparationScheme',
     ]),
     ...mapGetters('odosData', [
       'isAvailableOnNetwork',
@@ -335,9 +333,6 @@ export default defineComponent({
     ...mapGetters('accountData', ['account']),
     ...mapGetters('network', ['networkId', 'networkName']),
 
-    isLoaded() {
-      return this.isAllDataLoaded;
-    },
     deviceSize() {
       return deviceType();
     },
@@ -509,21 +504,12 @@ export default defineComponent({
     },
   },
   watch: {
-    networkLoaded() {
-      this.loadRouterContract(this.networkId);
+    allTokensList() {
       this.clearForm();
     },
     async networkId(val) {
       await this.loadRouterContract(val);
       this.clearForm();
-    },
-    account() {
-      this.clearForm();
-    },
-    allTokensList(tokens: TTokenInfo[]) {
-      if (tokens.length > 0) {
-        this.clearForm();
-      }
     },
     outputTokensWithSelectedTokensCount(val, oldVal) {
       // lock first
@@ -559,11 +545,8 @@ export default defineComponent({
       val: 'OVERNIGHT_SWAP',
     });
 
-    if (this.inputTokens.length === 0 && this.outputTokens.length === 0) {
-      this.clearForm();
-    }
-
     await this.init();
+    this.clearForm();
     if (this.$route.query.action === 'swap-out') this.changeSwap();
   },
   methods: {
@@ -634,7 +617,7 @@ export default defineComponent({
     addDefaultOvnToken() {
       const symbol = this.$route.query.symbol ? this.$route.query.symbol : null;
       const ovnSelectedToken: any = getDefaultSecondtoken(
-        this.tokenSeparationScheme,
+        'OVERNIGHT_SWAP',
         this.allTokensList,
         symbol as string | null,
       );
@@ -778,20 +761,8 @@ export default defineComponent({
     },
 
     clearForm() {
-      // console.log(val, 'CLEAFORM');
       this.clearAllSelectedTokens();
-
-      if (this.swapMethod === 'BUY') {
-        this.addDefaultOvnToken();
-        return;
-      }
-
-      if (this.swapMethod === 'SELL') {
-        this.addDefaultOvnToken();
-        return;
-      }
-
-      console.error('Clear form, swap method not found.', this.swapMethod);
+      this.addDefaultOvnToken();
     },
 
     resetOutputs() {
@@ -920,7 +891,6 @@ export default defineComponent({
                 return;
               }
 
-              console.log('INIT');
               await this.initWalletTransaction(
                 {
                   txData: responseAssembleData,

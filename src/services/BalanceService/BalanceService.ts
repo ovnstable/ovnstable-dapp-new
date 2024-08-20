@@ -76,7 +76,6 @@ class BalanceService {
     account: string,
     tokenList: string[] = [],
   ) {
-    console.log('__BalanceServiceFetchBalances');
     const balancesData = await fetchTokenBalancesMulticall(provider, tokenList, account);
 
     const nativeTokenBalance = await handleNativeBal(provider, account);
