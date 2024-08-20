@@ -311,7 +311,7 @@
 <!-- eslint-disable no-param-reassign -->
 <script lang="ts">
 import { useEventBus } from '@vueuse/core';
-import { computed, defineComponent, markRaw, ref } from 'vue';
+import { computed, defineComponent, markRaw } from 'vue';
 import { ethers } from 'ethers';
 import {
   mapActions, mapGetters, mapState, mapMutations,
@@ -394,14 +394,12 @@ export default defineComponent({
     const store = useStore() as any;
     const {
       data: allTokensList,
-      changeQueryData,
       isLoading: isAnyLoading,
     } = useTokensQuery(store.state);
 
     return {
       allTokensList,
       isAnyLoading: computed(() => isAnyLoading.value),
-      changeQueryData,
       refreshBalances: useRefreshBalances(),
     };
   },
@@ -674,11 +672,10 @@ export default defineComponent({
     },
   },
   watch: {
-    networkId(val: number) {
-      this.changeQueryData(val);
+    networkId() {
       this.$nextTick(() => {
         this.firstInit();
-      })
+      });
     },
     currentStage(stage: zapInStep) {
       this.$store.commit('zapinData/changeState', { field: 'currentStage', val: stage });

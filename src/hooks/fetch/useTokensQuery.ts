@@ -1,15 +1,19 @@
-import { useQuery, useQueryClient } from '@tanstack/vue-query';
+import { useQuery } from '@tanstack/vue-query';
 import TokenService from '@/services/TokenService/TokenService.ts';
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import BalanceService from '@/services/BalanceService/BalanceService.ts';
 import { mergeTokenLists } from '@/services/TokenService/utils/index.ts';
+
+const REFETCH_INTERVAL = 5 * 60 * 60 * 1000; // 5h
+const BALANCE_REFETCH_INTERVAL = 3000;
+
+export const useRefreshBalances = () => () => 0;
 
 export const allTokensMap = (tokensList: any[]): any => new Map(tokensList
   .map((token) => [token.address, token]));
 
 export const useTokensQuery = (stateData: any) => {
   const networkId = computed(() => stateData.network.networkId);
-  const networkLoaded = computed(() => stateData.network.networkLoaded);
   const address = computed(() => stateData.accountData.account);
   const provider = computed(() => stateData.web3.evmProvider);
 
@@ -17,16 +21,19 @@ export const useTokensQuery = (stateData: any) => {
     {
       queryKey: ['tokens'],
       queryFn: TokenService.fetchTokens,
-      refetchInterval: false,
+      refetchInterval: REFETCH_INTERVAL,
+      refetchOnWindowFocus: false,
     },
   );
 
   const pricesQuery = useQuery(
     {
-      queryKey: ['tokenPrices', networkId.value, networkLoaded.value],
+      queryKey: ['prices', networkId],
       queryFn: () => TokenService.fetchTokenPricesByNetworkId(networkId.value),
-      enabled: !!networkId.value,
-      refetchInterval: false,
+      enabled: !!networkId.value && !!provider.value,
+      refetchInterval: REFETCH_INTERVAL,
+      refetchOnWindowFocus: false,
+      staleTime: 0,
     },
   );
 
@@ -43,19 +50,22 @@ export const useTokensQuery = (stateData: any) => {
 
   const balancesQuery = useQuery(
     {
-      queryKey: ['balances', address.value, networkId.value, networkLoaded.value],
+      queryKey: ['balances', address, networkId],
       queryFn: () => BalanceService.fetchTokenBalances(
         provider.value,
         address.value,
         tokenList.value,
       ),
       enabled: isBalancesQueryEnabled,
-      refetchInterval: 3000,
+      refetchInterval: BALANCE_REFETCH_INTERVAL,
+      staleTime: 0,
     },
   );
 
   const isAnyLoading = computed(
-    () => tokensQuery.isLoading.value || pricesQuery.isLoading.value || balancesQuery.isLoading.value || !networkLoaded.value,
+    () => tokensQuery.isLoading.value
+     || pricesQuery.isLoading.value
+     || balancesQuery.isLoading.value,
   );
   const isAnyError = computed(
     () => tokensQuery.isError || pricesQuery.isError || balancesQuery.isError,
@@ -67,7 +77,6 @@ export const useTokensQuery = (stateData: any) => {
     () => tokensQuery.isFetching || pricesQuery.isFetching || balancesQuery.isFetching,
   );
 
-  
   const getTokenInfo = () => {
     const tokensData = tokensQuery.data.value;
     const pricesData = pricesQuery.data.value;
@@ -76,19 +85,16 @@ export const useTokensQuery = (stateData: any) => {
     if (isAnyLoading.value) return [];
 
     if (tokensData && pricesData && balancesData) {
-      return TokenService.getTokenInfo(
+      const tokenInfo = TokenService.getTokenInfo(
         tokensData,
         pricesData,
         networkId.value,
         balancesData,
       );
+      return tokenInfo;
     }
     return [];
   };
-
-  const changeQueryData = (val: number) => {
-    console.log(val, "changeQueryData")
-  }
 
   return {
     data: computed(getTokenInfo),
@@ -97,15 +103,5 @@ export const useTokensQuery = (stateData: any) => {
     isLoading: isAnyLoading,
     isError: isAnyError,
     isBalancesLoading: balancesQuery.isLoading,
-    changeQueryData
   };
-};
-
-export const useRefreshBalances = () => () => {
-  console.log('__queryRefreshBalances');
-  const queryClient = useQueryClient();
-  queryClient.invalidateQueries({
-    queryKey: ['balances'],
-    refetchType: 'all',
-  });
 };

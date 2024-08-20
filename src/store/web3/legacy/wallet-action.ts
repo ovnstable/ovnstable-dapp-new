@@ -313,7 +313,6 @@ const actions = {
     commit, dispatch, rootState,
   }: any, newNetworkId: any) {
     {
-      console.log(newNetworkId, '___setNetwork');
       newNetworkId = parseInt(newNetworkId);
 
       if (SUPPORTED_NETWORKS.includes(newNetworkId)) {

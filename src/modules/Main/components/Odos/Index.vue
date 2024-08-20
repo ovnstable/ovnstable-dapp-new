@@ -263,10 +263,9 @@ import {
   WHITE_LIST_ODOS,
 } from '@/store/helpers/index.ts';
 import BigNumber from 'bignumber.js';
-import { computed, defineComponent } from 'vue';
+import { defineComponent } from 'vue';
 import { useTokensQuery, useRefreshBalances } from '@/hooks/fetch/useTokensQuery.ts';
 import TokenService from '@/services/TokenService/TokenService.ts';
-import type { TTokenInfo } from '@/types/common/tokens/index.ts';
 
 export default defineComponent({
   name: 'SwapForm',
@@ -319,8 +318,6 @@ export default defineComponent({
       isSumulateIntervalStarted: false,
       slippagePercent: 0.05,
       firstSwipeClickOnApprove: false,
-
-      isInit: false as boolean,
     };
   },
   computed: {
@@ -335,7 +332,7 @@ export default defineComponent({
       'isAvailableOnNetwork',
     ]),
     ...mapGetters('accountData', ['account']),
-    ...mapGetters('network', ['networkId', 'networkName', 'networkLoaded']),
+    ...mapGetters('network', ['networkId', 'networkName']),
 
     isLoaded() {
       return this.isAllDataLoaded;
@@ -511,22 +508,22 @@ export default defineComponent({
     },
   },
   watch: {
-    networkLoaded() {
-      this.loadRouterContract(this.networkId);
-      this.clearForm();
-    },
+    // networkLoaded() {
+    //   this.loadRouterContract(this.networkId);
+    //   this.clearForm();
+    // },
     async networkId(val) {
-      if (this.networkLoaded) await this.loadRouterContract(val);
+      await this.loadRouterContract(val);
     },
     account() {
       this.clearForm();
     },
-    allTokensList(tokens: TTokenInfo[]) {
-      if (tokens.length > 0) {
-        this.clearForm();
-        this.isInit = true;
-      }
-    },
+    // allTokensList(tokens: TTokenInfo[]) {
+    //   if (tokens.length > 0) {
+    //     this.clearForm();
+    //     this.isInit = true;
+    //   }
+    // },
     outputTokensWithSelectedTokensCount(val, oldVal) {
       // lock first
       if (val === 1) {
@@ -640,7 +637,6 @@ export default defineComponent({
         this.allTokensList,
         symbol as string | null,
       );
-      console.log(this.allTokensList, "___TOKENLIST")
 
       if (!ovnSelectedToken) {
         this.addNewInputToken();
