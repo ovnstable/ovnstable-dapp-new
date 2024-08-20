@@ -163,7 +163,6 @@ export function getNetworkParams(networkName: string | number | null): any {
 }
 
 const state = {
-  networkLoaded: false,
   appApiUrl: getNetworkParams(dbNetworkName).appApiUrl,
   apiUrl: 'https://api.overnight.fi',
   networkName: getNetworkParams(dbNetworkName).networkName,
@@ -208,12 +207,13 @@ const state = {
   marketExplorerURL: 'https://arbiscan.io/',
   insuranceNetwork: 'arbitrum',
   dashboardNetwork: 'arbitrum',
-  accountModalNetwork: 'arbitrum',
   ovnNetwork: 'base',
   insuranceExplorerURL: 'https://optimistic.etherscan.io/',
   dashboardExplorerURL: 'https://arbiscan.io/',
   ovnExplorerURL: 'https://basescan.org/',
   showDeprecated: false,
+  network: null,
+  networkLoaded: false
 };
 
 const getters = {
@@ -235,6 +235,10 @@ const getters = {
 
   networkId(state: any) {
     return state.networkId;
+  },
+
+  networkLoaded(state: any) {
+    return state.networkLoaded;
   },
 
   rpcUrl(state: any) {
@@ -339,7 +343,6 @@ const actions = {
   changeDappNetwork({
     commit, dispatch,
   }: any, networkName: any) {
-    console.log('__changeDappNetwork');
     commit('setAppApiUrl', getNetworkParams(networkName).appApiUrl);
     commit('setNetworkName', getNetworkParams(networkName).networkName);
     commit('setNetworkId', getNetworkParams(networkName).networkId);
@@ -358,7 +361,6 @@ const actions = {
   // TODO refactore it to array
   saveNetworkToLocalStore(network: any) {
     const networkId = `${network}`;
-    console.log('_SetNetworkToLocalStorage', network);
     switch (networkId) {
       case 'blast':
       case '81457':
@@ -606,9 +608,6 @@ const actions = {
     commit('setDashboardExplorerURL', getNetworkParams(network).explorerUrl);
     commit('setDashboardNetwork', network);
   },
-  changeAccountModalNetwork({ commit }: any, network: any) {
-    commit('setAccountModalNetwork', network);
-  },
 };
 
 const mutations = {
@@ -626,7 +625,10 @@ const mutations = {
 
   setNetworkId(state: any, value: any) {
     state.networkId = value;
-    state.networkLoaded = true;
+
+    setTimeout(() => {
+      state.networkLoaded = true;
+    }, 200);
   },
 
   setRpcUrl(state: any, value: any) {
@@ -687,9 +689,6 @@ const mutations = {
 
   setDashboardNetwork(state: any, value: any) {
     state.dashboardNetwork = value;
-  },
-  setAccountModalNetwork(state: any, value: any) {
-    state.accountModalNetwork = value;
   },
 
   setDashboardExplorerURL(state: any, value: any) {

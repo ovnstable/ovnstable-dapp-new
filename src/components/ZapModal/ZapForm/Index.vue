@@ -83,7 +83,7 @@
                           :is-token-removable="isInputTokensRemovable"
                           :is-input-token="true"
                           :disabled="false"
-                          :balances-loading="isBalancesLoading"
+                          :balances-loading="isAnyLoading"
                           @select-token="selectFormToken"
                           @remove-token="removeInputToken"
                           @update-token="updateTokenValueMethod"
@@ -121,7 +121,7 @@
                       :is-token-removable="isOutputTokensRemovable"
                       :is-input-token="false"
                       :disabled="true"
-                      :balances-loading="isBalancesLoading"
+                      :balances-loading="isAnyLoading"
                       @remove-token="removeOutputToken"
                     />
                   </div>
@@ -297,7 +297,7 @@
       :tokens="zapAllTokens"
       :is-all-data-loaded="zapsLoaded"
       :selected-tokens="inputTokens"
-      :balances-loading="isTokensLoading"
+      :balances-loading="isAnyLoading"
       :user-account="account"
       remove-native
       @set-show="showSelectTokensModals"
@@ -311,7 +311,7 @@
 <!-- eslint-disable no-param-reassign -->
 <script lang="ts">
 import { useEventBus } from '@vueuse/core';
-import { defineComponent, markRaw } from 'vue';
+import { computed, defineComponent, markRaw } from 'vue';
 import { ethers } from 'ethers';
 import {
   mapActions, mapGetters, mapState, mapMutations,
@@ -392,16 +392,14 @@ export default defineComponent({
   },
   setup: () => {
     const store = useStore() as any;
-
     const {
       data: allTokensList,
-      isLoading: isTokensLoading, isBalancesLoading,
+      isLoading: isAnyLoading,
     } = useTokensQuery(store.state);
 
     return {
       allTokensList,
-      isTokensLoading,
-      isBalancesLoading,
+      isAnyLoading: computed(() => isAnyLoading.value),
       refreshBalances: useRefreshBalances(),
     };
   },
@@ -474,11 +472,11 @@ export default defineComponent({
     ...mapGetters('accountData', ['account']),
 
     zapsLoaded() {
-      return (this.allTokensList?.length > 0
+      return this.allTokensList?.length > 0
         && this.outputTokens?.length > 0
         && this.zapPool
         && this.zapContract
-        && this.isZapLoaded) ?? false;
+        && this.isZapLoaded;
     },
     getOdosFee() {
       return new BN(this.sumOfAllSelectedTokensInUsd)
@@ -674,6 +672,11 @@ export default defineComponent({
     },
   },
   watch: {
+    networkId() {
+      this.$nextTick(() => {
+        this.firstInit();
+      });
+    },
     currentStage(stage: zapInStep) {
       this.$store.commit('zapinData/changeState', { field: 'currentStage', val: stage });
       if (this.currentStage !== zapInStep.START) {

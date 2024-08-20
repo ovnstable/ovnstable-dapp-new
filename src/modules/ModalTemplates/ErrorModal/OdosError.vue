@@ -11,7 +11,7 @@
       class="error-message-container"
     >
       <div
-        v-if="errorMsg && errorMsg.includes('path')"
+        v-if="errorMsg && errorMsg?.includes('path')"
         class="error-message"
       >
         Could not find a viable path for your order
@@ -20,7 +20,7 @@
         v-else
         class="error-message"
       >
-        {{errorMsg}}
+        {{ errorMsg }}
       </div>
     </div>
 
@@ -50,24 +50,7 @@
 <script lang="ts">
 export default {
   name: 'SlippageError',
-  props: ['errorMsg', 'errorCode', 'copyError'],
-
-  data: () => ({
-    isCopied: false, // Initialize it as false
-  }),
-
-  methods: {
-    copyErrorToClipboard(copyTooltip: any, errorMsg: any) {
-      if (typeof this.copyError === 'function') {
-        this.copyError(copyTooltip, errorMsg);
-
-        this.isCopied = true;
-        setTimeout(() => {
-          this.isCopied = false;
-        }, 2000);
-      }
-    },
-  },
+  props: ['errorMsg'],
 };
 </script>
 

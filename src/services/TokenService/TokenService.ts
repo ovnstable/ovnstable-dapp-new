@@ -8,6 +8,7 @@ class TokenService {
   public static fetchTokens = async () => odosApiService.loadTokens();
 
   public static async fetchTokenPricesByNetworkId(chainId: number | string): Promise<any> {
+    console.log('__TokenServiceFetchTokens');
     if (ODOS_DEPRECATED_NETWORKS.includes(Number(chainId))) {
       console.log('__tokenService', { ...BLAST_TOKENS_PRICES }[chainId]);
       return {

@@ -31,7 +31,7 @@ const getters = {
 const actions = {
 
   async initOnboard({
-    commit, dispatch, getters, rootState,
+    commit, dispatch, rootState,
   }: any) {
     const logo = await dispatch('getLogo');
     const wallets = await dispatch('getMainWalletsConfig');
@@ -153,7 +153,7 @@ const actions = {
   },
 
   async connectWallet({
-    commit, dispatch, getters, rootState,
+    dispatch, getters, rootState,
   }: any) {
     if (!getters?.onboard) await dispatch('initOnboard');
 
@@ -166,7 +166,7 @@ const actions = {
   },
 
   async dappInitWalletConnect({
-    commit, dispatch, getters, rootState,
+    dispatch, getters,
   }: any) {
     if (!getters.onboard) await dispatch('initOnboard');
 
@@ -179,7 +179,7 @@ const actions = {
   },
 
   async disconnectWallet({
-    commit, dispatch, getters, rootState,
+    commit, dispatch, getters,
   }: any) {
     await commit('web3/setProvider', null, { root: true });
 
@@ -265,9 +265,7 @@ const actions = {
     };
   },
 
-  async getMainWalletsConfig({
-    commit, dispatch, getters, rootState,
-  }: any) {
+  async getMainWalletsConfig({ dispatch }: any) {
     const injected = injectedModule({
       filter: await dispatch('getWalletsFilter'),
       sort: (wallets) => {
@@ -312,17 +310,16 @@ const actions = {
   },
 
   async setNetwork({
-    commit, dispatch, getters, rootState,
+    commit, dispatch, rootState,
   }: any, newNetworkId: any) {
     {
       newNetworkId = parseInt(newNetworkId);
 
       if (SUPPORTED_NETWORKS.includes(newNetworkId)) {
         dispatch('network/saveNetworkToLocalStore', newNetworkId.toString(), { root: true });
+        dispatch('network/changeDappNetwork', newNetworkId.toString(), { root: true });
 
-        if (rootState.network.networkId !== newNetworkId) {
-          dispatch('network/changeDappNetwork', newNetworkId.toString(), { root: true });
-        } else {
+        if (rootState.network.networkId === newNetworkId) {
           commit('network/setSwitchToOtherNetwork', false, { root: true });
         }
 
@@ -335,7 +332,7 @@ const actions = {
   },
 
   async chainChanged({
-    commit, dispatch, getters, rootState,
+    dispatch,
   }: any, newNetworkId: any) {
     try {
       dispatch('setNetwork', newNetworkId);
@@ -345,7 +342,7 @@ const actions = {
   },
 
   async accountChanged({
-    commit, dispatch, getters, rootState,
+    dispatch, rootState,
   }: any, accounts: any) {
     try {
       dispatch('checkAccount', accounts[0]);

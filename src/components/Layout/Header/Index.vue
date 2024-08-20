@@ -218,6 +218,8 @@ import AccountModal from '@/modules/Account/Index.vue';
 import { deviceType } from '@/utils/deviceType.ts';
 import { useEventBus } from '@vueuse/core';
 import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
+// import { useQueryClient } from '@tanstack/vue-query';
+import { computed, watch } from 'vue';
 import UserBalances from './UserBalances.vue';
 import MobileMenu from './MobileMenu.vue';
 
