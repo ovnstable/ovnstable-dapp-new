@@ -218,7 +218,7 @@ import AccountModal from '@/modules/Account/Index.vue';
 import { deviceType } from '@/utils/deviceType.ts';
 import { useEventBus } from '@vueuse/core';
 import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
-import { useQueryClient } from '@tanstack/vue-query';
+// import { useQueryClient } from '@tanstack/vue-query';
 import { computed, watch } from 'vue';
 import UserBalances from './UserBalances.vue';
 import MobileMenu from './MobileMenu.vue';
@@ -250,11 +250,12 @@ export default {
       isBalancesLoading,
     } = useTokensQuery(store.state);
 
-    const queryClient = useQueryClient();
+    // const queryClient = useQueryClient();
 
     watch([networkId, address], () => {
       try {
-        queryClient.resetQueries({ queryKey: ['balances'] });
+        // queryClient.resetQueries({ queryKey: ['balances'] });
+        // queryClient.resetQueries({ queryKey: ['prices'] });
       } catch (error) {
         console.log(error);
       }

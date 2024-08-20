@@ -28,11 +28,12 @@ export const useTokensQuery = (stateData: any) => {
 
   const pricesQuery = useQuery(
     {
-      queryKey: ['tokenPrices', networkId.value],
+      queryKey: ['prices', networkId],
       queryFn: () => TokenService.fetchTokenPricesByNetworkId(networkId.value),
       enabled: !!networkId.value && !!provider.value,
       refetchInterval: REFETCH_INTERVAL,
       refetchOnWindowFocus: false,
+      staleTime: 0,
     },
   );
 
@@ -49,7 +50,7 @@ export const useTokensQuery = (stateData: any) => {
 
   const balancesQuery = useQuery(
     {
-      queryKey: ['balances', address.value, networkId.value],
+      queryKey: ['balances', address, networkId],
       queryFn: () => BalanceService.fetchTokenBalances(
         provider.value,
         address.value,
