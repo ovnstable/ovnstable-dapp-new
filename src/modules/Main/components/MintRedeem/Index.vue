@@ -317,9 +317,9 @@ export default defineComponent({
         // this.initForm();
       }
     },
-  },
-  networkId(val: number | string) {
-    if (val) this.initForm();
+    networkId(val: number | string) {
+      if (val) this.initForm();
+    },
   },
   methods: {
     ...mapActions('walletAction', ['connectWallet']),

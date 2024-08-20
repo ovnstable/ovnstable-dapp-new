@@ -57,7 +57,7 @@ import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { deviceType } from '@/utils/deviceType.ts';
 import BN from 'bignumber.js';
-import { computed, defineComponent } from 'vue';
+import { defineComponent } from 'vue';
 import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
 import TokenService from '@/services/TokenService/TokenService.ts';
 import type { TTokenInfo } from '@/types/common/tokens/index.ts';
@@ -79,14 +79,11 @@ export default defineComponent({
 
     const {
       data: allTokensList,
-      isLoading,
       isBalancesLoading,
     } = useTokensQuery(store.state);
 
     return {
       allTokensList,
-      isAllDataLoaded: computed(() => !isLoading.value),
-      isAllDataTrigger: computed(() => !isLoading.value),
       isBalancesLoading,
     };
   },

@@ -7,7 +7,7 @@ import { mergeTokenLists } from '@/services/TokenService/utils/index.ts';
 const REFETCH_INTERVAL = 5 * 60 * 60 * 1000; // 5h
 const BALANCE_REFETCH_INTERVAL = 3000;
 
-export const useRefreshBalances = async () => 0;
+export const useRefreshBalances = () => () => 0;
 
 export const allTokensMap = (tokensList: any[]): any => new Map(tokensList
   .map((token) => [token.address, token]));
@@ -62,7 +62,9 @@ export const useTokensQuery = (stateData: any) => {
   );
 
   const isAnyLoading = computed(
-    () => tokensQuery.isLoading || pricesQuery.isLoading || balancesQuery.isLoading,
+    () => tokensQuery.isLoading.value
+     || pricesQuery.isLoading.value
+     || balancesQuery.isLoading.value,
   );
   const isAnyError = computed(
     () => tokensQuery.isError || pricesQuery.isError || balancesQuery.isError,
@@ -79,6 +81,8 @@ export const useTokensQuery = (stateData: any) => {
     const pricesData = pricesQuery.data.value;
     const balancesData = balancesQuery.data.value;
 
+    if (isAnyLoading.value) return [];
+
     if (tokensData && pricesData && balancesData) {
       const tokenInfo = TokenService.getTokenInfo(
         tokensData,
@@ -92,11 +96,11 @@ export const useTokensQuery = (stateData: any) => {
   };
 
   return {
-    isLoading: isAnyLoading.value,
-    isError: isAnyError,
     data: computed(getTokenInfo),
     error: allErrors,
     isFetching: isAnyFetching,
+    isLoading: isAnyLoading,
+    isError: isAnyError,
     isBalancesLoading: balancesQuery.isLoading,
   };
 };

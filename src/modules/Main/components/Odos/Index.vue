@@ -7,11 +7,11 @@
     <div
       v-else
       :class="
-        !isAllDataTrigger ? 'swap-container swap-container-full' : 'swap-container'
+        !isLoaded ? 'swap-container swap-container-full' : 'swap-container'
       "
     >
       <div
-        v-if="!isAllDataTrigger"
+        v-if="!isLoaded"
         class="swap-form__loader"
       >
         <Spinner />
@@ -263,10 +263,9 @@ import {
   WHITE_LIST_ODOS,
 } from '@/store/helpers/index.ts';
 import BigNumber from 'bignumber.js';
-import { computed, defineComponent } from 'vue';
+import { defineComponent } from 'vue';
 import { useTokensQuery, useRefreshBalances } from '@/hooks/fetch/useTokensQuery.ts';
 import TokenService from '@/services/TokenService/TokenService.ts';
-import type { TTokenInfo } from '@/types/common/tokens/index.ts';
 
 export default defineComponent({
   name: 'SwapForm',
@@ -297,8 +296,7 @@ export default defineComponent({
 
     return {
       allTokensList,
-      isAllDataLoaded: computed(() => !isLoading.value),
-      isAllDataTrigger: computed(() => !isLoading.value),
+      isAllDataLoaded: isLoading.value,
       isBalancesLoading,
       refreshBalances: useRefreshBalances(),
     };
@@ -320,8 +318,6 @@ export default defineComponent({
       isSumulateIntervalStarted: false,
       slippagePercent: 0.05,
       firstSwipeClickOnApprove: false,
-
-      isInit: false as boolean,
     };
   },
   computed: {
@@ -338,6 +334,9 @@ export default defineComponent({
     ...mapGetters('accountData', ['account']),
     ...mapGetters('network', ['networkId', 'networkName']),
 
+    isLoaded() {
+      return this.isAllDataLoaded;
+    },
     deviceSize() {
       return deviceType();
     },
@@ -509,9 +508,12 @@ export default defineComponent({
     },
   },
   watch: {
+    // networkLoaded() {
+    //   this.loadRouterContract(this.networkId);
+    //   this.clearForm();
+    // },
     async networkId(val) {
       await this.loadRouterContract(val);
-      this.clearForm();
     },
     account() {
       this.clearForm();
@@ -559,8 +561,8 @@ export default defineComponent({
     if (this.inputTokens.length === 0 && this.outputTokens.length === 0) {
       this.clearForm();
     }
+
     await this.init();
-    await this.loadRouterContract(this.networkId);
     if (this.$route.query.action === 'swap-out') this.changeSwap();
   },
   methods: {
