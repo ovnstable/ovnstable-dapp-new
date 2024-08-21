@@ -549,8 +549,8 @@ export default defineComponent({
       val: 'OVERNIGHT_SWAP',
     });
 
-    await this.init();
     this.clearForm();
+    await this.init();
     if (this.$route.query.action === 'swap-out') this.changeSwap();
   },
   methods: {
