@@ -2,7 +2,7 @@ import BN from 'bignumber.js';
 import { getPositionProportion } from '@/components/Pools/PositionsTable/helpers.ts';
 import type {
   IInputTokenInfo, ISuccessTokenData, ISuccessTokenInfo, TInputToken,
-} from '@/types/common/tokens';
+} from '@/types/common/tokens/index.d.ts';
 import { formatMoney } from './numbers.ts';
 
 const DEFAULT_DECIMALS = 18;
