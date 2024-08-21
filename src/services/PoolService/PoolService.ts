@@ -16,7 +16,7 @@ export interface IPoolService {
   // filterPools(poolsList: TPoolInfo[], params: TFilterPoolsParams): TPoolInfo[],
   // sortPools(poolsList: TPoolInfo[], orderType: ORDER_TYPE, isDefaultOrder: boolean): TPoolInfo[],
   // New API
-  getFilterPools(filterParams: TFilterPoolsParams): Promise<any>;
+  getFilterPools(filterParams: Partial<TFilterPoolsParams>): Promise<any>;
   sendMockRequest(): Promise<any>;
 }
 
@@ -60,7 +60,12 @@ class PoolService implements IPoolService {
 
   // New pool API
   public async getFilterPools(filterParams: Partial<TFilterPoolsParams>): Promise<TPool[]> {
-    const pools = await this.overnightApi.getFilteredPools(filterParams);
+    // TODO: remove
+    const params: {[key: string]: string | number | string[]} = {};
+    Object.entries(filterParams).forEach(([key, value]) => {
+      if (value !== 0) params[key] = value;
+    });
+    const pools = await this.overnightApi.getFilteredPools(params);
     try {
       const poolInfoList = await formatPools(pools);
       return poolInfoList;

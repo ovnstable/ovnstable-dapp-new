@@ -11,13 +11,16 @@
       v-if="type === 'POOLS'"
       class="heading-row"
     >
-      <h1>ALL POOLS</h1>
+      <h1>POOLS</h1>
       <p>Use your Tokens+ and OVN in DeFi to maximize your yield.</p>
     </div>
     <div v-if="type === 'POOLS'">
-      <Pools
-        :is-overview="false"
-      />
+      <div class="pools-data-container">
+        <PoolFilterNew />
+        <Pools
+          :is-overview="false"
+        />
+      </div>
     </div>
     <div v-if="type === 'POSITIONS'">
       <Positions />
@@ -27,13 +30,15 @@
 
 <script lang="ts">
 import Positions from '@/modules/PoolsPositions/Positions/Index.vue';
-import Pools from '@/modules/PoolsPositions/Pools/Index.vue';
+import Pools from '@/modules/PoolsPositions/Pools/PoolsNew.vue';
+import PoolFilterNew from '@/components/Pools/PoolsFilter/PoolFilterNew.vue';
 
 export default {
   name: 'PoolsPositions',
   components: {
     Positions,
     Pools,
+    PoolFilterNew,
   },
   data() {
     return {
@@ -65,5 +70,13 @@ export default {
 
 .pos-wrap {
   width: 100%;
+}
+
+.pools-data-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
 }
 </style>

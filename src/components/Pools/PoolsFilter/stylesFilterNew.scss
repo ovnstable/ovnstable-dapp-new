@@ -1,0 +1,110 @@
+.pool-filter-wrapper {
+    display: flex;
+    width: 100%;
+    gap: 10px;
+    flex-direction: column;
+}
+.filter-container {
+width: 100%;
+background-color: var(--color-8);
+color: var(--color-1);
+font-weight: 500;
+font-size: 14px;
+border-radius: 30px;
+backdrop-filter: blur(20px);
+height: 100px;
+border: 1px var(--color-1) solid;
+box-shadow: 0px 1px 0px 0px #0F172A;
+padding: 20px 30px 20px 30px;
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+
+.search-button {
+    border-radius: 20px;
+    max-height: 40px;
+}
+}
+.network-filter-wrap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: auto;
+  }
+  .pools-wrap__filters-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 36px;
+    height: 36px;
+    margin: 0 2px;
+    font-size: 10px;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    transition: .2s ease color;
+    border: 1px solid var(--color-5);
+    border-radius: 50%;
+    color: var(--color-2);
+    svg {
+      width: 24px;
+      height: 24px;
+      filter: grayscale(10);
+      opacity: .5;
+    }
+  
+    &:hover {
+      color: var(--color-3);
+    }
+    [data-theme="dark"] & {
+      color: var(--color-1);
+    }
+  }
+
+  .pools-wrap__filters-networks {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+  }
+
+
+  .pools-wrap__filters-item--selected {
+    color: var(--color-3);
+    border-color: var(--color-6);
+  
+    svg {
+      opacity: 1;
+      filter: unset;
+    }
+  }
+
+.token-input-wrap {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.token-select-input {
+display: flex;
+align-items: center;
+justify-content: flex-start;
+min-width: 210px;
+min-height: 40px;
+padding: 10px 20px;
+gap: 0px;
+border-radius: 30px;
+justify-items: space-between;
+opacity: 0px;
+border: 1px solid var(--color-6);
+background: var(--color-5);
+color: var(--color-2);
+    svg {
+        height: 12px;
+        margin-left: auto;
+    }
+}

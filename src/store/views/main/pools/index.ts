@@ -1,10 +1,5 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-param-reassign */
-/* eslint-disable no-restricted-syntax */
-/* eslint-disable no-await-in-loop */
-
 import BigNumber from 'bignumber.js';
-import PoolService from '@/services/PoolService/PoolService.ts';
+import type { TFilterPoolsParams } from '@/types/common/pools';
 
 // eslint-disable-next-line no-shadow
 export enum POOL_TYPES {
@@ -30,6 +25,18 @@ const stateData = {
 
   lastParsedBurnedTokenIdEvent: '',
   lastParsedClaimedRewardsEvent: '',
+
+  // New filter
+  filterParams: {
+    token1: 'USD+' as string,
+    token2: '' as string,
+    chain: [] as string[],
+    minTvl: '0' as string,
+    protocol: [] as string[],
+    page: 0 as number,
+    limit: 0 as number,
+    sort: '' as string,
+  } as Partial<TFilterPoolsParams>,
 };
 
 const getters = {
@@ -72,33 +79,8 @@ const actions = {
       });
     }
   },
-
-  async loadPools({
-    commit,
-  }: any) {
-    commit('changeState', {
-      field: 'isPoolsLoading',
-      val: true,
-    });
-
-    commit('changeState', {
-      field: 'allPools',
-      val: [],
-    });
-
-    const poolList = await PoolService.getPoolsInfo();
-
-    if (poolList.length > 0) {
-      commit('changeState', {
-        field: 'allPools',
-        val: poolList,
-      });
-
-      commit('changeState', {
-        field: 'isPoolsLoading',
-        val: false,
-      });
-    }
+  setFilterParams({ commit }: any, params: Partial<TFilterPoolsParams>) {
+    commit('setFilterParams', params);
   },
 };
 
@@ -108,6 +90,9 @@ const mutations = {
     val: any
   }) {
     state[data.field] = data.val;
+  },
+  setFilterParams(state: any, params: Partial<TFilterPoolsParams>) {
+    state.filterParams = params;
   },
 };
 

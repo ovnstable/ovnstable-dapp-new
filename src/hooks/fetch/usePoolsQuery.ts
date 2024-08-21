@@ -2,6 +2,7 @@
 import { useQuery } from '@tanstack/vue-query';
 import PoolService, { type IPoolService } from '@/services/PoolService/PoolService.ts';
 import { OvernightApi } from '@/services/ApiService/OvernightApi.ts';
+import { computed } from 'vue';
 
 export const usePoolsQuery = () => useQuery(
   {
@@ -11,10 +12,16 @@ export const usePoolsQuery = () => useQuery(
   },
 );
 
-export const usePoolsQueryNew = (poolService: IPoolService) => useQuery(
-  {
-    queryKey: ['pools'],
-    queryFn: () => poolService.sendMockRequest(),
-    refetchInterval: false,
-  },
-);
+export const usePoolsQueryNew = (
+  poolService: IPoolService,
+  state: any,
+) => {
+  const filterParams = computed(() => state.poolsData.filterParams);
+  return useQuery(
+    {
+      queryKey: ['pools', filterParams],
+      queryFn: () => poolService.getFilterPools(filterParams.value),
+      staleTime: 0,
+    },
+  );
+};

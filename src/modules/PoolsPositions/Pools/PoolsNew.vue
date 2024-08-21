@@ -21,16 +21,15 @@
         :order-type="ORDER_TYPE[orderType]"
       >
         <template
-          v-if="!isOverview"
-          #filters
+          v-if="!isPoolsLoading && isMorePoolsToShow"
+          #footer
         >
-          <PoolsFilter
-            :selected-network="networkIds"
-            :is-show-deprecated="isShowDeprecated"
-            :search-query="searchQuery"
-            @change-tab="switchPoolsTab"
-            @change-network="setSelectedNetwork"
-            @search="updateSearch"
+          <PaginationComponent
+            :page="tableSettings.page"
+            :per-page="tableSettings.perPage"
+            :total="tableSettings.total || displayedPools.length"
+            @change-page="changePage"
+            @change-per-page="changePerPage"
           />
         </template>
       </PoolsTable>
@@ -47,13 +46,13 @@
 <script lang="ts">
 
 import {
-  mapActions, mapGetters, mapState, mapMutations,
+  mapActions, mapState, mapMutations,
   useStore,
 } from 'vuex';
 
 import ZapModal from '@/components/ZapModal/Index.vue';
-import PoolsFilter from '@/components/Pools/PoolsFilter/Index.vue';
-import PoolsTable from '@/components/Pools/PoolsTable/Index.vue';
+import PaginationComponent from '@/components/Pagination/Index.vue';
+import PoolsTable from '@/components/Pools/PoolsTable/PoolsTableNew.vue';
 import TableSkeleton from '@/components/TableSkeleton/Index.vue';
 import { POOL_TYPES } from '@/store/views/main/pools/index.ts';
 import { defineComponent, inject, type PropType } from 'vue';
@@ -66,16 +65,12 @@ import { POOL_SHOW_LIMIT } from '@/constants/pools/index.ts';
 export default defineComponent({
   name: 'PoolsContainer',
   components: {
-    PoolsFilter,
+    PaginationComponent,
     TableSkeleton,
     PoolsTable,
     ZapModal,
   },
   props: {
-    isOverview: {
-      type: Boolean,
-      required: true,
-    },
     poolType: {
       type: Number as PropType<POOL_TYPES>,
       default: POOL_TYPES.ALL,
@@ -84,8 +79,12 @@ export default defineComponent({
   },
   setup: () => {
     const { state } = useStore();
-    const poolService = inject('poolService') as IPoolService;
-    const { data: poolList, isLoading: isPoolsLoading } = usePoolsQueryNew(poolService, state);
+
+    const poolServiceInstance = inject('poolService') as IPoolService;
+    const {
+      data: poolList,
+      isLoading: isPoolsLoading,
+    } = usePoolsQueryNew(poolServiceInstance, state);
     return {
       poolList,
       isPoolsLoading,
@@ -93,7 +92,13 @@ export default defineComponent({
   },
   data: () => ({
     poolTabType: POOL_TYPES.ALL,
+    isMorePoolsToShow: true,
     isOpenHiddenPools: false,
+    tableSettings: {
+      page: 1,
+      perPage: 1000,
+      total: null,
+    },
 
     isShowOnlyZap: false,
     isShowAprLimit: false,
@@ -102,23 +107,12 @@ export default defineComponent({
     category: POOL_CATEGORIES.ALL as POOL_CATEGORIES,
     searchQuery: '',
 
-    // New filter
-    // token0: '' as string,
-    // token1: '' as string,
-    // chain: [] as number[],
-    // minTvl: 0 as number,
-    // protocol: [] as string[],
-    // page: 0 as number,
-    // limit: 0 as number,
-    // sort: '' as string,
-
     orderType: ORDER_TYPE.TVL_UP,
     isDefaultOrder: true as boolean,
     ORDER_TYPE,
   }),
 
   computed: {
-    ...mapGetters('network', ['isShowDeprecated']),
     ...mapState('poolsData', ['currentZapPool', 'isZapModalShow']),
     displayedPools() {
       const filterParams = {
@@ -158,28 +152,16 @@ export default defineComponent({
   methods: {
     ...mapActions('poolsData', ['openZapIn', 'setIsZapModalShow']),
     ...mapMutations('poolsData', ['changeState']),
-    switchPoolsTab(type: POOL_CATEGORIES) {
-      this.isDefaultOrder = true;
-      this.isOpenHiddenPools = false;
-      this.category = type;
+
+    changePerPage() {
+      console.log('changePerPage');
     },
-    updateSearch(searchQuery: string) {
-      this.isDefaultOrder = true;
-      this.isOpenHiddenPools = false;
-      this.searchQuery = searchQuery;
+    changePage() {
+      console.log('changePage');
     },
     setOrderType(orderType: keyof typeof ORDER_TYPE) {
       this.isDefaultOrder = false;
       this.orderType = ORDER_TYPE[orderType];
-    },
-    setSelectedNetwork(selectedChain: number | 'ALL') {
-      this.isOpenHiddenPools = false;
-      this.isDefaultOrder = true;
-      if (selectedChain === 'ALL') this.networkIds = [];
-      else if (this.networkIds.includes(selectedChain)) {
-        this.networkIds = this.networkIds
-          .filter((network) => network !== selectedChain);
-      } else this.networkIds.push(selectedChain as number);
     },
     clearAllFilters() {
       this.isOpenHiddenPools = false;
@@ -195,4 +177,4 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss" src='./styles.scss' scoped />
+  <style lang="scss" src='./stylesNew.scss' scoped />

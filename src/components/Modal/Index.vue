@@ -164,7 +164,7 @@ export default {
         z-index: 250;
         background-color: var(--color-4);
         box-shadow: 0px 1px 0px 0px #0F172A;
-        border-radius: 5px;
+        border-radius: 20px;
         padding: 30px 40px;
         border: 2px solid var(--color-1);
         [data-theme="dark"] & {

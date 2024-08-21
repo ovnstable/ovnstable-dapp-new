@@ -46,10 +46,6 @@ export default {
   components: {
     Spinner,
   },
-
-//   mounted() {
-//     this.loadPools();
-//   },
 };
 
 </script>

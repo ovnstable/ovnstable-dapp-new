@@ -13,12 +13,12 @@
         <h1
           v-if="selectTokenInput"
         >
-          Select Input token
+          {{ `Select ${token0Name}` }}
         </h1>
         <h1
           v-else
         >
-          Select Output token
+          {{ `Select ${token1Name}` }}
         </h1>
       </div>
 
@@ -64,6 +64,8 @@
             :selected-tokens="selectedTokens"
             :remove-native="removeNative"
             :is-input-tokens="selectTokenInput"
+            :max-token-count="maxTokenCount"
+            :is-overnight-first="isOvernightFirst"
             @add-token="selectToken"
             @remove-token="removeToken"
           />
@@ -124,9 +126,28 @@ export default {
       type: Boolean as PropType<boolean | Ref<boolean>>,
       required: true,
     },
+    token0Name: {
+      type: String,
+      required: false,
+      default: 'Input token',
+    },
+    token1Name: {
+      type: String,
+      required: false,
+      default: 'Output token',
+    },
+    maxTokenCount: {
+      type: Number,
+      required: false,
+      default: 3,
+    },
+    isOvernightFirst: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
   },
   emits: ['set-show', 'add-token-to-list', 'remove-token-from-list', 'connect-wallet', 'reload'],
-
   data() {
     return {
       showModal: false,
@@ -177,6 +198,7 @@ export default {
 .tokens-modal {
   min-width: 500px;
   max-width: 500px;
+  border-radius: 20px;
   [data-theme="dark"] & {
     border-color: var(--color-2);
     background-color: var(--color-17);
