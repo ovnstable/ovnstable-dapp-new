@@ -1,9 +1,21 @@
 <template>
   <div>
-    <div>
-      <ZapForm
+    <div class="zapin-wrap__title">
+      <router-link to="/pools">
+        <ButtonComponent btn-styles="grey">
+          <BaseIcon name="ArrowLeft" />
+          <span>
+            BACK
+          </span>
+        </ButtonComponent>
+      </router-link>
+      <h1>ZAPIN</h1>
+    </div>
+
+    <div v-if="zapPool && allTokensList.length > 0">
+      <AutoZapinV3
         :zap-pool="zapPool"
-        @close-form="closeModal"
+        :all-tokens-list="allTokensList"
       />
     </div>
 
@@ -16,74 +28,90 @@
 <script lang="ts">
 import {
   mapActions,
-  mapMutations,
+  useStore,
 } from 'vuex';
-import ZapForm from '@/components/ZapForm/Index.vue';
+import AutoZapinV3 from '@/components/ZapForm/AutoZapinV3.vue';
 import SuccessZapModal from '@/modules/ModalTemplates/SuccessModal/SuccessZapModal.vue';
+import ButtonComponent from '@/components/Button/Index.vue';
+import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import { inject } from 'vue';
+import type { IPoolService } from '@/services/PoolService/PoolService.ts';
+import { usePoolsQueryNew } from '@/hooks/fetch/usePoolsQuery.ts';
+import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
 
 export default {
   name: 'ZapFormPage',
   components: {
-    ZapForm,
+    AutoZapinV3,
     SuccessZapModal,
+    ButtonComponent,
+    BaseIcon,
   },
   props: {
     isShow: {
       type: Boolean,
       default: false,
     },
-    zapPool: {
-      type: Object,
-      required: false,
-      default: null,
-    },
   },
   emits: ['toggle-modal'],
+  setup: () => {
+    const { state } = useStore();
+    const poolService = inject('poolService') as IPoolService;
+    const { data: poolList, isLoading: isPoolsLoading } = usePoolsQueryNew(poolService, state);
+    const {
+      data: allTokensList,
+    } = useTokensQuery(state);
+    return {
+      poolList,
+      allTokensList,
+      isPoolsLoading,
+    };
+  },
   data() {
     return {
       showModal: false,
+      zapPool: null,
     };
   },
   watch: {
     isShow(currVal: boolean) {
       this.showModal = currVal;
     },
+    poolList() {
+      this.init();
+    },
+  },
+  mounted() {
+    this.init();
   },
   methods: {
     ...mapActions('odosData', [
       'triggerSuccessZapin',
     ]),
-    ...mapMutations('zapinData', ['resetStore']),
-    closeModal() {
-      this.resetStore();
-      this.$emit('toggle-modal');
+    init() {
+      if (this.poolList.length === 0) return;
+      const foundPool = this.poolList
+        .find((_: any) => _.address?.toLowerCase() === this.$route.query.pair);
+      if (foundPool) this.zapPool = foundPool;
     },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.modal-content {
-  padding: 20px;
-  min-width: 600px;
-  max-width: 600px;
+.zapin-wrap__title {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 40px;
+  color: var(--color-1);
 
-  &.v3 {
-    width: 100vw;
-    max-width: 80vw;
-    height: 100%;
+  h1 {
+    font-size: 26px;
+    font-weight: 800;
   }
 
-  @media (max-width: 1240px) {
-    &.v3 {
-      max-width: 80vw;
-    }
-  }
-}
-
-@media (max-width: 640px) {
-  .modal-content {
-    min-width: 0;
+  span {
+    margin-left: 8px;
   }
 }
 </style>

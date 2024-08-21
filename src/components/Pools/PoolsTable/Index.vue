@@ -272,9 +272,6 @@ export default {
     getIconName(poolTag: POOL_TAG) {
       return tagIconMap[poolTag];
     },
-    getTokenNames(pool: any) {
-      return pool.name.split('/');
-    },
     getPlatformLink(pool: any, platform: string) {
       return buildLink(pool, platform) ?? '';
     },

@@ -119,9 +119,8 @@
             </div>
 
             <ButtonComponent
-              :disabled="!pool.zappable"
               btn-styles="faded"
-              @click="openZapIn(pool)"
+              @click="handleZapin(pool)"
             >
               DEPOSIT
             </ButtonComponent>
@@ -149,27 +148,11 @@
 
   <!-- eslint-disable no-param-reassign -->
 <script lang="ts">
-import { mapActions } from 'vuex';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
-import { formatMoneyComma, formatNumberToMln, formatNumberToThousands } from '@/utils/numbers.ts';
+import { formatNumberToMln, formatNumberToThousands } from '@/utils/numbers.ts';
 import ZapInComponent from '@/components/ZapModal/Index.vue';
 import { buildLink, checkIsEveryStable } from '@/store/views/main/pools/helpers.ts';
-import { APY_POOLS } from '@/store/views/main/pools/mocks.ts';
-
-  enum POOL_TAG {
-    NEW,
-    PROMO,
-    HOT,
-    ZAPIN,
-  }
-
-const tagIconMap = {
-  [POOL_TAG.HOT]: 'CommonHot',
-  [POOL_TAG.NEW]: 'CommonStar',
-  [POOL_TAG.PROMO]: 'CommonPromo',
-  [POOL_TAG.ZAPIN]: 'CommonStar',
-};
 
 const getPoolDescStr = (
   isStable: boolean,
@@ -198,12 +181,6 @@ export default {
       required: true,
     },
   },
-  data() {
-    return {
-      POOL_TAG,
-      APY_POOLS,
-    };
-  },
   computed: {
     indexOfLastNewPool() {
       let lastNewPoolIndex = -1;
@@ -217,19 +194,16 @@ export default {
     },
   },
   methods: {
-    ...mapActions('poolsData', ['openZapIn']),
-    formatMoneyComma,
     formatNumberToMln,
     formatNumberToThousands,
+    handleZapin(pool: any) {
+      console.log(pool, '__POOl');
+      // if (false) this.openZapIn(pool);
+      this.$router.push(`/pools/zapin/${pool.platform?.toLowerCase()}?pair=${pool.address.toLowerCase()}&chain=${pool.chainName}`);
+    },
     poolVolatileType(poolD: any) {
       const isStable = checkIsEveryStable(poolD);
       return getPoolDescStr(isStable, poolD.poolVersion);
-    },
-    getTagName(poolTag: POOL_TAG) {
-      return POOL_TAG[poolTag as number];
-    },
-    getIconName(poolTag: POOL_TAG) {
-      return tagIconMap[poolTag];
     },
     getPlatformLink(pool: any, platform: string) {
       return buildLink(pool, platform) ?? '';

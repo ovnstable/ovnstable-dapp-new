@@ -17,11 +17,12 @@ export type TPositionData = [
     isStaked: boolean,
   ]
 
-type TTicks = {
+export type TTicks = {
   tickLower: number,
   tickUpper: number,
   centerTick: number,
 }
+
 export interface IPositionsInfo extends TPoolInfo {
   platformLinks: { platform: string, link: string }[],
   position: {
