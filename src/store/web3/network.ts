@@ -113,7 +113,7 @@ const BLAST_PARAMS = {
   isDeprecated: false,
 };
 
-const dbNetworkName = Number(window.ethereum.chainId)?.toString();
+const dbNetworkName = Number(window?.ethereum?.chainId)?.toString();
 
 export function getNetworkParams(networkName: string | number | null): any {
   switch (networkName) {
