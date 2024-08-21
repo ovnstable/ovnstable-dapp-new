@@ -611,6 +611,7 @@ export default defineComponent({
       this.updateQuotaInfo();
     },
     async init() {
+      await this.loadRouterContract(this.networkId);
       const bus = useEventBus('odos-transaction-finished');
       bus.on(() => {
         this.finishTransaction();
