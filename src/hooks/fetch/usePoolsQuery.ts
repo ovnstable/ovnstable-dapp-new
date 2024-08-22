@@ -18,9 +18,10 @@ export const usePoolsQueryNew = (
   const filterParams = computed(() => state.poolsData.filterParams);
   return useQuery(
     {
-      queryKey: ['pools', filterParams],
+      queryKey: ['allPools', filterParams],
       queryFn: () => poolService.getFilterPools(filterParams.value),
       staleTime: 0,
+      refetchInterval: false,
     },
   );
 };
