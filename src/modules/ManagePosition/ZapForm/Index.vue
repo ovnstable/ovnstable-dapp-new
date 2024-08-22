@@ -247,7 +247,7 @@ export default {
 
     const {
       isBalancesLoading,
-    } = useTokensQuery(state, tokenService);
+    } = useTokensQuery(tokenService, state);
 
     return {
       isBalancesLoading,
@@ -853,7 +853,7 @@ export default {
       let sourceBlacklist = [...this.sourceLiquidityBlacklist];
       // excluding platform for big liquidities zapins
       const excludeLiquidityByPlatform = this.mapExcludeLiquidityPlatform[
-        this.zapPool.platform[0]
+        this.zapPool.platform
       ];
       if (excludeLiquidityByPlatform && excludeLiquidityByPlatform.length) {
         sourceBlacklist = [...sourceBlacklist, ...excludeLiquidityByPlatform];

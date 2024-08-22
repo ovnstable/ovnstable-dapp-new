@@ -63,24 +63,6 @@
                     :src="pool.token1Icon"
                   />
                 </div>
-                <div
-                  v-if="pool.token2Icon"
-                  class="pools-table__tokens-item"
-                >
-                  <img
-                    alt="token"
-                    :src="pool.token2Icon"
-                  />
-                </div>
-                <div
-                  v-if="pool.token3Icon"
-                  class="pools-table__tokens-item"
-                >
-                  <img
-                    alt="token"
-                    :src="pool.token3Icon"
-                  />
-                </div>
               </div>
               <div class="pools-table__details">
                 <div class="pools-table__details-row">

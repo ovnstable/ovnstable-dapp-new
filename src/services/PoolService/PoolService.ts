@@ -11,13 +11,12 @@ import { formatPools } from './utils/formatPoolsNew.ts';
 
 export interface IPoolService {
   // Legacy API
-  // getPoolsInfo(): Promise<TPoolInfo[]>;
+  getPoolsInfo(): Promise<TPoolInfo[]>;
   // getDisplayedPool(poolsList: TPoolInfo[], filterByTvl: boolean): TPoolInfo[],
   // filterPools(poolsList: TPoolInfo[], params: TFilterPoolsParams): TPoolInfo[],
   // sortPools(poolsList: TPoolInfo[], orderType: ORDER_TYPE, isDefaultOrder: boolean): TPoolInfo[],
   // New API
   getFilterPools(filterParams: Partial<TFilterPoolsParams>): Promise<any>;
-  sendMockRequest(): Promise<any>;
 }
 
 class PoolService implements IPoolService {
@@ -73,11 +72,6 @@ class PoolService implements IPoolService {
       console.error('Error formatting pools');
     }
     return [];
-  }
-
-  // Mock method, remove
-  public async sendMockRequest() {
-    return this.getFilterPools({});
   }
 }
 

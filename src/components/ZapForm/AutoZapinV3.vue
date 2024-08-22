@@ -1103,7 +1103,7 @@ export default defineComponent({
       let sourceBlacklist = [...sourceLiquidityBlacklist];
       // excluding platform for big liquidities zapins
       const excludeLiquidityByPlatform = mapExcludeLiquidityPlatform[
-        this.zapPool.platform[0]
+        this.zapPool.platform
       ];
       if (excludeLiquidityByPlatform && excludeLiquidityByPlatform.length) {
         sourceBlacklist = [...sourceBlacklist, ...excludeLiquidityByPlatform];
@@ -1339,7 +1339,7 @@ export default defineComponent({
 
       let gaugeData: any;
 
-      if (zapPool.platform[0] === 'Pancake' && this.zapPool.poolVersion === 'v2') {
+      if (zapPool.platform === 'Pancake' && this.zapPool.poolVersion === 'v2') {
         gaugeData = {
           amountsOut: [
             proportions.amountToken0Out,

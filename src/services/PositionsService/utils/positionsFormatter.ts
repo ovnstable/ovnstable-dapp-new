@@ -52,12 +52,12 @@ export const getPositionProportion = (
 };
 
 const getPlatformLinks = (
-  platforms: string[],
+  platform: string,
   pool: TPoolInfo,
-) => platforms.map((platform: string) => ({
+) => ([{
   platform,
   link: buildLink(pool, platform) ?? '',
-}));
+}]);
 
 export const formatPositionData = (
   posDataArr: TPositionData[],

@@ -1,13 +1,12 @@
 /* eslint-disable import/prefer-default-export */
 import { useQuery } from '@tanstack/vue-query';
-import PoolService, { type IPoolService } from '@/services/PoolService/PoolService.ts';
-import { OvernightApi } from '@/services/ApiService/OvernightApi.ts';
+import { type IPoolService } from '@/services/PoolService/PoolService.ts';
 import { computed } from 'vue';
 
-export const usePoolsQuery = () => useQuery(
+export const usePoolsQuery = (poolService: IPoolService) => useQuery(
   {
     queryKey: ['pools'],
-    queryFn: () => new PoolService(new OvernightApi()).getPoolsInfo(),
+    queryFn: () => poolService.getPoolsInfo(),
     refetchInterval: false,
   },
 );

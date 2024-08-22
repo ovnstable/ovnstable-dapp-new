@@ -29,9 +29,9 @@
         </span>
         <div class="pool-data__row">
           <div class="pool-data__plat">
-            <BaseIcon :name="zapPool.platform[0]" />
+            <BaseIcon :name="zapPool.platform" />
             <span>
-              {{ zapPool.platform[0] }}
+              {{ zapPool.platform }}
             </span>
           </div>
 
@@ -173,8 +173,8 @@ export default {
       };
     },
     getSymbolToken() {
-      if (this.zapPool.platform[0] === 'Pancake') return REWARD_TOKEN.CAKE;
-      if (this.zapPool.platform[0] === 'Aerodrome') return REWARD_TOKEN.AERO;
+      if (this.zapPool.platform === 'Pancake') return REWARD_TOKEN.CAKE;
+      if (this.zapPool.platform === 'Aerodrome') return REWARD_TOKEN.AERO;
       return '';
     },
     getImgToken() {

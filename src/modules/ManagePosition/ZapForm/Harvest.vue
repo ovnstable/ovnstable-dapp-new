@@ -201,8 +201,8 @@ export default defineComponent({
     ...mapGetters('accountData', ['account']),
 
     getSymbolToken() {
-      if (this.zapPool.platform[0] === 'Pancake') return REWARD_TOKEN.CAKE;
-      if (this.zapPool.platform[0] === 'Aerodrome') return REWARD_TOKEN.AERO;
+      if (this.zapPool.platform === 'Pancake') return REWARD_TOKEN.CAKE;
+      if (this.zapPool.platform === 'Aerodrome') return REWARD_TOKEN.AERO;
       return '';
     },
     getImgToken() {
