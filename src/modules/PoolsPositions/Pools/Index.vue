@@ -85,6 +85,7 @@ import { POOL_CATEGORIES } from '@/types/common/pools/index.ts';
 import PoolService, { type IPoolService } from '@/services/PoolService/PoolService.ts';
 import { ORDER_TYPE } from '@/services/PoolService/utils/poolsSort.ts';
 import { POOL_SHOW_LIMIT } from '@/constants/pools/index.ts';
+import BaseIcon from '@/components/Icon/BaseIcon.vue';
 
 export default defineComponent({
   name: 'PoolsContainer',
@@ -93,6 +94,7 @@ export default defineComponent({
     TableSkeleton,
     PoolsTable,
     ZapModal,
+    BaseIcon,
   },
   props: {
     isOverview: {
