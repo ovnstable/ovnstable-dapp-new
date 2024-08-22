@@ -10,10 +10,6 @@ export const formatPools = (
   const tokenIconMap: {[key: string]: string} = tokensData!.reduce((acc, token) => (
     { ...acc, [token.address]: token.logoUrl }
   ), {}) ?? [];
-  console.log(tokenIconMap);
-  const tokenIds = poolData
-    .map((pool: TPoolData) => [pool.token0.tokenId, pool.token1.tokenId]).flat();
-  console.log(tokenIds);
   const poolsList = poolData.map((pool: TPoolData) => ({
     id: pool.name + pool.tvl + pool.platform,
     name: pool.name.toUpperCase(),

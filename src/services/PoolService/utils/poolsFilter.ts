@@ -39,7 +39,7 @@ const searchPoolByCategory = (
 );
 
 const filterByNetwork = (pool: TPoolInfo, selectedNetworkIds: number[]): boolean => (
-  selectedNetworkIds.length > 0
+  selectedNetworkIds?.length > 0
     ? selectedNetworkIds.includes(getNetworkParams(pool.chainName).networkId)
     : true
 );
