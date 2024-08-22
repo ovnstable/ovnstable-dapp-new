@@ -660,7 +660,7 @@ export default {
 .select-icon {
   svg {
     position: relative;
-    width: 5px;
+    width: 9px;
     top: -2px;
     margin-left: 3px;
     transform: rotate(90deg)
