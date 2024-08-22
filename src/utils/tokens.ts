@@ -37,10 +37,11 @@ export const getTransactionTotal = (tokens:ISuccessTokenData[]): string => token
 export const formatInputTokens = (tokens: TInputToken[]): IInputTokenInfo[] => {
   const tokensInfo = tokens
     .map((token) => {
-      const usdValue = getUsdStrFromValue(token.value, token.selectedToken.price);
+      const usdValue = getUsdStrFromValue(token?.value, token.selectedToken?.price);
+
       return {
         ...token,
-        usdValue: formatMoney(Number(usdValue), 6),
+        usdValue: usdValue ? formatMoney(Number(usdValue), 6) : 0,
         displayedValue: formatMoney(Number(token.value), 6),
         proportion: '',
       };

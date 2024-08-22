@@ -43,6 +43,7 @@
         :active-tab="activeTab"
         :all-tokens-list="allTokensList"
         :balance-list="balanceList"
+        :gauge-address="gaugeAddress"
       />
     </div>
     <div
@@ -52,6 +53,8 @@
       <WithdrawForm
         :zap-pool="zapPool"
         :active-tab="activeTab"
+        :all-tokens-list="allTokensList"
+        :gauge-address="gaugeAddress"
       />
     </div>
     <div
@@ -61,6 +64,8 @@
       <HarvestForm
         :zap-pool="zapPool"
         :active-tab="activeTab"
+        :all-tokens-list="allTokensList"
+        :gauge-address="gaugeAddress"
       />
     </div>
 
@@ -88,8 +93,10 @@ import { usePositionsQuery } from '@/hooks/fetch/usePositionsQuery.ts';
 import { useTokensQuery, useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.ts';
 import { inject } from 'vue';
 import { isEmpty } from 'lodash';
+import { usePoolsQueryNew } from '@/hooks/fetch/usePoolsQuery.ts';
 import type { ITokenService } from '@/services/TokenService/TokenService';
 import type { IPoolService } from '@/services/PoolService/PoolService';
+import type { TFilterPoolsParams } from '@/types/common/pools';
 
 export enum MANAGE_TAB {
   REBALANCE,
@@ -119,10 +126,12 @@ export default {
     const { data: getUserPositions } = usePositionsQuery(tokenService, poolService, state);
     const { data: balanceList, isLoading: tokensLoading } = useTokensQuery(tokenService, state);
     const { data: allTokensList } = useTokensQueryNew(tokenService, state);
+    const { data: poolList } = usePoolsQueryNew();
 
     return {
       allTokensList,
       balanceList,
+      poolList,
       tokensLoading,
       getUserPositions,
     };
@@ -132,6 +141,7 @@ export default {
       zapPool: null as any,
       manageTab: MANAGE_TAB,
       activeTab: MANAGE_TAB.REBALANCE,
+      gaugeAddress: '',
       filterTabs: [
         {
           id: MANAGE_TAB.REBALANCE,
@@ -152,21 +162,46 @@ export default {
     isLoadingData() {
       return isEmpty(this.zapPool)
         || isEmpty(this.allTokensList)
-        || isEmpty(this.balanceList);
+        || isEmpty(this.balanceList)
+        || !this.gaugeAddress;
     },
   },
   watch: {
     getUserPositions() {
       this.searchPool();
     },
+    poolList() {
+      this.init();
+    },
+    zapPool() {
+      this.handleClickSearch();
+    },
   },
   async mounted() {
     if (this.getUserPositions?.length > 0) this.searchPool();
+    this.handleClickSearch();
+    this.init();
   },
   methods: {
-    ...mapActions('odosData', [
-      'triggerSuccessZapin',
-    ]),
+    ...mapActions('odosData', ['triggerSuccessZapin']),
+    ...mapActions('poolsData', ['setFilterParams']),
+    handleClickSearch() {
+      const tokens = (this.zapPool.name as string)?.split('/');
+      const filterParams: Partial<TFilterPoolsParams> = {
+        token0: tokens[0],
+        // token1: tokens[1],
+      };
+      this.setFilterParams(filterParams);
+    },
+    init() {
+      console.log(this.poolList, '__this.poolList');
+      if (!this.poolList || this.poolList?.length === 0 || !this.zapPool) return;
+      const foundPool = this.poolList
+        .find((_: any) => _.address?.toLowerCase() === this.zapPool.address?.toLowerCase());
+
+      console.log(foundPool, '__foundPool');
+      if (foundPool) this.gaugeAddress = foundPool.gauge;
+    },
     changeTab(id: number) {
       this.activeTab = id;
     },

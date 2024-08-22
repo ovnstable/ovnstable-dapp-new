@@ -1667,7 +1667,6 @@ export default defineComponent({
         .times(10 ** 18)
         .toFixed(0);
 
-      console.log('TRIGGER__1');
       await this.checkApproveForToken(token, (Number(approveValue) * 0.5).toFixed(0));
       if (selectedToken.approveData.approved) {
         this.closeWaitingModal();

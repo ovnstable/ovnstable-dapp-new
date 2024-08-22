@@ -29,7 +29,7 @@ export type TPoolInfo = {
     chain: number,
     chainName: string,
     address: string,
-    platform: string,
+    platform: string[],
     tvl: number,
     apr: number,
     poolTag: null | string,

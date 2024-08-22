@@ -49,6 +49,7 @@ export const usePositionsQuery = (
           positionsQuery.data.value,
           poolsQuery.data.value as any,
           tokensQuery.data.value as any,
+          networkId.value,
         );
     }
     return [];

@@ -172,8 +172,8 @@ export default {
       };
     },
     getSymbolToken() {
-      if (this.zapPool.platform === 'Pancake') return REWARD_TOKEN.CAKE;
-      if (this.zapPool.platform === 'Aerodrome') return REWARD_TOKEN.AERO;
+      if (this.zapPool.platform[0] === 'Pancake') return REWARD_TOKEN.CAKE;
+      if (this.zapPool.platform[0] === 'Aerodrome') return REWARD_TOKEN.AERO;
       return '';
     },
     getImgToken() {
@@ -228,7 +228,6 @@ export default {
       const token0 = getTokenBySymbol(tokens[0], this.allTokensList);
       const token1 = getTokenBySymbol(tokens[1], this.allTokensList);
 
-      console.log(this.zapPool, '__token0');
       const tokenFull0 = {
         ...getNewInputToken(),
         locked: false,
@@ -254,7 +253,6 @@ export default {
         };
       });
 
-      console.log(arrTokens, '__arrTokens');
       const inputTokenInfo = formatInputTokens(arrTokens);
       this.inputTokens = inputTokenInfo;
     },

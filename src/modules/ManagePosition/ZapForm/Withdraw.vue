@@ -35,30 +35,27 @@
             class="swap-block__item"
           >
             <div
-            v-if="token.selectedToken"
-            class="swap-block__item-row"
-          >
-          <div class="swap-block__item-row--percentage">
-            {{ token.proportion }}%
-          </div>
-          <div class="swap-block__item-row--token-wrap">
-            <img
-              :src="token.selectedToken.logoUrl"
-              alt="select-token"
+              v-if="token.selectedToken"
+              class="swap-block__item-row"
             >
-            <span>
-              {{ token.selectedToken.symbol }}
-            </span>
-          </div>
+              <div class="swap-block__item-row--percentage">
+                {{ token.proportion }}%
+              </div>
+              <div class="swap-block__item-row--token-wrap">
+                <img
+                  :src="token.selectedToken.logoUrl"
+                  alt="select-token"
+                >
+                <span>
+                  {{ token.selectedToken.symbol }}
+                </span>
+              </div>
             </div>
-            <div
-              v-if="token.value"
-              class="swap-block__item-bal"
-            >
-              <div v-if="token.value">
+            <div class="swap-block__item-bal">
+              <div v-if="token.displayedValue">
                 {{ token.displayedValue }}
               </div>
-              <div>
+              <div v-if="token.value">
                 ~ ${{ token.usdValue }}
               </div>
             </div>
@@ -89,7 +86,7 @@
               :is-token-removable="false"
               :is-input-token="false"
               :disabled="true"
-              :balances-loading="isBalancesLoading"
+              hide-balance
             />
           </div>
         </div>
@@ -166,27 +163,26 @@
 <script lang="ts">
 import { useEventBus } from '@vueuse/core';
 import {
-  mapActions, mapGetters, mapState, mapMutations,
-  useStore,
+  mapActions, mapGetters, mapMutations,
 } from 'vuex';
 import {
-  getNewOutputToken,
-  getTokenByAddress,
+  getNewInputToken,
+  getTokenBySymbol,
 } from '@/store/helpers/index.ts';
 
 import Spinner from '@/components/Spinner/Index.vue';
 import ChangeNetwork from '@/components/ZapForm/ChangeNetwork.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
-import { poolTokensForZapMap } from '@/store/views/main/zapin/mocks.ts';
 import TokenForm from '@/modules/Main/components/Odos/TokenForm.vue';
 import { cloneDeep } from 'lodash';
 import BN from 'bignumber.js';
 import { MANAGE_FUNC, withdrawStep } from '@/store/modals/waiting-modal.ts';
 import { formatInputTokens } from '@/utils/tokens.ts';
 import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
-import { defineComponent, inject } from 'vue';
-import { useTokensQuery, useRefreshBalances } from '@/hooks/fetch/useTokensQuery.ts';
-import type { ITokenService } from '@/services/TokenService/TokenService';
+import { defineComponent } from 'vue';
+import { buildEvmContract } from '@/utils/contractsMap.ts';
+import { loadAbi, srcStringBuilder } from '@/store/views/main/zapin/index.ts';
+import { fixedByPrice } from '@/utils/numbers.ts';
 
 export default defineComponent({
   name: 'WithdrawForm',
@@ -197,30 +193,21 @@ export default defineComponent({
     Spinner,
   },
   props: {
+    allTokensList: {
+      type: Array,
+      required: true,
+      default: () => [],
+    },
     zapPool: {
       type: Object,
       required: false,
       default: null,
     },
-    typeOfPool: {
-      // OVN or ALL
+    gaugeAddress: {
       type: String,
-      required: false,
-      default: 'ALL',
+      required: true,
+      default: '',
     },
-  },
-  setup() {
-    const { state } = useStore() as any;
-
-    const tokenService = inject('tokenService') as ITokenService;
-
-    const { data: allTokensList, isBalancesLoading } = useTokensQuery(tokenService, state);
-
-    return {
-      allTokensList,
-      isBalancesLoading,
-      refreshBalances: useRefreshBalances(),
-    };
   },
   data() {
     return {
@@ -228,24 +215,19 @@ export default defineComponent({
       positionStaked: true,
       inputTokens: [] as any[],
       outputTokens: [] as any[],
-      swapMethod: 'BUY', // BUY (secondTokens) / SELL (secondTokens)
-
+      poolTokens: [] as any[],
+      gaugeContract: null as any,
+      zapContract: null as any,
+      poolTokenContract: null as any,
       currentStage: withdrawStep.WITHDRAW,
       isNftApproved: false,
       isSwapLoading: false,
     };
   },
   computed: {
-    ...mapState('zapinData', [
-      'zapContract',
-      'poolNftContract',
-      'gaugeContractV3',
-    ]),
+    ...mapGetters('web3', ['evmSigner']),
     ...mapGetters('odosData', [
       'isAvailableOnNetwork',
-    ]),
-    ...mapGetters('zapinData', [
-      'isZapLoaded',
     ]),
     ...mapGetters('network', ['networkId']),
     ...mapGetters('accountData', ['account']),
@@ -264,7 +246,7 @@ export default defineComponent({
       return res.toFixed(4);
     },
     zapsLoaded() {
-      return this.zapPool && this.zapContract && this.isZapLoaded;
+      return this.zapPool && this.zapContract;
     },
     outputTokensWithSelectedTokensCount() {
       return this.outputTokens.filter((item: any) => item.selectedToken).length;
@@ -296,6 +278,7 @@ export default defineComponent({
   mounted() {
     this.$store.commit('zapinData/changeState', { field: 'currentStage', val: withdrawStep.WITHDRAW });
     this.setStagesMap(MANAGE_FUNC.WITHDRAW);
+    this.initContracts();
     this.firstInit();
     this.setIsZapModalShow(true);
     this.positionStaked = this.zapPool.isStaked;
@@ -308,10 +291,7 @@ export default defineComponent({
     if (this.zapPool.chain !== this.networkId) return;
 
     this.firstInit();
-
-    setTimeout(() => {
-      this.loadZapContract();
-    }, 300);
+    this.initContracts();
   },
   methods: {
     ...mapActions('swapModal', ['showSwapModal', 'showMintView']),
@@ -319,19 +299,54 @@ export default defineComponent({
     ...mapActions('odosData', [
       'triggerSuccessZapin',
     ]),
-    ...mapActions('zapinData', ['loadZapContract']),
     ...mapActions('waitingModal', ['closeWaitingModal', 'showWaitingModal']),
     ...mapActions('walletAction', ['connectWallet']),
-
-    ...mapMutations('zapinData', ['changeState']),
     ...mapMutations('waitingModal', ['setStagesMap']),
+
+    async initContracts() {
+      const tokens = this.zapPool.name.split('/');
+      const tokenA = getTokenBySymbol(tokens[0], this.allTokensList);
+      const tokenB = getTokenBySymbol(tokens[1], this.allTokensList);
+
+      const abiGauge = srcStringBuilder('V3GaugeRebalance')(this.zapPool.chainName, this.zapPool.platform[0]);
+      const abiGaugeContractFileV3 = await loadAbi(abiGauge);
+
+      const abiV3Zap = srcStringBuilder('V3Zap')(this.zapPool.chainName, this.zapPool.platform[0]);
+      const abiContractV3Zap = await loadAbi(abiV3Zap);
+
+      const abiV3Nft = srcStringBuilder('V3Nft')(this.zapPool.chainName, this.zapPool.platform[0]);
+      const abiContractV3Nft = await loadAbi(abiV3Nft);
+
+      this.gaugeContract = buildEvmContract(
+        abiGaugeContractFileV3.abi,
+        this.evmSigner,
+        this.gaugeAddress,
+      );
+
+      this.zapContract = buildEvmContract(
+        abiContractV3Zap.abi,
+        this.evmSigner,
+        abiContractV3Zap.address,
+      );
+
+      this.poolTokenContract = buildEvmContract(
+        abiContractV3Nft.abi,
+        this.evmSigner,
+        abiContractV3Nft.address,
+      );
+
+      this.poolTokens = [tokenA, tokenB];
+
+      if (!this.isAvailableOnNetwork) this.mintAction();
+    },
+
     async approveNftPosition(approveToGauge: boolean) {
       this.isSwapLoading = true;
 
       try {
         console.log(approveToGauge, '__isApproved');
         this.showWaitingModal('Approve');
-        const tx = await this.poolNftContract
+        const tx = await this.poolTokenContract
           .approve(this.zapContract?.target, this.zapPool.tokenId);
 
         await tx.wait();
@@ -339,6 +354,7 @@ export default defineComponent({
         this.isSwapLoading = false;
         this.closeWaitingModal();
         this.currentStage = withdrawStep.ZAPOUT;
+        this.zapOutTrigger();
       } catch (e) {
         console.log(e);
         this.closeWaitingModal('Approve');
@@ -351,45 +367,10 @@ export default defineComponent({
     },
 
     async firstInit() {
-      this.changeState({
-        field: 'zapPoolRoot',
-        val: this.zapPool,
-      });
-      this.changeState({
-        field: 'tokenSeparationScheme',
-        val: 'POOL_SWAP',
-      });
-      this.changeState({
-        field: 'typeOfPoolScheme',
-        val: this.typeOfPool,
-      });
-
-      // todo: move to backend
-      const poolTokens = poolTokensForZapMap[this.zapPool.address];
-      if (!poolTokens) return;
-
-      this.$store.commit('odosData/changeState', {
-        field: 'listOfBuyTokensAddresses',
-        val: [poolTokens[0].address, poolTokens[1].address],
-      });
-
       await this.init();
-      this.clearAndInitForm();
+      this.initLiqTokens();
 
       if (!this.isAvailableOnNetwork) this.mintAction();
-
-      if (this.outputTokens?.length > 0) {
-        const symbName = this.zapPool?.name?.split('/');
-        this.outputTokens.forEach((_, key) => {
-          this.outputTokens[key].value = this.zapPool?.position?.tokens[key][symbName[key]];
-          this.outputTokens[key].sum = this.zapPool?.position?.tokens[key][symbName[key]];
-        });
-
-        const inputTokens = cloneDeep(this.outputTokens);
-
-        const inputTokenInfo = formatInputTokens(inputTokens);
-        this.inputTokens = inputTokenInfo;
-      }
     },
 
     async init() {
@@ -398,96 +379,46 @@ export default defineComponent({
         this.finishTransaction();
       });
     },
-    addDefaultPoolToken() {
-      const poolTokens = poolTokensForZapMap[this.zapPool.address];
-      const poolSelectedToken = getTokenByAddress(poolTokens[0].address, this.allTokensList);
-      const ovnSelectSelectedToken = getTokenByAddress(poolTokens[1].address, this.allTokensList);
+    initLiqTokens() {
+      const tokens = this.zapPool.name.split('/');
+      const token0 = getTokenBySymbol(tokens[0], this.allTokensList);
+      const token1 = getTokenBySymbol(tokens[1], this.allTokensList);
 
-      if (!poolSelectedToken || !ovnSelectSelectedToken) {
-        this.addNewOutputToken();
-        return;
-      }
+      const tokenFull0 = {
+        ...getNewInputToken(),
+        locked: false,
+        selectedToken: token0,
+      };
+      const tokenFull1 = {
+        ...getNewInputToken(),
+        locked: false,
+        selectedToken: token1,
+      };
 
-      poolSelectedToken.selected = true;
-      ovnSelectSelectedToken.selected = true;
+      let arrTokens = [tokenFull0, tokenFull1];
 
-      if (this.swapMethod === 'BUY') {
-        this.addSelectedTokenToOutputList(poolSelectedToken, true, 50);
-        this.addSelectedTokenToOutputList(ovnSelectSelectedToken, true, 50);
-        return;
-      }
+      console.log(this.zapPool, '__this.zapPool');
+      arrTokens = arrTokens.map((_: any, key: number) => {
+        const price = this.zapPool?.position?.tokens[key][tokens[key]];
 
-      if (this.swapMethod === 'SELL') {
-        this.addNewOutputToken();
-        return;
-      }
+        return {
+          ..._,
+          value: new BN(price).toFixed(fixedByPrice(price)),
+          sum: new BN(price).toFixed(fixedByPrice(price)),
+        };
+      });
 
-      console.error(
-        'Error when add default ovn token. Method not found: ',
-        this.swapMethod,
-      );
-    },
-    addNewOutputToken() {
-      this.outputTokens.push(getNewOutputToken());
-    },
-    removeToken(tokens: any[], id: string) {
-      // removing by token.id or token.selectedToken.id
-      const index = tokens.findIndex(
-        (item: any) => item.id === id
-          || (item.selectedToken ? item.selectedToken.id === id : false),
-      );
-      if (index !== -1) {
-        if (tokens[index].selectedToken) {
-          tokens[index].selectedToken.selected = false;
-        }
+      console.log(arrTokens, '__arrTokens');
 
-        tokens.splice(index, 1);
-      }
+      const inputTokenInfo = formatInputTokens(arrTokens);
+      this.inputTokens = inputTokenInfo;
+      this.outputTokens = cloneDeep(inputTokenInfo);
     },
     finishTransaction() {
-      this.clearAndInitForm();
       this.closeWaitingModal();
-      this.refreshBalances();
-    },
-
-    clearAndInitForm() {
-      this.clearAllSelectedTokens();
-
-      if (this.swapMethod === 'BUY') {
-        this.addDefaultPoolToken();
-        return;
-      }
-
-      if (this.swapMethod === 'SELL') {
-        this.addDefaultPoolToken();
-        return;
-      }
-
-      console.error('Clear form, swap method not found.', this.swapMethod);
-    },
-    resetOutputs() {
-      if (!this.selectedOutputTokens.length) {
-        return;
-      }
-
-      if (this.selectedOutputTokens.length === 2) {
-        for (let i = 0; i < this.selectedOutputTokens.length; i++) {
-          const token: any = this.selectedOutputTokens[i];
-          token.value = 50;
-        }
-        return;
-      }
-
-      for (let i = 0; i < this.selectedOutputTokens.length; i++) {
-        const token: any = this.selectedOutputTokens[i];
-        token.value = 0;
-      }
-
-      // init first token value
-      this.selectedOutputTokens[0].value = 100;
     },
     async zapOutTrigger() {
-      console.log(this.gaugeContractV3, 'zapOutTrigger');
+      console.log(this.gaugeContract, 'zapOutTrigger');
       this.isSwapLoading = true;
 
       try {
@@ -527,14 +458,15 @@ export default defineComponent({
 
         let tx;
 
-        if (this.zapPool.chainName === 'base') tx = await this.gaugeContractV3.withdraw(this.zapPool.tokenId);
-        else if (this.zapPool.chainName === 'arbitrum') tx = await this.gaugeContractV3.withdraw(this.zapPool.tokenId, this.account);
+        if (this.zapPool.chainName === 'base') tx = await this.gaugeContract.withdraw(this.zapPool.tokenId);
+        else if (this.zapPool.chainName === 'arbitrum') tx = await this.gaugeContract.withdraw(this.zapPool.tokenId, this.account);
 
         await tx.wait();
         this.isSwapLoading = false;
         this.closeWaitingModal();
         this.positionStaked = false;
         this.currentStage = withdrawStep.APPROVE;
+        this.approveNftPosition(false);
       } catch (e) {
         console.log(e);
         this.closeWaitingModal();
@@ -542,10 +474,10 @@ export default defineComponent({
       }
     },
     async checkNftApprove() {
-      if (!this.poolNftContract) return;
+      if (!this.poolTokenContract) return;
       this.isSwapLoading = true;
 
-      const isApproved = await this.poolNftContract
+      const isApproved = await this.poolTokenContract
         .getApproved(this.zapPool?.tokenId);
       console.log(isApproved, '__this.__isApproved');
 
@@ -564,43 +496,6 @@ export default defineComponent({
         field: 'swapResponseInfo',
         val: null,
       });
-    },
-    addSelectedTokenToOutputList(selectedToken: any, isLocked: any, startPercent: any) {
-      const newOutputToken = getNewOutputToken();
-      newOutputToken.locked = isLocked;
-      newOutputToken.value = startPercent;
-      newOutputToken.selectedToken = selectedToken;
-      this.outputTokens.push(newOutputToken);
-      this.removeAllWithoutSelectedTokens(this.outputTokens);
-      this.resetOutputs();
-    },
-    removeAllWithoutSelectedTokens(tokens: any) {
-      const tokensToRemove = [];
-      for (let i = 0; i < tokens.length; i++) {
-        if (tokens[i].selectedToken) continue;
-        tokensToRemove.push(tokens[i]);
-      }
-
-      for (let i = 0; i < tokensToRemove.length; i++) {
-        this.removeToken(tokens, tokensToRemove[i].id);
-      }
-    },
-    clearAllOutputSelectedTokens() {
-      for (let i = 0; i < this.outputTokens.length; i++) {
-        if (this.outputTokens[i].selectedToken) {
-          this.outputTokens[i].selectedToken.selected = false;
-        }
-      }
-
-      this.outputTokens = [];
-    },
-    clearAllSelectedTokens() {
-      this.clearAllOutputSelectedTokens();
-      this.clearAllTokens();
-    },
-    clearAllTokens() {
-      this.inputTokens = [];
-      this.outputTokens = [];
     },
   },
 });

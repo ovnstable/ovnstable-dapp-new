@@ -2,6 +2,7 @@
 import BN from 'bignumber.js';
 import { buildLink } from '@/store/views/main/pools/helpers.ts';
 import { getUsdStr, sumBnStr } from '@/utils/tokens.ts';
+import { appNetworksData } from '@/utils/const.ts';
 import type { TPoolInfo } from '@/types/common/pools';
 import type { TTokenInfo } from '@/types/common/tokens';
 import type { IPositionsInfo, TPositionData, TTicks } from '@/types/positions';
@@ -53,26 +54,30 @@ export const getPositionProportion = (
 
 const getPlatformLinks = (
   platform: string,
-  pool: TPoolInfo,
+  address: string,
+  chain: string,
 ) => ([{
   platform,
-  link: buildLink(pool, platform) ?? '',
+  link: buildLink({
+    address,
+    chainName: chain,
+  }, platform) ?? '',
 }]);
 
 export const formatPositionData = (
   posDataArr: TPositionData[],
   poolsMap: { [key: string]: TPoolInfo },
   tokenMap: Map<string, TTokenInfo>,
+  networkId: number,
 ): IPositionsInfo[] => {
   const positionInfo = posDataArr.flatMap((
     [platform, tokenId, poolId, token0, token1, amount0, amount1, rewardAmount0, rewardAmount1,
       emissions, tickLower, tickUpper, centerTick, isStaked]: TPositionData,
   ) => {
     // Pools
+    const network = appNetworksData.find((_) => _.chain === networkId);
     const pool = poolsMap[poolId]
     ?? poolsMap[poolId.toUpperCase()] ?? poolsMap[poolId.toLowerCase()];
-
-    // console.log('__1');
 
     if (isStaked) {
       // Tokens
@@ -103,12 +108,15 @@ export const formatPositionData = (
         centerTick,
       };
 
-      console.log(platform, '__pool');
-
       // Final data
       const positionFullInfo = {
         ...pool,
-        platform,
+        address: poolId,
+        chain: networkId,
+        chainName: network ? network.name?.toLowerCase() : 'base',
+        token0Icon: token0Info.logoUrl,
+        token1Icon: token1Info.logoUrl,
+        platform: [platform],
         name: pool ? pool.name : `${token0Info?.symbol}/${token1Info?.symbol}`,
         position: {
           tokens: [
@@ -129,7 +137,7 @@ export const formatPositionData = (
           displayedUsdValue: getMinVal(rewardUsdTotal),
         },
         emissions,
-        platformLinks: pool ? getPlatformLinks(platform, pool) : [],
+        platformLinks: getPlatformLinks(platform, poolId, 'base'),
         tokenId,
         ticks,
         tokenNames,
