@@ -104,7 +104,7 @@
               >
                 <BaseIcon
                   class="pools-table__platform-icon"
-                  :name="platform[0]"
+                  :name="platform"
                 />
               </a>
             </div>

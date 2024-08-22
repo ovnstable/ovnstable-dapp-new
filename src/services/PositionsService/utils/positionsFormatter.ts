@@ -20,7 +20,7 @@ const getTokenNames = (poolName: string) => {
 export const getTokenInfo = (
   address: string,
   tokenMap: Map<string, TTokenInfo>,
-):TTokenInfo => tokenMap.get(address)!;
+):TTokenInfo => tokenMap.get(address?.toLowerCase())!;
 
 const getMinVal = (val: string | number) => (new BN(val).gt(0.1) ? new BN(val).toFixed(2) : '< 0.1');
 
@@ -76,12 +76,12 @@ export const formatPositionData = (
 
     if (isStaked) {
       // Tokens
-      const tokenNames = pool ? getTokenNames(pool.name) : {
-        token0: '',
-        token1: '',
-      };
       const token0Info = getTokenInfo(token0, tokenMap);
       const token1Info = getTokenInfo(token1, tokenMap);
+      const tokenNames = pool ? getTokenNames(pool.name) : {
+        token0: token0Info.symbol,
+        token1: token1Info.symbol,
+      };
 
       // Token usd values
       const token0UsdStr = getUsdStr(amount0, token0Info?.decimals, token0Info?.price);
@@ -103,13 +103,13 @@ export const formatPositionData = (
         centerTick,
       };
 
-      // console.log(ticks, '__ticks');
+      console.log(platform, '__pool');
 
       // Final data
       const positionFullInfo = {
         ...pool,
-        platform: pool ? pool.platform : '',
-        name: pool ? pool.name : 'Empty',
+        platform,
+        name: pool ? pool.name : `${token0Info?.symbol}/${token1Info?.symbol}`,
         position: {
           tokens: [
             { [tokenNames.token0]: getUsdStr(amount0, token0Info?.decimals) },
@@ -129,7 +129,7 @@ export const formatPositionData = (
           displayedUsdValue: getMinVal(rewardUsdTotal),
         },
         emissions,
-        platformLinks: pool ? getPlatformLinks(pool.platform, pool) : '',
+        platformLinks: pool ? getPlatformLinks(platform, pool) : [],
         tokenId,
         ticks,
         tokenNames,
