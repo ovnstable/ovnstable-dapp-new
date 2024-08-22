@@ -11,7 +11,8 @@ export const formatPools = (
     { ...acc, [token.address]: token.logoUrl }
   ), {}) ?? [];
   console.log(tokenIconMap);
-  const tokenIds = poolData.map((pool: TPoolData) => [pool.token0.tokenId, pool.token1.tokenId]).flat();
+  const tokenIds = poolData
+    .map((pool: TPoolData) => [pool.token0.tokenId, pool.token1.tokenId]).flat();
   console.log(tokenIds);
   const poolsList = poolData.map((pool: TPoolData) => ({
     id: pool.name + pool.tvl + pool.platform,

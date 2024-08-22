@@ -42,11 +42,10 @@ import SuccessZapModal from '@/modules/ModalTemplates/SuccessModal/SuccessZapMod
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { inject } from 'vue';
-import type { IPoolService } from '@/services/PoolService/PoolService.ts';
 import { usePoolsQueryNew } from '@/hooks/fetch/usePoolsQuery.ts';
 import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
 import TableSkeleton from '@/components/TableSkeleton/Index.vue';
-import type { TFilterPoolsParams } from '@/types/common/pools';
+import type { TFilterPoolsParams, TPool } from '@/types/common/pools';
 import type { ITokenService } from '@/services/TokenService/TokenService';
 
 export default {
@@ -68,10 +67,9 @@ export default {
   setup: () => {
     const { state } = useStore();
 
-    const poolService = inject('poolService') as IPoolService;
     const tokenService = inject('tokenService') as ITokenService;
 
-    const { data: poolList, isLoading: isPoolsLoading } = usePoolsQueryNew(poolService, state);
+    const { data: poolList, isLoading: isPoolsLoading } = usePoolsQueryNew();
 
     const {
       data: allTokensList,
@@ -86,7 +84,7 @@ export default {
   data() {
     return {
       showModal: false,
-      zapPool: null,
+      zapPool: {} as TPool,
     };
   },
   watch: {

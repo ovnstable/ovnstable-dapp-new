@@ -44,11 +44,11 @@ const filterByNetwork = (pool: TPoolInfo, selectedNetworkIds: number[]): boolean
     : true
 );
 
-export const poolsFilter = (poolsList: TPoolInfo[], params: TFilterPoolsParams): TPoolInfo[] => {
+export const poolsFilter = (poolsList: TPoolInfo[], params: any): TPoolInfo[] => {
   const filteredPools = poolsList.filter((pool: TPoolInfo) => (
     searchPoolByQuery(pool, params.searchQuery)
     && searchPoolByCategory(pool, params.category)
-    && filterByNetwork(pool, params.networkIds)
+    && filterByNetwork(pool, params.chain)
   ));
   return filteredPools;
 };
