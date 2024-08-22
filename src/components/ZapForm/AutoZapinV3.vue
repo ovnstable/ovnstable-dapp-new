@@ -304,7 +304,9 @@
 <!-- eslint-disable no-param-reassign -->
 <script lang="ts">
 import { useEventBus } from '@vueuse/core';
-import { computed, defineComponent, markRaw } from 'vue';
+import {
+  computed, defineComponent, inject, markRaw,
+} from 'vue';
 import { ethers } from 'ethers';
 import {
   mapActions, mapGetters, mapState, mapMutations,
@@ -343,7 +345,7 @@ import { onLeaveList, onEnterList, beforeEnterList } from '@/utils/animations.ts
 import { MANAGE_FUNC, zapInStep } from '@/store/modals/waiting-modal.ts';
 import SwapSlippageSettings from '@/components/SwapSlippage/Index.vue';
 import { useTokensQuery, useRefreshBalances } from '@/hooks/fetch/useTokensQuery.ts';
-import TokenService from '@/services/TokenService/TokenService.ts';
+import TokenService, { type ITokenService } from '@/services/TokenService/TokenService.ts';
 import { loadAbi, srcStringBuilder } from '@/store/views/main/zapin/index.ts';
 import { buildEvmContract } from '@/utils/contractsMap.ts';
 import { mapExcludeLiquidityPlatform, parseLogs, sourceLiquidityBlacklist } from './helpers.ts';
@@ -381,10 +383,13 @@ export default defineComponent({
     },
   },
   setup: () => {
-    const store = useStore() as any;
+    const { state } = useStore() as any;
+
+    const tokenService = inject('tokenService') as ITokenService;
+
     const {
       isLoading: isAnyLoading,
-    } = useTokensQuery(store.state);
+    } = useTokensQuery(tokenService, state);
 
     return {
       isAnyLoading: computed(() => isAnyLoading.value),

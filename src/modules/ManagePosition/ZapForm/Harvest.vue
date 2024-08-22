@@ -133,9 +133,12 @@ import { formatInputTokens } from '@/utils/tokens.ts';
 import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
 import { REWARD_TOKEN } from '@/store/views/main/zapin/index.ts';
 import { loadTokenImage } from '@/utils/tokenLogo.ts';
-import { computed, defineComponent, type ComputedRef } from 'vue';
+import {
+  computed, defineComponent, inject, type ComputedRef,
+} from 'vue';
 import { useTokensQuery, useRefreshBalances } from '@/hooks/fetch/useTokensQuery.ts';
 import type { TTokenInfo } from '@/types/common/tokens/index.ts';
+import type { ITokenService } from '@/services/TokenService/TokenService';
 
 export default defineComponent({
   name: 'WithdrawForm',
@@ -158,9 +161,11 @@ export default defineComponent({
     },
   },
   setup() {
-    const store = useStore() as any;
+    const { state } = useStore() as any;
 
-    const { data: allTokensList } = useTokensQuery(store.state);
+    const tokenService = inject('tokenService') as ITokenService;
+
+    const { data: allTokensList } = useTokensQuery(tokenService, state);
 
     return {
       allTokensMap: computed(() => new Map(

@@ -77,10 +77,11 @@ import { mapActions, mapGetters, useStore } from 'vuex';
 import { sortedChainsByTVL } from '@/store/helpers/index.ts';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import SelectTokensModal from '@/components/TokensModal/Index.vue';
-import { computed } from 'vue';
+import { computed, inject } from 'vue';
 import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
 import type { TTokenInfo } from '@/types/common/tokens';
 import type { TFilterPoolsParams } from '@/types/common/pools';
+import type { ITokenService } from '@/services/TokenService/TokenService';
 
 interface Chain {
   chainName: string;
@@ -106,13 +107,15 @@ export default {
     SelectTokensModal,
   },
   setup: () => {
-    const store = useStore() as any;
+    const { state } = useStore() as any;
+
+    const tokenService = inject('tokenService') as ITokenService;
 
     const {
       data: allTokensList,
       isLoading,
       isBalancesLoading,
-    } = useTokensQuery(store.state);
+    } = useTokensQuery(tokenService, state);
 
     return {
       allTokensList,

@@ -22,3 +22,24 @@ export type TPoolData = {
     token0: TPoolTokenData,
     token1: TPoolTokenData,
 }
+
+export type TTokenData = {
+    address: string,
+    name: string,
+    symbol: string,
+    id: string,
+    decimals: number,
+    price: string,
+    image_url: string,
+    isPoolToken: boolean
+}
+
+export type TChainTokenMap = {
+    chainTokenMap: {
+        [key: string]: {
+            tokenMap: {
+                [key: string]: TTokenData
+            }
+        },
+    }
+}

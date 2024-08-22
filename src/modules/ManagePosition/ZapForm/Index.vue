@@ -200,9 +200,10 @@ import TokenForm from '@/modules/Main/components/Odos/TokenForm.vue';
 import { MANAGE_FUNC, rebalanceStep } from '@/store/modals/waiting-modal.ts';
 import ZapInStepsRow from '@/components/StepsRow/ZapinRow/RebalanceRow.vue';
 import { cloneDeep } from 'lodash';
-import { markRaw } from 'vue';
+import { inject, markRaw } from 'vue';
 import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
 import { useTokensQuery, useRefreshBalances } from '@/hooks/fetch/useTokensQuery.ts';
+import type { ITokenService } from '@/services/TokenService/TokenService.ts';
 import { parseLogs } from './helpers.ts';
 
 enum zapMobileSection {
@@ -240,11 +241,13 @@ export default {
     },
   },
   setup: () => {
-    const store = useStore() as any;
+    const { state } = useStore() as any;
+
+    const tokenService = inject('tokenService') as ITokenService;
 
     const {
       isBalancesLoading,
-    } = useTokensQuery(store.state);
+    } = useTokensQuery(state, tokenService);
 
     return {
       isBalancesLoading,

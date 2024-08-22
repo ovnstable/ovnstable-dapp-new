@@ -38,6 +38,7 @@ import { inject } from 'vue';
 import type { IPoolService } from '@/services/PoolService/PoolService.ts';
 import { usePoolsQueryNew } from '@/hooks/fetch/usePoolsQuery.ts';
 import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
+import type { ITokenService } from '@/services/TokenService/TokenService';
 
 export default {
   name: 'ZapFormPage',
@@ -56,11 +57,16 @@ export default {
   emits: ['toggle-modal'],
   setup: () => {
     const { state } = useStore();
+
     const poolService = inject('poolService') as IPoolService;
+    const tokenService = inject('tokenService') as ITokenService;
+
     const { data: poolList, isLoading: isPoolsLoading } = usePoolsQueryNew(poolService, state);
+
     const {
       data: allTokensList,
-    } = useTokensQuery(state);
+    } = useTokensQuery(tokenService, state);
+
     return {
       poolList,
       allTokensList,

@@ -34,6 +34,7 @@ app.component('PopperComponent', Popper);
 
 const ctx = createContext();
 app.provide('poolService', ctx.PoolService);
+app.provide('tokenService', ctx.TokenService);
 
 async function initPosthog() {
   try {

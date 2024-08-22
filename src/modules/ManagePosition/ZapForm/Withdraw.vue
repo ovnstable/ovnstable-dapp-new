@@ -184,8 +184,9 @@ import BN from 'bignumber.js';
 import { MANAGE_FUNC, withdrawStep } from '@/store/modals/waiting-modal.ts';
 import { formatInputTokens } from '@/utils/tokens.ts';
 import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
-import { defineComponent } from 'vue';
+import { defineComponent, inject } from 'vue';
 import { useTokensQuery, useRefreshBalances } from '@/hooks/fetch/useTokensQuery.ts';
+import type { ITokenService } from '@/services/TokenService/TokenService';
 
 export default defineComponent({
   name: 'WithdrawForm',
@@ -209,9 +210,11 @@ export default defineComponent({
     },
   },
   setup() {
-    const store = useStore() as any;
+    const { state } = useStore() as any;
 
-    const { data: allTokensList, isBalancesLoading } = useTokensQuery(store.state);
+    const tokenService = inject('tokenService') as ITokenService;
+
+    const { data: allTokensList, isBalancesLoading } = useTokensQuery(tokenService, state);
 
     return {
       allTokensList,
