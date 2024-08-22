@@ -2,7 +2,9 @@ import { ODOS_DEPRECATED_NETWORKS, OVN_TOKENS } from '@/utils/const.ts';
 import { BLAST_TOKENS_PRICES } from '@/constants/tokens/manualTokensMap.ts';
 import type { TTokenInfo } from '@/types/common/tokens/index.ts';
 import type { TChainTokenMap } from '@/types/api/overnightApi.ts';
-import { formatTokenInfo, loadContractForToken, mergeTokenLists } from './utils/index.ts';
+import {
+  formatTokenInfo, formatTokenInfoNew, loadContractForToken, mergeTokenLists,
+} from './utils/index.ts';
 import type { IOvernightApi } from '../ApiService/OvernightApi.ts';
 
 export interface ITokenService {
@@ -21,7 +23,10 @@ class TokenService implements ITokenService {
 
   public fetchTokens = async () => this.overnightApi.loadTokens();
 
-  public fetchAllTokens = async () => this.overnightApi.getAllTokens();
+  public async fetchAllTokens() {
+    const chainTokenMap = await this.overnightApi.getAllTokens();
+    return chainTokenMap;
+  }
 
   public async fetchTokenPricesByNetworkId(chainId: number | string): Promise<any> {
     if (ODOS_DEPRECATED_NETWORKS.includes(Number(chainId))) {
@@ -53,6 +58,17 @@ class TokenService implements ITokenService {
       tokenPricesData.tokenPrices,
       tokenBalanceMap,
     );
+    return tokenInfo;
+  };
+
+  // New API
+  public static formatTokenInfo = (
+    tokens: TChainTokenMap,
+    chainId: string,
+  ) => {
+    const tokenNetworkMap = mergeTokenLists(tokens);
+    const tokensByNetwork = tokenNetworkMap.chainTokenMap[chainId].tokenMap;
+    const tokenInfo = formatTokenInfoNew(tokensByNetwork);
     return tokenInfo;
   };
 

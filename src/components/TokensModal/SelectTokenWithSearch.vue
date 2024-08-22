@@ -139,7 +139,10 @@
                 </p>
               </div>
             </div>
-            <div class="search-tokens__list-item__right">
+            <div
+              v-if="isOvernightFirst"
+              class="search-tokens__list-item__right"
+            >
               <span class="token-balance">
                 {{ token.balanceData.balance ? token.balanceData.balance : '0' }}
               </span>

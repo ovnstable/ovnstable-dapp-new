@@ -61,9 +61,13 @@ class PoolService implements IPoolService {
   public async getFilterPools(filterParams: Partial<TFilterPoolsParams>): Promise<TPool[]> {
     // TODO: remove
     const params: {[key: string]: string | number | string[]} = {};
+
     Object.entries(filterParams).forEach(([key, value]) => {
       if (value !== 0) params[key] = value;
     });
+
+    params.limit = 'false';
+
     const pools = await this.overnightApi.getFilteredPools(params);
     try {
       const poolInfoList = await formatPools(pools);

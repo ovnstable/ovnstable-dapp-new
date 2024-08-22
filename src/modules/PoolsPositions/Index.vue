@@ -78,7 +78,6 @@ export default {
   },
   methods: {
     changeTab(val: number) {
-      console.log(val, '');
       this.activeTab = val;
     },
   },

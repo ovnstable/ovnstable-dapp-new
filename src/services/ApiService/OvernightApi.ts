@@ -1,5 +1,4 @@
 import ApiService from '@/services/ApiService/ApiService.ts';
-import type { TChainTokenMap } from '@/types/api/overnightApi';
 import type { TFilterPoolsParams } from '@/types/common/pools';
 
 const API_URL = process.env.OVERNIGHT_API_URL;
@@ -41,7 +40,7 @@ export interface IOvernightApi {
 
   // New API
   getFilteredPools(filterParams: Partial<TFilterPoolsParams>): any,
-  getAllTokens(): Promise<TChainTokenMap>,
+  getAllTokens(): any,
   // Old API
   getAllPools(apiUrl: string): any
 }
@@ -142,8 +141,7 @@ export class OvernightApi extends ApiService implements IOvernightApi {
   }
 
   public async getAllTokens() {
-    const response = await this.get<TChainTokenMap>(`${OVERNIGHT_POOLS_API_URL}/tokens`);
-    return response.data;
+    return this.get(`${OVERNIGHT_POOLS_API_URL}/tokens`);
   }
 
   // Old API
