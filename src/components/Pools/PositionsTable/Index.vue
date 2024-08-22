@@ -110,7 +110,6 @@
             </div>
 
             <ButtonComponent
-              :disabled="!pool.zappable"
               btn-styles="faded"
               @click="handleOpen(pool)"
             >
