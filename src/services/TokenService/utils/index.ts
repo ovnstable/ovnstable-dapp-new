@@ -104,6 +104,7 @@ export const getFormatTokenInfo = (
       approved: false,
     },
     price: tokenPricesMap ? formatTokenPrice(tokenPricesMap[address]) : '0',
+    isPoolToken: token?.isPoolToken ?? false,
   };
 
   return ({

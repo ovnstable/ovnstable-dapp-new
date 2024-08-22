@@ -58,9 +58,8 @@ import { POOL_TYPES } from '@/store/views/main/pools/index.ts';
 import { defineComponent, inject, type PropType } from 'vue';
 import { usePoolsQueryNew } from '@/hooks/fetch/usePoolsQuery.ts';
 import { POOL_CATEGORIES, type TFilterPoolsParams } from '@/types/common/pools/index.ts';
-import PoolService, { type IPoolService } from '@/services/PoolService/PoolService.ts';
+import { type IPoolService } from '@/services/PoolService/PoolService.ts';
 import { ORDER_TYPE } from '@/services/PoolService/utils/poolsSort.ts';
-import { POOL_SHOW_LIMIT } from '@/constants/pools/index.ts';
 
 export default defineComponent({
   name: 'PoolsContainer',
@@ -81,6 +80,7 @@ export default defineComponent({
     const { state } = useStore();
 
     const poolServiceInstance = inject('poolService') as IPoolService;
+
     const {
       data: poolList,
       isLoading: isPoolsLoading,
@@ -115,24 +115,24 @@ export default defineComponent({
   computed: {
     ...mapState('poolsData', ['currentZapPool', 'isZapModalShow']),
     displayedPools() {
-      const filterParams = {
-        networkIds: this.networkIds,
-        category: this.category,
-        searchQuery: this.searchQuery,
-      };
+      // const filterParams = {
+      //   networkIds: this.networkIds,
+      //   category: this.category,
+      //   searchQuery: this.searchQuery,
+      // };
 
-      const displayedPools = PoolService
-        .getDisplayedPool(this.poolList!, false);
-      const filteredPools = PoolService
-        .filterPools(displayedPools, filterParams);
-      const sortedPools = PoolService
-        .sortPools(filteredPools, this.orderType, this.isDefaultOrder);
+      // const displayedPools = PoolService
+      //   .getDisplayedPool(this.poolList!, false);
+      // const filteredPools = PoolService
+      //   .filterPools(displayedPools, filterParams);
+      // const sortedPools = PoolService
+      //   .sortPools(filteredPools, this.orderType, this.isDefaultOrder);
 
-      const pools = this.isOpenHiddenPools
-        ? sortedPools
-        : sortedPools.slice(0, POOL_SHOW_LIMIT);
+      // const pools = this.isOpenHiddenPools
+      //   ? sortedPools
+      //   : sortedPools.slice(0, POOL_SHOW_LIMIT);
 
-      return pools;
+      return this.poolList;
     },
   },
 

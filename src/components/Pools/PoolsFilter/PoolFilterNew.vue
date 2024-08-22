@@ -78,7 +78,7 @@ import { sortedChainsByTVL } from '@/store/helpers/index.ts';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import SelectTokensModal from '@/components/TokensModal/Index.vue';
 import { computed, inject } from 'vue';
-import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
+import { useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.ts';
 import type { TTokenInfo } from '@/types/common/tokens';
 import type { TFilterPoolsParams } from '@/types/common/pools';
 import type { ITokenService } from '@/services/TokenService/TokenService';
@@ -115,7 +115,7 @@ export default {
       data: allTokensList,
       isLoading,
       isBalancesLoading,
-    } = useTokensQuery(tokenService, state);
+    } = useTokensQueryNew(tokenService, state);
 
     return {
       allTokensList,
@@ -159,9 +159,8 @@ export default {
     handleClickSearch() {
       const filterParams: Partial<TFilterPoolsParams> = {
         token0: this.selectedTokens[0].symbol,
-        // token1: this.selectedTokens[1]?.symbol ?? '',
+        token1: this.selectedTokens[1]?.symbol ?? '',
       };
-      console.log('_handleClickSearch');
       this.setFilterParams(filterParams);
     },
   },

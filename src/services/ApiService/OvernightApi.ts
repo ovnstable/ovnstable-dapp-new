@@ -138,7 +138,7 @@ export class OvernightApi extends ApiService implements IOvernightApi {
 
   // New API
   public async getFilteredPools(filterParams: Partial<TFilterPoolsParams>) {
-    return this.get(OVERNIGHT_POOLS_API_URL, filterParams);
+    return this.get(`${OVERNIGHT_POOLS_API_URL}/pools`, filterParams);
   }
 
   public async getAllTokens() {
