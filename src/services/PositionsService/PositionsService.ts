@@ -25,7 +25,8 @@ class PositionsService {
     // console.log('__positionsServiceFetch');
     const positionsContract = await loadPositionContract(state);
     const rawPositionData = await positionsContract.getPositions(state.accountData.account);
-    // console.log('__positions', rawPositionData);
+
+    console.log('__positions', rawPositionData);
     return rawPositionData;
   }
 

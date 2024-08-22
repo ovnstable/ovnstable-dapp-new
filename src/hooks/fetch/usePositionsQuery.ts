@@ -2,7 +2,7 @@
 /* eslint-disable import/prefer-default-export */
 import { useQuery, type UseQueryReturnType } from '@tanstack/vue-query';
 import { usePoolsQuery } from '@/hooks/fetch/usePoolsQuery.ts';
-import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
+import { useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.ts';
 import { computed } from 'vue';
 import PositionsService from '@/services/PositionsService/PositionsService.ts';
 import type { ITokenService } from '@/services/TokenService/TokenService';
@@ -25,7 +25,7 @@ export const usePositionsQuery = (
   const address = computed(() => stateData.accountData.account);
 
   const poolsQuery = usePoolsQuery(poolService);
-  const tokensQuery = useTokensQuery(tokenService, stateData);
+  const tokensQuery = useTokensQueryNew(tokenService, stateData);
 
   const positionsQuery = useQuery(
     {

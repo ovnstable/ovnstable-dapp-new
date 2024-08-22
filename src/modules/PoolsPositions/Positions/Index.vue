@@ -170,6 +170,8 @@ export default defineComponent({
     const queryClient = useQueryClient();
     const invalidateQuery = async () => queryClient.invalidateQueries({ queryKey: ['positions'] });
 
+    console.log(positionData.value, '__positionData');
+
     return {
       isLoading,
       positionData,

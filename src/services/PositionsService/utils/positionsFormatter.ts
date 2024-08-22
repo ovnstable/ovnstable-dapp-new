@@ -74,9 +74,12 @@ export const formatPositionData = (
 
     // console.log('__1');
 
-    if (pool && pool.name && isStaked) {
+    if (isStaked) {
       // Tokens
-      const tokenNames = getTokenNames(pool.name);
+      const tokenNames = pool ? getTokenNames(pool.name) : {
+        token0: '',
+        token1: '',
+      };
       const token0Info = getTokenInfo(token0, tokenMap);
       const token1Info = getTokenInfo(token1, tokenMap);
 
@@ -105,6 +108,8 @@ export const formatPositionData = (
       // Final data
       const positionFullInfo = {
         ...pool,
+        platform: pool ? pool.platform : '',
+        name: pool ? pool.name : 'Empty',
         position: {
           tokens: [
             { [tokenNames.token0]: getUsdStr(amount0, token0Info?.decimals) },
@@ -124,7 +129,7 @@ export const formatPositionData = (
           displayedUsdValue: getMinVal(rewardUsdTotal),
         },
         emissions,
-        platformLinks: getPlatformLinks(pool.platform, pool),
+        platformLinks: pool ? getPlatformLinks(pool.platform, pool) : '',
         tokenId,
         ticks,
         tokenNames,
