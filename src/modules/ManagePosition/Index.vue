@@ -13,7 +13,7 @@
     </div>
 
     <PoolData
-      v-if="zapPool && !tokensLoading"
+      v-if="!isLoadingData"
       :all-tokens-list="allTokensList"
       :zap-pool="zapPool"
     />
@@ -29,7 +29,7 @@
     </div>
 
     <div
-      v-if="!zapPool"
+      v-if="isLoadingData"
       class="pools-wrap__loader"
     >
       <TableSkeleton />
@@ -42,6 +42,7 @@
         :zap-pool="zapPool"
         :active-tab="activeTab"
         :all-tokens-list="allTokensList"
+        :balance-list="balanceList"
       />
     </div>
     <div
@@ -84,8 +85,9 @@ import TableSkeleton from '@/components/TableSkeleton/Index.vue';
 import SwitchTabs from '@/components/SwitchTabs/Index.vue';
 import PoolData from '@/modules/ManagePosition/PoolData.vue';
 import { usePositionsQuery } from '@/hooks/fetch/usePositionsQuery.ts';
-import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
+import { useTokensQuery, useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.ts';
 import { inject } from 'vue';
+import { isEmpty } from 'lodash';
 import type { ITokenService } from '@/services/TokenService/TokenService';
 import type { IPoolService } from '@/services/PoolService/PoolService';
 
@@ -115,10 +117,12 @@ export default {
     const poolService = inject('poolService') as IPoolService;
 
     const { data: getUserPositions } = usePositionsQuery(tokenService, poolService, state);
-    const { data: allTokensList, isLoading: tokensLoading } = useTokensQuery(tokenService, state);
+    const { data: balanceList, isLoading: tokensLoading } = useTokensQuery(tokenService, state);
+    const { data: allTokensList } = useTokensQueryNew(tokenService, state);
 
     return {
       allTokensList,
+      balanceList,
       tokensLoading,
       getUserPositions,
     };
@@ -143,6 +147,13 @@ export default {
         },
       ],
     };
+  },
+  computed: {
+    isLoadingData() {
+      return isEmpty(this.zapPool)
+        || isEmpty(this.allTokensList)
+        || isEmpty(this.balanceList);
+    },
   },
   watch: {
     getUserPositions() {

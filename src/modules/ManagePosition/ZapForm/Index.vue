@@ -72,6 +72,7 @@
                       :is-input-token="false"
                       :disabled="true"
                       :balances-loading="isBalancesLoading"
+                      hide-balance
                       @select-token="selectOutputToken"
                       @remove-token="removeOutputToken"
                     />
@@ -181,7 +182,7 @@ import {
 } from 'vuex';
 import {
   getNewOutputToken,
-  getTokenByAddress,
+  getTokenBySymbol,
   WHITE_LIST_ODOS,
 } from '@/store/helpers/index.ts';
 import {
@@ -482,9 +483,9 @@ export default {
       });
     },
     addDefaultPoolToken() {
-      const poolTokens = poolTokensForZapMap[this.zapPool.address];
-      const poolSelectedToken = getTokenByAddress(poolTokens[0].address, this.allTokensList);
-      const ovnSelectSelectedToken = getTokenByAddress(poolTokens[1].address, this.allTokensList);
+      const tokens = this.zapPool.name.split('/');
+      const poolSelectedToken = getTokenBySymbol(tokens[0], this.allTokensList);
+      const ovnSelectSelectedToken = getTokenBySymbol(tokens[1], this.allTokensList);
 
       console.log(this.allTokensList, 'this.allTokensList');
       console.log(poolSelectedToken, 'poolSelectedToken');
