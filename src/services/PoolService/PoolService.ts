@@ -1,7 +1,10 @@
+/* eslint-disable vue/max-len */
 import type { TFilterPoolsParams, TPool, TPoolInfo } from '@/types/common/pools/index.ts';
 import { allNetworkConfigs } from '@/constants/networks/index.ts';
 import PromisePool from '@supercharge/promise-pool';
 // import { poolFilterParams } from './mockRequests.ts';
+import type { TPoolData } from '@/types/api/overnightApi.ts';
+import type { TTokenInfo } from '@/types/common/tokens/index.ts';
 import { type IOvernightApi } from '../ApiService/OvernightApi.ts';
 import { getFormatPools } from './utils/formatPools.ts';
 import { getFilterDisplayedPools } from './utils/index.ts';
@@ -17,6 +20,7 @@ export interface IPoolService {
   // sortPools(poolsList: TPoolInfo[], orderType: ORDER_TYPE, isDefaultOrder: boolean): TPoolInfo[],
   // New API
   getFilterPools(filterParams: Partial<TFilterPoolsParams>): Promise<any>;
+  formatPoolInfo(poolData: TPoolData[], tokensData?:TTokenInfo[]): TPool[];
 }
 
 class PoolService implements IPoolService {
@@ -68,14 +72,15 @@ class PoolService implements IPoolService {
 
     params.limit = 'false';
 
-    const pools = await this.overnightApi.getFilteredPools(params);
-    try {
-      const poolInfoList = await formatPools(pools);
-      return poolInfoList;
-    } catch (error) {
-      console.error('Error formatting pools');
-    }
-    return [];
+    return this.overnightApi.getFilteredPools(params);
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  public formatPoolInfo(
+    poolData: TPoolData[],
+    tokensData?:TTokenInfo[],
+  ): TPool[] {
+    return formatPools(poolData, tokensData);
   }
 }
 

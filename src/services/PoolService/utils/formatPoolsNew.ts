@@ -1,42 +1,40 @@
 /* eslint-disable import/prefer-default-export */
-// import {
-//   HOT_POOLS, POOL_TAG, NEW_POOLS,
-// } from '@/store/views/main/pools/mocks.ts';
-import { loadTokenImage } from '@/utils/tokenLogo.ts';
 import type { TPool } from '@/types/common/pools';
 import type { TPoolData } from '@/types/api/overnightApi';
+import type { TTokenInfo } from '@/types/common/tokens';
 
-export const formatPools = async (poolData: TPoolData[]): Promise<TPool[]> => {
-  const poolsList = poolData.map((pool: TPoolData) => {
-    const token0Icon = loadTokenImage(pool.token0.symbol).toString();
-    const token1Icon = loadTokenImage(pool.token1.symbol).toString();
-
-    // if (HOT_POOLS.includes(pool.poolAddress)) poolTag = POOL_TAG.HOT;
-    // if (NEW_POOLS.includes(pool.poolAddress)) poolTag = POOL_TAG.NEW;
-
-    return {
-      id: pool.name + pool.tvl + pool.platform,
-      name: pool.name.toUpperCase(),
-      token0Icon,
-      token1Icon,
-      // Pool version not available
-      poolVersion: `v${pool.poolVersion}`,
-      // Chain ID not available
-      chain: pool.chainId,
-      chainName: pool.chainName,
-      address: pool.poolAddress,
-      platform: pool.platform,
-      tvl: pool.tvl,
-      poolTag: 'NEW',
-      // Get explorer URL by platform
-      explorerUrl: 'explorer_url',
-      gauge: pool.gauge,
-      fee: pool.fee,
-      initPrice: pool.initPrice,
-      price: pool.price,
-      tickSpacing: pool.tickSpacing,
-    };
-  });
+export const formatPools = (
+  poolData: TPoolData[],
+  tokensData?:TTokenInfo[],
+): TPool[] => {
+  const tokenIconMap: {[key: string]: string} = tokensData!.reduce((acc, token) => (
+    { ...acc, [token.address]: token.logoUrl }
+  ), {}) ?? [];
+  console.log(tokenIconMap);
+  const tokenIds = poolData.map((pool: TPoolData) => [pool.token0.tokenId, pool.token1.tokenId]).flat();
+  console.log(tokenIds);
+  const poolsList = poolData.map((pool: TPoolData) => ({
+    id: pool.name + pool.tvl + pool.platform,
+    name: pool.name.toUpperCase(),
+    token0Icon: tokenIconMap[pool.token0.tokenId.toLowerCase()] ?? '',
+    token1Icon: tokenIconMap[pool.token1.tokenId.toLowerCase()] ?? '',
+    // Pool version not available
+    poolVersion: `v${pool.poolVersion}`,
+    // Chain ID not available
+    chain: pool.chainId,
+    chainName: pool.chainName,
+    address: pool.poolAddress,
+    platform: pool.platform,
+    tvl: pool.tvl,
+    poolTag: 'NEW',
+    // Get explorer URL by platform
+    explorerUrl: 'explorer_url',
+    gauge: pool.gauge,
+    fee: pool.fee,
+    initPrice: pool.initPrice,
+    price: pool.price,
+    tickSpacing: pool.tickSpacing,
+  }));
 
   return poolsList;
 };
