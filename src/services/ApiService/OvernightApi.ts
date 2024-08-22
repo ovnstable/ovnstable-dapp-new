@@ -79,15 +79,15 @@ export class OvernightApi extends ApiService implements IOvernightApi {
   }
 
   public async quoteRequest(requestData: any) {
-    return this.get(`${API_URL_ODOS}/sor/quote/v2`, requestData);
+    return this.post(`${API_URL_ODOS}/sor/quote/v2`, requestData);
   }
 
   public async assembleRequest(requestData: any) {
-    return this.get(`${API_URL_ODOS}/sor/assemble`, requestData);
+    return this.post(`${API_URL_ODOS}/sor/assemble`, requestData);
   }
 
   public async swapRequest(requestData: any) {
-    return this.get(`${API_URL_ODOS}/sor/swap`, requestData);
+    return this.post(`${API_URL_ODOS}/sor/swap`, requestData);
   }
 
   // Market
