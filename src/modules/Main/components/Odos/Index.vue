@@ -551,6 +551,7 @@ export default defineComponent({
       val: 'OVERNIGHT_SWAP',
     });
 
+    this.setIsZapModalShow(false);
     this.clearForm();
     await this.init();
     if (this.$route.query.action === 'swap-out') this.changeSwap();
@@ -564,6 +565,7 @@ export default defineComponent({
         'initWalletTransaction',
       ],
     ),
+    ...mapActions('poolsData', ['setIsZapModalShow']),
     ...mapActions('errorModal', ['showErrorModalWithMsg']),
     ...mapActions('waitingModal', ['showWaitingModal', 'closeWaitingModal']),
     ...mapActions('walletAction', ['connectWallet']),

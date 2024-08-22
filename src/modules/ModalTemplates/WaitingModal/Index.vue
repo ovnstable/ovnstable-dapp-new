@@ -49,7 +49,7 @@ export default {
   },
   computed: {
     ...mapGetters('waitingModal', ['STAGES_MAP_GET']),
-    ...mapState('poolsData', ['isZapModalShow']),
+    ...mapGetters('poolsData', ['isZapModalShow']),
   },
 };
 </script>

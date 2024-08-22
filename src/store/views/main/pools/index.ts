@@ -40,6 +40,9 @@ const stateData = {
 };
 
 const getters = {
+  isZapModalShow(state: typeof stateData) {
+    return state.isZapModalShow;
+  },
   getAllPools(state: typeof stateData) {
     return state.allPools;
   },

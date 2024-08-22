@@ -12,7 +12,14 @@
       <h1>ZAPIN</h1>
     </div>
 
-    <div v-if="zapPool && allTokensList.length > 0">
+    <div
+      v-if="!zapPool || allTokensList.length === 0"
+      class="pools-wrap__loader"
+    >
+      <TableSkeleton />
+    </div>
+
+    <div v-else-if="zapPool">
       <AutoZapinV3
         :zap-pool="zapPool"
         :all-tokens-list="allTokensList"
@@ -38,7 +45,8 @@ import { inject } from 'vue';
 import type { IPoolService } from '@/services/PoolService/PoolService.ts';
 import { usePoolsQueryNew } from '@/hooks/fetch/usePoolsQuery.ts';
 import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
-import type { ITokenService } from '@/services/TokenService/TokenService';
+import TableSkeleton from '@/components/TableSkeleton/Index.vue';
+import type { TFilterPoolsParams } from '@/types/common/pools';
 
 export default {
   name: 'ZapFormPage',
@@ -47,6 +55,7 @@ export default {
     SuccessZapModal,
     ButtonComponent,
     BaseIcon,
+    TableSkeleton,
   },
   props: {
     isShow: {
@@ -88,14 +97,24 @@ export default {
     },
   },
   mounted() {
+    this.handleClickSearch();
     this.init();
   },
   methods: {
     ...mapActions('odosData', [
       'triggerSuccessZapin',
     ]),
+    ...mapActions('poolsData', ['setFilterParams']),
+    handleClickSearch() {
+      const tokens = (this.$route.query?.tokens as string)?.split('-');
+      const filterParams: Partial<TFilterPoolsParams> = {
+        token0: tokens[0],
+        token1: tokens[1],
+      };
+      this.setFilterParams(filterParams);
+    },
     init() {
-      if (this.poolList.length === 0) return;
+      if (!this.poolList || this.poolList?.length === 0) return;
       const foundPool = this.poolList
         .find((_: any) => _.address?.toLowerCase() === this.$route.query.pair);
       if (foundPool) this.zapPool = foundPool;

@@ -81,9 +81,9 @@
             </div>
           </div>
           <ZapinV3
-
             :zap-pool="zapPool"
             :zap-contract="zapContract"
+            :tokens-data="outputTokens"
             :ticks-init="[zapPool?.ticks?.tickLower, zapPool?.ticks?.tickUpper]"
             :class="currentSection === zapMobileSection.SET_PRICE_RANGE && 'mobile-active'"
             @set-range="setRangeV3"

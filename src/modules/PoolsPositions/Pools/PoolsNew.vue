@@ -57,7 +57,7 @@ import TableSkeleton from '@/components/TableSkeleton/Index.vue';
 import { POOL_TYPES } from '@/store/views/main/pools/index.ts';
 import { defineComponent, inject, type PropType } from 'vue';
 import { usePoolsQueryNew } from '@/hooks/fetch/usePoolsQuery.ts';
-import { POOL_CATEGORIES } from '@/types/common/pools/index.ts';
+import { POOL_CATEGORIES, type TFilterPoolsParams } from '@/types/common/pools/index.ts';
 import PoolService, { type IPoolService } from '@/services/PoolService/PoolService.ts';
 import { ORDER_TYPE } from '@/services/PoolService/utils/poolsSort.ts';
 import { POOL_SHOW_LIMIT } from '@/constants/pools/index.ts';
@@ -148,9 +148,10 @@ export default defineComponent({
       this.poolTabType = this.poolType;
     }
     this.setIsZapModalShow(false);
+    this.handleClickSearch();
   },
   methods: {
-    ...mapActions('poolsData', ['openZapIn', 'setIsZapModalShow']),
+    ...mapActions('poolsData', ['openZapIn', 'setIsZapModalShow', 'setFilterParams']),
     ...mapMutations('poolsData', ['changeState']),
 
     changePerPage() {
@@ -158,6 +159,12 @@ export default defineComponent({
     },
     changePage() {
       console.log('changePage');
+    },
+    handleClickSearch() {
+      const filterParams: Partial<TFilterPoolsParams> = {
+        token0: 'USD+',
+      };
+      this.setFilterParams(filterParams);
     },
     setOrderType(orderType: keyof typeof ORDER_TYPE) {
       this.isDefaultOrder = false;
@@ -177,4 +184,4 @@ export default defineComponent({
 });
 </script>
 
-  <style lang="scss" src='./stylesNew.scss' scoped />
+<style lang="scss" src="./stylesNew.scss" scoped />

@@ -188,6 +188,7 @@
             v-if="zapPool?.poolVersion === 'v3'"
             :zap-pool="zapPool"
             :zap-contract="zapContract"
+            :tokens-data="outputTokens"
             :class="currentSection === zapMobileSection.SET_PRICE_RANGE && 'mobile-active'"
             @set-range="setRangeV3"
           />

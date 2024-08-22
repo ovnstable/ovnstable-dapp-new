@@ -197,9 +197,10 @@ export default {
     formatNumberToMln,
     formatNumberToThousands,
     handleZapin(pool: any) {
+      const tokens = pool.name.split('/');
       console.log(pool, '__POOl');
       // if (false) this.openZapIn(pool);
-      this.$router.push(`/pools/zapin/${pool.platform?.toLowerCase()}?pair=${pool.address.toLowerCase()}&chain=${pool.chainName}`);
+      this.$router.push(`/pools/zapin/${pool.platform?.toLowerCase()}?pair=${pool.address.toLowerCase()}&chain=${pool.chainName}&tokens=${tokens[0]}-${tokens[1]}`);
     },
     poolVolatileType(poolD: any) {
       const isStable = checkIsEveryStable(poolD);
