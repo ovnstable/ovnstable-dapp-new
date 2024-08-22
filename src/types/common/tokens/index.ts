@@ -25,6 +25,7 @@ export type TTokenInfo = {
     price: string,
     balanceData?: TBalanceInfo,
     approveData?: TApproveData,
+    isPoolToken?: boolean,
   }
 
 export type TTokenBalanceMap = {

@@ -118,7 +118,9 @@ export default {
     } = useTokensQueryNew(tokenService, state);
 
     return {
-      allTokensList,
+      allTokensList: computed(
+        () => allTokensList.value.filter((token: TTokenInfo) => token.isPoolToken),
+      ),
       isLoading,
       isAllDataLoaded: computed(() => !isLoading.value),
       isBalancesLoading,

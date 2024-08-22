@@ -147,7 +147,7 @@ export const formatTokenInfoNew = (
       decimals: token.decimals,
       assetType: 'unknown',
       name: token.name,
-      symbol: token.symbol,
+      symbol: token.symbol.toUpperCase(),
       logoUrl: token.image_url,
       selected: false,
       approveData: {
