@@ -372,7 +372,6 @@ export default {
       return this.pairSymbols[0];
     },
     getCenterPrice() {
-      console.log(this.centerPrice, '___this.centerPrice22');
       if (!this.reversePrice) return this.centerPrice;
 
       const dec = this.lowPoolPrice ? 8 : 6;
@@ -522,7 +521,6 @@ export default {
     const closestTicks = await this.zapContract.closestTicksForCurrentTick(this.zapPool.address);
     this.initTicks(tickSpace);
 
-    console.log(tickSpace.toString(), '___tickSpace');
     this.closestTicks = [closestTicks[0]?.toString(), closestTicks[1]?.toString()];
     this.tickSpace = tickSpace.toString();
 
@@ -987,11 +985,6 @@ export default {
       const tickNumR = await this.zapContract.tickToPrice(this.zapPool.address, this.tickRight);
       this.maxPrice = new BN(tickNumR.toString())
         .div(10 ** this.pairTokensData[1].decimals).toFixed(this.lowPoolPrice ? 8 : 0);
-
-      console.log(this.minPrice, '__MINPRICE');
-      console.log(this.frontMinPrice, '__MINPRICE2');
-      console.log(this.maxPrice, '__MaxPRICE');
-      console.log(this.frontMaxPrice, '__MaxPRICE2');
       this.ticksAmount = val.toString();
 
       (this.$refs?.zapinChart as any)?.updateOptions(

@@ -1,8 +1,8 @@
 /* eslint-disable import/prefer-default-export */
+import { loadEmptyImg } from '@/utils/tokenLogo.ts';
 import type { TPool } from '@/types/common/pools';
 import type { TPoolData } from '@/types/api/overnightApi';
 import type { TTokenInfo } from '@/types/common/tokens';
-import { loadEmptyImg } from '@/utils/tokenLogo';
 
 export const formatPools = (
   poolData: TPoolData[],
@@ -15,13 +15,13 @@ export const formatPools = (
     { ...acc, [token.symbol?.toLowerCase()]: token.logoUrl }
   ), {}) ?? [];
 
-  console.log(tokenIconMapBySymbol, '__tokenIconMapBySymbol');
-
   const poolsList = poolData.map((pool: TPoolData) => ({
     id: pool.name + pool.tvl + pool.platform,
     name: pool.name.toUpperCase(),
-    token0Icon: tokenIconMap[pool.token0.tokenId.toLowerCase()] ?? tokenIconMapBySymbol[pool.token0.symbol.toLowerCase()] ?? loadEmptyImg(),
-    token1Icon: tokenIconMap[pool.token1.tokenId.toLowerCase()] ?? tokenIconMapBySymbol[pool.token1.symbol.toLowerCase()] ?? loadEmptyImg(),
+    token0Icon: tokenIconMap[pool.token0.tokenId.toLowerCase()]
+      ?? tokenIconMapBySymbol[pool.token0.symbol.toLowerCase()] ?? loadEmptyImg(),
+    token1Icon: tokenIconMap[pool.token1.tokenId.toLowerCase()]
+      ?? tokenIconMapBySymbol[pool.token1.symbol.toLowerCase()] ?? loadEmptyImg(),
     // Pool version not available
     poolVersion: `v${pool.poolVersion}`,
     // Chain ID not available

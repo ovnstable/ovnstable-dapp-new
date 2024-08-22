@@ -651,8 +651,6 @@ export default defineComponent({
   methods: {
     ...mapActions('odosData', [
       'triggerSuccessZapin',
-      'startSwapConfirmTimer',
-      'stopSwapConfirmTimer',
     ]),
     ...mapActions('zapinData', ['loadZapContract']),
     ...mapActions('errorModal', ['showErrorModalWithMsg']),
@@ -734,7 +732,6 @@ export default defineComponent({
 
       const poolTokens = poolTokensForZapMap[this.zapPool.address];
 
-      console.log(poolTokens, '___poolTokens');
       if (!poolTokens) return;
 
       this.$store.commit('odosData/changeState', {
@@ -1145,8 +1142,6 @@ export default defineComponent({
 
       console.log(data, '___data');
       parseLogs(data.logs, this.commitEventToStore);
-
-      this.stopSwapConfirmTimer();
       this.currentStage = zapInStep.APPROVE_GAUGE;
 
       this.$store.commit('odosData/changeState', {
@@ -1426,8 +1421,6 @@ export default defineComponent({
         return;
       }
 
-      this.startSwapConfirmTimer();
-
       const requestInput = [];
       for (let i = 0; i < requestInputTokens.length; i++) {
         requestInput.push({
@@ -1525,13 +1518,6 @@ export default defineComponent({
 
         this.isSwapLoading = false;
       } catch (e: any) {
-        if (e && e.code === 4001) {
-          if (e.message === 'User rejected the request.') {
-            this.stopSwapConfirmTimer();
-            this.clickOnStake = false;
-          }
-        }
-
         this.isSwapLoading = false;
         this.closeWaitingModal();
         this.showErrorModalWithMsg({ errorType: 'zap', errorMsg: e });

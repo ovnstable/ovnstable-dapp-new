@@ -189,7 +189,6 @@ const actions = {
       .catch((e: any) => {
         console.log(e);
         dispatch('errorModal/showErrorModalWithMsg', { errorType: 'estimateGas', errorMsg: e }, { root: true });
-        dispatch('stopSwapConfirmTimer');
       });
 
     await dataTx.wait();

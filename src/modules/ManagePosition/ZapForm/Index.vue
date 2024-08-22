@@ -386,8 +386,6 @@ export default {
     ...mapActions('swapModal', ['showSwapModal', 'showMintView']),
     ...mapActions('poolsData', ['setIsZapModalShow']),
     ...mapActions('odosData', [
-      'startSwapConfirmTimer',
-      'stopSwapConfirmTimer',
       'triggerSuccessZapin',
     ]),
     ...mapActions('errorModal', ['showErrorModalWithMsg']),
@@ -489,8 +487,6 @@ export default {
       const poolSelectedToken = getTokenBySymbol(tokens[0], this.allTokensList);
       const ovnSelectSelectedToken = getTokenBySymbol(tokens[1], this.allTokensList);
 
-      console.log(poolSelectedToken, '__poolSelectedToken');
-      console.log(ovnSelectSelectedToken, '__ovnSelectSelectedToken');
       if (!poolSelectedToken || !ovnSelectSelectedToken) return;
       poolSelectedToken.selected = true;
       ovnSelectSelectedToken.selected = true;
@@ -912,8 +908,6 @@ export default {
         return;
       }
 
-      this.startSwapConfirmTimer();
-
       const requestInput = [];
       for (let i = 0; i < requestInputTokens.length; i++) {
         requestInput.push({
@@ -978,19 +972,12 @@ export default {
             this.commitEventToStore('lastParsedTokenIdEvent', new BN(item.args[0]).toString(10));
           }
         }
-        console.log(logsData, '__logsData');
 
         this.isSwapLoading = false;
         this.currentStage = rebalanceStep.APPROVEGAUGE;
         this.positionStaked = true;
         this.approveNftPosition(true);
       } catch (e: any) {
-        if (e && e.code === 4001) {
-          if (e.message === 'User rejected the request.') {
-            this.stopSwapConfirmTimer();
-          }
-        }
-
         this.isSwapLoading = false;
         this.closeWaitingModal();
         this.showErrorModalWithMsg({ errorType: 'zap', errorMsg: e });

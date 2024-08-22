@@ -124,13 +124,11 @@ const actions = {
 
     let abiFile = {} as ContractAbi;
 
-    console.log(chainName, platformName, poolVersion, '___abiFile');
     if (chainName && platformName) {
       const abiFileSrc = zapAbiSrcMap[poolVersion]?.(chainName, platformName);
       abiFile = await loadAbi(abiFileSrc);
     }
 
-    console.log(abiFile, '___abiFile');
     commit('changeState', {
       field: 'zapContract',
       val: buildEvmContract(
@@ -170,7 +168,6 @@ const actions = {
     const abiFileSrcV3 = gaugeSrcMap[poolVersionList.v3rebalance](chainName, contractName);
     const abiGaugeContractFileV3 = await loadAbi(abiFileSrcV3);
 
-    console.log(abiGaugeContractFileV3, '___abiFileSrcV3');
     if (Object.keys(abiGaugeContractFileV3).length > 0) {
       commit('changeState', {
         field: 'gaugeContractV3',

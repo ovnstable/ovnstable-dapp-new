@@ -194,12 +194,10 @@ export default {
       this.setFilterParams(filterParams);
     },
     init() {
-      console.log(this.poolList, '__this.poolList');
       if (!this.poolList || this.poolList?.length === 0 || !this.zapPool) return;
       const foundPool = this.poolList
         .find((_: any) => _.address?.toLowerCase() === this.zapPool.address?.toLowerCase());
 
-      console.log(foundPool, '__foundPool');
       if (foundPool) this.gaugeAddress = foundPool.gauge;
     },
     changeTab(id: number) {
