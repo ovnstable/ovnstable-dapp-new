@@ -14,7 +14,10 @@
       <h1>POOLS</h1>
       <p>Use your Tokens+ and OVN in DeFi to maximize your yield.</p>
     </div>
-    <div class="pos-wrap__tabs">
+    <div
+      v-if="type === 'POOLS'"
+      class="pos-wrap__tabs"
+    >
       <SwitchTabs
         :tabs="tabsList"
         :active-tab="activeTab"
