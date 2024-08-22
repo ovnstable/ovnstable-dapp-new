@@ -101,7 +101,7 @@ const actions = {
     const poolVersion = state.zapPoolRoot?.poolVersion;
     const chainName = state.zapPoolRoot.chainName;
     const address = state.zapPoolRoot.address;
-    const platformName = state.currentZapPlatformContractType?.name ?? poolRoot?.platform;
+    const platformName = state.currentZapPlatformContractType?.name ?? poolRoot?.platform[0];
 
     if (!poolRoot) {
       console.error('Zap Pool Root not found: ', poolRoot);
@@ -111,7 +111,7 @@ const actions = {
     commit('changeState', {
       field: 'currentZapPlatformContractType',
       val: zapPlatformContractTypeMap[address] ?? zapPlatformContractTypeMap[address.toLowerCase()]
-        ?? zapPlatformContractTypeMap[state.zapPoolRoot.platform],
+        ?? zapPlatformContractTypeMap[state.zapPoolRoot.platform[0]],
     });
 
     if (!state.currentZapPlatformContractType) {

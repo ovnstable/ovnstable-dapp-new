@@ -66,13 +66,13 @@ export default {
     ]),
     getSymbolToken() {
       const { pool } = this.successData;
-      if (pool.platform === 'Pancake') return REWARD_TOKEN.CAKE;
-      if (pool.platform === 'Aerodrome') return REWARD_TOKEN.AERO;
+      if (pool.platform[0] === 'Pancake') return REWARD_TOKEN.CAKE;
+      if (pool.platform[0] === 'Aerodrome') return REWARD_TOKEN.AERO;
       return '';
     },
     openPositionOnPool(): string {
       const { pool } = this.successData;
-      if (pool.address || pool.platform) return getPlatformLink(pool.platform, pool.address);
+      if (pool.address || pool.platform[0]) return getPlatformLink(pool.platform[0], pool.address);
       return '';
     },
   },

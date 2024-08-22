@@ -48,7 +48,7 @@ export const getProportion = (
 
   const { gauge } = poolInfo;
 
-  if (zapPool.data.platform === 'Baseswap') {
+  if (zapPool.data.platform[0] === 'Baseswap') {
     return zapContract
       .getProportion(gauge, poolInfo.poolId.toString())
       .then((data: any) => data)

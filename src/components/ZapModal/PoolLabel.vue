@@ -33,7 +33,7 @@
           :class="isShort ? 'pool-detail-title-short' : ''"
           class="pool-detail-title"
         >
-          {{ typeof pool.platform === 'string' ? pool.platform : pool.platform }}
+          {{ typeof pool.platform === 'string' ? pool.platform : pool.platform[0] }}
         </span>
       </div>
       <div
@@ -44,7 +44,7 @@
           :class="isShort ? 'pool-detail-title-short' : ''"
           class="pool-detail-title"
         >
-          <span v-if="pool.platform === 'Beefy'">
+          <span v-if="pool.platform[0] === 'Beefy'">
             APY:&nbsp;
           </span>
           <span v-else>
