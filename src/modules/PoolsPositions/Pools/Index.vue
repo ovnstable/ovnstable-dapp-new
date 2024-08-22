@@ -48,7 +48,6 @@
 
 import {
   mapActions, mapGetters, mapState, mapMutations,
-  useStore,
 } from 'vuex';
 
 import ZapModal from '@/components/ZapModal/Index.vue';
@@ -57,7 +56,7 @@ import PoolsTable from '@/components/Pools/PoolsTable/Index.vue';
 import TableSkeleton from '@/components/TableSkeleton/Index.vue';
 import { POOL_TYPES } from '@/store/views/main/pools/index.ts';
 import { defineComponent, inject, type PropType } from 'vue';
-import { usePoolsQueryNew } from '@/hooks/fetch/usePoolsQuery.ts';
+import { usePoolsQuery } from '@/hooks/fetch/usePoolsQuery.ts';
 import { POOL_CATEGORIES } from '@/types/common/pools/index.ts';
 import PoolService, { type IPoolService } from '@/services/PoolService/PoolService.ts';
 import { ORDER_TYPE } from '@/services/PoolService/utils/poolsSort.ts';
@@ -83,9 +82,8 @@ export default defineComponent({
     },
   },
   setup: () => {
-    const { state } = useStore();
     const poolService = inject('poolService') as IPoolService;
-    const { data: poolList, isLoading: isPoolsLoading } = usePoolsQueryNew(poolService, state);
+    const { data: poolList, isLoading: isPoolsLoading } = usePoolsQuery(poolService);
     return {
       poolList,
       isPoolsLoading,
