@@ -32,7 +32,7 @@
             class="pools-table__row"
             :class="{
               'pools-table__new': key === indexOfLastNewPool,
-              'pools-table__blast': pool.platform[0] === 'Thruster',
+              'pools-table__blast': pool.platform === 'Thruster',
             }"
           >
             <div class="pools-table__chain">

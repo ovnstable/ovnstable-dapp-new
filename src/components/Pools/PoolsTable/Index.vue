@@ -40,7 +40,7 @@
             class="pools-table__row"
             :class="{
               'pools-table__new': key === indexOfLastNewPool,
-              'pools-table__blast': pool.platform[0] === 'Thruster',
+              'pools-table__blast': pool.platform === 'Thruster',
             }"
           >
             <div class="pools-table__chain">
@@ -102,7 +102,7 @@
                 class="card-label text-center"
               >
                 {{ formatMoneyComma(pool.apr, 2) }}%
-                <sup v-if="APY_POOLS.includes(pool.platform[0])">(apy)</sup>
+                <sup v-if="APY_POOLS.includes(pool.platform)">(apy)</sup>
               </div>
               <div
                 v-else

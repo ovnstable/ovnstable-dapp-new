@@ -147,7 +147,7 @@ export default {
     openPositionOnPool(): string {
       // eslint-disable-next-line prefer-destructuring
       const pool = this.successData.pool;
-      if (pool.address || pool.platform[0]) return getPlatformLink(pool.platform[0], pool.address);
+      if (pool.address || pool.platform) return getPlatformLink(pool.platform, pool.address);
       return '';
     },
   },
