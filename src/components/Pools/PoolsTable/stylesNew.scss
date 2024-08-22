@@ -26,10 +26,9 @@
     padding: 20px;
   }
   .pools-table__row,
-  .pools-table__new,
-  .pools-table__blast {
+  .pools-table__new{
     display: grid;
-    grid-template-columns: minmax(100px, 0.5fr) minmax(200px, 2.5fr) minmax(100px, 1fr) minmax(140px, 1fr) minmax(140px, 1.5fr) minmax(140px, 1fr);
+    grid-template-columns: minmax(100px, 0.5fr) minmax(200px, 2.5fr) minmax(100px, 1fr) minmax(250px, 2fr) minmax(140px, 1.5fr);
     justify-content: space-between;
     width: 100%;
     padding: 15px 0;
@@ -56,13 +55,10 @@
       border-color: var(--color-18);
     }
   }
-  .pools-table__blast {
-    grid-template-columns: minmax(100px, 0.5fr) minmax(200px, 2.5fr) minmax(100px, 1fr) minmax(140px, 1fr) minmax(140px, 1.5fr) minmax(140px, 1fr);
-  }
   
   .pools-header {
     display: grid;
-    grid-template-columns: minmax(100px, 0.5fr) minmax(200px, 2.5fr) minmax(100px, 1fr) minmax(140px, 1fr) minmax(140px, 1.5fr) minmax(140px, 1fr);
+    grid-template-columns: minmax(100px, 0.5fr) minmax(200px, 2.5fr) minmax(100px, 1fr) minmax(250px, 2fr) minmax(140px, 1.5fr);
     width: 100%;
     color: var(--color-2);
     margin-top: 10px;
@@ -486,7 +482,7 @@
       font-size: 12px;
     }
     .pools-table__row {
-      grid-template-columns: 0.5fr 3fr 2fr 1fr 1.35fr 0.9fr;
+      grid-template-columns: 0.5fr 3fr 2fr 1fr 1.35fr;
       button {
         font-size: 14px;
       }
@@ -498,9 +494,6 @@
     .pools-table__tag-token-3  {
       top: -60px;
       right: -36px;
-    }
-    .pools-table__blast {
-      grid-template-columns: 0.5fr 3fr 2fr 2fr 1fr 0.8fr 0.9fr;
     }
   }
   

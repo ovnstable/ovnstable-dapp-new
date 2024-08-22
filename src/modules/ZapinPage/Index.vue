@@ -47,6 +47,7 @@ import { usePoolsQueryNew } from '@/hooks/fetch/usePoolsQuery.ts';
 import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
 import TableSkeleton from '@/components/TableSkeleton/Index.vue';
 import type { TFilterPoolsParams } from '@/types/common/pools';
+import type { ITokenService } from '@/services/TokenService/TokenService';
 
 export default {
   name: 'ZapFormPage',

@@ -274,4 +274,4 @@ export default {
 };
 </script>
 
-  <style lang="scss" src="./stylesNew.scss" scoped />
+<style lang="scss" src="./stylesNew.scss" scoped />
