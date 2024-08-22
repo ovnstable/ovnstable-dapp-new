@@ -1,5 +1,7 @@
 import { loadJSON } from '@/utils/httpUtils.ts';
 
+export const loadEmptyImg = () => new URL('../assets/icons/currencies/select/undefined.webp', import.meta.url);
+
 export const loadTokenImage = (itemSymbol: any) => {
   let path = null;
 
