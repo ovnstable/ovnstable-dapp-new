@@ -1137,6 +1137,7 @@ export default defineComponent({
       );
 
       this.closeWaitingModal();
+      this.clearAndInitForm();
       this.$store.commit('odosData/changeState', {
         field: 'additionalSwapStepType',
         val: null,

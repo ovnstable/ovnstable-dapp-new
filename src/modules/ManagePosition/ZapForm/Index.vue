@@ -787,8 +787,6 @@ export default {
           proportions.inputTokens,
           proportions.outputTokens,
           proportions,
-          this.lastPoolInfoData,
-          this.zapPool,
         );
 
         return;
@@ -829,8 +827,6 @@ export default {
                 proportions.inputTokens,
                 proportions.outputTokens,
                 proportions,
-                this.lastPoolInfoData,
-                this.zapPool,
               );
             })
             .catch((e) => {
@@ -910,8 +906,6 @@ export default {
       requestInputTokens: any[],
       requestOutputTokens: any[],
       proportions: any,
-      poolInfo: any,
-      zapPool: any,
     ) {
       if (!this.zapContract) {
         console.error(

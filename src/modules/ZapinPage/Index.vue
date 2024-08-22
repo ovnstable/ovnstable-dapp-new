@@ -96,7 +96,7 @@ export default {
   },
   computed: {
     isLoadingData() {
-      return !this.zapPool
+      return isEmpty(this.zapPool)
         || isEmpty(this.allTokensList)
         || isEmpty(this.balanceTokensList);
     },
@@ -122,7 +122,7 @@ export default {
       const tokens = (this.$route.query?.tokens as string)?.split('-');
       const filterParams: Partial<TFilterPoolsParams> = {
         token0: tokens[0],
-        token1: tokens[1],
+        // token1: tokens[1],
       };
       this.setFilterParams(filterParams);
     },

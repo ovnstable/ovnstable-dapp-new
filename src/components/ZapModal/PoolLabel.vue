@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="pool"
+    v-if="pool && pool?.platform?.length > 0"
     class="zap-header"
   >
     <div class="zap-header__content">
