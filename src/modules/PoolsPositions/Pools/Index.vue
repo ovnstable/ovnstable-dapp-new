@@ -33,6 +33,30 @@
             @search="updateSearch"
           />
         </template>
+        <template
+          v-if="!isPoolsLoading && isMorePoolsToShow"
+          #footer
+        >
+          <div
+            class="table-extend"
+            @click="isOpenHiddenPools = !isOpenHiddenPools"
+            @keypress="isOpenHiddenPools = !isOpenHiddenPools"
+          >
+            <div
+              class="table-extend__arrow"
+            >
+              <BaseIcon name="ArrowDown" />
+            </div>
+            <h1>
+              {{ isOpenHiddenPools ? "CLOSE POOLS" : "OPEN HIDDEN POOLS" }}
+            </h1>
+            <div
+              class="table-extend__arrow"
+            >
+              <BaseIcon name="ArrowDown" />
+            </div>
+          </div>
+        </template>
       </PoolsTable>
     </div>
 
@@ -92,6 +116,7 @@ export default defineComponent({
   data: () => ({
     poolTabType: POOL_TYPES.ALL,
     isOpenHiddenPools: false,
+    isMorePoolsToShow: true,
 
     isShowOnlyZap: false,
     isShowAprLimit: false,
@@ -99,17 +124,6 @@ export default defineComponent({
     networkIds: [] as number[], // [] for ALL or networks,
     category: POOL_CATEGORIES.ALL as POOL_CATEGORIES,
     searchQuery: '',
-
-    // New filter
-    // token0: '' as string,
-    // token1: '' as string,
-    // chain: [] as number[],
-    // minTvl: 0 as number,
-    // protocol: [] as string[],
-    // page: 0 as number,
-    // limit: 0 as number,
-    // sort: '' as string,
-
     orderType: ORDER_TYPE.TVL_UP,
     isDefaultOrder: true as boolean,
     ORDER_TYPE,
