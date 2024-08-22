@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/vue-query';
-import TokenService from '@/services/TokenService/TokenService.ts';
+import TokenService, { type ITokenService } from '@/services/TokenService/TokenService.ts';
 import { computed } from 'vue';
 import BalanceService from '@/services/BalanceService/BalanceService.ts';
 import { mergeTokenLists } from '@/services/TokenService/utils/index.ts';
@@ -12,7 +12,7 @@ export const useRefreshBalances = () => () => 0;
 export const allTokensMap = (tokensList: any[]): any => new Map(tokensList
   .map((token) => [token.address, token]));
 
-export const useTokensQuery = (stateData: any) => {
+export const useTokensQuery = (tokenService: ITokenService, stateData: any) => {
   const networkId = computed(() => stateData.network.networkId);
   const address = computed(() => stateData.accountData.account);
   const provider = computed(() => stateData.web3.evmProvider);
@@ -20,7 +20,7 @@ export const useTokensQuery = (stateData: any) => {
   const tokensQuery = useQuery(
     {
       queryKey: ['tokens'],
-      queryFn: TokenService.fetchTokens,
+      queryFn: tokenService.fetchTokens,
       refetchInterval: REFETCH_INTERVAL,
       refetchOnWindowFocus: false,
     },
@@ -29,7 +29,7 @@ export const useTokensQuery = (stateData: any) => {
   const pricesQuery = useQuery(
     {
       queryKey: ['prices', networkId],
-      queryFn: () => TokenService.fetchTokenPricesByNetworkId(networkId.value),
+      queryFn: () => tokenService.fetchTokenPricesByNetworkId(networkId.value),
       enabled: !!networkId.value && !!provider.value,
       refetchInterval: REFETCH_INTERVAL,
       refetchOnWindowFocus: false,
@@ -50,6 +50,7 @@ export const useTokensQuery = (stateData: any) => {
 
   const balancesQuery = useQuery(
     {
+      // eslint-disable-next-line @tanstack/query/exhaustive-deps
       queryKey: ['balances', address, networkId],
       queryFn: () => BalanceService.fetchTokenBalances(
         provider.value,
@@ -102,5 +103,37 @@ export const useTokensQuery = (stateData: any) => {
     isLoading: isAnyLoading,
     isError: isAnyError,
     isBalancesLoading: balancesQuery.isLoading,
+  };
+};
+
+export const useTokensQueryNew = (tokenService: ITokenService, stateData: any) => {
+  const networkId = computed(() => stateData.network.networkId);
+
+  const tokensQuery = useQuery(
+    {
+      queryKey: ['allTokens'],
+      queryFn: async () => tokenService.fetchAllTokens(),
+      refetchInterval: false,
+      refetchOnWindowFocus: false,
+    },
+  );
+
+  const getTokenInfo = () => {
+    const tokensData = tokensQuery.data.value;
+
+    if (tokensData) {
+      const tokenInfo = TokenService.formatTokenInfo(tokensData, networkId.value);
+      return tokenInfo;
+    }
+    return [];
+  };
+
+  return {
+    data: computed(getTokenInfo),
+    error: tokensQuery.error,
+    isFetching: tokensQuery.isFetching,
+    isLoading: tokensQuery.isLoading,
+    isError: tokensQuery.isError,
+    isBalancesLoading: tokensQuery.isLoading,
   };
 };

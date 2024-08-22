@@ -1,3 +1,23 @@
+export type TPool = {
+    id: string,
+    name: string,
+    token0Icon: string,
+    token1Icon: string,
+    poolVersion: string,
+    chain: number,
+    chainName: string,
+    address: string,
+    platform: string[],
+    tvl: string,
+    poolTag: string,
+    explorerUrl: string,
+    gauge: string,
+    fee: string,
+    initPrice: string,
+    price: string,
+    tickSpacing: string,
+}
+
 export type TPoolInfo = {
     id: string,
     name: string,
@@ -9,7 +29,7 @@ export type TPoolInfo = {
     chain: number,
     chainName: string,
     address: string,
-    platform: string[],
+    platform: string,
     tvl: number,
     apr: number,
     poolTag: null | string,
@@ -52,8 +72,19 @@ export enum POOL_CATEGORIES {
     OVN,
   }
 
+// export type TFilterPoolsParams = {
+//     networkIds: number[],
+//     category: POOL_CATEGORIES,
+//     searchQuery: string,
+// }
+
 export type TFilterPoolsParams = {
-    networkIds: number[],
-    category: POOL_CATEGORIES,
-    searchQuery: string,
+    token0: string,
+    token1: string,
+    chain: string[],
+    minTvl: string,
+    protocol: string[],
+    page: string | number,
+    limit: string | number,
+    sort: string,
 }

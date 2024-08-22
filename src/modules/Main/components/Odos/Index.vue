@@ -263,9 +263,9 @@ import {
   WHITE_LIST_ODOS,
 } from '@/store/helpers/index.ts';
 import BigNumber from 'bignumber.js';
-import { computed, defineComponent } from 'vue';
+import { computed, defineComponent, inject } from 'vue';
 import { useTokensQuery, useRefreshBalances } from '@/hooks/fetch/useTokensQuery.ts';
-import TokenService from '@/services/TokenService/TokenService.ts';
+import TokenService, { type ITokenService } from '@/services/TokenService/TokenService.ts';
 
 export default defineComponent({
   name: 'SwapForm',
@@ -286,13 +286,15 @@ export default defineComponent({
     },
   },
   setup: () => {
-    const store = useStore() as any;
+    const { state } = useStore() as any;
+
+    const tokenService = inject('tokenService') as ITokenService;
 
     const {
       data: allTokensList,
       isLoading,
       isBalancesLoading,
-    } = useTokensQuery(store.state);
+    } = useTokensQuery(tokenService, state);
 
     return {
       allTokensList,
@@ -549,6 +551,7 @@ export default defineComponent({
       val: 'OVERNIGHT_SWAP',
     });
 
+    this.setIsZapModalShow(false);
     this.clearForm();
     await this.init();
     if (this.$route.query.action === 'swap-out') this.changeSwap();
@@ -562,6 +565,7 @@ export default defineComponent({
         'initWalletTransaction',
       ],
     ),
+    ...mapActions('poolsData', ['setIsZapModalShow']),
     ...mapActions('errorModal', ['showErrorModalWithMsg']),
     ...mapActions('waitingModal', ['showWaitingModal', 'closeWaitingModal']),
     ...mapActions('walletAction', ['connectWallet']),

@@ -2,9 +2,9 @@
 import BN from 'bignumber.js';
 import { buildLink } from '@/store/views/main/pools/helpers.ts';
 import { getUsdStr, sumBnStr } from '@/utils/tokens.ts';
-import type { TPoolInfo } from '@/types/common/pools';
 import type { TTokenInfo } from '@/types/common/tokens/index.ts';
 import type { IPositionsInfo, TPositionData, TTicks } from '@/types/positions/index.ts';
+import type { TPoolInfo } from '@/types/common/pools/index.ts';
 
 const AERO_ADDR = '0x940181a94A35A4569E4529A3CDfB74e38FD98631';
 // const BN_USD_STRING_BASE = 2;
@@ -52,12 +52,12 @@ export const getPositionProportion = (
 };
 
 const getPlatformLinks = (
-  platforms: string[],
+  platform: string,
   pool: TPoolInfo,
-) => platforms.map((platform: string) => ({
+) => ([{
   platform,
   link: buildLink(pool, platform) ?? '',
-}));
+}]);
 
 export const formatPositionData = (
   posDataArr: TPositionData[],
@@ -124,7 +124,7 @@ export const formatPositionData = (
           displayedUsdValue: getMinVal(rewardUsdTotal),
         },
         emissions,
-        platformLinks: getPlatformLinks(pool.platform, pool),
+        platformLinks: getPlatformLinks(pool.platform[0], pool),
         tokenId,
         ticks,
         tokenNames,

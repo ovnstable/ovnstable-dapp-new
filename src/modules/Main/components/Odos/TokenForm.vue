@@ -66,6 +66,7 @@
         </div>
       </div>
       <div
+        v-if="!hideBalance"
         :class="{ 'input-tokens__balance': isInputToken }"
         @click="clickOnBalance"
         @keypress="clickOnBalance"
@@ -114,6 +115,10 @@ export default {
       type: Boolean as PropType<boolean | Ref<boolean>>,
       required: false,
       default: false,
+    },
+    hideBalance: {
+      type: Boolean,
+      required: false,
     },
     tokenInfo: {
       type: Object,

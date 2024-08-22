@@ -173,8 +173,8 @@ export default {
       };
     },
     getSymbolToken() {
-      if (this.zapPool.platform[0] === 'Pancake') return REWARD_TOKEN.CAKE;
-      if (this.zapPool.platform[0] === 'Aerodrome') return REWARD_TOKEN.AERO;
+      if (this.zapPool.platform === 'Pancake') return REWARD_TOKEN.CAKE;
+      if (this.zapPool.platform === 'Aerodrome') return REWARD_TOKEN.AERO;
       return '';
     },
     getImgToken() {
@@ -226,7 +226,6 @@ export default {
     },
     initLiqTokens() {
       const poolTokens = poolTokensForZapMap[this.zapPool.address];
-      console.log(this.allTokensList, '__this.allTokensList');
       const token0 = getTokenByAddress(poolTokens[0].address, this.allTokensList);
       const token1 = getTokenByAddress(poolTokens[1].address, this.allTokensList);
 

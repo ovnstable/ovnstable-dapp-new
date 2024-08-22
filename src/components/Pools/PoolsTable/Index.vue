@@ -66,33 +66,6 @@
                     :src="pool.token1Icon"
                   />
                 </div>
-                <div
-                  v-if="pool.token2Icon"
-                  class="pools-table__tokens-item"
-                >
-                  <img
-                    alt="token"
-                    :src="pool.token2Icon"
-                  />
-                  <span>
-                    {{ getTokenNames(pool)[2] }}
-                  </span>
-                  <div
-                    v-if="pool.poolTag && pool.token2Icon"
-                    class="pools-table__tag-token-3"
-                  >
-                    <BaseIcon :name="getIconName(pool.poolTag)" />
-                  </div>
-                </div>
-                <div
-                  v-if="pool.token3Icon"
-                  class="pools-table__tokens-item"
-                >
-                  <img
-                    alt="token"
-                    :src="pool.token3Icon"
-                  />
-                </div>
               </div>
               <div class="pools-table__details">
                 <div class="pools-table__details-row">
@@ -161,23 +134,22 @@
             </div>
             <div class="pools-table__platform-row">
               <a
-                v-for="(poolPlat, key) in pool.platform"
                 :key="key"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="pools-table__platform"
-                :href="getPlatformLink(pool, poolPlat)"
+                :href="getPlatformLink(pool, pool.platform)"
               >
                 <BaseIcon
                   class="pools-table__platform-icon"
-                  :name="poolPlat"
+                  :name="pool.platform"
                 />
 
                 <span v-if="pool.poolNameForAgregator">
                   {{ pool.poolNameForAgregator.toUpperCase() }}
                 </span>
                 <span v-else>
-                  {{ poolPlat.toUpperCase() }}
+                  {{ pool.platform[0].toUpperCase() }}
                 </span>
                 <div class="button-link">
                   <BaseIcon
@@ -299,9 +271,6 @@ export default {
     },
     getIconName(poolTag: POOL_TAG) {
       return tagIconMap[poolTag];
-    },
-    getTokenNames(pool: any) {
-      return pool.name.split('/');
     },
     getPlatformLink(pool: any, platform: string) {
       return buildLink(pool, platform) ?? '';

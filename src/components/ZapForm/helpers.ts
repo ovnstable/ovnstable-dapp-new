@@ -49,3 +49,21 @@ export const createScaledArray = (start: number, end: number, decimals = 4, maxI
 };
 
 export default decodeTokenEvent;
+
+export const mapExcludeLiquidityPlatform = {
+  Chronos: ['Chronos Volatile'], // "Chronos Stable"
+  // Pancake: ["PancakeSwap", "PancakeSwap V3"],
+  // Beefy: ["Aerodrome Stable", "Aerodrome Volatile"],
+  Aerodrome: ['Aerodrome Slipstream'],
+  Velodrome: [
+    'Velodrome Stable',
+    'Velodrome Volatile',
+    'Velodrome V2 Converter',
+    'Velodrome V2 Stable',
+    'Velodrome V2 Volatile',
+  ],
+  // Alienbase: ["Alien Base", "Alien Base Stable"],
+  // Convex: ["Curve Crypto Registry", "Curve Factory", "Curve Registry"]
+} as any;
+
+export const sourceLiquidityBlacklist = ['Hashflow', 'Wombat'];

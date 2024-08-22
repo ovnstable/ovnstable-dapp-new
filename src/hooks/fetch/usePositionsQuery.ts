@@ -5,6 +5,8 @@ import { usePoolsQuery } from '@/hooks/fetch/usePoolsQuery.ts';
 import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
 import { computed } from 'vue';
 import PositionsService from '@/services/PositionsService/PositionsService.ts';
+import type { ITokenService } from '@/services/TokenService/TokenService';
+import type { IPoolService } from '@/services/PoolService/PoolService';
 
 const isDataAvailable = (
   query: UseQueryReturnType<any[], any>,
@@ -14,15 +16,20 @@ const isAllDataAvailable = (
   queries: UseQueryReturnType<any[], any>[],
 ) => queries.every((query) => isDataAvailable(query));
 
-export const usePositionsQuery = (stateData: any) => {
+export const usePositionsQuery = (
+  tokenService: ITokenService,
+  poolService: IPoolService,
+  stateData: any,
+) => {
   const networkId = computed(() => stateData.network.networkId);
   const address = computed(() => stateData.accountData.account);
 
-  const poolsQuery = usePoolsQuery();
-  const tokensQuery = useTokensQuery(stateData);
+  const poolsQuery = usePoolsQuery(poolService);
+  const tokensQuery = useTokensQuery(tokenService, stateData);
 
   const positionsQuery = useQuery(
     {
+      // eslint-disable-next-line @tanstack/query/exhaustive-deps
       queryKey: ['positions', networkId, address],
       queryFn: async () => PositionsService.fetchPositions(stateData),
       enabled: !!networkId && !!address,

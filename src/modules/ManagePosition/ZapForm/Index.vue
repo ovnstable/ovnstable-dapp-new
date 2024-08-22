@@ -81,9 +81,9 @@
             </div>
           </div>
           <ZapinV3
-
             :zap-pool="zapPool"
             :zap-contract="zapContract"
+            :tokens-data="outputTokens"
             :ticks-init="[zapPool?.ticks?.tickLower, zapPool?.ticks?.tickUpper]"
             :class="currentSection === zapMobileSection.SET_PRICE_RANGE && 'mobile-active'"
             @set-range="setRangeV3"
@@ -190,19 +190,20 @@ import {
 import odosApiService from '@/services/odos-api-service.ts';
 
 import Spinner from '@/components/Spinner/Index.vue';
-import ChangeNetwork from '@/components/ZapModal/ZapForm/ChangeNetwork.vue';
+import ChangeNetwork from '@/components/ZapForm/ChangeNetwork.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
-import ZapinV3 from '@/components/ZapModal/ZapForm/ZapinV3.vue';
+import ZapinV3 from '@/components/ZapForm/ZapinV3.vue';
 import { poolsInfoMap, poolTokensForZapMap } from '@/store/views/main/zapin/mocks.ts';
 import BN from 'bignumber.js';
 import TokenForm from '@/modules/Main/components/Odos/TokenForm.vue';
 import { MANAGE_FUNC, rebalanceStep } from '@/store/modals/waiting-modal.ts';
 import ZapInStepsRow from '@/components/StepsRow/ZapinRow/RebalanceRow.vue';
-import { cloneDeep } from 'lodash';
-import { markRaw } from 'vue';
+import { cloneDeep, isEmpty } from 'lodash';
+import { inject, markRaw } from 'vue';
 import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
 import { useTokensQuery, useRefreshBalances } from '@/hooks/fetch/useTokensQuery.ts';
+import type { ITokenService } from '@/services/TokenService/TokenService.ts';
 import { parseLogs } from './helpers.ts';
 
 enum zapMobileSection {
@@ -240,11 +241,13 @@ export default {
     },
   },
   setup: () => {
-    const store = useStore() as any;
+    const { state } = useStore() as any;
+
+    const tokenService = inject('tokenService') as ITokenService;
 
     const {
       isBalancesLoading,
-    } = useTokensQuery(store.state);
+    } = useTokensQuery(tokenService, state);
 
     return {
       isBalancesLoading,
@@ -317,15 +320,10 @@ export default {
       return false;
     },
     zapsLoaded() {
-      // console.log(this.allTokensList, '__this.allTokensList');
-      // console.log(this.outputTokens, '__this.outputTokens');
-      // console.log(this.zapPool, '__this.zapPool');
-      // console.log(this.zapContract, '__this.zapContract');
-      // console.log(this.isZapLoaded, '__this.isZapLoaded');
-      return this.allTokensList?.length > 0
-        && this.outputTokens?.length > 0
+      return !isEmpty(this.allTokensList)
+        && !isEmpty(this.outputTokens)
         && this.zapPool
-        && this.zapContract
+        && !isEmpty(this.zapContract)
         && this.isZapLoaded;
     },
     isOutputTokensRemovable() {
@@ -789,8 +787,6 @@ export default {
           proportions.inputTokens,
           proportions.outputTokens,
           proportions,
-          this.lastPoolInfoData,
-          this.zapPool,
         );
 
         return;
@@ -831,8 +827,6 @@ export default {
                 proportions.inputTokens,
                 proportions.outputTokens,
                 proportions,
-                this.lastPoolInfoData,
-                this.zapPool,
               );
             })
             .catch((e) => {
@@ -850,7 +844,7 @@ export default {
       let sourceBlacklist = [...this.sourceLiquidityBlacklist];
       // excluding platform for big liquidities zapins
       const excludeLiquidityByPlatform = this.mapExcludeLiquidityPlatform[
-        this.zapPool.platform[0]
+        this.zapPool.platform
       ];
       if (excludeLiquidityByPlatform && excludeLiquidityByPlatform.length) {
         sourceBlacklist = [...sourceBlacklist, ...excludeLiquidityByPlatform];
@@ -912,8 +906,6 @@ export default {
       requestInputTokens: any[],
       requestOutputTokens: any[],
       proportions: any,
-      poolInfo: any,
-      zapPool: any,
     ) {
       if (!this.zapContract) {
         console.error(
@@ -961,7 +953,6 @@ export default {
         gasLimit: 1000000,
       };
 
-      console.log(zapPool, '----zapPool');
       console.log(this.zapContract, '-this.zapContract');
 
       console.log(txData, 'swapdata');

@@ -124,7 +124,7 @@ import {
 } from '@/store/helpers/index.ts';
 
 import Spinner from '@/components/Spinner/Index.vue';
-import ChangeNetwork from '@/components/ZapModal/ZapForm/ChangeNetwork.vue';
+import ChangeNetwork from '@/components/ZapForm/ChangeNetwork.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import { poolTokensForZapMap } from '@/store/views/main/zapin/mocks.ts';
 import { cloneDeep } from 'lodash';
@@ -133,9 +133,12 @@ import { formatInputTokens } from '@/utils/tokens.ts';
 import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
 import { REWARD_TOKEN } from '@/store/views/main/zapin/index.ts';
 import { loadTokenImage } from '@/utils/tokenLogo.ts';
-import { computed, defineComponent, type ComputedRef } from 'vue';
+import {
+  computed, defineComponent, inject, type ComputedRef,
+} from 'vue';
 import { useTokensQuery, useRefreshBalances } from '@/hooks/fetch/useTokensQuery.ts';
 import type { TTokenInfo } from '@/types/common/tokens/index.ts';
+import type { ITokenService } from '@/services/TokenService/TokenService';
 
 export default defineComponent({
   name: 'WithdrawForm',
@@ -158,9 +161,11 @@ export default defineComponent({
     },
   },
   setup() {
-    const store = useStore() as any;
+    const { state } = useStore() as any;
 
-    const { data: allTokensList } = useTokensQuery(store.state);
+    const tokenService = inject('tokenService') as ITokenService;
+
+    const { data: allTokensList } = useTokensQuery(tokenService, state);
 
     return {
       allTokensMap: computed(() => new Map(
@@ -196,8 +201,8 @@ export default defineComponent({
     ...mapGetters('accountData', ['account']),
 
     getSymbolToken() {
-      if (this.zapPool.platform[0] === 'Pancake') return REWARD_TOKEN.CAKE;
-      if (this.zapPool.platform[0] === 'Aerodrome') return REWARD_TOKEN.AERO;
+      if (this.zapPool.platform === 'Pancake') return REWARD_TOKEN.CAKE;
+      if (this.zapPool.platform === 'Aerodrome') return REWARD_TOKEN.AERO;
       return '';
     },
     getImgToken() {

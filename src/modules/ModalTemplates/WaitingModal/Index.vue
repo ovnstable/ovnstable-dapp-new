@@ -30,7 +30,7 @@
 </template>
 
 <script lang="ts">
-import { mapState, mapGetters } from 'vuex';
+import { mapGetters } from 'vuex';
 import Carousel from '@/modules/ModalTemplates/components/Carousel.vue';
 import Spinner from '@/components/Spinner/Index.vue';
 import ModalComponent from '@/components/Modal/Index.vue';
@@ -49,7 +49,7 @@ export default {
   },
   computed: {
     ...mapGetters('waitingModal', ['STAGES_MAP_GET']),
-    ...mapState('poolsData', ['isZapModalShow']),
+    ...mapGetters('poolsData', ['isZapModalShow']),
   },
 };
 </script>

@@ -73,24 +73,22 @@
 import {
   mapActions, mapGetters, mapState, mapMutations,
 } from 'vuex';
-import BaseIcon from '@/components/Icon/BaseIcon.vue';
 
 import ZapModal from '@/components/ZapModal/Index.vue';
 import PoolsFilter from '@/components/Pools/PoolsFilter/Index.vue';
 import PoolsTable from '@/components/Pools/PoolsTable/Index.vue';
 import TableSkeleton from '@/components/TableSkeleton/Index.vue';
 import { POOL_TYPES } from '@/store/views/main/pools/index.ts';
-import { defineComponent, type PropType } from 'vue';
+import { defineComponent, inject, type PropType } from 'vue';
 import { usePoolsQuery } from '@/hooks/fetch/usePoolsQuery.ts';
 import { POOL_CATEGORIES } from '@/types/common/pools/index.ts';
-import PoolService from '@/services/PoolService/PoolService.ts';
+import PoolService, { type IPoolService } from '@/services/PoolService/PoolService.ts';
 import { ORDER_TYPE } from '@/services/PoolService/utils/poolsSort.ts';
 import { POOL_SHOW_LIMIT } from '@/constants/pools/index.ts';
 
 export default defineComponent({
   name: 'PoolsContainer',
   components: {
-    BaseIcon,
     PoolsFilter,
     TableSkeleton,
     PoolsTable,
@@ -107,9 +105,9 @@ export default defineComponent({
       required: false,
     },
   },
-
   setup: () => {
-    const { data: poolList, isLoading: isPoolsLoading } = usePoolsQuery();
+    const poolService = inject('poolService') as IPoolService;
+    const { data: poolList, isLoading: isPoolsLoading } = usePoolsQuery(poolService);
     return {
       poolList,
       isPoolsLoading,
@@ -117,8 +115,8 @@ export default defineComponent({
   },
   data: () => ({
     poolTabType: POOL_TYPES.ALL,
-    isMorePoolsToShow: true,
     isOpenHiddenPools: false,
+    isMorePoolsToShow: true,
 
     isShowOnlyZap: false,
     isShowAprLimit: false,
@@ -126,7 +124,6 @@ export default defineComponent({
     networkIds: [] as number[], // [] for ALL or networks,
     category: POOL_CATEGORIES.ALL as POOL_CATEGORIES,
     searchQuery: '',
-
     orderType: ORDER_TYPE.TVL_UP,
     isDefaultOrder: true as boolean,
     ORDER_TYPE,
@@ -173,7 +170,6 @@ export default defineComponent({
   methods: {
     ...mapActions('poolsData', ['openZapIn', 'setIsZapModalShow']),
     ...mapMutations('poolsData', ['changeState']),
-
     switchPoolsTab(type: POOL_CATEGORIES) {
       this.isDefaultOrder = true;
       this.isOpenHiddenPools = false;

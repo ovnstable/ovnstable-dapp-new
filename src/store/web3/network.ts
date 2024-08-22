@@ -213,7 +213,7 @@ const state = {
   ovnExplorerURL: 'https://basescan.org/',
   showDeprecated: false,
   network: null,
-  networkLoaded: false
+  networkLoaded: false,
 };
 
 const getters = {
@@ -341,7 +341,7 @@ const actions = {
     commit('setShowDepracated', !state.showDeprecated);
   },
   changeDappNetwork({
-    commit, dispatch,
+    commit,
   }: any, networkName: any) {
     commit('setAppApiUrl', getNetworkParams(networkName).appApiUrl);
     commit('setNetworkName', getNetworkParams(networkName).networkName);

@@ -153,8 +153,8 @@ import GasSettings from '@/modules/Main/components/MintRedeem/GasSettings.vue';
 import BigNumber from 'bignumber.js';
 import { ABI_Exchange, ABI_Market } from '@/assets/abi/index.ts';
 import { getAllowanceValue, approveToken } from '@/utils/contractApprove.ts';
-import TokenService from '@/services/TokenService/TokenService.ts';
-import { defineComponent } from 'vue';
+import TokenService, { type ITokenService } from '@/services/TokenService/TokenService.ts';
+import { defineComponent, inject } from 'vue';
 import { useTokensQuery, useRefreshBalances } from '@/hooks/fetch/useTokensQuery.ts';
 import type { TTokenInfo } from '@/types/common/tokens/index.ts';
 
@@ -168,12 +168,14 @@ export default defineComponent({
     ButtonComponent,
   },
   setup: () => {
-    const store = useStore() as any;
+    const { state } = useStore() as any;
+
+    const tokenService = inject('tokenService') as ITokenService;
 
     const {
       data: allTokensList,
       isLoading,
-    } = useTokensQuery(store.state);
+    } = useTokensQuery(tokenService, state);
 
     return {
       allTokensList,

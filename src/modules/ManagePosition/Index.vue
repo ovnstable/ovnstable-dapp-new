@@ -85,6 +85,9 @@ import SwitchTabs from '@/components/SwitchTabs/Index.vue';
 import PoolData from '@/modules/ManagePosition/PoolData.vue';
 import { usePositionsQuery } from '@/hooks/fetch/usePositionsQuery.ts';
 import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
+import { inject } from 'vue';
+import type { ITokenService } from '@/services/TokenService/TokenService';
+import type { IPoolService } from '@/services/PoolService/PoolService';
 
 export enum MANAGE_TAB {
   REBALANCE,
@@ -106,10 +109,13 @@ export default {
     SwitchTabs,
   },
   setup() {
-    const store = useStore() as any;
+    const { state } = useStore() as any;
 
-    const { data: getUserPositions } = usePositionsQuery(store.state);
-    const { data: allTokensList, isLoading: tokensLoading } = useTokensQuery(store.state);
+    const tokenService = inject('tokenService') as ITokenService;
+    const poolService = inject('poolService') as IPoolService;
+
+    const { data: getUserPositions } = usePositionsQuery(tokenService, poolService, state);
+    const { data: allTokensList, isLoading: tokensLoading } = useTokensQuery(tokenService, state);
 
     return {
       allTokensList,

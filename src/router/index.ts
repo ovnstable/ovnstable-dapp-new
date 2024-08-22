@@ -35,6 +35,11 @@ const router = createRouter({
       component: () => import('@/views/Pools/Index.vue'),
     },
     {
+      path: '/pools/zapin/:platform',
+      name: 'zapinPool',
+      component: () => import('@/views/Zapin/Index.vue'),
+    },
+    {
       path: '/positions',
       name: 'positions',
       component: () => import('@/views/Positions/Index.vue'),
