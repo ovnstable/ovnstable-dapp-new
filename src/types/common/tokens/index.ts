@@ -48,3 +48,13 @@ export interface IInputTokenInfo extends TInputToken {
   proportion: string,
   displayedValue: string,
 }
+
+export interface ISuccessTokenInfo extends TTokenInfo {
+  value: string,
+}
+
+export type ISuccessTokenData = {
+  [key: string]: any;
+} & {
+  usdValue: string;
+};
