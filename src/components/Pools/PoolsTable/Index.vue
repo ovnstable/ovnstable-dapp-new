@@ -138,11 +138,11 @@
                 target="_blank"
                 rel="noopener noreferrer"
                 class="pools-table__platform"
-                :href="getPlatformLink(pool, pool.platform)"
+                :href="getPlatformLink(pool, pool.platform[0])"
               >
                 <BaseIcon
                   class="pools-table__platform-icon"
-                  :name="pool.platform"
+                  :name="pool.platform[0]"
                 />
 
                 <span v-if="pool.poolNameForAgregator">
