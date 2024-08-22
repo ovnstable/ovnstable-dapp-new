@@ -199,7 +199,7 @@ import BN from 'bignumber.js';
 import TokenForm from '@/modules/Main/components/Odos/TokenForm.vue';
 import { MANAGE_FUNC, rebalanceStep } from '@/store/modals/waiting-modal.ts';
 import ZapInStepsRow from '@/components/StepsRow/ZapinRow/RebalanceRow.vue';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, isEmpty } from 'lodash';
 import { inject, markRaw } from 'vue';
 import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
 import { useTokensQuery, useRefreshBalances } from '@/hooks/fetch/useTokensQuery.ts';
@@ -320,15 +320,10 @@ export default {
       return false;
     },
     zapsLoaded() {
-      // console.log(this.allTokensList, '__this.allTokensList');
-      // console.log(this.outputTokens, '__this.outputTokens');
-      // console.log(this.zapPool, '__this.zapPool');
-      // console.log(this.zapContract, '__this.zapContract');
-      // console.log(this.isZapLoaded, '__this.isZapLoaded');
-      return this.allTokensList?.length > 0
-        && this.outputTokens?.length > 0
+      return !isEmpty(this.allTokensList)
+        && !isEmpty(this.outputTokens)
         && this.zapPool
-        && this.zapContract
+        && !isEmpty(this.zapContract)
         && this.isZapLoaded;
     },
     isOutputTokensRemovable() {
@@ -964,7 +959,6 @@ export default {
         gasLimit: 1000000,
       };
 
-      console.log(zapPool, '----zapPool');
       console.log(this.zapContract, '-this.zapContract');
 
       console.log(txData, 'swapdata');

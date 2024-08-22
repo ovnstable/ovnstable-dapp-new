@@ -124,7 +124,7 @@ export const formatPositionData = (
           displayedUsdValue: getMinVal(rewardUsdTotal),
         },
         emissions,
-        platformLinks: getPlatformLinks(pool.platform, pool),
+        platformLinks: getPlatformLinks(pool.platform[0], pool),
         tokenId,
         ticks,
         tokenNames,

@@ -97,18 +97,18 @@
                 target="_blank"
                 rel="noopener noreferrer"
                 class="pools-table__platform"
-                :href="getPlatformLink(pool, pool.platform)"
+                :href="getPlatformLink(pool, pool.platform[0])"
               >
                 <BaseIcon
                   class="pools-table__platform-icon"
-                  :name="pool.platform"
+                  :name="pool.platform[0]"
                 />
 
                 <span v-if="pool.poolNameForAgregator">
                   {{ pool.poolNameForAgregator.toUpperCase() }}
                 </span>
                 <span v-else>
-                  {{ pool.platform.toUpperCase() }}
+                  {{ pool.platform[0].toUpperCase() }}
                 </span>
                 <div class="button-link">
                   <BaseIcon
@@ -141,8 +141,6 @@
         <slot name="footer" />
       </div>
     </div>
-
-    <ZapInComponent />
   </div>
 </template>
 
@@ -151,7 +149,6 @@
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import { formatNumberToMln, formatNumberToThousands } from '@/utils/numbers.ts';
-import ZapInComponent from '@/components/ZapModal/Index.vue';
 import { buildLink, checkIsEveryStable } from '@/store/views/main/pools/helpers.ts';
 
 const getPoolDescStr = (
@@ -163,7 +160,6 @@ export default {
   name: 'PoolsTable',
   components: {
     BaseIcon,
-    ZapInComponent,
     ButtonComponent,
   },
   props: {
@@ -200,7 +196,7 @@ export default {
       const tokens = pool.name.split('/');
       console.log(pool, '__POOl');
       // if (false) this.openZapIn(pool);
-      this.$router.push(`/pools/zapin/${pool.platform?.toLowerCase()}?pair=${pool.address.toLowerCase()}&chain=${pool.chainName}&tokens=${tokens[0]}-${tokens[1]}`);
+      this.$router.push(`/pools/zapin/${pool.platform[0]?.toLowerCase()}?pair=${pool.address.toLowerCase()}&chain=${pool.chainName}&tokens=${tokens[0]}-${tokens[1]}`);
     },
     poolVolatileType(poolD: any) {
       const isStable = checkIsEveryStable(poolD);

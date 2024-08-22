@@ -357,6 +357,7 @@ import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
 import SwapSlippageSettings from '@/components/SwapSlippage/Index.vue';
 import { useTokensQuery, useRefreshBalances } from '@/hooks/fetch/useTokensQuery.ts';
 import TokenService, { type ITokenService } from '@/services/TokenService/TokenService.ts';
+import { isEmpty } from 'lodash';
 import { mapExcludeLiquidityPlatform, parseLogs, sourceLiquidityBlacklist } from './helpers.ts';
 
 enum zapMobileSection {
@@ -461,10 +462,10 @@ export default defineComponent({
     ...mapGetters('accountData', ['account']),
 
     zapsLoaded() {
-      return this.allTokensList?.length > 0
-        && this.outputTokens?.length > 0
+      return !isEmpty(this.allTokensList)
+        && !isEmpty(this.outputTokens)
         && this.zapPool
-        && this.zapContract
+        && !isEmpty(this.zapContract)
         && this.isZapLoaded;
     },
     getOdosFee() {
@@ -732,6 +733,8 @@ export default defineComponent({
       });
 
       const poolTokens = poolTokensForZapMap[this.zapPool.address];
+
+      console.log(poolTokens, '___poolTokens');
       if (!poolTokens) return;
 
       this.$store.commit('odosData/changeState', {
@@ -1121,7 +1124,7 @@ export default defineComponent({
       let sourceBlacklist = [...sourceLiquidityBlacklist];
       // excluding platform for big liquidities zapins
       const excludeLiquidityByPlatform = mapExcludeLiquidityPlatform[
-        this.zapPool.platform
+        this.zapPool.platform[0]
       ];
       if (excludeLiquidityByPlatform && excludeLiquidityByPlatform.length) {
         sourceBlacklist = [...sourceBlacklist, ...excludeLiquidityByPlatform];
@@ -1480,7 +1483,6 @@ export default defineComponent({
         // gasLimit: 1000000,
       };
 
-      console.log(zapPool, '----zapPool');
       console.log(this.zapContract, '-this.zapContract');
 
       console.log(txData, 'swapdata');

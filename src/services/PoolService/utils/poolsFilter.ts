@@ -1,6 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 import { getNetworkParams } from '@/store/web3/network.ts';
-import { POOL_CATEGORIES, type TFilterPoolsParams, type TPoolInfo } from '@/types/common/pools/index.ts';
+import { POOL_CATEGORIES, type TPoolInfo } from '@/types/common/pools/index.ts';
 import { checkIsUsdPlusStable, checkIsOVNVolatile, checkIsEveryStable } from '@/services/PoolService/utils/index.ts';
 
   enum SearchableProperties {

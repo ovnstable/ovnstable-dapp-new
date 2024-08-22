@@ -29,9 +29,9 @@
         </span>
         <div class="pool-data__row">
           <div class="pool-data__plat">
-            <BaseIcon :name="zapPool.platform" />
+            <BaseIcon :name="zapPool.platform[0]" />
             <span>
-              {{ zapPool.platform }}
+              {{ zapPool.platform[0] }}
             </span>
           </div>
 
@@ -226,7 +226,6 @@ export default {
     },
     initLiqTokens() {
       const poolTokens = poolTokensForZapMap[this.zapPool.address];
-      console.log(this.allTokensList, '__this.allTokensList');
       const token0 = getTokenByAddress(poolTokens[0].address, this.allTokensList);
       const token1 = getTokenByAddress(poolTokens[1].address, this.allTokensList);
 

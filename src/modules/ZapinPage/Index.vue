@@ -13,7 +13,7 @@
     </div>
 
     <div
-      v-if="!zapPool || allTokensList.length === 0"
+      v-if="isLoadingData"
       class="pools-wrap__loader"
     >
       <TableSkeleton />
@@ -23,6 +23,7 @@
       <AutoZapinV3
         :zap-pool="zapPool"
         :all-tokens-list="allTokensList"
+        :balance-list="balanceTokensList"
       />
     </div>
 
@@ -43,8 +44,9 @@ import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { inject } from 'vue';
 import { usePoolsQueryNew } from '@/hooks/fetch/usePoolsQuery.ts';
-import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
+import { useTokensQuery, useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.ts';
 import TableSkeleton from '@/components/TableSkeleton/Index.vue';
+import { isEmpty } from 'lodash';
 import type { TFilterPoolsParams, TPool } from '@/types/common/pools';
 import type { ITokenService } from '@/services/TokenService/TokenService';
 
@@ -73,11 +75,16 @@ export default {
 
     const {
       data: allTokensList,
+    } = useTokensQueryNew(tokenService, state);
+
+    const {
+      data: balanceTokensList,
     } = useTokensQuery(tokenService, state);
 
     return {
       poolList,
       allTokensList,
+      balanceTokensList,
       isPoolsLoading,
     };
   },
@@ -86,6 +93,13 @@ export default {
       showModal: false,
       zapPool: {} as TPool,
     };
+  },
+  computed: {
+    isLoadingData() {
+      return !this.zapPool
+        || isEmpty(this.allTokensList)
+        || isEmpty(this.balanceTokensList);
+    },
   },
   watch: {
     isShow(currVal: boolean) {

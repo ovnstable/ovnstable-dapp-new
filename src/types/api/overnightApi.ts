@@ -12,7 +12,7 @@ export type TPoolData = {
     poolVersion: string,
     name: string,
     poolAddress: string,
-    platform: string,
+    platform: string[],
     fee: string,
     initPrice: string,
     price: string,

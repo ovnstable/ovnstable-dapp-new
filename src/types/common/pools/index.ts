@@ -7,7 +7,7 @@ export type TPool = {
     chain: number,
     chainName: string,
     address: string,
-    platform: string,
+    platform: string[],
     tvl: string,
     poolTag: string,
     explorerUrl: string,

@@ -28,12 +28,12 @@
         </span>
       </div>
       <div class="zap-header__col">
-        <BaseIcon :name="typeof pool.platform === 'string' ? pool.platform : pool.platform" />
+        <BaseIcon :name="pool.platform[0]" />
         <span
           :class="isShort ? 'pool-detail-title-short' : ''"
           class="pool-detail-title"
         >
-          {{ typeof pool.platform === 'string' ? pool.platform : pool.platform[0] }}
+          {{ pool.platform[0] }}
         </span>
       </div>
       <div

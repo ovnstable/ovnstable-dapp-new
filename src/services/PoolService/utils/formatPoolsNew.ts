@@ -25,7 +25,7 @@ export const formatPools = (
     chain: pool.chainId,
     chainName: pool.chainName,
     address: pool.poolAddress,
-    platform: pool.platform,
+    platform: [pool.platform],
     tvl: pool.tvl,
     poolTag: 'NEW',
     // Get explorer URL by platform

@@ -64,7 +64,7 @@ import {
 import { getAllTokensString, getTransactionTotal } from '@/utils/tokens.ts';
 import { checkIsEveryStable } from '@/store/views/main/pools/helpers.ts';
 import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
-import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
+import { useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.ts';
 import type { ITokenService } from '@/services/TokenService/TokenService.ts';
 import type { TTokenInfo } from '@/types/common/tokens/index.d.ts';
 import ZapinContent from './components/zapin.vue';
@@ -102,7 +102,7 @@ export default defineComponent({
       data: allTokensList,
       isLoading,
       isBalancesLoading,
-    } = useTokensQuery(tokenService, state);
+    } = useTokensQueryNew(tokenService, state);
 
     return {
       allTokensMap: computed(() => new Map(
