@@ -30,7 +30,7 @@ interface ITab {
 }
 
 type TSize = 'default' | 'large'
-type TStyle = 'default' | 'transparent' | 'white'
+type TStyle = 'default' | 'transparent' | 'white' | 'bigWhite'
 
 export default {
   name: 'TabsComponent',
@@ -95,11 +95,17 @@ export default {
 
 .switchtabs__inner {
   font-size: 15px;
+  font-weight: 500;
   display: flex;
   color: var(--color-2);
   border: 1px solid var(--color-6);
   background: var(--color-5);
   border-radius: 30px;
+
+  &.bigWhite {
+    border: unset;
+    gap: 8px;
+  }
 
   &.white {
     background: var(--color-4);
@@ -137,6 +143,11 @@ export default {
     background: var(--color-4);
   }
 
+  .bigWhite & {
+    background: var(--color-8);
+    color: var(--color-1);
+  }
+
   [data-theme="dark"] & {
     color: var(--color-18);
     background: var(--color-6);
@@ -167,6 +178,11 @@ export default {
     [data-theme="dark"] & {
       border-color: var(--color-2);
     }
+
+    .bigWhite & {
+      background-color: var(--color-4);
+    }
+
   }
 
   &:hover {
@@ -186,6 +202,12 @@ export default {
 
 .switchtabs__inner-text.active {
   color: var(--color-1);
+
+  .bigWhite & {
+    border: 1px solid var(--color-1);
+    background: var(--color-4);
+  }
+
   [data-theme="dark"] & {
     color: var(--color-4);
   }

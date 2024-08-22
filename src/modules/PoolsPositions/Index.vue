@@ -14,10 +14,26 @@
       <h1>POOLS</h1>
       <p>Use your Tokens+ and OVN in DeFi to maximize your yield.</p>
     </div>
-    <div v-if="type === 'POOLS'">
+    <div class="pos-wrap__tabs">
+      <SwitchTabs
+        :tabs="tabsList"
+        :active-tab="activeTab"
+        tab-style="bigWhite"
+        type="large"
+        @tab-change="changeTab"
+      />
+    </div>
+    <div v-if="type === 'POOLS' && activeTab === 0">
+      <div class="pools-data-container">
+        <PoolsOld
+          :is-overview="false"
+        />
+      </div>
+    </div>
+    <div v-if="type === 'POOLS' && activeTab === 1">
       <div class="pools-data-container">
         <PoolFilterNew />
-        <Pools
+        <PoolsNew
           :is-overview="false"
         />
       </div>
@@ -30,20 +46,41 @@
 
 <script lang="ts">
 import Positions from '@/modules/PoolsPositions/Positions/Index.vue';
-import Pools from '@/modules/PoolsPositions/Pools/PoolsNew.vue';
+import PoolsNew from '@/modules/PoolsPositions/Pools/PoolsNew.vue';
 import PoolFilterNew from '@/components/Pools/PoolsFilter/PoolFilterNew.vue';
+import SwitchTabs from '@/components/SwitchTabs/Index.vue';
+import PoolsOld from '@/modules/PoolsPositions/Pools/Index.vue';
 
 export default {
   name: 'PoolsPositions',
   components: {
     Positions,
-    Pools,
+    PoolsNew,
+    PoolsOld,
     PoolFilterNew,
+    SwitchTabs,
   },
   data() {
     return {
+      tabsList: [
+        {
+          id: 0,
+          name: 'OVERNIGHT POOLS',
+        },
+        {
+          id: 1,
+          name: 'ALL POOLS',
+        },
+      ],
+      activeTab: 0,
       type: window.location.pathname.split('/').pop()?.toUpperCase(),
     };
+  },
+  methods: {
+    changeTab(val: number) {
+      console.log(val, '');
+      this.activeTab = val;
+    },
   },
 };
 </script>
@@ -70,6 +107,10 @@ export default {
 
 .pos-wrap {
   width: 100%;
+}
+
+.pos-wrap__tabs {
+  margin-bottom: 30px;
 }
 
 .pools-data-container {
