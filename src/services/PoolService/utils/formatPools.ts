@@ -55,7 +55,7 @@ export const getFormatPools = async (data: any, networkConfig: any): Promise<[]>
           chain: networkConfig.networkId,
           chainName: networkConfig.networkName,
           address: pool.id.address,
-          platform: pool.platform,
+          platform: [pool.platform],
           tvl: pool.tvl,
           apr: pool.apr,
           poolTag,

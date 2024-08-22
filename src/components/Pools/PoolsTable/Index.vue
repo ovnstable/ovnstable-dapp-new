@@ -149,7 +149,7 @@
                   {{ pool.poolNameForAgregator.toUpperCase() }}
                 </span>
                 <span v-else>
-                  {{ pool.platform.toUpperCase() }}
+                  {{ pool.platform[0].toUpperCase() }}
                 </span>
                 <div class="button-link">
                   <BaseIcon
