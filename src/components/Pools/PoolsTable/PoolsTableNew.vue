@@ -16,7 +16,7 @@
           @keypress="toggleOrderType('TVL')"
         >
           TVL
-          <BaseIcon :name="iconNameSort('TVL')" />
+          <BaseIcon :name="iconNameSort()" />
         </div>
         <div class="pools-header__item">
           Platforms
@@ -27,13 +27,9 @@
       <div class="pools-table__content">
         <template v-if="pools.length > 0">
           <div
-            v-for="(pool, key) in (pools)"
+            v-for="(pool, key) in (sortedPools as any)"
             :key="key"
             class="pools-table__row"
-            :class="{
-              'pools-table__new': key === indexOfLastNewPool,
-              'pools-table__blast': pool.platform[0] === 'Thruster',
-            }"
           >
             <div class="pools-table__chain">
               <BaseIcon :name="pool.chainName" />
@@ -147,8 +143,11 @@ import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import { formatNumberToMln, formatNumberToThousands } from '@/utils/numbers.ts';
 import { buildLink, checkIsEveryStable } from '@/store/views/main/pools/helpers.ts';
-import type { PropType } from 'vue';
+import { inject, type PropType } from 'vue';
+import { ORDER_TYPE } from '@/services/PoolService/utils/poolsSort.ts';
+import PoolService from '@/services/PoolService/PoolService.ts';
 import type { TPool } from '@/types/common/pools';
+import type { IPoolService } from '@/services/PoolService/PoolService';
 
 const getPoolDescStr = (
   isStable: boolean,
@@ -166,25 +165,23 @@ export default {
       required: true,
     },
     orderType: {
-      type: String,
+      type: Number as PropType<ORDER_TYPE>,
       required: true,
-      default: 'APR', // APR, APR_UP, APR_DOWN, TVL, TVL_UP, TVL_DOWN
     },
     setOrderTypeFunc: {
       type: Function,
       required: true,
     },
   },
+  setup() {
+    const poolService = inject('poolService') as IPoolService;
+    return {
+      poolService,
+    };
+  },
   computed: {
-    indexOfLastNewPool() {
-      let lastNewPoolIndex = -1;
-      this.pools.forEach((pool: any, index) => {
-        if (pool.poolTag === '0') {
-          lastNewPoolIndex = index;
-        }
-      });
-
-      return lastNewPoolIndex;
+    sortedPools() {
+      return PoolService.sortPools(this.pools as any, this.orderType, true);
     },
   },
   methods: {
@@ -201,62 +198,32 @@ export default {
       return buildLink(pool, platform) ?? '';
     },
     toggleOrderType(type: string) {
-      if (type === 'APR') {
-        if (!this.orderType.startsWith('APR')) {
-          this.setOrderTypeFunc('APR');
-          this.setOrderTypeFunc('APR_UP');
-        }
-
-        if (this.orderType === 'APR') {
-          this.setOrderTypeFunc('APR_UP');
-          return;
-        }
-
-        if (this.orderType === 'APR_UP') {
-          this.setOrderTypeFunc('APR_DOWN');
-          return;
-        }
-
-        if (this.orderType === 'APR_DOWN') {
-          this.setOrderTypeFunc('APR');
-          return;
-        }
-      }
-
       if (type === 'TVL') {
-        if (!this.orderType.startsWith('TVL')) {
-          this.setOrderTypeFunc('TVL');
-          this.setOrderTypeFunc('TVL_UP');
+        if (this.orderType !== ORDER_TYPE.TVL) {
+          this.setOrderTypeFunc(ORDER_TYPE.TVL);
+          this.setOrderTypeFunc(ORDER_TYPE.TVL_UP);
         }
 
-        if (this.orderType === 'TVL') {
-          this.setOrderTypeFunc('TVL_UP');
+        if (this.orderType === ORDER_TYPE.TVL) {
+          this.setOrderTypeFunc(ORDER_TYPE.TVL_UP);
           return;
         }
 
-        if (this.orderType === 'TVL_UP') {
-          this.setOrderTypeFunc('TVL_DOWN');
+        if (this.orderType === ORDER_TYPE.TVL_UP) {
+          this.setOrderTypeFunc(ORDER_TYPE.TVL_DOWN);
           return;
         }
 
-        if (this.orderType === 'TVL_DOWN') {
-          this.setOrderTypeFunc('TVL');
+        if (this.orderType === ORDER_TYPE.TVL_DOWN) {
+          this.setOrderTypeFunc(ORDER_TYPE.TVL);
         }
       }
     },
-    iconNameSort(type: string) {
-      if (type === 'APR') {
-        if (['APR_UP'].includes(this.orderType)) {
-          return 'ArrowUpSort';
-        } if (['APR_DOWN'].includes(this.orderType)) {
-          return 'ArrowDownSort';
-        }
-      } else {
-        if (['TVL_UP'].includes(this.orderType)) {
-          return 'ArrowUpSort';
-        } if (['TVL_DOWN'].includes(this.orderType)) {
-          return 'ArrowDownSort';
-        }
+    iconNameSort() {
+      if (ORDER_TYPE.TVL_UP === this.orderType) {
+        return 'ArrowUpSort';
+      } if (ORDER_TYPE.TVL_DOWN === this.orderType) {
+        return 'ArrowDownSort';
       }
 
       return 'ArrowsFilter';
