@@ -181,7 +181,6 @@ export default {
   },
   computed: {
     sortedPools() {
-      console.log(this.orderType);
       return PoolService.sortPools(this.pools as any, this.orderType, true);
     },
   },
@@ -214,7 +213,6 @@ export default {
         console.log('tvl');
         this.setOrderTypeFunc(ORDER_TYPE.TVL);
       }
-      console.log(this.orderType);
     },
     iconNameSort() {
       if (ORDER_TYPE.TVL_UP === this.orderType) {
