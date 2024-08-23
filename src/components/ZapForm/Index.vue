@@ -448,6 +448,7 @@ export default defineComponent({
       'currentZapPlatformContractType',
       'zapContract',
       'gaugeContract',
+      'gaugeContractV3',
       'poolTokenContract',
       'zapPoolRoot',
     ]),
@@ -859,7 +860,7 @@ export default defineComponent({
       this.selectedOutputTokens[0].value = 100;
     },
     async stakeTrigger() {
-      console.log(this.poolTokenContract, '__this.poolTokenContract');
+      console.log(this.gaugeContractV3, '__thisgaugeContractV3');
       // await this.poolTokenContract.deposit(Number(26997));
       if (this.zapInType === 'V2') this.currentStage = zapInStep.STAKE_LP;
       if (!this.zapPool) return;
@@ -1144,6 +1145,14 @@ export default defineComponent({
       parseLogs(data.logs, this.commitEventToStore);
       this.currentStage = zapInStep.APPROVE_GAUGE;
 
+      for (const item of data.logs) {
+        const eventName = item?.eventName;
+        if (eventName === 'TokenId') {
+          // eslint-disable-next-line prefer-destructuring
+          this.commitEventToStore('lastParsedTokenIdEvent', new BN(item.args[0]).toString(10));
+        }
+      }
+
       this.$store.commit('odosData/changeState', {
         field: 'additionalSwapStepType',
         val: 'APPROVE',
@@ -1318,6 +1327,7 @@ export default defineComponent({
         this.gaugeContract,
         this.zapPoolRoot,
         this.poolTokenContract,
+        this.gaugeContractV3,
       )
         .then((data: any) => {
           this.closeWaitingModal();

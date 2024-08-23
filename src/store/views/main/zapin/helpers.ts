@@ -139,6 +139,7 @@ export const depositAllAtGauge = async (
   gaugeContract: any,
   zapPoolRoot: any,
   poolTokenContract: any,
+  gaugeContractV3: any,
 ) => {
   const params = { from: account };
   if (
@@ -182,8 +183,8 @@ export const depositAllAtGauge = async (
     currentZapPlatformContractType.typeOfDepositConstructor
     === 'CONSTRUCTOR_V3_WITH_TOKEN_ID'
   ) {
-    console.log('1');
-    return poolTokenContract.deposit(Number(lastNftTokenId));
+    console.log(lastNftTokenId, '1');
+    return gaugeContractV3.deposit(Number(lastNftTokenId));
   }
 
   console.log(currentZapPlatformContractType, '__currentZapPlatformContractType');
