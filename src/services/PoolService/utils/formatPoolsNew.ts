@@ -1,5 +1,5 @@
 /* eslint-disable import/prefer-default-export */
-import { loadEmptyImg } from '@/utils/tokenLogo.ts';
+import { loadEmptyImg, loadTokenImage } from '@/utils/tokenLogo.ts';
 import type { TPool } from '@/types/common/pools';
 import type { TPoolData } from '@/types/api/overnightApi';
 import type { TTokenInfo } from '@/types/common/tokens';
@@ -16,8 +16,10 @@ export const formatPools = (
     id: pool.name + pool.tvl + pool.platform,
     name: pool.name.toUpperCase(),
     token0Icon: tokenIconMap[pool.token0.tokenId.toLowerCase()]
+    ?? loadTokenImage(pool.token0.symbol)
        ?? loadEmptyImg(),
     token1Icon: tokenIconMap[pool.token1.tokenId.toLowerCase()]
+    ?? loadTokenImage(pool.token1.symbol)
        ?? loadEmptyImg(),
     // Pool version not available
     poolVersion: `v${pool.poolVersion}`,
