@@ -187,7 +187,6 @@ export default defineComponent({
       this.orderType = ORDER_TYPE[orderType];
     },
     setSelectedNetwork(selectedChain: number | 'ALL') {
-      console.log('setSelectedNetwork', selectedChain);
       this.isOpenHiddenPools = false;
       this.isDefaultOrder = true;
       if (selectedChain === 'ALL') this.networkIds = [];
