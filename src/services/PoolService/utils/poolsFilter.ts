@@ -1,5 +1,4 @@
 /* eslint-disable import/prefer-default-export */
-import { getNetworkParams } from '@/store/web3/network.ts';
 import { POOL_CATEGORIES, type TPoolInfo } from '@/types/common/pools/index.ts';
 import { checkIsUsdPlusStable, checkIsOVNVolatile, checkIsEveryStable } from '@/services/PoolService/utils/index.ts';
 
@@ -40,7 +39,7 @@ const searchPoolByCategory = (
 
 const filterByNetwork = (pool: TPoolInfo, selectedNetworkIds: number[]): boolean => (
   selectedNetworkIds?.length > 0
-    ? selectedNetworkIds.includes(getNetworkParams(pool.chainName).networkId)
+    ? selectedNetworkIds.includes(Number(pool.chain))
     : true
 );
 
@@ -48,7 +47,7 @@ export const poolsFilter = (poolsList: TPoolInfo[], params: any): TPoolInfo[] =>
   const filteredPools = poolsList.filter((pool: TPoolInfo) => (
     searchPoolByQuery(pool, params.searchQuery)
     && searchPoolByCategory(pool, params.category)
-    && filterByNetwork(pool, params.chain)
+    && filterByNetwork(pool, params.networkIds)
   ));
   return filteredPools;
 };
