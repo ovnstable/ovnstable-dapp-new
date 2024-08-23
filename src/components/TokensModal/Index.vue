@@ -84,7 +84,6 @@ import ButtonComponent from '@/components/Button/Index.vue';
 import BN from 'bignumber.js';
 import { mapGetters } from 'vuex';
 import BalanceService from '@/services/BalanceService/BalanceService.ts';
-import { fixedByPrice } from '@/utils/numbers.ts';
 
 export default {
   name: 'SelectTokensModal',
@@ -159,7 +158,7 @@ export default {
   },
   computed: {
     ...mapGetters('accountData', ['account']),
-    ...mapGetters('web3', ['evmProvider']),
+    ...mapGetters('web3', ['evmSigner']),
   },
   watch: {
     isShow(currVal: boolean) {
@@ -181,16 +180,21 @@ export default {
 
       if (new BN(tokenBalance?.balance).eq(0)) {
         const balance = await BalanceService
-          .fetchBalanceByAddress(this.evmProvider, this.account, token.address);
-        const balanceUsd = new BN(balance?.toString()).times(token.price);
+          .fetchBalanceByAddress(this.evmSigner, this.account, token.address);
+        const balanceUsd = new BN(balance?.toString())
+          .div(10 ** tokenBalance.decimal)
+          .times(token.price)
+          .toFixed();
 
         tokenBalance = {
           ...tokenBalance,
           originalBalance: balance?.toString(),
-          balanceInUsd: fixedByPrice(Number(balanceUsd)),
-          balance: fixedByPrice(Number(balance)),
+          balanceInUsd: balanceUsd,
+          balance: new BN(balance).div(10 ** tokenBalance.decimal),
         };
       }
+
+      console.log(tokenBalance, '__tokenBalance');
 
       // eslint-disable-next-line no-param-reassign
       token.selected = true;
