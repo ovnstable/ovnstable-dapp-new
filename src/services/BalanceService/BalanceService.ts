@@ -88,7 +88,6 @@ class BalanceService {
     const balancesData = await fetchTokenBalancesMulticall(provider, tokenList, account);
 
     const nativeTokenBalance = await this.fetchNativeBalance(provider, account);
-    console.log(nativeTokenBalance, '__nativeTokenBalance');
     balancesData[ZERO_ADDRESS] = nativeTokenBalance.toString();
 
     return balancesData;
