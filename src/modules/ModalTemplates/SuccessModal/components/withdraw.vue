@@ -35,7 +35,7 @@
 
     <span class="divider" />
     <div
-      v-if="successData.inputTokens?.length > 0"
+      v-if="tokensSentList?.length > 0"
       class="modal-content__data"
     >
       <div class="modal-content__data-main">
@@ -47,11 +47,11 @@
           </div>
           <div class="success-data-list">
             <div
-              v-for="sentData in successData.inputTokens"
+              v-for="sentData in tokensSentList as any"
               :key="sentData.id"
               class="token-amount token-amount--green"
             >
-              + {{ sentData.selectedToken.symbol }}
+              + {{ sentData.value }} {{ sentData.symbol }}
             </div>
           </div>
         </div>
@@ -74,6 +74,20 @@ export default {
     PoolLabel,
     BaseIcon,
     ButtonComponent,
+  },
+  props: {
+    // tokensStakedList: {
+    //   type: Array,
+    //   required: true,
+    // },
+    tokensSentList: {
+      type: Array,
+      required: true,
+    },
+    // tokensReturnedList: {
+    //   type: Array,
+    //   required: true,
+    // },
   },
   computed: {
     ...mapState('odosData', [

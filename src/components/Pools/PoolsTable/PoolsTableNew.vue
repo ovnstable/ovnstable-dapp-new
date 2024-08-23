@@ -161,7 +161,7 @@ export default {
   },
   props: {
     pools: {
-      type: [] as PropType<TPool[]>,
+      type: Array as PropType<TPool[]>,
       required: true,
     },
     orderType: {

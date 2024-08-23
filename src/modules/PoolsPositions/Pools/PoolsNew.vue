@@ -18,7 +18,7 @@
         :is-show-apr-limit="isShowAprLimit"
         :open-zap-in-func="openZapIn"
         :set-order-type-func="setOrderType"
-        :order-type="ORDER_TYPE[orderType]"
+        :order-type="ORDER_TYPE[orderType] as any"
       />
     </div>
 
@@ -71,13 +71,7 @@ export default defineComponent({
   },
   data: () => ({
     poolTabType: POOL_TYPES.ALL,
-    // isMorePoolsToShow: true,
     isOpenHiddenPools: false,
-    // tableSettings: {
-    //   page: 1,
-    //   perPage: 1000,
-    //   total: null,
-    // },
 
     isShowOnlyZap: false,
     isShowAprLimit: false,
@@ -115,13 +109,6 @@ export default defineComponent({
   methods: {
     ...mapActions('poolsData', ['openZapIn', 'setIsZapModalShow', 'setFilterParams']),
     ...mapMutations('poolsData', ['changeState']),
-
-    // changePerPage() {
-    //   console.log('changePerPage');
-    // },
-    // changePage() {
-    //   console.log('changePage');
-    // },
     handleClickSearch() {
       const filterParams: Partial<TFilterPoolsParams> = {
         token0: 'USD+',
