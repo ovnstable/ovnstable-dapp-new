@@ -27,7 +27,7 @@
       <div class="pools-table__content">
         <template v-if="pools.length > 0">
           <div
-            v-for="(pool, key) in (pools as any)"
+            v-for="(pool, key) in (pools)"
             :key="key"
             class="pools-table__row"
             :class="{
@@ -68,6 +68,12 @@
                 <div class="pools-table__tokens-details">
                   {{ poolVolatileType(pool) }}
                 </div>
+                <div
+                  v-if="pool.fee"
+                  class="pool-fee"
+                >
+                  {{ Number(pool.fee) * .0001 }} %
+                </div>
               </div>
             </div>
             <div class="pools-table__tvl">
@@ -76,12 +82,7 @@
                   v-if="pool.tvl"
                   class="card-label"
                 >
-                  <template v-if="pool.tvl >= 1000000">
-                    ${{ formatNumberToMln(pool.tvl, 2) }}M
-                  </template>
-                  <template v-if="pool.tvl < 1000000">
-                    ${{ formatNumberToThousands(pool.tvl, 0) }}K
-                  </template>
+                  {{ getDisplayedTvlValue(pool.tvl) }}
                 </div>
                 <div
                   v-else
@@ -103,11 +104,7 @@
                   class="pools-table__platform-icon"
                   :name="pool.platform[0]"
                 />
-
-                <span v-if="pool.poolNameForAgregator">
-                  {{ pool.poolNameForAgregator.toUpperCase() }}
-                </span>
-                <span v-else>
+                <span>
                   {{ pool.platform[0].toUpperCase() }}
                 </span>
                 <div class="button-link">
@@ -150,11 +147,12 @@ import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import { formatNumberToMln, formatNumberToThousands } from '@/utils/numbers.ts';
 import { buildLink, checkIsEveryStable } from '@/store/views/main/pools/helpers.ts';
+import type { PropType } from 'vue';
+import type { TPool } from '@/types/common/pools';
 
 const getPoolDescStr = (
   isStable: boolean,
-  version: string,
-) => `${version.toUpperCase()} ${version.includes('3') ? 'Concentrated' : 'Basic'} ${isStable ? 'Stable' : 'Volatile'} pool`;
+) => `${isStable ? 'Stable' : 'Volatile'} pool`;
 
 export default {
   name: 'PoolsTable',
@@ -164,7 +162,7 @@ export default {
   },
   props: {
     pools: {
-      type: Array,
+      type: [] as PropType<TPool[]>,
       required: true,
     },
     orderType: {
@@ -190,17 +188,14 @@ export default {
     },
   },
   methods: {
-    formatNumberToMln,
-    formatNumberToThousands,
     handleZapin(pool: any) {
       const tokens = pool.name.split('/');
-      console.log(pool, '__POOl');
       // if (false) this.openZapIn(pool);
       this.$router.push(`/pools/zapin/${pool.platform[0]?.toLowerCase()}?pair=${pool.address.toLowerCase()}&chain=${pool.chainName}&tokens=${tokens[0]}-${tokens[1]}`);
     },
     poolVolatileType(poolD: any) {
       const isStable = checkIsEveryStable(poolD);
-      return getPoolDescStr(isStable, poolD.poolVersion);
+      return getPoolDescStr(isStable);
     },
     getPlatformLink(pool: any, platform: string) {
       return buildLink(pool, platform) ?? '';
@@ -265,6 +260,11 @@ export default {
       }
 
       return 'ArrowsFilter';
+    },
+    getDisplayedTvlValue(tvl: string | number) {
+      return (Number(tvl) >= 1000000)
+        ? `${formatNumberToMln(tvl as number, 2)}M`
+        : `${formatNumberToThousands(tvl as number, 0)}K`;
     },
   },
 };

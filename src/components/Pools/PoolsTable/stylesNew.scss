@@ -28,7 +28,7 @@
   .pools-table__row,
   .pools-table__new{
     display: grid;
-    grid-template-columns: minmax(100px, 0.5fr) minmax(200px, 2.5fr) minmax(100px, 1fr) minmax(250px, 2fr) minmax(140px, 1.5fr);
+    grid-template-columns: minmax(100px, 0.5fr) minmax(200px, 3fr) minmax(100px, 1fr) minmax(250px, 2fr) minmax(140px, 1.5fr);
     justify-content: space-between;
     width: 100%;
     padding: 15px 0;
@@ -58,7 +58,7 @@
   
   .pools-header {
     display: grid;
-    grid-template-columns: minmax(100px, 0.5fr) minmax(200px, 2.5fr) minmax(100px, 1fr) minmax(250px, 2fr) minmax(140px, 1.5fr);
+    grid-template-columns: minmax(100px, 0.5fr) minmax(200px, 3fr) minmax(100px, 1fr) minmax(250px, 2fr) minmax(140px, 1.5fr);
     width: 100%;
     color: var(--color-2);
     margin-top: 10px;
@@ -496,15 +496,35 @@
       right: -36px;
     }
   }
+
+  .pools-table__details {
+    flex-direction: row;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      align-content: center;
+      flex-wrap: wrap;
+  }
   
   .pools-table__details-row {
     display: flex;
     align-items: center;
-    margin-bottom: 4px;
     gap: 8px;
   }
 
   .pools-table button {
     min-width: 160px;
     margin-left: auto;
+  }
+
+  .pool-fee {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3px 8px;
+    color: var(--color-2);
+    background-color: var(--color-5);
+    border-radius: 30px;
+    min-width: 65px;
   }
