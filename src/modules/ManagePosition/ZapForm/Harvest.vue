@@ -163,7 +163,6 @@ export default defineComponent({
   data() {
     return {
       positionFinish: false,
-      inputTokens: [] as any[],
       outputTokens: [] as any[],
       poolTokens: [] as any[],
       gaugeContract: null as any,
@@ -215,10 +214,6 @@ export default defineComponent({
     },
     outputTokensWithSelectedTokensCount() {
       return this.outputTokens.filter((item: any) => item.selectedToken).length;
-    },
-
-    selectedOutputTokens() {
-      return this.outputTokens.filter((item: any) => item.selectedToken);
     },
 
     isDisableButton() {
@@ -328,9 +323,6 @@ export default defineComponent({
       try {
         this.showWaitingModal('unstaking');
 
-        const inputTokens = [...this.inputTokens];
-        const outputTokens = [...this.selectedOutputTokens];
-
         let tx;
 
         if (this.zapPool.isStaked) {
@@ -344,8 +336,7 @@ export default defineComponent({
         this.triggerSuccessZapin(
           {
             isShow: true,
-            inputTokens,
-            outputTokens,
+            inputTokens: this.poolTokens,
             hash: tx.hash,
             pool: this.zapPool,
             modalType: MODAL_TYPE.HARVEST,
