@@ -18,7 +18,7 @@
         :is-show-apr-limit="isShowAprLimit"
         :open-zap-in-func="openZapIn"
         :set-order-type-func="setOrderType"
-        :order-type="ORDER_TYPE[orderType] as any"
+        :order-type="orderType as any"
       />
     </div>
 
@@ -82,7 +82,6 @@ export default defineComponent({
 
     orderType: ORDER_TYPE.TVL_UP,
     isDefaultOrder: true as boolean,
-    ORDER_TYPE,
   }),
 
   computed: {
@@ -115,9 +114,10 @@ export default defineComponent({
       };
       this.setFilterParams(filterParams);
     },
-    setOrderType(orderType: keyof typeof ORDER_TYPE) {
+    setOrderType(orderType: ORDER_TYPE) {
       this.isDefaultOrder = false;
-      this.orderType = ORDER_TYPE[orderType];
+      console.log('_setOrderType', orderType);
+      this.orderType = orderType;
     },
     clearAllFilters() {
       this.isOpenHiddenPools = false;

@@ -12,8 +12,8 @@
         </div>
         <div
           class="pools-header__item pools-header__item--hover"
-          @click="toggleOrderType('TVL')"
-          @keypress="toggleOrderType('TVL')"
+          @click="toggleOrderType()"
+          @keypress="toggleOrderType()"
         >
           TVL
           <BaseIcon :name="iconNameSort()" />
@@ -164,12 +164,12 @@ export default {
       type: Array as PropType<TPool[]>,
       required: true,
     },
-    orderType: {
-      type: Number as PropType<ORDER_TYPE>,
-      required: true,
-    },
     setOrderTypeFunc: {
       type: Function,
+      required: true,
+    },
+    orderType: {
+      type: Number as PropType<ORDER_TYPE>,
       required: true,
     },
   },
@@ -181,6 +181,7 @@ export default {
   },
   computed: {
     sortedPools() {
+      console.log(this.orderType);
       return PoolService.sortPools(this.pools as any, this.orderType, true);
     },
   },
@@ -197,27 +198,23 @@ export default {
     getPlatformLink(pool: any, platform: string) {
       return buildLink(pool, platform) ?? '';
     },
-    toggleOrderType(type: string) {
-      if (type === 'TVL') {
-        if (this.orderType !== ORDER_TYPE.TVL) {
-          this.setOrderTypeFunc(ORDER_TYPE.TVL);
-          this.setOrderTypeFunc(ORDER_TYPE.TVL_UP);
-        }
-
-        if (this.orderType === ORDER_TYPE.TVL) {
-          this.setOrderTypeFunc(ORDER_TYPE.TVL_UP);
-          return;
-        }
-
-        if (this.orderType === ORDER_TYPE.TVL_UP) {
-          this.setOrderTypeFunc(ORDER_TYPE.TVL_DOWN);
-          return;
-        }
-
-        if (this.orderType === ORDER_TYPE.TVL_DOWN) {
-          this.setOrderTypeFunc(ORDER_TYPE.TVL);
-        }
+    toggleOrderType() {
+      console.log('clickToggle');
+      if (this.orderType === ORDER_TYPE.TVL) {
+        this.setOrderTypeFunc(ORDER_TYPE.TVL_UP);
+        return;
       }
+
+      if (this.orderType === ORDER_TYPE.TVL_UP) {
+        this.setOrderTypeFunc(ORDER_TYPE.TVL_DOWN);
+        return;
+      }
+
+      if (this.orderType === ORDER_TYPE.TVL_DOWN) {
+        console.log('tvl');
+        this.setOrderTypeFunc(ORDER_TYPE.TVL);
+      }
+      console.log(this.orderType);
     },
     iconNameSort() {
       if (ORDER_TYPE.TVL_UP === this.orderType) {
