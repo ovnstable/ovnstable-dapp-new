@@ -81,7 +81,7 @@ export const mapEventTokenData = (
     const value = formatBN(tokenList.amounts[index], token?.decimals);
     return {
       id: `${token?.id}_return`,
-      symbol: token.symbol,
+      symbol: token?.symbol,
       value,
     };
   });

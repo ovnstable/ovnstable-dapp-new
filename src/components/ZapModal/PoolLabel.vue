@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="pool"
+    v-if="pool && pool?.platform?.length > 0"
     class="zap-header"
   >
     <div class="zap-header__content">
@@ -36,7 +36,10 @@
           {{ pool.platform[0] }}
         </span>
       </div>
-      <div class="zap-header__col short">
+      <div
+        v-if="pool.apr"
+        class="zap-header__col short"
+      >
         <div
           :class="isShort ? 'pool-detail-title-short' : ''"
           class="pool-detail-title"
@@ -60,7 +63,10 @@
           </span>
         </div>
       </div>
-      <div class="zap-header__col short">
+      <div
+        v-if="pool.tvl"
+        class="zap-header__col short"
+      >
         <span
           :class="isShort ? 'pool-detail-title-short' : ''"
           class="pool-detail-title"

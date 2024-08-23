@@ -251,9 +251,10 @@ import { debounce } from 'lodash';
 import { deviceType } from '@/utils/deviceType.ts';
 import { buildInsuranceContract, buildOvnContract, chainContractsMap } from '@/utils/contractsMap.ts';
 import StepsRow, { mintRedeemStep } from '@/components/StepsRow/Index.vue';
-import { computed, defineComponent } from 'vue';
+import { computed, defineComponent, inject } from 'vue';
 import { INSURANCE_AVAILABLE_NETWORKS } from '@/constants/networks/index.ts';
 import { useTokensQuery, useRefreshBalances } from '@/hooks/fetch/useTokensQuery.ts';
+import type { ITokenService } from '@/services/TokenService/TokenService';
 
 export default defineComponent({
   name: 'MintRedeemModal',
@@ -267,13 +268,15 @@ export default defineComponent({
     SwitchChainInsurance,
   },
   setup: () => {
-    const store = useStore() as any;
+    const { state } = useStore() as any;
+
+    const tokenService = inject('tokenService') as ITokenService;
 
     const {
       data: allTokensList,
       isLoading,
       isBalancesLoading,
-    } = useTokensQuery(store.state);
+    } = useTokensQuery(tokenService, state);
 
     return {
       allTokensList,

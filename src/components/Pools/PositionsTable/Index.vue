@@ -63,24 +63,6 @@
                     :src="pool.token1Icon"
                   />
                 </div>
-                <div
-                  v-if="pool.token2Icon"
-                  class="pools-table__tokens-item"
-                >
-                  <img
-                    alt="token"
-                    :src="pool.token2Icon"
-                  />
-                </div>
-                <div
-                  v-if="pool.token3Icon"
-                  class="pools-table__tokens-item"
-                >
-                  <img
-                    alt="token"
-                    :src="pool.token3Icon"
-                  />
-                </div>
               </div>
               <div class="pools-table__details">
                 <div class="pools-table__details-row">
@@ -128,7 +110,6 @@
             </div>
 
             <ButtonComponent
-              :disabled="!pool.zappable"
               btn-styles="faded"
               @click="handleOpen(pool)"
             >
@@ -165,7 +146,7 @@ import ButtonComponent from '@/components/Button/Index.vue';
 import type { PropType } from 'vue';
 import { mapActions } from 'vuex';
 import { getImageUrl } from '@/utils/const.ts';
-import type { IPositionsInfo } from '@/types/positions/index.ts';
+import type { IPositionsInfo } from '@/types/positions/index.d.ts';
 
 enum POSITION_SIZE_ORDER_TYPE {
   'VALUE', 'VALUE_UP', 'VALUE_DOWN',

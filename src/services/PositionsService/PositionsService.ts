@@ -25,16 +25,22 @@ class PositionsService {
     // console.log('__positionsServiceFetch');
     const positionsContract = await loadPositionContract(state);
     const rawPositionData = await positionsContract.getPositions(state.accountData.account);
+
     // console.log('__positions', rawPositionData);
     return rawPositionData;
   }
 
-  public static formatPositions(rawPositionData: any, pools: TPoolInfo[], tokens: TTokenInfo[]) {
+  public static formatPositions(
+    rawPositionData: any,
+    pools: TPoolInfo[],
+    tokens: TTokenInfo[],
+    networkId: number,
+  ) {
     // console.log('__positionsServiceFormat');
     const tokenMap = new Map(tokens.map((token) => [token.address, token]));
     const poolsMap = pools.reduce((acc: any, pool: any) => ({ ...acc, [pool.address]: pool }), {});
 
-    const positionInfo = formatPositionData(rawPositionData, poolsMap, tokenMap);
+    const positionInfo = formatPositionData(rawPositionData, poolsMap, tokenMap, networkId);
     // console.log('__positionsServiceFormatResult', positionInfo);
     return positionInfo;
   }

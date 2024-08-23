@@ -1,5 +1,4 @@
 /* eslint-disable import/prefer-default-export */
-import { isArray } from 'lodash';
 import {
   zapPlatformSupportList, HOT_POOLS, POOL_TAG, NEW_POOLS,
 } from '@/store/views/main/pools/mocks.ts';
@@ -56,7 +55,7 @@ export const getFormatPools = async (data: any, networkConfig: any): Promise<[]>
           chain: networkConfig.networkId,
           chainName: networkConfig.networkName,
           address: pool.id.address,
-          platform: isArray(pool.platform) ? pool.platform : [pool.platform],
+          platform: [pool.platform],
           tvl: pool.tvl,
           apr: pool.apr,
           poolTag,

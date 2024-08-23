@@ -48,10 +48,6 @@ const formatBlanceFixed = (fBalance: BigNumber) => {
   return fBalance.toFixed(fixedBy);
 };
 
-const handleNativeBal = async (provider: any, account: string) => (await provider
-  .getBalance(account))
-  .toString();
-
 const getHandleNoPrice = (price: string) => (!price || Number(price) === 0 ? '1' : price);
 
 const formatBalanceInUsd = (fBalance: BigNumber, price: string) => new BigNumber(fBalance)
@@ -71,6 +67,19 @@ export const getFormatTokenBalance = (token: TTokenInfo, balanceData: TTokenBala
 
 // Todo get provider from blockchain service, not state
 class BalanceService {
+  // eslint-disable-next-line class-methods-use-this
+  public static async fetchNativeBalance(provider: any, account: string) {
+    return provider.getBalance(account);
+  }
+
+  public static async fetchBalanceByAddress(provider: any, account: string, tokenAddress: string) {
+    return new ethers.Contract(
+      tokenAddress,
+      ERC20_ABI,
+      provider,
+    ).balanceOf(account).catch(() => '0');
+  }
+
   public static async fetchTokenBalances(
     provider: any,
     account: string,
@@ -78,7 +87,8 @@ class BalanceService {
   ) {
     const balancesData = await fetchTokenBalancesMulticall(provider, tokenList, account);
 
-    const nativeTokenBalance = await handleNativeBal(provider, account);
+    const nativeTokenBalance = await this.fetchNativeBalance(provider, account);
+    console.log(nativeTokenBalance, '__nativeTokenBalance');
     balancesData[ZERO_ADDRESS] = nativeTokenBalance.toString();
 
     return balancesData;
@@ -100,7 +110,7 @@ class BalanceService {
         account,
       );
 
-      const nativeTokenBalance = await handleNativeBal(provider, account);
+      const nativeTokenBalance = await this.fetchNativeBalance(provider, account);
       balancesData[ZERO_ADDRESS] = nativeTokenBalance.toString();
 
       const tokenBalanceMap = this.getTokenBalanceData(allTokenList, balancesData);

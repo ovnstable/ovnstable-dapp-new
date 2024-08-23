@@ -133,7 +133,8 @@ body {
 
   /* width */
 ::-webkit-scrollbar {
-  width: 10px;
+  height: 4px;
+  width: 4px;
   z-index: 1000;
 }
 

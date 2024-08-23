@@ -201,7 +201,7 @@
       <SelectTokensModal
         :is-show="isShowSelectTokensModal"
         :select-token-input="selectModalTypeInput"
-        :tokens="allTokensList"
+        :tokens="zapAllTokens"
         :user-account="account"
         :balances-loading="isBalancesLoading"
         :is-all-data-loaded="isAllDataLoaded"
@@ -217,7 +217,7 @@
       <SelectTokensModalMobile
         :is-show="isShowSelectTokensModal"
         :select-token-input="selectModalTypeInput"
-        :tokens="allTokensList"
+        :tokens="zapAllTokens"
         :user-account="account"
         :balances-loading="isBalancesLoading"
         :is-all-data-loaded="isAllDataLoaded"
@@ -263,9 +263,10 @@ import {
   WHITE_LIST_ODOS,
 } from '@/store/helpers/index.ts';
 import BigNumber from 'bignumber.js';
-import { computed, defineComponent } from 'vue';
-import { useTokensQuery, useRefreshBalances } from '@/hooks/fetch/useTokensQuery.ts';
-import TokenService from '@/services/TokenService/TokenService.ts';
+import { computed, defineComponent, inject } from 'vue';
+import { useTokensQuery, useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.ts';
+import TokenService, { type ITokenService } from '@/services/TokenService/TokenService.ts';
+import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 
 export default defineComponent({
   name: 'SwapForm',
@@ -286,19 +287,27 @@ export default defineComponent({
     },
   },
   setup: () => {
-    const store = useStore() as any;
+    const { state } = useStore() as any;
+
+    const tokenService = inject('tokenService') as ITokenService;
 
     const {
       data: allTokensList,
       isLoading,
       isBalancesLoading,
-    } = useTokensQuery(store.state);
+      refetchAll,
+    } = useTokensQuery(tokenService, state);
+
+    const {
+      data: balanceList,
+    } = useTokensQueryNew(tokenService, state);
 
     return {
       allTokensList,
+      balanceList,
       isAllDataLoaded: computed(() => !isLoading.value),
       isBalancesLoading,
-      refreshBalances: useRefreshBalances(),
+      refetchAll,
     };
   },
   data() {
@@ -316,6 +325,7 @@ export default defineComponent({
       isSwapLoading: false,
       isSumulateSwapLoading: false,
       isSumulateIntervalStarted: false,
+      renderDone: false,
       slippagePercent: 0.05,
       firstSwipeClickOnApprove: false,
     };
@@ -332,7 +342,13 @@ export default defineComponent({
     ]),
     ...mapGetters('accountData', ['account']),
     ...mapGetters('network', ['networkId', 'networkName']),
+    zapAllTokens() {
+      const selectedAdd = this.inputTokens
+        .map((_) => _.selectedToken?.address?.toLowerCase() ?? null)
+        .filter(Boolean);
 
+      return mergedTokens(this.allTokensList as any[], this.balanceList as any[], selectedAdd);
+    },
     deviceSize() {
       return deviceType();
     },
@@ -504,8 +520,10 @@ export default defineComponent({
     },
   },
   watch: {
-    allTokensList() {
+    allTokensList(val) {
+      if (this.renderDone || val.length === 0) return;
       this.clearForm();
+      this.renderDone = true;
     },
     // withour router, swaps do not gonna work
     async networkId(val) {
@@ -549,6 +567,7 @@ export default defineComponent({
       val: 'OVERNIGHT_SWAP',
     });
 
+    this.setIsZapModalShow(false);
     this.clearForm();
     await this.init();
     if (this.$route.query.action === 'swap-out') this.changeSwap();
@@ -562,6 +581,7 @@ export default defineComponent({
         'initWalletTransaction',
       ],
     ),
+    ...mapActions('poolsData', ['setIsZapModalShow']),
     ...mapActions('errorModal', ['showErrorModalWithMsg']),
     ...mapActions('waitingModal', ['showWaitingModal', 'closeWaitingModal']),
     ...mapActions('walletAction', ['connectWallet']),
@@ -762,7 +782,7 @@ export default defineComponent({
       });
 
       this.clearForm();
-      this.refreshBalances();
+      this.refetchAll();
     },
 
     clearForm() {

@@ -131,8 +131,7 @@
 </template>
 
 <script lang="ts">
-import { getNewInputToken, getTokenByAddress } from '@/store/helpers/index.ts';
-import { poolTokensForZapMap } from '@/store/views/main/zapin/mocks.ts';
+import { getNewInputToken, getTokenBySymbol } from '@/store/helpers/index.ts';
 import { formatInputTokens } from '@/utils/tokens.ts';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import BN from 'bignumber.js';
@@ -225,10 +224,9 @@ export default {
       this.initRewardTokens();
     },
     initLiqTokens() {
-      const poolTokens = poolTokensForZapMap[this.zapPool.address];
-      console.log(this.allTokensList, '__this.allTokensList');
-      const token0 = getTokenByAddress(poolTokens[0].address, this.allTokensList);
-      const token1 = getTokenByAddress(poolTokens[1].address, this.allTokensList);
+      const tokens = this.zapPool.name.split('/');
+      const token0 = getTokenBySymbol(tokens[0], this.allTokensList);
+      const token1 = getTokenBySymbol(tokens[1], this.allTokensList);
 
       const tokenFull0 = {
         ...getNewInputToken(),
@@ -245,7 +243,6 @@ export default {
 
       const symbName = this.zapPool?.name?.split('/');
 
-      console.log(this.zapPool?.position?.tokens, '__this.zapPool?.position?.tokens');
       arrTokens = arrTokens.map((_: any, key: number) => {
         const price = this.zapPool?.position?.tokens[key][symbName[key]];
 
@@ -256,7 +253,6 @@ export default {
         };
       });
 
-      console.log(arrTokens, '__arrTokens');
       const inputTokenInfo = formatInputTokens(arrTokens);
       this.inputTokens = inputTokenInfo;
     },

@@ -25,17 +25,8 @@ export type TTokenInfo = {
     price: string,
     balanceData?: TBalanceInfo,
     approveData?: TApproveData,
+    isPoolToken?: boolean,
   }
-
-  interface ISuccessTokenInfo extends TTokenInfo {
-    value: string,
-  }
-
-  type ISuccessTokenData = {
-    [key: string]: any;
-} & {
-    usdValue: string;
-};
 
 export type TTokenBalanceMap = {
     [key: string]: TBalanceInfo,
@@ -58,3 +49,13 @@ export interface IInputTokenInfo extends TInputToken {
   proportion: string,
   displayedValue: string,
 }
+
+export interface ISuccessTokenInfo extends TTokenInfo {
+  value: string,
+}
+
+export type ISuccessTokenData = {
+  [key: string]: any;
+} & {
+  usdValue: string;
+};

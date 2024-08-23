@@ -8,6 +8,7 @@ import { fixedByPrice } from '@/utils/numbers.ts';
 import { buildEvmContract } from '@/utils/contractsMap.ts';
 import { ERC20_ABI } from '@/assets/abi/index.ts';
 import type { TTokenBalanceData, TTokenInfo } from '@/types/common/tokens';
+import type { TTokenData } from '@/types/api/overnightApi';
 
 export const mergeTokenLists = (fetchedTokens: any) => {
   const tokensMap = {
@@ -42,6 +43,23 @@ export const mergeTokenLists = (fetchedTokens: any) => {
   };
 
   return tokensMap;
+};
+
+export const mergedTokens = (
+  fullTokenList: TTokenInfo[],
+  balanceTokenList: TTokenInfo[],
+  selectedAdd: string[],
+) => {
+  const merged = fullTokenList.concat(balanceTokenList);
+
+  const ids = merged.map(({ address }) => address?.toLowerCase());
+  const filtered = merged
+    .filter(({ address }, index) => !ids.includes(address?.toLowerCase(), index + 1));
+
+  return filtered.map((item: any) => ({
+    ...item,
+    selected: selectedAdd.includes(item.address?.toLowerCase()) ? item?.selected : false,
+  }));
 };
 
 // Helper functions
@@ -104,6 +122,7 @@ export const getFormatTokenInfo = (
       approved: false,
     },
     price: tokenPricesMap ? formatTokenPrice(tokenPricesMap[address]) : '0',
+    isPoolToken: token?.isPoolToken ?? false,
   };
 
   return ({
@@ -134,3 +153,34 @@ export const loadContractForToken = (tokenAddress: string, evmSigner: any) => bu
   evmSigner,
   tokenAddress,
 );
+
+export const formatTokenInfoNew = (
+  tokenMap: {[key: string]: TTokenData},
+): TTokenInfo[] => {
+  const tokenInfoList = Object.values(tokenMap).map((token: TTokenData) => (
+    {
+      id: token.id,
+      address: token.address,
+      decimals: token.decimals,
+      assetType: 'unknown',
+      name: token.name,
+      symbol: token.symbol.toUpperCase(),
+      logoUrl: token.image_url,
+      selected: false,
+      approveData: {
+        allowanceValue: 0,
+        approved: false,
+      },
+      balanceData: {
+        name: token.symbol,
+        balance: '0',
+        balanceInUsd: '0',
+        originalBalance: '0',
+        decimal: token.decimals,
+      },
+      price: token.price,
+      isPoolToken: token?.isPoolToken ?? false,
+    }
+  ));
+  return tokenInfoList;
+};

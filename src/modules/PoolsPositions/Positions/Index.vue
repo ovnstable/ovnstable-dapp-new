@@ -100,8 +100,10 @@ import TableSkeleton from '@/components/TableSkeleton/Index.vue';
 import { getImageUrl } from '@/utils/const.ts';
 import ButtonComponent from '@/components/Button/Index.vue';
 import { useQueryClient } from '@tanstack/vue-query';
-import { defineComponent } from 'vue';
+import { defineComponent, inject } from 'vue';
 import { usePositionsQuery } from '@/hooks/fetch/usePositionsQuery.ts';
+import type { ITokenService } from '@/services/TokenService/TokenService';
+import type { IPoolService } from '@/services/PoolService/PoolService';
 
 interface IEnumIterator {
   next: () => number,
@@ -158,9 +160,12 @@ export default defineComponent({
   },
   // Using new Composition API for hooks compatibility
   setup() {
-    const store = useStore() as any;
+    const { state } = useStore() as any;
 
-    const { data: positionData, isLoading } = usePositionsQuery(store.state);
+    const tokenService = inject('tokenService') as ITokenService;
+    const poolService = inject('poolService') as IPoolService;
+
+    const { data: positionData, isLoading } = usePositionsQuery(tokenService, poolService, state);
 
     const queryClient = useQueryClient();
     const invalidateQuery = async () => queryClient.invalidateQueries({ queryKey: ['positions'] });

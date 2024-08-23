@@ -20,10 +20,7 @@
     </div>
 
     <span class="divider" />
-    <div
-      v-if="successData.inputTokens?.length > 0"
-      class="modal-content__data"
-    >
+    <div class="modal-content__data">
       <div class="modal-content__data-main">
         <div
           class="data-row returned"

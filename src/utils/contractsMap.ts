@@ -1,4 +1,6 @@
-import { ABI_OVN, ERC20_ABI, EXCHANGER_INSURANCE_ABI, INSURANCE_TOKEN_ABI } from '@/assets/abi/index.ts';
+import {
+  ABI_OVN, ERC20_ABI, EXCHANGER_INSURANCE_ABI, INSURANCE_TOKEN_ABI,
+} from '@/assets/abi/index.ts';
 import { ethers } from 'ethers';
 
 export const chainContractsMap: {[key: string]: any} = {

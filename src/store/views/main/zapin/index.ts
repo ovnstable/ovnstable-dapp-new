@@ -101,7 +101,7 @@ const actions = {
     const poolVersion = state.zapPoolRoot?.poolVersion;
     const chainName = state.zapPoolRoot.chainName;
     const address = state.zapPoolRoot.address;
-    const platformName = state.currentZapPlatformContractType?.name ?? poolRoot?.platform[0];
+    const platformName = state.currentZapPlatformContractType?.name ?? poolRoot?.platform;
 
     if (!poolRoot) {
       console.error('Zap Pool Root not found: ', poolRoot);
@@ -123,6 +123,7 @@ const actions = {
     }
 
     let abiFile = {} as ContractAbi;
+
     if (chainName && platformName) {
       const abiFileSrc = zapAbiSrcMap[poolVersion]?.(chainName, platformName);
       abiFile = await loadAbi(abiFileSrc);
@@ -178,6 +179,7 @@ const actions = {
       });
     }
 
+    console.log(gaugeAddress, '___gaugeAddress');
     commit('changeState', {
       field: 'gaugeContract',
       val: buildEvmContract(

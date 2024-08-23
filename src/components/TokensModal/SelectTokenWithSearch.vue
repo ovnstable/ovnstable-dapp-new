@@ -1,14 +1,16 @@
 <!-- eslint-disable vuejs-accessibility/form-control-has-label -->
 <template>
   <div>
-
     <div
       v-if="deviceSize.isMobile"
       class="selected-tokens"
     >
       <p
+        v-if="maxTokenCount > 1"
         class="selected-tokens-amount"
-      >{{ selectedCount }} / 3</p>
+      >
+        {{ selectedCount }} / {{ maxTokenCount }}
+      </p>
       <div
         class="search-tokens__input"
       >
@@ -41,7 +43,7 @@
           :alt="token.symbol"
         >
         <span>
-          {{token.symbol}}
+          {{ token.symbol }}
         </span>
         <BaseIcon
           name="SearchClose"
@@ -56,8 +58,11 @@
       >
         <div class="selected-tokens">
           <p
+            v-if="maxTokenCount > 1"
             class="selected-tokens-amount"
-          >{{ selectedCount }} / 3</p>
+          >
+            {{ selectedCount }} / {{ maxTokenCount }}
+          </p>
           <div
             v-for="token in (selectedTokensList as any)"
             :key="token.id"
@@ -71,7 +76,7 @@
               :alt="token.symbol"
             >
             <span>
-              {{token.symbol}}
+              {{ token.symbol }}
             </span>
             <BaseIcon
               name="SearchClose"
@@ -98,20 +103,24 @@
       <div class="search-tokens__list">
         <div
           v-for="(token, index) in (queryTokens as any[])"
-          class="search-tokens__list-item"
           :key="token.id"
+          class="search-tokens__list-item"
           @click="toggleToken(token)"
           @keydown="toggleToken(token)"
         >
-          <h1 v-if="index === 0">OVERNIGHT TOKENS</h1>
-          <div
-            v-if="index === firstZeroBalanceIndexOvnTokens"
-            class="search-tokens__list-divider-zero-balance"
-          />
-          <div
-            v-if="index === firstZeroBalanceIndexNonOvnTokens"
-            class="search-tokens__list-divider-zero-balance"
-          />
+          <div v-if="isOvernightFirst">
+            <h1 v-if="index === 0">
+              OVERNIGHT TOKENS
+            </h1>
+            <div
+              v-if="index === firstZeroBalanceIndexOvnTokens"
+              class="search-tokens__list-divider-zero-balance"
+            />
+            <div
+              v-if="index === firstZeroBalanceIndexNonOvnTokens"
+              class="search-tokens__list-divider-zero-balance"
+            />
+          </div>
           <div
             class="search-tokens__list-item-info"
             :class="selectedTokensAddress.includes(token.address) ? 'search-tokens__list-item--selected' : ''"
@@ -123,27 +132,32 @@
               >
               <div class="search-tokens__list-item__left-text">
                 <h3>
-                  {{token.symbol}}
+                  {{ token.symbol }}
                 </h3>
                 <p>
-                  {{token.name}}
+                  {{ token.name }}
                 </p>
               </div>
             </div>
-            <div class="search-tokens__list-item__right">
+            <div
+              v-if="isOvernightFirst"
+              class="search-tokens__list-item__right"
+            >
               <span class="token-balance">
-                {{token.balanceData.balance ? token.balanceData.balance : '0'}}
+                {{ token.balanceData.balance ? token.balanceData.balance : '0' }}
               </span>
               <span class="token-usd-balance">
-                ${{token.balanceData.balance ? formatMoney(token.balanceData.balanceInUsd ?? "0", 2) : '0'}}
+                ${{ token.balanceData.balance ? formatMoney(token.balanceData.balanceInUsd ?? "0", 2) : '0' }}
               </span>
             </div>
           </div>
           <div
-            v-if="index === lastOvnTokenIndex"
+            v-if="isOvernightFirst && index === lastOvnTokenIndex"
             class="search-tokens__list-divider-plus-tokens"
           />
-          <h1 v-if="index === lastOvnTokenIndex">OTHER TOKENS</h1>
+          <h1 v-if="isOvernightFirst && index === lastOvnTokenIndex">
+            OTHER TOKENS
+          </h1>
         </div>
       </div>
     </div>
@@ -158,7 +172,6 @@ import { deviceType } from '@/utils/deviceType.ts';
 import BigNumber from 'bignumber.js';
 
 const NATIVE_ID = 'eth0x0000000000000000000000000000000000000000';
-const MAX_TOKEN_COUNT = 3;
 
 export default {
   name: 'SelectTokenWithSearch',
@@ -181,6 +194,16 @@ export default {
       required: false,
       default: false,
     },
+    maxTokenCount: {
+      type: Number,
+      required: false,
+      default: 3,
+    },
+    isOvernightFirst: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   data() {
     return {
@@ -192,7 +215,7 @@ export default {
       return deviceType();
     },
     selectedTokensList() {
-      if (!(this.selectedTokens[0] as any).selectedToken) return [];
+      if (!(this.selectedTokens[0] as any)?.selectedToken) return [];
       return this.selectedTokens.map((item: any) => item?.selectedToken).filter((_) => _?.selected);
     },
     selectedTokensAddress() {
@@ -208,9 +231,9 @@ export default {
 
       arrList = arrList.filter((token: any) => !this.selectedTokensAddress.includes(token
         .address) && (
-        token.name.toLowerCase().includes(this.searchQuery?.toLowerCase())
-          || token.symbol.toLowerCase().includes(this.searchQuery.toLowerCase())
-          || token.address.toLowerCase().includes(this.searchQuery.toLowerCase())
+        token.name?.toLowerCase().includes(this.searchQuery?.toLowerCase())
+          || token.symbol?.toLowerCase().includes(this.searchQuery?.toLowerCase())
+          || token.address?.toLowerCase().includes(this.searchQuery?.toLowerCase())
       ));
 
       arrList.sort((a: any, b: any) => {
@@ -274,7 +297,7 @@ export default {
     toggleToken(token: any) {
       const isSelected: boolean = this.selectedTokensAddress.includes(token.address);
       if (isSelected) this.$emit('remove-token', token);
-      else if (this.selectedTokensList.length < MAX_TOKEN_COUNT) this.$emit('add-token', token);
+      else if (this.selectedTokensList.length < this.maxTokenCount) this.$emit('add-token', token);
     },
   },
 };

@@ -2,6 +2,8 @@
 import BN from 'bignumber.js';
 import { buildLink } from '@/store/views/main/pools/helpers.ts';
 import { getUsdStr, sumBnStr } from '@/utils/tokens.ts';
+import { loadEmptyImg } from '@/utils/tokenLogo.ts';
+import { getNetworkParams } from '@/store/web3/network.ts';
 import type { TPoolInfo } from '@/types/common/pools';
 import type { TTokenInfo } from '@/types/common/tokens';
 import type { IPositionsInfo, TPositionData, TTicks } from '@/types/positions';
@@ -20,7 +22,7 @@ const getTokenNames = (poolName: string) => {
 export const getTokenInfo = (
   address: string,
   tokenMap: Map<string, TTokenInfo>,
-):TTokenInfo => tokenMap.get(address)!;
+):TTokenInfo => tokenMap.get(address?.toLowerCase())!;
 
 const getMinVal = (val: string | number) => (new BN(val).gt(0.1) ? new BN(val).toFixed(2) : '< 0.1');
 
@@ -52,33 +54,40 @@ export const getPositionProportion = (
 };
 
 const getPlatformLinks = (
-  platforms: string[],
-  pool: TPoolInfo,
-) => platforms.map((platform: string) => ({
+  platform: string,
+  address: string,
+  chain: string,
+) => ([{
   platform,
-  link: buildLink(pool, platform) ?? '',
-}));
+  link: buildLink({
+    address,
+    chainName: chain,
+  }, platform) ?? '',
+}]);
 
 export const formatPositionData = (
   posDataArr: TPositionData[],
   poolsMap: { [key: string]: TPoolInfo },
   tokenMap: Map<string, TTokenInfo>,
+  networkId: number,
 ): IPositionsInfo[] => {
   const positionInfo = posDataArr.flatMap((
     [platform, tokenId, poolId, token0, token1, amount0, amount1, rewardAmount0, rewardAmount1,
       emissions, tickLower, tickUpper, centerTick, isStaked]: TPositionData,
   ) => {
     // Pools
+    const network = getNetworkParams(networkId);
     const pool = poolsMap[poolId]
     ?? poolsMap[poolId.toUpperCase()] ?? poolsMap[poolId.toLowerCase()];
 
-    // console.log('__1');
-
-    if (pool && pool.name && isStaked) {
+    if (isStaked) {
       // Tokens
-      const tokenNames = getTokenNames(pool.name);
       const token0Info = getTokenInfo(token0, tokenMap);
       const token1Info = getTokenInfo(token1, tokenMap);
+      const tokenNames = pool ? getTokenNames(pool.name) : {
+        token0: token0Info.symbol,
+        token1: token1Info.symbol,
+      };
 
       // Token usd values
       const token0UsdStr = getUsdStr(amount0, token0Info?.decimals, token0Info?.price);
@@ -100,11 +109,16 @@ export const formatPositionData = (
         centerTick,
       };
 
-      // console.log(ticks, '__ticks');
-
       // Final data
       const positionFullInfo = {
         ...pool,
+        address: poolId,
+        chain: networkId,
+        chainName: network?.name?.toLowerCase() ?? 'base',
+        token0Icon: token0Info?.logoUrl ?? loadEmptyImg(),
+        token1Icon: token1Info?.logoUrl ?? loadEmptyImg(),
+        platform: [platform],
+        name: pool ? pool.name : `${token0Info?.symbol}/${token1Info?.symbol}`,
         position: {
           tokens: [
             { [tokenNames.token0]: getUsdStr(amount0, token0Info?.decimals) },
@@ -124,7 +138,7 @@ export const formatPositionData = (
           displayedUsdValue: getMinVal(rewardUsdTotal),
         },
         emissions,
-        platformLinks: getPlatformLinks(pool.platform, pool),
+        platformLinks: getPlatformLinks(platform, poolId, 'base'),
         tokenId,
         ticks,
         tokenNames,

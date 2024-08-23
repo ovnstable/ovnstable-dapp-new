@@ -13,12 +13,12 @@
         <h1
           v-if="selectTokenInput"
         >
-          Select Input token
+          {{ `Select ${token0Name}` }}
         </h1>
         <h1
           v-else
         >
-          Select Output token
+          {{ `Select ${token1Name}` }}
         </h1>
       </div>
 
@@ -64,6 +64,8 @@
             :selected-tokens="selectedTokens"
             :remove-native="removeNative"
             :is-input-tokens="selectTokenInput"
+            :max-token-count="maxTokenCount"
+            :is-overnight-first="isOvernightFirst"
             @add-token="selectToken"
             @remove-token="removeToken"
           />
@@ -79,6 +81,10 @@ import SelectTokenWithSearch from '@/components/TokensModal/SelectTokenWithSearc
 import ModalComponent from '@/components/Modal/Index.vue';
 import Spinner from '@/components/Spinner/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
+import BN from 'bignumber.js';
+import { mapGetters } from 'vuex';
+import BalanceService from '@/services/BalanceService/BalanceService.ts';
+import { fixedByPrice } from '@/utils/numbers.ts';
 
 export default {
   name: 'SelectTokensModal',
@@ -124,13 +130,36 @@ export default {
       type: Boolean as PropType<boolean | Ref<boolean>>,
       required: true,
     },
+    token0Name: {
+      type: String,
+      required: false,
+      default: 'Input token',
+    },
+    token1Name: {
+      type: String,
+      required: false,
+      default: 'Output token',
+    },
+    maxTokenCount: {
+      type: Number,
+      required: false,
+      default: 3,
+    },
+    isOvernightFirst: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
   },
   emits: ['set-show', 'add-token-to-list', 'remove-token-from-list', 'connect-wallet', 'reload'],
-
   data() {
     return {
       showModal: false,
     };
+  },
+  computed: {
+    ...mapGetters('accountData', ['account']),
+    ...mapGetters('web3', ['evmProvider']),
   },
   watch: {
     isShow(currVal: boolean) {
@@ -147,12 +176,28 @@ export default {
     closeModal() {
       this.$emit('set-show', false);
     },
-    selectToken(token: any) {
+    async selectToken(token: any) {
+      let tokenBalance = token.balanceData;
+
+      if (new BN(tokenBalance?.balance).eq(0)) {
+        const balance = await BalanceService
+          .fetchBalanceByAddress(this.evmProvider, this.account, token.address);
+        const balanceUsd = new BN(balance?.toString()).times(token.price);
+
+        tokenBalance = {
+          ...tokenBalance,
+          originalBalance: balance?.toString(),
+          balanceInUsd: fixedByPrice(Number(balanceUsd)),
+          balance: fixedByPrice(Number(balance)),
+        };
+      }
+
       // eslint-disable-next-line no-param-reassign
       token.selected = true;
       this.$emit('add-token-to-list', {
         tokenData: {
           ...token,
+          balanceData: tokenBalance,
           selected: true,
         },
         isInput: this.selectTokenInput,
@@ -177,6 +222,7 @@ export default {
 .tokens-modal {
   min-width: 500px;
   max-width: 500px;
+  border-radius: 20px;
   [data-theme="dark"] & {
     border-color: var(--color-2);
     background-color: var(--color-17);

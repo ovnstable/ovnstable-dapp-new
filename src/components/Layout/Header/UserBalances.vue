@@ -57,10 +57,10 @@ import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { deviceType } from '@/utils/deviceType.ts';
 import BN from 'bignumber.js';
-import { defineComponent } from 'vue';
+import { defineComponent, inject } from 'vue';
 import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
-import TokenService from '@/services/TokenService/TokenService.ts';
-import type { TTokenInfo } from '@/types/common/tokens/index.ts';
+import TokenService, { type ITokenService } from '@/services/TokenService/TokenService.ts';
+import type { TTokenInfo } from '@/types/common/tokens/index.d.ts';
 
 type TBalanceList = {
   balance: string,
@@ -75,12 +75,14 @@ export default defineComponent({
     BaseIcon,
   },
   setup: () => {
-    const store = useStore() as any;
+    const { state } = useStore() as any;
+
+    const tokenService = inject('tokenService') as ITokenService;
 
     const {
       data: allTokensList,
       isBalancesLoading,
-    } = useTokensQuery(store.state);
+    } = useTokensQuery(tokenService, state);
 
     return {
       allTokensList,
