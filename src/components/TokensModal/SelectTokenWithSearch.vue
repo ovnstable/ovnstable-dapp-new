@@ -231,9 +231,9 @@ export default {
 
       arrList = arrList.filter((token: any) => !this.selectedTokensAddress.includes(token
         .address) && (
-        token.name.toLowerCase().includes(this.searchQuery?.toLowerCase())
-          || token.symbol.toLowerCase().includes(this.searchQuery.toLowerCase())
-          || token.address.toLowerCase().includes(this.searchQuery.toLowerCase())
+        token.name?.toLowerCase().includes(this.searchQuery?.toLowerCase())
+          || token.symbol?.toLowerCase().includes(this.searchQuery?.toLowerCase())
+          || token.address?.toLowerCase().includes(this.searchQuery?.toLowerCase())
       ));
 
       arrList.sort((a: any, b: any) => {

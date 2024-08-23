@@ -318,6 +318,7 @@ export default defineComponent({
       isSwapLoading: false,
       isSumulateSwapLoading: false,
       isSumulateIntervalStarted: false,
+      renderDone: false,
       slippagePercent: 0.05,
       firstSwipeClickOnApprove: false,
     };
@@ -507,7 +508,9 @@ export default defineComponent({
   },
   watch: {
     allTokensList() {
+      if (this.renderDone) return;
       this.clearForm();
+      this.renderDone = true;
     },
     // withour router, swaps do not gonna work
     async networkId(val) {
