@@ -187,13 +187,17 @@ export default defineComponent({
       this.orderType = ORDER_TYPE[orderType];
     },
     setSelectedNetwork(selectedChain: number | 'ALL') {
+      console.log('setSelectedNetwork', selectedChain);
       this.isOpenHiddenPools = false;
       this.isDefaultOrder = true;
       if (selectedChain === 'ALL') this.networkIds = [];
       else if (this.networkIds.includes(selectedChain)) {
-        this.networkIds = this.networkIds
-          .filter((network) => network !== selectedChain);
-      } else this.networkIds.push(selectedChain as number);
+        this.networkIds = [...this.networkIds
+          .filter((network) => network !== selectedChain)];
+      } else {
+        this.networkIds.push(selectedChain);
+      }
+      return [];
     },
     clearAllFilters() {
       this.isOpenHiddenPools = false;
