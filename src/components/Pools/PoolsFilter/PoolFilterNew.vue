@@ -27,29 +27,33 @@
       <div class="network-filter-wrap">
         <div class="pools-wrap__filters-networks">
           <div
-            :class="selectedNetwork.length === 0 ? 'pools-wrap__filters-item--selected' : ''"
-            class="pools-wrap__filters-item"
-          >
-            ALL
-          </div>
-          <div
             v-for="networkConfig in sortedChains"
-            :key="networkConfig.chain"
-            :class="selectedNetwork.includes(networkConfig.chain) || selectedNetwork.length === 0 ? 'pools-wrap__filters-item--selected' : ''"
+            :key="networkConfig.chainId"
+            :class="networkConfig.enabled ? 'pools-wrap__filters-item--selected' : ''"
             class="pools-wrap__filters-item"
           >
             <BaseIcon :name="networkConfig.name.toLowerCase()" />
           </div>
         </div>
       </div>
-      <ButtonComponent
-        class="search-button"
-        btn-styles="faded"
-        @click="handleClickSearch"
-        @keypress="handleClickSearch"
-      >
-        SEARCH POOLS
-      </ButtonComponent>
+      <div class="button-container">
+        <ButtonComponent
+          class="search-button"
+          btn-styles="faded"
+          @click="handleClickSearch"
+          @keypress="handleClickSearch"
+        >
+          SEARCH POOLS
+        </ButtonComponent>
+        <ButtonComponent
+          class="search-button"
+          btn-styles="faded"
+          @click="handleClickResetFilter"
+          @keypress="handleClickResetFilter"
+        >
+          CLEAR FILTER
+        </ButtonComponent>
+      </div>
     </div>
   </div>
   <SelectTokensModal
@@ -72,9 +76,7 @@
 
 <script lang="ts">
 import ButtonComponent from '@/components/Button/Index.vue';
-import { appNetworksData } from '@/utils/const.ts';
 import { mapActions, mapGetters, useStore } from 'vuex';
-import { sortedChainsByTVL } from '@/store/helpers/index.ts';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import SelectTokensModal from '@/components/TokensModal/Index.vue';
 import { computed, inject } from 'vue';
@@ -82,13 +84,6 @@ import { useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.ts';
 import type { TTokenInfo } from '@/types/common/tokens';
 import type { TFilterPoolsParams } from '@/types/common/pools';
 import type { ITokenService } from '@/services/TokenService/TokenService';
-
-interface Chain {
-  chainName: string;
-  tvl: number;
-  name: string,
-  chain: number,
-}
 
 type TSelectTokenWithSearch = {
     isInput: boolean,
@@ -98,6 +93,19 @@ type TSelectTokenWithSearch = {
 const initSelectedToken = {
   symbol: 'USD+',
 };
+
+export const networkList = [
+  {
+    chainId: 8453,
+    name: 'Base',
+    enabled: true,
+  },
+  {
+    chainId: 42161,
+    name: 'Arbitrum',
+    enabled: false,
+  },
+];
 
 export default {
   name: 'PoolFilter',
@@ -129,23 +137,13 @@ export default {
   data() {
     return {
       selectedTokens: [initSelectedToken] as Partial<TTokenInfo>[],
-      sortedChains: [] as Chain[],
-      networksData: appNetworksData,
-      selectedNetwork: [] as any,
+      sortedChains: networkList,
       isShowTokensModal: false as boolean,
       selectingTokenIndex: 1 as Number,
     };
   },
   computed: {
-    ...mapGetters('network', ['networkId', 'isShowDeprecated']),
     ...mapGetters('accountData', ['account']),
-  },
-  async mounted() {
-    this.sortedChains = await sortedChainsByTVL(
-      this.networksData,
-      this.isShowDeprecated,
-      this.networkId,
-    );
   },
   methods: {
     ...mapActions('poolsData', ['setFilterParams']),
@@ -156,14 +154,23 @@ export default {
     toggleSelectToken(newToken: TSelectTokenWithSearch) {
       const selectedToken = newToken.tokenData;
       this.selectedTokens[Number(this.selectingTokenIndex) - 1] = selectedToken;
+      console.log(this.selectedTokens);
       this.isShowTokensModal = false;
     },
     handleClickSearch() {
       const filterParams: Partial<TFilterPoolsParams> = {
-        token0: this.selectedTokens[0].symbol,
+        token0: this.selectedTokens[0]?.symbol ?? '',
         token1: this.selectedTokens[1]?.symbol ?? '',
       };
       this.setFilterParams(filterParams);
+    },
+    handleClickResetFilter() {
+      const filterParams: Partial<TFilterPoolsParams> = {
+        token0: '',
+        token1: '',
+      };
+      this.setFilterParams(filterParams);
+      this.selectedTokens = [];
     },
   },
 };
