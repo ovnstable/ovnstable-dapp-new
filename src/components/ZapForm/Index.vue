@@ -401,12 +401,12 @@ export default defineComponent({
     const tokenService = inject('tokenService') as ITokenService;
 
     const {
-      data: allTokensList,
+      data: balanceList,
       isLoading: isAnyLoading,
     } = useTokensQuery(tokenService, state);
 
     const {
-      data: balanceList,
+      data: allTokensList,
     } = useTokensQueryNew(tokenService, state);
 
     return {
@@ -762,8 +762,8 @@ export default defineComponent({
     },
     addDefaultPoolToken() {
       const poolTokens = poolTokensForZapMap[this.zapPool.address];
-      const poolSelectedToken = getTokenByAddress(poolTokens[0].address, this.allTokensList);
-      const ovnSelectSelectedToken = getTokenByAddress(poolTokens[1].address, this.allTokensList);
+      const poolSelectedToken = getTokenByAddress(poolTokens[0].address, this.balanceList);
+      const ovnSelectSelectedToken = getTokenByAddress(poolTokens[1].address, this.balanceList);
 
       if (!poolSelectedToken || !ovnSelectSelectedToken) return;
       poolSelectedToken.selected = true;

@@ -292,14 +292,14 @@ export default defineComponent({
     const tokenService = inject('tokenService') as ITokenService;
 
     const {
-      data: allTokensList,
+      data: balanceList,
       isLoading,
       isBalancesLoading,
       refetchAll,
     } = useTokensQuery(tokenService, state);
 
     const {
-      data: balanceList,
+      data: allTokensList,
     } = useTokensQueryNew(tokenService, state);
 
     return {
@@ -520,7 +520,7 @@ export default defineComponent({
     },
   },
   watch: {
-    allTokensList(val) {
+    balanceList(val) {
       if (this.renderDone || val.length === 0) return;
       this.clearForm();
       this.renderDone = true;
@@ -643,7 +643,7 @@ export default defineComponent({
       const symbol = this.$route.query.symbol ? this.$route.query.symbol : null;
       const ovnSelectedToken: any = getDefaultSecondtoken(
         'OVERNIGHT_SWAP',
-        this.allTokensList,
+        this.balanceList,
         symbol as string | null,
       );
 
