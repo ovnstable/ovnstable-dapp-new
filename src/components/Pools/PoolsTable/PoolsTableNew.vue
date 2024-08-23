@@ -68,7 +68,7 @@
                   v-if="pool.fee"
                   class="pool-fee"
                 >
-                  {{ Number(pool.fee) * .0001 }} %
+                  {{ formatPoolFee(pool.fee) }}
                 </div>
               </div>
             </div>
@@ -146,6 +146,7 @@ import { buildLink, checkIsEveryStable } from '@/store/views/main/pools/helpers.
 import { inject, type PropType } from 'vue';
 import { ORDER_TYPE } from '@/services/PoolService/utils/poolsSort.ts';
 import PoolService from '@/services/PoolService/PoolService.ts';
+import BigNumber from 'bignumber.js';
 import type { TPool } from '@/types/common/pools';
 import type { IPoolService } from '@/services/PoolService/PoolService';
 
@@ -227,6 +228,10 @@ export default {
       return (Number(tvl) >= 1000000)
         ? `${formatNumberToMln(tvl as number, 2)}M`
         : `${formatNumberToThousands(tvl as number, 0)}K`;
+    },
+    formatPoolFee(fee: string) {
+      const formattedFee = new BigNumber(fee).multipliedBy(0.0001);
+      return `${formattedFee} %`;
     },
   },
 };
