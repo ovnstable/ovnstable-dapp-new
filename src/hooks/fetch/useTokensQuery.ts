@@ -96,6 +96,11 @@ export const useTokensQuery = (tokenService: ITokenService, stateData: any) => {
     return [];
   };
 
+  const refetchAll = () => {
+    tokensQuery.refetch();
+    balancesQuery.refetch();
+  };
+
   return {
     data: computed(getTokenInfo),
     error: allErrors,
@@ -103,6 +108,7 @@ export const useTokensQuery = (tokenService: ITokenService, stateData: any) => {
     isLoading: isAnyLoading,
     isError: isAnyError,
     isBalancesLoading: balancesQuery.isLoading,
+    refetchAll,
   };
 };
 

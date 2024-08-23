@@ -264,7 +264,7 @@ import {
 } from '@/store/helpers/index.ts';
 import BigNumber from 'bignumber.js';
 import { computed, defineComponent, inject } from 'vue';
-import { useTokensQuery, useRefreshBalances } from '@/hooks/fetch/useTokensQuery.ts';
+import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
 import TokenService, { type ITokenService } from '@/services/TokenService/TokenService.ts';
 
 export default defineComponent({
@@ -294,13 +294,14 @@ export default defineComponent({
       data: allTokensList,
       isLoading,
       isBalancesLoading,
+      refetchAll,
     } = useTokensQuery(tokenService, state);
 
     return {
       allTokensList,
       isAllDataLoaded: computed(() => !isLoading.value),
       isBalancesLoading,
-      refreshBalances: useRefreshBalances(),
+      refetchAll,
     };
   },
   data() {
@@ -507,8 +508,8 @@ export default defineComponent({
     },
   },
   watch: {
-    allTokensList() {
-      if (this.renderDone) return;
+    allTokensList(val) {
+      if (this.renderDone || val.length === 0) return;
       this.clearForm();
       this.renderDone = true;
     },
@@ -769,7 +770,7 @@ export default defineComponent({
       });
 
       this.clearForm();
-      this.refreshBalances();
+      this.refetchAll();
     },
 
     clearForm() {
