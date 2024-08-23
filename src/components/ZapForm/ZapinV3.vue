@@ -22,7 +22,7 @@
             </ButtonComponent>
           </div>
           <h2 v-if="pairSymbols">
-            Price in:  {{ getCenterPrice }}  {{ getFirstSymbol }} per {{ getSecondSymbol }}
+            Price in:  {{ getCenterPrice }} {{ getSecondSymbol }} per {{ getFirstSymbol }}
           </h2>
         </div>
 
@@ -101,7 +101,7 @@
           </div>
         </div>
         <p v-if="pairSymbols">
-          {{ getFirstSymbol }} per {{ getSecondSymbol }}
+          {{ getSecondSymbol }} per {{ getFirstSymbol }}
         </p>
       </div>
       <div class="zapin-v3__col-block">
@@ -134,7 +134,7 @@
           </div>
         </div>
         <p v-if="pairSymbols">
-          {{ getFirstSymbol }} per {{ getSecondSymbol }}
+          {{ getSecondSymbol }} per {{ getFirstSymbol }}
         </p>
       </div>
     </div>

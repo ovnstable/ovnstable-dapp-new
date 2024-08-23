@@ -329,6 +329,7 @@ import { loadAbi, srcStringBuilder } from '@/store/views/main/zapin/index.ts';
 import { buildEvmContract } from '@/utils/contractsMap.ts';
 import { isEmpty } from 'lodash';
 import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
+import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import { mapExcludeLiquidityPlatform, parseLogs, sourceLiquidityBlacklist } from './helpers.ts';
 
 enum zapMobileSection {
@@ -440,14 +441,7 @@ export default defineComponent({
         .times(this.slippagePercent).div(100).toNumber();
     },
     zapAllTokens() {
-      const selectedAdd = this.inputTokens
-        .map((_) => _.selectedToken?.address?.toLowerCase() ?? null)
-        .filter(Boolean);
-
-      return this.balanceList.map((item: any) => ({
-        ...item,
-        selected: selectedAdd.includes(item.address?.toLowerCase()) ? item?.selected : false,
-      }));
+      return mergedTokens(this.allTokensList as any[], this.balanceList as any[]);
     },
     isInputTokensRemovable() {
       return this.inputTokens.length > 1;

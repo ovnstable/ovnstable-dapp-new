@@ -201,7 +201,7 @@
       <SelectTokensModal
         :is-show="isShowSelectTokensModal"
         :select-token-input="selectModalTypeInput"
-        :tokens="allTokensList"
+        :tokens="zapAllTokens"
         :user-account="account"
         :balances-loading="isBalancesLoading"
         :is-all-data-loaded="isAllDataLoaded"
@@ -217,7 +217,7 @@
       <SelectTokensModalMobile
         :is-show="isShowSelectTokensModal"
         :select-token-input="selectModalTypeInput"
-        :tokens="allTokensList"
+        :tokens="zapAllTokens"
         :user-account="account"
         :balances-loading="isBalancesLoading"
         :is-all-data-loaded="isAllDataLoaded"
@@ -264,8 +264,9 @@ import {
 } from '@/store/helpers/index.ts';
 import BigNumber from 'bignumber.js';
 import { computed, defineComponent, inject } from 'vue';
-import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
+import { useTokensQuery, useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.ts';
 import TokenService, { type ITokenService } from '@/services/TokenService/TokenService.ts';
+import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 
 export default defineComponent({
   name: 'SwapForm',
@@ -297,8 +298,13 @@ export default defineComponent({
       refetchAll,
     } = useTokensQuery(tokenService, state);
 
+    const {
+      data: balanceList,
+    } = useTokensQueryNew(tokenService, state);
+
     return {
       allTokensList,
+      balanceList,
       isAllDataLoaded: computed(() => !isLoading.value),
       isBalancesLoading,
       refetchAll,
@@ -336,7 +342,9 @@ export default defineComponent({
     ]),
     ...mapGetters('accountData', ['account']),
     ...mapGetters('network', ['networkId', 'networkName']),
-
+    zapAllTokens() {
+      return mergedTokens(this.allTokensList as any[], this.balanceList as any[]);
+    },
     deviceSize() {
       return deviceType();
     },

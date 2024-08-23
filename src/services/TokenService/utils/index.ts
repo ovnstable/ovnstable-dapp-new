@@ -45,6 +45,13 @@ export const mergeTokenLists = (fetchedTokens: any) => {
   return tokensMap;
 };
 
+export const mergedTokens = (fullTokenList: TTokenInfo[], balanceTokenList: TTokenInfo[]) => {
+  const merged = fullTokenList.concat(balanceTokenList);
+
+  const ids = merged.map(({ address }) => address?.toLowerCase());
+  return merged.filter(({ address }, index) => !ids.includes(address?.toLowerCase(), index + 1));
+};
+
 // Helper functions
 const formatTokenDecimals = (amount: string, decimals: number) => new BigNumber(amount)
   .div(10 ** decimals);
@@ -156,9 +163,9 @@ export const formatTokenInfoNew = (
       },
       balanceData: {
         name: token.symbol,
-        balance: 'null',
-        balanceInUsd: 'null',
-        originalBalance: 'null',
+        balance: '0',
+        balanceInUsd: '0',
+        originalBalance: '0',
         decimal: token.decimals,
       },
       price: token.price,
