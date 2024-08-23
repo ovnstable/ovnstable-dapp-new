@@ -774,15 +774,15 @@ export default defineComponent({
       console.error('Change swap method not found.', this.swapMethod);
     },
 
-    finishTransaction() {
+    async finishTransaction() {
       this.$emit('update-path-view', {
         path: null,
         input: this.selectedInputTokens,
         output: this.selectedOutputTokens,
       });
 
+      await this.refetchAll();
       this.clearForm();
-      this.refetchAll();
     },
 
     clearForm() {

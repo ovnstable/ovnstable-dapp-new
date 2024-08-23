@@ -74,10 +74,10 @@ class BalanceService {
 
   public static async fetchBalanceByAddress(provider: any, account: string, tokenAddress: string) {
     return new ethers.Contract(
-      tokenAddress,
+      account,
       ERC20_ABI,
       provider,
-    ).balanceOf(account).catch(() => '0');
+    ).balanceOf(tokenAddress).catch(() => '0');
   }
 
   public static async fetchTokenBalances(
