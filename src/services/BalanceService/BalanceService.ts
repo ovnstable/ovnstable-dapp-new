@@ -69,7 +69,11 @@ export const getFormatTokenBalance = (token: TTokenInfo, balanceData: TTokenBala
 class BalanceService {
   // eslint-disable-next-line class-methods-use-this
   public static async fetchBalnceByAddress(provider: any, account: string) {
-    return provider.getBalance(account).toString();
+    return new ethers.Contract(
+      account,
+      ERC20_ABI,
+      provider,
+    ).balanceOf(account).catch(() => '0').then((balance) => balance);
   }
 
   public static async fetchTokenBalances(
