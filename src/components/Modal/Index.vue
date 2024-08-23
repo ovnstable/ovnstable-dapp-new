@@ -233,9 +233,10 @@ export default {
     background-color: var(--color-17);
   }
   }
-  [data-theme="dark"] & {
-    background-color: var(--color-6);
-  }
+  border-radius: 20px;
+  // [data-theme="dark"] & {
+  //   background-color: var(--color-6);
+  // }
 }
 
 @media (max-width: 640px) {

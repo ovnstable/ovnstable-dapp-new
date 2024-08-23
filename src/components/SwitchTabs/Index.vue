@@ -146,6 +146,9 @@ export default {
   .bigWhite & {
     background: var(--color-8);
     color: var(--color-1);
+    [data-theme="dark"] & {
+    background: var(--color-19);
+    }
   }
 
   [data-theme="dark"] & {
@@ -181,6 +184,9 @@ export default {
 
     .bigWhite & {
       background-color: var(--color-4);
+      [data-theme="dark"] & {
+    background: var(--color-19);
+    }
     }
 
   }
@@ -206,6 +212,9 @@ export default {
   .bigWhite & {
     border: 1px solid var(--color-1);
     background: var(--color-4);
+    [data-theme="dark"] & {
+    background: var(--color-19);
+    }
   }
 
   [data-theme="dark"] & {
