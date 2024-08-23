@@ -1,4 +1,4 @@
-type TPoolTokenData = {
+export type TPoolTokenData = {
     tokenId: string,
     decimals: string,
     name: string,

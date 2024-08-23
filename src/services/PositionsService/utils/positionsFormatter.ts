@@ -2,7 +2,8 @@
 import BN from 'bignumber.js';
 import { buildLink } from '@/store/views/main/pools/helpers.ts';
 import { getUsdStr, sumBnStr } from '@/utils/tokens.ts';
-import { appNetworksData } from '@/utils/const.ts';
+import { loadEmptyImg } from '@/utils/tokenLogo.ts';
+import { getNetworkParams } from '@/store/web3/network.ts';
 import type { TPoolInfo } from '@/types/common/pools';
 import type { TTokenInfo } from '@/types/common/tokens';
 import type { IPositionsInfo, TPositionData, TTicks } from '@/types/positions';
@@ -75,7 +76,7 @@ export const formatPositionData = (
       emissions, tickLower, tickUpper, centerTick, isStaked]: TPositionData,
   ) => {
     // Pools
-    const network = appNetworksData.find((_) => _.chain === networkId);
+    const network = getNetworkParams(networkId);
     const pool = poolsMap[poolId]
     ?? poolsMap[poolId.toUpperCase()] ?? poolsMap[poolId.toLowerCase()];
 
@@ -113,9 +114,9 @@ export const formatPositionData = (
         ...pool,
         address: poolId,
         chain: networkId,
-        chainName: network ? network.name?.toLowerCase() : 'base',
-        token0Icon: token0Info.logoUrl,
-        token1Icon: token1Info.logoUrl,
+        chainName: network?.name?.toLowerCase() ?? 'base',
+        token0Icon: token0Info?.logoUrl ?? loadEmptyImg(),
+        token1Icon: token1Info?.logoUrl ?? loadEmptyImg(),
         platform: [platform],
         name: pool ? pool.name : `${token0Info?.symbol}/${token1Info?.symbol}`,
         position: {
