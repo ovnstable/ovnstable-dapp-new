@@ -45,11 +45,21 @@ export const mergeTokenLists = (fetchedTokens: any) => {
   return tokensMap;
 };
 
-export const mergedTokens = (fullTokenList: TTokenInfo[], balanceTokenList: TTokenInfo[]) => {
+export const mergedTokens = (
+  fullTokenList: TTokenInfo[],
+  balanceTokenList: TTokenInfo[],
+  selectedAdd: string[],
+) => {
   const merged = fullTokenList.concat(balanceTokenList);
 
   const ids = merged.map(({ address }) => address?.toLowerCase());
-  return merged.filter(({ address }, index) => !ids.includes(address?.toLowerCase(), index + 1));
+  const filtered = merged
+    .filter(({ address }, index) => !ids.includes(address?.toLowerCase(), index + 1));
+
+  return filtered.map((item: any) => ({
+    ...item,
+    selected: selectedAdd.includes(item.address?.toLowerCase()) ? item?.selected : false,
+  }));
 };
 
 // Helper functions

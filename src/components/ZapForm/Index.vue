@@ -355,9 +355,10 @@ import { onLeaveList, onEnterList, beforeEnterList } from '@/utils/animations.ts
 import { MANAGE_FUNC, zapInStep } from '@/store/modals/waiting-modal.ts';
 import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
 import SwapSlippageSettings from '@/components/SwapSlippage/Index.vue';
-import { useTokensQuery, useRefreshBalances } from '@/hooks/fetch/useTokensQuery.ts';
+import { useTokensQuery, useRefreshBalances, useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.ts';
 import TokenService, { type ITokenService } from '@/services/TokenService/TokenService.ts';
 import { isEmpty } from 'lodash';
+import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import { mapExcludeLiquidityPlatform, parseLogs, sourceLiquidityBlacklist } from './helpers.ts';
 
 enum zapMobileSection {
@@ -404,8 +405,13 @@ export default defineComponent({
       isLoading: isAnyLoading,
     } = useTokensQuery(tokenService, state);
 
+    const {
+      data: balanceList,
+    } = useTokensQueryNew(tokenService, state);
+
     return {
       allTokensList,
+      balanceList,
       isAnyLoading: computed(() => isAnyLoading.value),
       refreshBalances: useRefreshBalances(),
     };
@@ -484,10 +490,7 @@ export default defineComponent({
         .map((_) => _.selectedToken?.address?.toLowerCase() ?? null)
         .filter(Boolean);
 
-      return this.allTokensList.map((item: any) => ({
-        ...item,
-        selected: selectedAdd.includes(item.address?.toLowerCase()) ? item?.selected : false,
-      }));
+      return mergedTokens(this.allTokensList as any[], this.balanceList as any[], selectedAdd);
     },
     isInputTokensRemovable() {
       return this.inputTokens.length > 1;
@@ -614,7 +617,8 @@ export default defineComponent({
     },
   },
   watch: {
-    networkId() {
+    networkId(val) {
+      this.loadRouterContract(val);
       this.$nextTick(() => {
         this.firstInit();
       });
@@ -630,6 +634,7 @@ export default defineComponent({
     },
     // on wallet connect
     async account(val) {
+      await this.loadRouterContract(this.networkId);
       if (val) this.clearAndInitForm();
       if (!val) this.outputTokens = [getNewOutputToken()];
     },
@@ -643,6 +648,7 @@ export default defineComponent({
     this.currentStage = zapInStep.START;
     if (this.zapPool.chain !== this.networkId) this.currentStage = zapInStep.START;
 
+    this.loadRouterContract(this.networkId);
     // for modal
     this.setStagesMap(MANAGE_FUNC.ZAPIN);
     this.initContracts();
@@ -652,6 +658,7 @@ export default defineComponent({
   methods: {
     ...mapActions('odosData', [
       'triggerSuccessZapin',
+      'loadRouterContract',
     ]),
     ...mapActions('zapinData', ['loadZapContract']),
     ...mapActions('errorModal', ['showErrorModalWithMsg']),
@@ -862,7 +869,7 @@ export default defineComponent({
     async stakeTrigger() {
       console.log(this.gaugeContractV3, '__thisgaugeContractV3');
       // await this.poolTokenContract.deposit(Number(26997));
-      if (this.zapInType === 'V2') this.currentStage = zapInStep.STAKE_LP;
+      if (this.zapInType === 'V2') this.currentStage = zapInStep.DEPOSIT;
       if (!this.zapPool) return;
       this.$store.commit('odosData/changeState', {
         field: 'lastPoolInfoData',

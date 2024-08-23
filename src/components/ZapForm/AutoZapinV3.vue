@@ -441,7 +441,11 @@ export default defineComponent({
         .times(this.slippagePercent).div(100).toNumber();
     },
     zapAllTokens() {
-      return mergedTokens(this.allTokensList as any[], this.balanceList as any[]);
+      const selectedAdd = this.inputTokens
+        .map((_) => _.selectedToken?.address?.toLowerCase() ?? null)
+        .filter(Boolean);
+
+      return mergedTokens(this.allTokensList as any[], this.balanceList as any[], selectedAdd);
     },
     isInputTokensRemovable() {
       return this.inputTokens.length > 1;

@@ -343,7 +343,11 @@ export default defineComponent({
     ...mapGetters('accountData', ['account']),
     ...mapGetters('network', ['networkId', 'networkName']),
     zapAllTokens() {
-      return mergedTokens(this.allTokensList as any[], this.balanceList as any[]);
+      const selectedAdd = this.inputTokens
+        .map((_) => _.selectedToken?.address?.toLowerCase() ?? null)
+        .filter(Boolean);
+
+      return mergedTokens(this.allTokensList as any[], this.balanceList as any[], selectedAdd);
     },
     deviceSize() {
       return deviceType();

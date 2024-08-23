@@ -81,6 +81,10 @@ import SelectTokenWithSearch from '@/components/TokensModal/SelectTokenWithSearc
 import ModalComponent from '@/components/Modal/Index.vue';
 import Spinner from '@/components/Spinner/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
+import BN from 'bignumber.js';
+import { mapGetters } from 'vuex';
+import BalanceService from '@/services/BalanceService/BalanceService.ts';
+import { fixedByPrice } from '@/utils/numbers.ts';
 
 export default {
   name: 'SelectTokensModal',
@@ -153,6 +157,10 @@ export default {
       showModal: false,
     };
   },
+  computed: {
+    ...mapGetters('accountData', ['account']),
+    ...mapGetters('web3', ['evmProvider']),
+  },
   watch: {
     isShow(currVal: boolean) {
       this.showModal = currVal;
@@ -168,12 +176,28 @@ export default {
     closeModal() {
       this.$emit('set-show', false);
     },
-    selectToken(token: any) {
+    async selectToken(token: any) {
+      let tokenBalance = token.balanceData;
+
+      if (new BN(tokenBalance?.balance).eq(0)) {
+        const balance = await BalanceService
+          .fetchBalanceByAddress(this.evmProvider, this.account, token.address);
+        const balanceUsd = new BN(balance?.toString()).times(token.price);
+
+        tokenBalance = {
+          ...tokenBalance,
+          originalBalance: balance?.toString(),
+          balanceInUsd: fixedByPrice(Number(balanceUsd)),
+          balance: fixedByPrice(Number(balance)),
+        };
+      }
+
       // eslint-disable-next-line no-param-reassign
       token.selected = true;
       this.$emit('add-token-to-list', {
         tokenData: {
           ...token,
+          balanceData: tokenBalance,
           selected: true,
         },
         isInput: this.selectTokenInput,
