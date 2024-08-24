@@ -55,6 +55,7 @@
         :zap-pool="zapPool"
         :active-tab="activeTab"
         :all-tokens-list="allTokensList"
+        :balance-list="balanceList"
         :gauge-address="gaugeAddress"
       />
     </div>
@@ -174,8 +175,8 @@ export default {
     poolList() {
       this.init();
     },
-    zapPool() {
-      this.handleClickSearch();
+    zapPool(val) {
+      if (val) this.handleClickSearch();
     },
   },
   async mounted() {
@@ -187,7 +188,9 @@ export default {
     ...mapActions('odosData', ['triggerSuccessZapin']),
     ...mapActions('poolsData', ['setFilterParams']),
     handleClickSearch() {
-      const tokens = (this.zapPool.name as string)?.split('/');
+      if (this.zapPool) return;
+      const tokens = (this.zapPool?.name as string)?.split('/');
+
       const filterParams: Partial<TFilterPoolsParams> = {
         token0: tokens[0],
         // token1: tokens[1],

@@ -183,6 +183,7 @@ import { defineComponent } from 'vue';
 import { buildEvmContract } from '@/utils/contractsMap.ts';
 import { loadAbi, srcStringBuilder } from '@/store/views/main/zapin/index.ts';
 import { fixedByPrice } from '@/utils/numbers.ts';
+import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 
 export default defineComponent({
   name: 'WithdrawForm',
@@ -194,6 +195,11 @@ export default defineComponent({
   },
   props: {
     allTokensList: {
+      type: Array,
+      required: true,
+      default: () => [],
+    },
+    balanceList: {
       type: Array,
       required: true,
       default: () => [],
@@ -232,6 +238,9 @@ export default defineComponent({
     ...mapGetters('network', ['networkId']),
     ...mapGetters('accountData', ['account']),
 
+    zapAllTokens() {
+      return mergedTokens(this.allTokensList as any[], this.balanceList as any[]);
+    },
     totalLiq() {
       if (this.inputTokens.length === 0) return 0;
 
@@ -305,8 +314,8 @@ export default defineComponent({
 
     async initContracts() {
       const tokens = this.zapPool.name.split('/');
-      const tokenA = getTokenBySymbol(tokens[0], this.allTokensList);
-      const tokenB = getTokenBySymbol(tokens[1], this.allTokensList);
+      const tokenA = getTokenBySymbol(tokens[0], this.zapAllTokens);
+      const tokenB = getTokenBySymbol(tokens[1], this.zapAllTokens);
 
       const abiGauge = srcStringBuilder('V3GaugeRebalance')(this.zapPool.chainName, this.zapPool.platform[0]);
       const abiGaugeContractFileV3 = await loadAbi(abiGauge);
@@ -381,8 +390,8 @@ export default defineComponent({
     },
     initLiqTokens() {
       const tokens = this.zapPool.name.split('/');
-      const token0 = getTokenBySymbol(tokens[0], this.allTokensList);
-      const token1 = getTokenBySymbol(tokens[1], this.allTokensList);
+      const token0 = getTokenBySymbol(tokens[0], this.zapAllTokens);
+      const token1 = getTokenBySymbol(tokens[1], this.zapAllTokens);
 
       const tokenFull0 = {
         ...getNewInputToken(),
