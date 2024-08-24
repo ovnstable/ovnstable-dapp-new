@@ -178,7 +178,7 @@ export const getSecondDefaultSecondtoken = (
 export const getTokenBySymbol = (
   symbol: string,
   tokensList: any[],
-) => tokensList.find((_) => _.symbol === symbol);
+) => tokensList.find((_) => _.symbol?.toLowerCase() === symbol?.toLowerCase());
 
 export const getTokenByAddress = (
   address: string,

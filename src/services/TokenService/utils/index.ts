@@ -48,7 +48,7 @@ export const mergeTokenLists = (fetchedTokens: any) => {
 export const mergedTokens = (
   fullTokenList: TTokenInfo[],
   balanceTokenList: TTokenInfo[],
-  selectedAdd: string[],
+  selectedAdd?: string[],
 ) => {
   const merged = fullTokenList.filter((_) => {
     const tokenExist = balanceTokenList
@@ -60,7 +60,7 @@ export const mergedTokens = (
 
   return merged.map((item: any) => ({
     ...item,
-    selected: selectedAdd.includes(item.address?.toLowerCase()) ? item?.selected : false,
+    selected: selectedAdd?.includes(item.address?.toLowerCase()) ? item?.selected : false,
   }));
 };
 
