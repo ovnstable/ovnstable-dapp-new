@@ -99,11 +99,15 @@ export default {
 
   &.primary {
     color: #fff;
-    background-color: #0497EC;
+    background-color: var(--color-3);
+    [data-theme="dark"] & {
+      background-color: var(--color-7);
+    }
 
     &:hover {
       opacity: .9;
     }
+
   }
 
   &.transparent {

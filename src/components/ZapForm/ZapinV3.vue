@@ -361,6 +361,11 @@ export default {
     };
   },
   computed: {
+    getFirstDecimal() {
+      if (!this.reversePrice) return this.pairTokensData[1].decimals;
+
+      return this.pairTokensData[0].decimals;
+    },
     getFirstSymbol() {
       if (!this.reversePrice) return this.pairSymbols[0];
 
@@ -940,10 +945,10 @@ export default {
       if (!isTick) {
         const percentMinPrice = new BN(this.centerPrice)
           .times((100 + val) / 100)
-          .times(10 ** this.pairTokensData[1].decimals).toFixed(0);
+          .times(10 ** this.getFirstDecimal).toFixed(0);
         const percentMaxPrice = new BN(this.centerPrice)
           .times((100 - val) / 100)
-          .times(10 ** this.pairTokensData[1].decimals).toFixed(0);
+          .times(10 ** this.getFirstDecimal).toFixed(0);
 
         const ticks = await this.zapContract
           .priceToClosestTick(this.zapPool.address, [percentMinPrice, percentMaxPrice]);
@@ -952,10 +957,6 @@ export default {
         tickVal = Number(new BN(tickVal).div(this.tickSpace).toFixed(0)) * Number(this.tickSpace);
       }
 
-      console.log(tickVal, '___tickVal');
-      console.log(this.centerPrice, '___centerPrice');
-      console.log(this.centerTick, '___centerTick');
-      console.log(this.tickSpace, '___tickSpace');
       if (tickVal === 1 && isTick) {
         this.tickLeft = this.closestTicks[0]?.toString();
         this.tickRight = this.closestTicks[1]?.toString();
@@ -972,16 +973,12 @@ export default {
         ).times(this.tickSpace).toString();
       }
 
-      console.log(this.centerTick, '__this.centerTick');
-      console.log(tickVal, '__this.tickVal');
-
-      console.log(this.tickLeft, this.tickRight, '___TIKS');
       const tickNumL = await this.zapContract.tickToPrice(this.zapPool.address, this.tickLeft);
       this.minPrice = new BN(tickNumL.toString())
-        .div(10 ** this.pairTokensData[1].decimals).toFixed(this.lowPoolPrice ? 8 : 0);
+        .div(10 ** this.getFirstDecimal).toFixed(this.lowPoolPrice ? 8 : 0);
       const tickNumR = await this.zapContract.tickToPrice(this.zapPool.address, this.tickRight);
       this.maxPrice = new BN(tickNumR.toString())
-        .div(10 ** this.pairTokensData[1].decimals).toFixed(this.lowPoolPrice ? 8 : 0);
+        .div(10 ** this.getFirstDecimal).toFixed(this.lowPoolPrice ? 8 : 0);
       this.ticksAmount = val.toString();
 
       (this.$refs?.zapinChart as any)?.updateOptions(

@@ -396,6 +396,9 @@ export default {
   border-radius: 20px;
   background-color: var(--color-8);
   border: 1px solid var(--color-6);
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
+  }
 }
 
 .pool-data__rewards {
