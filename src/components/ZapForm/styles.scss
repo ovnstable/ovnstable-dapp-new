@@ -533,4 +533,7 @@
   padding: 30px;
   border-radius: 20px;
   border: 2px solid var(--color-1);
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
+  }
 }
