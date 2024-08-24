@@ -96,9 +96,9 @@ export const useTokensQuery = (tokenService: ITokenService, stateData: any) => {
     return [];
   };
 
-  const refetchAll = () => {
-    tokensQuery.refetch();
-    balancesQuery.refetch();
+  const refetchAll = async () => {
+    await tokensQuery.refetch();
+    await balancesQuery.refetch();
   };
 
   return {

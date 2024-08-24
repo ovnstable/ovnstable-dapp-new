@@ -207,6 +207,7 @@ import { useTokensQuery, useRefreshBalances } from '@/hooks/fetch/useTokensQuery
 import type { ITokenService } from '@/services/TokenService/TokenService.ts';
 import { loadAbi, srcStringBuilder } from '@/store/views/main/zapin/index.ts';
 import { buildEvmContract } from '@/utils/contractsMap.ts';
+import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import { parseLogs } from './helpers.ts';
 
 enum zapMobileSection {
@@ -226,6 +227,11 @@ export default {
     ZapInStepsRow,
   },
   props: {
+    balanceList: {
+      type: Array,
+      required: true,
+      default: () => [],
+    },
     allTokensList: {
       type: Array,
       required: true,
@@ -312,12 +318,15 @@ export default {
     ...mapGetters('network', ['networkId']),
     ...mapGetters('accountData', ['account']),
 
+    zapAllTokens() {
+      return mergedTokens(this.allTokensList as any[], this.balanceList as any[]);
+    },
     isDisabled() {
       // if (this.currentStage === rebalanceStep.UNSTAKE && !this.positionStaked) return true;
       return false;
     },
     zapsLoaded() {
-      return !isEmpty(this.allTokensList)
+      return !isEmpty(this.zapAllTokens)
         && !isEmpty(this.outputTokens)
         && this.zapPool
         && !isEmpty(this.zapContract);
@@ -432,8 +441,8 @@ export default {
 
     async initContracts() {
       const tokens = this.zapPool.name.split('/');
-      const tokenA = getTokenBySymbol(tokens[0], this.allTokensList);
-      const tokenB = getTokenBySymbol(tokens[1], this.allTokensList);
+      const tokenA = getTokenBySymbol(tokens[0], this.zapAllTokens);
+      const tokenB = getTokenBySymbol(tokens[1], this.zapAllTokens);
 
       const abiGauge = srcStringBuilder('V3GaugeRebalance')(this.zapPool.chainName, this.zapPool.platform[0]);
       const abiGaugeContractFileV3 = await loadAbi(abiGauge);
@@ -484,8 +493,8 @@ export default {
     },
     addDefaultPoolToken() {
       const tokens = this.zapPool.name.split('/');
-      const poolSelectedToken = getTokenBySymbol(tokens[0], this.allTokensList);
-      const ovnSelectSelectedToken = getTokenBySymbol(tokens[1], this.allTokensList);
+      const poolSelectedToken = getTokenBySymbol(tokens[0], this.zapAllTokens);
+      const ovnSelectSelectedToken = getTokenBySymbol(tokens[1], this.zapAllTokens);
 
       if (!poolSelectedToken || !ovnSelectSelectedToken) return;
       poolSelectedToken.selected = true;
@@ -494,8 +503,6 @@ export default {
       const tokenA = this.addSelectedTokenToOutputList(poolSelectedToken, true, 50);
       const tokenB = this.addSelectedTokenToOutputList(ovnSelectSelectedToken, true, 50);
 
-      console.log(tokenA, '__tokenA');
-      console.log(tokenB, 'tokenB');
       this.outputTokens = [tokenA, tokenB];
 
       this.$forceUpdate();

@@ -939,18 +939,15 @@ export default {
 
       if (!isTick) {
         const percentMinPrice = new BN(this.centerPrice)
-          .times((100 + val / 2) / 100)
+          .times((100 + val) / 100)
           .times(10 ** this.pairTokensData[1].decimals).toFixed(0);
         const percentMaxPrice = new BN(this.centerPrice)
-          .times((100 - val / 2) / 100)
+          .times((100 - val) / 100)
           .times(10 ** this.pairTokensData[1].decimals).toFixed(0);
 
         const ticks = await this.zapContract
           .priceToClosestTick(this.zapPool.address, [percentMinPrice, percentMaxPrice]);
 
-        console.log(percentMinPrice, '__ticks1');
-        console.log(percentMaxPrice, '__ticks2');
-        console.log(ticks, '__ticks');
         tickVal = Number(new BN(this.centerTick).minus(ticks[1]).toFixed(0));
         tickVal = Number(new BN(tickVal).div(this.tickSpace).toFixed(0)) * Number(this.tickSpace);
       }

@@ -48,17 +48,19 @@ export const mergeTokenLists = (fetchedTokens: any) => {
 export const mergedTokens = (
   fullTokenList: TTokenInfo[],
   balanceTokenList: TTokenInfo[],
-  selectedAdd: string[],
+  selectedAdd?: string[],
 ) => {
-  const merged = fullTokenList.concat(balanceTokenList);
+  const merged = fullTokenList.filter((_) => {
+    const tokenExist = balanceTokenList
+      .find((bal) => bal?.address?.toLowerCase() === _?.address?.toLowerCase());
+    if (tokenExist) return false;
 
-  const ids = merged.map(({ address }) => address?.toLowerCase());
-  const filtered = merged
-    .filter(({ address }, index) => !ids.includes(address?.toLowerCase(), index + 1));
+    return true;
+  }).concat(balanceTokenList);
 
-  return filtered.map((item: any) => ({
+  return merged.map((item: any) => ({
     ...item,
-    selected: selectedAdd.includes(item.address?.toLowerCase()) ? item?.selected : false,
+    selected: selectedAdd?.includes(item.address?.toLowerCase()) ? item?.selected : false,
   }));
 };
 
