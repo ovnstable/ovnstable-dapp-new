@@ -1,13 +1,17 @@
 import { useQuery } from '@tanstack/vue-query';
 import TokenService, { type ITokenService } from '@/services/TokenService/TokenService.ts';
-import { computed } from 'vue';
-import BalanceService from '@/services/BalanceService/BalanceService.ts';
+import { computed, inject } from 'vue';
+import type { IBalanceService } from '@/services/BalanceService/BalanceService.ts';
 import { mergeTokenLists } from '@/services/TokenService/utils/index.ts';
+import { useStore } from 'vuex';
 
 const REFETCH_INTERVAL = 5 * 60 * 60 * 1000; // 5h
-const BALANCE_REFETCH_INTERVAL = 3000;
+const BALANCE_REFETCH_INTERVAL = 60000;
 
-export const useRefreshBalances = () => () => 0;
+export const useRefreshBalances = () => {
+  const store = useStore();
+  return () => store.dispatch('accountData/handleRefreshBalances');
+};
 
 export const allTokensMap = (tokensList: any[]): any => new Map(tokensList
   .map((token) => [token.address, token]));
@@ -15,6 +19,7 @@ export const allTokensMap = (tokensList: any[]): any => new Map(tokensList
 export const useTokensQuery = (tokenService: ITokenService, stateData: any) => {
   const networkId = computed(() => stateData.network.networkId);
   const address = computed(() => stateData.accountData.account);
+  const balanceRefreshTrigger = computed(() => stateData.accountData.balanceRefreshTrigger);
   const provider = computed(() => stateData.web3.evmProvider);
 
   const tokensQuery = useQuery(
@@ -48,10 +53,12 @@ export const useTokensQuery = (tokenService: ITokenService, stateData: any) => {
 
   const tokenList = computed(getTokenList);
 
+  const BalanceService = inject('balanceService') as IBalanceService;
+
   const balancesQuery = useQuery(
     {
       // eslint-disable-next-line @tanstack/query/exhaustive-deps
-      queryKey: ['balances', address, networkId],
+      queryKey: ['balances', address, networkId, balanceRefreshTrigger],
       queryFn: () => BalanceService.fetchTokenBalances(
         provider.value,
         address.value,
@@ -59,6 +66,7 @@ export const useTokensQuery = (tokenService: ITokenService, stateData: any) => {
       ),
       enabled: isBalancesQueryEnabled,
       refetchInterval: BALANCE_REFETCH_INTERVAL,
+      refetchOnWindowFocus: false,
       staleTime: 0,
     },
   );
