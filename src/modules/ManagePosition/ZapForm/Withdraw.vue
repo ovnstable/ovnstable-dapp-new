@@ -406,7 +406,6 @@ export default defineComponent({
 
       let arrTokens = [tokenFull0, tokenFull1];
 
-      console.log(this.zapPool, '__this.zapPool');
       arrTokens = arrTokens.map((_: any, key: number) => {
         const price = this.zapPool?.position?.tokens[key][tokens[key]];
 
@@ -417,8 +416,6 @@ export default defineComponent({
         };
       });
 
-      console.log(arrTokens, '__arrTokens');
-
       const inputTokenInfo = formatInputTokens(arrTokens);
       this.inputTokens = inputTokenInfo;
       this.outputTokens = cloneDeep(inputTokenInfo);
@@ -427,7 +424,6 @@ export default defineComponent({
       this.closeWaitingModal();
     },
     async zapOutTrigger() {
-      console.log(this.gaugeContract, 'zapOutTrigger');
       this.isSwapLoading = true;
 
       try {
