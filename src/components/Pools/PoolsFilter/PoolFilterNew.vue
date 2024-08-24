@@ -154,8 +154,12 @@ export default {
     toggleSelectToken(newToken: TSelectTokenWithSearch) {
       const selectedToken = newToken.tokenData;
       this.selectedTokens[Number(this.selectingTokenIndex) - 1] = selectedToken;
-      console.log(this.selectedTokens);
       this.isShowTokensModal = false;
+      const filterParams: Partial<TFilterPoolsParams> = {
+        token0: this.selectedTokens[0]?.symbol ?? '',
+        token1: this.selectedTokens[1]?.symbol ?? '',
+      };
+      this.setFilterParams(filterParams);
     },
     handleClickSearch() {
       const filterParams: Partial<TFilterPoolsParams> = {
