@@ -139,6 +139,7 @@ import { REWARD_TOKEN } from '@/store/views/main/zapin/index.ts';
 import { loadTokenImage } from '@/utils/tokenLogo.ts';
 import { allTokensMap } from '@/hooks/fetch/useTokensQuery.ts';
 import { fixedByPrice } from '@/utils/numbers.ts';
+import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 
 export default {
   name: 'PositionForm',
@@ -147,6 +148,11 @@ export default {
   },
   props: {
     allTokensList: {
+      type: Array,
+      required: false,
+      default: null,
+    },
+    balanceList: {
       type: Array,
       required: false,
       default: null,
@@ -171,6 +177,9 @@ export default {
         return new BN(price).toFixed(fixedByPrice(+price));
       };
     },
+    zapAllTokens() {
+      return mergedTokens(this.allTokensList as any[], this.balanceList as any[]);
+    },
     getSymbolToken() {
       if (this.zapPool.platform[0] === 'Pancake') return REWARD_TOKEN.CAKE;
       if (this.zapPool.platform[0] === 'Aerodrome') return REWARD_TOKEN.AERO;
@@ -188,7 +197,7 @@ export default {
       return new BN(this.zapPool.emissions).div(10 ** 18).toFixed(6);
     },
     getRewardTokenInfo() {
-      const tokenInfo = allTokensMap(this.allTokensList).values().find((_: any) => {
+      const tokenInfo = allTokensMap(this.zapAllTokens).values().find((_: any) => {
         const allTokSymbol = _?.symbol?.toLowerCase();
         return allTokSymbol === this.getSymbolToken?.toLowerCase();
       });
@@ -196,7 +205,7 @@ export default {
       return tokenInfo || null;
     },
     totalLiq() {
-      if (this.allTokensList.length === 0) return 0;
+      if (this.zapAllTokens.length === 0) return 0;
 
       const res: BN = this.inputTokens.reduce((acc: BN, curr: any) => {
         const val = new BN(curr.value).times(curr.selectedToken?.price).toFixed(6);
@@ -225,8 +234,8 @@ export default {
     },
     initLiqTokens() {
       const tokens = this.zapPool.name.split('/');
-      const token0 = getTokenBySymbol(tokens[0], this.allTokensList);
-      const token1 = getTokenBySymbol(tokens[1], this.allTokensList);
+      const token0 = getTokenBySymbol(tokens[0], this.zapAllTokens);
+      const token1 = getTokenBySymbol(tokens[1], this.zapAllTokens);
 
       const tokenFull0 = {
         ...getNewInputToken(),
@@ -259,7 +268,7 @@ export default {
     initRewardTokens() {
       const rewardToken = this.zapPool.rewards.tokens.map((_: any) => {
         const rewardData: any = Object.entries(_)[0];
-        const tokenInfo = allTokensMap(this.allTokensList).values().find((_: any) => {
+        const tokenInfo = allTokensMap(this.zapAllTokens).values().find((_: any) => {
           const allTokSymbol = _?.symbol?.toLowerCase();
           return allTokSymbol === rewardData[0]?.toLowerCase();
         });

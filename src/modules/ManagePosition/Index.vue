@@ -15,6 +15,7 @@
     <PoolData
       v-if="!isLoadingData"
       :all-tokens-list="allTokensList"
+      :balance-list="balanceList"
       :zap-pool="zapPool"
     />
 
