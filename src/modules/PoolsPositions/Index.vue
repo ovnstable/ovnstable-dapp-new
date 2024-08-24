@@ -5,7 +5,7 @@
       class="heading-row"
     >
       <h1>MY POSITIONS</h1>
-      <p>View and manage your open V2 and V3 positions.</p>
+      <p>View and manage your open V3 positions.</p>
     </div>
     <div
       v-if="type === 'POOLS'"
