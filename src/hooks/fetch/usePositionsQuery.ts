@@ -1,20 +1,12 @@
 /* eslint-disable vue/no-ref-as-operand */
 /* eslint-disable import/prefer-default-export */
-import { useQuery, type UseQueryReturnType } from '@tanstack/vue-query';
+import { useQuery } from '@tanstack/vue-query';
 import { usePoolsQuery } from '@/hooks/fetch/usePoolsQuery.ts';
 import { useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.ts';
 import { computed } from 'vue';
 import PositionsService from '@/services/PositionsService/PositionsService.ts';
 import { useStore } from 'vuex';
-import { getQueryStates, type TQuery } from '../utils/index.ts';
-
-const isDataAvailable = (
-  query: UseQueryReturnType<any[], any>,
-) => query?.data?.value && query?.data?.value.length > 0;
-
-const isAllDataAvailable = (
-  queries: UseQueryReturnType<any[], any>[],
-) => queries.every((query) => isDataAvailable(query));
+import { getQueryStates, isAllQueryDataAvailable, type TQuery } from '../utils/index.ts';
 
 export const usePositionsQuery = () => {
   const { state: stateData } = useStore();
@@ -41,7 +33,7 @@ export const usePositionsQuery = () => {
   } = getQueryStates(queries);
 
   const positionData = computed(() => {
-    if (isAllDataAvailable([positionsQuery, poolsQuery, tokensQuery as any])) {
+    if (isAllQueryDataAvailable(queries)) {
       return PositionsService
         .formatPositions(
           positionsQuery!.data!.value ?? [],
