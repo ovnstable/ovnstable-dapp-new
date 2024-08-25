@@ -277,17 +277,21 @@ export default {
       return deviceType();
     },
   },
-  // watch: {
-  //   async isShowDeprecated() {
-  //     this.chainsLoading = true;
-  //     this.sortedChains = await sortedChainsByTVL(this.networksData, this.isShowDeprecated);
-  //     this.chainsLoading = false;
-  //   },
-  // },
+  watch: {
+    async isShowDeprecated() {
+      this.chainsLoading = true;
+      this.sortedChains = await sortedChainsByTVL(
+        this.networksData,
+        this.isShowDeprecated,
+        this.networkId,
+      );
+      this.chainsLoading = false;
+    },
+  },
   async mounted() {
     this.sortedChains = await sortedChainsByTVL(
       this.networksData,
-      this.isShowDeprecated,
+      true,
       this.networkId,
     );
     const onTabChange = useEventBus<string>('change-profile-picture-request');

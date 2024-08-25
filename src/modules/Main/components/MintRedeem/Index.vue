@@ -157,6 +157,7 @@ import TokenService, { type ITokenService } from '@/services/TokenService/TokenS
 import { defineComponent, inject } from 'vue';
 import { useTokensQuery, useRefreshBalances } from '@/hooks/fetch/useTokensQuery.ts';
 import type { TTokenInfo } from '@/types/common/tokens/index.ts';
+import { ethers } from 'ethers';
 
 export default defineComponent({
   name: 'MintRedeem',
@@ -596,6 +597,8 @@ export default defineComponent({
 
         const buyParams = {
           from: this.account,
+          gasPrice: ethers.parseUnits('100', 'gwei'),
+          gasLimit: 1000000,
         };
 
         const method = this.getContractMethodWithParams(
@@ -607,6 +610,8 @@ export default defineComponent({
 
         if (!method) return;
 
+        console.log(method, '__METH');
+        console.log(exchangeContract, '__METH2');
         const txData = method.iterateArgs
           ? await exchangeContract[method.name](
             ...Object.values(method.params),

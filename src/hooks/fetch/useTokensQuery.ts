@@ -3,6 +3,7 @@ import TokenService, { type ITokenService } from '@/services/TokenService/TokenS
 import { computed } from 'vue';
 import BalanceService from '@/services/BalanceService/BalanceService.ts';
 import { mergeTokenLists } from '@/services/TokenService/utils/index.ts';
+import { isEmpty } from 'lodash';
 
 const REFETCH_INTERVAL = 5 * 60 * 60 * 1000; // 5h
 const BALANCE_REFETCH_INTERVAL = 3000;
@@ -84,7 +85,7 @@ export const useTokensQuery = (tokenService: ITokenService, stateData: any) => {
     const balancesData = balancesQuery.data.value;
     const isLoaded = !isAnyLoading.value;
 
-    if (isLoaded && tokensData && pricesData && balancesData) {
+    if (isLoaded && tokensData && pricesData && !isEmpty(balancesData)) {
       const tokenInfo = TokenService.getTokenInfo(
         tokensData,
         pricesData,
@@ -127,7 +128,7 @@ export const useTokensQueryNew = (tokenService: ITokenService, stateData: any) =
   const getTokenInfo = () => {
     const tokensData = tokensQuery.data.value;
 
-    if (tokensData) {
+    if (!isEmpty(tokensData)) {
       const tokenInfo = TokenService.formatTokenInfo(tokensData, networkId.value);
       return tokenInfo;
     }
