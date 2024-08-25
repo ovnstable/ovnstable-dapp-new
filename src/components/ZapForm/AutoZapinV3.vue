@@ -628,10 +628,10 @@ export default defineComponent({
       this.updateQuotaInfo();
     },
 
-    updateTokenValueMethod(tokenData: any, isMaxBal: boolean) {
+    updateTokenValueMethod(tokenData: any) {
       let newToken = null;
 
-      if (isMaxBal) {
+      if (tokenData.isMaxBal) {
         // bug with max balance sometimes, possible todo
         // problem in getProportion formula
         newToken = updateTokenValue(
