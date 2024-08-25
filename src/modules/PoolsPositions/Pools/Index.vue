@@ -79,10 +79,10 @@ import PoolsFilter from '@/components/Pools/PoolsFilter/Index.vue';
 import PoolsTable from '@/components/Pools/PoolsTable/Index.vue';
 import TableSkeleton from '@/components/TableSkeleton/Index.vue';
 import { POOL_TYPES } from '@/store/views/main/pools/index.ts';
-import { defineComponent, inject, type PropType } from 'vue';
+import { defineComponent, type PropType } from 'vue';
 import { usePoolsQuery } from '@/hooks/fetch/usePoolsQuery.ts';
 import { POOL_CATEGORIES } from '@/types/common/pools/index.ts';
-import PoolService, { type IPoolService } from '@/services/PoolService/PoolService.ts';
+import PoolService from '@/services/PoolService/PoolService.ts';
 import { ORDER_TYPE } from '@/services/PoolService/utils/poolsSort.ts';
 import { POOL_SHOW_LIMIT } from '@/constants/pools/index.ts';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
@@ -108,8 +108,7 @@ export default defineComponent({
     },
   },
   setup: () => {
-    const poolService = inject('poolService') as IPoolService;
-    const { data: poolList, isLoading: isPoolsLoading } = usePoolsQuery(poolService);
+    const { data: poolList, isLoading: isPoolsLoading } = usePoolsQuery();
     return {
       poolList,
       isPoolsLoading,

@@ -236,7 +236,7 @@
 <!-- eslint-disable no-continue -->
 <script lang="ts">
 import {
-  mapActions, mapGetters, mapState, useStore,
+  mapActions, mapGetters, mapState,
 } from 'vuex';
 import { useEventBus } from '@vueuse/core';
 import { ethers } from 'ethers';
@@ -263,10 +263,11 @@ import {
   WHITE_LIST_ODOS,
 } from '@/store/helpers/index.ts';
 import BigNumber from 'bignumber.js';
-import { computed, defineComponent, inject } from 'vue';
+import { computed, defineComponent } from 'vue';
 import { useTokensQuery, useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.ts';
-import TokenService, { type ITokenService } from '@/services/TokenService/TokenService.ts';
+import TokenService from '@/services/TokenService/TokenService.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
+import { useRefreshBalances } from '@/hooks/fetch/useRefreshBalances.ts';
 
 export default defineComponent({
   name: 'SwapForm',
@@ -287,27 +288,22 @@ export default defineComponent({
     },
   },
   setup: () => {
-    const { state } = useStore() as any;
-
-    const tokenService = inject('tokenService') as ITokenService;
-
     const {
       data: balanceList,
       isLoading,
       isBalancesLoading,
-      refetchAll,
-    } = useTokensQuery(tokenService, state);
+    } = useTokensQuery();
 
     const {
       data: allTokensList,
-    } = useTokensQueryNew(tokenService, state);
+    } = useTokensQueryNew();
 
     return {
       allTokensList,
       balanceList,
       isAllDataLoaded: computed(() => !isLoading.value),
       isBalancesLoading,
-      refetchAll,
+      refetchAll: useRefreshBalances(),
     };
   },
   data() {

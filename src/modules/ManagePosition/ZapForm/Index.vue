@@ -179,7 +179,6 @@ import { useEventBus } from '@vueuse/core';
 import { ethers } from 'ethers';
 import {
   mapActions, mapGetters, mapState, mapMutations,
-  useStore,
 } from 'vuex';
 import {
   getNewOutputToken,
@@ -201,13 +200,13 @@ import TokenForm from '@/modules/Main/components/Odos/TokenForm.vue';
 import { MANAGE_FUNC, rebalanceStep } from '@/store/modals/waiting-modal.ts';
 import ZapInStepsRow from '@/components/StepsRow/ZapinRow/RebalanceRow.vue';
 import { cloneDeep, isEmpty } from 'lodash';
-import { inject, markRaw } from 'vue';
+import { markRaw } from 'vue';
 import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
-import { useTokensQuery, useRefreshBalances } from '@/hooks/fetch/useTokensQuery.ts';
-import type { ITokenService } from '@/services/TokenService/TokenService.ts';
+import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
 import { loadAbi, srcStringBuilder } from '@/store/views/main/zapin/index.ts';
 import { buildEvmContract } from '@/utils/contractsMap.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
+import { useRefreshBalances } from '@/hooks/fetch/useRefreshBalances.ts';
 import { parseLogs } from './helpers.ts';
 
 enum zapMobileSection {
@@ -249,13 +248,9 @@ export default {
     },
   },
   setup: () => {
-    const { state } = useStore() as any;
-
-    const tokenService = inject('tokenService') as ITokenService;
-
     const {
       isBalancesLoading,
-    } = useTokensQuery(tokenService, state);
+    } = useTokensQuery();
 
     return {
       isBalancesLoading,

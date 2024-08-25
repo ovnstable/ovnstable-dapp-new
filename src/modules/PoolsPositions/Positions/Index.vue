@@ -92,18 +92,14 @@
 <script lang="ts">
 import PoolsTable from '@/components/Pools/PositionsTable/Index.vue';
 import PoolsFilter from '@/components/Pools/PositionsFilter/Index.vue';
-import {
-  mapGetters, useStore,
-} from 'vuex';
+import { mapGetters } from 'vuex';
 import { POOL_TYPES } from '@/store/views/main/pools/index.ts';
 import TableSkeleton from '@/components/TableSkeleton/Index.vue';
 import { getImageUrl } from '@/utils/const.ts';
 import ButtonComponent from '@/components/Button/Index.vue';
-import { useQueryClient } from '@tanstack/vue-query';
-import { defineComponent, inject } from 'vue';
+import { defineComponent } from 'vue';
 import { usePositionsQuery } from '@/hooks/fetch/usePositionsQuery.ts';
-import type { ITokenService } from '@/services/TokenService/TokenService';
-import type { IPoolService } from '@/services/PoolService/PoolService';
+import { useRefreshBalances } from '@/hooks/fetch/useRefreshBalances.ts';
 
 interface IEnumIterator {
   next: () => number,
@@ -160,21 +156,13 @@ export default defineComponent({
   },
   // Using new Composition API for hooks compatibility
   setup() {
-    const { state } = useStore() as any;
-
-    const tokenService = inject('tokenService') as ITokenService;
-    const poolService = inject('poolService') as IPoolService;
-
-    const { data: positionData, isLoading } = usePositionsQuery(tokenService, poolService, state);
-
-    const queryClient = useQueryClient();
-    const invalidateQuery = async () => queryClient.invalidateQueries({ queryKey: ['positions'] });
+    const { data: positionData, isLoading } = usePositionsQuery();
 
     return {
       isLoading,
       positionData,
 
-      resetData: invalidateQuery,
+      resetData: useRefreshBalances(),
 
       poolTabType: POOL_TYPES.ALL,
       isOpenHiddenPools: false,

@@ -4,19 +4,20 @@ import { computed, inject } from 'vue';
 import type { IBalanceService } from '@/services/BalanceService/BalanceService.ts';
 import { mergeTokenLists } from '@/services/TokenService/utils/index.ts';
 import { useStore } from 'vuex';
+import { getQueryStates, isAllQueryDataAvailable } from '../utils/index.ts';
 
 const REFETCH_INTERVAL = 5 * 60 * 60 * 1000; // 5h
 const BALANCE_REFETCH_INTERVAL = 60000;
 
-export const useRefreshBalances = () => {
-  const store = useStore();
-  return () => store.dispatch('accountData/handleRefreshBalances');
-};
-
 export const allTokensMap = (tokensList: any[]): any => new Map(tokensList
   .map((token) => [token.address, token]));
 
-export const useTokensQuery = (tokenService: ITokenService, stateData: any) => {
+export const useTokensQuery = () => {
+  const { state: stateData } = useStore();
+
+  const BalanceService = inject('balanceService') as IBalanceService;
+  const tokenService = inject('tokenService') as ITokenService;
+
   const networkId = computed(() => stateData.network.networkId);
   const address = computed(() => stateData.accountData.account);
   const balanceRefreshTrigger = computed(() => stateData.accountData.balanceRefreshTrigger);
@@ -28,6 +29,8 @@ export const useTokensQuery = (tokenService: ITokenService, stateData: any) => {
       queryFn: tokenService.fetchTokens,
       refetchInterval: REFETCH_INTERVAL,
       refetchOnWindowFocus: false,
+      refetchOnMount: false,
+      refetchOnReconnect: false,
     },
   );
 
@@ -38,7 +41,8 @@ export const useTokensQuery = (tokenService: ITokenService, stateData: any) => {
       enabled: !!networkId.value && !!provider.value,
       refetchInterval: REFETCH_INTERVAL,
       refetchOnWindowFocus: false,
-      staleTime: 0,
+      refetchOnMount: false,
+      refetchOnReconnect: false,
     },
   );
 
@@ -52,8 +56,6 @@ export const useTokensQuery = (tokenService: ITokenService, stateData: any) => {
   );
 
   const tokenList = computed(getTokenList);
-
-  const BalanceService = inject('balanceService') as IBalanceService;
 
   const balancesQuery = useQuery(
     {
@@ -71,42 +73,22 @@ export const useTokensQuery = (tokenService: ITokenService, stateData: any) => {
     },
   );
 
-  const isAnyLoading = computed(
-    () => tokensQuery.isLoading.value
-     || pricesQuery.isLoading.value
-     || balancesQuery.isLoading.value,
-  );
-  const isAnyError = computed(
-    () => tokensQuery.isError || pricesQuery.isError || balancesQuery.isError,
-  );
-  const allErrors = computed(
-    () => JSON.stringify([tokensQuery.error, pricesQuery.error, balancesQuery.isError]),
-  );
-  const isAnyFetching = computed(
-    () => tokensQuery.isFetching || pricesQuery.isFetching || balancesQuery.isFetching,
-  );
+  const queries = [tokensQuery, pricesQuery, balancesQuery];
+  const {
+    isAnyLoading, isAnyError, allErrors, isAnyFetching,
+  } = getQueryStates(queries);
 
   const getTokenInfo = () => {
-    const tokensData = tokensQuery.data.value;
-    const pricesData = pricesQuery.data.value;
-    const balancesData = balancesQuery.data.value;
-    const isLoaded = !isAnyLoading.value;
-
-    if (isLoaded && tokensData && pricesData && balancesData) {
+    if (!isAnyLoading.value && isAllQueryDataAvailable(queries)) {
       const tokenInfo = TokenService.getTokenInfo(
-        tokensData,
-        pricesData,
+        tokensQuery.data.value,
+        pricesQuery.data.value,
         networkId.value,
-        balancesData,
+        balancesQuery.data.value,
       );
       return tokenInfo;
     }
     return [];
-  };
-
-  const refetchAll = async () => {
-    await tokensQuery.refetch();
-    await balancesQuery.refetch();
   };
 
   return {
@@ -116,11 +98,13 @@ export const useTokensQuery = (tokenService: ITokenService, stateData: any) => {
     isLoading: isAnyLoading,
     isError: isAnyError,
     isBalancesLoading: balancesQuery.isLoading,
-    refetchAll,
   };
 };
 
-export const useTokensQueryNew = (tokenService: ITokenService, stateData: any) => {
+export const useTokensQueryNew = () => {
+  const { state: stateData } = useStore();
+
+  const tokenService = inject('tokenService') as ITokenService;
   const networkId = computed(() => stateData.network.networkId);
 
   const tokensQuery = useQuery(
@@ -129,6 +113,7 @@ export const useTokensQueryNew = (tokenService: ITokenService, stateData: any) =
       queryFn: async () => tokenService.fetchAllTokens(),
       refetchInterval: false,
       refetchOnWindowFocus: false,
+      refetchOnMount: false,
     },
   );
 

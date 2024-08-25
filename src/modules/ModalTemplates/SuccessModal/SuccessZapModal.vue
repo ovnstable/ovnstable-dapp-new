@@ -57,15 +57,14 @@
 import ModalComponent from '@/components/Modal/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
-import { mapGetters, mapState, useStore } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 import {
-  computed, defineComponent, inject, type ComputedRef,
+  computed, defineComponent, type ComputedRef,
 } from 'vue';
 import { getAllTokensString, getTransactionTotal } from '@/utils/tokens.ts';
 import { checkIsEveryStable } from '@/store/views/main/pools/helpers.ts';
 import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
 import { useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.ts';
-import type { ITokenService } from '@/services/TokenService/TokenService.ts';
 import type { TTokenInfo } from '@/types/common/tokens/index.d.ts';
 import ZapinContent from './components/zapin.vue';
 import WithdrawContent from './components/withdraw.vue';
@@ -94,15 +93,11 @@ export default defineComponent({
   },
   emits: ['close'],
   setup() {
-    const { state } = useStore() as any;
-
-    const tokenService = inject('tokenService') as ITokenService;
-
     const {
       data: allTokensList,
       isLoading,
       isBalancesLoading,
-    } = useTokensQueryNew(tokenService, state);
+    } = useTokensQueryNew();
 
     return {
       allTokensMap: computed(() => new Map(

@@ -36,19 +36,16 @@
 <script lang="ts">
 import {
   mapActions,
-  useStore,
 } from 'vuex';
 import AutoZapinV3 from '@/components/ZapForm/AutoZapinV3.vue';
 import SuccessZapModal from '@/modules/ModalTemplates/SuccessModal/SuccessZapModal.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
-import { inject } from 'vue';
 import { usePoolsQueryNew } from '@/hooks/fetch/usePoolsQuery.ts';
 import { useTokensQuery, useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.ts';
 import TableSkeleton from '@/components/TableSkeleton/Index.vue';
 import { isEmpty } from 'lodash';
 import type { TFilterPoolsParams, TPool } from '@/types/common/pools';
-import type { ITokenService } from '@/services/TokenService/TokenService';
 
 export default {
   name: 'ZapFormPage',
@@ -67,19 +64,15 @@ export default {
   },
   emits: ['toggle-modal'],
   setup: () => {
-    const { state } = useStore();
-
-    const tokenService = inject('tokenService') as ITokenService;
-
     const { data: poolList, isLoading: isPoolsLoading } = usePoolsQueryNew();
 
     const {
       data: allTokensList,
-    } = useTokensQueryNew(tokenService, state);
+    } = useTokensQueryNew();
 
     const {
       data: balanceTokensList,
-    } = useTokensQuery(tokenService, state);
+    } = useTokensQuery();
 
     return {
       poolList,

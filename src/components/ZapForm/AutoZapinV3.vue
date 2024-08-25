@@ -289,12 +289,11 @@
 <script lang="ts">
 import { useEventBus } from '@vueuse/core';
 import {
-  computed, defineComponent, inject, markRaw,
+  computed, defineComponent, markRaw,
 } from 'vue';
 import { ethers } from 'ethers';
 import {
   mapActions, mapGetters, mapState, mapMutations,
-  useStore,
 } from 'vuex';
 import {
   updateTokenValue,
@@ -323,13 +322,14 @@ import { approveToken, getAllowanceValue } from '@/utils/contractApprove.ts';
 import { onLeaveList, onEnterList, beforeEnterList } from '@/utils/animations.ts';
 import { MANAGE_FUNC, zapInStep } from '@/store/modals/waiting-modal.ts';
 import SwapSlippageSettings from '@/components/SwapSlippage/Index.vue';
-import { useTokensQuery, useRefreshBalances } from '@/hooks/fetch/useTokensQuery.ts';
-import TokenService, { type ITokenService } from '@/services/TokenService/TokenService.ts';
+import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
+import TokenService from '@/services/TokenService/TokenService.ts';
 import { loadAbi, srcStringBuilder } from '@/store/views/main/zapin/index.ts';
 import { buildEvmContract } from '@/utils/contractsMap.ts';
 import { isEmpty } from 'lodash';
 import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
+import { useRefreshBalances } from '@/hooks/fetch/useRefreshBalances.ts';
 import { mapExcludeLiquidityPlatform, parseLogs, sourceLiquidityBlacklist } from './helpers.ts';
 
 enum zapMobileSection {
@@ -370,13 +370,9 @@ export default defineComponent({
     },
   },
   setup: () => {
-    const { state } = useStore() as any;
-
-    const tokenService = inject('tokenService') as ITokenService;
-
     const {
       isLoading: isAnyLoading,
-    } = useTokensQuery(tokenService, state);
+    } = useTokensQuery();
 
     return {
       isAnyLoading: computed(() => isAnyLoading.value),

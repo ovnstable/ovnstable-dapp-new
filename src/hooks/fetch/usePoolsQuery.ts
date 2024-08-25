@@ -2,32 +2,39 @@
 import { useQuery } from '@tanstack/vue-query';
 import { type IPoolService } from '@/services/PoolService/PoolService.ts';
 import { computed, inject } from 'vue';
-import type { ITokenService } from '@/services/TokenService/TokenService.ts';
 import { useStore } from 'vuex';
 import { useTokensQueryNew } from './useTokensQuery.ts';
 
-export const usePoolsQuery = (poolService: IPoolService) => useQuery(
-  {
-    queryKey: ['pools'],
-    queryFn: () => poolService.getPoolsInfo(),
-    refetchInterval: false,
-  },
-);
+export const usePoolsQuery = () => {
+  const poolService = inject('poolService') as IPoolService;
+  return useQuery(
+    {
+      queryKey: ['pools'],
+      queryFn: () => poolService.getPoolsInfo(),
+      refetchInterval: false,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+    },
+  );
+};
 
 export const usePoolsQueryNew = () => {
   const { state } = useStore();
   const filterParams = computed(() => state.poolsData.filterParams);
 
-  const tokenService = inject('tokenService') as ITokenService;
   const poolService = inject('poolService') as IPoolService;
 
-  const tokensQuery = useTokensQueryNew(tokenService, state);
+  const tokensQuery = useTokensQueryNew();
   const poolsQuery = useQuery(
     {
       queryKey: ['allPools', filterParams],
       queryFn: async () => poolService.getFilterPools(filterParams.value),
       staleTime: 0,
       refetchInterval: false,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
     },
   );
 

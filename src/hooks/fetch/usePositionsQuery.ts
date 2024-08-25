@@ -5,8 +5,8 @@ import { usePoolsQuery } from '@/hooks/fetch/usePoolsQuery.ts';
 import { useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.ts';
 import { computed } from 'vue';
 import PositionsService from '@/services/PositionsService/PositionsService.ts';
-import type { ITokenService } from '@/services/TokenService/TokenService';
-import type { IPoolService } from '@/services/PoolService/PoolService';
+import { useStore } from 'vuex';
+import { getQueryStates, type TQuery } from '../utils/index.ts';
 
 const isDataAvailable = (
   query: UseQueryReturnType<any[], any>,
@@ -16,16 +16,14 @@ const isAllDataAvailable = (
   queries: UseQueryReturnType<any[], any>[],
 ) => queries.every((query) => isDataAvailable(query));
 
-export const usePositionsQuery = (
-  tokenService: ITokenService,
-  poolService: IPoolService,
-  stateData: any,
-) => {
+export const usePositionsQuery = () => {
+  const { state: stateData } = useStore();
+
   const networkId = computed(() => stateData.network.networkId);
   const address = computed(() => stateData.accountData.account);
 
-  const poolsQuery = usePoolsQuery(poolService);
-  const tokensQuery = useTokensQueryNew(tokenService, stateData);
+  const poolsQuery = usePoolsQuery();
+  const tokensQuery = useTokensQueryNew() as TQuery;
 
   const positionsQuery = useQuery(
     {
@@ -37,18 +35,18 @@ export const usePositionsQuery = (
     },
   );
 
-  const isAnyLoading = computed(
-    () => tokensQuery.isLoading.value
-    || poolsQuery.isLoading.value
-    || positionsQuery.isLoading.value,
-  );
+  const queries = [tokensQuery, positionsQuery, poolsQuery];
+  const {
+    isAnyLoading, isAnyError, allErrors, isAnyFetching,
+  } = getQueryStates(queries);
+
   const positionData = computed(() => {
     if (isAllDataAvailable([positionsQuery, poolsQuery, tokensQuery as any])) {
       return PositionsService
         .formatPositions(
-          positionsQuery.data.value,
-          poolsQuery.data.value as any,
-          tokensQuery.data.value as any,
+          positionsQuery!.data!.value ?? [],
+          poolsQuery!.data!.value ?? [],
+          tokensQuery!.data!.value ?? [],
           networkId.value,
         );
     }
@@ -57,9 +55,9 @@ export const usePositionsQuery = (
 
   return {
     isLoading: isAnyLoading,
-    // isError: isAnyError,
+    isError: isAnyError,
     data: positionData,
-    // error: allErrors,
-    // isFetching: isAnyFetching,
+    error: allErrors,
+    isFetching: isAnyFetching,
   };
 };
