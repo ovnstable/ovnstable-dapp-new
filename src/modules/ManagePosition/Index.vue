@@ -189,7 +189,6 @@ export default {
     ...mapActions('poolsData', ['setFilterParams']),
     handleClickSearch() {
       if (!this.zapPool) return;
-      console.log(this.zapPool, '___thiszapPool');
       const tokens = (this.zapPool?.name as string)?.split('/');
 
       const filterParams: Partial<TFilterPoolsParams> = {
