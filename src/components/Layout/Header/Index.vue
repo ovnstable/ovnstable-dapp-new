@@ -285,6 +285,7 @@ export default {
         this.isShowDeprecated,
         this.networkId,
       );
+      console.log(this.sortedChains, '__CHAINS');
       this.chainsLoading = false;
     },
   },
