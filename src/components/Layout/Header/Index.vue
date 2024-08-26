@@ -283,9 +283,7 @@ export default {
       this.sortedChains = await sortedChainsByTVL(
         this.networksData,
         this.isShowDeprecated,
-        this.networkId,
       );
-      console.log(this.sortedChains, '__CHAINS');
       this.chainsLoading = false;
     },
   },
@@ -293,7 +291,6 @@ export default {
     this.sortedChains = await sortedChainsByTVL(
       this.networksData,
       true,
-      this.networkId,
     );
     const onTabChange = useEventBus<string>('change-profile-picture-request');
     onTabChange.on((color) => {

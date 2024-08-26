@@ -56,7 +56,6 @@ import SwitchTabs from '@/components/SwitchTabs/Index.vue';
 import { appNetworksData } from '@/utils/const.ts';
 import { sortedChainsByTVL } from '@/store/helpers/index.ts';
 import { POOL_TYPES } from '@/store/views/main/pools/index.ts';
-import { mapGetters } from 'vuex';
 
 interface Chain {
   chainName: string;
@@ -90,19 +89,10 @@ export default {
       filterTabs: [],
     };
   },
-  // watch: {
-  //   async isShowDeprecated() {
-  //     this.sortedChains = await sortedChainsByTVL(this.networksData, this.isShowDeprecated);
-  //   },
-  // },
-  computed: {
-    ...mapGetters('network', ['networkId']),
-  },
   async mounted() {
     this.sortedChains = await sortedChainsByTVL(
       this.networksData,
       this.isShowDeprecated,
-      this.networkId,
     );
   },
   methods: {
