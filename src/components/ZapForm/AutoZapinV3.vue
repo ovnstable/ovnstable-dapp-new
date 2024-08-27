@@ -247,6 +247,7 @@
             btn-size="large"
             btn-styles="primary"
             full
+            disabled
             :loading="isSwapLoading"
             @click="depositGauge(lastNftTokenId)"
             @keypress="depositGauge(lastNftTokenId)"
@@ -258,6 +259,7 @@
             btn-size="large"
             btn-styles="primary"
             full
+            disabled
             :loading="isSwapLoading"
             @click="stakeTrigger"
             @keypress="stakeTrigger"

@@ -251,6 +251,7 @@
             btn-size="large"
             btn-styles="primary"
             full
+            disabled
             :loading="isSwapLoading"
             @click="
               depositGauge(
@@ -276,6 +277,7 @@
             btn-size="large"
             btn-styles="primary"
             full
+            disabled
             @click="stakeTrigger"
             @keypress="stakeTrigger"
           >

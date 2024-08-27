@@ -145,6 +145,7 @@
             btn-styles="primary"
             full
             :loading="isSwapLoading"
+            disabled
             @click="rebalanceTrigger"
             @keypress="rebalanceTrigger"
           >
@@ -155,6 +156,7 @@
             btn-size="large"
             btn-styles="primary"
             full
+            disabled
             :loading="isSwapLoading"
             @click="stakeTrigger"
             @keypress="stakeTrigger"
