@@ -593,6 +593,8 @@ export default defineComponent({
 
         const buyParams = {
           from: this.account,
+          // gasPrice: ethers.parseUnits('100', 'gwei'),
+          // gasLimit: 1000000,
         };
 
         const method = this.getContractMethodWithParams(
@@ -604,6 +606,8 @@ export default defineComponent({
 
         if (!method) return;
 
+        console.log(method, '__METH');
+        console.log(exchangeContract, '__METH2');
         const txData = method.iterateArgs
           ? await exchangeContract[method.name](
             ...Object.values(method.params),

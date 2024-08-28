@@ -145,6 +145,7 @@
             btn-styles="primary"
             full
             :loading="isSwapLoading"
+            disabled
             @click="rebalanceTrigger"
             @keypress="rebalanceTrigger"
           >
@@ -155,6 +156,7 @@
             btn-size="large"
             btn-styles="primary"
             full
+            disabled
             :loading="isSwapLoading"
             @click="stakeTrigger"
             @keypress="stakeTrigger"
@@ -942,8 +944,8 @@ export default {
 
       const params = {
         from: this.account,
-        gasPrice: ethers.parseUnits('100', 'gwei'),
-        gasLimit: 1000000,
+        // gasPrice: ethers.parseUnits('100', 'gwei'),
+        // gasLimit: 1000000,
       };
 
       console.log(this.zapContract, '-this.zapContract');

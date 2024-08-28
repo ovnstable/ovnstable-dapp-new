@@ -82,6 +82,7 @@ export const appNetworksData = [
 export const awaitDelay = async (time: number) => new Promise((res) => setTimeout(res, time));
 
 export const OVN_TOKENS = ['USD+', 'DAI+', 'USDT+', 'USDC+', 'ETH+', 'OVN', 'wETH+', 'wUSD+'];
+export const EXCLUDE_TOKENS = ['0xfc90518d5136585ba45e34ed5e1d108bd3950cfa'];
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 

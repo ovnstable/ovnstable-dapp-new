@@ -247,6 +247,7 @@
             btn-size="large"
             btn-styles="primary"
             full
+            disabled
             :loading="isSwapLoading"
             @click="depositGauge(lastNftTokenId)"
             @keypress="depositGauge(lastNftTokenId)"
@@ -258,6 +259,7 @@
             btn-size="large"
             btn-styles="primary"
             full
+            disabled
             :loading="isSwapLoading"
             @click="stakeTrigger"
             @keypress="stakeTrigger"
@@ -624,10 +626,10 @@ export default defineComponent({
       this.updateQuotaInfo();
     },
 
-    updateTokenValueMethod(tokenData: any, isMaxBal: boolean) {
+    updateTokenValueMethod(tokenData: any) {
       let newToken = null;
 
-      if (isMaxBal) {
+      if (tokenData.isMaxBal) {
         // bug with max balance sometimes, possible todo
         // problem in getProportion formula
         newToken = updateTokenValue(

@@ -4,6 +4,7 @@ import { computed, inject } from 'vue';
 import type { IBalanceService } from '@/services/BalanceService/BalanceService.ts';
 import { mergeTokenLists } from '@/services/TokenService/utils/index.ts';
 import { useStore } from 'vuex';
+import { isEmpty } from 'lodash';
 import { getQueryStates, isAllQueryDataAvailable } from '../utils/index.ts';
 
 const REFETCH_INTERVAL = 5 * 60 * 60 * 1000; // 5h
@@ -120,7 +121,7 @@ export const useTokensQueryNew = () => {
   const getTokenInfo = () => {
     const tokensData = tokensQuery.data.value;
 
-    if (tokensData) {
+    if (!isEmpty(tokensData)) {
       const tokenInfo = TokenService.formatTokenInfo(tokensData, networkId.value);
       return tokenInfo;
     }

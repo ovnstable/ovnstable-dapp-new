@@ -251,6 +251,7 @@
             btn-size="large"
             btn-styles="primary"
             full
+            disabled
             :loading="isSwapLoading"
             @click="
               depositGauge(
@@ -276,6 +277,7 @@
             btn-size="large"
             btn-styles="primary"
             full
+            disabled
             @click="stakeTrigger"
             @keypress="stakeTrigger"
           >
@@ -684,10 +686,10 @@ export default defineComponent({
       this.updateQuotaInfo();
     },
 
-    updateTokenValueMethod(tokenData: any, isMaxBal: boolean) {
+    updateTokenValueMethod(tokenData: any) {
       let newToken = null;
 
-      if (isMaxBal) {
+      if (tokenData.isMaxBal) {
         // bug with max balance sometimes, possible todo
         // problem in getProportion formula
         newToken = updateTokenValue(
@@ -902,6 +904,7 @@ export default defineComponent({
       const userInputTokens = this.selectedInputTokens;
       const poolOutputTokens = this.selectedOutputTokens;
 
+      console.log(userInputTokens, '__userInputTokens');
       const formulaInputTokens = [];
       let formulaOutputTokens = [];
 
@@ -981,7 +984,6 @@ export default defineComponent({
         outputTokensPrices: [...outputPrices],
       }), '__PARAMS');
 
-      console.log(userInputTokens, '__userInputTokens');
       let proportions: any = {
         inputTokens: [],
         outputTokens: [],

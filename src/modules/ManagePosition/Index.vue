@@ -179,7 +179,7 @@ export default {
     ...mapActions('odosData', ['triggerSuccessZapin']),
     ...mapActions('poolsData', ['setFilterParams']),
     handleClickSearch() {
-      if (this.zapPool) return;
+      if (!this.zapPool) return;
       const tokens = (this.zapPool?.name as string)?.split('/');
 
       const filterParams: Partial<TFilterPoolsParams> = {
