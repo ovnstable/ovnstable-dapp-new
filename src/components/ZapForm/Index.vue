@@ -215,7 +215,6 @@
             btn-size="large"
             full
             btn-styles="primary"
-            disabled
           >
             {{ disableButtonMessage }}
           </ButtonComponent>
@@ -251,7 +250,6 @@
             btn-size="large"
             btn-styles="primary"
             full
-            disabled
             :loading="isSwapLoading"
             @click="
               depositGauge(
@@ -277,7 +275,6 @@
             btn-size="large"
             btn-styles="primary"
             full
-            disabled
             @click="stakeTrigger"
             @keypress="stakeTrigger"
           >
@@ -421,7 +418,8 @@ export default defineComponent({
     maxInputTokens: MAX_INPUT_TOKENS,
     v3Range: null as any,
     isShowSelectTokensModal: false,
-    swapMethod: 'BUY', // BUY (secondTokens) / SELL (secondTokens)
+    swapMethod: 'BUY',
+    expectedZapin: [] as any[],
 
     isSwapLoading: false,
     slippagePercent: 0.5,
@@ -991,6 +989,9 @@ export default defineComponent({
         amountToken1Out: '0',
       };
 
+      // min amount of tokens, after swap, to escape big swap loss
+      let amountMins = [];
+
       if (this.zapPool?.poolVersion === 'v2') {
         proportions = calculateProportionForPool({
           inputTokensDecimals: [...inputDecimals],
@@ -1018,6 +1019,10 @@ export default defineComponent({
             price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
           })),
           this.zapContract,
+          poolOutputTokens.map((_) => ({
+            tokenAddress: _?.selectedToken?.address,
+            price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
+          })),
         );
 
         if (!resp) return;
@@ -1035,10 +1040,8 @@ export default defineComponent({
           amountToken1Out: resp[4][1]?.toString(),
         };
 
-        console.log(resp, '__resp');
+        amountMins = resp[2].map((_: any, key: number) => resp[6][key]?.toString());
       }
-
-      console.log(proportions, '__proportions');
 
       proportions.outputTokens = proportions.outputTokens.filter(
         (item: any) => new BN(item.proportion).gt(0),
@@ -1061,6 +1064,7 @@ export default defineComponent({
           proportions,
           this.lastPoolInfoData,
           this.zapPool,
+          amountMins,
         );
 
         this.isSwapLoading = false;
@@ -1105,6 +1109,7 @@ export default defineComponent({
                 proportions,
                 this.lastPoolInfoData,
                 this.zapPool,
+                amountMins,
               );
 
               this.isSwapLoading = false;
@@ -1426,6 +1431,7 @@ export default defineComponent({
       proportions: any,
       poolInfo: any,
       zapPool: any,
+      amountMins: string[],
     ) {
       const gaugeAddress = poolInfo.gauge;
       if (!this.zapContract) {
@@ -1452,7 +1458,7 @@ export default defineComponent({
         });
       }
 
-      const txData = {
+      let txData = {
         inputs: requestInput,
         outputs: requestOutput,
         data: responseData ? responseData.transaction.data : '0x',
@@ -1475,11 +1481,22 @@ export default defineComponent({
         };
       }
 
+      console.log(amountMins, '___amountMins');
+      console.log(1 - this.getSlippagePercent() / 100, '___amountMins');
       if (this.zapPool.poolVersion === 'v3') {
         gaugeData = {
           pair: this.zapPool.address,
           tickRange: this.v3Range.ticks,
           amountsOut: [proportions.amountToken0Out, proportions.amountToken1Out],
+        };
+        txData = {
+          ...txData,
+          outputs: requestOutput.map((_, key) => ({
+            ..._,
+            amountMin: new BN(amountMins[key])
+              .times(1 - this.getSlippagePercent() / 100)
+              .toFixed(0),
+          })),
         };
       }
 
@@ -1572,6 +1589,10 @@ export default defineComponent({
             price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
           })),
           this.zapContract,
+          this.selectedOutputTokens.map((_) => ({
+            tokenAddress: _?.selectedToken?.address,
+            price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
+          })),
         );
 
         if (!resp || resp[5]?.length === 0) return;
@@ -1586,6 +1607,15 @@ export default defineComponent({
           this.selectedOutputTokens[key].sum = val.toFixed(5);
         });
 
+        // remove later probably
+        this.expectedZapin = this.selectedOutputTokens.map((_: any, key: number) => {
+          const inputAm = resp[5].length > 1 ? resp[5][key] : resp[5][0];
+
+          return {
+            ..._?.selectedToken,
+            amount: new BN(inputAm).plus(resp[6][key]?.toString()).toFixed(0),
+          };
+        });
         return;
       }
 
@@ -1616,7 +1646,7 @@ export default defineComponent({
       console.log(this.selectedOutputTokens, '__resp1');
       this.recalculateOutputTokensSum();
     },
-    getSlippagePercent() {
+    getSlippagePercent(): number {
       return this.slippagePercent;
     },
     async checkApproveForToken(token: any, checkedAllowanceValue: any) {
