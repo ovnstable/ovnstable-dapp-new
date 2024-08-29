@@ -268,6 +268,7 @@ import { useTokensQuery, useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.
 import TokenService from '@/services/TokenService/TokenService.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import { useRefreshBalances } from '@/hooks/fetch/useRefreshBalances.ts';
+import { parseErrorLog } from '@/utils/errors.ts';
 
 export default defineComponent({
   name: 'SwapForm',
@@ -1148,7 +1149,7 @@ export default defineComponent({
           console.error('Error when approve token.', e);
           this.firstSwipeClickOnApprove = false;
           this.closeWaitingModal();
-          this.showErrorModalWithMsg({ errorType: 'approve', errorMsg: e });
+          this.showErrorModalWithMsg({ errorType: 'approve', errorMsg: parseErrorLog(e) });
         });
 
       const finishTx = () => {

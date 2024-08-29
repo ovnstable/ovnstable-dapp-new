@@ -412,9 +412,6 @@ export default defineComponent({
 
         result = gasVal;
       } catch (e) {
-        console.error(
-          `Insurance estimateGas error: ${e}. Sum: ${this.fromValue}. Account: ${this.account}. `,
-        );
         this.showErrorModalWithMsg({ errorType: 'estimateGas', errorMsg: e });
         return -1;
       }
