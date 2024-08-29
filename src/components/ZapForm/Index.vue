@@ -990,7 +990,7 @@ export default defineComponent({
       };
 
       // min amount of tokens, after swap, to escape big swap loss
-      let amountMins = [];
+      let amountMins: string[] = [];
 
       if (this.zapPool?.poolVersion === 'v2') {
         proportions = calculateProportionForPool({

@@ -896,7 +896,7 @@ export default defineComponent({
         outputTokensPrices: [...outputPrices],
       }), '__PARAMS');
 
-      let amountMins = [];
+      let amountMins: string[] = [];
       console.log(userInputTokens, '__userInputTokens');
       let proportions: any = {
         inputTokens: [],
