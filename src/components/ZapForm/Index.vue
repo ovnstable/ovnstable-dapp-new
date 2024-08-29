@@ -486,7 +486,7 @@ export default defineComponent({
         .map((_) => _.selectedToken?.address?.toLowerCase() ?? null)
         .filter(Boolean);
 
-      return mergedTokens(this.allTokensList as any[], this.balanceList as any[], selectedAdd);
+      return mergedTokens(this.allTokensList, this.balanceList as any[], selectedAdd);
     },
     isInputTokensRemovable() {
       return this.inputTokens.length > 1;
