@@ -113,8 +113,10 @@ export default {
     ...mapActions('poolsData', ['setFilterParams']),
     handleClickSearch() {
       const tokens = (this.$route.query?.tokens as string)?.split('-');
+
+      console.log(tokens, '__tokens');
       const filterParams: Partial<TFilterPoolsParams> = {
-        token0: tokens[0],
+        token0: tokens[0]?.replace(' ', ''),
         // token1: tokens[1],
       };
       this.setFilterParams(filterParams);
