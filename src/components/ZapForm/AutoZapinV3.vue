@@ -177,9 +177,6 @@
 
             <div>
               <SwapSlippageSettings
-                :selected-input-tokens="selectedInputTokens"
-                :selected-output-tokens="selectedOutputTokens"
-                :zap-pool-data="zapPool"
                 @change-slippage="handleCurrentSlippageChanged"
               />
             </div>

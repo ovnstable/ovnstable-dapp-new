@@ -135,8 +135,6 @@
         </div>
 
         <SwapSlippageSettings
-          :selected-input-tokens="selectedInputTokens"
-          :selected-output-tokens="selectedOutputTokens"
           @change-slippage="changeSlippage"
         />
 
