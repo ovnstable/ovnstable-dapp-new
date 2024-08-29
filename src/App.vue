@@ -2,7 +2,7 @@
   <div class="app-wrapper">
     <HeaderBar />
     <div
-      v-if="isShowDeprecated"
+      v-if="false"
       class="container"
     >
       <div class="app-wrapper__notify">
