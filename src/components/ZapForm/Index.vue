@@ -1008,6 +1008,20 @@ export default defineComponent({
       }
 
       if (this.zapPool?.poolVersion === 'v3') {
+        console.log(JSON.stringify({
+          address: this.zapPool.address,
+          ticks: this.v3Range.ticks,
+          inputs: userInputTokens.map((_) => ({
+            tokenAddress: _?.selectedToken?.address,
+            amount: _?.contractValue,
+            price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
+          })),
+          zap: this.zapContract.target,
+          outputs: poolOutputTokens.map((_) => ({
+            tokenAddress: _?.selectedToken?.address,
+            price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
+          })),
+        }), '___resp1');
         const resp = await getV3Proportion(
           this.zapPool.address,
           this.v3Range.ticks,
@@ -1022,6 +1036,8 @@ export default defineComponent({
             price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
           })),
         );
+
+        console.log(resp, '___resp2');
 
         if (!resp) return;
 
