@@ -101,7 +101,6 @@ import { deviceType } from '@/utils/deviceType.ts';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ModalComponent from '@/components/Modal/Index.vue';
-import { checkIsEveryStableToken } from '@/store/views/main/pools/helpers.ts';
 
 export default {
   name: 'SwapSlippageSettings',
@@ -109,16 +108,6 @@ export default {
     BaseIcon,
     ModalComponent,
     ButtonComponent,
-  },
-  props: {
-    selectedInputTokens: {
-      type: Array,
-      required: true,
-    },
-    selectedOutputTokens: {
-      type: Array,
-      required: true,
-    },
   },
   data() {
     return {
@@ -144,15 +133,6 @@ export default {
   computed: {
     deviceSize() {
       return deviceType();
-    },
-    isStableTokens() {
-      const allTokens = [...this.selectedInputTokens, ...this.selectedOutputTokens];
-      return checkIsEveryStableToken(allTokens.map((_: any) => _?.selectedToken?.symbol));
-    },
-  },
-  watch: {
-    selectedInputTokens() {
-      this.autoUpdateSlippage();
     },
   },
   mounted() {
@@ -187,18 +167,7 @@ export default {
     },
     autoUpdateSlippage() {
       // if volatile tokens choosen by user, slippage should be higher
-      if (!this.isStableTokens) {
-        const newVal = this.getSlippageSettingById(1);
-        this.newSlippageSetting(newVal);
-        return;
-      }
-
-      const auto: any = this.getSlippageSettingById(3);
-      this.currentSlippage = {
-        ...auto,
-        value: 0.1,
-      };
-      this.newSlippageSetting(auto);
+      this.newSlippageSetting(this.getSlippageSettingById(1));
     },
     onLeaveList,
     beforeEnterList,

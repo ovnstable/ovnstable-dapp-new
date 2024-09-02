@@ -177,9 +177,6 @@
 
             <div>
               <SwapSlippageSettings
-                :selected-input-tokens="selectedInputTokens"
-                :selected-output-tokens="selectedOutputTokens"
-                :zap-pool-data="zapPool"
                 @change-slippage="handleCurrentSlippageChanged"
               />
             </div>
@@ -330,6 +327,7 @@ import { isEmpty } from 'lodash';
 import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import { useRefreshBalances } from '@/hooks/fetch/useRefreshBalances.ts';
+import { parseErrorLog } from '@/utils/errors.ts';
 import { mapExcludeLiquidityPlatform, parseLogs, sourceLiquidityBlacklist } from './helpers.ts';
 
 enum zapMobileSection {
@@ -624,10 +622,10 @@ export default defineComponent({
       this.updateQuotaInfo();
     },
 
-    updateTokenValueMethod(tokenData: any, isMaxBal: boolean) {
+    updateTokenValueMethod(tokenData: any) {
       let newToken = null;
 
-      if (isMaxBal) {
+      if (tokenData.isMaxBal) {
         // bug with max balance sometimes, possible todo
         // problem in getProportion formula
         newToken = updateTokenValue(
@@ -894,6 +892,7 @@ export default defineComponent({
         outputTokensPrices: [...outputPrices],
       }), '__PARAMS');
 
+      let amountMins: string[] = [];
       console.log(userInputTokens, '__userInputTokens');
       let proportions: any = {
         inputTokens: [],
@@ -911,6 +910,10 @@ export default defineComponent({
           price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
         })),
         this.zapContract,
+        poolOutputTokens.map((_) => ({
+          tokenAddress: _?.selectedToken?.address,
+          price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
+        })),
       );
 
       if (!resp) return;
@@ -927,6 +930,8 @@ export default defineComponent({
         amountToken0Out: resp[4][0]?.toString(),
         amountToken1Out: resp[4][1]?.toString(),
       };
+
+      amountMins = resp[2].map((_: any, key: number) => resp[6][key]?.toString());
 
       console.log(resp, '__resp');
 
@@ -951,6 +956,7 @@ export default defineComponent({
           proportions.inputTokens,
           proportions.outputTokens,
           proportions,
+          amountMins,
         );
 
         this.isSwapLoading = false;
@@ -992,6 +998,7 @@ export default defineComponent({
                 proportions.inputTokens,
                 proportions.outputTokens,
                 proportions,
+                amountMins,
               );
             })
             .catch((e) => {
@@ -1142,6 +1149,7 @@ export default defineComponent({
       requestInputTokens: any[],
       requestOutputTokens: any[],
       proportions: any,
+      amountMins: string[],
     ) {
       const requestInput = [];
       for (let i = 0; i < requestInputTokens.length; i++) {
@@ -1161,7 +1169,12 @@ export default defineComponent({
 
       const txData = {
         inputs: requestInput,
-        outputs: requestOutput,
+        outputs: requestOutput.map((_, key) => ({
+          ..._,
+          amountMin: new BN(amountMins[key])
+            .times(1 - this.getSlippagePercent() / 100)
+            .toFixed(0),
+        })),
         data: responseData ? responseData.transaction.data : '0x',
       };
 
@@ -1203,7 +1216,10 @@ export default defineComponent({
       } catch (e: any) {
         this.isSwapLoading = false;
         this.closeWaitingModal();
-        this.showErrorModalWithMsg({ errorType: 'zap', errorMsg: e });
+        this.showErrorModalWithMsg({
+          errorType: 'zap',
+          errorMsg: parseErrorLog(e),
+        });
       }
     },
     clearQuotaInfo() {
@@ -1234,6 +1250,10 @@ export default defineComponent({
           price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
         })),
         this.zapContract,
+        this.selectedOutputTokens.map((_) => ({
+          tokenAddress: _?.selectedToken?.address,
+          price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
+        })),
       );
 
       if (!resp || resp[5]?.length === 0) return;
@@ -1314,7 +1334,7 @@ export default defineComponent({
         .catch((e) => {
           console.error('Error when approve token.', e);
           this.closeWaitingModal();
-          this.showErrorModalWithMsg({ errorType: 'approve', errorMsg: e });
+          this.showErrorModalWithMsg({ errorType: 'approve', errorMsg: parseErrorLog(e) });
         });
 
       console.log('TRIGGER__2');

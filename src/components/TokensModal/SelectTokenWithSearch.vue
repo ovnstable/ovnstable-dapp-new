@@ -167,7 +167,7 @@
 import { formatMoney } from '@/utils/numbers.ts';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import InputComponent from '@/components/Input/Index.vue';
-import { OVN_TOKENS } from '@/utils/const.ts';
+import { EXCLUDE_TOKENS, OVN_TOKENS } from '@/utils/const.ts';
 import { deviceType } from '@/utils/deviceType.ts';
 import BigNumber from 'bignumber.js';
 
@@ -229,12 +229,16 @@ export default {
         arrList = arrList.filter((_: any) => _.id !== NATIVE_ID);
       }
 
-      arrList = arrList.filter((token: any) => !this.selectedTokensAddress.includes(token
-        .address) && (
-        token.name?.toLowerCase().includes(this.searchQuery?.toLowerCase())
+      arrList = arrList.filter((token: any) => {
+        if (EXCLUDE_TOKENS.includes(token.address)) return false;
+
+        return !this.selectedTokensAddress.includes(token
+          .address) && (
+          token.name?.toLowerCase().includes(this.searchQuery?.toLowerCase())
           || token.symbol?.toLowerCase().includes(this.searchQuery?.toLowerCase())
           || token.address?.toLowerCase().includes(this.searchQuery?.toLowerCase())
-      ));
+        );
+      });
 
       arrList.sort((a: any, b: any) => {
         if (new BigNumber(b.balanceData.balanceInUsd).lt(a.balanceData.balanceInUsd)) {
@@ -253,16 +257,17 @@ export default {
       });
 
       if (!this.searchQuery) {
-        arrList.sort((a: any, b: any) => {
-          if (OVN_TOKENS.includes(a.symbol) && !OVN_TOKENS.includes(b.symbol)) {
-            return -1;
-          }
-          if (!OVN_TOKENS.includes(a.symbol) && OVN_TOKENS.includes(b.symbol)) {
-            return 1;
-          }
+        arrList
+          .sort((a: any, b: any) => {
+            if (OVN_TOKENS.includes(a.symbol) && !OVN_TOKENS.includes(b.symbol)) {
+              return -1;
+            }
+            if (!OVN_TOKENS.includes(a.symbol) && OVN_TOKENS.includes(b.symbol)) {
+              return 1;
+            }
 
-          return 0;
-        });
+            return 0;
+          });
       }
 
       return arrList;

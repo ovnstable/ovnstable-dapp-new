@@ -183,7 +183,7 @@ export const getTokenBySymbol = (
 export const getTokenByAddress = (
   address: string,
   tokensList: any[],
-) => tokensList.find((_) => _.address.toLowerCase() === address.toLowerCase());
+) => tokensList.find((_) => _.address?.toLowerCase() === address?.toLowerCase());
 
 export const getDefaultSecondtoken = (
   tokenSeparationScheme: string,
@@ -369,12 +369,8 @@ export const loadPrices = async (chainId: number | string) => odosApiService
 export const sortedChainsByTVL = async (
   chains: any,
   showDeprecated: boolean,
-  networkId: number,
 ) => {
   const tvl = await SliderApiService.loadTVL();
-  const response = await odosApiService.loadPrices(networkId);
-  const ethPrice = (response as any).tokenPrices['0x0000000000000000000000000000000000000000'];
-
   const filterDeprecated = chains.filter((_: any) => {
     if (showDeprecated) return chains;
 
@@ -385,10 +381,7 @@ export const sortedChainsByTVL = async (
     const chain = tvl.find((_: any) => _.chainName.toLowerCase() === chainData.name.toLowerCase());
     if (!chain) return { chainName: chainData.name, tvl: 0 };
 
-    const totalTVL = chain.values.reduce((total: any, token: any) => {
-      const value = token.name === 'ETH+' ? token.value * ethPrice : token.value;
-      return total + value;
-    }, 0);
+    const totalTVL = chain.values.reduce((total: any) => total, 0);
 
     return { chainName: chainData.name, tvl: totalTVL };
   });

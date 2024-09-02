@@ -158,6 +158,7 @@ import { defineComponent } from 'vue';
 import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
 import type { TTokenInfo } from '@/types/common/tokens/index.ts';
 import { useRefreshBalances } from '@/hooks/fetch/useRefreshBalances.ts';
+import { parseErrorLog } from '@/utils/errors.ts';
 
 export default defineComponent({
   name: 'MintRedeem',
@@ -370,7 +371,7 @@ export default defineComponent({
         .catch((e) => {
           console.error('Error when approve token.', e);
           this.closeWaitingModal();
-          this.showErrorModalWithMsg({ errorType: 'approve', errorMsg: e });
+          this.showErrorModalWithMsg({ errorType: 'approve', errorMsg: parseErrorLog(e) });
         });
 
       const finishTx = () => {
@@ -593,6 +594,8 @@ export default defineComponent({
 
         const buyParams = {
           from: this.account,
+          // gasPrice: ethers.parseUnits('100', 'gwei'),
+          // gasLimit: 1000000,
         };
 
         const method = this.getContractMethodWithParams(
@@ -604,6 +607,8 @@ export default defineComponent({
 
         if (!method) return;
 
+        console.log(method, '__METH');
+        console.log(exchangeContract, '__METH2');
         const txData = method.iterateArgs
           ? await exchangeContract[method.name](
             ...Object.values(method.params),

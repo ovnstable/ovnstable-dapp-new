@@ -52,7 +52,7 @@ class TokenService implements ITokenService {
     tokenBalanceMap: any = {},
   ) => {
     const tokenNetworkMap = mergeTokenLists(tokens);
-    const tokensByNetwork = tokenNetworkMap.chainTokenMap[chainId].tokenMap;
+    const tokensByNetwork = tokenNetworkMap.chainTokenMap[chainId]?.tokenMap ?? [];
     const tokenInfo = formatTokenInfo(
       tokensByNetwork,
       tokenPricesData.tokenPrices,
@@ -67,7 +67,7 @@ class TokenService implements ITokenService {
     chainId: string,
   ) => {
     const tokenNetworkMap = mergeTokenLists(tokens);
-    const tokensByNetwork = tokenNetworkMap.chainTokenMap[chainId].tokenMap;
+    const tokensByNetwork = tokenNetworkMap.chainTokenMap[chainId]?.tokenMap ?? [];
     const tokenInfo = formatTokenInfoNew(tokensByNetwork);
     return tokenInfo;
   };
