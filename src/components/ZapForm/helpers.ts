@@ -1,5 +1,8 @@
 /* eslint-disable no-restricted-syntax */
+import BN from 'bignumber.js';
 import { ethers } from 'ethers';
+import { fixedByPrice, formatMoney } from '@/utils/numbers.ts';
+import { updateTokenValue } from '@/store/helpers/index.ts';
 
 const EVENT_SIG = ['uint256[]', 'address[]'];
 
@@ -67,3 +70,188 @@ export const mapExcludeLiquidityPlatform = {
 } as any;
 
 export const sourceLiquidityBlacklist = ['Hashflow', 'Wombat'];
+
+export const getUpdatedTokenVal = (
+  tokenData: any,
+  checkApproveForToken: (tokenData: any, val: string) => void,
+) => {
+  let newToken = null;
+  if (tokenData.isMaxBal) {
+    const maxVal = tokenData.selectedToken.balanceData.originalBalance;
+
+    newToken = updateTokenValue(
+      tokenData,
+      tokenData.value,
+      checkApproveForToken,
+      maxVal,
+    );
+  } else {
+    newToken = updateTokenValue(
+      tokenData,
+      tokenData.value,
+      checkApproveForToken,
+    );
+  }
+
+  return {
+    contractValue: newToken?.contractValue,
+    id: newToken?.id,
+    selectedToken: newToken?.selectedToken,
+    usdValue: newToken?.usdValue,
+    value: newToken?.value,
+  };
+};
+
+export const removeToken = (tokens: any[], id: string) => {
+  // removing by token.id or token.selectedToken.id
+  const index = tokens.findIndex(
+    (item: any) => item.id === id
+      || (item.selectedToken ? item.selectedToken.id === id : false),
+  );
+  if (index !== -1) {
+    if (tokens[index].selectedToken) {
+      // eslint-disable-next-line no-param-reassign
+      tokens[index].selectedToken.selected = false;
+    }
+
+    tokens.splice(index, 1);
+  }
+};
+
+export const getOdosOutputTokens = (data: any, selectedOutputTokens: any[]) => {
+  console.log(data, '___DATA');
+  if (!data || !data.outTokens || !data.outAmounts) {
+    return [];
+  }
+
+  const { outTokens } = data;
+  const { outAmounts } = data;
+  const selectedOutputTokensCount = selectedOutputTokens.length;
+  const outTokensCount = outTokens.length;
+  const outAmountsCount = outAmounts.length;
+
+  if (
+    selectedOutputTokensCount < 1
+    || outTokensCount < 1
+    || outAmountsCount < 1
+  ) {
+    return [];
+  }
+
+  const selectedOutputTokensMap: any = {};
+  const list = [];
+
+  for (let i = 0; i < selectedOutputTokens.length; i++) {
+    const token: any = selectedOutputTokens[i];
+    selectedOutputTokensMap[
+      token.selectedToken.address.toLowerCase()
+    ] = token;
+  }
+
+  for (let i = 0; i < data.outTokens?.length; i++) {
+    const tokenAddress = data.outTokens[i];
+    const tokenAmount = data.outAmounts[i];
+    const token: any = selectedOutputTokensMap[tokenAddress.toLowerCase()];
+    if (token) {
+      const { selectedToken } = token;
+      const sum = new BN(tokenAmount)
+        .div(10 ** selectedToken.decimals);
+      token.sum = sum.toFixed(fixedByPrice(sum.toNumber()) + 2);
+    }
+
+    list.push(token);
+  }
+
+  return list;
+};
+
+export const getZapinOutputTokens = (data: any, selectedOutput: any[], respProp: any) => {
+  if (!data || !data.outTokens || !data.outAmounts) {
+    return [];
+  }
+
+  const { outTokens } = data;
+  const { outAmounts } = data;
+  const selectedOutputTokensCount = selectedOutput.length;
+  const outTokensCount = outTokens.length;
+  const outAmountsCount = outAmounts.length;
+
+  if (
+    selectedOutputTokensCount < 1
+    || outTokensCount < 1
+    || outAmountsCount < 1
+  ) {
+    return [];
+  }
+
+  const list = selectedOutput.map((token, key) => {
+    const indexOfToken = data.outTokens
+      .findIndex((add: string) => add
+        .toLowerCase() === token.selectedToken?.address?.toLowerCase());
+
+    const newToken = token;
+
+    if (indexOfToken === -1) {
+      const tokenAmount = respProp[4][key];
+      const sum = new BN(tokenAmount)
+        .div(10 ** token.selectedToken.decimals);
+
+      return {
+        ...token,
+        sum: sum.toFixed(fixedByPrice(sum.toNumber()) + 2),
+        originalBalance: tokenAmount.toString(),
+        tokenOut: tokenAmount.toString(),
+      };
+    }
+
+    if (token) {
+      const tokenAmount = data.outAmounts[indexOfToken];
+      const sum = new BN(tokenAmount)
+        .div(10 ** token.selectedToken.decimals);
+
+      return {
+        ...token,
+        sum: sum.toFixed(fixedByPrice(sum.toNumber()) + 2),
+        originalBalance: tokenAmount,
+        tokenOut: '0',
+      };
+    }
+
+    return newToken;
+  });
+
+  return list;
+};
+
+const sumOfAllSelectedTokensInUsd = (selectedInputTokens: any[]) => {
+  let sum = '0';
+  for (let i = 0; i < selectedInputTokens.length; i++) {
+    const token: any = selectedInputTokens[i];
+    const selectedTokenUsdValue = token.usdValue;
+    sum = new BN(
+      selectedTokenUsdValue,
+    ).plus(sum).toFixed(6, BN.ROUND_DOWN);
+  }
+
+  return sum;
+};
+
+export const recalculateOutputTokensSum = (
+  selectedOutputTokens: any[],
+  selectedInputTokens: any[],
+) => {
+  const list = [];
+  for (let i = 0; i < selectedOutputTokens.length; i++) {
+    const token: any = selectedOutputTokens[i];
+    const tokenSum = new BN(
+      sumOfAllSelectedTokensInUsd(selectedInputTokens),
+    ).times(token.value).div(100);
+    const sum = new BN(tokenSum).div(token.selectedToken.price);
+    list.push({
+      ...token,
+      sum: formatMoney(sum.toNumber(), 4),
+    });
+  }
+
+  return list;
+};

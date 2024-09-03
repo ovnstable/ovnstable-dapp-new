@@ -67,7 +67,7 @@ body {
 }
 
 
-$base-color: var(--color-5);
+$base-color: var(--color-7);
 $shine-color: var(--color-4);
 $animation-duration: 2.0s;
 $avatar-offset: 52 + 16;
@@ -137,6 +137,7 @@ $avatar-offset: 52 + 16;
   min-height: 15px;
   box-shadow: unset;
   border: 0;
+  background-color: wheat;
 }
 
 .sidebar__icon-social:hover {

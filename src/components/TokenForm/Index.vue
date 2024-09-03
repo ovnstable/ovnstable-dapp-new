@@ -2,7 +2,12 @@
 <template>
   <div class="input-tokens">
     <div class="input-tokens__row">
+      <div
+        v-if="tokenLoading"
+        class="lineLoader lineLoader--balance"
+      />
       <InputComponent
+        v-else
         custom-class="input-tokens__field"
         :value="isInputToken ? tokenInfo.value : tokenInfo.sum"
         is-custom
@@ -48,7 +53,7 @@
     <div class="input-tokens__row">
       <div>
         <div
-          v-if="balancesLoading"
+          v-if="balancesLoading || tokenLoading"
           class="lineLoader lineLoader--balance"
         />
         <div
@@ -110,6 +115,11 @@ export default {
     isInputToken: {
       type: Boolean,
       required: true,
+    },
+    tokenLoading: {
+      type: Boolean as PropType<boolean | Ref<boolean>>,
+      required: false,
+      default: false,
     },
     balancesLoading: {
       type: Boolean as PropType<boolean | Ref<boolean>>,

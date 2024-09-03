@@ -196,7 +196,7 @@ import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ZapinV3 from '@/components/ZapForm/ZapinV3.vue';
 import BN from 'bignumber.js';
-import TokenForm from '@/modules/Main/components/Odos/TokenForm.vue';
+import TokenForm from '@/components/TokenForm/Index.vue';
 import { MANAGE_FUNC, rebalanceStep } from '@/store/modals/waiting-modal.ts';
 import ZapInStepsRow from '@/components/StepsRow/ZapinRow/RebalanceRow.vue';
 import { cloneDeep, isEmpty } from 'lodash';
@@ -208,6 +208,7 @@ import { buildEvmContract } from '@/utils/contractsMap.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import { useRefreshBalances } from '@/hooks/fetch/useRefreshBalances.ts';
 import { parseErrorLog } from '@/utils/errors.ts';
+import { mapExcludeLiquidityPlatform, removeToken, sourceLiquidityBlacklist } from '@/components/ZapForm/helpers.ts';
 import { parseLogs } from './helpers.ts';
 
 enum zapMobileSection {
@@ -281,23 +282,6 @@ export default {
 
       tokensQuotaCounterId: null as any,
       tokensQuotaCheckerSec: 0,
-
-      sourceLiquidityBlacklist: ['Hashflow', 'Wombat'], // "Overnight Exchange"
-      mapExcludeLiquidityPlatform: {
-        Chronos: ['Chronos Volatile'], // "Chronos Stable"
-        // Pancake: ["PancakeSwap", "PancakeSwap V3"],
-        // Beefy: ["Aerodrome Stable", "Aerodrome Volatile"],
-        Aerodrome: ['Aerodrome Slipstream'],
-        Velodrome: [
-          'Velodrome Stable',
-          'Velodrome Volatile',
-          'Velodrome V2 Converter',
-          'Velodrome V2 Stable',
-          'Velodrome V2 Volatile',
-        ],
-        // Alienbase: ["Alien Base", "Alien Base Stable"],
-        // Convex: ["Curve Crypto Registry", "Curve Factory", "Curve Registry"]
-      } as any,
       // Mobile section switch
       zapMobileSection,
       currentSection: zapMobileSection.TOKEN_FORM,
@@ -515,22 +499,8 @@ export default {
       }
     },
     removeOutputToken(id: string) {
-      this.removeToken(this.outputTokens, id);
+      removeToken(this.outputTokens, id);
       this.resetOutputs();
-    },
-    removeToken(tokens: any[], id: string) {
-      // removing by token.id or token.selectedToken.id
-      const index = tokens.findIndex(
-        (item: any) => item.id === id
-          || (item.selectedToken ? item.selectedToken.id === id : false),
-      );
-      if (index !== -1) {
-        if (tokens[index].selectedToken) {
-          tokens[index].selectedToken.selected = false;
-        }
-
-        tokens.splice(index, 1);
-      }
     },
     odosAssembleRequest(requestData: any) {
       return odosApiService
@@ -660,7 +630,6 @@ export default {
       }
     },
     async rebalanceTrigger() {
-      console.log(this.poolTokenContract, '__this.poolTokenContract');
       if (!this.zapPool) return;
       if (this.isSwapLoading) return;
 
@@ -837,9 +806,9 @@ export default {
     },
 
     getSourceLiquidityBlackList() {
-      let sourceBlacklist = [...this.sourceLiquidityBlacklist];
+      let sourceBlacklist = [...sourceLiquidityBlacklist];
       // excluding platform for big liquidities zapins
-      const excludeLiquidityByPlatform = this.mapExcludeLiquidityPlatform[
+      const excludeLiquidityByPlatform = mapExcludeLiquidityPlatform[
         this.zapPool.platform[0]
       ];
       if (excludeLiquidityByPlatform && excludeLiquidityByPlatform.length) {
@@ -880,7 +849,6 @@ export default {
           return;
         }
 
-        console.log(tx, '__isApproved');
         this.currentStage = rebalanceStep.REBALANCE;
         this.isNftApproved = true;
         this.isSwapLoading = false;
