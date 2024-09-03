@@ -144,11 +144,6 @@ export default {
 </script>
 
 <style lang="scss">
-
-.transaction-info-container {
-  max-width: 600px;
-}
-
 .transaction-info-title {
   font-style: normal;
   font-weight: 400;

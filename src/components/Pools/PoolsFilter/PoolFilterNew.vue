@@ -59,7 +59,7 @@
   <SelectTokensModal
     :is-show="isShowTokensModal"
     :select-token-input="true"
-    :tokens="allTokensList"
+    :tokens="mergedTokenList"
     :is-all-data-loaded="isAllDataLoaded"
     :selected-tokens="selectedTokens"
     :balances-loading="isLoading"
@@ -80,7 +80,8 @@ import { mapActions, mapGetters } from 'vuex';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import SelectTokensModal from '@/components/TokensModal/Index.vue';
 import { computed } from 'vue';
-import { useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.ts';
+import { useTokensQuery, useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.ts';
+import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import type { TTokenInfo } from '@/types/common/tokens';
 import type { TFilterPoolsParams } from '@/types/common/pools';
 
@@ -120,10 +121,13 @@ export default {
       isBalancesLoading,
     } = useTokensQueryNew();
 
+    const { data: balancesList } = useTokensQuery();
+
     return {
       allTokensList: computed(
         () => allTokensList.value.filter((token: TTokenInfo) => token.isPoolToken),
       ),
+      balancesList,
       isLoading,
       isAllDataLoaded: computed(() => !isLoading.value),
       isBalancesLoading,
@@ -139,6 +143,9 @@ export default {
   },
   computed: {
     ...mapGetters('accountData', ['account']),
+    mergedTokenList() {
+      return mergedTokens(this.allTokensList, this.balancesList as any[]);
+    },
   },
   methods: {
     ...mapActions('poolsData', ['setFilterParams']),
