@@ -359,6 +359,7 @@ export default defineComponent({
     odosDataLoading: false,
     odosData: {
       percentDiff: 0,
+      netOutValue: 0,
     },
 
     isSwapLoading: false,
@@ -396,13 +397,13 @@ export default defineComponent({
         && !isEmpty(this.zapContract);
     },
     getOdosFee() {
-      return new BN(this.odosData.percentDiff)
+      return new BN(this.odosData.netOutValue)
         .times(this.multiSwapOdosFeePercent)
         .div(100)
         .toNumber();
     },
     getSlippageAmount() {
-      return new BN(this.odosData.percentDiff)
+      return new BN(this.odosData.netOutValue)
         .times(this.slippagePercent).div(100).toNumber();
     },
     zapAllTokens() {

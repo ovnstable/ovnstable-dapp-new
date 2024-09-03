@@ -393,6 +393,7 @@ export default defineComponent({
     odosDataLoading: false,
     odosData: {
       percentDiff: 0,
+      netOutValue: 0,
     },
 
     isSwapLoading: false,
