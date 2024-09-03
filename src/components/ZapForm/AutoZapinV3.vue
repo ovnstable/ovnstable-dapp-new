@@ -290,7 +290,7 @@ import { isEmpty } from 'lodash';
 import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import { useRefreshBalances } from '@/hooks/fetch/useRefreshBalances.ts';
-import FeesBlock from '@/components/FeesBlock/Index.vue';
+import FeesBlock, { MIN_IMPACT } from '@/components/FeesBlock/Index.vue';
 import { parseErrorLog } from '@/utils/errors.ts';
 import {
   getUpdatedTokenVal,
@@ -364,6 +364,7 @@ export default defineComponent({
     odosData: {
       percentDiff: 0,
       netOutValue: 0,
+      priceImpact: 0,
     },
 
     isSwapLoading: false,
@@ -523,6 +524,13 @@ export default defineComponent({
     },
   },
   watch: {
+    odosData(val) {
+      if (new BN(val.percentDiff).absoluteValue().gt(MIN_IMPACT)) {
+        this.agreeWithFees = false;
+      } else {
+        this.agreeWithFees = true;
+      }
+    },
     networkId() {
       this.$nextTick(() => {
         this.firstInit();

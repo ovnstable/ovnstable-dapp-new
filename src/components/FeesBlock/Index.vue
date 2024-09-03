@@ -47,7 +47,14 @@
             Output min. received
           </div>
           <div class="transaction-info">
-            ~{{ getFixed(odosData?.netOutValue) }}$
+            <span>
+              ~{{ getFixed(odosData?.netOutValue) }}$
+            </span>
+            <span
+              :class="{ 'tx-info--red': critImpact(odosData.priceImpact ?? 0) }"
+            >
+              ({{ getFixedPrice(odosData.priceImpact) }}%)
+            </span>
           </div>
         </div>
 
@@ -68,6 +75,8 @@
 import { formatMoney } from '@/utils/numbers.ts';
 import BN from 'bignumber.js';
 import SwitchComponent from '@/components/Switch/Index.vue';
+
+export const MIN_IMPACT = 2;
 
 export default {
   name: 'FeesBlock',
@@ -110,6 +119,20 @@ export default {
       return (val: string) => (new BN(val).gt(0)
         ? new BN(val).times(1 - this.slippagePercent / 100).toFixed(2) : 0);
     },
+    critImpact() {
+      return (val: string) => (!!new BN(val).absoluteValue().gt(MIN_IMPACT));
+    },
+    getFixedPrice() {
+      return (val: string) => {
+        if (new BN(val).eq(0)) return 0;
+        if (new BN(val).absoluteValue().lt(0.0001)) return 0;
+        if (new BN(val).absoluteValue().lt(0.001)) {
+          return new BN(val).toFixed(4);
+        }
+
+        return new BN(val).toFixed(2);
+      };
+    },
   },
   methods: {
     formatMoney,
@@ -135,13 +158,18 @@ export default {
   color: #707a8b;
 }
 
+.tx-info--red {
+  color: rgb(243, 57, 57);
+}
+
 .transaction-info {
+  display: flex;
+  gap: 4px;
   font-style: normal;
   font-weight: 500;
   font-size: 16px;
   line-height: 24px;
   text-align: end;
-
   color: var(--main-gray-text);
 }
 

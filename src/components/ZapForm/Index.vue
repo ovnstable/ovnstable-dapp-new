@@ -138,6 +138,8 @@
               :multi-swap-odos-fee-percent="multiSwapOdosFeePercent"
               :selected-input-tokens="selectedInputTokens"
               :odos-data="odosData"
+              :agree-with-fees="agreeWithFees"
+              @change-agree="changeAgreeFees"
             />
 
             <SwapSlippageSettings
@@ -313,7 +315,7 @@ import { onLeaveList, onEnterList, beforeEnterList } from '@/utils/animations.ts
 import { MANAGE_FUNC, zapInStep } from '@/store/modals/waiting-modal.ts';
 import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
 import SwapSlippageSettings from '@/components/SwapSlippage/Index.vue';
-import FeesBlock from '@/components/FeesBlock/Index.vue';
+import FeesBlock, { MIN_IMPACT } from '@/components/FeesBlock/Index.vue';
 import { useTokensQuery, useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.ts';
 import TokenService from '@/services/TokenService/TokenService.ts';
 import { isEmpty } from 'lodash';
@@ -384,16 +386,17 @@ export default defineComponent({
   },
   data: () => ({
     approvingPending: false,
+    agreeWithFees: true,
     inputTokens: [] as any[],
     outputTokens: [] as any[],
     maxInputTokens: MAX_INPUT_TOKENS,
     v3Range: null as any,
     isShowSelectTokensModal: false,
-    expectedZapin: [] as any[],
     odosDataLoading: false,
     odosData: {
       percentDiff: 0,
       netOutValue: 0,
+      priceImpact: 0,
     },
 
     isSwapLoading: false,
@@ -588,6 +591,13 @@ export default defineComponent({
     },
   },
   watch: {
+    odosData(val) {
+      if (new BN(val.percentDiff).absoluteValue().gt(MIN_IMPACT)) {
+        this.agreeWithFees = false;
+      } else {
+        this.agreeWithFees = true;
+      }
+    },
     networkId(val) {
       this.loadRouterContract(val);
       this.$nextTick(() => {
@@ -645,6 +655,9 @@ export default defineComponent({
     beforeEnterList,
     onEnterList,
     // Mobile section switcher
+    changeAgreeFees() {
+      this.agreeWithFees = !this.agreeWithFees;
+    },
     checkForPriceDiff(data: any) {
       if (data.percentDiff > 2) {
         alert('Price difference for zapin, higher than 2%');
@@ -917,17 +930,6 @@ export default defineComponent({
       const outputAddresses = formulaOutputTokens.map((token: any) => token.address);
       const outputAmounts = formulaOutputTokens.map((token: any) => token.contractValue);
       const outputPrices = formulaOutputTokens.map((token: any) => token.price);
-
-      console.log(JSON.stringify({
-        inputTokensDecimals: [...inputDecimals],
-        inputTokensAddresses: [...inputAddresses],
-        inputTokensAmounts: [...inputAmounts],
-        inputTokensPrices: [...inputPrices],
-        outputTokensDecimals: [...outputDecimals],
-        outputTokensAddresses: [...outputAddresses],
-        outputTokensAmounts: [...outputAmounts],
-        outputTokensPrices: [...outputPrices],
-      }), '__PARAMS');
 
       let proportions: any = {
         inputTokens: [],
@@ -1463,7 +1465,6 @@ export default defineComponent({
       }
 
       console.log(amountMins, '___amountMins');
-      console.log(1 - this.getSlippagePercent() / 100, '___amountMins');
       if (this.zapPool.poolVersion === 'v3') {
         gaugeData = {
           pair: this.zapPool.address,
@@ -1619,16 +1620,6 @@ export default defineComponent({
       );
 
       console.log(resp, '___resp2');
-
-      // remove later probably
-      this.expectedZapin = this.selectedOutputTokens.map((_: any, key: number) => {
-        const inputAm = resp[5].length > 1 ? resp[5][key] : resp[5][0];
-
-        return {
-          ..._?.selectedToken,
-          amount: new BN(inputAm).plus(resp[6][key]?.toString()).toFixed(0),
-        };
-      });
 
       const inputTokens = this.selectedInputTokens.map((_: any, key: number) => ({
         tokenAddress: _?.selectedToken?.address,
