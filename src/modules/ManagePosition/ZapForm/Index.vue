@@ -1139,6 +1139,9 @@ export default {
             .reduce((acc, curr) => acc
               .plus(new BN(curr.sum).times(curr.selectedToken?.price)), new BN(0)).toFixed();
 
+          if (finalOutput.length === 0) {
+            throw Error('Swap route not found');
+          }
           console.log(finalOutput, '__finalOutput');
           this.outputTokens = finalOutput;
           this.odosData = {
