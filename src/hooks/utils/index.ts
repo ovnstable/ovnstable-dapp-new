@@ -2,6 +2,9 @@
 import type { UseQueryReturnType } from '@tanstack/vue-query';
 import { computed } from 'vue';
 
+export const REFETCH_INTERVAL = 5 * 60 * 60 * 1000; // 5h
+export const BALANCE_REFETCH_INTERVAL = 60000;
+
 export type TQuery = Partial<UseQueryReturnType<any[], any>>
 
 export const getQueryStates = (queries: TQuery[]) => ({

@@ -266,6 +266,7 @@ import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import { useRefreshBalances } from '@/hooks/fetch/useRefreshBalances.ts';
 import { parseErrorLog } from '@/utils/errors.ts';
 import { getOdosOutputTokens, getUpdatedTokenVal } from '@/components/ZapForm/helpers.ts';
+import { debounce } from 'lodash';
 
 export default defineComponent({
   name: 'SwapForm',
@@ -1229,11 +1230,7 @@ export default defineComponent({
     setSwapMethod(method: any) {
       this.swapMethod = method;
     },
-
-    updateQuotaInfo() {
-      this.simulateSwap();
-    },
-
+    updateQuotaInfo: debounce(function debounceRoute(this: any) { this.simulateSwap(); }, 1000),
     initTabName(path: any, queryParams: any) {
       this.$router.push({
         path,

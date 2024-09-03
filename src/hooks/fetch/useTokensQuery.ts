@@ -5,10 +5,10 @@ import type { IBalanceService } from '@/services/BalanceService/BalanceService.t
 import { mergeTokenLists } from '@/services/TokenService/utils/index.ts';
 import { useStore } from 'vuex';
 import { isEmpty } from 'lodash';
-import { getQueryStates, isAllQueryDataAvailable } from '../utils/index.ts';
-
-const REFETCH_INTERVAL = 5 * 60 * 60 * 1000; // 5h
-const BALANCE_REFETCH_INTERVAL = 60000;
+import {
+  BALANCE_REFETCH_INTERVAL, getQueryStates, isAllQueryDataAvailable, REFETCH_INTERVAL,
+} from '../utils/index.ts';
+import { usePricesQuery } from './usePricesQuery.ts';
 
 export const allTokensMap = (tokensList: any[]): any => new Map(tokensList
   .map((token) => [token.address, token]));
@@ -35,17 +35,7 @@ export const useTokensQuery = () => {
     },
   );
 
-  const pricesQuery = useQuery(
-    {
-      queryKey: ['prices', networkId],
-      queryFn: () => tokenService.fetchTokenPricesByNetworkId(networkId.value),
-      enabled: !!networkId.value && !!provider.value,
-      refetchInterval: REFETCH_INTERVAL,
-      refetchOnWindowFocus: false,
-      refetchOnMount: false,
-      refetchOnReconnect: false,
-    },
-  );
+  const pricesQuery = usePricesQuery();
 
   const isBalancesQueryEnabled = computed(
     () => !!tokensQuery.data.value && !!networkId.value && !!provider.value,
