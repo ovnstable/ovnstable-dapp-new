@@ -50,6 +50,16 @@
             ~{{ getFixed(odosData?.netOutValue) }}$
           </div>
         </div>
+
+        <div class="zap-row">
+          <div class="transaction-info-title">
+            Agree with min. received
+          </div>
+          <SwitchComponent
+            :is-checked="agreeWithFees"
+            @change-switch="changeAgree"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -57,9 +67,13 @@
 <script lang="ts">
 import { formatMoney } from '@/utils/numbers.ts';
 import BN from 'bignumber.js';
+import SwitchComponent from '@/components/Switch/Index.vue';
 
 export default {
   name: 'FeesBlock',
+  components: {
+    SwitchComponent,
+  },
   props: {
     slippagePercent: {
       type: Number,
@@ -85,7 +99,12 @@ export default {
       type: Object,
       required: true,
     },
+    agreeWithFees: {
+      type: Boolean,
+      required: false,
+    },
   },
+  emits: ['change-agree'],
   computed: {
     getFixed() {
       return (val: string) => (new BN(val).gt(0)
@@ -94,6 +113,9 @@ export default {
   },
   methods: {
     formatMoney,
+    changeAgree() {
+      this.$emit('change-agree');
+    },
   },
 };
 </script>

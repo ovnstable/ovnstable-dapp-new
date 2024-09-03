@@ -137,6 +137,8 @@
               :multi-swap-odos-fee-percent="multiSwapOdosFeePercent"
               :selected-input-tokens="selectedInputTokens"
               :odos-data="odosData"
+              :agree-with-fees="agreeWithFees"
+              @change-agree="changeAgreeFees"
             />
             <SwapSlippageSettings
               @change-slippage="handleCurrentSlippageChanged"
@@ -216,6 +218,7 @@
             btn-size="large"
             btn-styles="primary"
             full
+            :disabled="!agreeWithFees"
             :loading="isSwapLoading || odosDataLoading"
             @click="stakeTrigger"
             @keypress="stakeTrigger"
@@ -347,6 +350,7 @@ export default defineComponent({
   },
   data: () => ({
     approvingPending: false,
+    agreeWithFees: true,
     inputTokens: [] as any[],
     outputTokens: [] as any[],
     maxInputTokens: MAX_INPUT_TOKENS,
@@ -564,6 +568,9 @@ export default defineComponent({
     beforeEnterList,
     onEnterList,
 
+    changeAgreeFees() {
+      this.agreeWithFees = !this.agreeWithFees;
+    },
     // Mobile section switcher
     toggleMobileSection() {
       // eslint-disable-next-line operator-assignment, no-bitwise
@@ -1194,10 +1201,13 @@ export default defineComponent({
           price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
         })),
       );
+
+      console.log(resp, '___resp');
       const inputTokens = this.selectedInputTokens.map((_: any, key: number) => ({
         tokenAddress: _?.selectedToken?.address,
         amount: resp[1][key]?.toString(),
       }));
+
       const outputTokens = resp[2]
         .map((_: any, key: number) => ({
           tokenAddress: _,
