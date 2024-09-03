@@ -268,7 +268,6 @@ export const updateTokenValue = (
     checkApprove(token, token.contractValue);
   }
 
-  // eslint-disable-next-line consistent-return
   return {
     ...token,
     value,
