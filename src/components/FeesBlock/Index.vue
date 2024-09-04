@@ -167,17 +167,17 @@ export default {
       const val = this.selectedInputTokens
         .reduce((acc: BN, curr:any) => acc.plus(curr.usdValue), new BN(0));
 
-      return val.gt(1) ? val.toFixed(0) : val.toFixed(4);
+      return val.gt(10) ? val.toFixed(0) : val.toFixed(4);
     },
     getFixedToken() {
       return (val: string) => {
         if (new BN(val).eq(0)) return 0;
-        const fixed = new BN(val).gt(1) ? 0 : 4;
+        const fixed = new BN(val).gt(10) ? 0 : fixedByPrice(Number(val));
         const valTotal = new BN(val).gt(1)
-          ? new BN(val).times(1 - this.slippagePercent / 100).toFixed(0)
-          : new BN(val).times(1 - this.slippagePercent / 100).toFixed(4);
+          ? new BN(val).times(1 - this.slippagePercent / 100).toFixed(fixed)
+          : new BN(val).times(1 - this.slippagePercent / 100).toFixed(fixed);
 
-        return formatMoney(Number(valTotal), fixed);
+        return valTotal;
       };
     },
     getFixedPrice() {
