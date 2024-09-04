@@ -277,6 +277,7 @@ export default {
       if (this.isLoaded) return;
       this.initLiqTokens();
       this.initRewardTokens();
+      this.switchPrices();
     },
     initLiqTokens() {
       const tokens = this.zapPool.name.split('/');
@@ -310,7 +311,6 @@ export default {
 
       const inputTokenInfo = formatInputTokens(arrTokens);
       this.inputTokens = inputTokenInfo;
-      this.priceProportionTokens = inputTokenInfo.map((token: any) => token.selectedToken);
     },
     initRewardTokens() {
       const rewardToken = this.zapPool.rewards.tokens.map((_: any) => {
@@ -338,7 +338,9 @@ export default {
       navigator.clipboard.writeText(textToCopy);
     },
     switchPrices() {
-      const tokensReversed = this.priceProportionTokens.reverse();
+      const tokensReversed = this.priceProportionTokens.length > 0
+        ? this.priceProportionTokens.reverse()
+        : this.inputTokens.map((token: any) => token.selectedToken);
       const priceProportion = new BN(tokensReversed?.[1]?.price)
         .div(new BN(tokensReversed?.[0]?.price)).toString();
       this.priceProportionTokens = tokensReversed;
