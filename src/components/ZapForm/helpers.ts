@@ -208,14 +208,20 @@ export const getZapinOutputTokens = (data: any, selectedOutput: any[], respProp:
     if (token) {
       const tokenAmount = data.outAmounts[indexOfToken];
       const tokenAmountUsd = data.outValues[indexOfToken];
+      const tokenAmountProp = respProp[4][key];
       const sum = new BN(tokenAmount)
+        .plus(tokenAmountProp)
         .div(10 ** token.selectedToken.decimals);
+
+      const price = new BN(tokenAmountUsd)
+        .div(BN(tokenAmount).div(10 ** token.selectedToken.decimals))
+        .toFixed(6);
 
       return {
         ...token,
         selectedToken: {
           ...token.selectedToken,
-          price: new BN(tokenAmountUsd).div(sum).toFixed(6),
+          price,
         },
         sum: sum.toFixed(fixedByPrice(sum.toNumber()) + 2),
         originalBalance: tokenAmount,

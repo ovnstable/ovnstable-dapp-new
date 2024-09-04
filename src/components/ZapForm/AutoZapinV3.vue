@@ -1197,6 +1197,7 @@ export default defineComponent({
         return;
       }
 
+      console.log(this.selectedInputTokens, '__this.selectedInputTokens');
       const resp = await getV3Proportion(
         this.zapPool.address,
         this.v3Range.ticks,
@@ -1211,6 +1212,11 @@ export default defineComponent({
           price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
         })),
       );
+
+      if (!resp) {
+        this.odosDataLoading = false;
+        return;
+      }
 
       console.log(resp, '___resp');
       const inputTokens = this.selectedInputTokens
@@ -1251,7 +1257,6 @@ export default defineComponent({
         this.odosDataLoading = false;
         return;
       }
-      console.log(data, '__data');
       const finalOutput = getZapinOutputTokens(
         data,
         this.selectedOutputTokens,
