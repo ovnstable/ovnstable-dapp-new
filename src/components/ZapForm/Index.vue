@@ -960,7 +960,7 @@ export default defineComponent({
               return tokenFound ? _.originalBalance : '0';
             });
 
-            const totalUsd = this.selectedOutputTokens
+            const totalUsd = finalOutput
               .reduce((acc, curr) => acc
                 .plus(new BN(curr.sum).times(curr.selectedToken?.price)), new BN(0)).toFixed();
 
@@ -1607,10 +1607,13 @@ export default defineComponent({
         resp,
       );
 
-      const totalUsd = this.selectedOutputTokens
+      console.log(finalOutput, '__finalOutput');
+      const totalUsd = finalOutput
         .reduce((acc, curr) => acc
-          .plus(new BN(curr.sum).times(curr.selectedToken?.price)), new BN(0)).toFixed();
+          .plus(new BN(curr.sum).times(curr.selectedToken?.price)), new BN(0))
+        .toFixed();
 
+      console.log(totalUsd, '__totalUsd');
       this.outputTokens = finalOutput;
       this.odosData = {
         ...data,
