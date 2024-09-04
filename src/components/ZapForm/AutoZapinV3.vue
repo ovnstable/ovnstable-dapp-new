@@ -1249,6 +1249,7 @@ export default defineComponent({
         ...data,
         netOutValue: totalUsd,
       };
+      this.odosDataLoading = false;
     },
     getSlippagePercent() {
       return this.slippagePercent;

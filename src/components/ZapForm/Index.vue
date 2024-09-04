@@ -1530,6 +1530,7 @@ export default defineComponent({
         })
         .catch((e) => {
           console.error(e);
+          this.odosDataLoading = false;
         });
     },
     async recalculateProportionV3() {
