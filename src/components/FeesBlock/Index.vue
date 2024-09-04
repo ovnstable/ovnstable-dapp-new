@@ -5,20 +5,6 @@
     >
       <div class="transaction-info-body">
         <div
-          class="zap-row"
-        >
-          <div class="transaction-info-title">
-            Slippage
-          </div>
-          <div class="transaction-info">
-            {{ slippagePercent * 1 }}%
-            <span class="transaction-info-additional">
-              ({{ formatMoney(getSlippageAmount, 3) }})$
-            </span>
-          </div>
-        </div>
-
-        <div
           v-if="selectedInputTokens?.length > 1"
           class="zap-row"
         >
@@ -35,30 +21,41 @@
 
         <div class="zap-row">
           <div class="transaction-info-title">
-            Single-swap Odos fee
+            Input Token Value (USD)
           </div>
           <div class="transaction-info">
-            0.00% <span class="transaction-info-additional">(0)$</span>
+            <span>
+              ~{{ getInputUsdValue }}$
+            </span>
           </div>
         </div>
-
         <div class="zap-row">
           <div class="transaction-info-title">
-            Output min. received
+            Output Token Value (USD)
           </div>
           <div class="transaction-info">
             <span>
               ~{{ getFixed(odosData?.netOutValue) }}$
             </span>
+          </div>
+        </div>
+        <div class="zap-row">
+          <div class="transaction-info-title">
+            Value difference (%)
+          </div>
+          <div class="transaction-info">
             <span
-              :class="{ 'tx-info--red': critImpact(odosData.priceImpact ?? 0) }"
+              :class="{
+                'tx-info--red': critImpact(odosData.percentDiff ?? 0),
+                'tx-info--green': !critImpact(odosData.percentDiff ?? 0),
+              }"
             >
-              ({{ getFixedPrice(odosData.priceImpact) }}%)
+              ({{ getFixedPrice(odosData.percentDiff) }}%)
             </span>
           </div>
         </div>
 
-        <div class="zap-row">
+        <div class="zap-row zap-row--mt">
           <div class="transaction-info-title">
             Agree with min. received
           </div>
@@ -66,6 +63,20 @@
             :is-checked="agreeWithFees"
             @change-switch="changeAgree"
           />
+        </div>
+        <div
+          v-for="(item, key) in selectedOutputTokens as any"
+          :key="key"
+          class="zap-row"
+        >
+          <div class="transaction-info-title">
+            Minimum received Token {{ key + 1 }}
+          </div>
+          <div class="transaction-info">
+            <span>
+              ~{{ getFixedToken(item.sum) }}$
+            </span>
+          </div>
         </div>
       </div>
     </div>
@@ -84,11 +95,11 @@ export default {
     SwitchComponent,
   },
   props: {
-    slippagePercent: {
+    getOdosFee: {
       type: Number,
       required: true,
     },
-    getOdosFee: {
+    slippagePercent: {
       type: Number,
       required: true,
     },
@@ -100,8 +111,8 @@ export default {
       type: Array,
       required: true,
     },
-    getSlippageAmount: {
-      type: Number,
+    selectedOutputTokens: {
+      type: Array,
       required: true,
     },
     odosData: {
@@ -116,11 +127,29 @@ export default {
   emits: ['change-agree'],
   computed: {
     getFixed() {
-      return (val: string) => (new BN(val).gt(0)
-        ? new BN(val).times(1 - this.slippagePercent / 100).toFixed(2) : 0);
+      return (val: string) => {
+        if (new BN(val).eq(0)) return 0;
+
+        return new BN(val).gt(1) ? new BN(val).toFixed(0) : new BN(val).toFixed(4);
+      };
     },
     critImpact() {
       return (val: string) => (!!new BN(val).absoluteValue().gt(MIN_IMPACT));
+    },
+    getInputUsdValue() {
+      const val = this.selectedInputTokens
+        .reduce((acc: BN, curr:any) => acc.plus(curr.usdValue), new BN(0));
+
+      return val.gt(1) ? val.toFixed(0) : val.toFixed(4);
+    },
+    getFixedToken() {
+      return (val: string) => {
+        if (new BN(val).eq(0)) return 0;
+
+        return (new BN(val).gt(1)
+          ? new BN(val).times(1 - this.slippagePercent / 100).toFixed(0)
+          : new BN(val).toFixed(1 - this.slippagePercent / 100));
+      };
     },
     getFixedPrice() {
       return (val: string) => {
@@ -153,8 +182,16 @@ export default {
   color: #707a8b;
 }
 
+.zap-row--mt {
+  margin-top: 12px;
+}
+
 .tx-info--red {
   color: rgb(243, 57, 57);
+}
+
+.tx-info--green {
+  color: rgb(95, 233, 67);
 }
 
 .transaction-info {

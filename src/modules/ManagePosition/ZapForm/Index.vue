@@ -85,10 +85,10 @@
             <FeesBlock
               v-if="odosData"
               :slippage-percent="slippagePercent"
-              :get-slippage-amount="0"
               :get-odos-fee="0"
               :multi-swap-odos-fee-percent="0"
               :selected-input-tokens="inputTokens"
+              :selected-output-tokens="selectedOutputTokens"
               :odos-data="odosData"
               :agree-with-fees="agreeWithFees"
               @change-agree="changeAgreeFees"

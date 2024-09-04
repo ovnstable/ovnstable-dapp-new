@@ -133,10 +133,10 @@
             <FeesBlock
               v-if="sumOfAllSelectedTokensInUsd && ifMoreThanOneSelectedTokensAdded && odosData"
               :slippage-percent="slippagePercent"
-              :get-slippage-amount="getSlippageAmount"
               :get-odos-fee="getOdosFee"
               :multi-swap-odos-fee-percent="multiSwapOdosFeePercent"
               :selected-input-tokens="selectedInputTokens"
+              :selected-output-tokens="selectedOutputTokens"
               :odos-data="odosData"
               :agree-with-fees="agreeWithFees"
               @change-agree="changeAgreeFees"
@@ -454,10 +454,6 @@ export default defineComponent({
         .times(this.multiSwapOdosFeePercent)
         .div(100)
         .toNumber();
-    },
-    getSlippageAmount() {
-      return new BN(this.sumOfAllSelectedTokensInUsd)
-        .times(this.slippagePercent).div(100).toNumber();
     },
     zapAllTokens() {
       const selectedAdd = this.inputTokens
@@ -1655,15 +1651,9 @@ export default defineComponent({
             this.selectedOutputTokens,
             resp,
           );
-          const totalUsd = finalOutput
-            .reduce((acc, curr) => acc
-              .plus(new BN(curr.sum).times(curr.selectedToken?.price)), new BN(0)).toFixed();
 
           this.outputTokens = finalOutput;
-          this.odosData = {
-            ...data,
-            netOutValue: totalUsd,
-          };
+          this.odosData = data;
           this.odosDataLoading = false;
         })
         .catch((e) => {

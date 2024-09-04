@@ -132,10 +132,10 @@
             <FeesBlock
               v-if="ifMoreThanOneSelectedTokensAdded && odosData"
               :slippage-percent="slippagePercent"
-              :get-slippage-amount="getSlippageAmount"
               :get-odos-fee="getOdosFee"
               :multi-swap-odos-fee-percent="multiSwapOdosFeePercent"
               :selected-input-tokens="selectedInputTokens"
+              :selected-output-tokens="selectedOutputTokens"
               :odos-data="odosData"
               :agree-with-fees="agreeWithFees"
               @change-agree="changeAgreeFees"
@@ -406,10 +406,6 @@ export default defineComponent({
         .times(this.multiSwapOdosFeePercent)
         .div(100)
         .toNumber();
-    },
-    getSlippageAmount() {
-      return new BN(this.odosData.netOutValue)
-        .times(this.slippagePercent).div(100).toNumber();
     },
     zapAllTokens() {
       const selectedAdd = this.inputTokens
