@@ -55,17 +55,31 @@
       </div>
       <div class="usd_prices_wrapper">
         <div
-          v-for="token in inputTokens"
-          :key="token.id"
-          :data-index="token.id"
           class="swap-block__item usd_price_row"
         >
           <span>
-            Current price, {{token.selectedToken.symbol }} per USD
+            Current price,
+            {{ priceProportionTokens?.[0]?.symbol }} per
+            {{ priceProportionTokens?.[1]?.symbol }}
           </span>
           <span class="usd_price">
-            {{ getFixedVal(token.selectedToken.price) }}
+            {{ getFixedVal(priceProportionValue) }}
           </span>
+        </div>
+        <div class="swap-block__item usd_price_row">
+          <span>
+            View price in:
+          </span>
+          <ButtonComponent
+            :btn-styles="'grey'"
+            @click="switchPrices"
+          >
+            <BaseIcon
+              class="row-icon"
+              name="SwapIconV3"
+            />
+            {{ priceProportionTokens?.[0]?.symbol }}
+          </ButtonComponent>
         </div>
       </div>
     </div>
@@ -168,11 +182,13 @@ import { loadTokenImage } from '@/utils/tokenLogo.ts';
 import { allTokensMap } from '@/hooks/fetch/useTokensQuery.ts';
 import { fixedByPrice } from '@/utils/numbers.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
+import ButtonComponent from '@/components/Button/Index.vue';
 
 export default {
   name: 'PositionForm',
   components: {
     BaseIcon,
+    ButtonComponent,
   },
   props: {
     allTokensList: {
@@ -196,6 +212,8 @@ export default {
       rewardTokens: [] as any,
       inputTokens: [] as any,
       isLoaded: false,
+      priceProportionTokens: [] as any,
+      priceProportionValue: '' as any,
     };
   },
   computed: {
@@ -292,6 +310,7 @@ export default {
 
       const inputTokenInfo = formatInputTokens(arrTokens);
       this.inputTokens = inputTokenInfo;
+      this.priceProportionTokens = inputTokenInfo.map((token: any) => token.selectedToken);
     },
     initRewardTokens() {
       const rewardToken = this.zapPool.rewards.tokens.map((_: any) => {
@@ -317,6 +336,13 @@ export default {
     },
     copyToClipBoard(textToCopy: string) {
       navigator.clipboard.writeText(textToCopy);
+    },
+    switchPrices() {
+      const tokensReversed = this.priceProportionTokens.reverse();
+      const priceProportion = new BN(tokensReversed?.[1]?.price)
+        .div(new BN(tokensReversed?.[0]?.price)).toString();
+      this.priceProportionTokens = tokensReversed;
+      this.priceProportionValue = this.getFixedVal(priceProportion);
     },
   },
 };
