@@ -1600,20 +1600,18 @@ export default defineComponent({
         this.odosDataLoading = false;
         return;
       }
-      console.log(data, '__data');
+
       const finalOutput = getZapinOutputTokens(
         data,
         this.selectedOutputTokens,
         resp,
       );
 
-      console.log(finalOutput, '__finalOutput');
       const totalUsd = finalOutput
         .reduce((acc, curr) => acc
           .plus(new BN(curr.sum).times(curr.selectedToken?.price)), new BN(0))
         .toFixed();
 
-      console.log(totalUsd, '__totalUsd');
       this.outputTokens = finalOutput;
       this.odosData = {
         ...data,
