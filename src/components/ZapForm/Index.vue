@@ -1533,9 +1533,7 @@ export default defineComponent({
         });
     },
     async recalculateProportionV3() {
-      let resp = null as any;
       this.odosDataLoading = true;
-
       const emptyVals = this.inputTokens.map((_) => {
         if (new BN(_?.value).eq(0) || !_?.value) return null;
 
@@ -1547,7 +1545,7 @@ export default defineComponent({
         return;
       }
 
-      resp = await getV3Proportion(
+      const resp = await getV3Proportion(
         this.zapPool.address,
         this.v3Range.ticks,
         this.selectedInputTokens.map((_) => ({
@@ -1562,12 +1560,11 @@ export default defineComponent({
         })),
       );
 
-      console.log(resp, '___resp2');
-
       const inputTokens = this.selectedInputTokens.map((_: any, key: number) => ({
         tokenAddress: _?.selectedToken?.address,
         amount: resp[1][key]?.toString(),
       }));
+
       const outputTokens = resp[2]
         .map((_: any, key: number) => ({
           tokenAddress: _,
@@ -1591,21 +1588,27 @@ export default defineComponent({
         pathViz: true,
       };
 
-      this.odosSwapRequest(requestData)
-        .then((data: any) => {
-          const finalOutput = getZapinOutputTokens(
-            data,
-            this.selectedOutputTokens,
-            resp,
-          );
+      const data: any = await this.odosSwapRequest(requestData);
 
-          this.outputTokens = finalOutput;
-          this.odosData = data;
-          this.odosDataLoading = false;
-        })
-        .catch((e) => {
-          console.error(e);
-        });
+      if (!data) {
+        this.odosDataLoading = false;
+        return;
+      }
+      console.log(data, '__data');
+      const finalOutput = getZapinOutputTokens(
+        data,
+        this.selectedOutputTokens,
+        resp,
+      );
+      const totalUsd = finalOutput
+        .reduce((acc, curr) => acc
+          .plus(new BN(curr.sum).times(curr.selectedToken?.price)), new BN(0)).toFixed();
+
+      this.outputTokens = finalOutput;
+      this.odosData = {
+        ...data,
+        netOutValue: totalUsd,
+      };
     },
     async recalculateProportion() {
       if (this.zapPool?.poolVersion === 'v2') await this.recalculateProportionV2();

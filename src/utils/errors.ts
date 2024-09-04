@@ -1,6 +1,10 @@
 export const codeErrorMap: any = {};
 
 export function parseErrorLog(e: any) {
+  if (e?.errorMsg?.detail) {
+    return e?.errorMsg?.detail;
+  }
+
   if (e?.reason) {
     return e?.reason;
   }

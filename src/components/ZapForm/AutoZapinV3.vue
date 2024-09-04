@@ -1235,27 +1235,27 @@ export default defineComponent({
         pathViz: true,
       };
 
-      this.odosSwapRequest(requestData)
-        .then((data: any) => {
-          const finalOutput = getZapinOutputTokens(
-            data,
-            this.selectedOutputTokens,
-            resp,
-          );
-          const totalUsd = finalOutput
-            .reduce((acc, curr) => acc
-              .plus(new BN(curr.sum).times(curr.selectedToken?.price)), new BN(0)).toFixed();
+      const data: any = await this.odosSwapRequest(requestData);
 
-          this.outputTokens = finalOutput;
-          this.odosData = {
-            ...data,
-            netOutValue: totalUsd,
-          };
-          this.odosDataLoading = false;
-        })
-        .catch((e) => {
-          console.error(e);
-        });
+      if (!data) {
+        this.odosDataLoading = false;
+        return;
+      }
+      console.log(data, '__data');
+      const finalOutput = getZapinOutputTokens(
+        data,
+        this.selectedOutputTokens,
+        resp,
+      );
+      const totalUsd = finalOutput
+        .reduce((acc, curr) => acc
+          .plus(new BN(curr.sum).times(curr.selectedToken?.price)), new BN(0)).toFixed();
+
+      this.outputTokens = finalOutput;
+      this.odosData = {
+        ...data,
+        netOutValue: totalUsd,
+      };
     },
     getSlippagePercent() {
       return this.slippagePercent;

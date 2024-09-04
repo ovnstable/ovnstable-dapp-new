@@ -11,7 +11,7 @@
       class="error-message-container"
     >
       <div
-        v-if="errorMsg && errorMsg?.includes('path')"
+        v-if="errorMsg"
         class="error-message"
       >
         Could not find a viable path for your order
