@@ -1228,6 +1228,11 @@ export default defineComponent({
           (item: any) => new BN(item.amount).gt(0),
         );
 
+      if (inputTokens?.length === 0) {
+        this.odosDataLoading = false;
+        return;
+      }
+
       const outputTokens = resp[2]
         .map((_: any, key: number) => ({
           tokenAddress: _,
