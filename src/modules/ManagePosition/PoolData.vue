@@ -173,7 +173,7 @@
 </template>
 
 <script lang="ts">
-import { getNewInputToken, getTokenBySymbol } from '@/store/helpers/index.ts';
+import { getNewInputToken, getTokenByAddress } from '@/store/helpers/index.ts';
 import { formatInputTokens } from '@/utils/tokens.ts';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import BN from 'bignumber.js';
@@ -280,9 +280,8 @@ export default {
       this.switchPrices();
     },
     initLiqTokens() {
-      const tokens = this.zapPool.name.split('/');
-      const token0 = getTokenBySymbol(tokens[0], this.zapAllTokens);
-      const token1 = getTokenBySymbol(tokens[1], this.zapAllTokens);
+      const token0 = getTokenByAddress(this.zapPool?.token0Add, this.zapAllTokens);
+      const token1 = getTokenByAddress(this.zapPool?.token1Add, this.zapAllTokens);
 
       const tokenFull0 = {
         ...getNewInputToken(),
@@ -494,5 +493,9 @@ export default {
   .usd_price {
     color: var(--color-3);
   }
+}
+
+.row-icon {
+  margin-right: 4px
 }
 </style>

@@ -67,6 +67,7 @@
         :zap-pool="zapPool"
         :active-tab="activeTab"
         :all-tokens-list="allTokensList"
+        :balance-list="balanceList"
         :gauge-address="gaugeAddress"
       />
     </div>

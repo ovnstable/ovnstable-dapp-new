@@ -120,7 +120,7 @@ import {
 } from 'vuex';
 import {
   getNewOutputToken,
-  getTokenBySymbol,
+  getTokenByAddress,
 } from '@/store/helpers/index.ts';
 
 import Spinner from '@/components/Spinner/Index.vue';
@@ -135,6 +135,7 @@ import {
 } from 'vue';
 import { buildEvmContract } from '@/utils/contractsMap.ts';
 import { allTokensMap } from '@/hooks/fetch/useTokensQuery.ts';
+import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 
 export default defineComponent({
   name: 'WithdrawForm',
@@ -153,6 +154,11 @@ export default defineComponent({
       type: Object,
       required: false,
       default: null,
+    },
+    balanceList: {
+      type: Array,
+      required: true,
+      default: () => [],
     },
     gaugeAddress: {
       type: String,
@@ -220,6 +226,9 @@ export default defineComponent({
       return (this.outputTokensWithSelectedTokensCount === 0 || !this.isAvailableOnNetwork
       );
     },
+    mergedAllTokens() {
+      return mergedTokens(this.allTokensList as any[], this.balanceList as any[]);
+    },
   },
   watch: {
     // on wallet connect
@@ -270,9 +279,8 @@ export default defineComponent({
     },
 
     async initContracts() {
-      const tokens = this.zapPool.name.split('/');
-      const tokenA = getTokenBySymbol(tokens[0], this.allTokensList);
-      const tokenB = getTokenBySymbol(tokens[1], this.allTokensList);
+      const tokenA = getTokenByAddress(this.zapPool?.token0Add, this.mergedAllTokens);
+      const tokenB = getTokenByAddress(this.zapPool?.token1Add, this.mergedAllTokens);
 
       const abiGauge = srcStringBuilder('V3GaugeRebalance')(this.zapPool.chainName, this.zapPool.platform[0]);
       const abiGaugeContractFileV3 = await loadAbi(abiGauge);

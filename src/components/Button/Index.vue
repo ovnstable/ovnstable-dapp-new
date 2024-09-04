@@ -66,6 +66,7 @@ export default {
   justify-content: center;
   align-items: center;
   padding: 7px 14px;
+  gap: 4px;
   border-radius: 10px;
   font-size: 15px;
   font-weight: 500;

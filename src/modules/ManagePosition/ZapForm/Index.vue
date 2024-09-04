@@ -201,7 +201,6 @@ import {
 import {
   getNewOutputToken,
   getTokenByAddress,
-  getTokenBySymbol,
   WHITE_LIST_ODOS,
 } from '@/store/helpers/index.ts';
 import {
@@ -516,9 +515,8 @@ export default {
       });
     },
     addDefaultPoolToken() {
-      const tokens = this.zapPool.name.split('/');
-      const poolSelectedToken = getTokenBySymbol(tokens[0], this.zapAllTokens);
-      const ovnSelectSelectedToken = getTokenBySymbol(tokens[1], this.zapAllTokens);
+      const poolSelectedToken = getTokenByAddress(this.zapPool?.token0Add, this.zapAllTokens);
+      const ovnSelectSelectedToken = getTokenByAddress(this.zapPool?.token1Add, this.zapAllTokens);
 
       if (!poolSelectedToken || !ovnSelectSelectedToken) return;
       poolSelectedToken.selected = true;
