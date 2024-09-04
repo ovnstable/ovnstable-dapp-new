@@ -178,6 +178,7 @@
             btn-size="large"
             full
             btn-styles="primary"
+            disabled
           >
             {{ disableButtonMessage }}
           </ButtonComponent>
