@@ -126,8 +126,6 @@ export default {
       const tokens = (this.$route.query?.tokens as string)?.split('-');
       const token0 = getTokenByAddress(tokens[0], this.mergedTokenList);
 
-      console.log(this.mergedTokenList, '__this.mergedTokenList');
-      console.log(token0, '__token0');
       if (!token0 || this.zapInit) return;
       const filterParams: Partial<TFilterPoolsParams> = {
         token0: token0.symbol,
