@@ -40,7 +40,7 @@
           </div>
           <div class="transaction-info">
             <span>
-              ~{{ getFixed(odosData?.netOutValue) }}$
+              ~{{ getFixed(getOutputValue) }}$
             </span>
           </div>
         </div>
@@ -144,6 +144,10 @@ export default {
   },
   emits: ['change-agree'],
   computed: {
+    getOutputValue() {
+      return new BN(this.odosData?.netOutValue).gt(this.getInputUsdValue)
+        ? this.getInputUsdValue : this.odosData?.netOutValue;
+    },
     v3Pool() {
       return this.poolVersion === 'v3';
     },
