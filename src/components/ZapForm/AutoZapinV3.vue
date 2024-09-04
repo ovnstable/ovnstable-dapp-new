@@ -1047,7 +1047,6 @@ export default defineComponent({
     ) {
       this.currentStage = zapInStep.STAKE_LP;
       this.showWaitingModal('Stake LP in process');
-
       console.log({
         acc: this.account,
         lastNftTokenId,
@@ -1141,6 +1140,20 @@ export default defineComponent({
       try {
         const tx = await this.zapContract.zapIn(txData, gaugeData, params);
         const receipt = await tx.wait();
+
+        if (this.gaugeContract.target === '0x0000000000000000000000000000000000000000') {
+          this.triggerSuccessZapin(
+            {
+              isShow: true,
+              inputTokens: this.inputTokens,
+              outputTokens: this.outputTokens,
+              hash: tx.hash,
+              pool: this.zapPool,
+              modalType: MODAL_TYPE.ZAPIN,
+            },
+          );
+          return;
+        }
 
         this.$store.commit('odosData/changeState', {
           field: 'lastZapResponseData',
