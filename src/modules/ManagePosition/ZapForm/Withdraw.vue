@@ -168,7 +168,6 @@ import {
 import {
   getNewInputToken,
   getTokenByAddress,
-  getTokenBySymbol,
 } from '@/store/helpers/index.ts';
 
 import Spinner from '@/components/Spinner/Index.vue';
@@ -390,8 +389,8 @@ export default defineComponent({
     },
     initLiqTokens() {
       const tokens = this.zapPool.name.split('/');
-      const token0 = getTokenBySymbol(tokens[0], this.zapAllTokens);
-      const token1 = getTokenBySymbol(tokens[1], this.zapAllTokens);
+      const token0 = getTokenByAddress(this.zapPool?.token0Add, this.zapAllTokens);
+      const token1 = getTokenByAddress(this.zapPool?.token1Add, this.zapAllTokens);
 
       const tokenFull0 = {
         ...getNewInputToken(),
