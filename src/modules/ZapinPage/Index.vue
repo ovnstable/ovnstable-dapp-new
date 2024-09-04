@@ -45,6 +45,8 @@ import { usePoolsQueryNew } from '@/hooks/fetch/usePoolsQuery.ts';
 import { useTokensQuery, useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.ts';
 import TableSkeleton from '@/components/TableSkeleton/Index.vue';
 import { isEmpty } from 'lodash';
+import { getTokenByAddress } from '@/store/helpers/index.ts';
+import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import type { TFilterPoolsParams, TPool } from '@/types/common/pools';
 
 export default {
@@ -93,6 +95,9 @@ export default {
         || isEmpty(this.allTokensList)
         || isEmpty(this.balanceTokensList);
     },
+    mergedTokenList() {
+      return mergedTokens(this.allTokensList as any[], this.balanceTokensList as any[]);
+    },
   },
   watch: {
     isShow(currVal: boolean) {
@@ -113,10 +118,12 @@ export default {
     ...mapActions('poolsData', ['setFilterParams']),
     handleClickSearch() {
       const tokens = (this.$route.query?.tokens as string)?.split('-');
+      const token0 = getTokenByAddress(tokens[0], this.mergedTokenList);
 
-      console.log(tokens, '__tokens');
+      console.log(token0, '__token0');
+      if (!token0) return;
       const filterParams: Partial<TFilterPoolsParams> = {
-        token0: tokens[0]?.replace(' ', ''),
+        token0: token0.symbol,
         // token1: tokens[1],
       };
       this.setFilterParams(filterParams);

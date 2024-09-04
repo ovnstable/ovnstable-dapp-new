@@ -262,7 +262,7 @@ import {
   getNewOutputToken,
   getNewInputToken,
   WHITE_LIST_ODOS,
-  getTokenBySymbol,
+  getTokenByAddress,
 } from '@/store/helpers/index.ts';
 import {
   getV3Proportion,
@@ -607,10 +607,9 @@ export default defineComponent({
     },
 
     async initContracts() {
-      const tokens = this.zapPool.name.split('/');
-      const tokenA = getTokenBySymbol(tokens[0], this.mergedTokenList);
-      const tokenB = getTokenBySymbol(tokens[1], this.mergedTokenList);
-
+      const tokens = (this.$route.query?.tokens as string)?.split('-');
+      const tokenA = getTokenByAddress(tokens[0], this.mergedTokenList);
+      const tokenB = getTokenByAddress(tokens[1], this.mergedTokenList);
       const abiGauge = srcStringBuilder('V3GaugeRebalance')(this.zapPool.chainName, this.zapPool.platform[0]);
       const abiGaugeContractFileV3 = await loadAbi(abiGauge);
 

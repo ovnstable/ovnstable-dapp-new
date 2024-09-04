@@ -21,6 +21,8 @@ export const formatPools = (
     token1Icon: tokenIconMap[pool.token1.tokenId.toLowerCase()]
     ?? loadTokenImage(pool.token1.symbol)
        ?? loadEmptyImg(),
+    token0Add: pool?.token0?.tokenId ?? '',
+    token1Add: pool?.token1?.tokenId ?? '',
     // Pool version not available
     poolVersion: `v${pool.poolVersion}`,
     // Chain ID not available

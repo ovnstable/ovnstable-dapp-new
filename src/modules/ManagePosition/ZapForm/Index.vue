@@ -199,6 +199,7 @@ import {
 } from 'vuex';
 import {
   getNewOutputToken,
+  getTokenByAddress,
   getTokenBySymbol,
   WHITE_LIST_ODOS,
 } from '@/store/helpers/index.ts';
@@ -463,9 +464,8 @@ export default {
     },
 
     async initContracts() {
-      const tokens = this.zapPool.name.split('/');
-      const tokenA = getTokenBySymbol(tokens[0], this.zapAllTokens);
-      const tokenB = getTokenBySymbol(tokens[1], this.zapAllTokens);
+      const tokenA = getTokenByAddress(this.zapPool.token0Add, this.zapAllTokens);
+      const tokenB = getTokenByAddress(this.zapPool.token1Add, this.zapAllTokens);
 
       const abiGauge = srcStringBuilder('V3GaugeRebalance')(this.zapPool.chainName, this.zapPool.platform[0]);
       const abiGaugeContractFileV3 = await loadAbi(abiGauge);

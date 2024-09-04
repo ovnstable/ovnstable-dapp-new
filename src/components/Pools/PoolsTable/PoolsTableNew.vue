@@ -186,14 +186,11 @@ export default {
     },
   },
   methods: {
-    handleZapin(pool: any) {
-      const tokens = pool.name.split('/');
-      // + cant be readed from url
-      const token0 = tokens[0].includes('+') ? `${tokens[0]}%2B` : tokens[0];
-      const token1 = tokens[1].includes('+') ? `${tokens[1]}%2B` : tokens[1];
+    handleZapin(pool: TPool) {
+      const tokens = `${pool?.token0Add}-${pool.token1Add}`;
 
       // if (false) this.openZapIn(pool);
-      this.$router.push(`/pools/zapin/${pool.platform[0]?.toLowerCase()}?pair=${pool.address.toLowerCase()}&chain=${pool.chainName}&tokens=${token0}-${token1}`);
+      this.$router.push(`/pools/zapin/${pool.platform[0]?.toLowerCase()}?pair=${pool.address.toLowerCase()}&chain=${pool.chainName}&tokens=${tokens}`);
     },
     poolVolatileType(poolD: any) {
       const isStable = checkIsEveryStable(poolD);
