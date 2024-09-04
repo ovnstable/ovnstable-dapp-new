@@ -138,6 +138,7 @@ export const formatTokenInfo = (
   tokenPricesMap: any = null,
   tokenBalanceMap: any = null,
 ) => {
+  console.log(tokenMap, '__tokenMap');
   const tokenInfoList = Object.entries(tokenMap)
     .map(([key, value]) => getFormatTokenInfo(key, value, tokenPricesMap, tokenBalanceMap));
 

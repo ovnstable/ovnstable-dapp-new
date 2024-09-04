@@ -25,7 +25,7 @@
           </div>
           <div class="transaction-info">
             <span>
-              ~{{ getInputUsdValue }}$
+              ~{{ getFixed(getInputUsdValue) }}$
             </span>
           </div>
         </div>
@@ -74,7 +74,7 @@
           </div>
           <div class="transaction-info">
             <span>
-              ~{{ getFixedToken(item.sum) }}$
+              {{ getFixedToken(item.sum) }} {{ item.selectedToken.symbol }}
             </span>
           </div>
         </div>
@@ -129,8 +129,8 @@ export default {
     getFixed() {
       return (val: string) => {
         if (new BN(val).eq(0)) return 0;
-
-        return new BN(val).gt(1) ? new BN(val).toFixed(0) : new BN(val).toFixed(4);
+        const fixed = new BN(val).gt(1) ? 0 : 4;
+        return formatMoney(Number(val), fixed);
       };
     },
     critImpact() {
@@ -145,10 +145,12 @@ export default {
     getFixedToken() {
       return (val: string) => {
         if (new BN(val).eq(0)) return 0;
-
-        return (new BN(val).gt(1)
+        const fixed = new BN(val).gt(1) ? 0 : 4;
+        const valTotal = new BN(val).gt(1)
           ? new BN(val).times(1 - this.slippagePercent / 100).toFixed(0)
-          : new BN(val).toFixed(1 - this.slippagePercent / 100));
+          : new BN(val).times(1 - this.slippagePercent / 100).toFixed(4);
+
+        return formatMoney(Number(valTotal), fixed);
       };
     },
     getFixedPrice() {
