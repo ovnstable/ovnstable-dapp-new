@@ -3,6 +3,7 @@ import BN from 'bignumber.js';
 import { ethers } from 'ethers';
 import { fixedByPrice, formatMoney } from '@/utils/numbers.ts';
 import { updateTokenValue } from '@/store/helpers/index.ts';
+import { calculateProportionForPool, getProportion } from '@/store/views/main/zapin/helpers.ts';
 
 const EVENT_SIG = ['uint256[]', 'address[]'];
 
@@ -259,4 +260,112 @@ export const recalculateOutputTokensSum = (
   }
 
   return list;
+};
+
+export const getV2Proportions = async (
+  userInputTokens: any[],
+  poolOutputTokens: any[],
+  zapPool: any,
+  zapContract: any,
+) => {
+  const outputToken0Price = poolOutputTokens[0].selectedToken.price;
+  const outputToken1Price = poolOutputTokens[1].selectedToken.price;
+
+  const reserves = await getProportion(
+    zapPool.address,
+    zapPool,
+    zapContract,
+  );
+
+  const sumReserves = (
+    new BN(reserves.token0Amount).times(outputToken0Price)
+  )
+    .plus(
+      new BN(reserves.token1Amount).times(outputToken1Price),
+    ).toFixed(0);
+
+  const formulaInputTokens = [];
+  let formulaOutputTokens = [];
+
+  for (let i = 0; i < userInputTokens.length; i++) {
+    const inputToken = userInputTokens[i];
+    const userInputToken = inputToken.selectedToken;
+
+    const isFindUserInputTokenInPoolTokens = poolOutputTokens.find(
+      (poolToken) => poolToken.selectedToken.address === userInputToken.address,
+    );
+
+    if (isFindUserInputTokenInPoolTokens) {
+      // if user token exist in pool pair, move to output for proportion formula
+      formulaOutputTokens.push({
+        decimals: userInputToken.decimals,
+        address: userInputToken.address,
+        contractValue: inputToken.contractValue,
+        price: userInputToken.price,
+      });
+      // eslint-disable-next-line no-continue
+      continue;
+    }
+
+    // if user token don't exist in pool pair, move to input for proportion formula
+    formulaInputTokens.push({
+      decimals: userInputToken.decimals,
+      address: userInputToken.address,
+      contractValue: inputToken.contractValue,
+      price: userInputToken.price,
+    });
+  }
+
+  // sort output formula and fill amount by 0;
+  const formulaResultOutputWithZero = [];
+  for (let i = 0; i < poolOutputTokens.length; i++) {
+    const outputToken = poolOutputTokens[i];
+    const poolOutputToken = outputToken.selectedToken;
+    const userInputTokenInFormulaOutputTokens = formulaOutputTokens.find(
+      (formulaToken) => formulaToken.address === poolOutputToken.address,
+    );
+    if (userInputTokenInFormulaOutputTokens) {
+      // if user token exist in pool pair, move to output for proportion formula
+      formulaResultOutputWithZero.push(userInputTokenInFormulaOutputTokens);
+      // eslint-disable-next-line no-continue
+      continue;
+    }
+
+    // fill amount with 0
+    formulaResultOutputWithZero.push({
+      decimals: poolOutputToken.decimals,
+      address: poolOutputToken.address,
+      contractValue: 0,
+      price: poolOutputToken.price,
+    });
+  }
+
+  // formulaOutputTokens sorted by pool pair and with zero for not exist in output formula.
+  formulaOutputTokens = formulaResultOutputWithZero;
+
+  const inputDecimals = formulaInputTokens.map((token: any) => token.decimals);
+  const inputAddresses = formulaInputTokens.map((token: any) => token.address);
+  const inputAmounts = formulaInputTokens.map((token: any) => token.contractValue);
+  const inputPrices = formulaInputTokens.map((token: any) => token.price);
+
+  // (!) List - formulaOutputTokens with 0 amount and sort like in pool pair.
+  const outputDecimals = formulaOutputTokens.map((token: any) => token.decimals);
+  const outputAddresses = formulaOutputTokens.map((token: any) => token.address);
+  const outputAmounts = formulaOutputTokens.map((token: any) => token.contractValue);
+  const outputPrices = formulaOutputTokens.map((token: any) => token.price);
+
+  return calculateProportionForPool({
+    inputTokensDecimals: [...inputDecimals],
+    inputTokensAddresses: [...inputAddresses],
+    inputTokensAmounts: [...inputAmounts],
+    inputTokensPrices: [...inputPrices],
+    outputTokensDecimals: [...outputDecimals],
+    outputTokensAddresses: [...outputAddresses],
+    outputTokensAmounts: [...outputAmounts],
+    outputTokensPrices: [...outputPrices],
+    proportion0: new BN(reserves[0])
+      .times(outputPrices[0])
+      .div(sumReserves)
+      .toFixed(),
+  });
 };

@@ -19,7 +19,9 @@
           </div>
         </div>
 
-        <div class="zap-row">
+        <div
+          class="zap-row"
+        >
           <div class="transaction-info-title">
             Input Token Value (USD)
           </div>
@@ -29,7 +31,10 @@
             </span>
           </div>
         </div>
-        <div class="zap-row">
+        <div
+          v-if="v3Pool"
+          class="zap-row"
+        >
           <div class="transaction-info-title">
             Output Token Value (USD)
           </div>
@@ -39,7 +44,9 @@
             </span>
           </div>
         </div>
-        <div class="zap-row">
+        <div
+          class="zap-row"
+        >
           <div class="transaction-info-title">
             Value difference (%)
           </div>
@@ -55,7 +62,9 @@
           </div>
         </div>
 
-        <div class="zap-row zap-row--mt">
+        <div
+          class="zap-row zap-row--mt"
+        >
           <div class="transaction-info-title">
             Agree with swap terms
           </div>
@@ -64,20 +73,24 @@
             @change-switch="changeAgree"
           />
         </div>
-        <div
-          v-for="(item, key) in selectedOutputTokens as any"
-          :key="key"
-          class="zap-row"
+        <template
+          v-if="v3Pool"
         >
-          <div class="transaction-info-title">
-            Minimum received Token {{ key + 1 }}
+          <div
+            v-for="(item, key) in selectedOutputTokens as any"
+            :key="key"
+            class="zap-row"
+          >
+            <div class="transaction-info-title">
+              Minimum received Token {{ key + 1 }}
+            </div>
+            <div class="transaction-info">
+              <span>
+                {{ getFixedToken(item.sum) }} {{ item.selectedToken.symbol }}
+              </span>
+            </div>
           </div>
-          <div class="transaction-info">
-            <span>
-              {{ getFixedToken(item.sum) }} {{ item.selectedToken.symbol }}
-            </span>
-          </div>
-        </div>
+        </template>
       </div>
     </div>
   </div>
@@ -98,6 +111,11 @@ export default {
     getOdosFee: {
       type: Number,
       required: true,
+    },
+    poolVersion: {
+      type: String,
+      default: 'v3',
+      required: false,
     },
     slippagePercent: {
       type: Number,
@@ -126,6 +144,9 @@ export default {
   },
   emits: ['change-agree'],
   computed: {
+    v3Pool() {
+      return this.poolVersion === 'v3';
+    },
     getFixed() {
       return (val: string) => {
         if (new BN(val).eq(0)) return 0;

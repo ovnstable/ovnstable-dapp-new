@@ -139,6 +139,7 @@
               :selected-output-tokens="selectedOutputTokens"
               :odos-data="odosData"
               :agree-with-fees="agreeWithFees"
+              :pool-version="zapPool?.poolVersion"
               @change-agree="changeAgreeFees"
             />
 
@@ -291,7 +292,6 @@ import {
 } from '@/store/helpers/index.ts';
 import {
   getProportion,
-  calculateProportionForPool,
   depositAllAtGauge,
   checkApproveForGauge,
   approveGaugeForStake,
@@ -324,6 +324,7 @@ import { useRefreshBalances } from '@/hooks/fetch/useRefreshBalances.ts';
 import { parseErrorLog } from '@/utils/errors.ts';
 import {
   getUpdatedTokenVal,
+  getV2Proportions,
   getZapinOutputTokens,
   mapExcludeLiquidityPlatform,
   parseLogs,
@@ -835,97 +836,9 @@ export default defineComponent({
       this.isSwapLoading = true;
 
       const actualGas = await odosApiService.getActualGasPrice(this.networkId);
-      const outputToken0Price = this.selectedOutputTokens[0].selectedToken.price;
-      const outputToken1Price = this.selectedOutputTokens[1].selectedToken.price;
-
-      let reserves = null;
-      let sumReserves = '0';
-
-      if (this.zapPool?.poolVersion === 'v2') {
-        reserves = await getProportion(
-          this.zapPool.address,
-          this.zapPool,
-          this.zapContract,
-        );
-        sumReserves = (
-          new BN(reserves.token0Amount).times(outputToken0Price)
-        )
-          .plus(
-            new BN(reserves.token1Amount).times(outputToken1Price),
-          ).toFixed(0);
-      }
 
       const userInputTokens = this.selectedInputTokens;
       const poolOutputTokens = this.selectedOutputTokens;
-
-      console.log(userInputTokens, '__userInputTokens');
-      const formulaInputTokens = [];
-      let formulaOutputTokens = [];
-
-      for (let i = 0; i < userInputTokens.length; i++) {
-        const inputToken = userInputTokens[i];
-        const userInputToken = inputToken.selectedToken;
-
-        const isFindUserInputTokenInPoolTokens = poolOutputTokens.find(
-          (poolToken) => poolToken.selectedToken.address === userInputToken.address,
-        );
-
-        if (isFindUserInputTokenInPoolTokens) {
-          // if user token exist in pool pair, move to output for proportion formula
-          formulaOutputTokens.push({
-            decimals: userInputToken.decimals,
-            address: userInputToken.address,
-            contractValue: inputToken.contractValue,
-            price: userInputToken.price,
-          });
-          continue;
-        }
-
-        // if user token don't exist in pool pair, move to input for proportion formula
-        formulaInputTokens.push({
-          decimals: userInputToken.decimals,
-          address: userInputToken.address,
-          contractValue: inputToken.contractValue,
-          price: userInputToken.price,
-        });
-      }
-
-      // sort output formula and fill amount by 0;
-      const formulaResultOutputWithZero = [];
-      for (let i = 0; i < poolOutputTokens.length; i++) {
-        const outputToken = poolOutputTokens[i];
-        const poolOutputToken = outputToken.selectedToken;
-        const userInputTokenInFormulaOutputTokens = formulaOutputTokens.find(
-          (formulaToken) => formulaToken.address === poolOutputToken.address,
-        );
-        if (userInputTokenInFormulaOutputTokens) {
-          // if user token exist in pool pair, move to output for proportion formula
-          formulaResultOutputWithZero.push(userInputTokenInFormulaOutputTokens);
-          continue;
-        }
-
-        // fill amount with 0
-        formulaResultOutputWithZero.push({
-          decimals: poolOutputToken.decimals,
-          address: poolOutputToken.address,
-          contractValue: 0,
-          price: poolOutputToken.price,
-        });
-      }
-
-      // formulaOutputTokens sorted by pool pair and with zero for not exist in output formula.
-      formulaOutputTokens = formulaResultOutputWithZero;
-
-      const inputDecimals = formulaInputTokens.map((token: any) => token.decimals);
-      const inputAddresses = formulaInputTokens.map((token: any) => token.address);
-      const inputAmounts = formulaInputTokens.map((token: any) => token.contractValue);
-      const inputPrices = formulaInputTokens.map((token: any) => token.price);
-
-      // (!) List - formulaOutputTokens with 0 amount and sort like in pool pair.
-      const outputDecimals = formulaOutputTokens.map((token: any) => token.decimals);
-      const outputAddresses = formulaOutputTokens.map((token: any) => token.address);
-      const outputAmounts = formulaOutputTokens.map((token: any) => token.contractValue);
-      const outputPrices = formulaOutputTokens.map((token: any) => token.price);
 
       let proportions: any = {
         inputTokens: [],
@@ -937,24 +850,18 @@ export default defineComponent({
       // min amount of tokens, after swap, to escape big swap loss
       let amountMins: string[] = [];
 
-      if (this.zapPool?.poolVersion === 'v2') {
-        proportions = calculateProportionForPool({
-          inputTokensDecimals: [...inputDecimals],
-          inputTokensAddresses: [...inputAddresses],
-          inputTokensAmounts: [...inputAmounts],
-          inputTokensPrices: [...inputPrices],
-          outputTokensDecimals: [...outputDecimals],
-          outputTokensAddresses: [...outputAddresses],
-          outputTokensAmounts: [...outputAmounts],
-          outputTokensPrices: [...outputPrices],
-          proportion0: new BN(reserves[0])
-            .times(outputPrices[0])
-            .div(sumReserves)
-            .toFixed(),
-        });
-      }
+      console.log(userInputTokens, '__userInputTokens');
 
       let resp = null as any;
+
+      if (this.zapPool?.poolVersion === 'v2') {
+        proportions = await getV2Proportions(
+          userInputTokens,
+          poolOutputTokens,
+          this.zapPool,
+          this.zapContract,
+        );
+      }
 
       if (this.zapPool?.poolVersion === 'v3') {
         console.log(userInputTokens, '___userInputTokens');
@@ -1584,6 +1491,46 @@ export default defineComponent({
         this.selectedOutputTokens,
         this.selectedInputTokens,
       );
+
+      const proportions = await getV2Proportions(
+        this.selectedInputTokens,
+        this.selectedOutputTokens,
+        this.zapPool,
+        this.zapContract,
+      );
+
+      const whiteList = WHITE_LIST_ODOS[this.networkId as keyof typeof WHITE_LIST_ODOS];
+
+      const request = {
+        chainId: this.networkId,
+        inputTokens: proportions.inputTokens,
+        outputTokens: proportions.outputTokens,
+        userAddr: this.zapContract.target,
+        slippageLimitPercent: this.getSlippagePercent(),
+      };
+
+      const requestData = {
+        chainId: request.chainId,
+        inputTokens: request.inputTokens,
+        outputTokens: request.outputTokens,
+        userAddr: ethers.getAddress(
+          request.userAddr.toLowerCase(),
+        ),
+        slippageLimitPercent: this.getSlippagePercent(),
+        sourceBlacklist: this.getSourceLiquidityBlackList(),
+        sourceWhitelist: whiteList ?? [],
+        simulate: true,
+        pathViz: true,
+      };
+
+      this.odosSwapRequest(requestData)
+        .then((data: any) => {
+          this.odosData = data;
+          this.odosDataLoading = false;
+        })
+        .catch((e) => {
+          console.error(e);
+        });
     },
     async recalculateProportionV3() {
       let resp = null as any;
