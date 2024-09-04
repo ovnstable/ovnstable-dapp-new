@@ -1603,6 +1603,9 @@ export default defineComponent({
         return;
       }
 
+      console.log(resp, '__resp');
+      console.log(data, '__data');
+
       const finalOutput = getZapinOutputTokens(
         data,
         this.selectedOutputTokens,

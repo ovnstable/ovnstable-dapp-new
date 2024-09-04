@@ -217,6 +217,7 @@ export const getZapinOutputTokens = (data: any, selectedOutput: any[], respProp:
         .div(BN(tokenAmount).div(10 ** token.selectedToken.decimals))
         .toFixed(6);
 
+      console.log(price, '__price');
       return {
         ...token,
         selectedToken: {
