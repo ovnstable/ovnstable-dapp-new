@@ -35,7 +35,6 @@
         />
       </template>
       <div class="zap-modal-footer">
-        Leave your feedback on Zap In feature and win $50 reward
         <a
           href="https://forms.gle/BCwwX4yhGW7EadTCA"
           target="_blank"
