@@ -832,7 +832,7 @@ export default {
             return tokenFound ? _.originalBalance : '0';
           });
 
-          const totalUsd = finalOutput
+          const totalUsd = this.selectedOutputTokens
             .reduce((acc, curr) => acc
               .plus(new BN(curr.sum).times(curr.selectedToken?.price)), new BN(0)).toFixed();
 
@@ -1128,32 +1128,47 @@ export default {
         pathViz: true,
       };
 
-      this.odosSwapRequest(requestData)
-        .then((data: any) => {
-          const finalOutput = getZapinOutputTokens(
-            data,
-            this.selectedOutputTokens,
-            resp,
-          );
-          const totalUsd = finalOutput
-            .reduce((acc, curr) => acc
-              .plus(new BN(curr.sum).times(curr.selectedToken?.price)), new BN(0)).toFixed();
+      const data: any = await this.odosSwapRequest(requestData);
 
-          if (finalOutput.length === 0) {
-            throw Error('Swap route not found');
-          }
-          console.log(finalOutput, '__finalOutput');
-          this.outputTokens = finalOutput;
-          this.odosData = {
-            ...data,
-            netOutValue: totalUsd,
-          };
-          this.odosDataLoading = false;
-        })
-        .catch((e) => {
-          console.error(e);
-          this.odosDataLoading = false;
-        });
+      if (!data) {
+        this.odosDataLoading = false;
+        return;
+      }
+      console.log(data, '__data');
+      // const finalOutput = getZapinOutputTokens(
+      //   data,
+      //   this.selectedOutputTokens,
+      //   resp,
+      // );
+
+      if (!resp) return;
+
+      resp[5]?.forEach((_: BigInt, key: number) => {
+        const { price } = this.selectedOutputTokens[key].selectedToken;
+        const val = new BN(_?.toString() ?? 0)
+          .div(10 ** 18)
+          .div(price);
+
+        this.selectedOutputTokens[key].value = val.toFixed();
+        this.selectedOutputTokens[key].sum = val.toFixed(5);
+      });
+
+      this.inputTokens = this.inputTokens.map((_) => ({
+        ..._,
+        usdValue: new BN(
+          _.sum,
+        ).times(_.selectedToken.price).toFixed(6, BN.ROUND_DOWN),
+      }));
+
+      const totalUsd = this.selectedOutputTokens
+        .reduce((acc, curr) => acc
+          .plus(new BN(curr.sum).times(curr.selectedToken?.price)), new BN(0)).toFixed();
+
+      this.odosData = {
+        ...data,
+        netOutValue: totalUsd,
+      };
+      this.odosDataLoading = false;
     },
     getSlippagePercent() {
       return this.slippagePercent;

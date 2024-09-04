@@ -960,7 +960,7 @@ export default defineComponent({
               return tokenFound ? _.originalBalance : '0';
             });
 
-            const totalUsd = finalOutput
+            const totalUsd = this.selectedOutputTokens
               .reduce((acc, curr) => acc
                 .plus(new BN(curr.sum).times(curr.selectedToken?.price)), new BN(0)).toFixed();
 
@@ -1600,7 +1600,8 @@ export default defineComponent({
         this.selectedOutputTokens,
         resp,
       );
-      const totalUsd = finalOutput
+
+      const totalUsd = this.selectedOutputTokens
         .reduce((acc, curr) => acc
           .plus(new BN(curr.sum).times(curr.selectedToken?.price)), new BN(0)).toFixed();
 
@@ -1609,6 +1610,7 @@ export default defineComponent({
         ...data,
         netOutValue: totalUsd,
       };
+      this.odosDataLoading = false;
     },
     async recalculateProportion() {
       if (this.zapPool?.poolVersion === 'v2') await this.recalculateProportionV2();

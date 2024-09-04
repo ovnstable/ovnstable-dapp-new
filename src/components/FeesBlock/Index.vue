@@ -96,7 +96,7 @@
   </div>
 </template>
 <script lang="ts">
-import { formatMoney } from '@/utils/numbers.ts';
+import { fixedByPrice, formatMoney } from '@/utils/numbers.ts';
 import BN from 'bignumber.js';
 import SwitchComponent from '@/components/Switch/Index.vue';
 
@@ -150,7 +150,9 @@ export default {
     getFixed() {
       return (val: string) => {
         if (new BN(val).eq(0)) return 0;
-        const fixed = new BN(val).gt(1) ? 0 : 4;
+
+        const fixed = new BN(val).gt(10) ? 0 : fixedByPrice(Number(val));
+
         return formatMoney(Number(val), fixed);
       };
     },

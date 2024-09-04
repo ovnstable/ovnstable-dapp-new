@@ -913,15 +913,8 @@ export default defineComponent({
             return tokenFound ? _.originalBalance : '0';
           });
 
-          const totalUsd = finalOutput
-            .reduce((acc, curr) => acc
-              .plus(new BN(curr.sum).times(curr.selectedToken?.price)), new BN(0)).toFixed();
-
           this.outputTokens = finalOutput;
-          this.odosData = {
-            ...data,
-            netOutValue: totalUsd,
-          };
+          this.odosData = data;
 
           proportions = {
             ...proportions,
