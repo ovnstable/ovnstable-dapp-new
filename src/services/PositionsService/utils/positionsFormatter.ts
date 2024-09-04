@@ -85,8 +85,8 @@ export const formatPositionData = (
       const token0Info = getTokenInfo(token0, tokenMap);
       const token1Info = getTokenInfo(token1, tokenMap);
       const tokenNames = pool ? getTokenNames(pool.name) : {
-        token0: token0Info.symbol,
-        token1: token1Info.symbol,
+        token0: token0Info?.symbol,
+        token1: token1Info?.symbol,
       };
 
       // Token usd values
@@ -114,8 +114,8 @@ export const formatPositionData = (
         ...pool,
         address: poolId,
         chain: networkId,
-        token0Add: token0Info.address,
-        token1Add: token1Info.address,
+        token0Add: token0Info?.address,
+        token1Add: token1Info?.address,
         chainName: network?.name?.toLowerCase() ?? 'base',
         token0Icon: token0Info?.logoUrl ?? loadEmptyImg(),
         token1Icon: token1Info?.logoUrl ?? loadEmptyImg(),
