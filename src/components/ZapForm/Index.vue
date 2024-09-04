@@ -1562,10 +1562,14 @@ export default defineComponent({
         })),
       );
 
-      const inputTokens = this.selectedInputTokens.map((_: any, key: number) => ({
-        tokenAddress: _?.selectedToken?.address,
-        amount: resp[1][key]?.toString(),
-      }));
+      const inputTokens = this.selectedInputTokens
+        .map((_: any, key: number) => ({
+          tokenAddress: _?.selectedToken?.address,
+          amount: resp[1][key]?.toString(),
+        }))
+        .filter(
+          (item: any) => new BN(item.amount).gt(0),
+        );
 
       const outputTokens = resp[2]
         .map((_: any, key: number) => ({
