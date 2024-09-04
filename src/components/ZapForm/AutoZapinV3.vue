@@ -207,7 +207,7 @@
             btn-size="large"
             btn-styles="primary"
             full
-            :loading="isSwapLoading"
+            :loading="isSwapLoading || !agreeWithFees"
             @click="depositGauge(lastNftTokenId)"
             @keypress="depositGauge(lastNftTokenId)"
           >

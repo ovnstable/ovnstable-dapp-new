@@ -139,6 +139,7 @@
             btn-styles="primary"
             full
             :loading="isSwapLoading"
+            :disabled="!agreeWithFees"
             @click="unstakeTrigger"
             @keypress="unstakeTrigger"
           >

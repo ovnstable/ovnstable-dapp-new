@@ -215,6 +215,7 @@
             btn-styles="primary"
             full
             :loading="isSwapLoading"
+            :disabled="!agreeWithFees"
             @click="
               depositGauge(
                 lastPutIntoPoolEvent,
@@ -239,7 +240,7 @@
             btn-size="large"
             btn-styles="primary"
             full
-            :disabled="odosDataLoading"
+            :disabled="odosDataLoading || !agreeWithFees"
             @click="stakeTrigger"
             @keypress="stakeTrigger"
           >
