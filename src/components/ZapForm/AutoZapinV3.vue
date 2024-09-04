@@ -915,6 +915,7 @@ export default defineComponent({
 
           this.outputTokens = finalOutput;
           this.odosData = data;
+          this.odosDataLoading = false;
 
           proportions = {
             ...proportions,

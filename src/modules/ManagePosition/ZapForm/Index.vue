@@ -841,6 +841,7 @@ export default {
             ...data,
             netOutValue: totalUsd,
           };
+          this.odosDataLoading = false;
 
           proportions = {
             ...proportions,
