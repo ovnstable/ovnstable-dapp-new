@@ -86,6 +86,7 @@ export default {
   data() {
     return {
       showModal: false,
+      zapInit: false,
       zapPool: {} as TPool,
     };
   },
@@ -102,6 +103,11 @@ export default {
   watch: {
     isShow(currVal: boolean) {
       this.showModal = currVal;
+    },
+    mergedTokenList(val) {
+      if (val?.length === 0) return;
+
+      this.handleClickSearch();
     },
     poolList() {
       this.init();
@@ -120,13 +126,15 @@ export default {
       const tokens = (this.$route.query?.tokens as string)?.split('-');
       const token0 = getTokenByAddress(tokens[0], this.mergedTokenList);
 
+      console.log(this.mergedTokenList, '__this.mergedTokenList');
       console.log(token0, '__token0');
-      if (!token0) return;
+      if (!token0 || this.zapInit) return;
       const filterParams: Partial<TFilterPoolsParams> = {
         token0: token0.symbol,
         // token1: tokens[1],
       };
       this.setFilterParams(filterParams);
+      this.zapInit = true;
     },
     init() {
       if (!this.poolList || this.poolList?.length === 0) return;
