@@ -57,7 +57,7 @@
 
         <div class="zap-row zap-row--mt">
           <div class="transaction-info-title">
-            Agree with min. received
+            Agree with swap terms
           </div>
           <SwitchComponent
             :is-checked="agreeWithFees"
