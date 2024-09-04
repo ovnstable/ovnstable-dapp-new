@@ -1135,24 +1135,13 @@ export default {
         this.odosDataLoading = false;
         return;
       }
-      console.log(data, '__data');
-      // const finalOutput = getZapinOutputTokens(
-      //   data,
-      //   this.selectedOutputTokens,
-      //   resp,
-      // );
+      const finalOutput = getZapinOutputTokens(
+        data,
+        this.selectedOutputTokens,
+        resp,
+      );
 
       if (!resp) return;
-
-      resp[5]?.forEach((_: BigInt, key: number) => {
-        const { price } = this.selectedOutputTokens[key].selectedToken;
-        const val = new BN(_?.toString() ?? 0)
-          .div(10 ** 18)
-          .div(price);
-
-        this.selectedOutputTokens[key].value = val.toFixed();
-        this.selectedOutputTokens[key].sum = val.toFixed(5);
-      });
 
       this.inputTokens = this.inputTokens.map((_) => ({
         ..._,
@@ -1161,7 +1150,7 @@ export default {
         ).times(_.selectedToken.price).toFixed(6, BN.ROUND_DOWN),
       }));
 
-      const totalUsd = this.selectedOutputTokens
+      const totalUsd = finalOutput
         .reduce((acc, curr) => acc
           .plus(new BN(curr.sum).times(curr.selectedToken?.price)), new BN(0)).toFixed();
 
