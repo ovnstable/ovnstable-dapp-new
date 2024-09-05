@@ -172,12 +172,13 @@ export default {
     getFixedToken() {
       return (val: string) => {
         if (new BN(val).eq(0)) return 0;
-        const fixed = new BN(val).gt(10) ? 0 : fixedByPrice(Number(val));
-        const valTotal = new BN(val).gt(1)
-          ? new BN(val).times(1 - this.slippagePercent / 100).toFixed(fixed)
-          : new BN(val).times(1 - this.slippagePercent / 100).toFixed(fixed);
+        const valTotal = new BN(val).times(1 - this.slippagePercent / 100);
+        let fixed = 2;
 
-        return valTotal;
+        if (valTotal.gt(10000)) fixed = 0;
+        if (valTotal.lt(0.1)) fixed = fixedByPrice(Number(valTotal));
+
+        return valTotal.toFixed(fixed);
       };
     },
     getFixedPrice() {
