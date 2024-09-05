@@ -314,6 +314,15 @@ export default {
       }
     },
     networkId(val: number | string) {
+      const params = {
+        tokenList: this.balanceList,
+        networkId: this.networkId,
+      };
+
+      if (this.balanceList.length > 0) {
+        this.initTokenSchema(params);
+      }
+
       if (val) this.initForm();
     },
   },
