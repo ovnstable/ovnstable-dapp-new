@@ -2,7 +2,7 @@
   <div class="app-wrapper">
     <HeaderBar />
     <div
-      v-if="isShowDeprecated"
+      v-if="false"
       class="container"
     >
       <div class="app-wrapper__notify">
@@ -16,6 +16,15 @@
         >
           LEARN MORE
         </ButtonComponent>
+      </div>
+    </div>
+    <div
+      class="container"
+    >
+      <div class="app-wrapper__notify">
+        <p>
+          Dear users, zapin and rebalance features stopped for an upgrade, sorry for inconvinience
+        </p>
       </div>
     </div>
 
