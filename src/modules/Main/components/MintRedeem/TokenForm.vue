@@ -180,7 +180,7 @@ export default {
     },
   },
   mounted() {
-    if (isEmpty(this.tokensListGetter)) {
+    if (isEmpty(this.tokensListGetter) || !this.tokensListGetter[this.networkId]) {
       const params = {
         tokenList: this.balanceList,
         networkId: this.networkId,
