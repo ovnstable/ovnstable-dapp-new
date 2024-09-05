@@ -204,7 +204,7 @@
 </template>
 
 <script lang="ts">
-import { mapGetters, mapActions, useStore } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 import SwitchComponent from '@/components/Switch/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import SpinnerComponent from '@/components/Spinner/Index.vue';
@@ -218,10 +218,8 @@ import AccountModal from '@/modules/Account/Index.vue';
 import { deviceType } from '@/utils/deviceType.ts';
 import { useEventBus } from '@vueuse/core';
 import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
-import { inject } from 'vue';
 import UserBalances from './UserBalances.vue';
 import MobileMenu from './MobileMenu.vue';
-import type { ITokenService } from '@/services/TokenService/TokenService';
 
 interface Chain {
   chainName: string;
@@ -242,13 +240,9 @@ export default {
     BaseIcon,
   },
   setup: () => {
-    const { state } = useStore() as any;
-
-    const tokenService = inject('tokenService') as ITokenService;
-
     const {
       isBalancesLoading,
-    } = useTokensQuery(tokenService, state);
+    } = useTokensQuery();
 
     return {
       isBalancesLoading,

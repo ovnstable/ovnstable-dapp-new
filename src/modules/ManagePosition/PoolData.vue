@@ -1,43 +1,85 @@
+<!-- eslint-disable vuejs-accessibility/anchor-has-content -->
 <template>
   <div class="pool-data">
-    <div class="pool-data__title">
-      <div class="pool-data__name">
-        <div class="pool-data__name-imgs">
-          <img
-            alt="token"
-            :src="zapPool.token0Icon"
-          />
-          <img
-            alt="token"
-            :src="zapPool.token1Icon"
-          />
+    <div class="pool-data_wrapper">
+      <div class="pool-data__title">
+        <div class="pool-data__name">
+          <div class="pool-data__name-imgs">
+            <img
+              alt="token"
+              :src="zapPool.token0Icon"
+            />
+            <img
+              alt="token"
+              :src="zapPool.token1Icon"
+            />
+          </div>
+
+          <h1>
+            {{ zapPool.name }}
+          </h1>
         </div>
-
-        <h1>
-          {{ zapPool.name }}
-        </h1>
-      </div>
-      <span class="pool-data__divider" />
-      <div>
-        <span>
-          <div
-            class="pools-data__range"
-            :class="{ 'out-range': !zapPool?.position?.isInRange }"
-          >
-            {{ zapPool?.position?.isInRange ? 'IN RANGE' : 'OUT OF RANGE' }}
-          </div>
-        </span>
-        <div class="pool-data__row">
-          <div class="pool-data__plat">
-            <BaseIcon :name="zapPool.platform[0]" />
-            <span>
-              {{ zapPool.platform[0] }}
-            </span>
-          </div>
-
-          <span class="pool-data__id">
-            ID: #{{ zapPool.tokenId?.toString() }}
+        <span class="pool-data__divider" />
+        <div>
+          <span>
+            <div
+              class="pools-data__range"
+              :class="{ 'out-range': !zapPool?.position?.isInRange }"
+            >
+              {{ zapPool?.position?.isInRange ? 'IN RANGE' : 'OUT OF RANGE' }}
+            </div>
           </span>
+          <div class="pool-data__row">
+            <div class="pool-data__plat">
+              <BaseIcon :name="zapPool.platform[0]" />
+              <span>
+                {{ zapPool.platform[0] }}
+              </span>
+            </div>
+
+            <div class="pool-data__nft-id">
+              <span class="pool-data__id">
+                ID: #{{ zapPool.tokenId?.toString() }}
+              </span>
+              <div
+                @click="copyToClipBoard(zapPool.tokenId)"
+                @keypress="copyToClipBoard(zapPool.tokenId)"
+              >
+                <BaseIcon
+                  name="Copy"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="usd_prices_wrapper">
+        <div
+          class="swap-block__item usd_price_row"
+        >
+          <span>
+            Current price,
+            {{ priceProportionTokens?.[0]?.symbol }} per
+            {{ priceProportionTokens?.[1]?.symbol }}
+          </span>
+          <span class="usd_price">
+            {{ getFixedVal(priceProportionValue) }}
+          </span>
+        </div>
+        <div class="swap-block__item usd_price_row">
+          <span>
+            View price in:
+          </span>
+          <ButtonComponent
+            :btn-styles="'grey'"
+            @click="switchPrices"
+          >
+            <BaseIcon
+              class="row-icon"
+              name="SwapIconV3"
+            />
+            {{ priceProportionTokens?.[0]?.symbol }}
+          </ButtonComponent>
         </div>
       </div>
     </div>
@@ -131,7 +173,7 @@
 </template>
 
 <script lang="ts">
-import { getNewInputToken, getTokenBySymbol } from '@/store/helpers/index.ts';
+import { getNewInputToken, getTokenByAddress } from '@/store/helpers/index.ts';
 import { formatInputTokens } from '@/utils/tokens.ts';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import BN from 'bignumber.js';
@@ -140,11 +182,13 @@ import { loadTokenImage } from '@/utils/tokenLogo.ts';
 import { allTokensMap } from '@/hooks/fetch/useTokensQuery.ts';
 import { fixedByPrice } from '@/utils/numbers.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
+import ButtonComponent from '@/components/Button/Index.vue';
 
 export default {
   name: 'PositionForm',
   components: {
     BaseIcon,
+    ButtonComponent,
   },
   props: {
     allTokensList: {
@@ -168,6 +212,8 @@ export default {
       rewardTokens: [] as any,
       inputTokens: [] as any,
       isLoaded: false,
+      priceProportionTokens: [] as any,
+      priceProportionValue: '' as any,
     };
   },
   computed: {
@@ -231,11 +277,11 @@ export default {
       if (this.isLoaded) return;
       this.initLiqTokens();
       this.initRewardTokens();
+      this.switchPrices();
     },
     initLiqTokens() {
-      const tokens = this.zapPool.name.split('/');
-      const token0 = getTokenBySymbol(tokens[0], this.zapAllTokens);
-      const token1 = getTokenBySymbol(tokens[1], this.zapAllTokens);
+      const token0 = getTokenByAddress(this.zapPool?.token0Add, this.zapAllTokens);
+      const token1 = getTokenByAddress(this.zapPool?.token1Add, this.zapAllTokens);
 
       const tokenFull0 = {
         ...getNewInputToken(),
@@ -287,6 +333,18 @@ export default {
 
       this.rewardTokens = rewardToken;
     },
+    copyToClipBoard(textToCopy: string) {
+      navigator.clipboard.writeText(textToCopy);
+    },
+    switchPrices() {
+      const tokensReversed = this.priceProportionTokens.length > 0
+        ? this.priceProportionTokens.reverse()
+        : this.inputTokens.map((token: any) => token.selectedToken);
+      const priceProportion = new BN(tokensReversed?.[1]?.price)
+        .div(new BN(tokensReversed?.[0]?.price)).toString();
+      this.priceProportionTokens = tokensReversed;
+      this.priceProportionValue = this.getFixedVal(priceProportion);
+    },
   },
 };
 </script>
@@ -334,6 +392,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-top: 15px;
 
   svg {
     width: 30px;
@@ -389,6 +448,12 @@ export default {
   width: 100%;
   margin-top: 0;
 }
+.pool-data_wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
 
 .pool-data__title {
   width: 100%;
@@ -404,5 +469,33 @@ export default {
 .pool-data__rewards {
   width: 100%;
   margin-top: 0;
+}
+
+.pool-data__nft-id {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  gap: 10px;
+  svg {
+    width: 20px;
+    height: 20px;
+    pointer-events: all;
+    cursor: pointer;
+  };
+}
+
+.usd_price_row {
+  margin-top: 15px;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--color-1);
+  .usd_price {
+    color: var(--color-3);
+  }
+}
+
+.row-icon {
+  margin-right: 4px
 }
 </style>

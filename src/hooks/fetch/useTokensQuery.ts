@@ -1,21 +1,27 @@
 import { useQuery } from '@tanstack/vue-query';
 import TokenService, { type ITokenService } from '@/services/TokenService/TokenService.ts';
-import { computed } from 'vue';
-import BalanceService from '@/services/BalanceService/BalanceService.ts';
+import { computed, inject } from 'vue';
+import type { IBalanceService } from '@/services/BalanceService/BalanceService.ts';
 import { mergeTokenLists } from '@/services/TokenService/utils/index.ts';
+import { useStore } from 'vuex';
 import { isEmpty } from 'lodash';
-
-const REFETCH_INTERVAL = 5 * 60 * 60 * 1000; // 5h
-const BALANCE_REFETCH_INTERVAL = 3000;
-
-export const useRefreshBalances = () => () => 0;
+import {
+  BALANCE_REFETCH_INTERVAL, getQueryStates, isAllQueryDataAvailable, REFETCH_INTERVAL,
+} from '../utils/index.ts';
+import { usePricesQuery } from './usePricesQuery.ts';
 
 export const allTokensMap = (tokensList: any[]): any => new Map(tokensList
   .map((token) => [token.address, token]));
 
-export const useTokensQuery = (tokenService: ITokenService, stateData: any) => {
+export const useTokensQuery = () => {
+  const { state: stateData } = useStore();
+
+  const BalanceService = inject('balanceService') as IBalanceService;
+  const tokenService = inject('tokenService') as ITokenService;
+
   const networkId = computed(() => stateData.network.networkId);
   const address = computed(() => stateData.accountData.account);
+  const balanceRefreshTrigger = computed(() => stateData.accountData.balanceRefreshTrigger);
   const provider = computed(() => stateData.web3.evmProvider);
 
   const tokensQuery = useQuery(
@@ -24,19 +30,12 @@ export const useTokensQuery = (tokenService: ITokenService, stateData: any) => {
       queryFn: tokenService.fetchTokens,
       refetchInterval: REFETCH_INTERVAL,
       refetchOnWindowFocus: false,
+      refetchOnMount: false,
+      refetchOnReconnect: false,
     },
   );
 
-  const pricesQuery = useQuery(
-    {
-      queryKey: ['prices', networkId],
-      queryFn: () => tokenService.fetchTokenPricesByNetworkId(networkId.value),
-      enabled: !!networkId.value && !!provider.value,
-      refetchInterval: REFETCH_INTERVAL,
-      refetchOnWindowFocus: false,
-      staleTime: 0,
-    },
-  );
+  const pricesQuery = usePricesQuery();
 
   const isBalancesQueryEnabled = computed(
     () => !!tokensQuery.data.value && !!networkId.value && !!provider.value,
@@ -52,7 +51,7 @@ export const useTokensQuery = (tokenService: ITokenService, stateData: any) => {
   const balancesQuery = useQuery(
     {
       // eslint-disable-next-line @tanstack/query/exhaustive-deps
-      queryKey: ['balances', address, networkId],
+      queryKey: ['balances', address, networkId, balanceRefreshTrigger],
       queryFn: () => BalanceService.fetchTokenBalances(
         provider.value,
         address.value,
@@ -60,46 +59,27 @@ export const useTokensQuery = (tokenService: ITokenService, stateData: any) => {
       ),
       enabled: isBalancesQueryEnabled,
       refetchInterval: BALANCE_REFETCH_INTERVAL,
+      refetchOnWindowFocus: false,
       staleTime: 0,
     },
   );
 
-  const isAnyLoading = computed(
-    () => tokensQuery.isLoading.value
-     || pricesQuery.isLoading.value
-     || balancesQuery.isLoading.value,
-  );
-  const isAnyError = computed(
-    () => tokensQuery.isError || pricesQuery.isError || balancesQuery.isError,
-  );
-  const allErrors = computed(
-    () => JSON.stringify([tokensQuery.error, pricesQuery.error, balancesQuery.isError]),
-  );
-  const isAnyFetching = computed(
-    () => tokensQuery.isFetching || pricesQuery.isFetching || balancesQuery.isFetching,
-  );
+  const queries = [tokensQuery, pricesQuery, balancesQuery];
+  const {
+    isAnyLoading, isAnyError, allErrors, isAnyFetching,
+  } = getQueryStates(queries);
 
   const getTokenInfo = () => {
-    const tokensData = tokensQuery.data.value;
-    const pricesData = pricesQuery.data.value;
-    const balancesData = balancesQuery.data.value;
-    const isLoaded = !isAnyLoading.value;
-
-    if (isLoaded && tokensData && pricesData && !isEmpty(balancesData)) {
+    if (!isAnyLoading.value && isAllQueryDataAvailable(queries)) {
       const tokenInfo = TokenService.getTokenInfo(
-        tokensData,
-        pricesData,
+        tokensQuery.data.value,
+        pricesQuery.data.value,
         networkId.value,
-        balancesData,
+        balancesQuery.data.value,
       );
       return tokenInfo;
     }
     return [];
-  };
-
-  const refetchAll = async () => {
-    await tokensQuery.refetch();
-    await balancesQuery.refetch();
   };
 
   return {
@@ -109,11 +89,13 @@ export const useTokensQuery = (tokenService: ITokenService, stateData: any) => {
     isLoading: isAnyLoading,
     isError: isAnyError,
     isBalancesLoading: balancesQuery.isLoading,
-    refetchAll,
   };
 };
 
-export const useTokensQueryNew = (tokenService: ITokenService, stateData: any) => {
+export const useTokensQueryNew = () => {
+  const { state: stateData } = useStore();
+
+  const tokenService = inject('tokenService') as ITokenService;
   const networkId = computed(() => stateData.network.networkId);
 
   const tokensQuery = useQuery(
@@ -122,6 +104,7 @@ export const useTokensQueryNew = (tokenService: ITokenService, stateData: any) =
       queryFn: async () => tokenService.fetchAllTokens(),
       refetchInterval: false,
       refetchOnWindowFocus: false,
+      refetchOnMount: false,
     },
   );
 

@@ -2,6 +2,7 @@
 /* eslint-disable no-unused-vars */
 
 import BigNumber from 'bignumber.js';
+import { getTokenByAddress } from '@/store/helpers/index.ts';
 import type { TTokenInfo } from '@/types/common/tokens';
 
 const DEFAULT_DECIMALS = 18;
@@ -73,12 +74,12 @@ const formatBN = (
 ): string => new BigNumber(val).div(10 ** decimals).toString(BN_STRING_BASE);
 
 export const mapEventTokenData = (
-  tokenList: TTokenDataList,
-  allTokenMap: TAllTokenList,
-): TFormatTokenInfo[] => tokenList.addresses
+  eventList: TTokenDataList,
+  allTokenList: TTokenInfo[],
+): TFormatTokenInfo[] => eventList.addresses
   .map((addr: string, index: number) => {
-    const token = allTokenMap.get(addr.toString())!;
-    const value = formatBN(tokenList.amounts[index], token?.decimals);
+    const token = getTokenByAddress(addr.toString(), allTokenList);
+    const value = formatBN(eventList.amounts[index], token?.decimals);
     return {
       id: `${token?.id}_return`,
       symbol: token?.symbol,

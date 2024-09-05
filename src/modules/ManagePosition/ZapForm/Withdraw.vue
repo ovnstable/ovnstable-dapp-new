@@ -167,13 +167,13 @@ import {
 } from 'vuex';
 import {
   getNewInputToken,
-  getTokenBySymbol,
+  getTokenByAddress,
 } from '@/store/helpers/index.ts';
 
 import Spinner from '@/components/Spinner/Index.vue';
 import ChangeNetwork from '@/components/ZapForm/ChangeNetwork.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
-import TokenForm from '@/modules/Main/components/Odos/TokenForm.vue';
+import TokenForm from '@/components/TokenForm/Index.vue';
 import { cloneDeep } from 'lodash';
 import BN from 'bignumber.js';
 import { MANAGE_FUNC, withdrawStep } from '@/store/modals/waiting-modal.ts';
@@ -313,9 +313,8 @@ export default defineComponent({
     ...mapMutations('waitingModal', ['setStagesMap']),
 
     async initContracts() {
-      const tokens = this.zapPool.name.split('/');
-      const tokenA = getTokenBySymbol(tokens[0], this.zapAllTokens);
-      const tokenB = getTokenBySymbol(tokens[1], this.zapAllTokens);
+      const tokenA = getTokenByAddress(this.zapPool?.token0Add, this.zapAllTokens);
+      const tokenB = getTokenByAddress(this.zapPool?.token1Add, this.zapAllTokens);
 
       const abiGauge = srcStringBuilder('V3GaugeRebalance')(this.zapPool.chainName, this.zapPool.platform[0]);
       const abiGaugeContractFileV3 = await loadAbi(abiGauge);
@@ -390,8 +389,8 @@ export default defineComponent({
     },
     initLiqTokens() {
       const tokens = this.zapPool.name.split('/');
-      const token0 = getTokenBySymbol(tokens[0], this.zapAllTokens);
-      const token1 = getTokenBySymbol(tokens[1], this.zapAllTokens);
+      const token0 = getTokenByAddress(this.zapPool?.token0Add, this.zapAllTokens);
+      const token1 = getTokenByAddress(this.zapPool?.token1Add, this.zapAllTokens);
 
       const tokenFull0 = {
         ...getNewInputToken(),

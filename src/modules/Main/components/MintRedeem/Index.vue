@@ -128,7 +128,7 @@
 <!-- eslint-disable no-underscore-dangle -->
 <!-- eslint-disable no-param-reassign -->
 <script lang="ts">
-import { mapActions, mapGetters, useStore } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import { deviceType } from '@/utils/deviceType.ts';
 import SwitchTabs from '@/components/SwitchTabs/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
@@ -153,10 +153,12 @@ import GasSettings from '@/modules/Main/components/MintRedeem/GasSettings.vue';
 import BigNumber from 'bignumber.js';
 import { ABI_Exchange, ABI_Market } from '@/assets/abi/index.ts';
 import { getAllowanceValue, approveToken } from '@/utils/contractApprove.ts';
-import TokenService, { type ITokenService } from '@/services/TokenService/TokenService.ts';
-import { defineComponent, inject } from 'vue';
-import { useTokensQuery, useRefreshBalances } from '@/hooks/fetch/useTokensQuery.ts';
+import TokenService from '@/services/TokenService/TokenService.ts';
+import { defineComponent } from 'vue';
+import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
 import type { TTokenInfo } from '@/types/common/tokens/index.ts';
+import { useRefreshBalances } from '@/hooks/fetch/useRefreshBalances.ts';
+import { parseErrorLog } from '@/utils/errors.ts';
 
 export default defineComponent({
   name: 'MintRedeem',
@@ -168,14 +170,10 @@ export default defineComponent({
     ButtonComponent,
   },
   setup: () => {
-    const { state } = useStore() as any;
-
-    const tokenService = inject('tokenService') as ITokenService;
-
     const {
       data: allTokensList,
       isLoading,
-    } = useTokensQuery(tokenService, state);
+    } = useTokensQuery();
 
     return {
       allTokensList,
@@ -373,7 +371,7 @@ export default defineComponent({
         .catch((e) => {
           console.error('Error when approve token.', e);
           this.closeWaitingModal();
-          this.showErrorModalWithMsg({ errorType: 'approve', errorMsg: e });
+          this.showErrorModalWithMsg({ errorType: 'approve', errorMsg: parseErrorLog(e) });
         });
 
       const finishTx = () => {

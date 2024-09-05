@@ -1017,6 +1017,7 @@ export default {
 
 .zapin-v3__chart {
   padding: 14px 14px 36px 14px;
+  max-height: 300px;
   border-radius: 10px;
   background-color: var(--color-5);
   flex-grow: 1;
@@ -1165,6 +1166,7 @@ export default {
 
 .zapin-v3__chart-range {
   height: 150px;
+  max-height: 150px;
 }
 
 .zapin-v3__loader {

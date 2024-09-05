@@ -67,6 +67,7 @@
         :zap-pool="zapPool"
         :active-tab="activeTab"
         :all-tokens-list="allTokensList"
+        :balance-list="balanceList"
         :gauge-address="gaugeAddress"
       />
     </div>
@@ -80,7 +81,6 @@
 <script lang="ts">
 import {
   mapActions,
-  useStore,
 } from 'vuex';
 import SuccessZapModal from '@/modules/ModalTemplates/SuccessModal/SuccessZapModal.vue';
 import RebalanceForm from '@/modules/ManagePosition/ZapForm/Index.vue';
@@ -93,11 +93,8 @@ import SwitchTabs from '@/components/SwitchTabs/Index.vue';
 import PoolData from '@/modules/ManagePosition/PoolData.vue';
 import { usePositionsQuery } from '@/hooks/fetch/usePositionsQuery.ts';
 import { useTokensQuery, useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.ts';
-import { inject } from 'vue';
 import { isEmpty } from 'lodash';
 import { usePoolsQueryNew } from '@/hooks/fetch/usePoolsQuery.ts';
-import type { ITokenService } from '@/services/TokenService/TokenService';
-import type { IPoolService } from '@/services/PoolService/PoolService';
 import type { TFilterPoolsParams } from '@/types/common/pools';
 
 export enum MANAGE_TAB {
@@ -120,14 +117,9 @@ export default {
     SwitchTabs,
   },
   setup() {
-    const { state } = useStore() as any;
-
-    const tokenService = inject('tokenService') as ITokenService;
-    const poolService = inject('poolService') as IPoolService;
-
-    const { data: getUserPositions } = usePositionsQuery(tokenService, poolService, state);
-    const { data: balanceList, isLoading: tokensLoading } = useTokensQuery(tokenService, state);
-    const { data: allTokensList } = useTokensQueryNew(tokenService, state);
+    const { data: getUserPositions } = usePositionsQuery();
+    const { data: balanceList, isLoading: tokensLoading } = useTokensQuery();
+    const { data: allTokensList } = useTokensQueryNew();
     const { data: poolList } = usePoolsQueryNew();
 
     return {

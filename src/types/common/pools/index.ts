@@ -1,6 +1,8 @@
 export type TPool = {
     id: string,
     name: string,
+    token0Add: string,
+    token1Add: string,
     token0Icon: string,
     token1Icon: string,
     poolVersion: string,

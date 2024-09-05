@@ -2,14 +2,17 @@
 import { OvernightApi } from './services/ApiService/OvernightApi.ts';
 import PoolService from './services/PoolService/PoolService.ts';
 import TokenService from './services/TokenService/TokenService.ts';
+import BalanceService from './services/BalanceService/BalanceService.ts';
 
 export const createContext = () => {
   const overnightApi = new OvernightApi();
   const poolService = new PoolService(overnightApi);
   const tokenService = new TokenService(overnightApi);
+  const balanceService = new BalanceService();
 
   return {
     PoolService: poolService,
     TokenService: tokenService,
+    BalanceService: balanceService,
   };
 };

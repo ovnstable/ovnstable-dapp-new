@@ -9,13 +9,19 @@ import BN from 'bignumber.js';
 interface ISwapData {
   tokenAddress: string,
   price: string;
+  amount: string;
+}
+
+interface IPoolTokensData {
+  tokenAddress: string,
+  price: string;
 }
 
 export const getV3Rebalance = async (
   tokenId: number,
   poolAddress: string,
   tickRange: string[],
-  inputSwapTokens: ISwapData[],
+  inputSwapTokens: IPoolTokensData[],
   zapContract: any,
 ) => zapContract
   .getProportionForRebalance(Number(tokenId), poolAddress, tickRange, inputSwapTokens);
@@ -25,8 +31,9 @@ export const getV3Proportion = (
   tickRange: string[],
   inputSwapTokens: ISwapData[],
   zapContract: any,
+  tokenPrices: IPoolTokensData[],
 ) => zapContract
-  .getProportionForZap(poolAddress, tickRange, inputSwapTokens)
+  .getProportionForZap(poolAddress, tickRange, inputSwapTokens, tokenPrices)
   .then((data: any) => data)
   .catch((e: any) => {
     console.error('Error get proportion for V3', e);

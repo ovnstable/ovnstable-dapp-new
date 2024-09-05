@@ -1,5 +1,8 @@
 const state = {
   account: null,
+
+  // Actual value doesnt matter, just a reactivity trigger
+  balanceRefreshTrigger: false as boolean,
 };
 
 const getters = {
@@ -24,13 +27,18 @@ const actions = {
     }
     commit('setAccount', walletAddress);
   },
+  handleRefreshBalances({ commit }: any) {
+    commit('toggleBalanceRefresh');
+  },
 };
 
 const mutations = {
   setAccount(state: any, value: any) {
     state.account = value;
   },
-
+  toggleBalanceRefresh(state: any) {
+    state.balanceRefreshTrigger = !state.balanceRefreshTrigger;
+  },
 };
 
 export default {

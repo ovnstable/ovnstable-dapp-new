@@ -194,8 +194,6 @@ export default {
         };
       }
 
-      console.log(tokenBalance, '__tokenBalance');
-
       // eslint-disable-next-line no-param-reassign
       token.selected = true;
       this.$emit('add-token-to-list', {

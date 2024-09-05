@@ -183,7 +183,7 @@ export const getTokenBySymbol = (
 export const getTokenByAddress = (
   address: string,
   tokensList: any[],
-) => tokensList.find((_) => _.address.toLowerCase() === address.toLowerCase());
+) => tokensList.find((_) => _.address?.toLowerCase() === address?.toLowerCase());
 
 export const getDefaultSecondtoken = (
   tokenSeparationScheme: string,
@@ -268,7 +268,6 @@ export const updateTokenValue = (
     checkApprove(token, token.contractValue);
   }
 
-  // eslint-disable-next-line consistent-return
   return {
     ...token,
     value,

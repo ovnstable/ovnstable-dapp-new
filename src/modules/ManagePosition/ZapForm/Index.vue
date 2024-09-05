@@ -73,6 +73,7 @@
                       :is-input-token="false"
                       :disabled="true"
                       :balances-loading="isBalancesLoading"
+                      :token-loading="odosDataLoading"
                       hide-balance
                       @select-token="selectOutputToken"
                       @remove-token="removeOutputToken"
@@ -81,6 +82,21 @@
                 </div>
               </div>
             </div>
+            <FeesBlock
+              v-if="odosData"
+              :slippage-percent="slippagePercent"
+              :get-odos-fee="0"
+              :multi-swap-odos-fee-percent="0"
+              :selected-input-tokens="inputTokens"
+              :selected-output-tokens="selectedOutputTokens"
+              :odos-data="odosData"
+              :agree-with-fees="agreeWithFees"
+              @change-agree="changeAgreeFees"
+            />
+
+            <SwapSlippageSettings
+              @change-slippage="handleCurrentSlippageChanged"
+            />
           </div>
           <ZapinV3
             :zap-pool="zapPool"
@@ -123,6 +139,7 @@
             btn-styles="primary"
             full
             :loading="isSwapLoading"
+            :disabled="!agreeWithFees"
             @click="unstakeTrigger"
             @keypress="unstakeTrigger"
           >
@@ -145,7 +162,7 @@
             btn-styles="primary"
             full
             :loading="isSwapLoading"
-            disabled
+            :disabled="!agreeWithFees"
             @click="rebalanceTrigger"
             @keypress="rebalanceTrigger"
           >
@@ -156,7 +173,6 @@
             btn-size="large"
             btn-styles="primary"
             full
-            disabled
             :loading="isSwapLoading"
             @click="stakeTrigger"
             @keypress="stakeTrigger"
@@ -181,11 +197,10 @@ import { useEventBus } from '@vueuse/core';
 import { ethers } from 'ethers';
 import {
   mapActions, mapGetters, mapState, mapMutations,
-  useStore,
 } from 'vuex';
 import {
   getNewOutputToken,
-  getTokenBySymbol,
+  getTokenByAddress,
   WHITE_LIST_ODOS,
 } from '@/store/helpers/index.ts';
 import {
@@ -199,17 +214,24 @@ import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ZapinV3 from '@/components/ZapForm/ZapinV3.vue';
 import BN from 'bignumber.js';
-import TokenForm from '@/modules/Main/components/Odos/TokenForm.vue';
+import TokenForm from '@/components/TokenForm/Index.vue';
 import { MANAGE_FUNC, rebalanceStep } from '@/store/modals/waiting-modal.ts';
 import ZapInStepsRow from '@/components/StepsRow/ZapinRow/RebalanceRow.vue';
 import { cloneDeep, isEmpty } from 'lodash';
-import { inject, markRaw } from 'vue';
+import { markRaw } from 'vue';
 import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
-import { useTokensQuery, useRefreshBalances } from '@/hooks/fetch/useTokensQuery.ts';
-import type { ITokenService } from '@/services/TokenService/TokenService.ts';
+import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
 import { loadAbi, srcStringBuilder } from '@/store/views/main/zapin/index.ts';
 import { buildEvmContract } from '@/utils/contractsMap.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
+import { useRefreshBalances } from '@/hooks/fetch/useRefreshBalances.ts';
+import { parseErrorLog } from '@/utils/errors.ts';
+import FeesBlock, { MIN_IMPACT } from '@/components/FeesBlock/Index.vue';
+import {
+  countPercentDiff,
+  getZapinOutputTokens, mapExcludeLiquidityPlatform, removeToken, sourceLiquidityBlacklist,
+} from '@/components/ZapForm/helpers.ts';
+import SwapSlippageSettings from '@/components/SwapSlippage/Index.vue';
 import { parseLogs } from './helpers.ts';
 
 enum zapMobileSection {
@@ -223,6 +245,8 @@ export default {
     BaseIcon,
     ZapinV3,
     ButtonComponent,
+    FeesBlock,
+    SwapSlippageSettings,
     TokenForm,
     ChangeNetwork,
     Spinner,
@@ -251,13 +275,9 @@ export default {
     },
   },
   setup: () => {
-    const { state } = useStore() as any;
-
-    const tokenService = inject('tokenService') as ITokenService;
-
     const {
       isBalancesLoading,
-    } = useTokensQuery(tokenService, state);
+    } = useTokensQuery();
 
     return {
       isBalancesLoading,
@@ -271,15 +291,22 @@ export default {
       outputTokens: [] as any[],
       v3Range: null as any,
       newTokenId: 0,
+      agreeWithFees: true,
       isShowSelectTokensModal: false,
       swapMethod: 'BUY', // BUY (secondTokens) / SELL (secondTokens)
       selectTokenType: 'OVERNIGHT', // OVERNIGHT / ALL
+      odosDataLoading: false,
+      odosData: {
+        percentDiff: 0,
+        netOutValue: 0,
+        priceImpact: 0,
+      },
 
       currentStage: rebalanceStep.UNSTAKE,
       isNftApproved: false,
       gaugeNftApproved: false,
       isSwapLoading: false,
-      slippagePercent: 0.5,
+      slippagePercent: 1,
       poolTokens: [] as any[],
       gaugeContract: null as any,
       zapContract: null as any,
@@ -287,23 +314,6 @@ export default {
 
       tokensQuotaCounterId: null as any,
       tokensQuotaCheckerSec: 0,
-
-      sourceLiquidityBlacklist: ['Hashflow', 'Wombat'], // "Overnight Exchange"
-      mapExcludeLiquidityPlatform: {
-        Chronos: ['Chronos Volatile'], // "Chronos Stable"
-        // Pancake: ["PancakeSwap", "PancakeSwap V3"],
-        // Beefy: ["Aerodrome Stable", "Aerodrome Volatile"],
-        Aerodrome: ['Aerodrome Slipstream'],
-        Velodrome: [
-          'Velodrome Stable',
-          'Velodrome Volatile',
-          'Velodrome V2 Converter',
-          'Velodrome V2 Stable',
-          'Velodrome V2 Volatile',
-        ],
-        // Alienbase: ["Alien Base", "Alien Base Stable"],
-        // Convex: ["Curve Crypto Registry", "Curve Factory", "Curve Registry"]
-      } as any,
       // Mobile section switch
       zapMobileSection,
       currentSection: zapMobileSection.TOKEN_FORM,
@@ -351,6 +361,13 @@ export default {
     },
   },
   watch: {
+    odosData(val) {
+      if (new BN(val.percentDiff).absoluteValue().gt(MIN_IMPACT)) {
+        this.agreeWithFees = false;
+      } else {
+        this.agreeWithFees = true;
+      }
+    },
     currentStage(stage: rebalanceStep) {
       this.$store.commit('zapinData/changeState', { field: 'currentStage', val: stage });
     },
@@ -406,6 +423,12 @@ export default {
 
     ...mapMutations('waitingModal', ['setStagesMap']),
 
+    changeAgreeFees() {
+      this.agreeWithFees = !this.agreeWithFees;
+    },
+    handleCurrentSlippageChanged(newSlippage: number) {
+      this.slippagePercent = newSlippage;
+    },
     clearZapData() {
       this.inputTokens = [];
       this.outputTokens = [];
@@ -442,9 +465,8 @@ export default {
     },
 
     async initContracts() {
-      const tokens = this.zapPool.name.split('/');
-      const tokenA = getTokenBySymbol(tokens[0], this.zapAllTokens);
-      const tokenB = getTokenBySymbol(tokens[1], this.zapAllTokens);
+      const tokenA = getTokenByAddress(this.zapPool.token0Add, this.zapAllTokens);
+      const tokenB = getTokenByAddress(this.zapPool.token1Add, this.zapAllTokens);
 
       const abiGauge = srcStringBuilder('V3GaugeRebalance')(this.zapPool.chainName, this.zapPool.platform[0]);
       const abiGaugeContractFileV3 = await loadAbi(abiGauge);
@@ -494,9 +516,8 @@ export default {
       });
     },
     addDefaultPoolToken() {
-      const tokens = this.zapPool.name.split('/');
-      const poolSelectedToken = getTokenBySymbol(tokens[0], this.zapAllTokens);
-      const ovnSelectSelectedToken = getTokenBySymbol(tokens[1], this.zapAllTokens);
+      const poolSelectedToken = getTokenByAddress(this.zapPool?.token0Add, this.zapAllTokens);
+      const ovnSelectSelectedToken = getTokenByAddress(this.zapPool?.token1Add, this.zapAllTokens);
 
       if (!poolSelectedToken || !ovnSelectSelectedToken) return;
       poolSelectedToken.selected = true;
@@ -521,22 +542,8 @@ export default {
       }
     },
     removeOutputToken(id: string) {
-      this.removeToken(this.outputTokens, id);
+      removeToken(this.outputTokens, id);
       this.resetOutputs();
-    },
-    removeToken(tokens: any[], id: string) {
-      // removing by token.id or token.selectedToken.id
-      const index = tokens.findIndex(
-        (item: any) => item.id === id
-          || (item.selectedToken ? item.selectedToken.id === id : false),
-      );
-      if (index !== -1) {
-        if (tokens[index].selectedToken) {
-          tokens[index].selectedToken.selected = false;
-        }
-
-        tokens.splice(index, 1);
-      }
     },
     odosAssembleRequest(requestData: any) {
       return odosApiService
@@ -666,7 +673,6 @@ export default {
       }
     },
     async rebalanceTrigger() {
-      console.log(this.poolTokenContract, '__this.poolTokenContract');
       if (!this.zapPool) return;
       if (this.isSwapLoading) return;
 
@@ -740,8 +746,6 @@ export default {
       let proportions: any = {
         inputTokens: [],
         outputTokens: [],
-        amountToken0Out: '0',
-        amountToken1Out: '0',
       };
 
       const resp = await getV3Rebalance(
@@ -766,8 +770,6 @@ export default {
           tokenAddress: _,
           proportion: new BN(resp[3][key]?.toString()).div(10 ** 6).toFixed(2),
         })),
-        amountToken0Out: resp[4][0]?.toString(),
-        amountToken1Out: resp[4][1]?.toString(),
       };
 
       proportions.outputTokens = proportions.outputTokens.filter(
@@ -783,12 +785,16 @@ export default {
         slippageLimitPercent: this.getSlippagePercent(),
       };
 
+      // min amount of tokens, after swap, to escape big swap loss
+      let amountMins: string[] = [];
+
       if (proportions.inputTokens?.length === 0) {
         await this.initZapInTransaction(
           null,
           proportions.inputTokens,
           proportions.outputTokens,
           proportions,
+          amountMins,
         );
 
         return;
@@ -814,6 +820,35 @@ export default {
 
       this.odosSwapRequest(requestData)
         .then(async (data: any) => {
+          const finalOutput = getZapinOutputTokens(
+            data,
+            this.selectedOutputTokens,
+            resp,
+          );
+          amountMins = this.selectedOutputTokens.map((_) => {
+            const tokenFound = data.outTokens.map((_: string) => _.toLowerCase())
+              .includes(_.selectedToken.address?.toLowerCase());
+
+            return tokenFound ? _.originalBalance : '0';
+          });
+
+          const totalUsd = finalOutput
+            .reduce((acc, curr) => acc
+              .plus(new BN(curr.sum).times(curr.selectedToken?.price)), new BN(0)).toFixed();
+
+          this.outputTokens = finalOutput;
+          this.odosData = {
+            ...data,
+            netOutValue: totalUsd,
+          };
+          this.odosDataLoading = false;
+
+          proportions = {
+            ...proportions,
+            amountToken0Out: finalOutput[0]?.tokenOut,
+            amountToken1Out: finalOutput[1]?.tokenOut,
+          };
+
           const assembleData = {
             userAddr: ethers.getAddress(
               request.userAddr.toLowerCase(),
@@ -829,6 +864,7 @@ export default {
                 proportions.inputTokens,
                 proportions.outputTokens,
                 proportions,
+                amountMins,
               );
             })
             .catch((e) => {
@@ -843,9 +879,9 @@ export default {
     },
 
     getSourceLiquidityBlackList() {
-      let sourceBlacklist = [...this.sourceLiquidityBlacklist];
+      let sourceBlacklist = [...sourceLiquidityBlacklist];
       // excluding platform for big liquidities zapins
-      const excludeLiquidityByPlatform = this.mapExcludeLiquidityPlatform[
+      const excludeLiquidityByPlatform = mapExcludeLiquidityPlatform[
         this.zapPool.platform[0]
       ];
       if (excludeLiquidityByPlatform && excludeLiquidityByPlatform.length) {
@@ -886,7 +922,6 @@ export default {
           return;
         }
 
-        console.log(tx, '__isApproved');
         this.currentStage = rebalanceStep.REBALANCE;
         this.isNftApproved = true;
         this.isSwapLoading = false;
@@ -908,6 +943,7 @@ export default {
       requestInputTokens: any[],
       requestOutputTokens: any[],
       proportions: any,
+      amountMins: string[],
     ) {
       if (!this.zapContract) {
         console.error(
@@ -933,9 +969,15 @@ export default {
         });
       }
 
+      console.log(amountMins, '___amountMins');
       const txData = {
         inputs: requestInput,
-        outputs: requestOutput,
+        outputs: requestOutput.map((_, key) => ({
+          ..._,
+          amountMin: new BN(amountMins[key] ?? 0)
+            .times(1 - this.getSlippagePercent() / 100)
+            .toFixed(0),
+        })),
         data: responseData ? responseData.transaction.data : '0x',
       };
 
@@ -989,7 +1031,7 @@ export default {
       } catch (e: any) {
         this.isSwapLoading = false;
         this.closeWaitingModal();
-        this.showErrorModalWithMsg({ errorType: 'zap', errorMsg: e });
+        this.showErrorModalWithMsg({ errorType: 'zap', errorMsg: parseErrorLog(e) });
       }
     },
     clearQuotaInfo() {
@@ -1002,9 +1044,48 @@ export default {
         val: null,
       });
     },
+    // async recalculateProportion() {
+    //   if (!this.v3Range) return;
+    //   const resp = await getV3Rebalance(
+    //     this.zapPool.tokenId?.toString(),
+    //     this.zapPool.address,
+    //     this.v3Range.ticks,
+    //     this.selectedOutputTokens.map((_) => ({
+    //       tokenAddress: _?.selectedToken?.address,
+    //       price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
+    //     })),
+    //     this.zapContract,
+    //   );
+
+    //   if (!resp) return;
+
+    //   console.log(resp, '__resp');
+    //   resp[5]?.forEach((_: BigInt, key: number) => {
+    //     const { price } = this.selectedOutputTokens[key].selectedToken;
+    //     const val = new BN(_?.toString() ?? 0)
+    //       .div(10 ** 18)
+    //       .div(price);
+
+    //     this.selectedOutputTokens[key].value = val.toFixed();
+    //     this.selectedOutputTokens[key].sum = val.toFixed(5);
+    //   });
+    // },
     async recalculateProportion() {
-      if (!this.v3Range) return;
-      const resp = await getV3Rebalance(
+      let resp = null as any;
+      this.odosDataLoading = true;
+
+      const emptyVals = this.inputTokens.map((_) => {
+        if (new BN(_?.value).eq(0) || !_?.value) return null;
+
+        return _;
+      });
+
+      if (emptyVals.every((_) => !_)) {
+        this.odosDataLoading = false;
+        return;
+      }
+
+      resp = await getV3Rebalance(
         this.zapPool.tokenId?.toString(),
         this.zapPool.address,
         this.v3Range.ticks,
@@ -1015,17 +1096,74 @@ export default {
         this.zapContract,
       );
 
+      console.log(resp, '___resp2');
+
+      const inputTokens = resp[0].map((_: any, key: number) => ({
+        tokenAddress: _,
+        amount: resp[1][key]?.toString(),
+      })).filter((_: any) => new BN(_.amount).gt(0));
+
+      if (inputTokens.length === 0) {
+        this.odosDataLoading = false;
+        return;
+      }
+
+      const outputTokens = resp[2].map((_: any, key: number) => ({
+        tokenAddress: _,
+        proportion: new BN(resp[3][key]?.toString()).div(10 ** 6).toFixed(2),
+      }));
+
+      console.log(inputTokens, '__this.inputTokens');
+      console.log(outputTokens, '__this.inputTokens');
+      const whiteList = WHITE_LIST_ODOS[this.networkId as keyof typeof WHITE_LIST_ODOS];
+
+      const requestData = {
+        chainId: this.networkId,
+        inputTokens,
+        outputTokens,
+        userAddr: ethers.getAddress(this.account.toLowerCase()),
+        slippageLimitPercent: this.getSlippagePercent(),
+        sourceBlacklist: this.getSourceLiquidityBlackList(),
+        sourceWhitelist: whiteList ?? [],
+        simulate: true,
+        pathViz: true,
+      };
+
+      const data: any = await this.odosSwapRequest(requestData);
+
+      if (!data) {
+        this.odosDataLoading = false;
+        return;
+      }
+      const finalOutput = getZapinOutputTokens(
+        data,
+        this.selectedOutputTokens,
+        resp,
+      );
+
       if (!resp) return;
 
-      resp[5]?.forEach((_: BigInt, key: number) => {
-        const { price } = this.selectedOutputTokens[key].selectedToken;
-        const val = new BN(_?.toString() ?? 0)
-          .div(10 ** 18)
-          .div(price);
+      this.inputTokens = this.inputTokens.map((_) => ({
+        ..._,
+        usdValue: new BN(
+          _.sum,
+        ).times(_.selectedToken.price).toFixed(6, BN.ROUND_DOWN),
+      }));
 
-        this.selectedOutputTokens[key].value = val.toFixed();
-        this.selectedOutputTokens[key].sum = val.toFixed(5);
-      });
+      const totalInputUsd = this.inputTokens
+        .reduce((acc: BN, curr:any) => acc.plus(curr.usdValue), new BN(0)).toFixed();
+      const totalOutputUsd = finalOutput
+        .reduce((acc, curr) => acc
+          .plus(new BN(curr.sum).times(curr.selectedToken?.price)), new BN(0))
+        .toFixed();
+
+      this.outputTokens = finalOutput;
+      this.odosData = {
+        ...data,
+        percentDiff: countPercentDiff(totalInputUsd, totalOutputUsd),
+        netOutValue: totalOutputUsd,
+      };
+      this.odosDataLoading = false;
     },
     getSlippagePercent() {
       return this.slippagePercent;

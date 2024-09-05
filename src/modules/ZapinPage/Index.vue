@@ -36,19 +36,18 @@
 <script lang="ts">
 import {
   mapActions,
-  useStore,
 } from 'vuex';
 import AutoZapinV3 from '@/components/ZapForm/AutoZapinV3.vue';
 import SuccessZapModal from '@/modules/ModalTemplates/SuccessModal/SuccessZapModal.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
-import { inject } from 'vue';
 import { usePoolsQueryNew } from '@/hooks/fetch/usePoolsQuery.ts';
 import { useTokensQuery, useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.ts';
 import TableSkeleton from '@/components/TableSkeleton/Index.vue';
 import { isEmpty } from 'lodash';
+import { getTokenByAddress } from '@/store/helpers/index.ts';
+import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import type { TFilterPoolsParams, TPool } from '@/types/common/pools';
-import type { ITokenService } from '@/services/TokenService/TokenService';
 
 export default {
   name: 'ZapFormPage',
@@ -67,19 +66,15 @@ export default {
   },
   emits: ['toggle-modal'],
   setup: () => {
-    const { state } = useStore();
-
-    const tokenService = inject('tokenService') as ITokenService;
-
     const { data: poolList, isLoading: isPoolsLoading } = usePoolsQueryNew();
 
     const {
       data: allTokensList,
-    } = useTokensQueryNew(tokenService, state);
+    } = useTokensQueryNew();
 
     const {
       data: balanceTokensList,
-    } = useTokensQuery(tokenService, state);
+    } = useTokensQuery();
 
     return {
       poolList,
@@ -91,6 +86,7 @@ export default {
   data() {
     return {
       showModal: false,
+      zapInit: false,
       zapPool: {} as TPool,
     };
   },
@@ -100,10 +96,18 @@ export default {
         || isEmpty(this.allTokensList)
         || isEmpty(this.balanceTokensList);
     },
+    mergedTokenList() {
+      return mergedTokens(this.allTokensList as any[], this.balanceTokensList as any[]);
+    },
   },
   watch: {
     isShow(currVal: boolean) {
       this.showModal = currVal;
+    },
+    mergedTokenList(val) {
+      if (val?.length === 0) return;
+
+      this.handleClickSearch();
     },
     poolList() {
       this.init();
@@ -120,11 +124,15 @@ export default {
     ...mapActions('poolsData', ['setFilterParams']),
     handleClickSearch() {
       const tokens = (this.$route.query?.tokens as string)?.split('-');
+      const token0 = getTokenByAddress(tokens[0], this.mergedTokenList);
+
+      if (!token0 || this.zapInit) return;
       const filterParams: Partial<TFilterPoolsParams> = {
-        token0: tokens[0],
+        token0: token0.symbol,
         // token1: tokens[1],
       };
       this.setFilterParams(filterParams);
+      this.zapInit = true;
     },
     init() {
       if (!this.poolList || this.poolList?.length === 0) return;

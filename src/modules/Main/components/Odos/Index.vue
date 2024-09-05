@@ -135,8 +135,6 @@
         </div>
 
         <SwapSlippageSettings
-          :selected-input-tokens="selectedInputTokens"
-          :selected-output-tokens="selectedOutputTokens"
           @change-slippage="changeSlippage"
         />
 
@@ -236,11 +234,11 @@
 <!-- eslint-disable no-continue -->
 <script lang="ts">
 import {
-  mapActions, mapGetters, mapState, useStore,
+  mapActions, mapGetters, mapState,
 } from 'vuex';
 import { useEventBus } from '@vueuse/core';
 import { ethers } from 'ethers';
-import TokenForm from '@/modules/Main/components/Odos/TokenForm.vue';
+import TokenForm from '@/components/TokenForm/Index.vue';
 import Spinner from '@/components/Spinner/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
@@ -249,7 +247,6 @@ import SelectTokensModal from '@/components/TokensModal/Index.vue';
 import SelectTokensModalMobile from '@/modules/Main/components/MobileModals/TokenSelect.vue';
 import SwapSlippageSettings from '@/components/SwapSlippage/Index.vue';
 import { deviceType } from '@/utils/deviceType.ts';
-import { fixedByPrice } from '@/utils/numbers.ts';
 import { getRandomString } from '@/utils/strings.ts';
 import { clearApproveToken, getAllowanceValue, approveToken } from '@/utils/contractApprove.ts';
 import odosApiService from '@/services/odos-api-service.ts';
@@ -258,15 +255,18 @@ import {
   getNewInputToken,
   getNewOutputToken,
   maxAll,
-  updateTokenValue,
   getDefaultSecondtoken,
   WHITE_LIST_ODOS,
 } from '@/store/helpers/index.ts';
 import BigNumber from 'bignumber.js';
-import { computed, defineComponent, inject } from 'vue';
+import { computed, defineComponent } from 'vue';
 import { useTokensQuery, useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.ts';
-import TokenService, { type ITokenService } from '@/services/TokenService/TokenService.ts';
+import TokenService from '@/services/TokenService/TokenService.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
+import { useRefreshBalances } from '@/hooks/fetch/useRefreshBalances.ts';
+import { parseErrorLog } from '@/utils/errors.ts';
+import { getOdosOutputTokens, getUpdatedTokenVal } from '@/components/ZapForm/helpers.ts';
+import { debounce } from 'lodash';
 
 export default defineComponent({
   name: 'SwapForm',
@@ -287,27 +287,22 @@ export default defineComponent({
     },
   },
   setup: () => {
-    const { state } = useStore() as any;
-
-    const tokenService = inject('tokenService') as ITokenService;
-
     const {
       data: balanceList,
       isLoading,
       isBalancesLoading,
-      refetchAll,
-    } = useTokensQuery(tokenService, state);
+    } = useTokensQuery();
 
     const {
       data: allTokensList,
-    } = useTokensQueryNew(tokenService, state);
+    } = useTokensQueryNew();
 
     return {
       allTokensList,
       balanceList,
       isAllDataLoaded: computed(() => !isLoading.value),
       isBalancesLoading,
-      refetchAll,
+      refetchAll: useRefreshBalances(),
     };
   },
   data() {
@@ -608,24 +603,7 @@ export default defineComponent({
       this.updateQuotaInfo();
     },
     updateTokenValueMethod(tokenData: any) {
-      let currToken = null;
-
-      if (tokenData.isMaxBal) {
-        currToken = updateTokenValue(
-          tokenData,
-          tokenData.value,
-          this.checkApproveForToken,
-          tokenData.selectedToken.balanceData.originalBalance,
-        );
-      } else {
-        currToken = updateTokenValue(
-          tokenData,
-          tokenData.value,
-          this.checkApproveForToken,
-        );
-      }
-
-      delete currToken.isMaxBal;
+      const currToken = getUpdatedTokenVal(tokenData, this.checkApproveForToken);
       const indexOf = this.inputTokens.map((_) => _.id).indexOf(currToken.id);
       this.inputTokens[indexOf] = currToken;
       this.updateQuotaInfo();
@@ -872,8 +850,8 @@ export default defineComponent({
 
       const requestData = {
         chainId: this.networkId,
-        inputTokens: this.getRequestInputTokens(),
-        outputTokens: this.getRequestOutputTokens(),
+        inputTokens: this.getRequestTokens(true),
+        outputTokens: this.getRequestTokens(false),
         gasPrice: actualGas,
         userAddr: ethers.getAddress(this.account.toLowerCase()),
         slippageLimitPercent: this.getSlippagePercent,
@@ -964,8 +942,8 @@ export default defineComponent({
       this.isSumulateSwapLoading = true;
       const actualGas = await this.getActualGasPrice(this.networkId);
 
-      const input = this.getRequestInputTokens(false);
-      const output = this.getRequestOutputTokens(false);
+      const input = this.getRequestTokens(true);
+      const output = this.getRequestTokens(false);
       if (!input.length || !output.length) {
         this.isSumulateSwapLoading = false;
         this.isSumulateIntervalStarted = false;
@@ -992,7 +970,7 @@ export default defineComponent({
 
       this.quoteRequest(requestData)
         .then((data: any) => {
-          this.updateSelectedOutputTokens(data);
+          this.outputTokens = getOdosOutputTokens(data, this.selectedOutputTokens);
 
           this.isSumulateSwapLoading = false;
           this.isSumulateIntervalStarted = false;
@@ -1011,51 +989,6 @@ export default defineComponent({
           this.$emit('update-is-loading-data', false);
         });
     },
-    // function get data.outTokens and data.outAmounts and find matches in selectedOutputTokens
-    // and update selectedOutputTokens with new values
-    updateSelectedOutputTokens(data: any) {
-      if (!data || !data.outTokens || !data.outAmounts) {
-        return;
-      }
-
-      const { outTokens } = data;
-      const { outAmounts } = data;
-      const { selectedOutputTokens } = this;
-      const selectedOutputTokensCount = selectedOutputTokens.length;
-      const outTokensCount = outTokens.length;
-      const outAmountsCount = outAmounts.length;
-
-      if (
-        selectedOutputTokensCount < 1
-        || outTokensCount < 1
-        || outAmountsCount < 1
-      ) {
-        return;
-      }
-
-      const selectedOutputTokensMap: any = {};
-      for (let i = 0; i < selectedOutputTokensCount; i++) {
-        const token: any = selectedOutputTokens[i];
-        selectedOutputTokensMap[
-          token.selectedToken.address.toLowerCase()
-        ] = token;
-      }
-
-      for (let i = 0; i < outTokensCount; i++) {
-        const tokenAddress = outTokens[i];
-        const tokenAmount = outAmounts[i];
-        const token: any = selectedOutputTokensMap[tokenAddress.toLowerCase()];
-        if (token) {
-          const { selectedToken } = token;
-          const sum = new BigNumber(tokenAmount)
-            .div(10 ** selectedToken.decimals);
-          token.sum = sum.toFixed(fixedByPrice(sum.toNumber()) + 2);
-        }
-
-        this.outputTokens[i] = token;
-      }
-    },
-
     getSourceBlackList(networkId: any) {
       if (networkId === 324) {
         return ['Hashflow', 'Wombat', 'Maverick'];
@@ -1152,7 +1085,7 @@ export default defineComponent({
           console.error('Error when approve token.', e);
           this.firstSwipeClickOnApprove = false;
           this.closeWaitingModal();
-          this.showErrorModalWithMsg({ errorType: 'approve', errorMsg: e });
+          this.showErrorModalWithMsg({ errorType: 'approve', errorMsg: parseErrorLog(e) });
         });
 
       const finishTx = () => {
@@ -1170,37 +1103,16 @@ export default defineComponent({
       finishTx();
     },
 
-    getRequestInputTokens(ignoreNullable?: any) {
-      const inputTokens = [];
-      for (let i = 0; i < this.selectedInputTokens.length; i++) {
-        const token: any = this.selectedInputTokens[i];
-        const { selectedToken } = token;
-        if (!ignoreNullable && !token.value) continue;
+    getRequestTokens(isInput: boolean) {
+      const list = isInput ? this.selectedInputTokens : this.selectedOutputTokens;
 
-        if (token.value > 0) {
-          inputTokens.push({
-            tokenAddress: selectedToken.address,
-            amount: String(token.contractValue),
-          });
-        }
-      }
-      return inputTokens;
+      return list
+        .filter((_) => _.value)
+        .map((_) => ({
+          tokenAddress: _?.selectedToken.address,
+          amount: isInput ? String(_.contractValue) : String(_.value),
+        }));
     },
-    getRequestOutputTokens(ignoreNullable?: any) {
-      const outputTokens = [];
-      for (let i = 0; i < this.selectedOutputTokens.length; i++) {
-        const token: any = this.selectedOutputTokens[i];
-        const { selectedToken } = token;
-        if (!ignoreNullable && !token.value) continue;
-
-        outputTokens.push({
-          tokenAddress: selectedToken.address,
-          proportion: String(token.value),
-        });
-      }
-      return outputTokens;
-    },
-
     lockProportion(isLock: any, token: any) {
       if (this.outputTokensWithSelectedTokensCount <= 1 && !isLock) return;
 
@@ -1318,11 +1230,7 @@ export default defineComponent({
     setSwapMethod(method: any) {
       this.swapMethod = method;
     },
-
-    updateQuotaInfo() {
-      this.simulateSwap();
-    },
-
+    updateQuotaInfo: debounce(function debounceRoute(this: any) { this.simulateSwap(); }, 1000),
     initTabName(path: any, queryParams: any) {
       this.$router.push({
         path,

@@ -1,5 +1,21 @@
 export const codeErrorMap: any = {};
 
+export function parseErrorLog(e: any) {
+  if (e?.errorMsg?.detail) {
+    return e?.errorMsg?.detail;
+  }
+
+  if (e?.reason) {
+    return e?.reason;
+  }
+
+  if (e?.errorMsg?.shortMessage) {
+    return e?.errorMsg?.shortMessage;
+  }
+
+  return e;
+}
+
 export function getErrorMessage(e: any) {
   const errorMessage = codeErrorMap[e.code];
   return errorMessage || e.message || `Unknown error with code: ${e.code}`;

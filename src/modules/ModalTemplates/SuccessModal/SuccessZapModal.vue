@@ -35,7 +35,6 @@
         />
       </template>
       <div class="zap-modal-footer">
-        Leave your feedback on Zap In feature and win $50 reward
         <a
           href="https://forms.gle/BCwwX4yhGW7EadTCA"
           target="_blank"
@@ -57,16 +56,15 @@
 import ModalComponent from '@/components/Modal/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
-import { mapGetters, mapState, useStore } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 import {
-  computed, defineComponent, inject, type ComputedRef,
+  computed, defineComponent,
 } from 'vue';
 import { getAllTokensString, getTransactionTotal } from '@/utils/tokens.ts';
 import { checkIsEveryStable } from '@/store/views/main/pools/helpers.ts';
 import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
-import { useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.ts';
-import type { ITokenService } from '@/services/TokenService/TokenService.ts';
-import type { TTokenInfo } from '@/types/common/tokens/index.d.ts';
+import { useTokensQuery, useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.ts';
+import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import ZapinContent from './components/zapin.vue';
 import WithdrawContent from './components/withdraw.vue';
 import HarvestContent from './components/harvest.vue';
@@ -94,20 +92,19 @@ export default defineComponent({
   },
   emits: ['close'],
   setup() {
-    const { state } = useStore() as any;
-
-    const tokenService = inject('tokenService') as ITokenService;
-
     const {
       data: allTokensList,
       isLoading,
       isBalancesLoading,
-    } = useTokensQueryNew(tokenService, state);
+    } = useTokensQueryNew();
+
+    const {
+      data: balancesList,
+    } = useTokensQuery();
 
     return {
-      allTokensMap: computed(() => new Map(
-        allTokensList.value.map((token) => [token.address, token]),
-      )) as ComputedRef<Map<string, TTokenInfo>>,
+      balancesList,
+      allTokensList,
       isAllDataLoaded: computed(() => !isLoading.value),
       isAllDataTrigger: computed(() => !isLoading.value),
       isBalancesLoading,
@@ -138,6 +135,10 @@ export default defineComponent({
     ...mapGetters('accountData', ['account']),
     ...mapGetters('posthog', ['posthogService']),
     ...mapGetters('network', ['explorerUrl']),
+
+    mergedTokenList() {
+      return mergedTokens(this.allTokensList, this.balancesList as any[]);
+    },
 
     getName() {
       if (this.successData.modalType === MODAL_TYPE.HARVEST) return 'HARVEST';
@@ -223,7 +224,7 @@ export default defineComponent({
       if (this.lastParsedReturnedToUserEvent?.amounts) {
         this.tokensReturnedList = mapEventTokenData(
           this.lastParsedReturnedToUserEvent,
-          this.allTokensMap,
+          this.mergedTokenList,
         );
       }
     },
@@ -232,7 +233,7 @@ export default defineComponent({
       if (this.lastParsedPutIntoPoolEvent?.amounts) {
         this.tokensStakedList = mapEventTokenData(
           this.lastParsedPutIntoPoolEvent,
-          this.allTokensMap,
+          this.mergedTokenList,
         );
       }
     },

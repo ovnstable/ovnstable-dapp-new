@@ -121,7 +121,7 @@
                       :is-token-removable="isOutputTokensRemovable"
                       :is-input-token="false"
                       :disabled="true"
-                      hide-balance
+                      :token-loading="odosDataLoading"
                       @remove-token="removeOutputToken"
                     />
                   </div>
@@ -129,60 +129,20 @@
               </div>
             </div>
 
-            <div v-if="sumOfAllSelectedTokensInUsd && ifMoreThanOneSelectedTokensAdded"
-                  class="transaction-info-container"
-            >
-                <div class="transaction-info-body">
-                  <div
-                    class="zap-row"
-                  >
-                    <div class="transaction-info-title">
-                      Slippage
-                    </div>
-                    <div class="transaction-info">
-                      {{ slippagePercent * 1 }}%
-                      <span class="transaction-info-additional">
-                        ({{ formatMoney(getSlippageAmount, 3) }})$
-                      </span>
-                    </div>
-                  </div>
-
-                  <div
-                    v-if="selectedInputTokens?.length > 1"
-                    class="zap-row"
-                  >
-                    <div class="transaction-info-title">
-                      Multi-swap Odos fee
-                    </div>
-                    <div class="transaction-info">
-                      {{ multiSwapOdosFeePercent * 1 }}%
-                      <span class="transaction-info-additional">
-                        ({{ formatMoney(getOdosFee, 3) }})$
-                      </span>
-                    </div>
-                  </div>
-
-                  <div
-                    class="zap-row"
-                  >
-                    <div class="transaction-info-title">
-                      Single-swap Odos fee
-                    </div>
-                    <div class="transaction-info">
-                      0.00% <span class="transaction-info-additional">(0)$</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-            <div>
-              <SwapSlippageSettings
-                :selected-input-tokens="selectedInputTokens"
-                :selected-output-tokens="selectedOutputTokens"
-                :zap-pool-data="zapPool"
-                @change-slippage="handleCurrentSlippageChanged"
-              />
-            </div>
+            <FeesBlock
+              v-if="ifMoreThanOneSelectedTokensAdded && odosData"
+              :slippage-percent="slippagePercent"
+              :get-odos-fee="getOdosFee"
+              :multi-swap-odos-fee-percent="multiSwapOdosFeePercent"
+              :selected-input-tokens="selectedInputTokens"
+              :selected-output-tokens="selectedOutputTokens"
+              :odos-data="odosData"
+              :agree-with-fees="agreeWithFees"
+              @change-agree="changeAgreeFees"
+            />
+            <SwapSlippageSettings
+              @change-slippage="handleCurrentSlippageChanged"
+            />
           </div>
           <ZapinV3
             v-if="zapPool?.poolVersion === 'v3'"
@@ -247,8 +207,7 @@
             btn-size="large"
             btn-styles="primary"
             full
-            disabled
-            :loading="isSwapLoading"
+            :loading="isSwapLoading || !agreeWithFees"
             @click="depositGauge(lastNftTokenId)"
             @keypress="depositGauge(lastNftTokenId)"
           >
@@ -259,8 +218,8 @@
             btn-size="large"
             btn-styles="primary"
             full
-            disabled
-            :loading="isSwapLoading"
+            :disabled="!agreeWithFees"
+            :loading="isSwapLoading || odosDataLoading"
             @click="stakeTrigger"
             @keypress="stakeTrigger"
           >
@@ -291,12 +250,11 @@
 <script lang="ts">
 import { useEventBus } from '@vueuse/core';
 import {
-  computed, defineComponent, inject, markRaw,
+  computed, defineComponent, markRaw,
 } from 'vue';
 import { ethers } from 'ethers';
 import {
   mapActions, mapGetters, mapState, mapMutations,
-  useStore,
 } from 'vuex';
 import {
   updateTokenValue,
@@ -304,7 +262,7 @@ import {
   getNewOutputToken,
   getNewInputToken,
   WHITE_LIST_ODOS,
-  getTokenBySymbol,
+  getTokenByAddress,
 } from '@/store/helpers/index.ts';
 import {
   getV3Proportion,
@@ -315,8 +273,7 @@ import Spinner from '@/components/Spinner/Index.vue';
 import ChangeNetwork from '@/components/ZapForm/ChangeNetwork.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
-import { formatMoney } from '@/utils/numbers.ts';
-import TokenForm from '@/modules/Main/components/Odos/TokenForm.vue';
+import TokenForm from '@/components/TokenForm/Index.vue';
 import PoolLabel from '@/components/ZapModal/PoolLabel.vue';
 import SelectTokensModal from '@/components/TokensModal/Index.vue';
 import ZapinV3 from '@/components/ZapForm/ZapinV3.vue';
@@ -325,14 +282,24 @@ import { approveToken, getAllowanceValue } from '@/utils/contractApprove.ts';
 import { onLeaveList, onEnterList, beforeEnterList } from '@/utils/animations.ts';
 import { MANAGE_FUNC, zapInStep } from '@/store/modals/waiting-modal.ts';
 import SwapSlippageSettings from '@/components/SwapSlippage/Index.vue';
-import { useTokensQuery, useRefreshBalances } from '@/hooks/fetch/useTokensQuery.ts';
-import TokenService, { type ITokenService } from '@/services/TokenService/TokenService.ts';
+import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
+import TokenService from '@/services/TokenService/TokenService.ts';
 import { loadAbi, srcStringBuilder } from '@/store/views/main/zapin/index.ts';
 import { buildEvmContract } from '@/utils/contractsMap.ts';
 import { isEmpty } from 'lodash';
 import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
-import { mapExcludeLiquidityPlatform, parseLogs, sourceLiquidityBlacklist } from './helpers.ts';
+import { useRefreshBalances } from '@/hooks/fetch/useRefreshBalances.ts';
+import FeesBlock, { MIN_IMPACT } from '@/components/FeesBlock/Index.vue';
+import { parseErrorLog } from '@/utils/errors.ts';
+import {
+  countPercentDiff,
+  getUpdatedTokenVal,
+  getZapinOutputTokens,
+  mapExcludeLiquidityPlatform,
+  parseLogs,
+  sourceLiquidityBlacklist,
+} from './helpers.ts';
 
 enum zapMobileSection {
   'TOKEN_FORM',
@@ -347,6 +314,7 @@ export default defineComponent({
     PoolLabel,
     BaseIcon,
     ZapinV3,
+    FeesBlock,
     ButtonComponent,
     SwapSlippageSettings,
     SelectTokensModal,
@@ -372,13 +340,9 @@ export default defineComponent({
     },
   },
   setup: () => {
-    const { state } = useStore() as any;
-
-    const tokenService = inject('tokenService') as ITokenService;
-
     const {
       isLoading: isAnyLoading,
-    } = useTokensQuery(tokenService, state);
+    } = useTokensQuery();
 
     return {
       isAnyLoading: computed(() => isAnyLoading.value),
@@ -387,6 +351,7 @@ export default defineComponent({
   },
   data: () => ({
     approvingPending: false,
+    agreeWithFees: true,
     inputTokens: [] as any[],
     outputTokens: [] as any[],
     maxInputTokens: MAX_INPUT_TOKENS,
@@ -396,7 +361,12 @@ export default defineComponent({
     zapContract: null as any,
     poolTokenContract: null as any,
     zapPoolRoot: null as any,
-    swapMethod: 'BUY', // BUY (secondTokens) / SELL (secondTokens)
+    odosDataLoading: false,
+    odosData: {
+      percentDiff: 0,
+      netOutValue: 0,
+      priceImpact: 0,
+    },
 
     isSwapLoading: false,
     slippagePercent: 0.5,
@@ -433,14 +403,10 @@ export default defineComponent({
         && !isEmpty(this.zapContract);
     },
     getOdosFee() {
-      return new BN(this.sumOfAllSelectedTokensInUsd)
+      return new BN(this.odosData.netOutValue)
         .times(this.multiSwapOdosFeePercent)
         .div(100)
         .toNumber();
-    },
-    getSlippageAmount() {
-      return new BN(this.sumOfAllSelectedTokensInUsd)
-        .times(this.slippagePercent).div(100).toNumber();
     },
     zapAllTokens() {
       const selectedAdd = this.inputTokens
@@ -448,6 +414,9 @@ export default defineComponent({
         .filter(Boolean);
 
       return mergedTokens(this.allTokensList as any[], this.balanceList as any[], selectedAdd);
+    },
+    mergedTokenList() {
+      return mergedTokens(this.allTokensList as any[], this.balanceList as any[]);
     },
     isInputTokensRemovable() {
       return this.inputTokens.length > 1;
@@ -539,19 +508,6 @@ export default defineComponent({
 
       return false;
     },
-    sumOfAllSelectedTokensInUsd() {
-      let sum = '0';
-      for (let i = 0; i < this.selectedInputTokens.length; i++) {
-        const token: any = this.selectedInputTokens[i];
-        const selectedTokenUsdValue = token.usdValue;
-        sum = new BN(
-          selectedTokenUsdValue,
-        ).plus(sum).toFixed(6, BN.ROUND_DOWN);
-      }
-
-      return sum;
-    },
-
     isAnyTokensBalanceIsInsufficient() {
       const tokens = this.selectedInputTokens;
       for (let i = 0; i < tokens.length; i++) {
@@ -565,6 +521,13 @@ export default defineComponent({
     },
   },
   watch: {
+    odosData(val) {
+      if (new BN(val.percentDiff).absoluteValue().gt(MIN_IMPACT)) {
+        this.agreeWithFees = false;
+      } else {
+        this.agreeWithFees = true;
+      }
+    },
     networkId() {
       this.$nextTick(() => {
         this.firstInit();
@@ -575,9 +538,6 @@ export default defineComponent({
       if (this.currentStage !== zapInStep.START) {
         this.$store.commit('zapinData/changeState', { field: 'selectedTokens', val: this.inputTokens });
       }
-    },
-    sumOfAllSelectedTokensInUsd() {
-      this.recalculateOutputTokensSum();
     },
     // on wallet connect
     async account(val) {
@@ -612,8 +572,10 @@ export default defineComponent({
     onLeaveList,
     beforeEnterList,
     onEnterList,
-    formatMoney,
 
+    changeAgreeFees() {
+      this.agreeWithFees = !this.agreeWithFees;
+    },
     // Mobile section switcher
     toggleMobileSection() {
       // eslint-disable-next-line operator-assignment, no-bitwise
@@ -631,28 +593,7 @@ export default defineComponent({
     },
 
     updateTokenValueMethod(tokenData: any) {
-      let newToken = null;
-
-      if (tokenData.isMaxBal) {
-        // bug with max balance sometimes, possible todo
-        // problem in getProportion formula
-        newToken = updateTokenValue(
-          tokenData,
-          tokenData.value,
-          this.checkApproveForToken,
-          new BN(tokenData.selectedToken.balanceData.originalBalance)
-            .minus(10)
-            .toFixed(),
-        );
-      } else {
-        newToken = updateTokenValue(
-          tokenData,
-          tokenData.value,
-          this.checkApproveForToken,
-        );
-      }
-
-      this.updateTokenState(newToken);
+      this.updateTokenState(getUpdatedTokenVal(tokenData, this.checkApproveForToken));
     },
     selectFormToken() {
       this.showSelectTokensModals(true);
@@ -667,10 +608,9 @@ export default defineComponent({
     },
 
     async initContracts() {
-      const tokens = this.zapPool.name.split('/');
-      const tokenA = getTokenBySymbol(tokens[0], this.allTokensList);
-      const tokenB = getTokenBySymbol(tokens[1], this.allTokensList);
-
+      const tokens = (this.$route.query?.tokens as string)?.split('-');
+      const tokenA = getTokenByAddress(tokens[0], this.mergedTokenList);
+      const tokenB = getTokenByAddress(tokens[1], this.mergedTokenList);
       const abiGauge = srcStringBuilder('V3GaugeRebalance')(this.zapPool.chainName, this.zapPool.platform[0]);
       const abiGaugeContractFileV3 = await loadAbi(abiGauge);
 
@@ -812,7 +752,6 @@ export default defineComponent({
       this.selectedOutputTokens[0].value = 100;
     },
     async stakeTrigger() {
-      console.log(this.poolTokenContract, '__this.poolTokenContract');
       if (this.isSwapLoading) return;
 
       this.isSwapLoading = true;
@@ -878,29 +817,7 @@ export default defineComponent({
       // formulaOutputTokens sorted by pool pair and with zero for not exist in output formula.
       formulaOutputTokens = formulaResultOutputWithZero;
 
-      const inputDecimals = formulaInputTokens.map((token: any) => token.decimals);
-      const inputAddresses = formulaInputTokens.map((token: any) => token.address);
-      const inputAmounts = formulaInputTokens.map((token: any) => token.contractValue);
-      const inputPrices = formulaInputTokens.map((token: any) => token.price);
-
-      // (!) List - formulaOutputTokens with 0 amount and sort like in pool pair.
-      const outputDecimals = formulaOutputTokens.map((token: any) => token.decimals);
-      const outputAddresses = formulaOutputTokens.map((token: any) => token.address);
-      const outputAmounts = formulaOutputTokens.map((token: any) => token.contractValue);
-      const outputPrices = formulaOutputTokens.map((token: any) => token.price);
-
-      console.log(JSON.stringify({
-        inputTokensDecimals: [...inputDecimals],
-        inputTokensAddresses: [...inputAddresses],
-        inputTokensAmounts: [...inputAmounts],
-        inputTokensPrices: [...inputPrices],
-        outputTokensDecimals: [...outputDecimals],
-        outputTokensAddresses: [...outputAddresses],
-        outputTokensAmounts: [...outputAmounts],
-        outputTokensPrices: [...outputPrices],
-      }), '__PARAMS');
-
-      console.log(userInputTokens, '__userInputTokens');
+      let amountMins: string[] = [];
       let proportions: any = {
         inputTokens: [],
         outputTokens: [],
@@ -917,6 +834,10 @@ export default defineComponent({
           price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
         })),
         this.zapContract,
+        poolOutputTokens.map((_) => ({
+          tokenAddress: _?.selectedToken?.address,
+          price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
+        })),
       );
 
       if (!resp) return;
@@ -930,13 +851,9 @@ export default defineComponent({
           tokenAddress: _,
           proportion: new BN(resp[3][key]?.toString()).div(10 ** 6),
         })),
-        amountToken0Out: resp[4][0]?.toString(),
-        amountToken1Out: resp[4][1]?.toString(),
       };
 
-      console.log(resp, '__resp');
-
-      console.log(proportions, '__proportions');
+      amountMins = resp[2].map((_: any, key: number) => resp[6][key]?.toString());
 
       proportions.outputTokens = proportions.outputTokens.filter(
         (item: any) => new BN(item.proportion).gt(0),
@@ -957,6 +874,7 @@ export default defineComponent({
           proportions.inputTokens,
           proportions.outputTokens,
           proportions,
+          amountMins,
         );
 
         this.isSwapLoading = false;
@@ -983,6 +901,28 @@ export default defineComponent({
 
       this.odosSwapRequest(requestData)
         .then(async (data: any) => {
+          const finalOutput = getZapinOutputTokens(
+            data,
+            this.selectedOutputTokens,
+            resp,
+          );
+          amountMins = this.selectedOutputTokens.map((_) => {
+            const tokenFound = data.outTokens.map((_: string) => _.toLowerCase())
+              .includes(_.selectedToken.address?.toLowerCase());
+
+            return tokenFound ? _.originalBalance : '0';
+          });
+
+          this.outputTokens = finalOutput;
+          this.odosData = data;
+          this.odosDataLoading = false;
+
+          proportions = {
+            ...proportions,
+            amountToken0Out: finalOutput[0]?.tokenOut,
+            amountToken1Out: finalOutput[1]?.tokenOut,
+          };
+
           const assembleData = {
             userAddr: ethers.getAddress(
               request.userAddr.toLowerCase(),
@@ -998,6 +938,7 @@ export default defineComponent({
                 proportions.inputTokens,
                 proportions.outputTokens,
                 proportions,
+                amountMins,
               );
             })
             .catch((e) => {
@@ -1106,7 +1047,6 @@ export default defineComponent({
     ) {
       this.currentStage = zapInStep.STAKE_LP;
       this.showWaitingModal('Stake LP in process');
-
       console.log({
         acc: this.account,
         lastNftTokenId,
@@ -1148,6 +1088,7 @@ export default defineComponent({
       requestInputTokens: any[],
       requestOutputTokens: any[],
       proportions: any,
+      amountMins: string[],
     ) {
       const requestInput = [];
       for (let i = 0; i < requestInputTokens.length; i++) {
@@ -1167,7 +1108,12 @@ export default defineComponent({
 
       const txData = {
         inputs: requestInput,
-        outputs: requestOutput,
+        outputs: requestOutput.map((_, key) => ({
+          ..._,
+          amountMin: new BN(amountMins[key])
+            .times(1 - this.getSlippagePercent() / 100)
+            .toFixed(0),
+        })),
         data: responseData ? responseData.transaction.data : '0x',
       };
 
@@ -1195,6 +1141,20 @@ export default defineComponent({
         const tx = await this.zapContract.zapIn(txData, gaugeData, params);
         const receipt = await tx.wait();
 
+        if (this.gaugeContract.target === '0x0000000000000000000000000000000000000000') {
+          this.triggerSuccessZapin(
+            {
+              isShow: true,
+              inputTokens: this.inputTokens,
+              outputTokens: this.outputTokens,
+              hash: tx.hash,
+              pool: this.zapPool,
+              modalType: MODAL_TYPE.ZAPIN,
+            },
+          );
+          return;
+        }
+
         this.$store.commit('odosData/changeState', {
           field: 'lastZapResponseData',
           val: markRaw(receipt),
@@ -1209,7 +1169,10 @@ export default defineComponent({
       } catch (e: any) {
         this.isSwapLoading = false;
         this.closeWaitingModal();
-        this.showErrorModalWithMsg({ errorType: 'zap', errorMsg: e });
+        this.showErrorModalWithMsg({
+          errorType: 'zap',
+          errorMsg: parseErrorLog(e),
+        });
       }
     },
     clearQuotaInfo() {
@@ -1223,14 +1186,19 @@ export default defineComponent({
       });
     },
     async recalculateProportion() {
+      this.odosDataLoading = true;
       const emptyVals = this.inputTokens.map((_) => {
         if (new BN(_?.value).eq(0) || !_?.value) return null;
 
         return _;
       });
 
-      if (emptyVals.every((_) => !_)) return;
+      if (emptyVals.every((_) => !_)) {
+        this.odosDataLoading = false;
+        return;
+      }
 
+      console.log(this.selectedInputTokens, '__this.selectedInputTokens');
       const resp = await getV3Proportion(
         this.zapPool.address,
         this.v3Range.ticks,
@@ -1240,19 +1208,80 @@ export default defineComponent({
           price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
         })),
         this.zapContract,
+        this.selectedOutputTokens.map((_) => ({
+          tokenAddress: _?.selectedToken?.address,
+          price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
+        })),
       );
 
-      if (!resp || resp[5]?.length === 0) return;
+      if (!resp) {
+        this.odosDataLoading = false;
+        return;
+      }
 
-      resp[5]?.forEach((_: BigInt, key: number) => {
-        const { price } = this.selectedOutputTokens[key].selectedToken;
-        const val = new BN(_?.toString() ?? 0)
-          .div(10 ** 18)
-          .div(price);
+      console.log(resp, '___resp');
+      const inputTokens = this.selectedInputTokens
+        .map((_: any, key: number) => ({
+          tokenAddress: _?.selectedToken?.address,
+          amount: resp[1][key]?.toString(),
+        }))
+        .filter(
+          (item: any) => new BN(item.amount).gt(0),
+        );
 
-        this.selectedOutputTokens[key].value = val.toFixed();
-        this.selectedOutputTokens[key].sum = val.toFixed(5);
-      });
+      if (inputTokens?.length === 0) {
+        this.odosDataLoading = false;
+        return;
+      }
+
+      const outputTokens = resp[2]
+        .map((_: any, key: number) => ({
+          tokenAddress: _,
+          proportion: new BN(resp[3][key]?.toString()).div(10 ** 6).toFixed(),
+        }))
+        .filter(
+          (item: any) => new BN(item.proportion).gt(0),
+        );
+
+      const whiteList = WHITE_LIST_ODOS[this.networkId as keyof typeof WHITE_LIST_ODOS];
+
+      const requestData = {
+        chainId: this.networkId,
+        inputTokens,
+        outputTokens,
+        userAddr: ethers.getAddress(this.account.toLowerCase()),
+        slippageLimitPercent: this.getSlippagePercent(),
+        sourceBlacklist: this.getSourceLiquidityBlackList(),
+        sourceWhitelist: whiteList ?? [],
+        simulate: true,
+        pathViz: true,
+      };
+
+      const data: any = await this.odosSwapRequest(requestData);
+
+      if (!data) {
+        this.odosDataLoading = false;
+        return;
+      }
+      const finalOutput = getZapinOutputTokens(
+        data,
+        this.selectedOutputTokens,
+        resp,
+      );
+      const totalInputUsd = this.selectedInputTokens
+        .reduce((acc: BN, curr:any) => acc.plus(curr.usdValue), new BN(0)).toFixed();
+      const totalOutputUsd = finalOutput
+        .reduce((acc, curr) => acc
+          .plus(new BN(curr.sum).times(curr.selectedToken?.price)), new BN(0))
+        .toFixed();
+
+      this.outputTokens = finalOutput;
+      this.odosData = {
+        ...data,
+        percentDiff: countPercentDiff(totalInputUsd, totalOutputUsd),
+        netOutValue: totalOutputUsd,
+      };
+      this.odosDataLoading = false;
     },
     getSlippagePercent() {
       return this.slippagePercent;
@@ -1320,7 +1349,7 @@ export default defineComponent({
         .catch((e) => {
           console.error('Error when approve token.', e);
           this.closeWaitingModal();
-          this.showErrorModalWithMsg({ errorType: 'approve', errorMsg: e });
+          this.showErrorModalWithMsg({ errorType: 'approve', errorMsg: parseErrorLog(e) });
         });
 
       console.log('TRIGGER__2');
@@ -1339,22 +1368,6 @@ export default defineComponent({
       finishTx();
       this.currentStage = zapInStep.DEPOSIT;
     },
-    recalculateOutputTokensSum() {
-      for (let i = 0; i < this.selectedOutputTokens.length; i++) {
-        const token: any = this.selectedOutputTokens[i];
-        const tokenSum = new BN(
-          this.sumOfAllSelectedTokensInUsd,
-        ).times(token.value).div(100);
-        const sum = this.swapMethod === 'BUY'
-          ? new BN(tokenSum).div(token.selectedToken.price)
-          : new BN(tokenSum).times(token.selectedToken.price);
-        this.outputTokens[i] = {
-          ...token,
-          sum: this.formatMoney(sum.toNumber(), 4),
-        };
-      }
-    },
-
     addSelectedTokenToList(data: any) {
       if (data.isInput) {
         this.addSelectedTokenToInputList(data.tokenData, false);

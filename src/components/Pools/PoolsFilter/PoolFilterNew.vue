@@ -59,7 +59,7 @@
   <SelectTokensModal
     :is-show="isShowTokensModal"
     :select-token-input="true"
-    :tokens="allTokensList"
+    :tokens="mergedTokenList"
     :is-all-data-loaded="isAllDataLoaded"
     :selected-tokens="selectedTokens"
     :balances-loading="isLoading"
@@ -76,14 +76,14 @@
 
 <script lang="ts">
 import ButtonComponent from '@/components/Button/Index.vue';
-import { mapActions, mapGetters, useStore } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import SelectTokensModal from '@/components/TokensModal/Index.vue';
-import { computed, inject } from 'vue';
-import { useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.ts';
+import { computed } from 'vue';
+import { useTokensQuery, useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.ts';
+import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import type { TTokenInfo } from '@/types/common/tokens';
 import type { TFilterPoolsParams } from '@/types/common/pools';
-import type { ITokenService } from '@/services/TokenService/TokenService';
 
 type TSelectTokenWithSearch = {
     isInput: boolean,
@@ -115,20 +115,19 @@ export default {
     SelectTokensModal,
   },
   setup: () => {
-    const { state } = useStore() as any;
-
-    const tokenService = inject('tokenService') as ITokenService;
-
     const {
       data: allTokensList,
       isLoading,
       isBalancesLoading,
-    } = useTokensQueryNew(tokenService, state);
+    } = useTokensQueryNew();
+
+    const { data: balancesList } = useTokensQuery();
 
     return {
       allTokensList: computed(
         () => allTokensList.value.filter((token: TTokenInfo) => token.isPoolToken),
       ),
+      balancesList,
       isLoading,
       isAllDataLoaded: computed(() => !isLoading.value),
       isBalancesLoading,
@@ -144,6 +143,9 @@ export default {
   },
   computed: {
     ...mapGetters('accountData', ['account']),
+    mergedTokenList() {
+      return mergedTokens(this.allTokensList, this.balancesList as any[]);
+    },
   },
   methods: {
     ...mapActions('poolsData', ['setFilterParams']),

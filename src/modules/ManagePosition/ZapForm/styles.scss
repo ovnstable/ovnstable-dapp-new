@@ -174,50 +174,6 @@
   cursor: pointer;
 }
 
-.transaction-info-container {
-  max-width: 600px;
-}
-
-.transaction-info-title {
-  font-style: normal;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 24px;
-
-  color: #707a8b;
-}
-
-.transaction-info {
-  font-style: normal;
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 24px;
-  text-align: end;
-
-  color: var(--main-gray-text);
-}
-
-.transaction-info-additional {
-  font-style: normal;
-  font-weight: 200;
-  font-size: 16px;
-  line-height: 24px;
-
-  color: var(--main-gray-text);
-}
-
-.transaction-info-address {
-  text-decoration: underline;
-  font-weight: bold;
-  text-align: end;
-  color: var(--main-gray-text);
-}
-
-.transaction-info-footer {
-  border-top: 1px solid #dee1e5;
-  padding-top: 22px;
-}
-
 .loader-container {
   display: flex;
   justify-content: center;

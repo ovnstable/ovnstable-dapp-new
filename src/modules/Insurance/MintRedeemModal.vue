@@ -238,7 +238,7 @@
 
 <!-- eslint-disable no-param-reassign -->
 <script lang="ts">
-import { mapActions, mapGetters, useStore } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import ModalComponent from '@/components/Modal/Index.vue';
@@ -251,10 +251,10 @@ import { debounce } from 'lodash';
 import { deviceType } from '@/utils/deviceType.ts';
 import { buildInsuranceContract, buildOvnContract, chainContractsMap } from '@/utils/contractsMap.ts';
 import StepsRow, { mintRedeemStep } from '@/components/StepsRow/Index.vue';
-import { computed, defineComponent, inject } from 'vue';
+import { computed, defineComponent } from 'vue';
 import { INSURANCE_AVAILABLE_NETWORKS } from '@/constants/networks/index.ts';
-import { useTokensQuery, useRefreshBalances } from '@/hooks/fetch/useTokensQuery.ts';
-import type { ITokenService } from '@/services/TokenService/TokenService';
+import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
+import { useRefreshBalances } from '@/hooks/fetch/useRefreshBalances.ts';
 
 export default defineComponent({
   name: 'MintRedeemModal',
@@ -268,15 +268,11 @@ export default defineComponent({
     SwitchChainInsurance,
   },
   setup: () => {
-    const { state } = useStore() as any;
-
-    const tokenService = inject('tokenService') as ITokenService;
-
     const {
       data: allTokensList,
       isLoading,
       isBalancesLoading,
-    } = useTokensQuery(tokenService, state);
+    } = useTokensQuery();
 
     return {
       allTokensList,
@@ -416,9 +412,6 @@ export default defineComponent({
 
         result = gasVal;
       } catch (e) {
-        console.error(
-          `Insurance estimateGas error: ${e}. Sum: ${this.fromValue}. Account: ${this.account}. `,
-        );
         this.showErrorModalWithMsg({ errorType: 'estimateGas', errorMsg: e });
         return -1;
       }
