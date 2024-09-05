@@ -171,12 +171,12 @@ export default defineComponent({
   setup: () => {
     const {
       data: balanceList,
-      isLoading,
+      isBalancesLoading,
     } = useTokensQuery();
 
     return {
       balanceList,
-      isLoading,
+      isLoading: isBalancesLoading,
       refreshBalances: useRefreshBalances(),
       inputToken: getNewInputToken(),
       outputToken: getNewInputToken(),
@@ -302,7 +302,7 @@ export default defineComponent({
         this.checkApprove(this);
       }
     },
-    isLoading(val: boolean) {
+    'isLoading.value': function (val: boolean) {
       console.log(this.balanceList, '__tokenList1');
       if (val) return;
       const params = {
@@ -323,7 +323,6 @@ export default defineComponent({
   methods: {
     ...mapActions('walletAction', ['connectWallet']),
     ...mapActions('mintRedeem', ['initTokenSchema']),
-    ...mapActions('gasPrice', ['refreshGasPrice']),
     ...mapActions('errorModal', ['showErrorModalWithMsg']),
     ...mapActions('waitingModal', ['showWaitingModal', 'closeWaitingModal']),
     ...mapActions('successModal', ['showSuccessModal']),
@@ -547,7 +546,6 @@ export default defineComponent({
     },
     async swapTokens() {
       try {
-        await this.refreshGasPrice();
         this.showWaitingModal('swaping in process');
         const networkId = this.networkId as keyof typeof MINTREDEEM_SCHEME;
 
