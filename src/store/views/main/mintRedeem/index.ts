@@ -29,7 +29,6 @@ const actions = {
       { ...acc, [token.address]: token }
     ), {});
 
-    console.log(networkMintRedeemScheme, '__networkMintRedeemScheme');
     // eslint-disable-next-line array-callback-return, consistent-return
     const mintRedeemList = networkMintRedeemScheme.map((pair: any) => {
       if (tokenMap[pair.token0] && tokenMap[pair.token1]) {

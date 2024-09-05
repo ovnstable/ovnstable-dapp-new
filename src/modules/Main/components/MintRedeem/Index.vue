@@ -273,6 +273,18 @@ export default defineComponent({
     },
   },
   watch: {
+    'isLoading.value': function (val: boolean) {
+      if (val) return;
+      const params = {
+        tokenList: this.balanceList,
+        networkId: this.networkId,
+      };
+
+      if (this.balanceList.length > 0) {
+        this.initTokenSchema(params);
+        // this.initForm();
+      }
+    },
     inputToken() {
       this.checkApprove(this);
 
@@ -300,20 +312,6 @@ export default defineComponent({
         this.inputToken = output;
         this.outputToken = input;
         this.checkApprove(this);
-      }
-    },
-    'isLoading.value': function (val: boolean) {
-      console.log(this.balanceList, '__tokenList1');
-      if (val) return;
-      const params = {
-        tokenList: this.balanceList,
-        networkId: this.networkId,
-      };
-
-      console.log(this.balanceList, '__tokenList');
-      if (this.balanceList.length > 0) {
-        this.initTokenSchema(params);
-        // this.initForm();
       }
     },
     networkId(val: number | string) {
