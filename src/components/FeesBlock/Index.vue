@@ -57,7 +57,7 @@
                 'tx-info--green': !critImpact(odosData.percentDiff ?? 0),
               }"
             >
-              ({{ getFixedPrice(odosData.percentDiff) }}%)
+              (-{{ getFixedPrice(odosData.percentDiff) }}%)
             </span>
           </div>
         </div>

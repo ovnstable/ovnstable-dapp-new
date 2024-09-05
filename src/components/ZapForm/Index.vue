@@ -325,6 +325,7 @@ import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import { useRefreshBalances } from '@/hooks/fetch/useRefreshBalances.ts';
 import { parseErrorLog } from '@/utils/errors.ts';
 import {
+  countPercentDiff,
   getUpdatedTokenVal,
   getV2Proportions,
   getZapinOutputTokens,
@@ -1612,16 +1613,18 @@ export default defineComponent({
         resp,
       );
 
-      const totalUsd = finalOutput
+      const totalInputUsd = this.selectedInputTokens
+        .reduce((acc: BN, curr:any) => acc.plus(curr.usdValue), new BN(0)).toFixed();
+      const totalOutputUsd = finalOutput
         .reduce((acc, curr) => acc
           .plus(new BN(curr.sum).times(curr.selectedToken?.price)), new BN(0))
         .toFixed();
 
-      console.log(totalUsd, '__totalUsd');
       this.outputTokens = finalOutput;
       this.odosData = {
         ...data,
-        netOutValue: totalUsd,
+        percentDiff: countPercentDiff(totalInputUsd, totalOutputUsd),
+        netOutValue: totalOutputUsd,
       };
       this.odosDataLoading = false;
     },

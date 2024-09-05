@@ -293,6 +293,7 @@ import { useRefreshBalances } from '@/hooks/fetch/useRefreshBalances.ts';
 import FeesBlock, { MIN_IMPACT } from '@/components/FeesBlock/Index.vue';
 import { parseErrorLog } from '@/utils/errors.ts';
 import {
+  countPercentDiff,
   getUpdatedTokenVal,
   getZapinOutputTokens,
   mapExcludeLiquidityPlatform,
@@ -1267,14 +1268,18 @@ export default defineComponent({
         this.selectedOutputTokens,
         resp,
       );
-      const totalUsd = finalOutput
+      const totalInputUsd = this.selectedInputTokens
+        .reduce((acc: BN, curr:any) => acc.plus(curr.usdValue), new BN(0)).toFixed();
+      const totalOutputUsd = finalOutput
         .reduce((acc, curr) => acc
-          .plus(new BN(curr.sum).times(curr.selectedToken?.price)), new BN(0)).toFixed();
+          .plus(new BN(curr.sum).times(curr.selectedToken?.price)), new BN(0))
+        .toFixed();
 
       this.outputTokens = finalOutput;
       this.odosData = {
         ...data,
-        netOutValue: totalUsd,
+        percentDiff: countPercentDiff(totalInputUsd, totalOutputUsd),
+        netOutValue: totalOutputUsd,
       };
       this.odosDataLoading = false;
     },

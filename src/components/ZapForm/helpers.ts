@@ -207,18 +207,16 @@ export const getZapinOutputTokens = (data: any, selectedOutput: any[], respProp:
 
     if (token) {
       const tokenAmount = data.outAmounts[indexOfToken];
-      const tokenAmountUsd = data.outValues[indexOfToken];
+      // const tokenAmountUsd = data.outValues[indexOfToken];
       const tokenAmountProp = respProp[4][key];
       const sum = new BN(tokenAmount)
         .plus(tokenAmountProp)
         .div(10 ** token.selectedToken.decimals);
 
-      console.log(tokenAmount, '__AMOUNT');
-      const price = new BN(tokenAmountUsd)
-        .div(BN(tokenAmount).div(10 ** token.selectedToken.decimals))
-        .toFixed(6);
+      // const price = new BN(tokenAmountUsd)
+      //   .div(BN(tokenAmount).div(10 ** token.selectedToken.decimals))
+      //   .toFixed(6);
 
-      console.log(price, '__price');
       return {
         ...token,
         sum: sum.toFixed(fixedByPrice(sum.toNumber()) + 2),
@@ -372,4 +370,10 @@ export const getV2Proportions = async (
       .div(sumReserves)
       .toFixed(),
   });
+};
+
+export const countPercentDiff = (valueA: string, valueB: string) => {
+  const difference = new BN(valueA).minus(valueB);
+  const percentageDifference = new BN(new BN(difference).div(valueA).times(100)).abs().toFixed();
+  return percentageDifference;
 };

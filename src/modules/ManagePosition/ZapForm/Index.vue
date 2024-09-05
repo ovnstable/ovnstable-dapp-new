@@ -228,6 +228,7 @@ import { useRefreshBalances } from '@/hooks/fetch/useRefreshBalances.ts';
 import { parseErrorLog } from '@/utils/errors.ts';
 import FeesBlock, { MIN_IMPACT } from '@/components/FeesBlock/Index.vue';
 import {
+  countPercentDiff,
   getZapinOutputTokens, mapExcludeLiquidityPlatform, removeToken, sourceLiquidityBlacklist,
 } from '@/components/ZapForm/helpers.ts';
 import SwapSlippageSettings from '@/components/SwapSlippage/Index.vue';
@@ -1149,13 +1150,18 @@ export default {
         ).times(_.selectedToken.price).toFixed(6, BN.ROUND_DOWN),
       }));
 
-      const totalUsd = finalOutput
+      const totalInputUsd = this.inputTokens
+        .reduce((acc: BN, curr:any) => acc.plus(curr.usdValue), new BN(0)).toFixed();
+      const totalOutputUsd = finalOutput
         .reduce((acc, curr) => acc
-          .plus(new BN(curr.sum).times(curr.selectedToken?.price)), new BN(0)).toFixed();
+          .plus(new BN(curr.sum).times(curr.selectedToken?.price)), new BN(0))
+        .toFixed();
 
+      this.outputTokens = finalOutput;
       this.odosData = {
         ...data,
-        netOutValue: totalUsd,
+        percentDiff: countPercentDiff(totalInputUsd, totalOutputUsd),
+        netOutValue: totalOutputUsd,
       };
       this.odosDataLoading = false;
     },
