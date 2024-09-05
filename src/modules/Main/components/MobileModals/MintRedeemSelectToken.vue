@@ -1,8 +1,8 @@
 <template>
   <ModalComponent
-    :customClass="'mob-menu'"
-    type-modal="custom"
     v-model="showModal"
+    :custom-class="'mob-menu'"
+    type-modal="custom"
     @close="closeModal"
   >
     <div class="mob-menu__header">
@@ -27,7 +27,7 @@
       >
         <p>mobile</p>
         <h1>
-          Choose token to use for {{getStatus}}
+          Choose token to use for {{ getStatus }}
         </h1>
         <div
           class="slider__arrow-wrapper"
@@ -56,7 +56,6 @@
           @close-select="closeSelect"
         />
       </template>
-
     </div>
   </ModalComponent>
 </template>
@@ -76,12 +75,6 @@ export default {
     Spinner,
     ModalComponent,
   },
-  emits: ['close', 'close-select', 'add-token', 'remove-token'],
-  data() {
-    return {
-      showModal: false,
-    };
-  },
   props: {
     tokensList: {
       type: Array,
@@ -97,11 +90,6 @@ export default {
       required: false,
       default: false,
     },
-    reverseArray: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
     isInputToken: {
       type: Boolean,
       required: true,
@@ -112,6 +100,12 @@ export default {
       required: false,
       default: '',
     },
+  },
+  emits: ['close', 'close-select', 'add-token', 'remove-token'],
+  data() {
+    return {
+      showModal: false,
+    };
   },
 
   computed: {
