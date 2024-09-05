@@ -73,7 +73,7 @@
         :tokens-list="tokensList"
         :reverse-array="reverseArray"
         :is-input-token="isInputToken"
-        :selected-token="tokenInfo.symbol"
+        :selected-token="tokenFullData.symbol"
         :active-wrap="activeWrap"
         :is-loading="isLoading"
         @add-token="addSelectedTokenToList"
@@ -90,15 +90,13 @@ import InputComponent from '@/components/Input/Index.vue';
 import { formatMoney, fixedByPrice } from '@/utils/numbers.ts';
 import TokensChooseForm from '@/modules/Main/components/MintRedeem/TokenSelect/Index.vue';
 import { MINTREDEEM_SCHEME } from '@/store/views/main/mintRedeem/mocks.ts';
-import { defineComponent } from 'vue';
-import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
 import { isEmpty } from 'lodash';
 import { mintRedeemTypes, mintWrapStatus } from './types/index.ts';
 
 const wrapStatusArr = [mintWrapStatus.WRAP, mintWrapStatus.UNWRAP];
 
-export default defineComponent({
-  name: 'TokenForm',
+export default {
+  name: 'TokenFormMr',
   components: {
     InputComponent,
     TokensChooseForm,
@@ -129,17 +127,12 @@ export default defineComponent({
       required: true,
       default: true,
     },
+    balanceList: {
+      type: Array,
+      required: true,
+    },
   },
-  emits: { 'update-token': null, 'add-token': null },
-  setup: () => {
-    const {
-      data: balanceList,
-    } = useTokensQuery();
-
-    return {
-      balanceList,
-    };
-  },
+  emits: ['update-token', 'add-token'],
   data() {
     return {
       showTokenSelect: false,
@@ -148,6 +141,9 @@ export default defineComponent({
   computed: {
     ...mapGetters('network', ['networkId']),
     ...mapGetters('mintRedeem', ['tokensListGetter']),
+    tokenFullData() {
+      return this.tokenInfo;
+    },
     tokenBalance() {
       if (!this.tokenInfo.balanceData.balanceInUsd) return '0';
       const usdBalance = Number(this.tokenInfo.balanceData.balanceInUsd);
@@ -279,7 +275,7 @@ export default defineComponent({
       }, this.isInputToken, true);
     },
   },
-});
+};
 </script>
 
 <style>

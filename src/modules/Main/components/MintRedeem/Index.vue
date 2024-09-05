@@ -48,7 +48,8 @@
         :is-input-token="true"
         :reverse-array="isReverseArray"
         :active-wrap="mintWrapTab"
-        :is-loading="isLoading"
+        :is-loading="false"
+        :balance-list="balanceList"
         @add-token="selectFormToken"
         @update-token="updateTokenValueMethod"
       />
@@ -61,7 +62,8 @@
         :is-input-token="false"
         :reverse-array="isReverseArray"
         :active-wrap="mintWrapTab"
-        :is-loading="isLoading"
+        :is-loading="false"
+        :balance-list="balanceList"
         @add-token="selectFormToken"
       />
     </div>
@@ -154,12 +156,10 @@ import BigNumber from 'bignumber.js';
 import { ABI_Exchange, ABI_Market } from '@/assets/abi/index.ts';
 import { getAllowanceValue, approveToken } from '@/utils/contractApprove.ts';
 import TokenService from '@/services/TokenService/TokenService.ts';
-import { defineComponent } from 'vue';
-import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
 import { useRefreshBalances } from '@/hooks/fetch/useRefreshBalances.ts';
 import { parseErrorLog } from '@/utils/errors.ts';
 
-export default defineComponent({
+export default {
   name: 'MintRedeem',
   components: {
     SwitchTabs,
@@ -168,15 +168,14 @@ export default defineComponent({
     GasSettings,
     ButtonComponent,
   },
-  setup: () => {
-    const {
-      data: balanceList,
-      isBalancesLoading,
-    } = useTokensQuery();
-
+  props: {
+    balanceList: {
+      type: Array,
+      required: true,
+    },
+  },
+  data() {
     return {
-      balanceList,
-      isLoading: isBalancesLoading,
       refreshBalances: useRefreshBalances(),
       inputToken: getNewInputToken(),
       outputToken: getNewInputToken(),
@@ -687,7 +686,7 @@ export default defineComponent({
       return `${valueStr.slice(0, index)}.${valueStr.slice(index)}`;
     },
   },
-});
+};
 </script>
 
 <style lang="scss" scoped>
