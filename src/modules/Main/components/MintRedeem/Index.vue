@@ -156,7 +156,6 @@ import { getAllowanceValue, approveToken } from '@/utils/contractApprove.ts';
 import TokenService from '@/services/TokenService/TokenService.ts';
 import { defineComponent } from 'vue';
 import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
-import type { TTokenInfo } from '@/types/common/tokens/index.ts';
 import { useRefreshBalances } from '@/hooks/fetch/useRefreshBalances.ts';
 import { parseErrorLog } from '@/utils/errors.ts';
 
@@ -171,18 +170,14 @@ export default defineComponent({
   },
   setup: () => {
     const {
-      data: allTokensList,
+      data: balanceList,
       isLoading,
     } = useTokensQuery();
 
     return {
-      allTokensList,
+      balanceList,
       isLoading,
       refreshBalances: useRefreshBalances(),
-    };
-  },
-  data() {
-    return {
       inputToken: getNewInputToken(),
       outputToken: getNewInputToken(),
       activeMintTab: mintWrapStatus.MINT as mintWrapStatus | -1,
@@ -307,12 +302,16 @@ export default defineComponent({
         this.checkApprove(this);
       }
     },
-    allTokensList(tokenList: TTokenInfo[]) {
+    isLoading(val: boolean) {
+      console.log(this.balanceList, '__tokenList1');
+      if (val) return;
       const params = {
-        tokenList,
+        tokenList: this.balanceList,
         networkId: this.networkId,
       };
-      if (tokenList.length > 0) {
+
+      console.log(this.balanceList, '__tokenList');
+      if (this.balanceList.length > 0) {
         this.initTokenSchema(params);
         // this.initForm();
       }
