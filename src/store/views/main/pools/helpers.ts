@@ -12,6 +12,7 @@ const ALL_STABLE_TOKENS = [
   'dola', 'frax', 'sfrax', 'usdc', 'usdt',
   'usdb', 'eusd', 'usdbc', 'crvusd', 'usdz',
   'usdc.e', 'axlusdc', 'axlusdt', 'eurc',
+  'mai',
 ];
 
 // const REVERT_AGG = [
