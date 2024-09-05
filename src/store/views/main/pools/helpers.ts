@@ -8,9 +8,10 @@ import {
 
 // const OVN_STABLE_TOKENS = ['USD+', 'DAI+', 'WUSD+', 'USDC+', 'USDT+'];
 const ALL_STABLE_TOKENS = [
-  'USD+', 'DAI+', 'WUSD+', 'USDC+', 'USDT+', 'DOLA',
-  'FRAX', 'SFRAX', 'USDC', 'USDT', 'USDB', 'EUSD',
-  'USDBC', 'CRVUSD', 'USDZ', 'USDC.E',
+  'usd+', 'dai+', 'wusd+', 'usdc+', 'usdt+',
+  'dola', 'frax', 'sfrax', 'usdc', 'usdt',
+  'usdb', 'eusd', 'usdbc', 'crvusd', 'usdz',
+  'usdc.e', 'axlusdc', 'axlusdt', 'eurc',
 ];
 
 // const REVERT_AGG = [
@@ -343,7 +344,7 @@ export const checkIsEveryStableToken = (tokenSymbols: string[]) => {
 
 export const checkIsEveryStable = (pool: any) => {
   const poolTokens = pool.name.split('/');
-  if (poolTokens.every((id: string) => ALL_STABLE_TOKENS.includes(id))) return true;
+  if (poolTokens.every((id: string) => ALL_STABLE_TOKENS.includes(id?.toLowerCase()))) return true;
   return false;
 };
 
