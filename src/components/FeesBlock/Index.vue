@@ -27,7 +27,7 @@
           </div>
           <div class="transaction-info">
             <span>
-              ~{{ getFixed(getInputUsdValue) }}$
+              ~{{ getTotal(getInputUsdValue) }}$
             </span>
           </div>
         </div>
@@ -40,7 +40,7 @@
           </div>
           <div class="transaction-info">
             <span>
-              ~{{ getFixed(getOutputValue) }}$
+              ~{{ getTotal(getOutputValue) }}$
             </span>
           </div>
         </div>
@@ -86,7 +86,7 @@
             </div>
             <div class="transaction-info">
               <span>
-                {{ getFixedToken(item.sum) }} {{ item.selectedToken.symbol }}
+                {{ getToken(item.sum) }} {{ item.selectedToken.symbol }}
               </span>
             </div>
           </div>
@@ -151,13 +151,11 @@ export default {
     v3Pool() {
       return this.poolVersion === 'v3';
     },
-    getFixed() {
+    getTotal() {
       return (val: string) => {
         if (new BN(val).eq(0)) return 0;
 
-        const fixed = new BN(val).gt(10) ? 0 : fixedByPrice(Number(val));
-
-        return formatMoney(Number(val), fixed);
+        return formatMoney(Number(val), this.getFixed(val));
       };
     },
     critImpact() {
@@ -169,16 +167,22 @@ export default {
 
       return val.gt(10) ? val.toFixed(0) : val.toFixed(4);
     },
-    getFixedToken() {
+    getToken() {
       return (val: string) => {
         if (new BN(val).eq(0)) return 0;
         const valTotal = new BN(val).times(1 - this.slippagePercent / 100);
+        const fixedAm = this.getFixed(val);
+        return formatMoney(Number(valTotal), fixedAm);
+      };
+    },
+    getFixed() {
+      return (val: string) => {
         let fixed = 2;
 
-        if (valTotal.gt(10000)) fixed = 0;
-        if (valTotal.lt(0.1)) fixed = fixedByPrice(Number(valTotal));
+        if (new BN(val).gt(10000)) fixed = 0;
+        if (new BN(val).lt(0.1)) fixed = fixedByPrice(Number(val));
 
-        return valTotal.toFixed(fixed);
+        return fixed;
       };
     },
     getFixedPrice() {

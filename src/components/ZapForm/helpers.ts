@@ -193,35 +193,31 @@ export const getZapinOutputTokens = (data: any, selectedOutput: any[], respProp:
     const newToken = token;
 
     if (indexOfToken === -1) {
-      const tokenAmount = respProp[4][key];
-      const sum = new BN(tokenAmount)
+      const amountOut = respProp[4][key];
+      const sum = new BN(amountOut)
         .div(10 ** token.selectedToken.decimals);
 
       return {
         ...token,
         sum: sum.toFixed(fixedByPrice(sum.toNumber()) + 2),
-        originalBalance: tokenAmount.toString(),
-        tokenOut: tokenAmount.toString(),
+        amountMin: amountOut.toString(),
+        tokenOut: amountOut?.toString(),
       };
     }
 
     if (token) {
       const tokenAmount = data.outAmounts[indexOfToken];
-      // const tokenAmountUsd = data.outValues[indexOfToken];
+      const amountOut = respProp[4][key];
       const tokenAmountProp = respProp[4][key];
       const sum = new BN(tokenAmount)
         .plus(tokenAmountProp)
         .div(10 ** token.selectedToken.decimals);
 
-      // const price = new BN(tokenAmountUsd)
-      //   .div(BN(tokenAmount).div(10 ** token.selectedToken.decimals))
-      //   .toFixed(6);
-
       return {
         ...token,
         sum: sum.toFixed(fixedByPrice(sum.toNumber()) + 2),
-        originalBalance: tokenAmount,
-        tokenOut: '0',
+        amountMin: tokenAmount,
+        tokenOut: amountOut?.toString(),
       };
     }
 

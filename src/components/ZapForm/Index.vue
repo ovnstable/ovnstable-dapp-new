@@ -960,7 +960,7 @@ export default defineComponent({
               const tokenFound = data.outTokens.map((_: string) => _.toLowerCase())
                 .includes(_.selectedToken.address?.toLowerCase());
 
-              return tokenFound ? _.originalBalance : '0';
+              return tokenFound ? _.amountMin : '0';
             });
 
             const totalUsd = finalOutput

@@ -145,7 +145,6 @@
             />
           </div>
           <ZapinV3
-            v-if="zapPool?.poolVersion === 'v3'"
             :zap-pool="zapPool"
             :zap-contract="zapContract"
             :tokens-data="outputTokens"
@@ -840,6 +839,7 @@ export default defineComponent({
         })),
       );
 
+      console.log(resp, '___resp');
       if (!resp) return;
 
       proportions = {
@@ -910,11 +910,22 @@ export default defineComponent({
             const tokenFound = data.outTokens.map((_: string) => _.toLowerCase())
               .includes(_.selectedToken.address?.toLowerCase());
 
-            return tokenFound ? _.originalBalance : '0';
+            return tokenFound ? _.amountMin : '0';
           });
 
+          const totalInputUsd = this.selectedInputTokens
+            .reduce((acc: BN, curr:any) => acc.plus(curr.usdValue), new BN(0)).toFixed();
+          const totalOutputUsd = finalOutput
+            .reduce((acc, curr) => acc
+              .plus(new BN(curr.sum).times(curr.selectedToken?.price)), new BN(0))
+            .toFixed();
+
           this.outputTokens = finalOutput;
-          this.odosData = data;
+          this.odosData = {
+            ...data,
+            percentDiff: countPercentDiff(totalInputUsd, totalOutputUsd),
+            netOutValue: totalOutputUsd,
+          };
           this.odosDataLoading = false;
 
           proportions = {
@@ -1198,7 +1209,6 @@ export default defineComponent({
         return;
       }
 
-      console.log(this.selectedInputTokens, '__this.selectedInputTokens');
       const resp = await getV3Proportion(
         this.zapPool.address,
         this.v3Range.ticks,
@@ -1268,6 +1278,7 @@ export default defineComponent({
         this.selectedOutputTokens,
         resp,
       );
+
       const totalInputUsd = this.selectedInputTokens
         .reduce((acc: BN, curr:any) => acc.plus(curr.usdValue), new BN(0)).toFixed();
       const totalOutputUsd = finalOutput
