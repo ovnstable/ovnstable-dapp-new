@@ -114,7 +114,6 @@
 <!-- eslint-disable no-continue -->
 <!-- eslint-disable no-param-reassign -->
 <script lang="ts">
-import { useEventBus } from '@vueuse/core';
 import {
   mapActions, mapGetters,
 } from 'vuex';
@@ -127,7 +126,6 @@ import Spinner from '@/components/Spinner/Index.vue';
 import ChangeNetwork from '@/components/ZapForm/ChangeNetwork.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BN from 'bignumber.js';
-import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
 import { loadAbi, REWARD_TOKEN, srcStringBuilder } from '@/store/views/main/zapin/index.ts';
 import { loadTokenImage } from '@/utils/tokenLogo.ts';
 import {
@@ -136,9 +134,11 @@ import {
 import { buildEvmContract } from '@/utils/contractsMap.ts';
 import { allTokensMap } from '@/hooks/fetch/useTokensQuery.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
+import zapinService from '@/services/Web3Service/zapin-service.ts';
+import { parseErrorLog } from '@/utils/errors.ts';
 
 export default defineComponent({
-  name: 'WithdrawForm',
+  name: 'HarvestForm',
   components: {
     ChangeNetwork,
     ButtonComponent,
@@ -258,7 +258,6 @@ export default defineComponent({
   },
   async mounted() {
     await this.initContracts();
-    this.init();
     this.setIsZapModalShow(false);
   },
   created() {
@@ -267,6 +266,7 @@ export default defineComponent({
   },
   methods: {
     ...mapActions('swapModal', ['showSwapModal', 'showMintView']),
+    ...mapActions('errorModal', ['showErrorModalWithMsg']),
     ...mapActions('poolsData', ['setIsZapModalShow']),
     ...mapActions('odosData', [
       'triggerSuccessZapin',
@@ -314,50 +314,21 @@ export default defineComponent({
       if (!this.isAvailableOnNetwork) this.mintAction();
     },
 
-    async init() {
-      const bus = useEventBus('odos-transaction-finished');
-      bus.on(() => {
-        this.finishTransaction();
-      });
-    },
-    finishTransaction() {
-      this.closeWaitingModal();
-    },
-
     async claimTrigger() {
-      console.log(this.zapPool, 'claimTrigger');
-      this.isSwapLoading = true;
-
       try {
         this.showWaitingModal('unstaking');
-
-        let tx;
-
-        if (this.zapPool.isStaked) {
-          tx = await this.gaugeContract.getReward(this.zapPool.tokenId);
-        } else {
-          tx = await this.poolTokenContract.collect(this.zapPool.tokenId);
-        }
-
-        await tx.wait();
-
-        this.triggerSuccessZapin(
-          {
-            isShow: true,
-            inputTokens: this.poolTokens,
-            hash: tx.hash,
-            pool: this.zapPool,
-            modalType: MODAL_TYPE.HARVEST,
-          },
+        this.isSwapLoading = true;
+        await zapinService.claimPosition(
+          this.zapPool,
+          this.gaugeContract,
+          this.poolTokenContract,
+          this.triggerSuccessZapin,
+          this.showErrorModalWithMsg,
         );
-        this.isSwapLoading = false;
-        this.closeWaitingModal();
-        this.closeWaitingModal();
-        this.positionFinish = true;
       } catch (e) {
-        console.log(e);
-        this.closeWaitingModal();
         this.isSwapLoading = false;
+        this.closeWaitingModal();
+        this.showErrorModalWithMsg({ errorMsg: parseErrorLog(e) });
       }
     },
     async checkNftApprove() {

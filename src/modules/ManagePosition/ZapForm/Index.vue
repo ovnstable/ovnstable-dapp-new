@@ -398,9 +398,7 @@ export default {
   methods: {
     ...mapActions('swapModal', ['showSwapModal', 'showMintView']),
     ...mapActions('poolsData', ['setIsZapModalShow']),
-    ...mapActions('odosData', [
-      'triggerSuccessZapin',
-    ]),
+    ...mapActions('odosData', ['triggerSuccessZapin']),
     ...mapActions('errorModal', ['showErrorModalWithMsg']),
     ...mapActions('waitingModal', ['closeWaitingModal']),
     ...mapActions('walletAction', ['connectWallet']),

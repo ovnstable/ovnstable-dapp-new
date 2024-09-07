@@ -6,7 +6,8 @@ import BN from 'bignumber.js';
 import { fixedByPrice, formatMoney } from '@/utils/numbers.ts';
 import { WHITE_LIST_ODOS } from '@/store/helpers/index.ts';
 import { ethers } from 'ethers';
-import { ODOS_REF_CODE } from '@/store/views/main/odos/index.ts';
+import { MODAL_TYPE, ODOS_REF_CODE } from '@/store/views/main/odos/index.ts';
+import { parseErrorLog } from '@/utils/errors.ts';
 import {
   calculateProportionForPool,
   countPercentDiff,
@@ -43,6 +44,34 @@ interface IPoolTokensData {
 }
 
 class ZapinService {
+  async claimPosition(
+    zapPool: any,
+    gaugeContract: any,
+    poolTokenContract: any,
+    triggerSuccess: Function,
+    inputTokens?: any,
+  ) {
+    let tx = null;
+
+    if (zapPool.isStaked) {
+      tx = await gaugeContract.getReward(zapPool.tokenId);
+    } else {
+      tx = await poolTokenContract.collect(zapPool.tokenId);
+    }
+
+    await tx.wait();
+
+    triggerSuccess(
+      {
+        isShow: true,
+        inputTokens: inputTokens ?? [],
+        hash: tx.hash,
+        pool: zapPool,
+        modalType: MODAL_TYPE.HARVEST,
+      },
+    );
+  }
+
   async getV3Rebalance(
     tokenId: number,
     poolAddress: string,
@@ -157,9 +186,8 @@ class ZapinService {
       await tx.wait();
       closeWaitingModal();
     } catch (e) {
-      console.error('Error when approve token.', e);
       closeWaitingModal();
-      showErrorModalWithMsg({ errorType: 'approve', errorMsg: e });
+      showErrorModalWithMsg({ errorMsg: parseErrorLog(e) });
     }
   }
 

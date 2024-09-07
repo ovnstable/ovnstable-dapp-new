@@ -2,7 +2,9 @@
 import BN from 'bignumber.js';
 import { ethers } from 'ethers';
 import { fixedByPrice } from '@/utils/numbers.ts';
-import { updateTokenValue } from '@/store/helpers/index.ts';
+import { getTokenByAddress, updateTokenValue } from '@/store/helpers/index.ts';
+import { loadAbi, srcStringBuilder } from '@/store/views/main/zapin/index.ts';
+import { buildEvmContract } from '@/utils/contractsMap.ts';
 
 const EVENT_SIG = ['uint256[]', 'address[]'];
 
@@ -371,5 +373,51 @@ export const initReqData = (
   return {
     inputT: requestInput,
     outputT: requestOutput,
+  };
+};
+
+export const initZapinContracts = async (
+  zapPool: any,
+  mergedAllTokens: any[],
+  evmSigner: any,
+  gaugeAddress: string,
+) => {
+  const tokenA = getTokenByAddress(zapPool?.token0Add, mergedAllTokens);
+  const tokenB = getTokenByAddress(zapPool?.token1Add, mergedAllTokens);
+
+  const abiGauge = srcStringBuilder('V3GaugeRebalance')(zapPool.chainName, zapPool.platform[0]);
+  const abiGaugeContractFileV3 = await loadAbi(abiGauge);
+
+  const abiV3Zap = srcStringBuilder('V3Zap')(zapPool.chainName, zapPool.platform[0]);
+  const abiContractV3Zap = await loadAbi(abiV3Zap);
+
+  const abiV3Nft = srcStringBuilder('V3Nft')(zapPool.chainName, zapPool.platform[0]);
+  const abiContractV3Nft = await loadAbi(abiV3Nft);
+
+  const gaugeContract = buildEvmContract(
+    abiGaugeContractFileV3.abi,
+    evmSigner,
+    gaugeAddress,
+  );
+
+  const zapContract = buildEvmContract(
+    abiContractV3Zap.abi,
+    evmSigner,
+    abiContractV3Zap.address,
+  );
+
+  const poolTokenContract = buildEvmContract(
+    abiContractV3Nft.abi,
+    evmSigner,
+    abiContractV3Nft.address,
+  );
+
+  const poolTokens = [tokenA, tokenB];
+
+  return {
+    gaugeContract,
+    zapContract,
+    poolTokenContract,
+    poolTokens,
   };
 };
