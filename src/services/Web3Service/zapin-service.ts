@@ -488,23 +488,9 @@ class ZapinService {
       price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
     }));
 
-    console.log(
-      zapPool.address,
-      v3RangeTicks,
-      selectedInputTokens.map((_) => ({
-        tokenAddress: _?.selectedToken?.address,
-        amount: _?.contractValue,
-        price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
-      })),
-      zapContract,
-      outputTokensForZap,
-      '__PARAMS',
-    );
-
     let resp = null;
 
     if (typeFunc === ZAPIN_TYPE.ZAPIN) {
-      console.log('1');
       resp = await this.getV3Proportion(
         zapPool.address,
         v3RangeTicks,
@@ -519,17 +505,6 @@ class ZapinService {
     }
 
     if (typeFunc === ZAPIN_TYPE.REBALANCE) {
-      console.log(
-        zapPool.tokenId?.toString(),
-        zapPool.address,
-        v3RangeTicks,
-        selectedOutputTokens.map((_) => ({
-          tokenAddress: _?.selectedToken?.address,
-          price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
-        })),
-        zapContract,
-        '2',
-      );
       resp = await this.getV3Rebalance(
         zapPool.tokenId?.toString(),
         zapPool.address,
