@@ -118,12 +118,11 @@
                   >
                     <TokenForm
                       :token-info="token"
-                      :is-token-removable="isOutputTokensRemovable"
+                      :is-token-removable="false"
                       :is-input-token="false"
                       :disabled="true"
                       :balances-loading="isAnyLoading"
                       :token-loading="odosDataLoading"
-                      @remove-token="removeOutputToken"
                     />
                   </div>
                 </div>
@@ -292,13 +291,6 @@ import {
   getTokenByAddress,
   WHITE_LIST_ODOS,
 } from '@/store/helpers/index.ts';
-import {
-  getProportion,
-  depositAllAtGauge,
-  checkApproveForGauge,
-  approveGaugeForStake,
-  getV3Proportion,
-} from '@/store/views/main/zapin/helpers.ts';
 import odosApiService from '@/services/odos-api-service.ts';
 
 import Spinner from '@/components/Spinner/Index.vue';
@@ -324,17 +316,10 @@ import { isEmpty } from 'lodash';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import { useRefreshBalances } from '@/hooks/fetch/useRefreshBalances.ts';
 import { parseErrorLog } from '@/utils/errors.ts';
+import zapinService from '@/services/Web3Service/zapin-service.ts';
 import {
-  countPercentDiff,
-  getUpdatedTokenVal,
-  getV2Proportions,
-  getZapinOutputTokens,
-  mapExcludeLiquidityPlatform,
-  parseLogs,
-  recalculateOutputTokensSum,
-  removeToken,
-  sourceLiquidityBlacklist,
-} from './helpers.ts';
+  getUpdatedTokenVal, mapExcludeLiquidityPlatform, parseLogs, removeToken, sourceLiquidityBlacklist,
+} from '@/services/Web3Service/utils/index.ts';
 
 enum zapMobileSection {
   'TOKEN_FORM',
@@ -468,10 +453,6 @@ export default defineComponent({
     },
     isInputTokensRemovable() {
       return this.inputTokens.length > 1;
-    },
-
-    isOutputTokensRemovable() {
-      return false;
     },
     isInputTokensAddAvailable() {
       return (
@@ -658,11 +639,6 @@ export default defineComponent({
     changeAgreeFees() {
       this.agreeWithFees = !this.agreeWithFees;
     },
-    checkForPriceDiff(data: any) {
-      if (data.percentDiff > 2) {
-        alert('Price difference for zapin, higher than 2%');
-      }
-    },
     toggleMobileSection() {
       // eslint-disable-next-line operator-assignment, no-bitwise
       this.currentSection = zapMobileSection.SET_PRICE_RANGE
@@ -749,10 +725,6 @@ export default defineComponent({
       this.$forceUpdate();
       this.recalculateProportion();
     },
-    removeOutputToken(id: string) {
-      removeToken(this.outputTokens, id);
-      this.resetOutputs();
-    },
     addNewInputToken() {
       this.inputTokens.push(getNewInputToken());
     },
@@ -801,27 +773,6 @@ export default defineComponent({
       this.clearAllSelectedTokens();
       this.addDefaultPoolToken();
     },
-    resetOutputs() {
-      if (!this.selectedOutputTokens.length) {
-        return;
-      }
-
-      if (this.selectedOutputTokens.length === 2) {
-        for (let i = 0; i < this.selectedOutputTokens.length; i++) {
-          const token: any = this.selectedOutputTokens[i];
-          token.value = 50;
-        }
-        return;
-      }
-
-      for (let i = 0; i < this.selectedOutputTokens.length; i++) {
-        const token: any = this.selectedOutputTokens[i];
-        token.value = 0;
-      }
-
-      // init first token value
-      this.selectedOutputTokens[0].value = 100;
-    },
     async stakeTrigger() {
       console.log(this.gaugeContractV3, '__thisgaugeContractV3');
       // await this.poolTokenContract.deposit(Number(26997));
@@ -851,14 +802,14 @@ export default defineComponent({
       };
 
       // min amount of tokens, after swap, to escape big swap loss
-      let amountMins: string[] = [];
+      const amountMins: string[] = [];
 
       console.log(userInputTokens, '__userInputTokens');
 
       let resp = null as any;
 
       if (this.zapPool?.poolVersion === 'v2') {
-        proportions = await getV2Proportions(
+        proportions = await zapinService.getV2Proportions(
           userInputTokens,
           poolOutputTokens,
           this.zapPool,
@@ -868,7 +819,7 @@ export default defineComponent({
 
       if (this.zapPool?.poolVersion === 'v3') {
         console.log(userInputTokens, '___userInputTokens');
-        resp = await getV3Proportion(
+        resp = await zapinService.getV3Proportion(
           this.zapPool.address,
           this.v3Range.ticks,
           userInputTokens.map((_) => ({
@@ -948,36 +899,24 @@ export default defineComponent({
 
       this.odosSwapRequest(requestData)
         .then(async (data: any) => {
-          this.checkForPriceDiff(data);
-
           if (this.zapPool?.poolVersion === 'v3') {
-            const finalOutput = getZapinOutputTokens(
+            const finalOutput = zapinService.getZapinOutputTokens(
               data,
-              this.selectedOutputTokens,
               resp,
+              this.selectedOutputTokens,
+              this.selectedInputTokens,
             );
-            amountMins = this.selectedOutputTokens.map((_) => {
-              const tokenFound = data.outTokens.map((_: string) => _.toLowerCase())
-                .includes(_.selectedToken.address?.toLowerCase());
 
-              return tokenFound ? _.amountMin : '0';
-            });
+            if (!finalOutput) return;
 
-            const totalUsd = finalOutput
-              .reduce((acc, curr) => acc
-                .plus(new BN(curr.sum).times(curr.selectedToken?.price)), new BN(0)).toFixed();
-
-            this.outputTokens = finalOutput;
-            this.odosData = {
-              ...data,
-              netOutValue: totalUsd,
-            };
+            this.outputTokens = finalOutput?.outputToken;
+            this.odosData = finalOutput?.odosData;
             this.odosDataLoading = false;
 
             proportions = {
               ...proportions,
-              amountToken0Out: finalOutput[0]?.tokenOut,
-              amountToken1Out: finalOutput[1]?.tokenOut,
+              amountToken0Out: finalOutput.outputToken[0]?.tokenOut,
+              amountToken1Out: finalOutput.outputToken[1]?.tokenOut,
             };
           }
 
@@ -1150,7 +1089,7 @@ export default defineComponent({
     ) {
       this.currentStage = zapInStep.APPROVE_GAUGE;
       const approveAmount = new BN(10).pow(24).toFixed();
-      const isGaugeApproved = await checkApproveForGauge(
+      const isGaugeApproved = await zapinService.checkApproveForGauge(
         this.poolTokenContract,
         approveAmount,
         this.routerContract,
@@ -1159,7 +1098,7 @@ export default defineComponent({
 
       if (!isGaugeApproved) {
         this.showWaitingModal('Approving gauge in process');
-        approveGaugeForStake(
+        zapinService.approveGaugeForStake(
           this.showWaitingModal,
           this.closeWaitingModal,
           this.showErrorModalWithMsg,
@@ -1219,7 +1158,7 @@ export default defineComponent({
         token: this.poolTokenContract,
 
       }, '___DATA1');
-      depositAllAtGauge(
+      zapinService.depositAllAtGauge(
         this.account,
         lastPoolInfoData,
         lastNftTokenId,
@@ -1469,7 +1408,7 @@ export default defineComponent({
 
       if (emptyVals.every((_) => !_)) return;
 
-      reserves = await getProportion(
+      reserves = await zapinService.getV2Reserves(
         this.zapPool.address,
         this.zapPool,
         this.zapContract,
@@ -1491,12 +1430,12 @@ export default defineComponent({
           .times(Number(outputToken1Price)).div(sumReserves).times(100)
           .toFixed();
 
-      this.outputTokens = recalculateOutputTokensSum(
+      this.outputTokens = zapinService.recalculateOutputTokensSum(
         this.selectedOutputTokens,
         this.selectedInputTokens,
       );
 
-      const proportions = await getV2Proportions(
+      const proportions = await zapinService.getV2Proportions(
         this.selectedInputTokens,
         this.selectedOutputTokens,
         this.zapPool,
@@ -1550,7 +1489,7 @@ export default defineComponent({
         return;
       }
 
-      const resp = await getV3Proportion(
+      const resp = await zapinService.getV3Proportion(
         this.zapPool.address,
         this.v3Range.ticks,
         this.selectedInputTokens.map((_) => ({
@@ -1607,25 +1546,17 @@ export default defineComponent({
       console.log(resp, '__resp');
       console.log(data, '__data');
 
-      const finalOutput = getZapinOutputTokens(
+      const finalOutput = zapinService.getZapinOutputTokens(
         data,
-        this.selectedOutputTokens,
         resp,
+        this.selectedOutputTokens,
+        this.selectedInputTokens,
       );
 
-      const totalInputUsd = this.selectedInputTokens
-        .reduce((acc: BN, curr:any) => acc.plus(curr.usdValue), new BN(0)).toFixed();
-      const totalOutputUsd = finalOutput
-        .reduce((acc, curr) => acc
-          .plus(new BN(curr.sum).times(curr.selectedToken?.price)), new BN(0))
-        .toFixed();
+      if (!finalOutput) return;
 
-      this.outputTokens = finalOutput;
-      this.odosData = {
-        ...data,
-        percentDiff: countPercentDiff(totalInputUsd, totalOutputUsd),
-        netOutValue: totalOutputUsd,
-      };
+      this.outputTokens = finalOutput.outputToken;
+      this.odosData = finalOutput.odosData;
       this.odosDataLoading = false;
     },
     async recalculateProportion() {

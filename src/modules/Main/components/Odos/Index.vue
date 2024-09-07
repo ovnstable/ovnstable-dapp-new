@@ -236,6 +236,7 @@
 import {
   mapActions, mapGetters, mapState,
 } from 'vuex';
+import { computed, defineComponent } from 'vue';
 import { useEventBus } from '@vueuse/core';
 import { ethers } from 'ethers';
 import TokenForm from '@/components/TokenForm/Index.vue';
@@ -259,13 +260,12 @@ import {
   WHITE_LIST_ODOS,
 } from '@/store/helpers/index.ts';
 import BigNumber from 'bignumber.js';
-import { computed, defineComponent } from 'vue';
 import { useTokensQuery, useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.ts';
 import TokenService from '@/services/TokenService/TokenService.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import { useRefreshBalances } from '@/hooks/fetch/useRefreshBalances.ts';
 import { parseErrorLog } from '@/utils/errors.ts';
-import { getOdosOutputTokens, getUpdatedTokenVal } from '@/components/ZapForm/helpers.ts';
+import { getOdosOutputTokens, getUpdatedTokenVal } from '@/services/Web3Service/utils/index.ts';
 import { debounce } from 'lodash';
 
 export default defineComponent({

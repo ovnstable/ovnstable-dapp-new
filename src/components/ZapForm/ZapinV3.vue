@@ -193,7 +193,7 @@ import BN from 'bignumber.js';
 import debounce from 'lodash/debounce';
 import { awaitDelay } from '@/utils/const.ts';
 import { checkIsEveryStable } from '@/store/views/main/pools/helpers.ts';
-import { createScaledArray } from './helpers.ts';
+import { createScaledArray } from '@/services/Web3Service/utils/index.ts';
 
 export default {
   name: 'ZapinV3',

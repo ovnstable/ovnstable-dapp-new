@@ -5,6 +5,10 @@ export function parseErrorLog(e: any) {
     return e?.errorMsg?.detail;
   }
 
+  if (e?.errorMsg?.message) {
+    return e?.errorMsg?.message;
+  }
+
   if (e?.reason) {
     return e?.reason;
   }

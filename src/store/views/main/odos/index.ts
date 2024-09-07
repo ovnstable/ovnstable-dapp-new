@@ -6,6 +6,7 @@ import { useEventBus } from '@vueuse/core';
 import BigNumber from 'bignumber.js';
 import _ from 'lodash';
 
+export const ODOS_REF_CODE = 7777777;
 const ODOS_DURATION_CONFIRM_REQUEST = 60;
 
 export enum MODAL_TYPE {
@@ -64,8 +65,6 @@ export const stateData = {
   typeOfPoolScheme: null, // OVN, ALL, null
 
   listOfBuyTokensAddresses: null, // for POOL_SWAP scheme
-  odosReferalCode: 7777777, // test account or user acc
-  odosZapReferalCode: 7777777, // test account
 
   swapSessionId: null,
   routerContract: null,

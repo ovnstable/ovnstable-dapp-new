@@ -122,7 +122,6 @@
                       :is-input-token="false"
                       :disabled="true"
                       :token-loading="odosDataLoading"
-                      @remove-token="removeOutputToken"
                     />
                   </div>
                 </div>
@@ -260,12 +259,8 @@ import {
   maxAll,
   getNewOutputToken,
   getNewInputToken,
-  WHITE_LIST_ODOS,
   getTokenByAddress,
 } from '@/store/helpers/index.ts';
-import {
-  getV3Proportion,
-} from '@/store/views/main/zapin/helpers.ts';
 import odosApiService from '@/services/odos-api-service.ts';
 
 import Spinner from '@/components/Spinner/Index.vue';
@@ -291,14 +286,11 @@ import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import { useRefreshBalances } from '@/hooks/fetch/useRefreshBalances.ts';
 import FeesBlock, { MIN_IMPACT } from '@/components/FeesBlock/Index.vue';
 import { parseErrorLog } from '@/utils/errors.ts';
+import zapinService from '@/services/Web3Service/zapin-service.ts';
 import {
-  countPercentDiff,
   getUpdatedTokenVal,
-  getZapinOutputTokens,
-  mapExcludeLiquidityPlatform,
   parseLogs,
-  sourceLiquidityBlacklist,
-} from './helpers.ts';
+} from '@/services/Web3Service/utils/index.ts';
 
 enum zapMobileSection {
   'TOKEN_FORM',
@@ -385,7 +377,6 @@ export default defineComponent({
       'additionalSwapStepType',
       'lastZapResponseData',
       'lastNftTokenId',
-      'odosReferalCode',
     ]),
 
     ...mapGetters('odosData', [
@@ -543,11 +534,6 @@ export default defineComponent({
       if (val) this.clearAndInitForm();
       if (!val) this.outputTokens = [getNewOutputToken()];
     },
-    isDisableButton(val) {
-      if (val) {
-        this.clearQuotaInfo();
-      }
-    },
   },
   async mounted() {
     this.currentStage = zapInStep.START;
@@ -662,10 +648,6 @@ export default defineComponent({
       this.$forceUpdate();
       this.recalculateProportion();
     },
-    removeOutputToken(id: string) {
-      this.removeToken(this.outputTokens, id);
-      this.resetOutputs();
-    },
     addNewInputToken() {
       this.inputTokens.push(getNewInputToken());
     },
@@ -698,13 +680,7 @@ export default defineComponent({
     async odosSwapRequest(requestData: any) {
       return odosApiService
         .quoteRequest(requestData)
-        .then((data) => {
-          this.$store.commit('odosData/changeState', {
-            field: 'swapResponseInfo',
-            val: data,
-          });
-          return data;
-        })
+        .then((data) => data)
         .catch((e) => {
           this.closeWaitingModal();
           if (e && e.message && e.message.includes('path')) {
@@ -729,252 +705,72 @@ export default defineComponent({
       this.clearAllSelectedTokens();
       this.addDefaultPoolToken();
     },
-    resetOutputs() {
-      if (!this.selectedOutputTokens.length) {
-        return;
-      }
-
-      if (this.selectedOutputTokens.length === 2) {
-        for (let i = 0; i < this.selectedOutputTokens.length; i++) {
-          const token: any = this.selectedOutputTokens[i];
-          token.value = 50;
-        }
-        return;
-      }
-
-      for (let i = 0; i < this.selectedOutputTokens.length; i++) {
-        const token: any = this.selectedOutputTokens[i];
-        token.value = 0;
-      }
-
-      // init first token value
-      this.selectedOutputTokens[0].value = 100;
-    },
     async stakeTrigger() {
       if (this.isSwapLoading) return;
 
-      this.isSwapLoading = true;
+      if (!this.v3Range || this.selectedInputTokens?.length === 0) return;
 
-      const actualGas = await odosApiService.getActualGasPrice(this.networkId);
-      const userInputTokens = this.selectedInputTokens;
-      const poolOutputTokens = this.selectedOutputTokens;
+      this.odosDataLoading = true;
 
-      const formulaInputTokens = [];
-      let formulaOutputTokens = [];
-
-      for (let i = 0; i < userInputTokens.length; i++) {
-        const inputToken = userInputTokens[i];
-        const userInputToken = inputToken.selectedToken;
-
-        const isFindUserInputTokenInPoolTokens = poolOutputTokens.find(
-          (poolToken) => poolToken.selectedToken.address === userInputToken.address,
+      try {
+        const data = await zapinService.recalculateProportionOdosV3(
+          this.selectedInputTokens,
+          this.selectedOutputTokens,
+          this.zapPool,
+          this.zapContract,
+          this.v3Range.ticks,
+          this.networkId,
+          this.getSlippagePercent(),
+          this.odosSwapRequest,
+          false,
         );
 
-        if (isFindUserInputTokenInPoolTokens) {
-          // if user token exist in pool pair, move to output for proportion formula
-          formulaOutputTokens.push({
-            decimals: userInputToken.decimals,
-            address: userInputToken.address,
-            contractValue: inputToken.contractValue,
-            price: userInputToken.price,
-          });
-          continue;
-        }
-
-        // if user token don't exist in pool pair, move to input for proportion formula
-        formulaInputTokens.push({
-          decimals: userInputToken.decimals,
-          address: userInputToken.address,
-          contractValue: inputToken.contractValue,
-          price: userInputToken.price,
-        });
-      }
-
-      // sort output formula and fill amount by 0;
-      const formulaResultOutputWithZero = [];
-      for (let i = 0; i < poolOutputTokens.length; i++) {
-        const outputToken = poolOutputTokens[i];
-        const poolOutputToken = outputToken.selectedToken;
-        const userInputTokenInFormulaOutputTokens = formulaOutputTokens.find(
-          (formulaToken) => formulaToken.address === poolOutputToken.address,
-        );
-        if (userInputTokenInFormulaOutputTokens) {
-          // if user token exist in pool pair, move to output for proportion formula
-          formulaResultOutputWithZero.push(userInputTokenInFormulaOutputTokens);
-          continue;
-        }
-
-        // fill amount with 0
-        formulaResultOutputWithZero.push({
-          decimals: poolOutputToken.decimals,
-          address: poolOutputToken.address,
-          contractValue: 0,
-          price: poolOutputToken.price,
-        });
-      }
-
-      // formulaOutputTokens sorted by pool pair and with zero for not exist in output formula.
-      formulaOutputTokens = formulaResultOutputWithZero;
-
-      let amountMins: string[] = [];
-      let proportions: any = {
-        inputTokens: [],
-        outputTokens: [],
-        amountToken0Out: '0',
-        amountToken1Out: '0',
-      };
-
-      const resp = await getV3Proportion(
-        this.zapPool.address,
-        this.v3Range.ticks,
-        userInputTokens.map((_) => ({
-          tokenAddress: _?.selectedToken?.address,
-          amount: _?.contractValue,
-          price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
-        })),
-        this.zapContract,
-        poolOutputTokens.map((_) => ({
-          tokenAddress: _?.selectedToken?.address,
-          price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
-        })),
-      );
-
-      console.log(resp, '___resp');
-      if (!resp) return;
-
-      proportions = {
-        inputTokens: userInputTokens.map((_: any, key: number) => ({
-          tokenAddress: _?.selectedToken?.address,
-          amount: resp[1][key]?.toString(),
-        })).filter((_) => new BN(_.amount).gt(0)),
-        outputTokens: resp[2].map((_: any, key: number) => ({
-          tokenAddress: _,
-          proportion: new BN(resp[3][key]?.toString()).div(10 ** 6),
-        })),
-      };
-
-      amountMins = resp[2].map((_: any, key: number) => resp[6][key]?.toString());
-
-      proportions.outputTokens = proportions.outputTokens.filter(
-        (item: any) => new BN(item.proportion).gt(0),
-      );
-
-      const request = {
-        chainId: this.networkId,
-        inputTokens: proportions.inputTokens,
-        outputTokens: proportions.outputTokens,
-        gasPrice: actualGas as any,
-        userAddr: this.zapContract.target,
-        slippageLimitPercent: this.getSlippagePercent(),
-      };
-
-      if (proportions.inputTokens?.length === 0 && proportions.outputTokens?.length === 0) {
-        await this.initZapInTransaction(
-          null,
-          proportions.inputTokens,
-          proportions.outputTokens,
-          proportions,
-          amountMins,
-        );
-
-        this.isSwapLoading = false;
-        return;
-      }
-
-      const whiteList = WHITE_LIST_ODOS[request.chainId as keyof typeof WHITE_LIST_ODOS];
-      const requestData = {
-        chainId: request.chainId,
-        inputTokens: request.inputTokens,
-        outputTokens: request.outputTokens,
-        gasPrice: request.gasPrice?.baseFee,
-        userAddr: ethers.getAddress(
-          request.userAddr.toLowerCase(),
-        ),
-        slippageLimitPercent: request.slippageLimitPercent,
-        sourceBlacklist: this.getSourceLiquidityBlackList(),
-        sourceWhitelist: whiteList ?? [],
-        simulate: false,
-        pathViz: false,
-        disableRFQs: false,
-        referralCode: this.odosReferalCode,
-      };
-
-      this.odosSwapRequest(requestData)
-        .then(async (data: any) => {
-          const finalOutput = getZapinOutputTokens(
-            data,
-            this.selectedOutputTokens,
-            resp,
-          );
-          amountMins = this.selectedOutputTokens.map((_) => {
-            const tokenFound = data.outTokens.map((_: string) => _.toLowerCase())
-              .includes(_.selectedToken.address?.toLowerCase());
-
-            return tokenFound ? _.amountMin : '0';
-          });
-
-          const totalInputUsd = this.selectedInputTokens
-            .reduce((acc: BN, curr:any) => acc.plus(curr.usdValue), new BN(0)).toFixed();
-          const totalOutputUsd = finalOutput
-            .reduce((acc, curr) => acc
-              .plus(new BN(curr.sum).times(curr.selectedToken?.price)), new BN(0))
-            .toFixed();
-
-          this.outputTokens = finalOutput;
-          this.odosData = {
-            ...data,
-            percentDiff: countPercentDiff(totalInputUsd, totalOutputUsd),
-            netOutValue: totalOutputUsd,
-          };
+        if (!data || (data && !data.odosData)) {
           this.odosDataLoading = false;
+          this.isSwapLoading = true;
+          return;
+        }
 
-          proportions = {
-            ...proportions,
-            amountToken0Out: finalOutput[0]?.tokenOut,
-            amountToken1Out: finalOutput[1]?.tokenOut,
-          };
+        if (data.inputTokens?.length === 0 && data.outputTokens?.length === 0) {
+          this.initZapInTransaction(
+            null,
+            data.inputTokens,
+            data.outputTokensForZap,
+            data.amountOut,
+            data.amountMins,
+          );
+        }
 
-          const assembleData = {
-            userAddr: ethers.getAddress(
-              request.userAddr.toLowerCase(),
-            ),
-            pathId: data.pathId,
-            simulate: true,
-          };
+        this.outputTokens = data?.outputTokens;
+        this.odosData = data?.odosData;
+        this.odosDataLoading = false;
+        this.isSwapLoading = true;
 
-          this.odosAssembleRequest(assembleData)
-            .then(async (responseAssembleData) => {
-              await this.initZapInTransaction(
-                responseAssembleData,
-                proportions.inputTokens,
-                proportions.outputTokens,
-                proportions,
-                amountMins,
-              );
-            })
-            .catch((e) => {
-              console.error('Odos assemble request failed swap form', e);
-              this.isSwapLoading = false;
-            });
-        })
-        .catch((e) => {
-          console.error('Odos swap request failed from zap', e);
-          this.isSwapLoading = false;
-        });
-    },
+        const assembleData = {
+          userAddr: ethers.getAddress(
+            this.zapContract.target?.toLowerCase(),
+          ),
+          pathId: data.odosData?.pathId,
+          simulate: true,
+        };
 
-    getSourceLiquidityBlackList() {
-      let sourceBlacklist = [...sourceLiquidityBlacklist];
-      // excluding platform for big liquidities zapins
-      const excludeLiquidityByPlatform = mapExcludeLiquidityPlatform[
-        this.zapPool.platform[0]
-      ];
-      if (excludeLiquidityByPlatform && excludeLiquidityByPlatform.length) {
-        sourceBlacklist = [...sourceBlacklist, ...excludeLiquidityByPlatform];
+        this.odosAssembleRequest(assembleData)
+          .then(async (responseAssembleData) => {
+            await this.initZapInTransaction(
+              responseAssembleData,
+              data.inputTokens,
+              data.outputTokensForZap,
+              data.amountOut,
+              data.amountMins,
+            );
+          });
+      } catch (e) {
+        this.showErrorModalWithMsg({ errorMsg: parseErrorLog(e) });
+        this.odosDataLoading = false;
+        this.isSwapLoading = true;
       }
-
-      return sourceBlacklist;
     },
+
     commitEventToStore(field: string, value: any) {
       this.$store.commit('odosData/changeState', {
         field,
@@ -984,7 +780,6 @@ export default defineComponent({
     async toApproveAndDepositSteps(data: any) {
       const nftId = '';
 
-      console.log(parseLogs(data.logs, this.commitEventToStore), '___data');
       parseLogs(data.logs, this.commitEventToStore);
       this.currentStage = zapInStep.APPROVE_GAUGE;
       this.isSwapLoading = true;
@@ -1186,113 +981,36 @@ export default defineComponent({
         });
       }
     },
-    clearQuotaInfo() {
-      this.$store.commit('odosData/changeState', {
-        field: 'quotaResponseInfo',
-        val: null,
-      });
-      this.$store.commit('odosData/changeState', {
-        field: 'swapResponseInfo',
-        val: null,
-      });
-    },
     async recalculateProportion() {
+      if (!this.v3Range || this.selectedInputTokens?.length === 0) return;
+
       this.odosDataLoading = true;
-      const emptyVals = this.inputTokens.map((_) => {
-        if (new BN(_?.value).eq(0) || !_?.value) return null;
 
-        return _;
-      });
-
-      if (emptyVals.every((_) => !_)) {
-        this.odosDataLoading = false;
-        return;
-      }
-
-      const resp = await getV3Proportion(
-        this.zapPool.address,
-        this.v3Range.ticks,
-        this.selectedInputTokens.map((_) => ({
-          tokenAddress: _?.selectedToken?.address,
-          amount: _?.contractValue,
-          price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
-        })),
-        this.zapContract,
-        this.selectedOutputTokens.map((_) => ({
-          tokenAddress: _?.selectedToken?.address,
-          price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
-        })),
-      );
-
-      if (!resp) {
-        this.odosDataLoading = false;
-        return;
-      }
-
-      console.log(resp, '___resp');
-      const inputTokens = this.selectedInputTokens
-        .map((_: any, key: number) => ({
-          tokenAddress: _?.selectedToken?.address,
-          amount: resp[1][key]?.toString(),
-        }))
-        .filter(
-          (item: any) => new BN(item.amount).gt(0),
+      try {
+        const data = await zapinService.recalculateProportionOdosV3(
+          this.selectedInputTokens,
+          this.selectedOutputTokens,
+          this.zapPool,
+          this.zapContract,
+          this.v3Range.ticks,
+          this.networkId,
+          this.getSlippagePercent(),
+          this.odosSwapRequest,
+          true,
         );
 
-      if (inputTokens?.length === 0) {
+        if (!data || (data && !data.odosData)) {
+          this.odosDataLoading = false;
+          return;
+        }
+
+        this.outputTokens = data?.outputTokens;
+        this.odosData = data.odosData;
         this.odosDataLoading = false;
-        return;
-      }
-
-      const outputTokens = resp[2]
-        .map((_: any, key: number) => ({
-          tokenAddress: _,
-          proportion: new BN(resp[3][key]?.toString()).div(10 ** 6).toFixed(),
-        }))
-        .filter(
-          (item: any) => new BN(item.proportion).gt(0),
-        );
-
-      const whiteList = WHITE_LIST_ODOS[this.networkId as keyof typeof WHITE_LIST_ODOS];
-
-      const requestData = {
-        chainId: this.networkId,
-        inputTokens,
-        outputTokens,
-        userAddr: ethers.getAddress(this.account.toLowerCase()),
-        slippageLimitPercent: this.getSlippagePercent(),
-        sourceBlacklist: this.getSourceLiquidityBlackList(),
-        sourceWhitelist: whiteList ?? [],
-        simulate: true,
-        pathViz: true,
-      };
-
-      const data: any = await this.odosSwapRequest(requestData);
-
-      if (!data) {
+      } catch (e) {
+        this.showErrorModalWithMsg({ errorMsg: parseErrorLog(e) });
         this.odosDataLoading = false;
-        return;
       }
-      const finalOutput = getZapinOutputTokens(
-        data,
-        this.selectedOutputTokens,
-        resp,
-      );
-
-      const totalInputUsd = this.selectedInputTokens
-        .reduce((acc: BN, curr:any) => acc.plus(curr.usdValue), new BN(0)).toFixed();
-      const totalOutputUsd = finalOutput
-        .reduce((acc, curr) => acc
-          .plus(new BN(curr.sum).times(curr.selectedToken?.price)), new BN(0))
-        .toFixed();
-
-      this.outputTokens = finalOutput;
-      this.odosData = {
-        ...data,
-        percentDiff: countPercentDiff(totalInputUsd, totalOutputUsd),
-        netOutValue: totalOutputUsd,
-      };
-      this.odosDataLoading = false;
     },
     getSlippagePercent() {
       return this.slippagePercent;
@@ -1403,10 +1121,6 @@ export default defineComponent({
 
         this.updateTokenState(newToken);
       }
-
-      // if (newInputToken.selectedToken.symbol === 'OVN') {
-      //   this.initDefaultTopInputTokensByBalance(this.noneOvnTokens);
-      // }
 
       this.checkApproveForToken(
         newInputToken,
