@@ -73,7 +73,7 @@
         :tokens-list="tokensList"
         :reverse-array="reverseArray"
         :is-input-token="isInputToken"
-        :selected-token="tokenInfo.symbol"
+        :selected-token="tokenFullData.symbol"
         :active-wrap="activeWrap"
         :is-loading="isLoading"
         @add-token="addSelectedTokenToList"
@@ -85,17 +85,18 @@
 
 <!-- eslint-disable no-param-reassign -->
 <script lang="ts">
-import { mapGetters } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import InputComponent from '@/components/Input/Index.vue';
 import { formatMoney, fixedByPrice } from '@/utils/numbers.ts';
 import TokensChooseForm from '@/modules/Main/components/MintRedeem/TokenSelect/Index.vue';
 import { MINTREDEEM_SCHEME } from '@/store/views/main/mintRedeem/mocks.ts';
+import { isEmpty } from 'lodash';
 import { mintRedeemTypes, mintWrapStatus } from './types/index.ts';
 
 const wrapStatusArr = [mintWrapStatus.WRAP, mintWrapStatus.UNWRAP];
 
 export default {
-  name: 'TokenForm',
+  name: 'TokenFormMr',
   components: {
     InputComponent,
     TokensChooseForm,
@@ -126,8 +127,12 @@ export default {
       required: true,
       default: true,
     },
+    balanceList: {
+      type: Array,
+      required: true,
+    },
   },
-  emits: { 'update-token': null, 'add-token': null },
+  emits: ['update-token', 'add-token'],
   data() {
     return {
       showTokenSelect: false,
@@ -136,6 +141,9 @@ export default {
   computed: {
     ...mapGetters('network', ['networkId']),
     ...mapGetters('mintRedeem', ['tokensListGetter']),
+    tokenFullData() {
+      return this.tokenInfo;
+    },
     tokenBalance() {
       if (!this.tokenInfo.balanceData.balanceInUsd) return '0';
       const usdBalance = Number(this.tokenInfo.balanceData.balanceInUsd);
@@ -171,7 +179,20 @@ export default {
       return [];
     },
   },
+  mounted() {
+    if (isEmpty(this.tokensListGetter) || !this.tokensListGetter[this.networkId]) {
+      const params = {
+        tokenList: this.balanceList,
+        networkId: this.networkId,
+      };
+
+      if (this.balanceList.length > 0) {
+        this.initTokenSchema(params);
+      }
+    }
+  },
   methods: {
+    ...mapActions('mintRedeem', ['initTokenSchema']),
     formatMoney,
     filterTokens(list: any[], wrapType: mintWrapStatus, schemePair: any): any[] {
       const arr = list.filter((_: any) => {

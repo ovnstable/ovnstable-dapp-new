@@ -21,7 +21,17 @@
           v-if="activeTab === 1"
           class="form-wrap"
         >
-          <MintRedeemForm />
+          <div
+            v-if="balancesEmpty"
+            class="swap-form__loader"
+          >
+            <Spinner />
+          </div>
+
+          <MintRedeemForm
+            v-else
+            :balance-list="balanceList"
+          />
         </div>
         <div
           v-if="activeTab === 2"
@@ -106,11 +116,16 @@ import BridgeMobile from '@/modules/Main/components/MobileModals/BridgeMobile.vu
 import UserBalances from '@/components/Layout/Header/UserBalances.vue';
 import { useEventBus } from '@vueuse/core';
 import { deviceType } from '@/utils/deviceType.ts';
+import { defineComponent } from 'vue';
+import { isEmpty } from 'lodash';
+import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
+import Spinner from '@/components/Spinner/Index.vue';
 
-export default {
+export default defineComponent({
   name: 'MainModule',
   components: {
     SliderComponent,
+    Spinner,
     TabsComponent,
     MintRedeemForm,
     BaseIcon,
@@ -121,6 +136,15 @@ export default {
     MobileMintRedeemMenu,
     BridgeMobile,
     UserBalances,
+  },
+  setup: () => {
+    const {
+      data: balanceList,
+    } = useTokensQuery();
+
+    return {
+      balanceList,
+    };
   },
   data() {
     return {
@@ -158,6 +182,9 @@ export default {
     deviceSize() {
       return deviceType();
     },
+    balancesEmpty() {
+      return isEmpty(this.balanceList);
+    },
   },
   watch: {
     networkName: {
@@ -192,7 +219,7 @@ export default {
       this.stablecoinTokens = stablecoinTokens;
     },
   },
-};
+});
 </script>
 
 <style lang="scss">

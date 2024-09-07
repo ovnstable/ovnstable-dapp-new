@@ -18,5 +18,6 @@ export default {
 <style>
 .pos {
   width: 100%;
+  margin-top: 20px;
 }
 </style>

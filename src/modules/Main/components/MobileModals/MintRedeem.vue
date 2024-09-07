@@ -1,8 +1,8 @@
 <template>
   <ModalComponent
-    :customClass="'mob-menu'"
-    type-modal="custom"
     v-model="showModal"
+    :custom-class="'mob-menu'"
+    type-modal="custom"
   >
     <div class="mob-menu__header">
       <div
@@ -17,7 +17,17 @@
       </div>
     </div>
 
-    <MintRedeemForm />
+    <div
+      v-if="balancesEmpty"
+      class="swap-form__loader"
+    >
+      <Spinner />
+    </div>
+
+    <MintRedeemForm
+      v-else
+      :balance-list="balanceList"
+    />
   </ModalComponent>
 </template>
 
@@ -25,15 +35,19 @@
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ModalComponent from '@/components/Modal/Index.vue';
 import MintRedeemForm from '@/modules/Main/components/MintRedeem/Index.vue';
+import { defineComponent } from 'vue';
+import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
+import { isEmpty } from 'lodash';
+import Spinner from '@/components/Spinner/Index.vue';
 
-export default {
+export default defineComponent({
   name: 'MobileMintRedeemMenu',
   components: {
     BaseIcon,
     ModalComponent,
     MintRedeemForm,
+    Spinner,
   },
-  emits: ['close'],
   props: {
     isShow: {
       type: Boolean,
@@ -41,10 +55,25 @@ export default {
       default: false,
     },
   },
+  emits: ['close'],
+  setup: () => {
+    const {
+      data: balanceList,
+    } = useTokensQuery();
+
+    return {
+      balanceList,
+    };
+  },
   data() {
     return {
       showModal: false,
     };
+  },
+  computed: {
+    balancesEmpty() {
+      return isEmpty(this.balanceList);
+    },
   },
   watch: {
     isShow(currVal: boolean) {
@@ -56,7 +85,7 @@ export default {
       this.$emit('close');
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

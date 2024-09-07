@@ -48,7 +48,8 @@
         :is-input-token="true"
         :reverse-array="isReverseArray"
         :active-wrap="mintWrapTab"
-        :is-loading="isLoading"
+        :is-loading="false"
+        :balance-list="balanceList"
         @add-token="selectFormToken"
         @update-token="updateTokenValueMethod"
       />
@@ -61,7 +62,8 @@
         :is-input-token="false"
         :reverse-array="isReverseArray"
         :active-wrap="mintWrapTab"
-        :is-loading="isLoading"
+        :is-loading="false"
+        :balance-list="balanceList"
         @add-token="selectFormToken"
       />
     </div>
@@ -154,13 +156,10 @@ import BigNumber from 'bignumber.js';
 import { ABI_Exchange, ABI_Market } from '@/assets/abi/index.ts';
 import { getAllowanceValue, approveToken } from '@/utils/contractApprove.ts';
 import TokenService from '@/services/TokenService/TokenService.ts';
-import { defineComponent } from 'vue';
-import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
-import type { TTokenInfo } from '@/types/common/tokens/index.ts';
 import { useRefreshBalances } from '@/hooks/fetch/useRefreshBalances.ts';
 import { parseErrorLog } from '@/utils/errors.ts';
 
-export default defineComponent({
+export default {
   name: 'MintRedeem',
   components: {
     SwitchTabs,
@@ -169,20 +168,15 @@ export default defineComponent({
     GasSettings,
     ButtonComponent,
   },
-  setup: () => {
-    const {
-      data: allTokensList,
-      isLoading,
-    } = useTokensQuery();
-
-    return {
-      allTokensList,
-      isLoading,
-      refreshBalances: useRefreshBalances(),
-    };
+  props: {
+    balanceList: {
+      type: Array,
+      required: true,
+    },
   },
   data() {
     return {
+      refreshBalances: useRefreshBalances(),
       inputToken: getNewInputToken(),
       outputToken: getNewInputToken(),
       activeMintTab: mintWrapStatus.MINT as mintWrapStatus | -1,
@@ -278,6 +272,18 @@ export default defineComponent({
     },
   },
   watch: {
+    'isLoading.value': function (val: boolean) {
+      if (val) return;
+      const params = {
+        tokenList: this.balanceList,
+        networkId: this.networkId,
+      };
+
+      if (this.balanceList.length > 0) {
+        this.initTokenSchema(params);
+        // this.initForm();
+      }
+    },
     inputToken() {
       this.checkApprove(this);
 
@@ -307,24 +313,22 @@ export default defineComponent({
         this.checkApprove(this);
       }
     },
-    allTokensList(tokenList: TTokenInfo[]) {
+    networkId(val: number | string) {
       const params = {
-        tokenList,
+        tokenList: this.balanceList,
         networkId: this.networkId,
       };
-      if (tokenList.length > 0) {
+
+      if (this.balanceList.length > 0) {
         this.initTokenSchema(params);
-        // this.initForm();
       }
-    },
-    networkId(val: number | string) {
+
       if (val) this.initForm();
     },
   },
   methods: {
     ...mapActions('walletAction', ['connectWallet']),
     ...mapActions('mintRedeem', ['initTokenSchema']),
-    ...mapActions('gasPrice', ['refreshGasPrice']),
     ...mapActions('errorModal', ['showErrorModalWithMsg']),
     ...mapActions('waitingModal', ['showWaitingModal', 'closeWaitingModal']),
     ...mapActions('successModal', ['showSuccessModal']),
@@ -548,7 +552,6 @@ export default defineComponent({
     },
     async swapTokens() {
       try {
-        await this.refreshGasPrice();
         this.showWaitingModal('swaping in process');
         const networkId = this.networkId as keyof typeof MINTREDEEM_SCHEME;
 
@@ -692,7 +695,7 @@ export default defineComponent({
       return `${valueStr.slice(0, index)}.${valueStr.slice(index)}`;
     },
   },
-});
+};
 </script>
 
 <style lang="scss" scoped>
