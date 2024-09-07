@@ -636,14 +636,6 @@ export default defineComponent({
     removeInputToken(id: string) {
       removeToken(this.inputTokens, id);
     },
-    odosAssembleRequest(requestData: any) {
-      return odosApiService
-        .assembleRequest(requestData)
-        .then((data) => data)
-        .catch((e) => {
-          console.log('Assemble request error: ', e);
-        });
-    },
     async odosSwapRequest(requestData: any) {
       return odosApiService
         .quoteRequest(requestData)
@@ -686,7 +678,7 @@ export default defineComponent({
 
         if (!data || (data && !data.odosData)) {
           this.odosDataLoading = false;
-          this.isSwapLoading = true;
+          this.isSwapLoading = false;
           return;
         }
 
@@ -713,7 +705,8 @@ export default defineComponent({
           simulate: true,
         };
 
-        this.odosAssembleRequest(assembleData)
+        odosApiService
+          .assembleRequest(assembleData)
           .then(async (responseAssembleData) => {
             await this.initZapInTransaction(
               responseAssembleData,
@@ -1046,12 +1039,12 @@ export default defineComponent({
     },
     addSelectedTokenToInputList(selectedToken: any, isAddAllBalance: any) {
       // todo computed ovn input tokens and logic here
-      const newInputToken = getNewInputToken();
-      this.removeAllWithoutSelectedTokens(this.inputTokens);
-      this.inputTokens.push({
-        ...newInputToken,
+      const newInputToken = {
+        ...getNewInputToken(),
         selectedToken,
-      });
+      };
+      this.removeAllWithoutSelectedTokens(this.inputTokens);
+      this.inputTokens.push(newInputToken);
 
       if (isAddAllBalance) {
         const newToken = updateTokenValue(

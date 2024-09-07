@@ -655,7 +655,7 @@ export default {
 
         if (!data || (data && !data.odosData)) {
           this.odosDataLoading = false;
-          this.isSwapLoading = true;
+          this.isSwapLoading = false;
           return;
         }
 

@@ -36,7 +36,7 @@
       </template>
       <div class="zap-modal-footer">
         <a
-          href="https://forms.gle/BCwwX4yhGW7EadTCA"
+          href="https://discord.gg/zPqdc4Bn"
           target="_blank"
           rel="noopener noreferrer"
           class="leave-feedback-link"

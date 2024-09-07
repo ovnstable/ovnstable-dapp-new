@@ -509,17 +509,13 @@ class ZapinService {
         zapPool.tokenId?.toString(),
         zapPool.address,
         v3RangeTicks,
-        selectedOutputTokens.map((_) => ({
-          tokenAddress: _?.selectedToken?.address,
-          price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
-        })),
+        outputTokensForZap,
         zapContract,
       );
     }
 
     if (!resp) throw Error('No response v3, smth wrong');
 
-    console.log(resp, '___resp');
     let inputTokens = [];
 
     if (typeFunc === ZAPIN_TYPE.ZAPIN) {
@@ -559,7 +555,7 @@ class ZapinService {
       return {
         inputTokens,
         outputTokens,
-        outputTokensForZap,
+        outputTokensForZap: outputTokens,
         amountToken0Out: '0',
         amountToken1Out: '0',
         responseProportionV3: resp,
@@ -622,7 +618,7 @@ class ZapinService {
     return {
       inputTokens,
       outputTokens: finalOutput?.outputToken,
-      outputTokensForZap,
+      outputTokensForZap: outputTokens,
       amountOut: {
         amountToken0Out: finalOutput.outputToken[0]?.tokenOut,
         amountToken1Out: finalOutput.outputToken[1]?.tokenOut,

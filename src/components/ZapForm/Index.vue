@@ -273,7 +273,6 @@
 </template>
 <!-- eslint-disable no-restricted-syntax -->
 <!-- eslint-disable no-continue -->
-<!-- eslint-disable no-param-reassign -->
 <script lang="ts">
 import { useEventBus } from '@vueuse/core';
 import {
@@ -318,9 +317,10 @@ import { useRefreshBalances } from '@/hooks/fetch/useRefreshBalances.ts';
 import { parseErrorLog } from '@/utils/errors.ts';
 import zapinService from '@/services/Web3Service/zapin-service.ts';
 import {
+  getSourceLiquidityBlackList,
   getUpdatedTokenVal, initReqData,
-  mapExcludeLiquidityPlatform, parseLogs,
-  removeToken, sourceLiquidityBlacklist,
+  parseLogs,
+  removeToken,
 } from '@/services/Web3Service/utils/index.ts';
 
 enum zapMobileSection {
@@ -587,6 +587,11 @@ export default defineComponent({
         this.firstInit();
       });
     },
+    balanceList() {
+      if (!isEmpty(this.outputTokens)) return;
+
+      this.firstInit();
+    },
     currentStage(stage: zapInStep) {
       this.$store.commit('zapinData/changeState', { field: 'currentStage', val: stage });
       if (this.currentStage !== zapInStep.START) {
@@ -733,14 +738,6 @@ export default defineComponent({
     removeInputToken(id: string) {
       removeToken(this.inputTokens, id);
     },
-    odosAssembleRequest(requestData: any) {
-      return odosApiService
-        .assembleRequest(requestData)
-        .then((data) => data)
-        .catch((e) => {
-          console.log('Assemble request error: ', e);
-        });
-    },
     async odosSwapRequest(requestData: any) {
       return odosApiService
         .quoteRequest(requestData)
@@ -775,85 +772,83 @@ export default defineComponent({
       this.clearAllSelectedTokens();
       this.addDefaultPoolToken();
     },
-    async stakeTrigger() {
-      console.log(this.gaugeContractV3, '__thisgaugeContractV3');
-      // await this.poolTokenContract.deposit(Number(26997));
-      if (this.zapInType === 'V2') this.currentStage = zapInStep.DEPOSIT;
-      if (!this.zapPool) return;
-      this.$store.commit('odosData/changeState', {
-        field: 'lastPoolInfoData',
-        val: poolsInfoMap[this.zapPool.address],
-      });
+    async stakeTriggerV3() {
+      if (!this.v3Range || this.selectedInputTokens?.length === 0) return;
+      this.odosDataLoading = true;
 
-      if (!this.lastPoolInfoData) return;
-      if (this.isSwapLoading) return;
+      try {
+        const data = await zapinService.recalculateProportionOdosV3(
+          this.selectedInputTokens,
+          this.selectedOutputTokens,
+          this.zapPool,
+          this.zapContract,
+          this.v3Range.ticks,
+          this.networkId,
+          this.getSlippagePercent(),
+          this.odosSwapRequest,
+          false,
+        );
 
-      this.clickOnStake = true;
-      this.isSwapLoading = true;
+        if (!data || (data && !data.odosData)) {
+          this.odosDataLoading = false;
+          this.isSwapLoading = false;
+          return;
+        }
 
+        if (data.inputTokens?.length === 0 && data.outputTokens?.length === 0) {
+          this.initZapInTransaction(
+            null,
+            data.inputTokens,
+            data.outputTokensForZap,
+            data.amountOut,
+            this.lastPoolInfoData,
+            this.zapPool,
+            data.amountMins,
+          );
+        }
+
+        this.outputTokens = data?.outputTokens;
+        this.odosData = data?.odosData;
+        this.odosDataLoading = false;
+
+        const assembleData = {
+          userAddr: ethers.getAddress(
+            this.zapContract.target?.toLowerCase(),
+          ),
+          pathId: data.odosData?.pathId,
+          simulate: true,
+        };
+
+        odosApiService
+          .assembleRequest(assembleData)
+          .then(async (responseAssembleData) => {
+            await this.initZapInTransaction(
+              responseAssembleData,
+              data.inputTokens,
+              data.outputTokensForZap,
+              data.amountOut,
+              this.lastPoolInfoData,
+              this.zapPool,
+              data.amountMins,
+            );
+          });
+      } catch (e) {
+        this.showErrorModalWithMsg({ errorMsg: parseErrorLog(e) });
+        this.odosDataLoading = false;
+        this.isSwapLoading = false;
+      }
+    },
+    async stakeTriggerV2() {
       const actualGas = await odosApiService.getActualGasPrice(this.networkId);
 
       const userInputTokens = this.selectedInputTokens;
       const poolOutputTokens = this.selectedOutputTokens;
 
-      let proportions: any = {
-        inputTokens: [],
-        outputTokens: [],
-        amountToken0Out: '0',
-        amountToken1Out: '0',
-      };
-
-      // min amount of tokens, after swap, to escape big swap loss
-      const amountMins: string[] = [];
-
-      console.log(userInputTokens, '__userInputTokens');
-
-      let resp = null as any;
-
-      if (this.zapPool?.poolVersion === 'v2') {
-        proportions = await zapinService.getV2Proportions(
-          userInputTokens,
-          poolOutputTokens,
-          this.zapPool,
-          this.zapContract,
-        );
-      }
-
-      if (this.zapPool?.poolVersion === 'v3') {
-        console.log(userInputTokens, '___userInputTokens');
-        resp = await zapinService.getV3Proportion(
-          this.zapPool.address,
-          this.v3Range.ticks,
-          userInputTokens.map((_) => ({
-            tokenAddress: _?.selectedToken?.address,
-            amount: _?.contractValue,
-            price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
-          })),
-          this.zapContract,
-          poolOutputTokens.map((_) => ({
-            tokenAddress: _?.selectedToken?.address,
-            price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
-          })),
-        );
-
-        console.log(resp, '___resp2');
-
-        if (!resp) return;
-
-        proportions = {
-          inputTokens: userInputTokens.map((_: any, key: number) => ({
-            tokenAddress: _?.selectedToken?.address,
-            amount: resp[1][key]?.toString(),
-          })).filter((_) => new BN(_.amount).gt(0)),
-          outputTokens: resp[2].map((_: any, key: number) => ({
-            tokenAddress: _,
-            proportion: new BN(resp[3][key]?.toString()).div(10 ** 6),
-          })),
-        };
-      }
-
-      proportions.outputTokens = proportions.outputTokens.filter(
-        (item: any) => new BN(item.proportion).gt(0),
+      const proportions = await zapinService.getV2Proportions(
+        userInputTokens,
+        poolOutputTokens,
+        this.zapPool,
+        this.zapContract,
       );
 
       const request = {
@@ -865,22 +860,6 @@ export default defineComponent({
         slippageLimitPercent: this.getSlippagePercent(),
       };
 
-      if (proportions.inputTokens?.length === 0 && proportions.outputTokens?.length === 0) {
-        await this.initZapInTransaction(
-          null,
-          proportions.inputTokens,
-          proportions.outputTokens,
-          proportions,
-          this.lastPoolInfoData,
-          this.zapPool,
-          amountMins,
-        );
-
-        this.isSwapLoading = false;
-        this.clickOnStake = false;
-        return;
-      }
-
       const whiteList = WHITE_LIST_ODOS[request.chainId as keyof typeof WHITE_LIST_ODOS];
       const requestData = {
         chainId: request.chainId,
@@ -891,7 +870,7 @@ export default defineComponent({
           request.userAddr.toLowerCase(),
         ),
         slippageLimitPercent: request.slippageLimitPercent,
-        sourceBlacklist: this.getSourceLiquidityBlackList(),
+        sourceBlacklist: getSourceLiquidityBlackList(this.zapPool),
         sourceWhitelist: whiteList ?? [],
         simulate: false,
         pathViz: false,
@@ -901,27 +880,6 @@ export default defineComponent({
 
       this.odosSwapRequest(requestData)
         .then(async (data: any) => {
-          if (this.zapPool?.poolVersion === 'v3') {
-            const finalOutput = zapinService.getZapinOutputTokens(
-              data,
-              resp,
-              this.selectedOutputTokens,
-              this.selectedInputTokens,
-            );
-
-            if (!finalOutput) return;
-
-            this.outputTokens = finalOutput?.outputToken;
-            this.odosData = finalOutput?.odosData;
-            this.odosDataLoading = false;
-
-            proportions = {
-              ...proportions,
-              amountToken0Out: finalOutput.outputToken[0]?.tokenOut,
-              amountToken1Out: finalOutput.outputToken[1]?.tokenOut,
-            };
-          }
-
           const assembleData = {
             userAddr: ethers.getAddress(
               request.userAddr.toLowerCase(),
@@ -930,8 +888,7 @@ export default defineComponent({
             simulate: true,
           };
 
-          console.log(data, '___data');
-          this.odosAssembleRequest(assembleData)
+          odosApiService.assembleRequest(assembleData)
             .then(async (responseAssembleData) => {
               await this.initZapInTransaction(
                 responseAssembleData,
@@ -940,36 +897,38 @@ export default defineComponent({
                 proportions,
                 this.lastPoolInfoData,
                 this.zapPool,
-                amountMins,
+                [],
               );
 
               this.isSwapLoading = false;
               this.clickOnStake = false;
             })
-            .catch((e) => {
-              console.error('Odos assemble request failed swap form', e);
+            .catch(() => {
               this.isSwapLoading = false;
               this.clickOnStake = false;
             });
         })
-        .catch((e) => {
-          console.error('Odos swap request failed from zap', e);
+        .catch(() => {
           this.isSwapLoading = false;
           this.clickOnStake = false;
         });
     },
+    async stakeTrigger() {
+      this.$store.commit('odosData/changeState', {
+        field: 'lastPoolInfoData',
+        val: poolsInfoMap[this.zapPool.address],
+      });
 
-    getSourceLiquidityBlackList() {
-      let sourceBlacklist = [...sourceLiquidityBlacklist];
-      // excluding platform for big liquidities zapins
-      const excludeLiquidityByPlatform = mapExcludeLiquidityPlatform[
-        this.zapPool.platform[0]
-      ];
-      if (excludeLiquidityByPlatform && excludeLiquidityByPlatform.length) {
-        sourceBlacklist = [...sourceBlacklist, ...excludeLiquidityByPlatform];
-      }
+      if (!this.zapPool) return;
+      if (!this.lastPoolInfoData) return;
+      if (this.isSwapLoading) return;
 
-      return sourceBlacklist;
+      this.currentStage = zapInStep.DEPOSIT;
+      this.clickOnStake = true;
+      this.isSwapLoading = true;
+
+      if (this.zapInType === 'V2') this.stakeTriggerV2();
+      if (this.zapInType === 'V3') this.stakeTriggerV3();
     },
     commitEventToStore(field: string, value: any) {
       this.$store.commit('odosData/changeState', {
@@ -1150,16 +1109,6 @@ export default defineComponent({
       this.currentStage = zapInStep.STAKE_LP;
       this.showWaitingModal('Stake LP in process');
 
-      console.log({
-        acc: this.account,
-        lastPoolInfoData,
-        lastNftTokenId,
-        zap: this.currentZapPlatformContractType,
-        gauge: this.gaugeContract,
-        zaproot: this.zapPoolRoot,
-        token: this.poolTokenContract,
-
-      }, '___DATA1');
       zapinService.depositAllAtGauge(
         this.account,
         lastPoolInfoData,
@@ -1264,6 +1213,7 @@ export default defineComponent({
       zapPool: any,
       amountMins: string[],
     ) {
+      console.log(proportions, '__proportions');
       const gaugeAddress = poolInfo.gauge;
       const requestData = initReqData(
         requestInputTokens,
@@ -1292,7 +1242,6 @@ export default defineComponent({
         };
       }
 
-      console.log(amountMins, '___amountMins');
       if (this.zapPool.poolVersion === 'v3') {
         gaugeData = {
           pair: this.zapPool.address,
@@ -1317,8 +1266,6 @@ export default defineComponent({
         // gasPrice: ethers.parseUnits('100', 'gwei'),
         // gasLimit: 1000000,
       };
-
-      console.log(this.zapContract, '-this.zapContract');
 
       console.log(txData, 'swapdata');
       console.log(gaugeData, 'gaugeData');
@@ -1353,14 +1300,8 @@ export default defineComponent({
           return;
         }
 
-        console.error(
-          'Error when end of transaction, method type not found. ',
-          this.currentZapPlatformContractType,
-        );
-
         this.isSwapLoading = false;
       } catch (e: any) {
-        console.log(JSON.parse(JSON.stringify(e)), '____e');
         this.isSwapLoading = false;
         this.closeWaitingModal();
         this.showErrorModalWithMsg({ errorType: 'zap', errorMsg: parseErrorLog(e) });
@@ -1442,7 +1383,7 @@ export default defineComponent({
           request.userAddr.toLowerCase(),
         ),
         slippageLimitPercent: this.getSlippagePercent(),
-        sourceBlacklist: this.getSourceLiquidityBlackList(),
+        sourceBlacklist: getSourceLiquidityBlackList(this.zapPool),
         sourceWhitelist: whiteList ?? [],
         simulate: true,
         pathViz: true,
@@ -1459,87 +1400,35 @@ export default defineComponent({
         });
     },
     async recalculateProportionV3() {
+      if (!this.v3Range || this.selectedInputTokens?.length === 0) return;
+
       this.odosDataLoading = true;
-      const emptyVals = this.inputTokens.map((_) => {
-        if (new BN(_?.value).eq(0) || !_?.value) return null;
 
-        return _;
-      });
-
-      if (emptyVals.every((_) => !_)) {
-        this.odosDataLoading = false;
-        return;
-      }
-
-      const resp = await zapinService.getV3Proportion(
-        this.zapPool.address,
-        this.v3Range.ticks,
-        this.selectedInputTokens.map((_) => ({
-          tokenAddress: _?.selectedToken?.address,
-          amount: _?.contractValue,
-          price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
-        })),
-        this.zapContract,
-        this.selectedOutputTokens.map((_) => ({
-          tokenAddress: _?.selectedToken?.address,
-          price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
-        })),
-      );
-
-      const inputTokens = this.selectedInputTokens
-        .map((_: any, key: number) => ({
-          tokenAddress: _?.selectedToken?.address,
-          amount: resp[1][key]?.toString(),
-        }))
-        .filter(
-          (item: any) => new BN(item.amount).gt(0),
+      try {
+        const data = await zapinService.recalculateProportionOdosV3(
+          this.selectedInputTokens,
+          this.selectedOutputTokens,
+          this.zapPool,
+          this.zapContract,
+          this.v3Range.ticks,
+          this.networkId,
+          this.getSlippagePercent(),
+          this.odosSwapRequest,
+          true,
         );
 
-      const outputTokens = resp[2]
-        .map((_: any, key: number) => ({
-          tokenAddress: _,
-          proportion: new BN(resp[3][key]?.toString()).div(10 ** 6).toFixed(),
-        }))
-        .filter(
-          (item: any) => new BN(item.proportion).gt(0),
-        );
+        if (!data || (data && !data.odosData)) {
+          this.odosDataLoading = false;
+          return;
+        }
 
-      const whiteList = WHITE_LIST_ODOS[this.networkId as keyof typeof WHITE_LIST_ODOS];
-
-      const requestData = {
-        chainId: this.networkId,
-        inputTokens,
-        outputTokens,
-        userAddr: ethers.getAddress(this.account.toLowerCase()),
-        slippageLimitPercent: this.getSlippagePercent(),
-        sourceBlacklist: this.getSourceLiquidityBlackList(),
-        sourceWhitelist: whiteList ?? [],
-        simulate: true,
-        pathViz: true,
-      };
-
-      const data: any = await this.odosSwapRequest(requestData);
-
-      if (!data) {
+        this.outputTokens = data?.outputTokens;
+        this.odosData = data.odosData;
         this.odosDataLoading = false;
-        return;
+      } catch (e) {
+        this.showErrorModalWithMsg({ errorMsg: parseErrorLog(e) });
+        this.odosDataLoading = false;
       }
-
-      console.log(resp, '__resp');
-      console.log(data, '__data');
-
-      const finalOutput = zapinService.getZapinOutputTokens(
-        data,
-        resp,
-        this.selectedOutputTokens,
-        this.selectedInputTokens,
-      );
-
-      if (!finalOutput) return;
-
-      this.outputTokens = finalOutput.outputToken;
-      this.odosData = finalOutput.odosData;
-      this.odosDataLoading = false;
     },
     async recalculateProportion() {
       if (this.zapPool?.poolVersion === 'v2') await this.recalculateProportionV2();
@@ -1552,6 +1441,8 @@ export default defineComponent({
       this.currentStage = zapInStep.APPROVE_TOKENS;
       // checkedAllowanceValue in wei
       const { selectedToken } = token;
+
+      console.log(token, '__TOKEN');
       if (
         selectedToken.address === '0x0000000000000000000000000000000000000000'
       ) {
@@ -1623,6 +1514,7 @@ export default defineComponent({
         this.checkApproveForToken(token, token.contractValue);
         this.closeWaitingModal();
         this.approvingPending = false;
+        this.currentStage = zapInStep.DEPOSIT;
       };
 
       if (!tx) {
@@ -1632,7 +1524,6 @@ export default defineComponent({
 
       await tx.wait();
       finishTx();
-      this.currentStage = zapInStep.DEPOSIT;
     },
     addSelectedTokenToList(data: any) {
       if (data.isInput) {
@@ -1643,11 +1534,12 @@ export default defineComponent({
       this.addSelectedTokenToOutputList(data.tokenData, true, 50);
     },
     addSelectedTokenToInputList(selectedToken: any, isAddAllBalance: any) {
-      // todo computed ovn input tokens and logic here
-      const newInputToken = getNewInputToken();
-      newInputToken.selectedToken = selectedToken;
+      const newInputToken = {
+        ...getNewInputToken(),
+        selectedToken,
+      };
       this.removeAllWithoutSelectedTokens(this.inputTokens);
-      this.inputTokens.unshift(newInputToken);
+      this.inputTokens.push(newInputToken);
 
       if (isAddAllBalance) {
         const newToken = updateTokenValue(
@@ -1658,10 +1550,6 @@ export default defineComponent({
 
         this.updateTokenState(newToken);
       }
-
-      // if (newInputToken.selectedToken.symbol === 'OVN') {
-      //   this.initDefaultTopInputTokensByBalance(this.noneOvnTokens);
-      // }
 
       this.checkApproveForToken(
         newInputToken,
