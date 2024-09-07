@@ -214,15 +214,13 @@ import { cloneDeep, isEmpty } from 'lodash';
 import { markRaw } from 'vue';
 import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
 import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
-import { loadAbi, srcStringBuilder } from '@/store/views/main/zapin/index.ts';
-import { buildEvmContract } from '@/utils/contractsMap.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import { useRefreshBalances } from '@/hooks/fetch/useRefreshBalances.ts';
 import { parseErrorLog } from '@/utils/errors.ts';
 import FeesBlock, { MIN_IMPACT } from '@/components/FeesBlock/Index.vue';
 import SwapSlippageSettings from '@/components/SwapSlippage/Index.vue';
 import {
-  initReqData, parseLogs,
+  initReqData, initZapinContracts, parseLogs,
 } from '@/services/Web3Service/utils/index.ts';
 import zapinService, { ZAPIN_TYPE } from '@/services/Web3Service/zapin-service.ts';
 
@@ -448,37 +446,17 @@ export default {
     },
 
     async initContracts() {
-      const tokenA = getTokenByAddress(this.zapPool.token0Add, this.zapAllTokens);
-      const tokenB = getTokenByAddress(this.zapPool.token1Add, this.zapAllTokens);
-
-      const abiGauge = srcStringBuilder('V3GaugeRebalance')(this.zapPool.chainName, this.zapPool.platform[0]);
-      const abiGaugeContractFileV3 = await loadAbi(abiGauge);
-
-      const abiV3Zap = srcStringBuilder('V3Zap')(this.zapPool.chainName, this.zapPool.platform[0]);
-      const abiContractV3Zap = await loadAbi(abiV3Zap);
-
-      const abiV3Nft = srcStringBuilder('V3Nft')(this.zapPool.chainName, this.zapPool.platform[0]);
-      const abiContractV3Nft = await loadAbi(abiV3Nft);
-
-      this.gaugeContract = buildEvmContract(
-        abiGaugeContractFileV3.abi,
+      const contractsData = await initZapinContracts(
+        this.zapPool,
+        this.zapAllTokens,
         this.evmSigner,
         this.gaugeAddress,
       );
 
-      this.zapContract = buildEvmContract(
-        abiContractV3Zap.abi,
-        this.evmSigner,
-        abiContractV3Zap.address,
-      );
-
-      this.poolTokenContract = buildEvmContract(
-        abiContractV3Nft.abi,
-        this.evmSigner,
-        abiContractV3Nft.address,
-      );
-
-      this.poolTokens = [tokenA, tokenB];
+      this.gaugeContract = contractsData.gaugeContract;
+      this.zapContract = contractsData.zapContract;
+      this.poolTokenContract = contractsData.poolTokenContract;
+      this.poolTokens = contractsData.poolTokens;
 
       if (!this.isAvailableOnNetwork) this.mintAction();
       if (!this.zapPool.isStaked) {
@@ -486,7 +464,6 @@ export default {
         this.currentStage = rebalanceStep.APPROVE;
       }
     },
-
     firstInit() {
       this.initEvent();
       this.clearAndInitForm();
@@ -649,6 +626,7 @@ export default {
           this.getSlippagePercent(),
           this.odosSwapRequest,
           false,
+          ZAPIN_TYPE.REBALANCE,
         );
 
         if (!data || (data && !data.odosData)) {

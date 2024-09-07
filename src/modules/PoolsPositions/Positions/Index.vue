@@ -277,6 +277,7 @@ export default defineComponent({
     ...mapActions('waitingModal', ['closeWaitingModal', 'showWaitingModal']),
     ...mapActions('errorModal', ['showErrorModalWithMsg']),
     ...mapActions('odosData', ['triggerSuccessZapin']),
+    ...mapActions('poolsData', ['setIsZapModalShow']),
     searchGauge(pool: TPoolInfo) {
       if (!this.poolList || this.poolList?.length === 0 || !pool) return '';
       const foundPool = this.poolList
@@ -286,6 +287,7 @@ export default defineComponent({
       return '';
     },
     async handleClaim(pool: TPoolInfo) {
+      this.setIsZapModalShow(false);
       const gaugeAdd = this.searchGauge(pool);
       if (!gaugeAdd) {
         this.showErrorModalWithMsg({ errorMsg: 'Gauge not found' });
