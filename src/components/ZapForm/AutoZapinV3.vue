@@ -289,6 +289,7 @@ import { parseErrorLog } from '@/utils/errors.ts';
 import zapinService from '@/services/Web3Service/zapin-service.ts';
 import {
   getUpdatedTokenVal,
+  initReqData,
   parseLogs,
 } from '@/services/Web3Service/utils/index.ts';
 
@@ -896,25 +897,15 @@ export default defineComponent({
       proportions: any,
       amountMins: string[],
     ) {
-      const requestInput = [];
-      for (let i = 0; i < requestInputTokens.length; i++) {
-        requestInput.push({
-          tokenAddress: requestInputTokens[i].tokenAddress,
-          amountIn: requestInputTokens[i].amount,
-        });
-      }
-
-      const requestOutput = [];
-      for (let i = 0; i < requestOutputTokens.length; i++) {
-        requestOutput.push({
-          tokenAddress: requestOutputTokens[i].tokenAddress,
-          receiver: this.zapContract.target,
-        });
-      }
+      const requestData = initReqData(
+        requestInputTokens,
+        requestOutputTokens,
+        this.zapContract.target,
+      );
 
       const txData = {
-        inputs: requestInput,
-        outputs: requestOutput.map((_, key) => ({
+        inputs: requestData.inputT,
+        outputs: requestData.outputT.map((_, key) => ({
           ..._,
           amountMin: new BN(amountMins[key])
             .times(1 - this.getSlippagePercent() / 100)

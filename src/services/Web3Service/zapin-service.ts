@@ -15,6 +15,11 @@ import {
 } from './utils/index.ts';
 import odosApiService from '../odos-api-service.ts';
 
+export enum ZAPIN_TYPE {
+  ZAPIN,
+  REBALANCE
+}
+
 interface IZapinProportion {
   outputToken: any[]
   odosData: {
@@ -468,6 +473,7 @@ class ZapinService {
     slippageLimitPercent: number,
     odosSwapRequest: Function,
     simulateSwap: boolean,
+    typeFunc = ZAPIN_TYPE.ZAPIN,
   ) {
     const emptyVals = selectedInputTokens.map((_) => {
       if (new BN(_?.value).eq(0) || !_?.value) return null;
@@ -482,7 +488,7 @@ class ZapinService {
       price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
     }));
 
-    const resp = await this.getV3Proportion(
+    console.log(
       zapPool.address,
       v3RangeTicks,
       selectedInputTokens.map((_) => ({
@@ -492,21 +498,75 @@ class ZapinService {
       })),
       zapContract,
       outputTokensForZap,
+      '__PARAMS',
     );
 
-    if (!resp) throw Error('No response v3');
+    let resp = null;
+
+    if (typeFunc === ZAPIN_TYPE.ZAPIN) {
+      console.log('1');
+      resp = await this.getV3Proportion(
+        zapPool.address,
+        v3RangeTicks,
+        selectedInputTokens.map((_) => ({
+          tokenAddress: _?.selectedToken?.address,
+          amount: _?.contractValue,
+          price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
+        })),
+        zapContract,
+        outputTokensForZap,
+      );
+    }
+
+    if (typeFunc === ZAPIN_TYPE.REBALANCE) {
+      console.log(
+        zapPool.tokenId?.toString(),
+        zapPool.address,
+        v3RangeTicks,
+        selectedOutputTokens.map((_) => ({
+          tokenAddress: _?.selectedToken?.address,
+          price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
+        })),
+        zapContract,
+        '2',
+      );
+      resp = await this.getV3Rebalance(
+        zapPool.tokenId?.toString(),
+        zapPool.address,
+        v3RangeTicks,
+        selectedOutputTokens.map((_) => ({
+          tokenAddress: _?.selectedToken?.address,
+          price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
+        })),
+        zapContract,
+      );
+    }
+
+    if (!resp) throw Error('No response v3, smth wrong');
 
     console.log(resp, '___resp');
-    const inputTokens = selectedInputTokens
-      .map((_: any, key: number) => ({
-        tokenAddress: _?.selectedToken?.address,
+    let inputTokens = [];
+
+    if (typeFunc === ZAPIN_TYPE.ZAPIN) {
+      inputTokens = selectedInputTokens
+        .map((_: any, key: number) => ({
+          tokenAddress: _?.selectedToken?.address,
+          amount: resp[1][key]?.toString(),
+        }))
+        .filter(
+          (item: any) => new BN(item.amount).gt(0),
+        );
+    }
+
+    if (typeFunc === ZAPIN_TYPE.REBALANCE) {
+      inputTokens = resp[0].map((_: any, key: number) => ({
+        tokenAddress: _,
         amount: resp[1][key]?.toString(),
       }))
-      .filter(
-        (item: any) => new BN(item.amount).gt(0),
-      );
+        .filter((_: any) => new BN(_.amount).gt(0));
+    }
 
-    if (inputTokens?.length === 0) throw Error('No input tokens v3');
+    if (inputTokens?.length === 0) return null;
 
     const outputTokens = resp[2]
       .map((_: any, key: number) => ({

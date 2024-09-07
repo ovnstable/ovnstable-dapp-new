@@ -318,7 +318,9 @@ import { useRefreshBalances } from '@/hooks/fetch/useRefreshBalances.ts';
 import { parseErrorLog } from '@/utils/errors.ts';
 import zapinService from '@/services/Web3Service/zapin-service.ts';
 import {
-  getUpdatedTokenVal, mapExcludeLiquidityPlatform, parseLogs, removeToken, sourceLiquidityBlacklist,
+  getUpdatedTokenVal, initReqData,
+  mapExcludeLiquidityPlatform, parseLogs,
+  removeToken, sourceLiquidityBlacklist,
 } from '@/services/Web3Service/utils/index.ts';
 
 enum zapMobileSection {
@@ -1263,33 +1265,15 @@ export default defineComponent({
       amountMins: string[],
     ) {
       const gaugeAddress = poolInfo.gauge;
-      if (!this.zapContract) {
-        console.error(
-          'Init zap transactions failed, chronos contract not found. responseData: ',
-          responseData,
-        );
-        return;
-      }
-
-      const requestInput = [];
-      for (let i = 0; i < requestInputTokens.length; i++) {
-        requestInput.push({
-          tokenAddress: requestInputTokens[i].tokenAddress,
-          amountIn: requestInputTokens[i].amount,
-        });
-      }
-
-      const requestOutput = [];
-      for (let i = 0; i < requestOutputTokens.length; i++) {
-        requestOutput.push({
-          tokenAddress: requestOutputTokens[i].tokenAddress,
-          receiver: this.zapContract.target,
-        });
-      }
+      const requestData = initReqData(
+        requestInputTokens,
+        requestOutputTokens,
+        this.zapContract.target,
+      );
 
       let txData = {
-        inputs: requestInput,
-        outputs: requestOutput,
+        inputs: requestData.inputT,
+        outputs: requestData.outputT,
         data: responseData ? responseData.transaction.data : '0x',
       };
 
@@ -1319,7 +1303,7 @@ export default defineComponent({
         };
         txData = {
           ...txData,
-          outputs: requestOutput.map((_, key) => ({
+          outputs: requestData.outputT.map((_, key) => ({
             ..._,
             amountMin: new BN(amountMins[key])
               .times(1 - this.getSlippagePercent() / 100)

@@ -138,7 +138,7 @@
             btn-styles="primary"
             full
             :loading="isSwapLoading"
-            :disabled="!agreeWithFees"
+            :disabled="!agreeWithFees || isSwapLoading"
             @click="unstakeTrigger"
             @keypress="unstakeTrigger"
           >
@@ -189,18 +189,15 @@
 </div>
 </template>
 <!-- eslint-disable no-restricted-syntax -->
-<!-- eslint-disable no-continue -->
-<!-- eslint-disable no-param-reassign -->
 <script lang="ts">
 import { useEventBus } from '@vueuse/core';
 import { ethers } from 'ethers';
 import {
-  mapActions, mapGetters, mapState, mapMutations,
+  mapActions, mapGetters, mapMutations,
 } from 'vuex';
 import {
   getNewOutputToken,
   getTokenByAddress,
-  WHITE_LIST_ODOS,
 } from '@/store/helpers/index.ts';
 import odosApiService from '@/services/odos-api-service.ts';
 
@@ -224,8 +221,10 @@ import { useRefreshBalances } from '@/hooks/fetch/useRefreshBalances.ts';
 import { parseErrorLog } from '@/utils/errors.ts';
 import FeesBlock, { MIN_IMPACT } from '@/components/FeesBlock/Index.vue';
 import SwapSlippageSettings from '@/components/SwapSlippage/Index.vue';
-import { mapExcludeLiquidityPlatform, parseLogs, sourceLiquidityBlacklist } from '@/services/Web3Service/utils/index.ts';
-import zapinService from '@/services/Web3Service/zapin-service.ts';
+import {
+  initReqData, parseLogs,
+} from '@/services/Web3Service/utils/index.ts';
+import zapinService, { ZAPIN_TYPE } from '@/services/Web3Service/zapin-service.ts';
 
 enum zapMobileSection {
   'TOKEN_FORM',
@@ -313,9 +312,6 @@ export default {
     };
   },
   computed: {
-    ...mapState('odosData', [
-      'odosReferalCode',
-    ]),
     ...mapGetters('web3', ['evmSigner']),
     ...mapGetters('odosData', [
       'isAvailableOnNetwork',
@@ -636,214 +632,73 @@ export default {
         this.isSwapLoading = false;
       }
     },
+
     async rebalanceTrigger() {
-      if (!this.zapPool) return;
       if (this.isSwapLoading) return;
 
-      if (this.outputTokensWithSelectedTokensCount < 1) {
-        return;
-      }
+      if (!this.v3Range || this.inputTokens?.length === 0) return;
 
-      this.isSwapLoading = true;
+      this.odosDataLoading = true;
 
-      const actualGas = await odosApiService.getActualGasPrice(this.networkId);
-      const userInputTokens = this.inputTokens;
-      const poolOutputTokens = this.selectedOutputTokens;
-
-      const formulaInputTokens = [];
-      let formulaOutputTokens = [];
-
-      for (let i = 0; i < userInputTokens.length; i++) {
-        const inputToken = userInputTokens[i];
-        const userInputToken = inputToken.selectedToken;
-
-        const isFindUserInputTokenInPoolTokens = poolOutputTokens.find(
-          (poolToken) => poolToken.selectedToken.address === userInputToken.address,
+      try {
+        const data = await zapinService.recalculateProportionOdosV3(
+          this.inputTokens,
+          this.selectedOutputTokens,
+          this.zapPool,
+          this.zapContract,
+          this.v3Range.ticks,
+          this.networkId,
+          this.getSlippagePercent(),
+          this.odosSwapRequest,
+          false,
         );
 
-        if (isFindUserInputTokenInPoolTokens) {
-          // if user token exist in pool pair, move to output for proportion formula
-          formulaOutputTokens.push({
-            decimals: userInputToken.decimals,
-            address: userInputToken.address,
-            contractValue: inputToken.contractValue,
-            price: userInputToken.price,
-          });
-          continue;
-        }
-
-        // if user token don't exist in pool pair, move to input for proportion formula
-        formulaInputTokens.push({
-          decimals: userInputToken.decimals,
-          address: userInputToken.address,
-          contractValue: inputToken.contractValue,
-          price: userInputToken.price,
-        });
-      }
-
-      // sort output formula and fill amount by 0;
-      const formulaResultOutputWithZero = [];
-      for (let i = 0; i < poolOutputTokens.length; i++) {
-        const outputToken = poolOutputTokens[i];
-        const poolOutputToken = outputToken.selectedToken;
-        const userInputTokenInFormulaOutputTokens = formulaOutputTokens.find(
-          (formulaToken) => formulaToken.address === poolOutputToken.address,
-        );
-        if (userInputTokenInFormulaOutputTokens) {
-          // if user token exist in pool pair, move to output for proportion formula
-          formulaResultOutputWithZero.push(userInputTokenInFormulaOutputTokens);
-          continue;
-        }
-
-        // fill amount with 0
-        formulaResultOutputWithZero.push({
-          decimals: poolOutputToken.decimals,
-          address: poolOutputToken.address,
-          contractValue: 0,
-          price: poolOutputToken.price,
-        });
-      }
-
-      // formulaOutputTokens sorted by pool pair and with zero for not exist in output formula.
-      formulaOutputTokens = formulaResultOutputWithZero;
-
-      let proportions: any = {
-        inputTokens: [],
-        outputTokens: [],
-      };
-
-      const resp = await zapinService.getV3Rebalance(
-        this.zapPool.tokenId?.toString(),
-        this.zapPool.address,
-        this.v3Range.ticks,
-        this.selectedOutputTokens.map((_) => ({
-          tokenAddress: _?.selectedToken?.address,
-          price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
-        })),
-        this.zapContract,
-      );
-
-      if (!resp) return;
-
-      proportions = {
-        inputTokens: resp[0].map((_: any, key: number) => ({
-          tokenAddress: _,
-          amount: resp[1][key]?.toString(),
-        })).filter((_: any) => new BN(_.amount).gt(0)),
-        outputTokens: resp[2].map((_: any, key: number) => ({
-          tokenAddress: _,
-          proportion: new BN(resp[3][key]?.toString()).div(10 ** 6).toFixed(2),
-        })),
-      };
-
-      proportions.outputTokens = proportions.outputTokens.filter(
-        (item: any) => new BN(item.proportion).gt(0),
-      );
-
-      const request = {
-        chainId: this.networkId,
-        inputTokens: proportions.inputTokens,
-        outputTokens: proportions.outputTokens,
-        gasPrice: actualGas as any,
-        userAddr: this.zapContract.target,
-        slippageLimitPercent: this.getSlippagePercent(),
-      };
-
-      // min amount of tokens, after swap, to escape big swap loss
-      const amountMins: string[] = [];
-
-      if (proportions.inputTokens?.length === 0) {
-        await this.initZapInTransaction(
-          null,
-          proportions.inputTokens,
-          proportions.outputTokens,
-          proportions,
-          amountMins,
-        );
-
-        return;
-      }
-
-      const whiteList = WHITE_LIST_ODOS[request.chainId as keyof typeof WHITE_LIST_ODOS];
-      const requestData = {
-        chainId: request.chainId,
-        inputTokens: request.inputTokens,
-        outputTokens: request.outputTokens,
-        gasPrice: request.gasPrice?.baseFee,
-        userAddr: ethers.getAddress(
-          request.userAddr.toLowerCase(),
-        ),
-        slippageLimitPercent: request.slippageLimitPercent,
-        sourceBlacklist: this.getSourceLiquidityBlackList(),
-        sourceWhitelist: whiteList ?? [],
-        simulate: false,
-        pathViz: false,
-        disableRFQs: false,
-        referralCode: this.odosReferalCode,
-      };
-
-      this.odosSwapRequest(requestData)
-        .then(async (data: any) => {
-          const finalOutput = zapinService.getZapinOutputTokens(
-            data,
-            resp,
-            this.selectedOutputTokens,
-            this.inputTokens,
-          );
-
-          if (!finalOutput) return;
-
-          this.outputTokens = finalOutput.outputToken;
-          this.odosData = finalOutput.odosData;
+        if (!data || (data && !data.odosData)) {
           this.odosDataLoading = false;
+          this.isSwapLoading = true;
+          return;
+        }
 
-          proportions = {
-            ...proportions,
-            amountToken0Out: finalOutput.outputToken[0]?.tokenOut,
-            amountToken1Out: finalOutput.outputToken[1]?.tokenOut,
-          };
+        if (data.inputTokens?.length === 0 && data.outputTokens?.length === 0) {
+          this.initZapInTransaction(
+            null,
+            data.inputTokens,
+            data.outputTokensForZap,
+            data.amountOut,
+            data.amountMins,
+          );
+        }
 
-          const assembleData = {
-            userAddr: ethers.getAddress(
-              request.userAddr.toLowerCase(),
-            ),
-            pathId: data.pathId,
-            simulate: true,
-          };
+        this.outputTokens = data?.outputTokens;
+        this.odosData = data?.odosData;
+        this.odosDataLoading = false;
+        this.isSwapLoading = true;
 
-          this.odosAssembleRequest(assembleData)
-            .then(async (responseAssembleData) => {
-              await this.initZapInTransaction(
-                responseAssembleData,
-                proportions.inputTokens,
-                proportions.outputTokens,
-                proportions,
-                amountMins,
-              );
-            })
-            .catch((e) => {
-              console.error('Odos assemble request failed swap form', e);
-              this.isSwapLoading = false;
-            });
-        })
-        .catch((e) => {
-          console.error('Odos swap request failed from zap', e);
-          this.isSwapLoading = false;
-        });
-    },
+        const assembleData = {
+          userAddr: ethers.getAddress(
+            this.zapContract.target?.toLowerCase(),
+          ),
+          pathId: data.odosData?.pathId,
+          simulate: true,
+        };
 
-    getSourceLiquidityBlackList() {
-      let sourceBlacklist = [...sourceLiquidityBlacklist];
-      // excluding platform for big liquidities zapins
-      const excludeLiquidityByPlatform = mapExcludeLiquidityPlatform[
-        this.zapPool.platform[0]
-      ];
-      if (excludeLiquidityByPlatform && excludeLiquidityByPlatform.length) {
-        sourceBlacklist = [...sourceBlacklist, ...excludeLiquidityByPlatform];
+        this.odosAssembleRequest(assembleData)
+          .then(async (responseAssembleData) => {
+            await this.initZapInTransaction(
+              responseAssembleData,
+              data.inputTokens,
+              data.outputTokensForZap,
+              data.amountOut,
+              data.amountMins,
+            );
+          });
+      } catch (e) {
+        this.showErrorModalWithMsg({ errorMsg: parseErrorLog(e) });
+        this.odosDataLoading = false;
+        this.isSwapLoading = true;
       }
-
-      return sourceBlacklist;
     },
+
     async checkNftApprove() {
       if (!this.poolTokenContract) return;
       this.isSwapLoading = true;
@@ -899,34 +754,15 @@ export default {
       proportions: any,
       amountMins: string[],
     ) {
-      if (!this.zapContract) {
-        console.error(
-          'Init zap transactions failed, chronos contract not found. responseData: ',
-          responseData,
-        );
-        return;
-      }
+      const requestData = initReqData(
+        requestInputTokens,
+        requestOutputTokens,
+        this.zapContract.target,
+      );
 
-      const requestInput = [];
-      for (let i = 0; i < requestInputTokens.length; i++) {
-        requestInput.push({
-          tokenAddress: requestInputTokens[i].tokenAddress,
-          amountIn: requestInputTokens[i].amount,
-        });
-      }
-
-      const requestOutput = [];
-      for (let i = 0; i < requestOutputTokens.length; i++) {
-        requestOutput.push({
-          tokenAddress: requestOutputTokens[i].tokenAddress,
-          receiver: this.zapContract.target,
-        });
-      }
-
-      console.log(amountMins, '___amountMins');
       const txData = {
-        inputs: requestInput,
-        outputs: requestOutput.map((_, key) => ({
+        inputs: requestData.inputT,
+        outputs: requestData.outputT.map((_, key) => ({
           ..._,
           amountMin: new BN(amountMins[key] ?? 0)
             .times(1 - this.getSlippagePercent() / 100)
@@ -940,8 +776,6 @@ export default {
         tickRange: this.v3Range.ticks,
         amountsOut: [proportions.amountToken0Out, proportions.amountToken1Out],
       };
-
-      // this.showWaitingModal('Staking in process');
 
       const params = {
         from: this.account,
@@ -998,109 +832,37 @@ export default {
         val: null,
       });
     },
-    // async recalculateProportion() {
-    //   if (!this.v3Range) return;
-    //   const resp = await getV3Rebalance(
-    //     this.zapPool.tokenId?.toString(),
-    //     this.zapPool.address,
-    //     this.v3Range.ticks,
-    //     this.selectedOutputTokens.map((_) => ({
-    //       tokenAddress: _?.selectedToken?.address,
-    //       price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
-    //     })),
-    //     this.zapContract,
-    //   );
-
-    //   if (!resp) return;
-
-    //   console.log(resp, '__resp');
-    //   resp[5]?.forEach((_: BigInt, key: number) => {
-    //     const { price } = this.selectedOutputTokens[key].selectedToken;
-    //     const val = new BN(_?.toString() ?? 0)
-    //       .div(10 ** 18)
-    //       .div(price);
-
-    //     this.selectedOutputTokens[key].value = val.toFixed();
-    //     this.selectedOutputTokens[key].sum = val.toFixed(5);
-    //   });
-    // },
     async recalculateProportion() {
-      let resp = null as any;
+      if (!this.v3Range || this.inputTokens?.length === 0) return;
+
       this.odosDataLoading = true;
 
-      const emptyVals = this.inputTokens.map((_) => {
-        if (new BN(_?.value).eq(0) || !_?.value) return null;
+      try {
+        const data = await zapinService.recalculateProportionOdosV3(
+          this.inputTokens,
+          this.selectedOutputTokens,
+          this.zapPool,
+          this.zapContract,
+          this.v3Range.ticks,
+          this.networkId,
+          this.getSlippagePercent(),
+          this.odosSwapRequest,
+          true,
+          ZAPIN_TYPE.REBALANCE,
+        );
 
-        return _;
-      });
+        if (!data || (data && !data.odosData)) {
+          this.odosDataLoading = false;
+          return;
+        }
 
-      if (emptyVals.every((_) => !_)) {
+        this.outputTokens = data?.outputTokens;
+        this.odosData = data.odosData;
         this.odosDataLoading = false;
-        return;
-      }
-
-      resp = await zapinService.getV3Rebalance(
-        this.zapPool.tokenId?.toString(),
-        this.zapPool.address,
-        this.v3Range.ticks,
-        this.selectedOutputTokens.map((_) => ({
-          tokenAddress: _?.selectedToken?.address,
-          price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
-        })),
-        this.zapContract,
-      );
-
-      console.log(resp, '___resp2');
-
-      const inputTokens = resp[0].map((_: any, key: number) => ({
-        tokenAddress: _,
-        amount: resp[1][key]?.toString(),
-      })).filter((_: any) => new BN(_.amount).gt(0));
-
-      if (inputTokens.length === 0) {
+      } catch (e) {
+        this.showErrorModalWithMsg({ errorMsg: parseErrorLog(e) });
         this.odosDataLoading = false;
-        return;
       }
-
-      const outputTokens = resp[2].map((_: any, key: number) => ({
-        tokenAddress: _,
-        proportion: new BN(resp[3][key]?.toString()).div(10 ** 6).toFixed(2),
-      }));
-
-      console.log(inputTokens, '__this.inputTokens');
-      console.log(outputTokens, '__this.inputTokens');
-      const whiteList = WHITE_LIST_ODOS[this.networkId as keyof typeof WHITE_LIST_ODOS];
-
-      const requestData = {
-        chainId: this.networkId,
-        inputTokens,
-        outputTokens,
-        userAddr: ethers.getAddress(this.account.toLowerCase()),
-        slippageLimitPercent: this.getSlippagePercent(),
-        sourceBlacklist: this.getSourceLiquidityBlackList(),
-        sourceWhitelist: whiteList ?? [],
-        simulate: true,
-        pathViz: true,
-      };
-
-      const data: any = await this.odosSwapRequest(requestData);
-
-      if (!data) {
-        this.odosDataLoading = false;
-        return;
-      }
-      const finalOutput = zapinService.getZapinOutputTokens(
-        data,
-        resp,
-        this.selectedOutputTokens,
-        this.inputTokens,
-      );
-
-      if (!resp || !finalOutput) return;
-
-      this.outputTokens = finalOutput.outputToken;
-      this.odosData = finalOutput.odosData;
-      this.odosDataLoading = false;
     },
     getSlippagePercent() {
       return this.slippagePercent;

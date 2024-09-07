@@ -345,3 +345,31 @@ export const getSourceLiquidityBlackList = (zapPool: any) => {
 
   return sourceBlacklist;
 };
+
+export const initReqData = (
+  requestInputTokens: any[],
+  requestOutputTokens: any[],
+  zapAdd: string,
+) => {
+  const requestInput = [];
+
+  for (let i = 0; i < requestInputTokens.length; i++) {
+    requestInput.push({
+      tokenAddress: requestInputTokens[i].tokenAddress,
+      amountIn: requestInputTokens[i].amount,
+    });
+  }
+
+  const requestOutput = [];
+  for (let i = 0; i < requestOutputTokens.length; i++) {
+    requestOutput.push({
+      tokenAddress: requestOutputTokens[i].tokenAddress,
+      receiver: zapAdd,
+    });
+  }
+
+  return {
+    inputT: requestInput,
+    outputT: requestOutput,
+  };
+};
