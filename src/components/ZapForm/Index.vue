@@ -239,7 +239,7 @@
             btn-size="large"
             btn-styles="primary"
             full
-            :disabled="odosDataLoading || !agreeWithFees"
+            :disabled="odosDataLoading || !agreeWithFees || isSwapLoading"
             @click="stakeTrigger"
             @keypress="stakeTrigger"
           >
