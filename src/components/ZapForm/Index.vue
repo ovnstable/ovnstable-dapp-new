@@ -1277,7 +1277,10 @@ export default defineComponent({
         data: responseData ? responseData.transaction.data : '0x',
       };
 
-      let gaugeData: any;
+      let gaugeData: any = {
+        gauge: gaugeAddress,
+        amountsOut: [proportions.amountToken0Out, proportions.amountToken1Out],
+      };
 
       if (zapPool.platform === 'Pancake' && this.zapPool.poolVersion === 'v2') {
         gaugeData = {
@@ -1286,11 +1289,6 @@ export default defineComponent({
             proportions.amountToken1Out,
           ],
           pair: gaugeAddress,
-        };
-      } else {
-        gaugeData = {
-          gauge: gaugeAddress,
-          amountsOut: [proportions.amountToken0Out, proportions.amountToken1Out],
         };
       }
 

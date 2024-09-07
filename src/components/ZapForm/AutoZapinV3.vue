@@ -1,5 +1,3 @@
-<!-- eslint-disable vue/html-indent -->
-<!-- eslint-disable vue/first-attribute-linebreak -->
 <template>
   <div>
     <div
@@ -24,20 +22,22 @@
     >
       <div class="zapin-block v3">
         <div class="zapin-block__header-container">
-          <BaseIcon name="ArrowLeft"
-          @click="toggleMobileSection"
+          <BaseIcon
+            name="ArrowLeft"
+            @click="toggleMobileSection"
           />
           <div class="zapin-block__header">
             ZAP IN
           </div>
-          <BaseIcon name="ArrowRight"
-          @click="toggleMobileSection"
+          <BaseIcon
+            name="ArrowRight"
+            @click="toggleMobileSection"
           />
         </div>
         <div class="zapin-block__row">
           <div
-          class="zapin-block__content"
-          :class="currentSection === zapMobileSection.TOKEN_FORM && 'mobile-active'"
+            class="zapin-block__content"
+            :class="currentSection === zapMobileSection.TOKEN_FORM && 'mobile-active'"
           >
             <div class="zapin-block__wrapper">
               <h2 v-if="zapPool?.poolVersion === 'v3'">
@@ -66,7 +66,7 @@
                     <TransitionGroup
                       name="staggered-fade"
                       tag="div"
-                      :class="{ 'swap-form__body-block__inputs': true, 'block-inputs--scroll': outputTokens?.length > 3 }"
+                      :class="{ 'swap-form__body-block__inputs': true, 'block-inputs--scroll': inputTokens?.length > 3 }"
                       :css="false"
                       @before-enter="beforeEnterList"
                       @enter="onEnterList"
@@ -162,7 +162,7 @@
           @click="connectWallet"
           @keypress="connectWallet"
         >
-        CONNECT WALLET
+          CONNECT WALLET
         </ButtonComponent>
         <div
           v-else
@@ -240,13 +240,10 @@
       @add-token-to-list="addSelectedTokenToList"
       @remove-token-from-list="removeSelectedTokenFromList"
     />
-</div>
+  </div>
 </template>
-<!-- eslint-disable no-restricted-syntax -->
 <!-- eslint-disable no-continue -->
-<!-- eslint-disable no-param-reassign -->
 <script lang="ts">
-import { useEventBus } from '@vueuse/core';
 import {
   computed, defineComponent, markRaw,
 } from 'vue';
@@ -291,6 +288,7 @@ import {
   getUpdatedTokenVal,
   initReqData,
   parseLogs,
+  removeToken,
 } from '@/services/Web3Service/utils/index.ts';
 
 enum zapMobileSection {
@@ -346,13 +344,11 @@ export default defineComponent({
     agreeWithFees: true,
     inputTokens: [] as any[],
     outputTokens: [] as any[],
-    maxInputTokens: MAX_INPUT_TOKENS,
     v3Range: null as any,
     isShowSelectTokensModal: false,
     gaugeContract: null as any,
     zapContract: null as any,
     poolTokenContract: null as any,
-    zapPoolRoot: null as any,
     odosDataLoading: false,
     odosData: {
       percentDiff: 0,
@@ -418,15 +414,9 @@ export default defineComponent({
     },
     isInputTokensAddAvailable() {
       return (
-        this.inputTokens.length < this.maxInputTokens
-        && this.inputTokensWithoutSelectedTokensCount === 0
+        this.inputTokens.length < MAX_INPUT_TOKENS
       );
     },
-
-    inputTokensWithoutSelectedTokensCount() {
-      return this.inputTokens.filter((item: any) => !item.selectedToken).length;
-    },
-
     isEmptyForm() {
       if (this.inputTokens.filter((item: any) => item.selectedToken).length === 0) return true;
       if (this.outputTokens.filter((item: any) => item.selectedToken).length === 0) return true;
@@ -553,7 +543,6 @@ export default defineComponent({
     ...mapActions('waitingModal', ['showWaitingModal', 'closeWaitingModal']),
     ...mapActions('poolsData', ['setIsZapModalShow']),
     ...mapActions('walletAction', ['connectWallet']),
-
     ...mapMutations('waitingModal', ['setStagesMap']),
     onLeaveList,
     beforeEnterList,
@@ -628,15 +617,7 @@ export default defineComponent({
     },
 
     firstInit() {
-      this.initEvent();
       this.clearAndInitForm();
-    },
-
-    async initEvent() {
-      const bus = useEventBus('odos-transaction-finished');
-      bus.on(() => {
-        this.finishTransaction();
-      });
     },
     addDefaultPoolToken() {
       if (this.poolTokens.length === 0) return;
@@ -653,22 +634,7 @@ export default defineComponent({
       this.inputTokens.push(getNewInputToken());
     },
     removeInputToken(id: string) {
-      this.removeToken(this.inputTokens, id);
-    },
-
-    removeToken(tokens: any[], id: string) {
-      // removing by token.id or token.selectedToken.id
-      const index = tokens.findIndex(
-        (item: any) => item.id === id
-          || (item.selectedToken ? item.selectedToken.id === id : false),
-      );
-      if (index !== -1) {
-        if (tokens[index].selectedToken) {
-          tokens[index].selectedToken.selected = false;
-        }
-
-        tokens.splice(index, 1);
-      }
+      removeToken(this.inputTokens, id);
     },
     odosAssembleRequest(requestData: any) {
       return odosApiService
@@ -696,21 +662,13 @@ export default defineComponent({
       this.slippagePercent = newSlippage;
     },
 
-    finishTransaction() {
-      this.clearAndInitForm();
-      this.closeWaitingModal();
-      this.refreshBalances();
-    },
-
     clearAndInitForm() {
       this.clearAllSelectedTokens();
       this.addDefaultPoolToken();
     },
     async stakeTrigger() {
       if (this.isSwapLoading) return;
-
       if (!this.v3Range || this.selectedInputTokens?.length === 0) return;
-
       this.odosDataLoading = true;
 
       try {
@@ -842,53 +800,46 @@ export default defineComponent({
     },
     async getLastNftId() {
       const tokens = await this.poolTokenContract.balanceOf(this.account);
-      console.log(tokens, '___tokens');
       const tokenId = await this.poolTokenContract
         .tokenOfOwnerByIndex(this.account, Number(tokens) - 1);
-
-      console.log(tokenId, '___tokenId');
       return tokenId;
     },
     async depositGauge(
       lastNftTokenId: any,
     ) {
-      this.currentStage = zapInStep.STAKE_LP;
-      this.showWaitingModal('Stake LP in process');
-      console.log({
-        acc: this.account,
-        lastNftTokenId,
-        gauge: this.gaugeContract,
-        zaproot: this.zapPoolRoot,
-        token: this.poolTokenContract,
+      try {
+        this.currentStage = zapInStep.STAKE_LP;
+        this.showWaitingModal('Stake LP in process');
+        this.isSwapLoading = true;
+        const tx = await this.gaugeContract.deposit(Number(lastNftTokenId));
+        await tx.wait();
 
-      }, '___DATA1');
+        this.isSwapLoading = false;
+        this.triggerSuccessZapin(
+          {
+            isShow: true,
+            inputTokens: [...this.selectedInputTokens],
+            outputTokens: [...this.selectedOutputTokens],
+            hash: tx.hash,
+            pool: this.zapPool,
+            modalType: MODAL_TYPE.ZAPIN,
+          },
+        );
 
-      this.isSwapLoading = true;
-      const tx = await this.gaugeContract.deposit(Number(lastNftTokenId));
-      await tx.wait();
-
-      const inputTokens = [...this.selectedInputTokens];
-      const outputTokens = [...this.selectedOutputTokens];
-      this.isSwapLoading = false;
-      console.log(inputTokens, 'SUCCESS1');
-      console.log(outputTokens, 'SUCCESS2');
-      this.triggerSuccessZapin(
-        {
-          isShow: true,
-          inputTokens,
-          outputTokens,
-          hash: tx.hash,
-          pool: this.zapPool,
-          modalType: MODAL_TYPE.ZAPIN,
-        },
-      );
-
-      this.closeWaitingModal();
-      this.clearAndInitForm();
-      this.$store.commit('odosData/changeState', {
-        field: 'additionalSwapStepType',
-        val: null,
-      });
+        this.closeWaitingModal();
+        this.clearAndInitForm();
+        this.$store.commit('odosData/changeState', {
+          field: 'additionalSwapStepType',
+          val: null,
+        });
+      } catch (e) {
+        this.isSwapLoading = false;
+        this.closeWaitingModal();
+        this.showErrorModalWithMsg({
+          errorType: 'zap',
+          errorMsg: parseErrorLog(e),
+        });
+      }
     },
     async initZapInTransaction(
       responseData: any,
@@ -929,7 +880,6 @@ export default defineComponent({
       };
 
       console.log(this.zapContract, '-this.zapContract');
-
       console.log(txData, 'swapdata');
       console.log(gaugeData, 'gaugeData');
       console.log((params), 'params');
@@ -1017,8 +967,7 @@ export default defineComponent({
         return;
       }
 
-      const tokenContract = TokenService
-        .loadTokenContract(selectedToken.address, this.$store.state.web3.evmSigner);
+      const tokenContract = TokenService.loadTokenContract(selectedToken.address, this.evmSigner);
       const allowanceValue = await getAllowanceValue(
         tokenContract,
         this.account,
@@ -1091,17 +1040,18 @@ export default defineComponent({
     addSelectedTokenToList(data: any) {
       if (data.isInput) {
         this.addSelectedTokenToInputList(data.tokenData, false);
-        return;
+      } else {
+        this.addSelectedTokenToOutputList(data.tokenData, true, 50);
       }
-
-      this.addSelectedTokenToOutputList(data.tokenData, true, 50);
     },
     addSelectedTokenToInputList(selectedToken: any, isAddAllBalance: any) {
       // todo computed ovn input tokens and logic here
       const newInputToken = getNewInputToken();
-      newInputToken.selectedToken = selectedToken;
       this.removeAllWithoutSelectedTokens(this.inputTokens);
-      this.inputTokens.unshift(newInputToken);
+      this.inputTokens.push({
+        ...newInputToken,
+        selectedToken,
+      });
 
       if (isAddAllBalance) {
         const newToken = updateTokenValue(
@@ -1129,7 +1079,7 @@ export default defineComponent({
       }
 
       for (let i = 0; i < tokensToRemove.length; i++) {
-        this.removeToken(tokens, tokensToRemove[i].id);
+        removeToken(tokens, tokensToRemove[i].id);
       }
     },
     addSelectedTokenToOutputList(selectedToken: any, locked: any, startPercent: any) {
@@ -1156,9 +1106,7 @@ export default defineComponent({
     },
     updateQuotaInfo() {
       if (!this.tokensQuotaCounterId) {
-        // first call
         this.tokensQuotaCounterId = -1;
-        // update
         this.recalculateProportion();
         return;
       }
