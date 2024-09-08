@@ -516,7 +516,7 @@ class ZapinService {
       price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
     }));
 
-    let resp = null;
+    let resp: any = null;
 
     if (typeFunc === ZAPIN_TYPE.ZAPIN) {
       resp = await this.getV3Proportion(
