@@ -97,7 +97,7 @@ import PoolsFilter from '@/components/Pools/PositionsFilter/Index.vue';
 import { mapActions, mapGetters } from 'vuex';
 import { POOL_TYPES } from '@/store/views/main/pools/index.ts';
 import TableSkeleton from '@/components/TableSkeleton/Index.vue';
-import { getImageUrl } from '@/utils/const.ts';
+import { awaitDelay, getImageUrl } from '@/utils/const.ts';
 import ButtonComponent from '@/components/Button/Index.vue';
 import { defineComponent } from 'vue';
 import { usePositionsQuery } from '@/hooks/fetch/usePositionsQuery.ts';
@@ -108,7 +108,7 @@ import { initZapinContracts } from '@/services/Web3Service/utils/index.ts';
 import { useTokensQuery, useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import { usePoolsQueryNew } from '@/hooks/fetch/usePoolsQuery.ts';
-import type { TPoolInfo } from '@/types/common/pools/index.ts';
+import type { TFilterPoolsParams, TPoolInfo } from '@/types/common/pools/index.ts';
 
 interface IEnumIterator {
   next: () => number,
@@ -163,7 +163,6 @@ export default defineComponent({
     TableSkeleton,
     ButtonComponent,
   },
-  // Using new Composition API for hooks compatibility
   setup() {
     const { data: positionData, isLoading } = usePositionsQuery();
     const { data: allTokensList } = useTokensQuery();
@@ -197,11 +196,8 @@ export default defineComponent({
       positionSizeSortIterator: {} as IEnumIterator,
       positionSizeOrder: 0 as number,
       isManualLoading: false as boolean,
-      // positionData: [] as any,
       supportedNetworks: SUPPORTED_REBALANCE_NETWORKS,
-
       isInit: false as boolean,
-    // tokensLength: 0 as number,
     };
   },
   computed: {
@@ -277,7 +273,16 @@ export default defineComponent({
     ...mapActions('waitingModal', ['closeWaitingModal', 'showWaitingModal']),
     ...mapActions('errorModal', ['showErrorModalWithMsg']),
     ...mapActions('odosData', ['triggerSuccessZapin']),
-    ...mapActions('poolsData', ['setIsZapModalShow']),
+    ...mapActions('poolsData', ['setIsZapModalShow', 'setFilterParams']),
+    handleClickSearch(zapPool: any) {
+      if (!zapPool) return;
+      const tokens = (zapPool?.name as string)?.split('/');
+
+      const filterParams: Partial<TFilterPoolsParams> = {
+        token0: tokens[0],
+      };
+      this.setFilterParams(filterParams);
+    },
     searchGauge(pool: TPoolInfo) {
       if (!this.poolList || this.poolList?.length === 0 || !pool) return '';
       const foundPool = this.poolList
@@ -288,7 +293,10 @@ export default defineComponent({
     },
     async handleClaim(pool: TPoolInfo) {
       this.setIsZapModalShow(false);
+      this.handleClickSearch(pool);
+      await awaitDelay(500);
       const gaugeAdd = this.searchGauge(pool);
+
       if (!gaugeAdd) {
         this.showErrorModalWithMsg({ errorMsg: 'Gauge not found' });
         return;
