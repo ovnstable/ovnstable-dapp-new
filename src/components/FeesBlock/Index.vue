@@ -165,7 +165,7 @@ export default {
       const val = this.selectedInputTokens
         .reduce((acc: BN, curr:any) => acc.plus(curr.usdValue), new BN(0));
 
-      return val.gt(10) ? val.toFixed(0) : val.toFixed(4);
+      return val.toFixed(this.getFixed(val.toFixed()));
     },
     getToken() {
       return (val: string) => {

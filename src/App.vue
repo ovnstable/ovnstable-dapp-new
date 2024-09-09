@@ -32,6 +32,9 @@
       v-if="showSuccessModal"
       :show-modal="showSuccessModal"
     />
+    <SuccessZapModal
+      :set-show-func="triggerSuccessZapin"
+    />
     <DeprecatedModal
       :show-modal="showDeprecatedModal"
       @close="showDeprecatedModal = false"
@@ -41,7 +44,7 @@
 </template>
 
 <script lang="ts">
-import { mapGetters } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import { RouterView } from 'vue-router';
 import HeaderBar from '@/components/Layout/Header/Index.vue';
 import FooterMobile from '@/components/Layout/FooterMobile/Index.vue';
@@ -52,6 +55,7 @@ import SuccessModal from '@/modules/ModalTemplates/SuccessModal/Index.vue';
 import DeprecatedModal from '@/modules/ModalTemplates/DeprecatedModal/Index.vue';
 import { deviceType } from '@/utils/deviceType.ts';
 import ButtonComponent from '@/components/Button/Index.vue';
+import SuccessZapModal from '@/modules/ModalTemplates/SuccessModal/SuccessZapModal.vue';
 
 export default {
   name: 'AppView',
@@ -65,6 +69,7 @@ export default {
     WaitingModal,
     SuccessModal,
     ButtonComponent,
+    SuccessZapModal,
   },
   data() {
     return {
@@ -82,6 +87,7 @@ export default {
     await this.$store.dispatch('walletAction/dappInitWalletConnect');
   },
   methods: {
+    ...mapActions('odosData', ['triggerSuccessZapin']),
     deviceType,
     toggleDeprectedModal() {
       this.showDeprecatedModal = true;

@@ -59,8 +59,10 @@ class ZapinService {
       tx = await poolTokenContract.collect(zapPool.tokenId);
     }
 
+    console.log(tx, '__TX');
     await tx.wait();
 
+    console.log('__TX2');
     triggerSuccess(
       {
         isShow: true,
@@ -70,6 +72,8 @@ class ZapinService {
         modalType: MODAL_TYPE.HARVEST,
       },
     );
+
+    return tx;
   }
 
   async getV3Rebalance(

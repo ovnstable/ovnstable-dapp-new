@@ -96,7 +96,9 @@ export const formatPositionData = (
       const reward1UsdStr = getUsdStr(rewardAmount1, token1Info?.decimals, token1Info?.price);
       const positionUsdTotal = sumBnStr(token0UsdStr, token1UsdStr);
       let rewardUsdTotal = sumBnStr(reward0UsdStr, reward1UsdStr);
+      let platformName = platform;
 
+      if (platformName === 'PCS') platformName = 'Pancake';
       if (platform === 'Aerodrome') {
         const aeroTokenInfo = getTokenInfo(AERO_ADDR, tokenMap);
         rewardUsdTotal = getUsdStr(emissions, aeroTokenInfo?.decimals, aeroTokenInfo?.price);
@@ -116,10 +118,10 @@ export const formatPositionData = (
         chain: networkId,
         token0Add: token0Info?.address,
         token1Add: token1Info?.address,
-        chainName: network?.name?.toLowerCase() ?? 'base',
+        chainName: network?.networkName?.toLowerCase(),
         token0Icon: token0Info?.logoUrl ?? loadEmptyImg(),
         token1Icon: token1Info?.logoUrl ?? loadEmptyImg(),
-        platform: [platform],
+        platform: [platformName],
         name: pool ? pool.name : `${token0Info?.symbol}/${token1Info?.symbol}`,
         position: {
           tokens: [
@@ -140,7 +142,7 @@ export const formatPositionData = (
           displayedUsdValue: getMinVal(rewardUsdTotal),
         },
         emissions,
-        platformLinks: getPlatformLinks(platform, poolId, 'base'),
+        platformLinks: getPlatformLinks(platformName, poolId, network?.networkName?.toLowerCase()),
         tokenId,
         ticks,
         tokenNames,

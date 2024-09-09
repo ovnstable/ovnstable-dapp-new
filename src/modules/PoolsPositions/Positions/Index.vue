@@ -263,7 +263,6 @@ export default defineComponent({
   },
   async mounted() {
     this.clearAllFilters();
-
     this.aprSortIterator = iterateEnum(APR_ORDER_TYPE);
     this.aprOrder = this.aprSortIterator.next();
     this.positionSizeSortIterator = iterateEnum(POSITION_SIZE_ORDER_TYPE);
@@ -317,8 +316,8 @@ export default defineComponent({
           contractsData.gaugeContract,
           contractsData.poolTokenContract,
           this.triggerSuccessZapin,
-          this.showErrorModalWithMsg,
         );
+        this.closeWaitingModal();
       } catch (e) {
         this.isClaiming = false;
         this.closeWaitingModal();

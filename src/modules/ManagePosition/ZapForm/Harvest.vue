@@ -267,9 +267,7 @@ export default defineComponent({
     ...mapActions('swapModal', ['showSwapModal', 'showMintView']),
     ...mapActions('errorModal', ['showErrorModalWithMsg']),
     ...mapActions('poolsData', ['setIsZapModalShow']),
-    ...mapActions('odosData', [
-      'triggerSuccessZapin',
-    ]),
+    ...mapActions('odosData', ['triggerSuccessZapin']),
     ...mapActions('waitingModal', ['closeWaitingModal', 'showWaitingModal']),
     ...mapActions('walletAction', ['connectWallet']),
     mintAction() {
@@ -302,8 +300,9 @@ export default defineComponent({
           this.gaugeContract,
           this.poolTokenContract,
           this.triggerSuccessZapin,
-          this.showErrorModalWithMsg,
         );
+
+        this.closeWaitingModal();
       } catch (e) {
         this.isSwapLoading = false;
         this.closeWaitingModal();

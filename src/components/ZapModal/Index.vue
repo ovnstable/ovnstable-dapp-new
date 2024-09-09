@@ -13,27 +13,20 @@
         />
       </div>
     </ModalComponent>
-
-    <SuccessZapModal
-      :set-show-func="triggerSuccessZapin"
-    />
   </div>
 </template>
 
 <script lang="ts">
 import {
-  mapActions,
   mapMutations,
 } from 'vuex';
 import ModalComponent from '@/components/Modal/Index.vue';
 import ZapForm from '@/components/ZapForm/Index.vue';
-import SuccessZapModal from '@/modules/ModalTemplates/SuccessModal/SuccessZapModal.vue';
 
 export default {
   name: 'ZapModal',
   components: {
     ZapForm,
-    SuccessZapModal,
     ModalComponent,
   },
   props: {
@@ -59,9 +52,6 @@ export default {
     },
   },
   methods: {
-    ...mapActions('odosData', [
-      'triggerSuccessZapin',
-    ]),
     ...mapMutations('zapinData', ['resetStore']),
     closeModal() {
       this.resetStore();

@@ -71,10 +71,6 @@
         :gauge-address="gaugeAddress"
       />
     </div>
-
-    <SuccessZapModal
-      :set-show-func="triggerSuccessZapin"
-    />
   </div>
 </template>
 
@@ -82,7 +78,6 @@
 import {
   mapActions,
 } from 'vuex';
-import SuccessZapModal from '@/modules/ModalTemplates/SuccessModal/SuccessZapModal.vue';
 import RebalanceForm from '@/modules/ManagePosition/ZapForm/Index.vue';
 import WithdrawForm from '@/modules/ManagePosition/ZapForm/Withdraw.vue';
 import HarvestForm from '@/modules/ManagePosition/ZapForm/Harvest.vue';
@@ -110,7 +105,6 @@ export default {
     RebalanceForm,
     HarvestForm,
     WithdrawForm,
-    SuccessZapModal,
     ButtonComponent,
     BaseIcon,
     TableSkeleton,
@@ -177,7 +171,6 @@ export default {
     this.init();
   },
   methods: {
-    ...mapActions('odosData', ['triggerSuccessZapin']),
     ...mapActions('poolsData', ['setFilterParams']),
     handleClickSearch() {
       if (!this.zapPool) return;

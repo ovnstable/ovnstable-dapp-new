@@ -44,7 +44,7 @@
                     Initial tokens
                   </h2>
                   <div
-                    v-for="token in (inputTokens as any)"
+                    v-for="token in inputTokens"
                     :key="token.id"
                     class="input-component-container"
                   >
@@ -86,7 +86,7 @@
               :slippage-percent="slippagePercent"
               :get-odos-fee="0"
               :multi-swap-odos-fee-percent="0"
-              :selected-input-tokens="inputTokens"
+              :selected-input-tokens="selectedInputTokens"
               :selected-output-tokens="selectedOutputTokens"
               :odos-data="odosData"
               :agree-with-fees="agreeWithFees"
@@ -334,6 +334,12 @@ export default {
       return this.outputTokens.filter((item: any) => item.selectedToken).length;
     },
 
+    selectedInputTokens() {
+      return this.inputTokens.map((_) => ({
+        ..._,
+        usdValue: new BN(_?.sum).times(_?.selectedToken?.price).toFixed(4),
+      }));
+    },
     selectedOutputTokens() {
       return this.outputTokens.filter((item: any) => item.selectedToken);
     },
@@ -815,7 +821,7 @@ export default {
 
       try {
         const data = await zapinService.recalculateProportionOdosV3(
-          this.inputTokens,
+          this.selectedInputTokens,
           this.selectedOutputTokens,
           this.zapPool,
           this.zapContract,
@@ -827,6 +833,7 @@ export default {
           ZAPIN_TYPE.REBALANCE,
         );
 
+        console.log(data, '___data');
         if (!data || (data && !data.odosData)) {
           this.odosDataLoading = false;
           return;
