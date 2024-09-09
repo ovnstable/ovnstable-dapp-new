@@ -4,7 +4,7 @@
     <div class="input-tokens__row">
       <div
         v-if="tokenLoading"
-        class="lineLoader lineLoader--balance"
+        class="lineLoader lineLoader--balance lineLoader--balance-orig"
       />
       <InputComponent
         v-else
@@ -179,6 +179,10 @@ export default {
 </style>
 
 <style lang="scss" scoped>
+.lineLoader--balance-orig {
+  margin: 13.5px 0;
+}
+
 .input-tokens {
   height: 100%;
   position: relative;
