@@ -289,9 +289,9 @@ import {
   WHITE_LIST_ODOS,
   getTokenByAddress,
 } from '@/store/helpers/index.ts';
-import {
-  getV3Proportion,
-} from '@/store/views/main/zapin/helpers.ts';
+import zapinService, {
+  ZAPIN_TYPE,
+} from '@/services/Web3Service/zapin-service.ts';
 import odosApiService from '@/services/odos-api-service.ts';
 
 import Spinner from '@/components/Spinner/Index.vue';
@@ -324,9 +324,8 @@ import {
   parseLogs,
   sourceLiquidityBlacklist,
 } from '@/components/ZapForm/helpers.ts';
-import zapinService, { ZAPIN_TYPE } from '@/services/Web3Service/zapin-service.ts';
-import { initReqData } from '@/services/Web3Service/utils/index.ts';
 import ZapInStepsRow from '@/components/StepsRow/ZapinRow/IncreaseRow.vue';
+import { initReqData } from '@/services/Web3Service/utils/index.ts';
 
 enum zapMobileSection {
   'TOKEN_FORM',
@@ -1147,7 +1146,8 @@ export default {
 
       console.log(this.selectedInputTokens, '__this.selectedInputTokens');
       console.log(this.selectedOutputTokens, '__this.selectedOutputTokens');
-      const resp = await getV3Proportion(
+
+      const resp = await zapinService.getV3Proportion(
         this.zapPool.address,
         this.v3Range.ticks,
         this.selectedInputTokens.map((_) => ({
