@@ -623,7 +623,7 @@ export default {
 
       try {
         const data = await zapinService.recalculateProportionOdosV3(
-          this.inputTokens,
+          this.selectedInputTokens,
           this.selectedOutputTokens,
           this.zapPool,
           this.zapContract,
