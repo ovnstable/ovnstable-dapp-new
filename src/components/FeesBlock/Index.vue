@@ -96,7 +96,7 @@
   </div>
 </template>
 <script lang="ts">
-import { fixedByPrice, formatMoney } from '@/utils/numbers.ts';
+import { formatMoney, getFixed } from '@/utils/numbers.ts';
 import BN from 'bignumber.js';
 import SwitchComponent from '@/components/Switch/Index.vue';
 
@@ -155,7 +155,7 @@ export default {
       return (val: string) => {
         if (new BN(val).eq(0)) return 0;
 
-        return formatMoney(Number(val), this.getFixed(val));
+        return formatMoney(Number(val), getFixed(val));
       };
     },
     critImpact() {
@@ -165,24 +165,14 @@ export default {
       const val = this.selectedInputTokens
         .reduce((acc: BN, curr:any) => acc.plus(curr.usdValue), new BN(0));
 
-      return val.toFixed(this.getFixed(val.toFixed()));
+      return val.toFixed(getFixed(val.toFixed()));
     },
     getToken() {
       return (val: string) => {
         if (new BN(val).eq(0)) return 0;
         const valTotal = new BN(val).times(1 - this.slippagePercent / 100);
-        const fixedAm = this.getFixed(val);
+        const fixedAm = getFixed(val);
         return formatMoney(Number(valTotal), fixedAm);
-      };
-    },
-    getFixed() {
-      return (val: string) => {
-        let fixed = 2;
-
-        if (new BN(val).gt(10000)) fixed = 0;
-        if (new BN(val).lt(0.1)) fixed = fixedByPrice(Number(val));
-
-        return fixed;
       };
     },
     getFixedPrice() {

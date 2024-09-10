@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="zapin-wrap">
     <div
       v-if="zapPool.chain !== networkId"
       class="zapin-container"
@@ -143,13 +143,21 @@
               @change-slippage="handleCurrentSlippageChanged"
             />
           </div>
-          <ZapinV3
-            :zap-pool="zapPool"
-            :zap-contract="zapContract"
-            :tokens-data="outputTokens"
-            :class="currentSection === zapMobileSection.SET_PRICE_RANGE && 'mobile-active'"
-            @set-range="setRangeV3"
-          />
+          <div class="zapin-block__counts">
+            <ZapinV3
+              :zap-pool="zapPool"
+              :zap-contract="zapContract"
+              :tokens-data="outputTokens"
+              :class="currentSection === zapMobileSection.SET_PRICE_RANGE && 'mobile-active'"
+              @set-range="setRangeV3"
+            />
+            <SwapRouting
+              v-if="odosData?.netOutValue"
+              :swap-data="odosData"
+              :merged-list="mergedTokenList"
+              :output-tokens="selectedOutputTokens"
+            />
+          </div>
         </div>
       </div>
       <div class="swap-container__footer">
@@ -260,6 +268,7 @@ import {
 } from '@/store/helpers/index.ts';
 import odosApiService from '@/services/odos-api-service.ts';
 
+import SwapRouting from '@/components/SwapRouting/Index.vue';
 import Spinner from '@/components/Spinner/Index.vue';
 import ChangeNetwork from '@/components/ZapForm/ChangeNetwork.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
@@ -302,6 +311,7 @@ export default defineComponent({
   name: 'AutoZapForm',
   components: {
     PoolLabel,
+    SwapRouting,
     BaseIcon,
     ZapinV3,
     FeesBlock,
