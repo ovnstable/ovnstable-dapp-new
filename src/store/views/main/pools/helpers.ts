@@ -48,6 +48,8 @@ export const buildLink = (pool: any, poolPlatform: string) => {
     return url;
   }
 
+  const pancakeChain = pool.chainName === 'arbitrum' ? 'arb' : pool.chainName;
+
   switch (poolPlatform) {
     case 'Dystopia':
       url = 'https://www.dystopia.exchange/liquidity/';
@@ -164,7 +166,7 @@ export const buildLink = (pool: any, poolPlatform: string) => {
       url = 'https://www.convexfinance.com/stake/arbitrum/13';
       break;
     case 'Pancake':
-      url = `https://pancakeswap.finance/info/v3/${pool.chainName}/pairs/${pool.address}?chain=${pool.chainName}`;
+      url = `https://pancakeswap.finance/info/v3/${pancakeChain}/pairs/${pool.address}?chain=${pool.chainName}`;
       break;
     case 'Lynex':
       url = 'https://app.lynex.fi/liquidity/manage/';
