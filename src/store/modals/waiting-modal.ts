@@ -20,6 +20,15 @@ export enum withdrawStep {
   ZAPOUT,
 }
 
+export enum IncreaseStep {
+  START,
+  APPROVE,
+  UNSTAKE,
+  APPROVEGAUGE,
+  INCREASE,
+  STAKE,
+}
+
 export const ZAPIN_MAP: Record<zapInStep, string> = {
   [zapInStep.START]: 'Start',
   [zapInStep.APPROVE_TOKENS]: 'Approve Tokens',
@@ -42,18 +51,29 @@ export const WITHDRAW_MAP: Record<withdrawStep, string> = {
   [withdrawStep.ZAPOUT]: 'Zapout',
 };
 
+export const INCREASE_MAP: Record<IncreaseStep, string> = {
+  [IncreaseStep.START]: 'Start',
+  [IncreaseStep.APPROVE]: 'Approve Tokens',
+  [IncreaseStep.UNSTAKE]: 'Unstake',
+  [IncreaseStep.APPROVEGAUGE]: 'Approve NFT for gauge',
+  [IncreaseStep.INCREASE]: 'Increase',
+  [IncreaseStep.STAKE]: 'Stake',
+};
+
 export enum MANAGE_FUNC {
   REBALANCE,
   ZAPIN,
   WITHDRAW,
-  HARVEST
+  HARVEST,
+  INCREASE,
 }
 
 /* eslint-disable no-unused-vars */
 const stateData = {
   show: false,
   modalText: '',
-  STAGES_MAP: ZAPIN_MAP as typeof ZAPIN_MAP | typeof REBALANCE_MAP | typeof WITHDRAW_MAP,
+  STAGES_MAP: ZAPIN_MAP as typeof ZAPIN_MAP
+  | typeof REBALANCE_MAP | typeof WITHDRAW_MAP | typeof INCREASE_MAP,
 };
 
 const getters = {
@@ -96,6 +116,8 @@ const mutations = {
     if (func === MANAGE_FUNC.ZAPIN) state.STAGES_MAP = ZAPIN_MAP;
     if (func === MANAGE_FUNC.WITHDRAW) state.STAGES_MAP = WITHDRAW_MAP;
     if (func === MANAGE_FUNC.REBALANCE) state.STAGES_MAP = REBALANCE_MAP;
+    if (func === MANAGE_FUNC.INCREASE) state.STAGES_MAP = INCREASE_MAP;
+    console.log(state.STAGES_MAP);
   },
 };
 

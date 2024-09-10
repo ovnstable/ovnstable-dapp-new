@@ -71,6 +71,22 @@
         :gauge-address="gaugeAddress"
       />
     </div>
+    <div
+      v-else-if="activeTab === manageTab.INCREASE"
+      class="manage-wrap__content"
+    >
+      <IncreaseForm
+        :zap-pool="zapPool"
+        :active-tab="activeTab"
+        :all-tokens-list="allTokensList"
+        :balance-list="balanceList"
+        :gauge-address="gaugeAddress"
+      />
+    </div>
+
+    <SuccessZapModal
+      :set-show-func="triggerSuccessZapin"
+    />
   </div>
 </template>
 
@@ -78,9 +94,11 @@
 import {
   mapActions,
 } from 'vuex';
+import SuccessZapModal from '@/modules/ModalTemplates/SuccessModal/SuccessZapModal.vue';
 import RebalanceForm from '@/modules/ManagePosition/ZapForm/Index.vue';
 import WithdrawForm from '@/modules/ManagePosition/ZapForm/Withdraw.vue';
 import HarvestForm from '@/modules/ManagePosition/ZapForm/Harvest.vue';
+import IncreaseForm from '@/modules/ManagePosition/ZapForm/Increase.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import TableSkeleton from '@/components/TableSkeleton/Index.vue';
@@ -95,7 +113,8 @@ import type { TFilterPoolsParams } from '@/types/common/pools';
 export enum MANAGE_TAB {
   REBALANCE,
   WITHDRAW,
-  HARVEST
+  HARVEST,
+  INCREASE,
 }
 
 export default {
@@ -105,10 +124,12 @@ export default {
     RebalanceForm,
     HarvestForm,
     WithdrawForm,
+    SuccessZapModal,
     ButtonComponent,
     BaseIcon,
     TableSkeleton,
     SwitchTabs,
+    IncreaseForm,
   },
   setup() {
     const { data: getUserPositions } = usePositionsQuery();
@@ -143,6 +164,10 @@ export default {
           id: MANAGE_TAB.HARVEST,
           name: 'Harvest',
         },
+        {
+          id: MANAGE_TAB.INCREASE,
+          name: 'Increase',
+        },
       ],
     };
   },
@@ -171,6 +196,7 @@ export default {
     this.init();
   },
   methods: {
+    ...mapActions('odosData', ['triggerSuccessZapin']),
     ...mapActions('poolsData', ['setFilterParams']),
     handleClickSearch() {
       if (!this.zapPool) return;

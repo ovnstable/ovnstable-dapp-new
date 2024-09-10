@@ -18,7 +18,7 @@ import odosApiService from '../odos-api-service.ts';
 
 export enum ZAPIN_TYPE {
   ZAPIN,
-  REBALANCE
+  REBALANCE,
 }
 
 interface IZapinProportion {
