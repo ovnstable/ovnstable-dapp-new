@@ -83,6 +83,18 @@
         :gauge-address="gaugeAddress"
       />
     </div>
+    <div
+      v-else-if="activeTab === manageTab.MERGE"
+      class="manage-wrap__content"
+    >
+      <MergeForm
+        :zap-pool="zapPool"
+        :active-tab="activeTab"
+        :all-tokens-list="allTokensList"
+        :balance-list="balanceList"
+        :gauge-address="gaugeAddress"
+      />
+    </div>
 
     <SuccessZapModal
       :set-show-func="triggerSuccessZapin"
@@ -99,6 +111,7 @@ import RebalanceForm from '@/modules/ManagePosition/ZapForm/Index.vue';
 import WithdrawForm from '@/modules/ManagePosition/ZapForm/Withdraw.vue';
 import HarvestForm from '@/modules/ManagePosition/ZapForm/Harvest.vue';
 import IncreaseForm from '@/modules/ManagePosition/ZapForm/Increase.vue';
+import MergeForm from '@/modules/ManagePosition/ZapForm/Merge.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import TableSkeleton from '@/components/TableSkeleton/Index.vue';
@@ -115,6 +128,7 @@ export enum MANAGE_TAB {
   WITHDRAW,
   HARVEST,
   INCREASE,
+  MERGE,
 }
 
 export default {
@@ -123,6 +137,7 @@ export default {
     PoolData,
     RebalanceForm,
     HarvestForm,
+    MergeForm,
     WithdrawForm,
     SuccessZapModal,
     ButtonComponent,
@@ -168,6 +183,10 @@ export default {
           id: MANAGE_TAB.INCREASE,
           name: 'Increase',
         },
+        // {
+        //   id: MANAGE_TAB.MERGE,
+        //   name: 'Merge',
+        // },
       ],
     };
   },

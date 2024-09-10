@@ -102,13 +102,13 @@ import ButtonComponent from '@/components/Button/Index.vue';
 import { defineComponent } from 'vue';
 import { usePositionsQuery } from '@/hooks/fetch/usePositionsQuery.ts';
 import { useRefreshBalances } from '@/hooks/fetch/useRefreshBalances.ts';
-import zapinService from '@/services/Web3Service/zapin-service.ts';
 import { parseErrorLog } from '@/utils/errors.ts';
 import { initZapinContracts } from '@/services/Web3Service/utils/index.ts';
 import { useTokensQuery, useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import { usePoolsQueryNew } from '@/hooks/fetch/usePoolsQuery.ts';
 import type { TFilterPoolsParams, TPoolInfo } from '@/types/common/pools/index.ts';
+import ZapinService from '@/services/Web3Service/Zapin-service.ts';
 
 interface IEnumIterator {
   next: () => number,
@@ -311,7 +311,7 @@ export default defineComponent({
       try {
         this.showWaitingModal('unstaking');
         this.isClaiming = true;
-        await zapinService.claimPosition(
+        await ZapinService.claimPosition(
           pool,
           contractsData.gaugeContract,
           contractsData.poolTokenContract,

@@ -288,9 +288,6 @@ import {
   getNewInputToken,
   getTokenByAddress,
 } from '@/store/helpers/index.ts';
-import zapinService, {
-  ZAPIN_TYPE,
-} from '@/services/Web3Service/zapin-service.ts';
 import odosApiService from '@/services/odos-api-service.ts';
 
 import Spinner from '@/components/Spinner/Index.vue';
@@ -322,6 +319,7 @@ import {
 } from '@/components/ZapForm/helpers.ts';
 import ZapInStepsRow from '@/components/StepsRow/ZapinRow/IncreaseRow.vue';
 import { initReqData } from '@/services/Web3Service/utils/index.ts';
+import zapinService, { ZAPIN_TYPE } from '@/services/Web3Service/Zapin-service.ts';
 
 enum zapMobileSection {
   'TOKEN_FORM',

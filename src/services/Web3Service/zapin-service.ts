@@ -43,6 +43,19 @@ interface IPoolTokensData {
   price: string;
 }
 
+const ZAPIN_SCHEME = {
+  BASE: {
+    stake: 'deposit',
+    args: 'tokenId',
+  },
+  PANCAKE: {
+    stake: 'transfer',
+  },
+  UNISWAP: {
+    stake: '',
+  },
+};
+
 class ZapinService {
   async claimPosition(
     zapPool: any,

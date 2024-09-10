@@ -205,7 +205,7 @@ import BN from 'bignumber.js';
 import debounce from 'lodash/debounce';
 import { awaitDelay } from '@/utils/const.ts';
 import { checkIsEveryStable } from '@/store/views/main/pools/helpers.ts';
-import getZapinChartConfig from '@/services/ZapinService/utils/chartConfig.ts';
+import getZapinChartConfig from '@/services/Web3Service/utils/chart.ts';
 import { createScaledArray } from '@/services/Web3Service/utils/index.ts';
 
 export default {
