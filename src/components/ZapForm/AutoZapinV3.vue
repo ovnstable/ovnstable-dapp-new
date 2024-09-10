@@ -292,7 +292,7 @@ import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import { useRefreshBalances } from '@/hooks/fetch/useRefreshBalances.ts';
 import FeesBlock, { MIN_IMPACT } from '@/components/FeesBlock/Index.vue';
 import { parseErrorLog } from '@/utils/errors.ts';
-import zapinService from '@/services/Web3Service/zapin-service.ts';
+import ZapinService from '@/services/Web3Service/Zapin-service.ts';
 import {
   getUpdatedTokenVal,
   initReqData,
@@ -674,7 +674,7 @@ export default defineComponent({
       this.odosDataLoading = true;
 
       try {
-        const data = await zapinService.recalculateProportionOdosV3(
+        const data = await ZapinService.recalculateProportionOdosV3(
           this.selectedInputTokens,
           this.selectedOutputTokens,
           this.zapPool,
@@ -931,7 +931,7 @@ export default defineComponent({
       this.odosDataLoading = true;
 
       try {
-        const data = await zapinService.recalculateProportionOdosV3(
+        const data = await ZapinService.recalculateProportionOdosV3(
           this.selectedInputTokens,
           this.selectedOutputTokens,
           this.zapPool,

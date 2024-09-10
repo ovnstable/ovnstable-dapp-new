@@ -288,9 +288,6 @@ import {
   getNewInputToken,
   getTokenByAddress,
 } from '@/store/helpers/index.ts';
-import zapinService, {
-  ZAPIN_TYPE,
-} from '@/services/Web3Service/zapin-service.ts';
 import odosApiService from '@/services/odos-api-service.ts';
 
 import Spinner from '@/components/Spinner/Index.vue';
@@ -315,13 +312,11 @@ import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import { useRefreshBalances } from '@/hooks/fetch/useRefreshBalances.ts';
 import FeesBlock, { MIN_IMPACT } from '@/components/FeesBlock/Index.vue';
 import { parseErrorLog } from '@/utils/errors.ts';
-import {
-  countPercentDiff,
-  getUpdatedTokenVal,
-  parseLogs,
-} from '@/components/ZapForm/helpers.ts';
 import ZapInStepsRow from '@/components/StepsRow/ZapinRow/IncreaseRow.vue';
-import { initReqData } from '@/services/Web3Service/utils/index.ts';
+import {
+  countPercentDiff, getUpdatedTokenVal, initReqData, parseLogs,
+} from '@/services/Web3Service/utils/index.ts';
+import zapinService, { ZAPIN_TYPE } from '@/services/Web3Service/Zapin-service.ts';
 
 enum zapMobileSection {
   'TOKEN_FORM',
@@ -406,7 +401,7 @@ export default {
     poolTokenContract: null as any,
     odosDataLoading: false,
     odosData: {
-      percentDiff: '0',
+      percentDiff: 0,
       netOutValue: 0,
       priceImpact: 0,
     },
@@ -1161,7 +1156,7 @@ export default {
         this.outputTokens = data?.outputTokens;
         this.odosData = {
           ...data.odosData,
-          percentDiff: countPercentDiff(new BN(totalOutputUsd)
+          percentDiff: +countPercentDiff(new BN(totalOutputUsd)
             .plus(totalInputUsd).toFixed(), totalFinalOutputUsd),
           netOutValue: totalFinalOutputUsd,
         };

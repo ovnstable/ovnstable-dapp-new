@@ -1,5 +1,5 @@
 type TChartConfgigParams = {
-    isSelectionEnabled: boolean,
+  isSelectionEnabled: boolean,
 };
 
 const getZapinChartConfig = (chartConfigParams: TChartConfgigParams) => ({

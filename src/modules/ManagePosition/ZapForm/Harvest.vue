@@ -132,9 +132,9 @@ import {
 } from 'vue';
 import { allTokensMap } from '@/hooks/fetch/useTokensQuery.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
-import zapinService from '@/services/Web3Service/zapin-service.ts';
 import { parseErrorLog } from '@/utils/errors.ts';
 import { initZapinContracts } from '@/services/Web3Service/utils/index.ts';
+import ZapinService from '@/services/Web3Service/Zapin-service.ts';
 
 export default defineComponent({
   name: 'HarvestForm',
@@ -295,7 +295,7 @@ export default defineComponent({
       try {
         this.showWaitingModal('unstaking');
         this.isSwapLoading = true;
-        await zapinService.claimPosition(
+        await ZapinService.claimPosition(
           this.zapPool,
           this.gaugeContract,
           this.poolTokenContract,

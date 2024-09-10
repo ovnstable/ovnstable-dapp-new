@@ -315,13 +315,13 @@ import { isEmpty } from 'lodash';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import { useRefreshBalances } from '@/hooks/fetch/useRefreshBalances.ts';
 import { parseErrorLog } from '@/utils/errors.ts';
-import zapinService from '@/services/Web3Service/zapin-service.ts';
 import {
   getSourceLiquidityBlackList,
   getUpdatedTokenVal, initReqData,
   parseLogs,
   removeToken,
 } from '@/services/Web3Service/utils/index.ts';
+import ZapinService from '@/services/Web3Service/Zapin-service.ts';
 
 enum zapMobileSection {
   'TOKEN_FORM',
@@ -777,7 +777,7 @@ export default defineComponent({
       this.odosDataLoading = true;
 
       try {
-        const data = await zapinService.recalculateProportionOdosV3(
+        const data = await ZapinService.recalculateProportionOdosV3(
           this.selectedInputTokens,
           this.selectedOutputTokens,
           this.zapPool,
@@ -844,7 +844,7 @@ export default defineComponent({
       const userInputTokens = this.selectedInputTokens;
       const poolOutputTokens = this.selectedOutputTokens;
 
-      const proportions = await zapinService.getV2Proportions(
+      const proportions = await ZapinService.getV2Proportions(
         userInputTokens,
         poolOutputTokens,
         this.zapPool,
@@ -1050,7 +1050,7 @@ export default defineComponent({
     ) {
       this.currentStage = zapInStep.APPROVE_GAUGE;
       const approveAmount = new BN(10).pow(24).toFixed();
-      const isGaugeApproved = await zapinService.checkApproveForGauge(
+      const isGaugeApproved = await ZapinService.checkApproveForGauge(
         this.poolTokenContract,
         approveAmount,
         this.routerContract,
@@ -1059,7 +1059,7 @@ export default defineComponent({
 
       if (!isGaugeApproved) {
         this.showWaitingModal('Approving gauge in process');
-        zapinService.approveGaugeForStake(
+        ZapinService.approveGaugeForStake(
           this.showWaitingModal,
           this.closeWaitingModal,
           this.showErrorModalWithMsg,
@@ -1109,7 +1109,7 @@ export default defineComponent({
       this.currentStage = zapInStep.STAKE_LP;
       this.showWaitingModal('Stake LP in process');
 
-      zapinService.depositAllAtGauge(
+      ZapinService.depositAllAtGauge(
         this.account,
         lastPoolInfoData,
         lastNftTokenId,
@@ -1331,7 +1331,7 @@ export default defineComponent({
 
       if (emptyVals.every((_) => !_)) return;
 
-      reserves = await zapinService.getV2Reserves(
+      reserves = await ZapinService.getV2Reserves(
         this.zapPool.address,
         this.zapPool,
         this.zapContract,
@@ -1353,12 +1353,12 @@ export default defineComponent({
           .times(Number(outputToken1Price)).div(sumReserves).times(100)
           .toFixed();
 
-      this.outputTokens = zapinService.recalculateOutputTokensSum(
+      this.outputTokens = ZapinService.recalculateOutputTokensSum(
         this.selectedOutputTokens,
         this.selectedInputTokens,
       );
 
-      const proportions = await zapinService.getV2Proportions(
+      const proportions = await ZapinService.getV2Proportions(
         this.selectedInputTokens,
         this.selectedOutputTokens,
         this.zapPool,
@@ -1405,7 +1405,7 @@ export default defineComponent({
       this.odosDataLoading = true;
 
       try {
-        const data = await zapinService.recalculateProportionOdosV3(
+        const data = await ZapinService.recalculateProportionOdosV3(
           this.selectedInputTokens,
           this.selectedOutputTokens,
           this.zapPool,
