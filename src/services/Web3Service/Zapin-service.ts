@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable class-methods-use-this */
 
 import { poolsInfoMap } from '@/store/views/main/zapin/mocks.ts';
@@ -43,16 +45,30 @@ interface IPoolTokensData {
   price: string;
 }
 
+// for positions
+export const ACTIVE_PROTOCOLS_V3 = {
+  BASE: [8453],
+  PANCAKE: [8453, 42161],
+};
+
+enum DEPOSIT_TYPES {
+  DEPOSIT = 'deposit',
+  TRANSFER = 'transfer',
+  NONE = ''
+}
+
+// for zapins
 const ZAPIN_SCHEME = {
   BASE: {
-    stake: 'deposit',
-    args: 'tokenId',
+    stake: DEPOSIT_TYPES.DEPOSIT,
+    contract: 'gaugeContract',
   },
   PANCAKE: {
-    stake: 'transfer',
+    stake: DEPOSIT_TYPES.TRANSFER,
+    contract: 'poolTokenContract',
   },
   UNISWAP: {
-    stake: '',
+    stake: DEPOSIT_TYPES.NONE,
   },
 };
 
