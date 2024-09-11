@@ -183,10 +183,10 @@ export default {
           id: MANAGE_TAB.INCREASE,
           name: 'Increase',
         },
-        // {
-        //   id: MANAGE_TAB.MERGE,
-        //   name: 'Merge',
-        // },
+        {
+          id: MANAGE_TAB.MERGE,
+          name: 'Merge',
+        },
       ],
     };
   },

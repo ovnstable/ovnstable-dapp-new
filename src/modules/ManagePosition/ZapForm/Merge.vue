@@ -20,139 +20,117 @@
       v-else
       class="swap-block"
     >
-      <div class="swap-block__part">
-        <h2>
-          You have
-        </h2>
-        <div class="swap-block__item-col--send">
-          <h1>
-            LIQUIDITY
-          </h1>
-          <span class="divider" />
-          <div
-            v-for="token in inputTokens"
-            :key="token.id"
-            class="swap-block__item"
-          >
-            <div
-              v-if="token.selectedToken"
-              class="swap-block__item-row"
-            >
-              <div class="swap-block__item-row--percentage">
-                {{ token.proportion }}%
-              </div>
-              <div class="swap-block__item-row--token-wrap">
-                <img
-                  :src="token.selectedToken.logoUrl"
-                  alt="select-token"
-                >
-                <span>
-                  {{ token.selectedToken.symbol }}
-                </span>
-              </div>
-            </div>
-            <div class="swap-block__item-bal">
-              <div v-if="token.displayedValue">
-                {{ token.displayedValue }}
-              </div>
-              <div v-if="token.value">
-                ~ ${{ token.usdValue }}
-              </div>
-            </div>
-          </div>
-          <!-- <span class="divider" /> -->
-        </div>
-        <div class="swap-block__part-total">
-          <h2>
-            Total amount
-          </h2>
-          <div>
-            ${{ totalLiq }}
-          </div>
+      <h2>
+        Position you merge to chosen
+      </h2>
+      <div class="swap-block__select">
+        <div class="swap-block__select-trigger">
+          Select position
         </div>
       </div>
-      <div class="swap-block__part">
-        <h2>
-          You receive
-        </h2>
-        <div class="swap-block__get-col">
+
+      <SwapSlippageSettings
+        @change-slippage="handleCurrentSlippageChanged"
+      />
+      <!-- <div class="swap-block__item-col--send">
+        <h1>
+          LIQUIDITY
+        </h1>
+        <span class="divider" />
+        <div
+          v-for="token in inputTokens"
+          :key="token.id"
+          class="swap-block__item"
+        >
           <div
-            v-for="token in (outputTokens as any)"
-            :key="token.id"
-            class="input-component-container"
+            v-if="token.selectedToken"
+            class="swap-block__item-row"
           >
-            <TokenForm
-              :token-info="token"
-              :is-token-removable="false"
-              :is-input-token="false"
-              :disabled="true"
-              hide-balance
-            />
+            <div class="swap-block__item-row--percentage">
+              {{ token.proportion }}%
+            </div>
+            <div class="swap-block__item-row--token-wrap">
+              <img
+                :src="token.selectedToken.logoUrl"
+                alt="select-token"
+              >
+              <span>
+                {{ token.selectedToken.symbol }}
+              </span>
+            </div>
+          </div>
+          <div class="swap-block__item-bal">
+            <div v-if="token.displayedValue">
+              {{ token.displayedValue }}
+            </div>
+            <div v-if="token.value">
+              ~ ${{ token.usdValue }}
+            </div>
           </div>
         </div>
-        <div class="swap-container__footer">
+      </div> -->
+    </div>
+    <div class="swap-container__footer">
+      <ButtonComponent
+        v-if="!account"
+        class="swap-button-container"
+        btn-size="large"
+        btn-styles="primary"
+        full
+        @click="connectWallet"
+        @keypress="connectWallet"
+      >
+        CONNECT WALLET
+      </ButtonComponent>
+      <div
+        v-else
+        class="swap-button-container"
+      >
+        <ButtonComponent
+          v-if="positionStaked"
+          btn-size="large"
+          btn-styles="primary"
+          full
+          :loading="isSwapLoading"
+          @click="withdrawTrigger"
+          @keypress="withdrawTrigger"
+        >
+          WITHDRAW
+        </ButtonComponent>
+        <ButtonComponent
+          v-else-if="!isNftApproved"
+          btn-size="large"
+          btn-styles="primary"
+          full
+          :loading="isSwapLoading"
+          @click="approveNftPosition(false)"
+          @keypress="approveNftPosition(false)"
+        >
+          APPROVE
+        </ButtonComponent>
+        <RouterLink
+          v-else-if="positionFinish"
+          to="/positions"
+        >
           <ButtonComponent
-            v-if="!account"
-            class="swap-button-container"
             btn-size="large"
             btn-styles="primary"
             full
-            @click="connectWallet"
-            @keypress="connectWallet"
           >
-            CONNECT WALLET
+            RETURN TO POSITIONS
           </ButtonComponent>
-          <div
-            v-else
-            class="swap-button-container"
-          >
-            <ButtonComponent
-              v-if="positionStaked"
-              btn-size="large"
-              btn-styles="primary"
-              full
-              :loading="isSwapLoading"
-              @click="withdrawTrigger"
-              @keypress="withdrawTrigger"
-            >
-              WITHDRAW
-            </ButtonComponent>
-            <ButtonComponent
-              v-else-if="!isNftApproved"
-              btn-size="large"
-              btn-styles="primary"
-              full
-              :loading="isSwapLoading"
-              @click="approveNftPosition(false)"
-              @keypress="approveNftPosition(false)"
-            >
-              APPROVE
-            </ButtonComponent>
-            <RouterLink
-              v-else-if="positionFinish"
-              to="/positions"
-            >
-              <ButtonComponent
-                btn-size="large"
-                btn-styles="primary"
-                full
-              >
-                RETURN TO POSITIONS
-              </ButtonComponent>
-            </RouterLink>
-            <ButtonComponent
-              v-else
-              btn-size="large"
-              btn-styles="primary"
-              full
-              :loading="isSwapLoading"
-              @click="zapOutTrigger"
-              @keypress="zapOutTrigger"
-            >
-              ZAP OUT
-            </ButtonComponent>
-          </div>
-        </div>
+        </RouterLink>
+        <ButtonComponent
+          v-else
+          btn-size="large"
+          btn-styles="primary"
+          full
+          :loading="isSwapLoading"
+          @click="zapOutTrigger"
+          @keypress="zapOutTrigger"
+        >
+          ZAP OUT
+        </ButtonComponent>
       </div>
     </div>
   </div>
@@ -173,7 +151,6 @@ import {
 import Spinner from '@/components/Spinner/Index.vue';
 import ChangeNetwork from '@/components/ZapForm/ChangeNetwork.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
-import TokenForm from '@/components/TokenForm/Index.vue';
 import { cloneDeep } from 'lodash';
 import BN from 'bignumber.js';
 import { MANAGE_FUNC, withdrawStep } from '@/store/modals/waiting-modal.ts';
@@ -183,14 +160,15 @@ import { defineComponent } from 'vue';
 import { fixedByPrice } from '@/utils/numbers.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import { initZapinContracts } from '@/services/Web3Service/utils/index.ts';
+import SwapSlippageSettings from '@/components/SwapSlippage/Index.vue';
 
 export default defineComponent({
   name: 'MergeForm',
   components: {
     ButtonComponent,
-    TokenForm,
     ChangeNetwork,
     Spinner,
+    SwapSlippageSettings,
   },
   props: {
     allTokensList: {
@@ -227,6 +205,7 @@ export default defineComponent({
       currentStage: withdrawStep.WITHDRAW,
       isNftApproved: false,
       isSwapLoading: false,
+      slippagePercent: 1,
     };
   },
   computed: {
@@ -239,19 +218,6 @@ export default defineComponent({
 
     zapAllTokens() {
       return mergedTokens(this.allTokensList as any[], this.balanceList as any[]);
-    },
-    totalLiq() {
-      if (this.inputTokens.length === 0) return 0;
-
-      const res: BN = this.inputTokens.reduce((acc, curr) => {
-        const val = new BN(curr.value).times(curr.selectedToken.price).toFixed(6);
-
-        return acc.plus(val);
-      }, new BN(0));
-
-      if (res.lt(0.01)) return '0.01';
-
-      return res.toFixed(4);
     },
     zapsLoaded() {
       return this.zapPool && this.zapContract;
@@ -401,6 +367,9 @@ export default defineComponent({
     finishTransaction() {
       this.closeWaitingModal();
     },
+    handleCurrentSlippageChanged(newSlippage: number) {
+      this.slippagePercent = newSlippage;
+    },
     async zapOutTrigger() {
       this.isSwapLoading = true;
 
@@ -485,5 +454,31 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@import "./styles.scss"
+.swap-block__select {
+  background-color: var(--color-5);
+  padding: 26px 16px;
+  border-radius: 12px;
+  margin: 20px 0;
+}
+
+.swap-block__select-trigger {
+  width: fit-content;
+  padding: 8px 12px;
+  border-radius: 30px;
+  color: var(--color-2);
+  background-color: var(--color-4);
+  font-weight: 500;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all .2s ease;
+
+  &:hover {
+    color: var(--color-4);
+    background-color: var(--color-3);
+  }
+}
+
+.swap-container__footer {
+  margin-top: 20px;
+}
 </style>
