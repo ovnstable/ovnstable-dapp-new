@@ -24,7 +24,11 @@
         Position you merge to chosen
       </h2>
       <div class="swap-block__select">
-        <div class="swap-block__select-trigger">
+        <div
+          class="swap-block__select-trigger"
+          @click="showModalPos"
+          @keypress="showModalPos"
+        >
           Select position
         </div>
       </div>
@@ -133,11 +137,16 @@
         </ButtonComponent>
       </div>
     </div>
+
+    <PositionsModal
+      :is-show="showPositionsModal"
+      :selected-positions="positionsSelected"
+      :positions-list="positionsList"
+      @close="showPositionsModal = false"
+      @position-select="selectPos"
+    />
   </div>
 </template>
-<!-- eslint-disable no-restricted-syntax -->
-<!-- eslint-disable no-continue -->
-<!-- eslint-disable no-param-reassign -->
 <script lang="ts">
 import { useEventBus } from '@vueuse/core';
 import {
@@ -161,6 +170,9 @@ import { fixedByPrice } from '@/utils/numbers.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import { initZapinContracts } from '@/services/Web3Service/utils/index.ts';
 import SwapSlippageSettings from '@/components/SwapSlippage/Index.vue';
+import PositionsModal from '@/modules/ManagePosition/ZapForm/Merge/PositionsModal.vue';
+import { usePositionsQuery } from '@/hooks/fetch/usePositionsQuery.ts';
+import type { IPositionsInfo } from '@/types/positions';
 
 export default defineComponent({
   name: 'MergeForm',
@@ -168,6 +180,7 @@ export default defineComponent({
     ButtonComponent,
     ChangeNetwork,
     Spinner,
+    PositionsModal,
     SwapSlippageSettings,
   },
   props: {
@@ -192,9 +205,18 @@ export default defineComponent({
       default: '',
     },
   },
+  setup() {
+    const { data: positionData } = usePositionsQuery();
+
+    return {
+      positionsList: positionData,
+    };
+  },
   data() {
     return {
+      showPositionsModal: false,
       positionFinish: false,
+      positionsSelected: [] as string[],
       positionStaked: true,
       inputTokens: [] as any[],
       outputTokens: [] as any[],
@@ -270,13 +292,23 @@ export default defineComponent({
   methods: {
     ...mapActions('swapModal', ['showSwapModal', 'showMintView']),
     ...mapActions('poolsData', ['setIsZapModalShow']),
-    ...mapActions('odosData', [
-      'triggerSuccessZapin',
-    ]),
+    ...mapActions('odosData', ['triggerSuccessZapin']),
     ...mapActions('waitingModal', ['closeWaitingModal', 'showWaitingModal']),
     ...mapActions('walletAction', ['connectWallet']),
     ...mapMutations('waitingModal', ['setStagesMap']),
 
+    selectPos(pos: IPositionsInfo) {
+      const index = this.positionsSelected.indexOf(pos?.tokenId?.toString());
+
+      if (index === -1) {
+        this.positionsSelected.push(pos?.tokenId?.toString());
+      } else {
+        this.positionsSelected.splice(index, 1);
+      }
+    },
+    showModalPos() {
+      this.showPositionsModal = true;
+    },
     async initContracts() {
       const contractsData = await initZapinContracts(
         this.zapPool,
