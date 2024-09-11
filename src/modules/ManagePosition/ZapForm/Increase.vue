@@ -439,12 +439,6 @@ export default {
         && this.zapPool
         && !isEmpty(this.zapContract);
     },
-    // getOdosFee() {
-    //   return new BN(this.odosData.netOutValue)
-    //     .times(this.multiSwapOdosFeePercent)
-    //     .div(100)
-    //     .toNumber();
-    // },
     zapAllTokens() {
       const selectedAdd = this.inputTokens
         .map((_) => _.selectedToken?.address?.toLowerCase() ?? null)
@@ -452,16 +446,9 @@ export default {
 
       return mergedTokens(this.allTokensList as any[], this.balanceList as any[], selectedAdd);
     },
-    // mergedTokenList() {
-    //   return mergedTokens(this.allTokensList as any[], this.balanceList as any[]);
-    // },
     isInputTokensRemovable() {
       return this.inputTokens.length > 1;
     },
-
-    // isOutputTokensRemovable() {
-    //   return false;
-    // },
     isInputTokensAddAvailable() {
       return (
         this.inputTokens.length < this.maxInputTokens
@@ -478,32 +465,12 @@ export default {
       if (this.outputTokens.filter((item: any) => item.selectedToken).length === 0) return true;
       return false;
     },
-
-    // ifMoreThanOneSelectedTokensAdded() {
-    //   return this.selectedInputTokens.length > 0;
-    // },
-
     selectedInputTokens() {
       return this.inputTokens.filter((item: any) => item.selectedToken);
     },
     selectedOutputTokens() {
       return this.outputTokens.filter((item: any) => item.selectedToken);
     },
-    // isAnyInputsNeedApprove() {
-    //   return this.allInputsWithNotApproved.length > 0;
-    // },
-    // allInputsWithNotApproved() {
-    //   return this.selectedInputTokens.filter(
-    //     (token: any) => !token.selectedToken.approveData.approved,
-    //   );
-    // },
-
-    // firstInputInQueueForToApprove(): any {
-    //   return this.isAnyInputsNeedApprove
-    //     ? this.allInputsWithNotApproved[0]
-    //     : null;
-    // },
-
     isDisableButton() {
       return (this.isEmptyForm
         || !this.isAvailableOnNetwork
@@ -511,30 +478,6 @@ export default {
         || !this.isAmountEntered
       );
     },
-
-    // btnName() {
-    //   return 'STAKE';
-    // },
-
-    // disableButtonMessage() {
-    //   if (this.isEmptyForm) {
-    //     if (this.isAvailableOnNetwork) {
-    //       return 'SELECT TOKENS';
-    //     }
-
-    //     return 'SWITCH CHAIN';
-    //   }
-
-    //   if (!this.isAmountEntered) {
-    //     return 'ENTER AMOUNT';
-    //   }
-
-    //   if (!this.isAnyTokensBalanceIsInsufficient) {
-    //     return 'BALANCE IS INSUFFICIENT';
-    //   }
-
-    //   return null;
-    // },
     isAmountEntered() {
       const tokens = this.selectedInputTokens;
       for (let i = 0; i < tokens.length; i++) {
@@ -723,8 +666,6 @@ export default {
       const poolSelectedToken = getTokenByAddress(this.zapPool?.token0Add, this.zapAllTokens);
       const ovnSelectSelectedToken = getTokenByAddress(this.zapPool?.token1Add, this.zapAllTokens);
 
-      console.log('poolTokens', poolSelectedToken, ovnSelectSelectedToken);
-
       if (!poolSelectedToken || !ovnSelectSelectedToken) return;
       poolSelectedToken.selected = true;
       ovnSelectSelectedToken.selected = true;
@@ -912,119 +853,6 @@ export default {
         val: value,
       });
     },
-    // async toApproveAndDepositSteps(data: any) {
-    //   const nftId = '';
-
-    //   console.log(parseLogs(data.logs, this.commitEventToStore), '___data');
-    //   parseLogs(data.logs, this.commitEventToStore);
-    //   this.currentStage = IncreaseStep.APPROVEGAUGE;
-    //   this.isSwapLoading = true;
-
-    //   this.$store.commit('odosData/changeState', {
-    //     field: 'additionalSwapStepType',
-    //     val: 'APPROVE',
-    //   });
-
-    //   this.approveNftGauge(nftId);
-    // },
-    // async approveNftGauge(nftId: string) {
-    //   this.showWaitingModal('Approving NFT in process');
-    //   this.isSwapLoading = true;
-
-    //   if (!this.lastNftTokenId || nftId) {
-    //     try {
-    //       const tokenId = nftId || await this.getLastNftId();
-
-    //       this.$store.commit('odosData/changeState', {
-    //         field: 'lastNftTokenId',
-    //         val: tokenId,
-    //       });
-
-    //       const params = { from: this.account };
-    //       const tx = await this.poolTokenContract
-    //         .approve(this.gaugeContract?.target, tokenId, params);
-
-    //       await tx.wait();
-
-    //       this.isSwapLoading = false;
-    //       // this.$store.commit('odosData/changeState', {
-    //       //   field: 'additionalSwapStepType',
-    //       //   val: 'DEPOSIT',
-    //       // });
-    //       this.currentStage = IncreaseStep.STAKE;
-    //       this.closeWaitingModal();
-    //       this.depositGauge(
-    //         this.lastNftTokenId,
-    //       );
-    //     } catch (e) {
-    //       console.error('Approve nft gauge failed', e);
-    //       this.$store.commit('odosData/changeState', {
-    //         field: 'lastNftTokenId',
-    //         val: null,
-    //       });
-    //       this.closeWaitingModal();
-    //     }
-    //   } else {
-    //     // this.$store.commit('odosData/changeState', {
-    //     //   field: 'additionalSwapStepType',
-    //     //   val: 'DEPOSIT',
-    //     // });
-    //     this.currentStage = IncreaseStep.INCREASE;
-    //     this.depositGauge(
-    //       this.lastNftTokenId,
-    //     );
-    //   }
-    // },
-    // async getLastNftId() {
-    //   const tokens = await this.poolTokenContract.balanceOf(this.account);
-    //   console.log(tokens, '___tokens');
-    //   const tokenId = await this.poolTokenContract
-    //     .tokenOfOwnerByIndex(this.account, Number(tokens) - 1);
-
-    //   console.log(tokenId, '___tokenId');
-    //   return tokenId;
-    // },
-    // async depositGauge(
-    //   lastNftTokenId: any,
-    // ) {
-    //   this.currentStage = IncreaseStep.STAKE;
-    //   this.showWaitingModal('Stake LP in process');
-    //   console.log({
-    //     acc: this.account,
-    //     lastNftTokenId,
-    //     gauge: this.gaugeContract,
-    //     zaproot: this.zapPoolRoot,
-    //     token: this.poolTokenContract,
-
-    //   }, '___DATA1');
-
-    //   this.isSwapLoading = true;
-    //   const tx = await this.gaugeContract.deposit(Number(lastNftTokenId));
-    //   await tx.wait();
-
-    //   const inputTokens = [...this.selectedInputTokens];
-    //   const outputTokens = [...this.selectedOutputTokens];
-    //   this.isSwapLoading = false;
-    //   console.log(inputTokens, 'SUCCESS1');
-    //   console.log(outputTokens, 'SUCCESS2');
-    //   this.triggerSuccessZapin(
-    //     {
-    //       isShow: true,
-    //       inputTokens,
-    //       outputTokens,
-    //       hash: tx.hash,
-    //       pool: this.zapPool,
-    //       modalType: MODAL_TYPE.ZAPIN,
-    //     },
-    //   );
-
-    //   this.closeWaitingModal();
-    //   this.clearAndInitForm();
-    //   this.$store.commit('odosData/changeState', {
-    //     field: 'additionalSwapStepType',
-    //     val: null,
-    //   });
-    // },
     async initZapInTransaction(
       responseData: any,
       requestInputTokens: any[],
@@ -1061,7 +889,7 @@ export default {
       // gasLimit: 1000000,
       };
 
-      console.log(this.zapContract, '-this.zapContract');
+      // console.log(this.zapContract, '-this.zapContract');
 
       console.log(txData, 'swapdata');
       console.log(gaugeData, 'gaugeData');
@@ -1116,7 +944,7 @@ export default {
       this.odosDataLoading = true;
 
       try {
-        console.log(this.selectedInputTokens, '___this.selectedInputTokens');
+        // console.log(this.selectedInputTokens, '___this.selectedInputTokens');
         const data = await zapinService.recalculateProportionOdosV3(
           this.selectedInputTokens,
           this.selectedOutputTokens,
@@ -1202,55 +1030,6 @@ export default {
         .isGreaterThanOrEqualTo(checkedAllowanceValue);
       this.currentStage = IncreaseStep.UNSTAKE;
     },
-
-    // async approveTrigger(token: any) {
-    //   this.showWaitingModal('Approving in process');
-
-    //   this.approvingPending = true;
-    //   const { selectedToken } = token;
-
-    //   const approveValue = new BN(10)
-    //     .pow(selectedToken.decimals)
-    //     .times(10 ** 18)
-    //     .toFixed(0);
-
-    //   await this.checkApproveForToken(token, (Number(approveValue) * 0.5).toFixed(0));
-    //   if (selectedToken.approveData.approved) {
-    //     this.closeWaitingModal();
-    //     return;
-    //   }
-
-    //   const tokenContract = TokenService
-    //     .loadTokenContract(selectedToken.address, this.$store.state.web3.evmSigner);
-
-    //   const tx = await approveToken(
-    //     tokenContract,
-    //     this.zapContract.target,
-    //     approveValue,
-    //     this.account,
-    //   )
-    //     .catch((e) => {
-    //       console.error('Error when approve token.', e);
-    //       this.closeWaitingModal();
-    //       this.showErrorModalWithMsg({ errorType: 'approve', errorMsg: parseErrorLog(e) });
-    //     });
-
-    //   console.log('TRIGGER__2');
-    //   const finishTx = () => {
-    //     this.checkApproveForToken(token, token.contractValue);
-    //     this.closeWaitingModal();
-    //     this.approvingPending = false;
-    //   };
-
-    //   if (!tx) {
-    //     finishTx();
-    //     return;
-    //   }
-
-    //   await tx.wait();
-    //   finishTx();
-    //   this.currentStage = zapInStep.DEPOSIT;
-    // },
     addSelectedTokenToList(data: any) {
       if (data.isInput) {
         this.addSelectedTokenToInputList(data.tokenData, false);
@@ -1275,11 +1054,6 @@ export default {
 
         this.updateTokenState(newToken);
       }
-
-      // if (newInputToken.selectedToken.symbol === 'OVN') {
-      //   this.initDefaultTopInputTokensByBalance(this.noneOvnTokens);
-      // }
-
       this.checkApproveForToken(
         newInputToken,
         new BN(10 ** selectedToken.decimals).times(1000000).toFixed(0),
@@ -1355,7 +1129,7 @@ export default {
     },
 
     async unstakeTrigger() {
-      console.log(this.poolTokenContract, 'unstakeTrigger');
+      // console.log(this.poolTokenContract, 'unstakeTrigger');
       this.isSwapLoading = true;
 
       try {
