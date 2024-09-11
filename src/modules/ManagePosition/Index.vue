@@ -88,8 +88,7 @@
       class="manage-wrap__content"
     >
       <MergeForm
-        :zap-pool="zapPool"
-        :active-tab="activeTab"
+        :current-position="zapPool"
         :all-tokens-list="allTokensList"
         :balance-list="balanceList"
         :gauge-address="gaugeAddress"

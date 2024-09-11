@@ -161,7 +161,6 @@
 <!-- eslint-disable no-continue -->
 <!-- eslint-disable no-param-reassign -->
 <script lang="ts">
-import { useEventBus } from '@vueuse/core';
 import {
   mapActions, mapGetters, mapMutations,
 } from 'vuex';
@@ -354,17 +353,9 @@ export default defineComponent({
     },
 
     async firstInit() {
-      await this.init();
       this.initLiqTokens();
 
       if (!this.isAvailableOnNetwork) this.mintAction();
-    },
-
-    async init() {
-      const bus = useEventBus('odos-transaction-finished');
-      bus.on(() => {
-        this.finishTransaction();
-      });
     },
     initLiqTokens() {
       const tokens = this.zapPool.name.split('/');
@@ -397,9 +388,6 @@ export default defineComponent({
       const inputTokenInfo = formatInputTokens(arrTokens);
       this.inputTokens = inputTokenInfo;
       this.outputTokens = cloneDeep(inputTokenInfo);
-    },
-    finishTransaction() {
-      this.closeWaitingModal();
     },
     async zapOutTrigger() {
       this.isSwapLoading = true;

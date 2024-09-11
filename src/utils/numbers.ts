@@ -33,6 +33,9 @@ export const getFixed = (val: string | BN) => {
 
   return fixed;
 };
+
+export const getFixedMoney = (val: string) => formatMoney(val, getFixed(val));
+
 export const formatMoneyComma = (number = 0, count = 6) => {
   if (!number) {
     return 0;

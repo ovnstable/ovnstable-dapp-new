@@ -2,29 +2,42 @@
 <!-- eslint-disable vue/first-attribute-linebreak -->
 <template>
   <div>
-    <div
-      v-if="zapPool.chain !== networkId"
-      class="swap-container"
-    >
-      <div class="swap-body">
-        <ChangeNetwork :zap-pool="zapPool" />
-      </div>
-    </div>
-    <div
-      v-else-if="!zapsLoaded"
-      class="loader-container"
-    >
-      <Spinner />
-    </div>
-    <div
-      v-else
-      class="swap-block"
-    >
+    <div>
       <h2>
         Position you merge to chosen
       </h2>
       <div class="swap-block__select">
+        <template v-if="positionsSelected?.length > 0">
+          <div class="positions-row">
+            <div class="positions-row">
+              <div class="positions-modal__item-imgs">
+                <img
+                  alt="token"
+                  :src="positionsData[0].token0Icon"
+                />
+                <img
+                  alt="token"
+                  :src="positionsData[0].token1Icon"
+                />
+              </div>
+              <span class="positions-modal__item-prim">
+                {{ positionsData[0].name }}
+              </span>
+              <span class="positions-modal__item-sec">
+                #{{ positionsData[0].tokenId?.toString() }}
+              </span>
+            </div>
+            <div
+              class="positions-close"
+              @click="clearPos"
+              @keypress="clearPos"
+            >
+              <BaseIcon name="Close" />
+            </div>
+          </div>
+        </template>
         <div
+          v-else
           class="swap-block__select-trigger"
           @click="showModalPos"
           @keypress="showModalPos"
@@ -33,13 +46,18 @@
         </div>
       </div>
 
-      <SwapSlippageSettings
-        @change-slippage="handleCurrentSlippageChanged"
-      />
-      <!-- <div class="swap-block__item-col--send">
-        <h1>
-          LIQUIDITY
-        </h1>
+      <div
+        v-if="totalLiq()"
+        class="swap-block__item-col--send"
+      >
+        <div class="swap-block__part-total">
+          <h1>
+            LIQUIDITY
+          </h1>
+          <div>
+            {{ totalLiq() }}
+          </div>
+        </div>
         <span class="divider" />
         <div
           v-for="token in inputTokens"
@@ -72,7 +90,12 @@
             </div>
           </div>
         </div>
-      </div> -->
+        <!-- <span class="divider" /> -->
+      </div>
+
+      <SwapSlippageSettings
+        @change-slippage="handleCurrentSlippageChanged"
+      />
     </div>
     <div class="swap-container__footer">
       <ButtonComponent
@@ -141,14 +164,13 @@
     <PositionsModal
       :is-show="showPositionsModal"
       :selected-positions="positionsSelected"
-      :positions-list="positionsList"
+      :positions-list="filteredPositions"
       @close="showPositionsModal = false"
       @position-select="selectPos"
     />
   </div>
 </template>
 <script lang="ts">
-import { useEventBus } from '@vueuse/core';
 import {
   mapActions, mapGetters, mapMutations,
 } from 'vuex';
@@ -157,8 +179,6 @@ import {
   getTokenByAddress,
 } from '@/store/helpers/index.ts';
 
-import Spinner from '@/components/Spinner/Index.vue';
-import ChangeNetwork from '@/components/ZapForm/ChangeNetwork.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import { cloneDeep } from 'lodash';
 import BN from 'bignumber.js';
@@ -172,18 +192,26 @@ import { initZapinContracts } from '@/services/Web3Service/utils/index.ts';
 import SwapSlippageSettings from '@/components/SwapSlippage/Index.vue';
 import PositionsModal from '@/modules/ManagePosition/ZapForm/Merge/PositionsModal.vue';
 import { usePositionsQuery } from '@/hooks/fetch/usePositionsQuery.ts';
+import { usePoolsQueryNew } from '@/hooks/fetch/usePoolsQuery.ts';
+import { awaitDelay } from '@/utils/const.ts';
+import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import type { IPositionsInfo } from '@/types/positions';
+import type { TFilterPoolsParams } from '@/types/common/pools';
 
 export default defineComponent({
   name: 'MergeForm',
   components: {
     ButtonComponent,
-    ChangeNetwork,
-    Spinner,
     PositionsModal,
     SwapSlippageSettings,
+    BaseIcon,
   },
   props: {
+    currentPosition: {
+      type: Object,
+      required: true,
+      default: () => ({}),
+    },
     allTokensList: {
       type: Array,
       required: true,
@@ -194,29 +222,23 @@ export default defineComponent({
       required: true,
       default: () => [],
     },
-    zapPool: {
-      type: Object,
-      required: false,
-      default: null,
-    },
-    gaugeAddress: {
-      type: String,
-      required: true,
-      default: '',
-    },
   },
   setup() {
     const { data: positionData } = usePositionsQuery();
+    const { data: poolList } = usePoolsQueryNew();
 
     return {
       positionsList: positionData,
+      poolList,
     };
   },
   data() {
     return {
       showPositionsModal: false,
       positionFinish: false,
+      zapPool: null as any,
       positionsSelected: [] as string[],
+      positionsData: [] as IPositionsInfo[],
       positionStaked: true,
       inputTokens: [] as any[],
       outputTokens: [] as any[],
@@ -235,14 +257,16 @@ export default defineComponent({
     ...mapGetters('odosData', [
       'isAvailableOnNetwork',
     ]),
-    ...mapGetters('network', ['networkId']),
     ...mapGetters('accountData', ['account']),
 
+    filteredPositions() {
+      if (!this.currentPosition || this.positionsList?.length === 0) return [];
+
+      return this.positionsList
+        .filter((_) => _?.tokenId?.toString() !== this.currentPosition?.tokenId?.toString());
+    },
     zapAllTokens() {
       return mergedTokens(this.allTokensList as any[], this.balanceList as any[]);
-    },
-    zapsLoaded() {
-      return this.zapPool && this.zapContract;
     },
     outputTokensWithSelectedTokensCount() {
       return this.outputTokens.filter((item: any) => item.selectedToken).length;
@@ -274,20 +298,7 @@ export default defineComponent({
   mounted() {
     this.$store.commit('zapinData/changeState', { field: 'currentStage', val: withdrawStep.WITHDRAW });
     this.setStagesMap(MANAGE_FUNC.WITHDRAW);
-    this.initContracts();
-    this.firstInit();
     this.setIsZapModalShow(true);
-    this.positionStaked = this.zapPool.isStaked;
-
-    if (!this.zapPool.isStaked) {
-      this.currentStage = withdrawStep.APPROVE;
-    }
-  },
-  created() {
-    if (this.zapPool.chain !== this.networkId) return;
-
-    this.firstInit();
-    this.initContracts();
   },
   methods: {
     ...mapActions('swapModal', ['showSwapModal', 'showMintView']),
@@ -296,33 +307,60 @@ export default defineComponent({
     ...mapActions('waitingModal', ['closeWaitingModal', 'showWaitingModal']),
     ...mapActions('walletAction', ['connectWallet']),
     ...mapMutations('waitingModal', ['setStagesMap']),
+    ...mapActions('poolsData', ['setFilterParams']),
 
-    selectPos(pos: IPositionsInfo) {
-      const index = this.positionsSelected.indexOf(pos?.tokenId?.toString());
+    clearPos() {
+      this.positionsData = [];
+      this.positionsSelected = [];
+      this.inputTokens = [];
+    },
+    async selectPos(pos: IPositionsInfo) {
+      this.positionsSelected = [pos.tokenId?.toString()];
+      this.positionsData = [pos];
+      this.handleClickSearch(pos);
+      await awaitDelay(500);
+      const gaugeAdd = this.searchGauge(pos);
 
-      if (index === -1) {
-        this.positionsSelected.push(pos?.tokenId?.toString());
-      } else {
-        this.positionsSelected.splice(index, 1);
-      }
+      this.initContracts(pos, gaugeAdd);
     },
     showModalPos() {
       this.showPositionsModal = true;
     },
-    async initContracts() {
+    handleClickSearch(zapPool: any) {
+      if (!zapPool) return;
+      const tokens = (zapPool?.name as string)?.split('/');
+
+      const filterParams: Partial<TFilterPoolsParams> = {
+        token0: tokens[0],
+      };
+      this.setFilterParams(filterParams);
+    },
+    searchGauge(pool: IPositionsInfo) {
+      if (!this.poolList || this.poolList?.length === 0 || !pool) return '';
+      const foundPool = this.poolList
+        .find((_: any) => _.address?.toLowerCase() === pool.address?.toLowerCase());
+
+      if (foundPool) return foundPool.gauge;
+      return '';
+    },
+    async initContracts(pos: IPositionsInfo, gaugeAddress: string) {
+      console.log(pos, gaugeAddress, '___ARGs');
       const contractsData = await initZapinContracts(
-        this.zapPool,
+        pos,
         this.zapAllTokens,
         this.evmSigner,
-        this.gaugeAddress,
+        gaugeAddress,
       );
 
       this.gaugeContract = contractsData.gaugeContract;
       this.zapContract = contractsData.zapContract;
       this.poolTokenContract = contractsData.poolTokenContract;
       this.poolTokens = contractsData.poolTokens;
+      this.zapPool = pos;
 
       if (!this.isAvailableOnNetwork) this.mintAction();
+
+      this.initLiqTokens();
     },
 
     async approveNftPosition(approveToGauge: boolean) {
@@ -349,20 +387,6 @@ export default defineComponent({
     mintAction() {
       this.showMintView();
       this.showSwapModal();
-    },
-
-    async firstInit() {
-      await this.init();
-      this.initLiqTokens();
-
-      if (!this.isAvailableOnNetwork) this.mintAction();
-    },
-
-    async init() {
-      const bus = useEventBus('odos-transaction-finished');
-      bus.on(() => {
-        this.finishTransaction();
-      });
     },
     initLiqTokens() {
       const tokens = this.zapPool.name.split('/');
@@ -396,8 +420,18 @@ export default defineComponent({
       this.inputTokens = inputTokenInfo;
       this.outputTokens = cloneDeep(inputTokenInfo);
     },
-    finishTransaction() {
-      this.closeWaitingModal();
+    totalLiq() {
+      if (this.inputTokens.length === 0) return 0;
+
+      const res: BN = this.inputTokens.reduce((acc, curr) => {
+        const val = new BN(curr.value).times(curr.selectedToken.price).toFixed(6);
+
+        return acc.plus(val);
+      }, new BN(0));
+
+      if (res.lt(0.01)) return '0.01';
+
+      return res.toFixed(4);
     },
     handleCurrentSlippageChanged(newSlippage: number) {
       this.slippagePercent = newSlippage;
@@ -486,31 +520,9 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.swap-block__select {
-  background-color: var(--color-5);
-  padding: 26px 16px;
-  border-radius: 12px;
-  margin: 20px 0;
-}
+@import "./styles.scss"
+</style>
 
-.swap-block__select-trigger {
-  width: fit-content;
-  padding: 8px 12px;
-  border-radius: 30px;
-  color: var(--color-2);
-  background-color: var(--color-4);
-  font-weight: 500;
-  font-size: 16px;
-  cursor: pointer;
-  transition: all .2s ease;
-
-  &:hover {
-    color: var(--color-4);
-    background-color: var(--color-3);
-  }
-}
-
-.swap-container__footer {
-  margin-top: 20px;
-}
+<style lang="scss" scoped>
+@import "../styles.scss"
 </style>

@@ -85,7 +85,7 @@
 <script lang="ts">
 import ModalComponent from '@/components/Modal/Index.vue';
 import type { PropType } from 'vue';
-import { formatMoney, getFixed } from '@/utils/numbers.ts';
+import { getFixedMoney } from '@/utils/numbers.ts';
 import type { IPositionsInfo } from '@/types/positions';
 
 export default {
@@ -115,7 +115,7 @@ export default {
   },
   computed: {
     getFixedVal() {
-      return (val: any) => formatMoney(val, getFixed(val));
+      return (val: any) => getFixedMoney(val);
     },
   },
   watch: {
@@ -134,107 +134,6 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
-.positions-modal {
-  min-width: 500px;
-  padding: 15px 30px 30px 30px;
-
-  h1 {
-    font-size: 20px;
-    font-weight: 600;
-    color: var(--color-1);
-    margin-bottom: 22px;
-    text-transform: uppercase;
-  }
-
-  img {
-    width: 30px;
-    height: 30px;
-  }
-
-}
-
-.positions-modal__item-content {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  padding: 10px;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: background-color .2s ease;
-
-  &:hover {
-    background-color: var(--color-5);
-  }
-}
-
-.positions--active {
-  background-color: var(--color-5);
-}
-
-.positions-modal__usd-val {
-  color: var(--color-3);
-  font-weight: 600;
-  font-size: 20px;
-  margin-left: auto;
-}
-
-.positions-modal__notify {
-  color: var(--color-12);
-  width: 100%;
-  text-align: center;
-  font-size: 14px;
-  font-weight: 500;
-  margin-bottom: 22px;
-}
-
-.divider {
-  height: 1px;
-  width: 100%;
-  background-color: var(--color-7);
-  margin-bottom: 22px;
-}
-
-.divider--item {
-  margin-top: 22px
-}
-
-.positions-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.positions-modal__item-imgs {
-  display: flex;
-
-  img:last-child {
-    position: relative;
-    right: 8px;
-  }
-}
-
-.positions-modal__item-prim {
-  font-size: 20px;
-  font-weight: 500;
-  color: var(--color-1);
-}
-
-.positions-modal__price-prim {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--color-1);
-}
-
-.positions-modal__item-sec {
-  font-size: 16px;
-  color: var(--color-2);
-}
-
-.positions-modal__price-sec {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--color-2);
-}
-
+<style lang="scss" scoped>
+@import "./styles.scss"
 </style>
