@@ -148,7 +148,7 @@ export default {
       return (swapD: any) => swapD.inTokens.map((_: string, i: number) => {
         const tokenData = getTokenByAddress(_, this.mergedList);
         const origVal = new BN(swapD?.inAmounts[i]).div(10 ** tokenData.decimals).toFixed();
-        const usdVal = new BN(swapD?.inValues[i]).toFixed();
+        const usdVal = new BN(origVal).times(tokenData.price).toFixed();
 
         return {
           tokenData,

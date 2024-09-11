@@ -47,13 +47,14 @@ interface IPoolTokensData {
 
 // for positions
 export const ACTIVE_PROTOCOLS_V3 = {
-  BASE: [8453],
+  AERODROME: [8453],
   PANCAKE: [8453, 42161],
 };
 
 enum DEPOSIT_TYPES {
   DEPOSIT = 'deposit',
   TRANSFER = 'transfer',
+  ADD = 'add',
   NONE = ''
 }
 
@@ -66,6 +67,10 @@ const ZAPIN_SCHEME = {
   PANCAKE: {
     stake: DEPOSIT_TYPES.TRANSFER,
     contract: 'poolTokenContract',
+  },
+  TRADERJOE: {
+    stake: DEPOSIT_TYPES.ADD,
+    contract: 'gaugeContract',
   },
   UNISWAP: {
     stake: DEPOSIT_TYPES.NONE,
