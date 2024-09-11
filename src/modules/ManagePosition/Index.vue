@@ -88,8 +88,7 @@
       class="manage-wrap__content"
     >
       <MergeForm
-        :zap-pool="zapPool"
-        :active-tab="activeTab"
+        :current-position="zapPool"
         :all-tokens-list="allTokensList"
         :balance-list="balanceList"
         :gauge-address="gaugeAddress"
@@ -111,7 +110,7 @@ import RebalanceForm from '@/modules/ManagePosition/ZapForm/Index.vue';
 import WithdrawForm from '@/modules/ManagePosition/ZapForm/Withdraw.vue';
 import HarvestForm from '@/modules/ManagePosition/ZapForm/Harvest.vue';
 import IncreaseForm from '@/modules/ManagePosition/ZapForm/Increase.vue';
-import MergeForm from '@/modules/ManagePosition/ZapForm/Merge.vue';
+import MergeForm from '@/modules/ManagePosition/ZapForm/Merge/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import TableSkeleton from '@/components/TableSkeleton/Index.vue';

@@ -38,7 +38,7 @@
               <slot name="header" />
             </div>
 
-            <div v-bind:class="['modal__body', customClass]">
+            <div :class="['modal__body', customClass]">
               <slot />
             </div>
 
@@ -63,7 +63,6 @@ export default {
   components: {
     BaseIcon,
   },
-  emits: ['update:modelValue', 'close'],
   props: {
     customClass: {
       type: String,
@@ -90,6 +89,7 @@ export default {
       default: false,
     },
   },
+  emits: ['update:modelValue', 'close'],
   data() {
     return {
       elActivator: null,
@@ -178,7 +178,7 @@ export default {
     .modal__close {
         position: absolute;
         top: 12px;
-        right: 12px;
+        right: 20px;
         z-index: 16;
         cursor: pointer;
         svg {

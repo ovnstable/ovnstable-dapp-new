@@ -222,7 +222,7 @@ import SwapSlippageSettings from '@/components/SwapSlippage/Index.vue';
 import {
   initReqData, initZapinContracts, parseLogs,
 } from '@/services/Web3Service/utils/index.ts';
-import zapinService, { ZAPIN_TYPE } from '@/services/Web3Service/Zapin-service';
+import zapinService, { ZAPIN_TYPE } from '@/services/Web3Service/Zapin-service.ts';
 
 enum zapMobileSection {
   'TOKEN_FORM',

@@ -610,9 +610,15 @@
   }
 }
 
-  .new-position-tokens {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    margin-top: 10px;
-  }
+.new-position-tokens {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.swap-block__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
