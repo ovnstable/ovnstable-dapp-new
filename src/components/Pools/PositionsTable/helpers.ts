@@ -120,6 +120,7 @@ export const formatPositionData = (
             { [tokenNames.token0]: getUsdStr(rewardAmount0, token0Info?.decimals) },
             { [tokenNames.token1]: getUsdStr(rewardAmount1, token1Info?.decimals) },
           ],
+          tokensInfo: [],
           usdValue: rewardUsdTotal,
           displayedUsdValue: getMinVal(rewardUsdTotal),
         },

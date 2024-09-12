@@ -92,16 +92,26 @@ export const formatPositionData = (
       // Token usd values
       const token0UsdStr = getUsdStr(amount0, token0Info?.decimals, token0Info?.price);
       const token1UsdStr = getUsdStr(amount1, token1Info?.decimals, token1Info?.price);
+      const reward0Str = getUsdStr(rewardAmount0, token0Info?.decimals);
+      const reward1Str = getUsdStr(rewardAmount1, token1Info?.decimals);
       const reward0UsdStr = getUsdStr(rewardAmount0, token0Info?.decimals, token0Info?.price);
       const reward1UsdStr = getUsdStr(rewardAmount1, token1Info?.decimals, token1Info?.price);
       const positionUsdTotal = sumBnStr(token0UsdStr, token1UsdStr);
       let rewardUsdTotal = sumBnStr(reward0UsdStr, reward1UsdStr);
       let platformName = platform;
+      let rewardTokensInfo;
 
       if (platformName === 'PCS') platformName = 'Pancake';
       if (platform === 'Aerodrome') {
         const aeroTokenInfo = getTokenInfo(AERO_ADDR, tokenMap);
         rewardUsdTotal = getUsdStr(emissions, aeroTokenInfo?.decimals, aeroTokenInfo?.price);
+        rewardTokensInfo = [
+          {
+            value: getUsdStr(emissions, aeroTokenInfo?.decimals),
+            usdValue: getUsdStr(emissions, aeroTokenInfo?.decimals, aeroTokenInfo?.price),
+            selectedToken: aeroTokenInfo,
+          },
+        ];
       }
 
       // Ticks
@@ -139,9 +149,10 @@ export const formatPositionData = (
         },
         rewards: {
           tokens: [
-            { [tokenNames.token0]: getUsdStr(rewardAmount0, token0Info?.decimals) },
-            { [tokenNames.token1]: getUsdStr(rewardAmount1, token1Info?.decimals) },
+            { [tokenNames.token0]: reward0Str },
+            { [tokenNames.token1]: reward1Str },
           ],
+          tokensInfo: rewardTokensInfo || [],
           usdValue: rewardUsdTotal,
           displayedUsdValue: getMinVal(rewardUsdTotal),
         },

@@ -27,6 +27,7 @@
         </div>
 
         <div
+          v-if="isInteractive"
           class="zapin-v3__chart-zoom"
         >
           <span>
@@ -77,6 +78,7 @@
         </h3>
         <div class="zapin-v3__row-block">
           <div
+            v-if="isInteractive"
             class="zapin-v3__clicker"
             @click="reversePrice ? handleRightTick(false) : handleLeftTick(true)"
             @keypress="reversePrice ? handleRightTick(false) : handleLeftTick(true)"
@@ -95,6 +97,7 @@
             @input="setMinPrice"
           />
           <div
+            v-if="isInteractive"
             class="zapin-v3__clicker"
             @click="reversePrice ? handleRightTick(true) : handleLeftTick(false)"
             @keypress="reversePrice ? handleRightTick(true) : handleLeftTick(false)"
@@ -112,6 +115,7 @@
         </h3>
         <div class="zapin-v3__row-block">
           <div
+            v-if="isInteractive"
             class="zapin-v3__clicker"
             @click="reversePrice ? handleLeftTick(false) : handleRightTick(true)"
             @keypress="reversePrice ? handleLeftTick(false) : handleRightTick(true)"
@@ -130,6 +134,7 @@
             @input="setMaxPrice"
           />
           <div
+            v-if="isInteractive"
             class="zapin-v3__clicker"
             @click="reversePrice ? handleLeftTick(true) : handleRightTick(false)"
             @keypress="reversePrice ? handleLeftTick(true) : handleRightTick(false)"
