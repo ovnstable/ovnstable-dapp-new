@@ -133,7 +133,7 @@ export default {
     getOutputUsd() {
       const outputUsd: string = this.swapData?.netOutValue;
 
-      return new BN(outputUsd).gt(0) ? `-${formatMoney(outputUsd, getFixed(outputUsd))}` : 0;
+      return new BN(outputUsd).gt(0) ? formatMoney(outputUsd, getFixed(outputUsd)) : 0;
     },
     getSwapPrice() {
       const inputUsd = this.inputSwapList(this.swapData)
