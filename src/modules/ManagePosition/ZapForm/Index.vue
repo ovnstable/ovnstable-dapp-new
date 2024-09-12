@@ -833,7 +833,6 @@ export default {
           ZAPIN_TYPE.REBALANCE,
         );
 
-        console.log(data, '___data');
         if (!data || (data && !data.odosData)) {
           this.odosDataLoading = false;
           return;

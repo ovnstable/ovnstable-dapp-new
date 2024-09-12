@@ -2,8 +2,8 @@
 import BN from 'bignumber.js';
 import { ethers } from 'ethers';
 import { fixedByPrice } from '@/utils/numbers.ts';
-import { getTokenByAddress, updateTokenValue } from '@/store/helpers/index.ts';
-import { loadAbi, srcStringBuilder } from '@/store/views/main/zapin/index.ts';
+import { getNewOutputToken, getTokenByAddress, updateTokenValue } from '@/store/helpers/index.ts';
+import { loadAbi, REWARD_TOKEN, srcStringBuilder } from '@/store/views/main/zapin/index.ts';
 import { buildEvmContract } from '@/utils/contractsMap.ts';
 
 const EVENT_SIG = ['uint256[]', 'address[]'];
@@ -289,7 +289,6 @@ export const removeToken = (tokens: any[], id: string) => {
 };
 
 export const getOdosOutputTokens = (data: any, selectedOutputTokens: any[]) => {
-  console.log(data, '___DATA');
   if (!data || !data.outTokens || !data.outAmounts) {
     return [];
   }
@@ -420,4 +419,17 @@ export const initZapinContracts = async (
     poolTokenContract,
     poolTokens,
   };
+};
+
+export const initOutputToken = (selectedToken: any, locked: any, startPercent: any) => ({
+  ...getNewOutputToken(),
+  locked,
+  value: startPercent,
+  selectedToken,
+});
+
+export const getSymbolEmmToken = (platform: string) => {
+  if (platform === 'Pancake') return REWARD_TOKEN.CAKE;
+  if (platform === 'Aerodrome') return REWARD_TOKEN.AERO;
+  return '';
 };

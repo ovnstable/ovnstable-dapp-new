@@ -941,7 +941,6 @@ export default defineComponent({
       let returnedToUserEvent;
       const nftId = '';
 
-      console.log(data, '___data');
       parseLogs(data.logs, this.commitEventToStore);
       this.currentStage = zapInStep.APPROVE_GAUGE;
 

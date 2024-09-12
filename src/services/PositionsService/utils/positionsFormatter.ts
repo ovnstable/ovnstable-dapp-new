@@ -128,6 +128,10 @@ export const formatPositionData = (
             { [tokenNames.token0]: getUsdStr(amount0, token0Info?.decimals) },
             { [tokenNames.token1]: getUsdStr(amount1, token1Info?.decimals) },
           ],
+          tokensOrig: [
+            { [tokenNames.token0]: amount0.toString() },
+            { [tokenNames.token1]: amount1.toString() },
+          ],
           usdValue: positionUsdTotal,
           displayedUsdValue: getMinVal(positionUsdTotal),
           tokenProportions: getPositionProportion(token0UsdStr, token1UsdStr, positionUsdTotal),
