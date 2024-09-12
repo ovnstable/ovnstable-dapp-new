@@ -35,20 +35,20 @@
             />
             <div class="routing-wrap__content-col">
               <div
-                v-for="(inputT, key) in outputSwapList(swapData)"
+                v-for="(item, key) in outputTokens as any"
                 :key="key"
                 class="routing-wrap__row-item"
               >
                 <img
-                  :src="inputT?.tokenData?.logoUrl"
+                  :src="item?.selectedToken?.logoUrl"
                   alt="logourl"
                 />
                 <span>
-                  {{ getFormattedVal(inputT.val) }}
+                  {{ getToken(item.sum) }}
                 </span>
                 <span class="secondary">
                   $
-                  {{ getFormattedVal(inputT.usdVal) }}
+                  ${{ getTokenUsd(item) }}
                 </span>
               </div>
             </div>
