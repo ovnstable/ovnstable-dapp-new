@@ -505,6 +505,7 @@ export default {
       return false;
     },
     disableButtonMessage() {
+      if (!this.zapPool.position.isInRange) return 'OUT OF RANGE, INCREASE UNAVAILABLE';
       if (this.isEmptyForm) {
         if (this.isAvailableOnNetwork) {
           return 'SELECT TOKENS';
