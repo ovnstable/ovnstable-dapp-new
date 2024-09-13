@@ -59,20 +59,24 @@
           size="48px"
         />
       </div>
-      <apexchart
-        v-else
-        ref="zapinChart"
-        class="zapin-v3__chart-range"
-        type="area"
-        height="100%"
-        :options="optionsChart"
-        :series="optionsChart.series"
-        @selection="selectEvent"
-      />
       <div
-        v-if="!isInteractive && !initialLoading"
-        class="zapin-v3__blocker"
-      />
+        v-else
+        class="zapin-v3__chart-range"
+      >
+        <apexchart
+          ref="zapinChart"
+          class="zapin-v3__chart-range__apex"
+          type="area"
+          height="100%"
+          :options="optionsChart"
+          :series="optionsChart.series"
+          @selection="selectEvent"
+        />
+        <div
+          v-if="!isInteractive && !initialLoading"
+          class="zapin-v3__blocker"
+        />
+      </div>
     </div>
 
     <div class="zapin-v3__row">
@@ -1109,8 +1113,12 @@ export default {
 }
 
 .zapin-v3__chart-range {
-  height: 150px;
-  max-height: 150px;
+  position: relative;
+  height: 100%;
+}
+
+.zapin-v3__chart-range__apex {
+  min-height: 250px;
 }
 
 .zapin-v3__loader {
