@@ -583,7 +583,7 @@ export default {
           sum: token.value,
           value: token.value,
           usdValue: token.usdValue,
-          contractValue: new BN(token.value).times(10 ** 18).toString(),
+          contractValue: new BN(token.value).times(10 ** 18).toFixed(),
         }));
 
       if (this.newPositionTokens?.length > 0) {
@@ -875,7 +875,7 @@ export default {
 
         this.newPositionTokens = this.outputTokens.map((token: any, i) => ({
           ...token,
-          sum: new BN(token.sum).plus(new BN(this.newPositionTokens[i].sum)),
+          sum: new BN(token.sum).plus(new BN(this.newPositionTokens[i].sum)).toFixed(),
         }));
 
         const totalFinalOutputUsd = this.newPositionTokens
