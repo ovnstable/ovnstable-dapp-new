@@ -76,4 +76,10 @@ export default {
 };
 </script>
 
+<style scoped>
+.view-position-link {
+  margin: 0 auto;
+}
+</style>
+
 <style scoped lang="scss" src="../styles.scss" />

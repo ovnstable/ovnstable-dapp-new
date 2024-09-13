@@ -92,14 +92,26 @@ export const formatPositionData = (
       // Token usd values
       const token0UsdStr = getUsdStr(amount0, token0Info?.decimals, token0Info?.price);
       const token1UsdStr = getUsdStr(amount1, token1Info?.decimals, token1Info?.price);
+      const reward0Str = getUsdStr(rewardAmount0, token0Info?.decimals);
+      const reward1Str = getUsdStr(rewardAmount1, token1Info?.decimals);
       const reward0UsdStr = getUsdStr(rewardAmount0, token0Info?.decimals, token0Info?.price);
       const reward1UsdStr = getUsdStr(rewardAmount1, token1Info?.decimals, token1Info?.price);
       const positionUsdTotal = sumBnStr(token0UsdStr, token1UsdStr);
       let rewardUsdTotal = sumBnStr(reward0UsdStr, reward1UsdStr);
+      let platformName = platform;
+      let rewardTokensInfo;
 
+      if (platformName === 'PCS') platformName = 'Pancake';
       if (platform === 'Aerodrome') {
         const aeroTokenInfo = getTokenInfo(AERO_ADDR, tokenMap);
         rewardUsdTotal = getUsdStr(emissions, aeroTokenInfo?.decimals, aeroTokenInfo?.price);
+        rewardTokensInfo = [
+          {
+            value: getUsdStr(emissions, aeroTokenInfo?.decimals),
+            usdValue: getUsdStr(emissions, aeroTokenInfo?.decimals, aeroTokenInfo?.price),
+            selectedToken: aeroTokenInfo,
+          },
+        ];
       }
 
       // Ticks
@@ -116,15 +128,19 @@ export const formatPositionData = (
         chain: networkId,
         token0Add: token0Info?.address,
         token1Add: token1Info?.address,
-        chainName: network?.name?.toLowerCase() ?? 'base',
+        chainName: network?.networkName?.toLowerCase(),
         token0Icon: token0Info?.logoUrl ?? loadEmptyImg(),
         token1Icon: token1Info?.logoUrl ?? loadEmptyImg(),
-        platform: [platform],
+        platform: [platformName],
         name: pool ? pool.name : `${token0Info?.symbol}/${token1Info?.symbol}`,
         position: {
           tokens: [
             { [tokenNames.token0]: getUsdStr(amount0, token0Info?.decimals) },
             { [tokenNames.token1]: getUsdStr(amount1, token1Info?.decimals) },
+          ],
+          tokensOrig: [
+            { [tokenNames.token0]: amount0.toString() },
+            { [tokenNames.token1]: amount1.toString() },
           ],
           usdValue: positionUsdTotal,
           displayedUsdValue: getMinVal(positionUsdTotal),
@@ -133,14 +149,15 @@ export const formatPositionData = (
         },
         rewards: {
           tokens: [
-            { [tokenNames.token0]: getUsdStr(rewardAmount0, token0Info?.decimals) },
-            { [tokenNames.token1]: getUsdStr(rewardAmount1, token1Info?.decimals) },
+            { [tokenNames.token0]: reward0Str },
+            { [tokenNames.token1]: reward1Str },
           ],
+          tokensInfo: rewardTokensInfo || [],
           usdValue: rewardUsdTotal,
           displayedUsdValue: getMinVal(rewardUsdTotal),
         },
         emissions,
-        platformLinks: getPlatformLinks(platform, poolId, 'base'),
+        platformLinks: getPlatformLinks(platformName, poolId, network?.networkName?.toLowerCase()),
         tokenId,
         ticks,
         tokenNames,

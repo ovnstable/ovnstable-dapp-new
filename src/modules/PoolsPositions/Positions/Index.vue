@@ -72,6 +72,8 @@
           :position-size-sort-func="togglePositionSizeSort"
           :apy-order-type="orderType"
           :position-size-order-type="positionSizeOrder"
+          :claim-loading="isClaiming"
+          @claim="handleClaim"
         >
           <template #filters>
             <PoolsFilter
@@ -92,14 +94,21 @@
 <script lang="ts">
 import PoolsTable from '@/components/Pools/PositionsTable/Index.vue';
 import PoolsFilter from '@/components/Pools/PositionsFilter/Index.vue';
-import { mapGetters } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import { POOL_TYPES } from '@/store/views/main/pools/index.ts';
 import TableSkeleton from '@/components/TableSkeleton/Index.vue';
-import { getImageUrl } from '@/utils/const.ts';
+import { awaitDelay, getImageUrl } from '@/utils/const.ts';
 import ButtonComponent from '@/components/Button/Index.vue';
 import { defineComponent } from 'vue';
 import { usePositionsQuery } from '@/hooks/fetch/usePositionsQuery.ts';
 import { useRefreshBalances } from '@/hooks/fetch/useRefreshBalances.ts';
+import { parseErrorLog } from '@/utils/errors.ts';
+import { initZapinContracts } from '@/services/Web3Service/utils/index.ts';
+import { useTokensQuery, useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.ts';
+import { mergedTokens } from '@/services/TokenService/utils/index.ts';
+import { usePoolsQueryNew } from '@/hooks/fetch/usePoolsQuery.ts';
+import type { TFilterPoolsParams, TPoolInfo } from '@/types/common/pools/index.ts';
+import ZapinService from '@/services/Web3Service/Zapin-service.ts';
 
 interface IEnumIterator {
   next: () => number,
@@ -154,18 +163,24 @@ export default defineComponent({
     TableSkeleton,
     ButtonComponent,
   },
-  // Using new Composition API for hooks compatibility
   setup() {
     const { data: positionData, isLoading } = usePositionsQuery();
+    const { data: allTokensList } = useTokensQuery();
+    const { data: balanceList } = useTokensQueryNew();
+    const { data: poolList } = usePoolsQueryNew();
 
     return {
       isLoading,
       positionData,
+      allTokensList,
+      balanceList,
+      poolList,
 
       resetData: useRefreshBalances(),
 
       poolTabType: POOL_TYPES.ALL,
       isOpenHiddenPools: false,
+      isClaiming: false,
 
       selectedTabs: ['ALL'],
       selectedNetworks: [] as number[], // [] for ALL or networks,
@@ -181,11 +196,8 @@ export default defineComponent({
       positionSizeSortIterator: {} as IEnumIterator,
       positionSizeOrder: 0 as number,
       isManualLoading: false as boolean,
-      // positionData: [] as any,
       supportedNetworks: SUPPORTED_REBALANCE_NETWORKS,
-
       isInit: false as boolean,
-    // tokensLength: 0 as number,
     };
   },
   computed: {
@@ -193,6 +205,10 @@ export default defineComponent({
     ...mapGetters('accountData', ['account']),
     ...mapGetters('network', ['networkName']),
     ...mapGetters('walletAction', ['walletConnected']),
+    ...mapGetters('web3', ['evmSigner']),
+    mergedAllTokens() {
+      return mergedTokens(this.allTokensList as any[], this.balanceList as any[]);
+    },
     filteredPools() {
       const sortByHotTagAndValue = sortByTagAndValue(
         'NEW',
@@ -247,13 +263,67 @@ export default defineComponent({
   },
   async mounted() {
     this.clearAllFilters();
-
     this.aprSortIterator = iterateEnum(APR_ORDER_TYPE);
     this.aprOrder = this.aprSortIterator.next();
     this.positionSizeSortIterator = iterateEnum(POSITION_SIZE_ORDER_TYPE);
     this.positionSizeOrder = this.positionSizeSortIterator.next();
   },
   methods: {
+    ...mapActions('waitingModal', ['closeWaitingModal', 'showWaitingModal']),
+    ...mapActions('errorModal', ['showErrorModalWithMsg']),
+    ...mapActions('odosData', ['triggerSuccessZapin']),
+    ...mapActions('poolsData', ['setIsZapModalShow', 'setFilterParams']),
+    handleClickSearch(zapPool: any) {
+      if (!zapPool) return;
+      const tokens = (zapPool?.name as string)?.split('/');
+
+      const filterParams: Partial<TFilterPoolsParams> = {
+        token0: tokens[0],
+      };
+      this.setFilterParams(filterParams);
+    },
+    searchGauge(pool: TPoolInfo) {
+      if (!this.poolList || this.poolList?.length === 0 || !pool) return '';
+      const foundPool = this.poolList
+        .find((_: any) => _.address?.toLowerCase() === pool.address?.toLowerCase());
+
+      if (foundPool) return foundPool.gauge;
+      return '';
+    },
+    async handleClaim(pool: TPoolInfo) {
+      this.setIsZapModalShow(false);
+      this.handleClickSearch(pool);
+      await awaitDelay(500);
+      const gaugeAdd = this.searchGauge(pool);
+
+      if (!gaugeAdd) {
+        this.showErrorModalWithMsg({ errorMsg: 'Gauge not found' });
+        return;
+      }
+
+      const contractsData = await initZapinContracts(
+        pool,
+        this.mergedAllTokens,
+        this.evmSigner,
+        gaugeAdd,
+      );
+
+      try {
+        this.showWaitingModal('unstaking');
+        this.isClaiming = true;
+        await ZapinService.claimPosition(
+          pool,
+          contractsData.gaugeContract,
+          contractsData.poolTokenContract,
+          this.triggerSuccessZapin,
+        );
+        this.closeWaitingModal();
+      } catch (e) {
+        this.isClaiming = false;
+        this.closeWaitingModal();
+        this.showErrorModalWithMsg({ errorMsg: parseErrorLog(e) });
+      }
+    },
     switchPoolsTab(type: POOL_TYPES) {
       this.isDefaultOrder = true;
       this.isOpenHiddenPools = false;

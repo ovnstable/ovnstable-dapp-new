@@ -65,7 +65,7 @@
           </div>
           <div class="success-data-list">
             <div class="token-amount">
-              ~ {{ lastParsedClaimedRewardsEvent }} USD
+              ~ {{ getFixedPrice(lastParsedClaimedRewardsEvent) }} USD
             </div>
           </div>
         </div>
@@ -80,7 +80,7 @@
               :key="returnData.id"
               class="token-amount"
             >
-              + {{ returnData.value }}
+              + {{ getFixedPrice(returnData.value) }}
               {{ returnData.symbol }}
             </div>
           </div>
@@ -96,7 +96,7 @@
               :key="stakeData.id"
               class="token-amount"
             >
-              + {{ stakeData.value }}
+              + {{ getFixedPrice(stakeData.value) }}
               {{ stakeData.symbol }}
             </div>
           </div>
@@ -112,6 +112,8 @@ import PoolLabel from '@/components/ZapModal/PoolLabel.vue';
 import { type PropType } from 'vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import BN from 'bignumber.js';
+import { fixedByPrice } from '@/utils/numbers.ts';
 import getPlatformLink from '../helpers.ts';
 
 export default {
@@ -144,6 +146,13 @@ export default {
       'lastParsedBurnedTokenIdEvent',
       'lastParsedClaimedRewardsEvent',
     ]),
+    getFixedPrice() {
+      return (val: string) => {
+        if (new BN(val).eq(0)) return 0;
+
+        return new BN(val).toFixed(fixedByPrice(+val));
+      };
+    },
     openPositionOnPool(): string {
       // eslint-disable-next-line prefer-destructuring
       const pool = this.successData.pool;

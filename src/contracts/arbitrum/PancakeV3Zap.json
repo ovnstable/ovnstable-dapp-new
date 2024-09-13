@@ -1,5 +1,5 @@
 {
-  "address": "0xAb54c628E85e7C59C2e62E4E3f7bCcD5d2874cef",
+  "address": "0x24C032f63Bd3De6AB47F4ADeE83D46A99a98a7F9",
   "abi": [
     {
       "type": "function",
@@ -7,6 +7,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 3200000,
       "inputs": [
         {
           "type": "bytes32",
@@ -24,6 +25,7 @@
       "name": "grantRole",
       "constant": false,
       "payable": false,
+      "gas": 3200000,
       "inputs": [
         {
           "type": "bytes32",
@@ -42,6 +44,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 3200000,
       "inputs": [
         {
           "type": "bytes32",
@@ -63,6 +66,7 @@
       "name": "revokeRole",
       "constant": false,
       "payable": false,
+      "gas": 3200000,
       "inputs": [
         {
           "type": "bytes32",
@@ -81,6 +85,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 3200000,
       "inputs": [
         {
           "type": "uint160",
@@ -114,6 +119,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 3200000,
       "inputs": [
         {
           "type": "uint160",
@@ -148,6 +154,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 3200000,
       "inputs": [
         {
           "type": "address",
@@ -169,6 +176,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 3200000,
       "inputs": [
         {
           "type": "address",
@@ -188,6 +196,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 3200000,
       "inputs": [
         {
           "type": "address",
@@ -207,6 +216,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 3200000,
       "inputs": [
         {
           "type": "address",
@@ -225,6 +235,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 3200000,
       "inputs": [
         {
           "type": "address",
@@ -246,6 +257,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 3200000,
       "inputs": [
         {
           "type": "int24",
@@ -264,6 +276,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 3200000,
       "inputs": [
         {
           "type": "uint160",
@@ -283,6 +296,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 3200000,
       "inputs": [
         {
           "type": "uint256",
@@ -310,6 +324,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 3200000,
       "inputs": [
         {
           "type": "uint256",
@@ -346,6 +361,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 3200000,
       "inputs": [
         {
           "type": "uint256",
@@ -363,6 +379,7 @@
       "name": "closePosition",
       "constant": false,
       "payable": false,
+      "gas": 3200000,
       "inputs": [
         {
           "type": "uint256",
@@ -381,10 +398,30 @@
     },
     {
       "type": "function",
+      "name": "getPool",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 3200000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "tokenId"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "address"
+        }
+      ]
+    },
+    {
+      "type": "function",
       "name": "getPositionAmounts",
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 3200000,
       "inputs": [
         {
           "type": "uint256",
@@ -406,6 +443,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 3200000,
       "inputs": [
         {
           "type": "address",
@@ -479,9 +517,81 @@
     },
     {
       "type": "function",
+      "name": "getTicks",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 3200000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "tokenId"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "int24"
+        },
+        {
+          "type": "int24"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "getTokens",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 3200000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "tokenId"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "address"
+        },
+        {
+          "type": "address"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "increaseLiquidity",
+      "constant": false,
+      "payable": false,
+      "gas": 3200000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "tokenId"
+        },
+        {
+          "type": "uint256",
+          "name": "amount0"
+        },
+        {
+          "type": "uint256",
+          "name": "amount1"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "uint128",
+          "name": "liquidity"
+        }
+      ]
+    },
+    {
+      "type": "function",
       "name": "mintPosition",
       "constant": false,
       "payable": false,
+      "gas": 3200000,
       "inputs": [
         {
           "type": "address",
@@ -521,6 +631,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 3200000,
       "inputs": [
         {
           "type": "address",
@@ -544,6 +655,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 3200000,
       "inputs": [
         {
           "type": "address",
@@ -562,6 +674,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 3200000,
       "inputs": [
         {
           "type": "address",
@@ -580,6 +693,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 3200000,
       "inputs": [
         {
           "type": "address",
@@ -598,6 +712,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 3200000,
       "inputs": [
         {
           "type": "address",
@@ -620,6 +735,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 3200000,
       "inputs": [
         {
           "type": "address",
@@ -642,6 +758,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 3200000,
       "inputs": [
         {
           "type": "uint256",
@@ -698,6 +815,10 @@
             {
               "type": "uint256[]",
               "name": "poolProportionsUsd"
+            },
+            {
+              "type": "uint256[]",
+              "name": "outputSwapExpected"
             }
           ]
         }
@@ -709,6 +830,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 3200000,
       "inputs": [
         {
           "type": "address",
@@ -729,6 +851,20 @@
             {
               "type": "uint256",
               "name": "amount"
+            },
+            {
+              "type": "uint256",
+              "name": "price"
+            }
+          ]
+        },
+        {
+          "type": "tuple[]",
+          "name": "prices",
+          "components": [
+            {
+              "type": "address",
+              "name": "tokenAddress"
             },
             {
               "type": "uint256",
@@ -765,6 +901,10 @@
             {
               "type": "uint256[]",
               "name": "poolProportionsUsd"
+            },
+            {
+              "type": "uint256[]",
+              "name": "outputSwapExpected"
             }
           ]
         }
@@ -776,6 +916,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 3200000,
       "inputs": [],
       "outputs": [
         {
@@ -789,6 +930,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 3200000,
       "inputs": [],
       "outputs": [
         {
@@ -801,6 +943,7 @@
       "name": "setCoreParams",
       "constant": false,
       "payable": false,
+      "gas": 3200000,
       "inputs": [
         {
           "type": "tuple",
@@ -824,6 +967,7 @@
       "name": "setSlippages",
       "constant": false,
       "payable": false,
+      "gas": 3200000,
       "inputs": [
         {
           "type": "uint256",
@@ -838,10 +982,29 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 3200000,
       "inputs": [],
       "outputs": [
         {
           "type": "uint256"
+        }
+      ]
+    },
+    {
+      "type": "error",
+      "name": "BelowAmountMin",
+      "inputs": [
+        {
+          "type": "address",
+          "name": "tokenAddress"
+        },
+        {
+          "type": "uint256",
+          "name": "amountMin"
+        },
+        {
+          "type": "uint256",
+          "name": "amountReceived"
         }
       ]
     },
@@ -927,9 +1090,10 @@
     },
     {
       "type": "function",
-      "name": "rebalance",
+      "name": "increase",
       "constant": false,
       "payable": false,
+      "gas": 3200000,
       "inputs": [
         {
           "type": "tuple",
@@ -960,6 +1124,102 @@
                 {
                   "type": "address",
                   "name": "receiver"
+                },
+                {
+                  "type": "uint256",
+                  "name": "amountMin"
+                }
+              ]
+            },
+            {
+              "type": "bytes",
+              "name": "data"
+            }
+          ]
+        },
+        {
+          "type": "tuple",
+          "name": "paramsData",
+          "components": [
+            {
+              "type": "address",
+              "name": "pair"
+            },
+            {
+              "type": "int24[]",
+              "name": "tickRange"
+            },
+            {
+              "type": "uint256[]",
+              "name": "amountsOut"
+            }
+          ]
+        },
+        {
+          "type": "uint256",
+          "name": "tokenId"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "merge",
+      "constant": false,
+      "payable": false,
+      "gas": 3200000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "tokenIn"
+        },
+        {
+          "type": "uint256[]",
+          "name": "tokensOut"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "rebalance",
+      "constant": false,
+      "payable": false,
+      "gas": 3200000,
+      "inputs": [
+        {
+          "type": "tuple",
+          "name": "swapData",
+          "components": [
+            {
+              "type": "tuple[]",
+              "name": "inputs",
+              "components": [
+                {
+                  "type": "address",
+                  "name": "tokenAddress"
+                },
+                {
+                  "type": "uint256",
+                  "name": "amountIn"
+                }
+              ]
+            },
+            {
+              "type": "tuple[]",
+              "name": "outputs",
+              "components": [
+                {
+                  "type": "address",
+                  "name": "tokenAddress"
+                },
+                {
+                  "type": "address",
+                  "name": "receiver"
+                },
+                {
+                  "type": "uint256",
+                  "name": "amountMin"
                 }
               ]
             },
@@ -999,6 +1259,7 @@
       "name": "zapIn",
       "constant": false,
       "payable": false,
+      "gas": 3200000,
       "inputs": [
         {
           "type": "tuple",
@@ -1029,6 +1290,10 @@
                 {
                   "type": "address",
                   "name": "receiver"
+                },
+                {
+                  "type": "uint256",
+                  "name": "amountMin"
                 }
               ]
             },
@@ -1064,6 +1329,7 @@
       "name": "zapOut",
       "constant": false,
       "payable": false,
+      "gas": 3200000,
       "inputs": [
         {
           "type": "uint256",
@@ -1127,6 +1393,7 @@
       "name": "diamondCut",
       "constant": false,
       "payable": false,
+      "gas": 3200000,
       "inputs": [
         {
           "type": "tuple[]",
@@ -1163,6 +1430,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 3200000,
       "inputs": [
         {
           "type": "bytes4",
@@ -1182,6 +1450,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 3200000,
       "inputs": [],
       "outputs": [
         {
@@ -1196,6 +1465,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 3200000,
       "inputs": [
         {
           "type": "address",
@@ -1215,6 +1485,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 3200000,
       "inputs": [],
       "outputs": [
         {
@@ -1239,6 +1510,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
+      "gas": 3200000,
       "inputs": [
         {
           "type": "bytes4",

@@ -173,16 +173,15 @@
 </template>
 
 <script lang="ts">
-import { getNewInputToken, getTokenByAddress } from '@/store/helpers/index.ts';
+import { getNewInputToken, getTokenByAddress, getTokenBySymbol } from '@/store/helpers/index.ts';
 import { formatInputTokens } from '@/utils/tokens.ts';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import BN from 'bignumber.js';
-import { REWARD_TOKEN } from '@/store/views/main/zapin/index.ts';
 import { loadTokenImage } from '@/utils/tokenLogo.ts';
-import { allTokensMap } from '@/hooks/fetch/useTokensQuery.ts';
 import { fixedByPrice } from '@/utils/numbers.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import ButtonComponent from '@/components/Button/Index.vue';
+import { getSymbolEmmToken } from '@/services/Web3Service/utils/index.ts';
 
 export default {
   name: 'PositionForm',
@@ -209,7 +208,6 @@ export default {
   },
   data() {
     return {
-      rewardTokens: [] as any,
       inputTokens: [] as any,
       isLoaded: false,
       priceProportionTokens: [] as any,
@@ -217,6 +215,9 @@ export default {
     };
   },
   computed: {
+    getSymbolToken() {
+      return getSymbolEmmToken(this.zapPool.platform[0]);
+    },
     getFixedVal() {
       return (price: string) => {
         if (new BN(price).eq(0)) return 0;
@@ -226,13 +227,8 @@ export default {
     zapAllTokens() {
       return mergedTokens(this.allTokensList as any[], this.balanceList as any[]);
     },
-    getSymbolToken() {
-      if (this.zapPool.platform[0] === 'Pancake') return REWARD_TOKEN.CAKE;
-      if (this.zapPool.platform[0] === 'Aerodrome') return REWARD_TOKEN.AERO;
-      return '';
-    },
     getImgToken() {
-      return loadTokenImage(this.getSymbolToken).href;
+      return loadTokenImage(getSymbolEmmToken(this.zapPool.platform[0])).href;
     },
     getRewardUsd() {
       if (!this.getRewardTokenInfo) return 0;
@@ -243,10 +239,7 @@ export default {
       return new BN(this.zapPool.emissions).div(10 ** 18).toFixed(6);
     },
     getRewardTokenInfo() {
-      const tokenInfo = allTokensMap(this.zapAllTokens).values().find((_: any) => {
-        const allTokSymbol = _?.symbol?.toLowerCase();
-        return allTokSymbol === this.getSymbolToken?.toLowerCase();
-      });
+      const tokenInfo = getTokenBySymbol(this.getSymbolToken, this.zapAllTokens);
 
       return tokenInfo || null;
     },
@@ -276,7 +269,6 @@ export default {
     init() {
       if (this.isLoaded) return;
       this.initLiqTokens();
-      this.initRewardTokens();
       this.switchPrices();
     },
     initLiqTokens() {
@@ -310,28 +302,6 @@ export default {
 
       const inputTokenInfo = formatInputTokens(arrTokens);
       this.inputTokens = inputTokenInfo;
-    },
-    initRewardTokens() {
-      const rewardToken = this.zapPool.rewards.tokens.map((_: any) => {
-        const rewardData: any = Object.entries(_)[0];
-        const tokenInfo = allTokensMap(this.zapAllTokens).values().find((_: any) => {
-          const allTokSymbol = _?.symbol?.toLowerCase();
-          return allTokSymbol === rewardData[0]?.toLowerCase();
-        });
-
-        return {
-          displayedValue: new BN(rewardData[1] ?? 0).toFixed(8),
-          id: Date.now().toString(),
-          locked: true,
-          proportion: 0,
-          selectedToken: tokenInfo,
-          sum: new BN(rewardData[1] ?? 0).toFixed(6),
-          usdValue: new BN(rewardData[1] ?? 0).times(tokenInfo.price).toFixed(6),
-          value: new BN(rewardData[1] ?? 0).toFixed(6),
-        };
-      });
-
-      this.rewardTokens = rewardToken;
     },
     copyToClipBoard(textToCopy: string) {
       navigator.clipboard.writeText(textToCopy);

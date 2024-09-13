@@ -236,6 +236,7 @@
 import {
   mapActions, mapGetters, mapState,
 } from 'vuex';
+import { computed, defineComponent } from 'vue';
 import { useEventBus } from '@vueuse/core';
 import { ethers } from 'ethers';
 import TokenForm from '@/components/TokenForm/Index.vue';
@@ -259,13 +260,12 @@ import {
   WHITE_LIST_ODOS,
 } from '@/store/helpers/index.ts';
 import BigNumber from 'bignumber.js';
-import { computed, defineComponent } from 'vue';
 import { useTokensQuery, useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.ts';
 import TokenService from '@/services/TokenService/TokenService.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import { useRefreshBalances } from '@/hooks/fetch/useRefreshBalances.ts';
 import { parseErrorLog } from '@/utils/errors.ts';
-import { getOdosOutputTokens, getUpdatedTokenVal } from '@/components/ZapForm/helpers.ts';
+import { getOdosOutputTokens, getUpdatedTokenVal } from '@/services/Web3Service/utils/index.ts';
 import { debounce } from 'lodash';
 
 export default defineComponent({
@@ -864,6 +864,12 @@ export default defineComponent({
 
       this.odosSwapRequest(requestData)
         .then(async (data: any) => {
+          if (!data.pathViz) {
+            this.isSumulateSwapLoading = false;
+            this.isSumulateIntervalStarted = false;
+            throw new Error('Simulation error');
+          }
+
           const assembleData = {
             userAddr: ethers.getAddress(
               this.account.toLowerCase(),
@@ -974,6 +980,12 @@ export default defineComponent({
 
           this.isSumulateSwapLoading = false;
           this.isSumulateIntervalStarted = false;
+
+          if (!data.pathViz) {
+            this.isSumulateSwapLoading = false;
+            this.isSumulateIntervalStarted = false;
+            throw new Error('Simulation error');
+          }
 
           this.$emit('update-path-view', {
             path: data.pathViz,
@@ -1106,11 +1118,22 @@ export default defineComponent({
     getRequestTokens(isInput: boolean) {
       const list = isInput ? this.selectedInputTokens : this.selectedOutputTokens;
 
+      if (isInput) {
+        return list
+          .filter((_) => _.value)
+          .map((_) => ({
+            tokenAddress: _?.selectedToken.address,
+            amount: isInput ? String(_.contractValue) : String(_.value),
+          }));
+      }
+
+      console.log(list, '___list');
+
       return list
         .filter((_) => _.value)
         .map((_) => ({
           tokenAddress: _?.selectedToken.address,
-          amount: isInput ? String(_.contractValue) : String(_.value),
+          proportion: new BigNumber(_?.value).div(100).toString(),
         }));
     },
     lockProportion(isLock: any, token: any) {

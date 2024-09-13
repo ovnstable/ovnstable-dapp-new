@@ -26,10 +26,6 @@
         :balance-list="balanceTokensList"
       />
     </div>
-
-    <SuccessZapModal
-      :set-show-func="triggerSuccessZapin"
-    />
   </div>
 </template>
 
@@ -38,7 +34,6 @@ import {
   mapActions,
 } from 'vuex';
 import AutoZapinV3 from '@/components/ZapForm/AutoZapinV3.vue';
-import SuccessZapModal from '@/modules/ModalTemplates/SuccessModal/SuccessZapModal.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { usePoolsQueryNew } from '@/hooks/fetch/usePoolsQuery.ts';
@@ -53,7 +48,6 @@ export default {
   name: 'ZapFormPage',
   components: {
     AutoZapinV3,
-    SuccessZapModal,
     ButtonComponent,
     BaseIcon,
     TableSkeleton,
@@ -118,9 +112,6 @@ export default {
     this.init();
   },
   methods: {
-    ...mapActions('odosData', [
-      'triggerSuccessZapin',
-    ]),
     ...mapActions('poolsData', ['setFilterParams']),
     handleClickSearch() {
       const tokens = (this.$route.query?.tokens as string)?.split('-');
@@ -150,6 +141,7 @@ export default {
   gap: 24px;
   margin-bottom: 40px;
   color: var(--color-1);
+  margin-top: 20px;
 
   h1 {
     font-size: 26px;

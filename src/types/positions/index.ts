@@ -1,4 +1,5 @@
 import type { TPoolInfo } from '@/types/common/pools';
+import type { TTokenInfo } from '../common/tokens';
 
 export type TPositionData = [
     platform: string,
@@ -23,10 +24,16 @@ export type TTicks = {
   centerTick: number,
 }
 
+export type TPositionRewardTokenInfo = {
+    value: string, usdValue: string, selectedToken: TTokenInfo
+  }
+
 export interface IPositionsInfo extends TPoolInfo {
   platformLinks: { platform: string, link: string }[],
+  isStaked: boolean;
   position: {
     tokens:{ [key: string]: string }[],
+    tokensOrig:{ [key: string]: string }[],
     displayedUsdValue: string,
     usdValue: string,
     tokenProportions: {
@@ -35,8 +42,12 @@ export interface IPositionsInfo extends TPoolInfo {
     },
     isInRange: boolean,
   },
+  emissions: number,
+  token0Add: string,
+  token1Add: string,
   rewards: {
     tokens: { [key: string]: string }[],
+    tokensInfo: TPositionRewardTokenInfo[],
     displayedUsdValue: string,
     usdValue: string,
   },

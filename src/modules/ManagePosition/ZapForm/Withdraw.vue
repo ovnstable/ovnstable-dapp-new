@@ -161,7 +161,6 @@
 <!-- eslint-disable no-continue -->
 <!-- eslint-disable no-param-reassign -->
 <script lang="ts">
-import { useEventBus } from '@vueuse/core';
 import {
   mapActions, mapGetters, mapMutations,
 } from 'vuex';
@@ -180,10 +179,9 @@ import { MANAGE_FUNC, withdrawStep } from '@/store/modals/waiting-modal.ts';
 import { formatInputTokens } from '@/utils/tokens.ts';
 import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
 import { defineComponent } from 'vue';
-import { buildEvmContract } from '@/utils/contractsMap.ts';
-import { loadAbi, srcStringBuilder } from '@/store/views/main/zapin/index.ts';
 import { fixedByPrice } from '@/utils/numbers.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
+import { initZapinContracts } from '@/services/Web3Service/utils/index.ts';
 
 export default defineComponent({
   name: 'WithdrawForm',
@@ -313,37 +311,17 @@ export default defineComponent({
     ...mapMutations('waitingModal', ['setStagesMap']),
 
     async initContracts() {
-      const tokenA = getTokenByAddress(this.zapPool?.token0Add, this.zapAllTokens);
-      const tokenB = getTokenByAddress(this.zapPool?.token1Add, this.zapAllTokens);
-
-      const abiGauge = srcStringBuilder('V3GaugeRebalance')(this.zapPool.chainName, this.zapPool.platform[0]);
-      const abiGaugeContractFileV3 = await loadAbi(abiGauge);
-
-      const abiV3Zap = srcStringBuilder('V3Zap')(this.zapPool.chainName, this.zapPool.platform[0]);
-      const abiContractV3Zap = await loadAbi(abiV3Zap);
-
-      const abiV3Nft = srcStringBuilder('V3Nft')(this.zapPool.chainName, this.zapPool.platform[0]);
-      const abiContractV3Nft = await loadAbi(abiV3Nft);
-
-      this.gaugeContract = buildEvmContract(
-        abiGaugeContractFileV3.abi,
+      const contractsData = await initZapinContracts(
+        this.zapPool,
+        this.zapAllTokens,
         this.evmSigner,
         this.gaugeAddress,
       );
 
-      this.zapContract = buildEvmContract(
-        abiContractV3Zap.abi,
-        this.evmSigner,
-        abiContractV3Zap.address,
-      );
-
-      this.poolTokenContract = buildEvmContract(
-        abiContractV3Nft.abi,
-        this.evmSigner,
-        abiContractV3Nft.address,
-      );
-
-      this.poolTokens = [tokenA, tokenB];
+      this.gaugeContract = contractsData.gaugeContract;
+      this.zapContract = contractsData.zapContract;
+      this.poolTokenContract = contractsData.poolTokenContract;
+      this.poolTokens = contractsData.poolTokens;
 
       if (!this.isAvailableOnNetwork) this.mintAction();
     },
@@ -375,17 +353,9 @@ export default defineComponent({
     },
 
     async firstInit() {
-      await this.init();
       this.initLiqTokens();
 
       if (!this.isAvailableOnNetwork) this.mintAction();
-    },
-
-    async init() {
-      const bus = useEventBus('odos-transaction-finished');
-      bus.on(() => {
-        this.finishTransaction();
-      });
     },
     initLiqTokens() {
       const tokens = this.zapPool.name.split('/');
@@ -418,9 +388,6 @@ export default defineComponent({
       const inputTokenInfo = formatInputTokens(arrTokens);
       this.inputTokens = inputTokenInfo;
       this.outputTokens = cloneDeep(inputTokenInfo);
-    },
-    finishTransaction() {
-      this.closeWaitingModal();
     },
     async zapOutTrigger() {
       this.isSwapLoading = true;

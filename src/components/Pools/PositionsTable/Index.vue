@@ -90,8 +90,19 @@
                 {{ pool.tokenNames.token1 }} {{ pool.position.tokenProportions.token1 }} %
               </div>
             </div>
-            <div class="pools-table__apy">
-              {{ pool.rewards.displayedUsdValue }}$
+            <div class="pools-table__emission">
+              <div>
+                {{ pool.rewards.displayedUsdValue }}$
+              </div>
+              <div
+                v-if="pool.chain === 8453"
+                class="pools-table__btn"
+                :class="{ 'pools-table__btn--disabled': lessThanMin(pool.rewards.usdValue) }"
+                @click="emitClaim(pool)"
+                @keypress="emitClaim(pool)"
+              >
+                Claim
+              </div>
             </div>
             <div class="pools-table__platform-row center">
               <a
@@ -110,6 +121,7 @@
             </div>
 
             <ButtonComponent
+              :disabled="pool.chain !== 8453"
               btn-styles="faded"
               @click="handleOpen(pool)"
             >
@@ -146,6 +158,7 @@ import ButtonComponent from '@/components/Button/Index.vue';
 import type { PropType } from 'vue';
 import { mapActions } from 'vuex';
 import { getImageUrl } from '@/utils/const.ts';
+import BN from 'bignumber.js';
 import type { IPositionsInfo } from '@/types/positions/index.d.ts';
 
 enum POSITION_SIZE_ORDER_TYPE {
@@ -179,11 +192,20 @@ export default {
       required: true,
     },
   },
+  emits: ['claim'],
+  computed: {
+    lessThanMin() {
+      return (val: string) => new BN(val).lt(0.02);
+    },
+  },
   methods: {
     ...mapActions('poolsData', ['openZapIn']),
     handleOpen(pool: any) {
       this.openZapIn(pool);
       this.$router.replace(`/positions/${pool?.tokenId?.toString()}`);
+    },
+    emitClaim(pool: any) {
+      this.$emit('claim', pool);
     },
     toggleSortIcon() {
       return iconNameSort(POSITION_SIZE_ORDER_TYPE[this.positionSizeOrderType]);

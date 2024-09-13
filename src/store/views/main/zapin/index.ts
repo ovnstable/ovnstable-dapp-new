@@ -179,7 +179,6 @@ const actions = {
       });
     }
 
-    console.log(gaugeAddress, '___gaugeAddress');
     commit('changeState', {
       field: 'gaugeContract',
       val: buildEvmContract(

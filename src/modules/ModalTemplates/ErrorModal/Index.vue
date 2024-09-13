@@ -1,8 +1,8 @@
 <template>
   <ModalComponent
-    :modelValue="showModal"
+    :model-value="showModal"
     type-modal="custom"
-    overlayModals
+    overlay-modals
     @close="close"
   >
     <div class="modal-content">
@@ -68,7 +68,6 @@
           :copy-error="copyErrorToClipboard"
         />
       </div>
-
     </div>
   </ModalComponent>
 </template>
@@ -118,7 +117,6 @@ export default {
 
   computed: {
     ...mapGetters('errorModal', ['show', 'errorType', 'errorMsg']),
-    ...mapGetters('theme', ['light']),
   },
 
   watch: {
@@ -136,10 +134,10 @@ export default {
   },
 
   methods: {
-    ...mapActions('errorModal', ['showErrorModal', 'closeErrorModal', 'showErrorModalWithMsg']),
+    ...mapActions('errorModal', ['closeErrorModal']),
 
     initError() {
-      if (!this.errorMsg) {
+      if (!this.errorMsg || !this.errorType) {
         return;
       }
 
@@ -173,7 +171,7 @@ export default {
         return;
       }
 
-      if (this.errorType.includes('odos')) {
+      if (this.errorType?.includes('odos')) {
         this.errorViewType = 'odos';
         return;
       }

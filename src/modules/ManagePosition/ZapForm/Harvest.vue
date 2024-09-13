@@ -114,31 +114,30 @@
 <!-- eslint-disable no-continue -->
 <!-- eslint-disable no-param-reassign -->
 <script lang="ts">
-import { useEventBus } from '@vueuse/core';
 import {
   mapActions, mapGetters,
 } from 'vuex';
 import {
   getNewOutputToken,
-  getTokenByAddress,
 } from '@/store/helpers/index.ts';
 
 import Spinner from '@/components/Spinner/Index.vue';
 import ChangeNetwork from '@/components/ZapForm/ChangeNetwork.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BN from 'bignumber.js';
-import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
-import { loadAbi, REWARD_TOKEN, srcStringBuilder } from '@/store/views/main/zapin/index.ts';
+import { REWARD_TOKEN } from '@/store/views/main/zapin/index.ts';
 import { loadTokenImage } from '@/utils/tokenLogo.ts';
 import {
   defineComponent,
 } from 'vue';
-import { buildEvmContract } from '@/utils/contractsMap.ts';
 import { allTokensMap } from '@/hooks/fetch/useTokensQuery.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
+import { parseErrorLog } from '@/utils/errors.ts';
+import { initZapinContracts } from '@/services/Web3Service/utils/index.ts';
+import ZapinService from '@/services/Web3Service/Zapin-service.ts';
 
 export default defineComponent({
-  name: 'WithdrawForm',
+  name: 'HarvestForm',
   components: {
     ChangeNetwork,
     ButtonComponent,
@@ -258,7 +257,6 @@ export default defineComponent({
   },
   async mounted() {
     await this.initContracts();
-    this.init();
     this.setIsZapModalShow(false);
   },
   created() {
@@ -267,10 +265,9 @@ export default defineComponent({
   },
   methods: {
     ...mapActions('swapModal', ['showSwapModal', 'showMintView']),
+    ...mapActions('errorModal', ['showErrorModalWithMsg']),
     ...mapActions('poolsData', ['setIsZapModalShow']),
-    ...mapActions('odosData', [
-      'triggerSuccessZapin',
-    ]),
+    ...mapActions('odosData', ['triggerSuccessZapin']),
     ...mapActions('waitingModal', ['closeWaitingModal', 'showWaitingModal']),
     ...mapActions('walletAction', ['connectWallet']),
     mintAction() {
@@ -279,85 +276,37 @@ export default defineComponent({
     },
 
     async initContracts() {
-      const tokenA = getTokenByAddress(this.zapPool?.token0Add, this.mergedAllTokens);
-      const tokenB = getTokenByAddress(this.zapPool?.token1Add, this.mergedAllTokens);
-
-      const abiGauge = srcStringBuilder('V3GaugeRebalance')(this.zapPool.chainName, this.zapPool.platform[0]);
-      const abiGaugeContractFileV3 = await loadAbi(abiGauge);
-
-      const abiV3Zap = srcStringBuilder('V3Zap')(this.zapPool.chainName, this.zapPool.platform[0]);
-      const abiContractV3Zap = await loadAbi(abiV3Zap);
-
-      const abiV3Nft = srcStringBuilder('V3Nft')(this.zapPool.chainName, this.zapPool.platform[0]);
-      const abiContractV3Nft = await loadAbi(abiV3Nft);
-
-      this.gaugeContract = buildEvmContract(
-        abiGaugeContractFileV3.abi,
+      const contractsData = await initZapinContracts(
+        this.zapPool,
+        this.mergedAllTokens,
         this.evmSigner,
         this.gaugeAddress,
       );
 
-      this.zapContract = buildEvmContract(
-        abiContractV3Zap.abi,
-        this.evmSigner,
-        abiContractV3Zap.address,
-      );
-
-      this.poolTokenContract = buildEvmContract(
-        abiContractV3Nft.abi,
-        this.evmSigner,
-        abiContractV3Nft.address,
-      );
-
-      this.poolTokens = [tokenA, tokenB];
+      this.gaugeContract = contractsData.gaugeContract;
+      this.zapContract = contractsData.zapContract;
+      this.poolTokenContract = contractsData.poolTokenContract;
+      this.poolTokens = contractsData.poolTokens;
 
       if (!this.isAvailableOnNetwork) this.mintAction();
     },
 
-    async init() {
-      const bus = useEventBus('odos-transaction-finished');
-      bus.on(() => {
-        this.finishTransaction();
-      });
-    },
-    finishTransaction() {
-      this.closeWaitingModal();
-    },
-
     async claimTrigger() {
-      console.log(this.zapPool, 'claimTrigger');
-      this.isSwapLoading = true;
-
       try {
         this.showWaitingModal('unstaking');
-
-        let tx;
-
-        if (this.zapPool.isStaked) {
-          tx = await this.gaugeContract.getReward(this.zapPool.tokenId);
-        } else {
-          tx = await this.poolTokenContract.collect(this.zapPool.tokenId);
-        }
-
-        await tx.wait();
-
-        this.triggerSuccessZapin(
-          {
-            isShow: true,
-            inputTokens: this.poolTokens,
-            hash: tx.hash,
-            pool: this.zapPool,
-            modalType: MODAL_TYPE.HARVEST,
-          },
+        this.isSwapLoading = true;
+        await ZapinService.claimPosition(
+          this.zapPool,
+          this.gaugeContract,
+          this.poolTokenContract,
+          this.triggerSuccessZapin,
         );
-        this.isSwapLoading = false;
+
         this.closeWaitingModal();
-        this.closeWaitingModal();
-        this.positionFinish = true;
       } catch (e) {
-        console.log(e);
-        this.closeWaitingModal();
         this.isSwapLoading = false;
+        this.closeWaitingModal();
+        this.showErrorModalWithMsg({ errorMsg: parseErrorLog(e) });
       }
     },
     async checkNftApprove() {

@@ -27,6 +27,7 @@
         </div>
 
         <div
+          v-if="isInteractive"
           class="zapin-v3__chart-zoom"
         >
           <span>
@@ -58,16 +59,24 @@
           size="48px"
         />
       </div>
-      <apexchart
+      <div
         v-else
-        ref="zapinChart"
         class="zapin-v3__chart-range"
-        type="area"
-        height="100%"
-        :options="optionsChart"
-        :series="optionsChart.series"
-        @selection="selectEvent"
-      />
+      >
+        <apexchart
+          ref="zapinChart"
+          class="zapin-v3__chart-range__apex"
+          type="area"
+          height="100%"
+          :options="optionsChart"
+          :series="optionsChart.series"
+          @selection="selectEvent"
+        />
+        <div
+          v-if="!isInteractive && !initialLoading"
+          class="zapin-v3__blocker"
+        />
+      </div>
     </div>
 
     <div class="zapin-v3__row">
@@ -77,6 +86,7 @@
         </h3>
         <div class="zapin-v3__row-block">
           <div
+            v-if="isInteractive"
             class="zapin-v3__clicker"
             @click="reversePrice ? handleRightTick(false) : handleLeftTick(true)"
             @keypress="reversePrice ? handleRightTick(false) : handleLeftTick(true)"
@@ -90,9 +100,12 @@
             full-width
             is-center
             input-size="lg"
+            :disabled="isInteractive"
+            :readonly="true"
             @input="setMinPrice"
           />
           <div
+            v-if="isInteractive"
             class="zapin-v3__clicker"
             @click="reversePrice ? handleRightTick(true) : handleLeftTick(false)"
             @keypress="reversePrice ? handleRightTick(true) : handleLeftTick(false)"
@@ -110,6 +123,7 @@
         </h3>
         <div class="zapin-v3__row-block">
           <div
+            v-if="isInteractive"
             class="zapin-v3__clicker"
             @click="reversePrice ? handleLeftTick(false) : handleRightTick(true)"
             @keypress="reversePrice ? handleLeftTick(false) : handleRightTick(true)"
@@ -123,9 +137,12 @@
             full-width
             is-center
             input-size="lg"
+            :disabled="isInteractive"
+            :readonly="true"
             @input="setMaxPrice"
           />
           <div
+            v-if="isInteractive"
             class="zapin-v3__clicker"
             @click="reversePrice ? handleLeftTick(true) : handleRightTick(false)"
             @keypress="reversePrice ? handleLeftTick(true) : handleRightTick(false)"
@@ -139,7 +156,10 @@
       </div>
     </div>
 
-    <div class="range-presets-wrap">
+    <div
+      v-if="isInteractive"
+      class="range-presets-wrap"
+    >
       <h2>
         {{ isStablePool ? "Tick" : "Percent" }} presets:
       </h2>
@@ -193,7 +213,8 @@ import BN from 'bignumber.js';
 import debounce from 'lodash/debounce';
 import { awaitDelay } from '@/utils/const.ts';
 import { checkIsEveryStable } from '@/store/views/main/pools/helpers.ts';
-import { createScaledArray } from './helpers.ts';
+import getZapinChartConfig from '@/services/Web3Service/utils/chart.ts';
+import { createScaledArray } from '@/services/Web3Service/utils/index.ts';
 
 export default {
   name: 'ZapinV3',
@@ -220,6 +241,11 @@ export default {
     tokensData: {
       type: Array,
       required: true,
+    },
+    isInteractive: {
+      type: Boolean,
+      required: false,
+      default: true,
     },
   },
   emits: ['set-range'],
@@ -276,85 +302,7 @@ export default {
           id: 4, value: 887272, label: 'FULL', tick: true,
         },
       ],
-      optionsChart: {
-        annotations: {
-          xaxis: [
-            {
-              x: '9.5',
-              borderColor: '#0497EC',
-              borderWidth: 2,
-              label: {
-                borderColor: '#0497EC',
-                orientation: 'horizontal',
-              },
-            },
-          ],
-        },
-        chart: {
-          id: 'chart1',
-          width: '100%',
-          type: 'bar',
-          foreColor: '#ccc',
-          parentHeightOffset: 50,
-          brush: {
-            target: 'chart2',
-            enabled: true,
-          },
-          fill: {
-            opacity: 0.2,
-          },
-          selection: {
-            enabled: true,
-            fill: {
-              color: '#fff',
-              opacity: 0.4,
-            },
-            stroke: {
-              width: 3,
-              color: '#0497EC',
-              opacity: 1,
-            },
-            xaxis: {
-              min: 0,
-              max: 0,
-            },
-          },
-        },
-        fill: {
-          opacity: 0.9,
-          type: 'solid',
-        },
-        colors: ['#FF008044'],
-        series: [
-          {
-            data: [],
-          },
-        ],
-        stroke: {
-          width: 2,
-        },
-        grid: {
-          borderColor: '#E3F2FD',
-          show: false,
-          padding: {
-            top: 0, bottom: 20,
-          },
-        },
-        markers: {
-          size: 0,
-        },
-        xaxis: {
-          labels: {
-            style: {
-              colors: '#687386',
-              fontSize: '14px',
-            },
-          } as any,
-        },
-        yaxis: {
-          tickAmount: 2,
-        },
-      },
+      optionsChart: getZapinChartConfig(),
       // < 2$
       lowPoolPrice: true,
       isStablePool: true,
@@ -1165,8 +1113,12 @@ export default {
 }
 
 .zapin-v3__chart-range {
-  height: 150px;
-  max-height: 150px;
+  position: relative;
+  height: 100%;
+}
+
+.zapin-v3__chart-range__apex {
+  min-height: 250px;
 }
 
 .zapin-v3__loader {
@@ -1174,6 +1126,15 @@ export default {
   justify-content: center;
   align-items: center;
   min-height: 150px;
+}
+
+.zapin-v3__blocker {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
 }
 
 .zapin-v3__loader-tx {

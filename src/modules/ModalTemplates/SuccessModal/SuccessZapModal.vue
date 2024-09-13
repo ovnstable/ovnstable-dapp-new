@@ -36,7 +36,7 @@
       </template>
       <div class="zap-modal-footer">
         <a
-          href="https://forms.gle/BCwwX4yhGW7EadTCA"
+          href="https://discord.gg/zPqdc4Bn"
           target="_blank"
           rel="noopener noreferrer"
           class="leave-feedback-link"
@@ -156,10 +156,10 @@ export default defineComponent({
         // TODO: move Posthog logic up to store
         const posthogEventData = {
           txUrl: `${this.explorerUrl}tx/${this.lastParsedZapResponseData?.hash || ''}`,
-          token0: getAllTokensString(this.successData.inputTokens
-            .map((token: any) => token.selectedToken)),
-          token1: getAllTokensString(this.successData.outputTokens
-            .map((token: any) => token.selectedToken)),
+          token0: this.successData.inputTokens ? getAllTokensString(this.successData.inputTokens
+            .map((token: any) => token.selectedToken)) : '',
+          token1: this.successData.outputTokens ? getAllTokensString(this.successData.outputTokens
+            .map((token: any) => token.selectedToken)) : '',
           poolName: this.successData.pool.name,
           poolVersion: this.successData.pool.poolVersion,
           usdTotal: getTransactionTotal(this.successData.inputTokens),
