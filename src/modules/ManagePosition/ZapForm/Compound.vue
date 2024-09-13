@@ -164,17 +164,29 @@
             NOT ENOUGH REWARDS TO COMPOUND
           </ButtonComponent>
           <ButtonComponent
-            v-else-if="isHasRewards"
-            btn-size="large"
-            btn-styles="primary"
-            full
-            :loading="isSwapLoading"
-            :disabled="!agreeWithFees"
-            @click="claimTrigger"
-            @keypress="claimTrigger"
+          v-else-if="isHasRewards"
+          btn-size="large"
+          btn-styles="primary"
+          full
+          :loading="isSwapLoading"
+          :disabled="!agreeWithFees"
+          @click="claimTrigger"
+          @keypress="claimTrigger"
           >
-            CLAIM
-          </ButtonComponent>
+          CLAIM
+        </ButtonComponent>
+        <ButtonComponent
+          v-else-if="isAnyInputsNeedApprove"
+          btn-size="large"
+          btn-styles="primary"
+          full
+          :loading="approvingPending"
+          @click="approveTrigger(firstInputInQueueForToApprove)"
+          @keypress="approveTrigger(firstInputInQueueForToApprove)"
+        >
+          APPROVE
+          {{ firstInputInQueueForToApprove.selectedToken?.symbol }}
+        </ButtonComponent>
           <ButtonComponent
             v-else-if="positionStaked"
             btn-size="large"
@@ -255,7 +267,7 @@ import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import TokenForm from '@/components/TokenForm/Index.vue';
 import BN from 'bignumber.js';
-import { getAllowanceValue } from '@/utils/contractApprove.ts';
+import { approveToken, getAllowanceValue } from '@/utils/contractApprove.ts';
 import { onLeaveList, onEnterList, beforeEnterList } from '@/utils/animations.ts';
 import { MANAGE_FUNC } from '@/store/modals/waiting-modal.ts';
 import SwapSlippageSettings from '@/components/SwapSlippage/Index.vue';
@@ -342,7 +354,7 @@ export default {
     };
   },
   data: () => ({
-  // approvingPending: false,
+    approvingPending: false,
     agreeWithFees: true,
     inputTokens: [] as any[],
     outputTokens: [] as any[],
@@ -440,8 +452,21 @@ export default {
       return true;
     },
     isDisabled() {
-      if (new BN(this.zapPool.rewards.usdValue) < new BN(0.01)) return true;
+      // if (new BN(this.zapPool.rewards.usdValue) < new BN(0.01)) return true;
       return false;
+    },
+    isAnyInputsNeedApprove() {
+      return this.allInputsWithNotApproved.length > 0;
+    },
+    allInputsWithNotApproved() {
+      return this.selectedInputTokens.filter(
+        (token: any) => !token.selectedToken.approveData.approved,
+      );
+    },
+    firstInputInQueueForToApprove(): any {
+      return this.isAnyInputsNeedApprove
+        ? this.allInputsWithNotApproved[0]
+        : null;
     },
   },
   watch: {
@@ -1124,6 +1149,54 @@ export default {
         this.closeWaitingModal();
         this.showErrorModalWithMsg({ errorMsg: parseErrorLog(e) });
       }
+    },
+    async approveTrigger(token: any) {
+      this.showWaitingModal('Approving in process');
+
+      this.approvingPending = true;
+      const { selectedToken } = token;
+
+      const approveValue = new BN(10)
+        .pow(selectedToken.decimals)
+        .times(10 ** 18)
+        .toFixed(0);
+
+      await this.checkApproveForToken(token, (Number(approveValue) * 0.5).toFixed(0));
+      if (selectedToken.approveData.approved) {
+        this.closeWaitingModal();
+        return;
+      }
+
+      const tokenContract = TokenService
+        .loadTokenContract(selectedToken.address, this.$store.state.web3.evmSigner);
+
+      const tx = await approveToken(
+        tokenContract,
+        this.zapContract.target,
+        approveValue,
+        this.account,
+      )
+        .catch((e) => {
+          console.error('Error when approve token.', e);
+          this.closeWaitingModal();
+          this.showErrorModalWithMsg({ errorType: 'approve', errorMsg: parseErrorLog(e) });
+        });
+
+      console.log('TRIGGER__2');
+      const finishTx = () => {
+        this.checkApproveForToken(token, token.contractValue);
+        this.closeWaitingModal();
+        this.approvingPending = false;
+      };
+
+      if (!tx) {
+        finishTx();
+        return;
+      }
+
+      await tx.wait();
+      finishTx();
+      this.currentStage = CompoundStep.UNSTAKE;
     },
   },
 };
