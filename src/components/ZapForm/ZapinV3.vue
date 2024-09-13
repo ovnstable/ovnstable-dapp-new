@@ -69,6 +69,10 @@
         :series="optionsChart.series"
         @selection="selectEvent"
       />
+      <div
+        v-if="!isInteractive && !initialLoading"
+        class="zapin-v3__blocker"
+      />
     </div>
 
     <div class="zapin-v3__row">
@@ -294,7 +298,7 @@ export default {
           id: 4, value: 887272, label: 'FULL', tick: true,
         },
       ],
-      optionsChart: getZapinChartConfig({ isSelectionEnabled: this.isInteractive }),
+      optionsChart: getZapinChartConfig(),
       // < 2$
       lowPoolPrice: true,
       isStablePool: true,
@@ -1114,6 +1118,15 @@ export default {
   justify-content: center;
   align-items: center;
   min-height: 150px;
+}
+
+.zapin-v3__blocker {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
 }
 
 .zapin-v3__loader-tx {

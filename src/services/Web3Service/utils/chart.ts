@@ -1,8 +1,4 @@
-type TChartConfgigParams = {
-  isSelectionEnabled: boolean,
-};
-
-const getZapinChartConfig = (chartConfigParams: TChartConfgigParams) => ({
+const getZapinChartConfig = () => ({
   annotations: {
     xaxis: [
       {
@@ -30,7 +26,7 @@ const getZapinChartConfig = (chartConfigParams: TChartConfgigParams) => ({
       opacity: 0.2,
     },
     selection: {
-      enabled: chartConfigParams.isSelectionEnabled ?? false,
+      enabled: true,
       fill: {
         color: '#fff',
         opacity: 0.4,
