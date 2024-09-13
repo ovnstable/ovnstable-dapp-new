@@ -141,6 +141,7 @@ export default {
   gap: 24px;
   margin-bottom: 40px;
   color: var(--color-1);
+  margin-top: 20px;
 
   h1 {
     font-size: 26px;
