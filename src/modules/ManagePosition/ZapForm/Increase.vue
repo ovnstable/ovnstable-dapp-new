@@ -405,6 +405,7 @@ export default {
     inputTokens: [] as any[],
     outputTokens: [] as any[],
     newPositionTokens: [] as any[],
+    initPositionTokens: [] as any[],
     maxInputTokens: MAX_INPUT_TOKENS,
     v3Range: null as any,
     isShowSelectTokensModal: false,
@@ -705,7 +706,7 @@ export default {
         sum: 0,
       }));
 
-      // this.outputTokens = [tokenA, tokenB];
+      this.initPositionTokens = [tokenA, tokenB];
       this.newPositionTokens = [tokenA, tokenB];
 
       this.$forceUpdate();
@@ -1000,7 +1001,7 @@ export default {
 
         this.newPositionTokens = this.outputTokens.map((token: any, i) => ({
           ...token,
-          sum: new BN(token.sum).plus(new BN(this.newPositionTokens[i].sum)).toFixed(),
+          sum: new BN(token.sum).plus(new BN(this.initPositionTokens[i].sum)).toFixed(),
         }));
 
         const totalFinalOutputUsd = this.newPositionTokens
