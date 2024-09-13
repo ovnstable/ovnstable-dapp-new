@@ -200,6 +200,18 @@
         >
           {{ disableButtonMessage }}
         </ButtonComponent>
+        <ButtonComponent
+            v-else-if="isAnyInputsNeedApprove"
+            btn-size="large"
+            btn-styles="primary"
+            full
+            :loading="approvingPending"
+            @click="approveTrigger(firstInputInQueueForToApprove)"
+            @keypress="approveTrigger(firstInputInQueueForToApprove)"
+          >
+            APPROVE
+            {{ firstInputInQueueForToApprove.selectedToken?.symbol }}
+          </ButtonComponent>
           <ButtonComponent
             v-else-if="positionStaked"
             btn-size="large"
@@ -210,7 +222,7 @@
             @click="unstakeTrigger"
             @keypress="unstakeTrigger"
           >
-            Unstake
+            UNSTAKE
           </ButtonComponent>
           <ButtonComponent
             v-else-if="!isNftApproved || (!gaugeNftApproved && positionStaked)"
@@ -298,7 +310,6 @@ import TokenForm from '@/components/TokenForm/Index.vue';
 import SelectTokensModal from '@/components/TokensModal/Index.vue';
 import ZapinV3 from '@/components/ZapForm/ZapinV3.vue';
 import BN from 'bignumber.js';
-import { getAllowanceValue } from '@/utils/contractApprove.ts';
 import { onLeaveList, onEnterList, beforeEnterList } from '@/utils/animations.ts';
 import { MANAGE_FUNC } from '@/store/modals/waiting-modal.ts';
 import SwapSlippageSettings from '@/components/SwapSlippage/Index.vue';
@@ -317,6 +328,7 @@ import {
   countPercentDiff, getUpdatedTokenVal, initReqData, parseLogs,
 } from '@/services/Web3Service/utils/index.ts';
 import zapinService, { ZAPIN_TYPE } from '@/services/Web3Service/Zapin-service.ts';
+import { approveToken, getAllowanceValue } from '@/utils/contractApprove.ts';
 
 enum zapMobileSection {
   'TOKEN_FORM',
@@ -388,7 +400,7 @@ export default {
     };
   },
   data: () => ({
-  // approvingPending: false,
+    approvingPending: false,
     agreeWithFees: true,
     inputTokens: [] as any[],
     outputTokens: [] as any[],
@@ -523,6 +535,19 @@ export default {
       }
 
       return null;
+    },
+    isAnyInputsNeedApprove() {
+      return this.allInputsWithNotApproved.length > 0;
+    },
+    allInputsWithNotApproved() {
+      return this.selectedInputTokens.filter(
+        (token: any) => !token.selectedToken.approveData.approved,
+      );
+    },
+    firstInputInQueueForToApprove(): any {
+      return this.isAnyInputsNeedApprove
+        ? this.allInputsWithNotApproved[0]
+        : null;
     },
   },
   watch: {
@@ -975,7 +1000,7 @@ export default {
 
         this.newPositionTokens = this.outputTokens.map((token: any, i) => ({
           ...token,
-          sum: new BN(token.sum).plus(new BN(this.newPositionTokens[i].sum)),
+          sum: new BN(token.sum).plus(new BN(this.newPositionTokens[i].sum)).toFixed(),
         }));
 
         const totalFinalOutputUsd = this.newPositionTokens
@@ -1248,6 +1273,54 @@ export default {
         this.odosDataLoading = false;
         this.isSwapLoading = true;
       }
+    },
+    async approveTrigger(token: any) {
+      this.showWaitingModal('Approving in process');
+
+      this.approvingPending = true;
+      const { selectedToken } = token;
+
+      const approveValue = new BN(10)
+        .pow(selectedToken.decimals)
+        .times(10 ** 18)
+        .toFixed(0);
+
+      await this.checkApproveForToken(token, (Number(approveValue) * 0.5).toFixed(0));
+      if (selectedToken.approveData.approved) {
+        this.closeWaitingModal();
+        return;
+      }
+
+      const tokenContract = TokenService
+        .loadTokenContract(selectedToken.address, this.$store.state.web3.evmSigner);
+
+      const tx = await approveToken(
+        tokenContract,
+        this.zapContract.target,
+        approveValue,
+        this.account,
+      )
+        .catch((e) => {
+          console.error('Error when approve token.', e);
+          this.closeWaitingModal();
+          this.showErrorModalWithMsg({ errorType: 'approve', errorMsg: parseErrorLog(e) });
+        });
+
+      console.log('TRIGGER__2');
+      const finishTx = () => {
+        this.checkApproveForToken(token, token.contractValue);
+        this.closeWaitingModal();
+        this.approvingPending = false;
+      };
+
+      if (!tx) {
+        finishTx();
+        return;
+      }
+
+      await tx.wait();
+      finishTx();
+      this.currentStage = IncreaseStep.UNSTAKE;
     },
   },
 };
