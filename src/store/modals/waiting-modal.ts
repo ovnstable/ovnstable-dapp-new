@@ -24,8 +24,9 @@ export enum IncreaseStep {
   START,
   APPROVE,
   UNSTAKE,
-  APPROVEGAUGE,
+  APPROVEINCREASE,
   INCREASE,
+  APPROVEGAUGE,
   STAKE,
 }
 
@@ -64,8 +65,9 @@ export const INCREASE_MAP: Record<IncreaseStep, string> = {
   [IncreaseStep.START]: 'Start',
   [IncreaseStep.APPROVE]: 'Approve Tokens',
   [IncreaseStep.UNSTAKE]: 'Unstake',
-  [IncreaseStep.APPROVEGAUGE]: 'Approve NFT for gauge',
+  [IncreaseStep.APPROVEINCREASE]: 'Approve NFT for increase',
   [IncreaseStep.INCREASE]: 'Increase',
+  [IncreaseStep.APPROVEGAUGE]: 'Approve NFT for gauge',
   [IncreaseStep.STAKE]: 'Stake',
 };
 
