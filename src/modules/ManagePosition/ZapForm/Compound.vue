@@ -161,7 +161,7 @@
             full
             disabled
           >
-            Something wrong
+            NOT ENOUGH REWARDS TO COMPOUND
           </ButtonComponent>
           <ButtonComponent
             v-else-if="isHasRewards"
@@ -440,7 +440,7 @@ export default {
       return true;
     },
     isDisabled() {
-      // if (this.currentStage === CompoundStep.UNSTAKE && !this.positionStaked) return true;
+      if (new BN(this.zapPool.rewards.usdValue) < new BN(0.01)) return true;
       return false;
     },
   },
