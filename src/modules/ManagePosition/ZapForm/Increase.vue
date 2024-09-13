@@ -114,6 +114,27 @@
                     />
                   </div>
                 </div>
+                <div class="out-swap-container pt-5 new-position-tokens">
+                  <h2>
+                    New position
+                  </h2>
+                  <div
+                    v-for="token in (newPositionTokens as any)"
+                    :key="token.id"
+                    class="input-component-container"
+                  >
+                    <TokenForm
+                      :token-info="token"
+                      :is-token-removable="false"
+                      :is-input-token="false"
+                      :disabled="true"
+                      :balances-loading="isBalancesLoading"
+                      :token-loading="odosDataLoading"
+                      hide-balance
+                      @remove-token="removeOutputToken"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
             <FeesBlock
@@ -142,27 +163,6 @@
               :class="currentSection === zapMobileSection.SET_PRICE_RANGE && 'mobile-active'"
               @set-range="setRangeV3"
             />
-            <div class="out-swap-container pt-5 new-position-tokens">
-                  <h2>
-                    New position
-                  </h2>
-                  <div
-                    v-for="token in (newPositionTokens as any)"
-                    :key="token.id"
-                    class="input-component-container"
-                  >
-                    <TokenForm
-                      :token-info="token"
-                      :is-token-removable="false"
-                      :is-input-token="false"
-                      :disabled="true"
-                      :balances-loading="isBalancesLoading"
-                      :token-loading="odosDataLoading"
-                      hide-balance
-                      @remove-token="removeOutputToken"
-                    />
-                  </div>
-                </div>
           </div>
         </div>
       </div>
