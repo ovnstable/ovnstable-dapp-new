@@ -7,7 +7,7 @@
         class="routing-wrap__content-col"
       >
         <div class="routing-wrap__row">
-          <h2>Swap to zapin</h2>
+          <h2>Value difference ($)</h2>
           <span class="red">{{ getSwapPrice }}$</span>
         </div>
         <div class="routing-wrap__row">
