@@ -155,7 +155,7 @@
           </div>
           <div>
             <ZapinV3
-              :is-interactive="true"
+              :is-interactive="false"
               :zap-pool="zapPool"
               :zap-contract="zapContract"
               :tokens-data="outputTokens"
