@@ -864,6 +864,12 @@ export default defineComponent({
 
       this.odosSwapRequest(requestData)
         .then(async (data: any) => {
+          if (!data.pathViz) {
+            this.isSumulateSwapLoading = false;
+            this.isSumulateIntervalStarted = false;
+            throw new Error('Simulation error');
+          }
+
           const assembleData = {
             userAddr: ethers.getAddress(
               this.account.toLowerCase(),
@@ -974,6 +980,12 @@ export default defineComponent({
 
           this.isSumulateSwapLoading = false;
           this.isSumulateIntervalStarted = false;
+
+          if (!data.pathViz) {
+            this.isSumulateSwapLoading = false;
+            this.isSumulateIntervalStarted = false;
+            throw new Error('Simulation error');
+          }
 
           this.$emit('update-path-view', {
             path: data.pathViz,
@@ -1106,11 +1118,22 @@ export default defineComponent({
     getRequestTokens(isInput: boolean) {
       const list = isInput ? this.selectedInputTokens : this.selectedOutputTokens;
 
+      if (isInput) {
+        return list
+          .filter((_) => _.value)
+          .map((_) => ({
+            tokenAddress: _?.selectedToken.address,
+            amount: isInput ? String(_.contractValue) : String(_.value),
+          }));
+      }
+
+      console.log(list, '___list');
+
       return list
         .filter((_) => _.value)
         .map((_) => ({
           tokenAddress: _?.selectedToken.address,
-          amount: isInput ? String(_.contractValue) : String(_.value),
+          proportion: new BigNumber(_?.value).div(100).toString(),
         }));
     },
     lockProportion(isLock: any, token: any) {
