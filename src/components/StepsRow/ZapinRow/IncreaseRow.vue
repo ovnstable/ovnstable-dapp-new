@@ -33,7 +33,7 @@
         'active-color': isActiveTab(IncreaseStep.APPROVEINCREASE),
       }"
     >
-      Approve for increase
+      Approve NFT (zap)
     </p>
     <BaseIcon name="InsuranceModalArrowRight" />
     <p

@@ -34,8 +34,9 @@ export enum CompoundStep {
   CLAIM,
   APPROVE,
   UNSTAKE,
-  APPROVEGAUGE,
+  APPROVEZAPIN,
   INCREASE,
+  APPROVEGAUGE,
   STAKE,
 }
 
@@ -75,8 +76,9 @@ export const COMPOUND_MAP: Record<CompoundStep, string> = {
   [CompoundStep.CLAIM]: 'Claim',
   [CompoundStep.APPROVE]: 'Approve Tokens',
   [CompoundStep.UNSTAKE]: 'Unstake',
-  [CompoundStep.APPROVEGAUGE]: 'Approve NFT for gauge',
+  [CompoundStep.APPROVEZAPIN]: 'Approve NFT for compound',
   [CompoundStep.INCREASE]: 'Increase',
+  [CompoundStep.APPROVEGAUGE]: 'Approve NFT for gauge',
   [CompoundStep.STAKE]: 'Stake',
 };
 
