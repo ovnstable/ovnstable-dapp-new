@@ -750,7 +750,6 @@ export default defineComponent({
 
         await tx.wait();
         this.stakeTrigger();
-        this.isSwapLoading = false;
         this.closeWaitingModal();
       } catch (e) {
         console.log(e);
