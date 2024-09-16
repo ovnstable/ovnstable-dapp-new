@@ -158,8 +158,17 @@
         v-else
         class="swap-button-container"
       >
+          <ButtonComponent
+          v-if="isDisableButton"
+          btn-size="large"
+          full
+          btn-styles="primary"
+          disabled
+        >
+          {{ disableButtonMessage }}
+        </ButtonComponent>
         <ButtonComponent
-          v-if="positionsStaked.length > 0"
+          v-else-if="positionsStaked.length > 0"
           btn-size="large"
           btn-styles="primary"
           full
@@ -315,6 +324,14 @@ export default defineComponent({
     ...mapGetters('odosData', ['isAvailableOnNetwork']),
     ...mapGetters('accountData', ['account']),
 
+    disableButtonMessage() {
+      if (!this.zapPool.position.isInRange) return 'OUT OF RANGE, INCREASE UNAVAILABLE';
+
+      return null;
+    },
+    isDisableButton() {
+      return !this.zapPool.position?.isInRange;
+    },
     totalLiq() {
       if (this.inputTokens.length === 0) return 0;
 
@@ -471,7 +488,6 @@ export default defineComponent({
       return '';
     },
     async initContracts(pos: IPositionsInfo, gaugeAddress: string) {
-      console.log(pos, gaugeAddress, '___ARGs');
       const contractsData = await initZapinContracts(
         pos,
         this.zapAllTokens,
