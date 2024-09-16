@@ -29,11 +29,11 @@
     <BaseIcon name="InsuranceModalArrowRight" />
     <p
       :class="{
-        'active-stage': currentStage === CompoundStep.APPROVEGAUGE,
-        'active-color': isActiveTab(CompoundStep.APPROVEGAUGE),
+        'active-stage': currentStage === CompoundStep.APPROVEZAPIN,
+        'active-color': isActiveTab(CompoundStep.APPROVEZAPIN),
       }"
     >
-      Approve NFT (gauge)
+      Approve NFT (zap)
     </p>
     <BaseIcon name="InsuranceModalArrowRight" />
     <p
@@ -43,6 +43,15 @@
       }"
     >
       Increase
+    </p>
+    <BaseIcon name="InsuranceModalArrowRight" />
+    <p
+      :class="{
+        'active-stage': currentStage === CompoundStep.APPROVEGAUGE,
+        'active-color': isActiveTab(CompoundStep.APPROVEGAUGE),
+      }"
+    >
+      Approve NFT (gauge)
     </p>
     <BaseIcon name="InsuranceModalArrowRight" />
     <p
@@ -60,15 +69,7 @@
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
-
-export enum CompoundStep {
-    CLAIM,
-    APPROVE,
-    UNSTAKE,
-    APPROVEGAUGE,
-    INCREASE,
-    STAKE,
-  }
+import { CompoundStep } from '@/store/modals/waiting-modal.ts';
 
 export default defineComponent({
   name: 'CompoundStepsRow',

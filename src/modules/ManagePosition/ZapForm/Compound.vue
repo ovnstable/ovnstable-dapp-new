@@ -154,7 +154,7 @@
           v-else
           class="swap-button-container"
         >
-          <ButtonComponent
+          <!-- <ButtonComponent
             v-if="isDisabled"
             btn-size="large"
             btn-styles="primary"
@@ -162,9 +162,9 @@
             disabled
           >
             NOT ENOUGH REWARDS TO COMPOUND
-          </ButtonComponent>
+          </ButtonComponent> -->
           <ButtonComponent
-          v-else-if="isHasRewards"
+          v-if="isHasRewards"
           btn-size="large"
           btn-styles="primary"
           full
@@ -205,13 +205,13 @@
             btn-styles="primary"
             full
             :loading="isSwapLoading"
-            @click="approveNftPosition(true)"
-            @keypress="approveNftPosition(true)"
+            @click="approveNftPosition(false)"
+            @keypress="approveNftPosition(false)"
           >
             APPROVE
           </ButtonComponent>
           <ButtonComponent
-            v-else-if="!positionStaked && currentStage === CompoundStep.INCREASE"
+            v-else-if="!positionStaked"
             btn-size="large"
             btn-styles="primary"
             full
@@ -269,7 +269,7 @@ import TokenForm from '@/components/TokenForm/Index.vue';
 import BN from 'bignumber.js';
 import { approveToken, getAllowanceValue } from '@/utils/contractApprove.ts';
 import { onLeaveList, onEnterList, beforeEnterList } from '@/utils/animations.ts';
-import { MANAGE_FUNC } from '@/store/modals/waiting-modal.ts';
+import { CompoundStep, MANAGE_FUNC } from '@/store/modals/waiting-modal.ts';
 import SwapSlippageSettings from '@/components/SwapSlippage/Index.vue';
 import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
 import TokenService from '@/services/TokenService/TokenService.ts';
@@ -291,15 +291,6 @@ import type { TPositionRewardTokenInfo } from '@/types/positions';
 enum zapMobileSection {
   'TOKEN_FORM',
   'SET_PRICE_RANGE'
-}
-
-export enum CompoundStep {
-CLAIM,
-APPROVE,
-UNSTAKE,
-APPROVEGAUGE,
-INCREASE,
-STAKE,
 }
 
 export default {
@@ -386,7 +377,6 @@ export default {
     positionStaked: true,
     isNftApproved: false,
     newTokenId: 0,
-    CompoundStep,
     isHasRewards: true as boolean,
   }),
   computed: {
@@ -620,6 +610,15 @@ export default {
       }
 
       this.updateQuotaInfo();
+
+      const approveValue = new BN(10)
+        .pow(this.firstInputInQueueForToApprove?.selectedToken.decimals)
+        .times(10 ** 18)
+        .toFixed(0);
+
+      this.updateTokenState(
+        this.checkApproveForToken(this.firstInputInQueueForToApprove, approveValue),
+      );
     },
     removeOutputToken(id: string) {
       this.removeToken(this.outputTokens, id);
@@ -842,9 +841,8 @@ export default {
         }
 
         this.isSwapLoading = false;
-        this.currentStage = CompoundStep.STAKE;
-        // this.positionStaked = true;
-        this.stakeTrigger();
+        this.approveNftPosition(true);
+        this.currentStage = CompoundStep.APPROVEGAUGE;
       } catch (e: any) {
         this.isSwapLoading = false;
         this.closeWaitingModal();
@@ -925,14 +923,13 @@ export default {
     },
     // eslint-disable-next-line vue/no-unused-properties
     async checkApproveForToken(token: any, checkedAllowanceValue: any) {
-      this.currentStage = CompoundStep.APPROVE;
       // checkedAllowanceValue in wei
       const { selectedToken } = token;
       if (
         selectedToken.address === '0x0000000000000000000000000000000000000000'
       ) {
         selectedToken.approveData.approved = true;
-        return;
+        return token;
       }
 
       const tokenContract = TokenService
@@ -946,16 +943,26 @@ export default {
       selectedToken.approveData.allowanceValue = allowanceValue;
       if (!selectedToken.approveData.allowanceValue) {
         selectedToken.approveData.approved = false;
-        return;
+        return token;
       }
 
       if (!checkedAllowanceValue) {
         selectedToken.approveData.approved = true;
-        return;
+        return token;
       }
       selectedToken.approveData.approved = new BN(selectedToken.approveData.allowanceValue)
         .isGreaterThanOrEqualTo(checkedAllowanceValue);
-      this.currentStage = CompoundStep.UNSTAKE;
+
+      if (this.currentStage === CompoundStep.APPROVE && selectedToken.approveData.approved) {
+        this.currentStage = CompoundStep.UNSTAKE;
+      }
+
+      return token;
+    },
+    updateTokenState(newToken: any) {
+      const indexOf = this.inputTokens.map((_) => _.id).indexOf(newToken.id);
+      this.inputTokens[indexOf] = newToken;
+      this.updateQuotaInfo();
     },
     addSelectedTokenToOutputList(selectedToken: any, locked: any, startPercent: any) {
       return {
@@ -1020,8 +1027,8 @@ export default {
         this.isSwapLoading = false;
         this.closeWaitingModal();
         this.positionStaked = false;
-        this.currentStage = CompoundStep.APPROVEGAUGE;
-        this.approveNftPosition(true);
+        this.currentStage = CompoundStep.APPROVEZAPIN;
+        this.approveNftPosition(false);
       } catch (e) {
         console.log(e);
         this.closeWaitingModal();
@@ -1042,16 +1049,17 @@ export default {
 
         if (approveToGauge) {
           this.gaugeNftApproved = true;
-          this.currentStage = CompoundStep.INCREASE;
-          this.isNftApproved = true;
+          this.currentStage = CompoundStep.STAKE;
           this.isSwapLoading = false;
           this.closeWaitingModal();
-          // this.increaseTrigger();
-          // return;
+          this.stakeTrigger();
+          return;
         }
 
-        // this.currentStage = CompoundStep.INCREASE;
-        // this.increaseTrigger();
+        this.isNftApproved = true;
+        this.currentStage = CompoundStep.INCREASE;
+        this.isSwapLoading = false;
+        this.closeWaitingModal();
       } catch (e) {
         console.log(e);
         this.closeWaitingModal('Approve');
@@ -1060,10 +1068,10 @@ export default {
     },
     async increaseTrigger() {
       if (this.isSwapLoading) return;
-
       if (this.inputTokens?.length === 0) return;
 
       this.odosDataLoading = true;
+      this.currentStage = CompoundStep.INCREASE;
 
       const ticks = [
         new BN(this.zapPool.ticks.tickLower).toFixed(),
@@ -1126,7 +1134,7 @@ export default {
       } catch (e) {
         this.showErrorModalWithMsg({ errorMsg: parseErrorLog(e) });
         this.odosDataLoading = false;
-        this.isSwapLoading = true;
+        this.isSwapLoading = false;
       }
     },
     async claimTrigger() {

@@ -155,7 +155,6 @@
               v-if="odosData?.netOutValue"
               :swap-data="odosData"
               :merged-list="mergedTokenList"
-              :input-tokens="selectedInputTokens"
               :output-tokens="selectedOutputTokens"
             />
           </div>

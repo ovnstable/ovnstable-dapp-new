@@ -29,11 +29,11 @@
     <BaseIcon name="InsuranceModalArrowRight" />
     <p
       :class="{
-        'active-stage': currentStage === IncreaseStep.APPROVEGAUGE,
-        'active-color': isActiveTab(IncreaseStep.APPROVEGAUGE),
+        'active-stage': currentStage === IncreaseStep.APPROVEINCREASE,
+        'active-color': isActiveTab(IncreaseStep.APPROVEINCREASE),
       }"
     >
-      Approve NFT (gauge)
+      Approve NFT (zap)
     </p>
     <BaseIcon name="InsuranceModalArrowRight" />
     <p
@@ -43,6 +43,15 @@
       }"
     >
       Increase
+    </p>
+    <BaseIcon name="InsuranceModalArrowRight" />
+    <p
+      :class="{
+        'active-stage': currentStage === IncreaseStep.APPROVEGAUGE,
+        'active-color': isActiveTab(IncreaseStep.APPROVEGAUGE),
+      }"
+    >
+      Approve NFT (gauge)
     </p>
     <BaseIcon name="InsuranceModalArrowRight" />
     <p
@@ -60,15 +69,7 @@
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
-
-export enum IncreaseStep {
-  START,
-  APPROVE,
-  UNSTAKE,
-  APPROVEGAUGE,
-  INCREASE,
-  STAKE,
-}
+import { IncreaseStep } from '@/store/modals/waiting-modal.ts';
 
 export default defineComponent({
   name: 'IncreaseStepsRow',

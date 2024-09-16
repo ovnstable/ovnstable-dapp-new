@@ -24,8 +24,9 @@ export enum IncreaseStep {
   START,
   APPROVE,
   UNSTAKE,
-  APPROVEGAUGE,
+  APPROVEINCREASE,
   INCREASE,
+  APPROVEGAUGE,
   STAKE,
 }
 
@@ -33,8 +34,9 @@ export enum CompoundStep {
   CLAIM,
   APPROVE,
   UNSTAKE,
-  APPROVEGAUGE,
+  APPROVEZAPIN,
   INCREASE,
+  APPROVEGAUGE,
   STAKE,
 }
 
@@ -64,8 +66,9 @@ export const INCREASE_MAP: Record<IncreaseStep, string> = {
   [IncreaseStep.START]: 'Start',
   [IncreaseStep.APPROVE]: 'Approve Tokens',
   [IncreaseStep.UNSTAKE]: 'Unstake',
-  [IncreaseStep.APPROVEGAUGE]: 'Approve NFT for gauge',
+  [IncreaseStep.APPROVEINCREASE]: 'Approve NFT for increase',
   [IncreaseStep.INCREASE]: 'Increase',
+  [IncreaseStep.APPROVEGAUGE]: 'Approve NFT for gauge',
   [IncreaseStep.STAKE]: 'Stake',
 };
 
@@ -73,8 +76,9 @@ export const COMPOUND_MAP: Record<CompoundStep, string> = {
   [CompoundStep.CLAIM]: 'Claim',
   [CompoundStep.APPROVE]: 'Approve Tokens',
   [CompoundStep.UNSTAKE]: 'Unstake',
-  [CompoundStep.APPROVEGAUGE]: 'Approve NFT for gauge',
+  [CompoundStep.APPROVEZAPIN]: 'Approve NFT for compound',
   [CompoundStep.INCREASE]: 'Increase',
+  [CompoundStep.APPROVEGAUGE]: 'Approve NFT for gauge',
   [CompoundStep.STAKE]: 'Stake',
 };
 

@@ -53,8 +53,8 @@
           <div class="transaction-info">
             <span
               :class="{
-                'tx-info--red': critImpact(odosData.percentDiff ?? 0),
-                'tx-info--green': !critImpact(odosData.percentDiff ?? 0),
+                'tx-info--red': critImpact(odosData.percentDiff ?? 0) === 'red',
+                'tx-info--yellow': critImpact(odosData.percentDiff ?? 0) === 'yellow',
               }"
             >
               (-{{ getFixedPrice(odosData.percentDiff) }}%)
@@ -145,8 +145,16 @@ export default {
   emits: ['change-agree'],
   computed: {
     getOutputValue() {
-      return new BN(this.odosData?.netOutValue).gt(this.getInputUsdValue)
-        ? this.getInputUsdValue : this.odosData?.netOutValue;
+      if (!this.odosData?.inValues) return '0';
+
+      const inputUsd = this.odosData.inValues
+        .reduce((acc: BN, curr: string) => acc.plus(curr), new BN(0));
+      const outputUsd = this.odosData.outValues
+        .reduce((acc: BN, curr: string) => acc.plus(curr), new BN(0));
+      const diff = inputUsd.minus(outputUsd).abs().toFixed();
+      const total = new BN(this.getInputUsdValue).minus(diff).toFixed();
+
+      return total;
     },
     v3Pool() {
       return this.poolVersion === 'v3';
@@ -159,7 +167,11 @@ export default {
       };
     },
     critImpact() {
-      return (val: string) => (!!new BN(val).absoluteValue().gt(MIN_IMPACT));
+      return (val: string) => {
+        if ((new BN(val).absoluteValue().eq(0))) return '';
+        if ((new BN(val).absoluteValue().gt(MIN_IMPACT))) return 'red';
+        return 'yellow';
+      };
     },
     getInputUsdValue() {
       const val = this.selectedInputTokens
@@ -214,8 +226,8 @@ export default {
   color: rgb(243, 57, 57);
 }
 
-.tx-info--green {
-  color: rgb(95, 233, 67);
+.tx-info--yellow {
+  color: rgb(255, 196, 0);
 }
 
 .transaction-info {

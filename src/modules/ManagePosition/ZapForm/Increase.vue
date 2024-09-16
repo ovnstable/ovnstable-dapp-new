@@ -230,13 +230,13 @@
             btn-styles="primary"
             full
             :loading="isSwapLoading"
-            @click="approveNftPosition(true)"
-            @keypress="approveNftPosition(true)"
+            @click="approveNftPosition(false)"
+            @keypress="approveNftPosition(false)"
           >
             APPROVE
           </ButtonComponent>
           <ButtonComponent
-            v-else-if="!positionStaked && currentStage === IncreaseStep.INCREASE"
+            v-else-if="!positionStaked"
             btn-size="large"
             btn-styles="primary"
             full
@@ -267,7 +267,7 @@
       />
     </div>
 </div>
-<SelectTokensModal
+  <SelectTokensModal
     :is-show="isShowSelectTokensModal"
     :select-token-input="true"
     :tokens="zapAllTokens"
@@ -311,7 +311,7 @@ import SelectTokensModal from '@/components/TokensModal/Index.vue';
 import ZapinV3 from '@/components/ZapForm/ZapinV3.vue';
 import BN from 'bignumber.js';
 import { onLeaveList, onEnterList, beforeEnterList } from '@/utils/animations.ts';
-import { MANAGE_FUNC } from '@/store/modals/waiting-modal.ts';
+import { IncreaseStep, MANAGE_FUNC } from '@/store/modals/waiting-modal.ts';
 import SwapSlippageSettings from '@/components/SwapSlippage/Index.vue';
 import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
 import TokenService from '@/services/TokenService/TokenService.ts';
@@ -333,15 +333,6 @@ import { approveToken, getAllowanceValue } from '@/utils/contractApprove.ts';
 enum zapMobileSection {
   'TOKEN_FORM',
   'SET_PRICE_RANGE'
-}
-
-export enum IncreaseStep {
-START,
-APPROVE,
-UNSTAKE,
-APPROVEGAUGE,
-INCREASE,
-STAKE,
 }
 
 const MAX_INPUT_TOKENS = 3;
@@ -436,7 +427,6 @@ export default {
     positionStaked: true,
     isNftApproved: false,
     newTokenId: 0,
-    IncreaseStep,
   }),
   computed: {
     ...mapGetters('odosData', [
@@ -674,7 +664,7 @@ export default {
       // if (!this.isAvailableOnNetwork) this.mintAction();
       if (!this.zapPool.isStaked) {
         this.positionStaked = this.zapPool.isStaked;
-        this.currentStage = IncreaseStep.APPROVEGAUGE;
+        this.currentStage = IncreaseStep.APPROVE;
       }
     },
 
@@ -946,9 +936,9 @@ export default {
         }
 
         this.isSwapLoading = false;
-        this.currentStage = IncreaseStep.STAKE;
-        // this.positionStaked = true;
-        this.stakeTrigger();
+        this.currentStage = IncreaseStep.APPROVEGAUGE;
+        this.positionStaked = true;
+        this.approveNftPosition(true);
       } catch (e: any) {
         this.isSwapLoading = false;
         this.closeWaitingModal();
@@ -1171,8 +1161,8 @@ export default {
         this.isSwapLoading = false;
         this.closeWaitingModal();
         this.positionStaked = false;
-        this.currentStage = IncreaseStep.APPROVEGAUGE;
-        this.approveNftPosition(true);
+        this.currentStage = IncreaseStep.APPROVEINCREASE;
+        this.approveNftPosition(false);
       } catch (e) {
         console.log(e);
         this.closeWaitingModal();
@@ -1193,16 +1183,15 @@ export default {
 
         if (approveToGauge) {
           this.gaugeNftApproved = true;
-          this.currentStage = IncreaseStep.INCREASE;
-          this.isNftApproved = true;
-          this.isSwapLoading = false;
-          this.closeWaitingModal();
-          // this.increaseTrigger();
-          // return;
+          this.currentStage = IncreaseStep.STAKE;
+          this.stakeTrigger();
+          return;
         }
 
-        // this.currentStage = IncreaseStep.INCREASE;
-        // this.increaseTrigger();
+        this.currentStage = IncreaseStep.INCREASE;
+        this.isNftApproved = true;
+        this.isSwapLoading = false;
+        this.closeWaitingModal();
       } catch (e) {
         console.log(e);
         this.closeWaitingModal('Approve');

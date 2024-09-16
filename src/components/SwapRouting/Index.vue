@@ -7,26 +7,26 @@
         class="routing-wrap__content-col"
       >
         <div class="routing-wrap__row">
-          <h2>Swap to zapin</h2>
+          <h2>Value difference ($)</h2>
           <span class="red">{{ getSwapPrice }}$</span>
         </div>
         <div class="routing-wrap__row">
           <div class="routing-wrap__row">
             <div class="routing-wrap__content-col">
               <div
-                v-for="(inputT, key) in inputSwapList(swapData)"
+                v-for="(inputT, key) in inputTokens as any"
                 :key="key"
                 class="routing-wrap__row-item"
               >
                 <img
-                  :src="inputT?.tokenData?.logoUrl"
+                  :src="inputT?.selectedToken?.logoUrl"
                   alt="logourl"
                 />
                 <span>
-                  {{ getFormattedVal(inputT.val) }}
+                  {{ getToken(inputT.value) }}
                 </span>
                 <span class="secondary">
-                  ${{ getFormattedVal(inputT.usdVal) }}
+                  ${{ getTokenUsd(inputT) }}
                 </span>
               </div>
             </div>
@@ -123,11 +123,6 @@ export default {
       required: false,
       default: () => ({}),
     },
-    inputTokens: {
-      type: Array,
-      required: false,
-      default: () => ([]),
-    },
     outputTokens: {
       type: Array,
       required: false,
@@ -141,26 +136,14 @@ export default {
       return new BN(outputUsd).gt(0) ? formatMoney(outputUsd, getFixed(outputUsd)) : 0;
     },
     getSwapPrice() {
-      const inputUsd = this.inputTokens
-        .reduce((acc: any, curr: any) => acc.plus(curr.usdValue), new BN(0)) as BN;
-      const outputUsd = this.swapData?.netOutValue;
+      const inputUsd = this.swapData.inValues
+        .reduce((acc: BN, curr: string) => acc.plus(curr), new BN(0));
+      const outputUsd = this.swapData.outValues
+        .reduce((acc: BN, curr: string) => acc.plus(curr), new BN(0));
 
       const diff = inputUsd.minus(outputUsd).toFixed();
 
-      return new BN(diff).gt(0) ? `-${formatMoney(diff, getFixed(diff))}` : 0;
-    },
-    inputSwapList() {
-      return (swapD: any) => swapD.inTokens.map((_: string, i: number) => {
-        const tokenData = getTokenByAddress(_, this.mergedList);
-        const origVal = new BN(swapD?.inAmounts[i]).div(10 ** tokenData.decimals).toFixed();
-        const usdVal = new BN(origVal).times(tokenData.price).toFixed();
-
-        return {
-          tokenData,
-          usdVal,
-          val: origVal,
-        };
-      });
+      return diff ? formatMoney(diff, getFixed(diff)) : 0;
     },
     outputSwapList() {
       return (swapD: any) => swapD.outTokens.map((_: string, i: number) => {
@@ -178,7 +161,8 @@ export default {
     getTokenUsd() {
       return (val: any) => {
         if (new BN(val).eq(0)) return 0;
-        const usdVal = new BN(val.sum).times(val?.selectedToken?.price).toFixed();
+        const usdVal = new BN(val.sum ? val.sum : val.value)
+          .times(val?.selectedToken?.price).toFixed();
 
         return formatMoney(usdVal, getFixed(usdVal));
       };
@@ -188,9 +172,6 @@ export default {
         if (new BN(val).eq(0)) return 0;
         return formatMoney(val, getFixed(val));
       };
-    },
-    getFormattedVal() {
-      return (val: string) => formatMoney(val, getFixed(val));
     },
   },
   mounted() {
