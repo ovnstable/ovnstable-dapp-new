@@ -325,7 +325,7 @@ export default defineComponent({
     ...mapGetters('accountData', ['account']),
 
     disableButtonMessage() {
-      if (!this.zapPool.position.isInRange) return 'OUT OF RANGE, INCREASE UNAVAILABLE';
+      if (!this.zapPool.position.isInRange) return 'OUT OF RANGE, MERGE UNAVAILABLE';
 
       return null;
     },
