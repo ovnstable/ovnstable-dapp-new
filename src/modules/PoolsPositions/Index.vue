@@ -28,15 +28,15 @@
     </div>
     <div v-if="type === 'POOLS' && activeTab === 0">
       <div class="pools-data-container">
-        <PoolsOld
+        <PoolFilterNew />
+        <PoolsNew
           :is-overview="false"
         />
       </div>
     </div>
     <div v-if="type === 'POOLS' && activeTab === 1">
       <div class="pools-data-container">
-        <PoolFilterNew />
-        <PoolsNew
+        <PoolsOld
           :is-overview="false"
         />
       </div>
@@ -68,11 +68,11 @@ export default {
       tabsList: [
         {
           id: 0,
-          name: 'OVERNIGHT POOLS',
+          name: 'ALL POOLS',
         },
         {
           id: 1,
-          name: 'ALL POOLS',
+          name: 'OVERNIGHT POOLS',
         },
       ],
       activeTab: 0,

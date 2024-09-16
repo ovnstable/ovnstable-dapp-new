@@ -122,8 +122,6 @@ export const formatPositionData = (
         centerTick,
       };
 
-      console.log(ticks, tokenId, '__ticks');
-
       // Final data
       const positionFullInfo = {
         ...pool,
