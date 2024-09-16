@@ -26,10 +26,19 @@ export const getTokenInfo = (
 
 const getMinVal = (val: string | number) => (new BN(val).gt(0.1) ? new BN(val).toFixed(2) : '< 0.1');
 
-export const isInRange = ({ tickLower, tickUpper, centerTick }: TTicks) => !(
-  new BN(centerTick)
-    .abs().lte(new BN(tickUpper).abs()) || new BN(centerTick).abs().gte(new BN(tickLower).abs())
-);
+export const isInRange = ({ tickLower, tickUpper, centerTick }: TTicks) => {
+  if (new BN(centerTick).lt(0)) {
+    return (
+      new BN(centerTick)
+        .lte(new BN(tickUpper)) && new BN(centerTick).gte(new BN(tickLower))
+    );
+  }
+
+  return (
+    new BN(centerTick)
+      .lte(new BN(tickUpper)) && new BN(centerTick).gte(new BN(tickLower))
+  );
+};
 
 const getPercentage = (value: string, total: string) => new BN((value))
   .dividedBy(new BN(total)).multipliedBy(100).toFixed(0);
@@ -121,6 +130,8 @@ export const formatPositionData = (
         tickUpper,
         centerTick,
       };
+
+      console.log(ticks, tokenId, '__tokenid');
 
       // Final data
       const positionFullInfo = {

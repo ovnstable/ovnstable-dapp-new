@@ -556,21 +556,6 @@ class ZapinService {
     let resp: any = null;
 
     if (typeFunc === ZAPIN_TYPE.ZAPIN) {
-      console.log(
-        JSON.stringify(
-          {
-            add: zapPool.address,
-            ticks: v3RangeTicks,
-            inputSwapTokens: selectedInputTokens.map((_) => ({
-              tokenAddress: _?.selectedToken?.address,
-              amount: _?.contractValue,
-              price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
-            })),
-          },
-        ),
-
-        '___PARAM',
-      );
       resp = await this.getV3Proportion(
         zapPool.address,
         v3RangeTicks,
@@ -592,6 +577,8 @@ class ZapinService {
         zapContract,
       );
     }
+
+    console.log(resp, '___resp');
 
     if (!resp) throw Error('No response v3, smth wrong');
 
