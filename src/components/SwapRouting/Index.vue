@@ -145,8 +145,6 @@ export default {
         .reduce((acc: any, curr: any) => acc.plus(curr.usdValue), new BN(0)) as BN;
       const outputUsd = this.swapData?.netOutValue;
 
-      console.log(inputUsd.toString(), '___inputUsd');
-      console.log(outputUsd.toString(), '__outputUsd');
       const diff = inputUsd.minus(outputUsd).toFixed();
 
       return new BN(diff).gt(0) ? `-${formatMoney(diff, getFixed(diff))}` : 0;
