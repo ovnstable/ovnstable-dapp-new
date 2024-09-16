@@ -123,6 +123,11 @@ export default {
       required: false,
       default: () => ({}),
     },
+    inputTokens: {
+      type: Array,
+      required: false,
+      default: () => ([]),
+    },
     outputTokens: {
       type: Array,
       required: false,
