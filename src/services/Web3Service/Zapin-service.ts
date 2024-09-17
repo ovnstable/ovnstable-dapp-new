@@ -126,9 +126,10 @@ class ZapinService {
     tickRange: string[],
     inputSwapTokens: ISwapData[],
     zapContract: any,
+    tokenPrices: IPoolTokensData[],
   ) {
     return zapContract
-      .getProportionForZap(poolAddress, tickRange, inputSwapTokens)
+      .getProportionForZap(poolAddress, tickRange, inputSwapTokens, tokenPrices)
       .then((data: any) => data)
       .catch((e: any) => {
         console.error('Error get proportion for V3', e);
@@ -580,6 +581,7 @@ class ZapinService {
           price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
         })),
         zapContract,
+        outputTokensForRebalance,
       );
     }
 
