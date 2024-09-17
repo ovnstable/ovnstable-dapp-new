@@ -639,7 +639,7 @@ export default {
         ],
       };
 
-      this.setRange(this.getPresetsData[0].value, false);
+      if (this.ticksInit?.length === 0) this.setRange(this.getPresetsData[0].value, false);
     },
     initBuildData() {
       if (this.reversePrice) return;
