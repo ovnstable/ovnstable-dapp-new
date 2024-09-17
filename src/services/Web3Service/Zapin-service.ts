@@ -556,6 +556,18 @@ class ZapinService {
     let resp: any = null;
 
     if (typeFunc === ZAPIN_TYPE.ZAPIN) {
+      console.log(
+        JSON.stringify({
+          add: zapPool.address,
+          ticks: v3RangeTicks,
+          tokens: selectedInputTokens.map((_) => ({
+            tokenAddress: _?.selectedToken?.address,
+            amount: _?.contractValue,
+            price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
+          })),
+        }),
+        'LOOGS___',
+      );
       resp = await this.getV3Proportion(
         zapPool.address,
         v3RangeTicks,

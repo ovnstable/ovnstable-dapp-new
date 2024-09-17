@@ -638,6 +638,8 @@ export default {
           },
         ],
       };
+
+      this.setRange(this.getPresetsData[0].value, false);
     },
     initBuildData() {
       if (this.reversePrice) return;
