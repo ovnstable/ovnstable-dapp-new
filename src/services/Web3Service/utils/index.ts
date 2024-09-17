@@ -6,7 +6,7 @@ import { getNewOutputToken, getTokenByAddress, updateTokenValue } from '@/store/
 import { loadAbi, REWARD_TOKEN, srcStringBuilder } from '@/store/views/main/zapin/index.ts';
 import { buildEvmContract } from '@/utils/contractsMap.ts';
 
-const EVENT_SIG = ['address[]', 'uint256[]'];
+const EVENT_SIG = ['uint256[]', 'address[]'];
 
 enum ZAP_EVENTS {
     'PutIntoPool',
@@ -46,8 +46,8 @@ const decodeTokenEvent = (data: string) => {
   const decodedData = decodeEventData(EVENT_SIG, data);
 
   return {
-    amounts: decodedData[1],
-    addresses: decodedData[0],
+    amounts: decodedData[0],
+    addresses: decodedData[1],
   };
 };
 
