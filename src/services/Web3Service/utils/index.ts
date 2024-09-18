@@ -71,9 +71,9 @@ const decodeReceiptEvent = (
     retuernedToUser,
   ] = decodedData;
 
-  commitEventToStore('lastParsedInputTokensEvent', { addresses, inputTokens });
-  commitEventToStore('lastParsedReturnedToUserEvent', { addresses, retuernedToUser });
-  commitEventToStore('lastParsedPutIntoPoolEvent', { addresses, putIntoPool });
+  commitEventToStore('lastParsedInputTokensEvent', { addresses, amounts: inputTokens });
+  commitEventToStore('lastParsedReturnedToUserEvent', { addresses, amounts: retuernedToUser });
+  commitEventToStore('lastParsedPutIntoPoolEvent', { addresses, amounts: putIntoPool });
 };
 
 const getStoreFieldName = (eventName: string) => `lastParsed${eventName}Event`;
