@@ -138,7 +138,7 @@
             btn-styles="primary"
             full
             :loading="isSwapLoading"
-            :disabled="!agreeWithFees || isSwapLoading"
+            :disabled="!agreeWithFees || isSwapLoading || !odosData.netOutValue"
             @click="unstakeTrigger"
             @keypress="unstakeTrigger"
           >
@@ -463,6 +463,8 @@ export default {
       this.zapContract = contractsData.zapContract;
       this.poolTokenContract = contractsData.poolTokenContract;
       this.poolTokens = contractsData.poolTokens;
+
+      console.log(this.zapPool, '__POOL');
 
       if (!this.isAvailableOnNetwork) this.mintAction();
       if (!this.zapPool.isStaked) {
