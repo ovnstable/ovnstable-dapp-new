@@ -16,22 +16,33 @@
 
       <template v-if="successData">
         <ZapinContent
-          v-if="[modalType.ZAPIN, modalType.REBALANCE].includes(successData.modalType)"
+          v-if="[MODAL_TYPE.ZAPIN, MODAL_TYPE.REBALANCE, MODAL_TYPE.INCREASE]
+            .includes(successData.modalType)"
           :tokens-staked-list="tokensStakedList"
           :tokens-sent-list="tokensSentList"
           :tokens-returned-list="tokensReturnedList"
+          :tokens-claimed-list="tokensClaimedList"
+          :open-position-on-pool="openPositionOnPool"
         />
         <WithdrawContent
-          v-else-if="successData.modalType === modalType.WITHDRAW"
+          v-else-if="successData.modalType === MODAL_TYPE.WITHDRAW"
           :tokens-staked-list="tokensStakedList"
           :tokens-sent-list="tokensSentList"
           :tokens-returned-list="tokensReturnedList"
+          :tokens-claimed-list="tokensClaimedList"
+          :open-position-on-pool="openPositionOnPool"
         />
         <CompoundContent
-          v-else-if="successData.modalType === modalType.COMPOUND"
+          v-else-if="successData.modalType === MODAL_TYPE.COMPOUND"
+          :tokens-staked-list="tokensStakedList"
+          :tokens-returned-list="tokensReturnedList"
+          :tokens-claimed-list="tokensClaimedList"
+          :open-position-on-pool="openPositionOnPool"
         />
         <HarvestContent
-          v-else-if="successData.modalType === modalType.HARVEST"
+          v-else-if="successData.modalType === MODAL_TYPE.HARVEST"
+          :tokens-claimed-list="tokensClaimedList"
+          :open-position-on-pool="openPositionOnPool"
         />
       </template>
       <div class="zap-modal-footer">
@@ -65,11 +76,12 @@ import { checkIsEveryStable } from '@/store/views/main/pools/helpers.ts';
 import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
 import { useTokensQuery, useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
+import type { TPoolInfo } from '@/types/common/pools/index.ts';
 import ZapinContent from './components/zapin.vue';
 import WithdrawContent from './components/withdraw.vue';
 import HarvestContent from './components/harvest.vue';
 import CompoundContent from './components/compound.vue';
-import {
+import getPlatformLink, {
   mapEventTokenData, mapInputTokenData, type TFormatTokenInfo,
 } from './helpers.ts';
 
@@ -115,9 +127,10 @@ export default defineComponent({
       tokensSentList: [] as TFormatTokenInfo[],
       tokensReturnedList: [] as TFormatTokenInfo[],
       tokensStakedList: [] as TFormatTokenInfo[],
+      tokensClaimedList: [] as TFormatTokenInfo[],
       showModal: false,
       isInit: false,
-      modalType: MODAL_TYPE,
+      MODAL_TYPE,
     };
   },
   computed: {
@@ -129,7 +142,6 @@ export default defineComponent({
       'lastParsedZapResponseData',
     ]),
     ...mapState('poolsData', [
-      'lastParsedBurnedTokenIdEvent',
       'lastParsedClaimedRewardsEvent',
     ]),
     ...mapGetters('accountData', ['account']),
@@ -145,6 +157,8 @@ export default defineComponent({
       if (this.successData.modalType === MODAL_TYPE.WITHDRAW) return 'WITHDRAW';
       if (this.successData.modalType === MODAL_TYPE.COMPOUND) return 'COMPOUND';
       if (this.successData.modalType === MODAL_TYPE.REBALANCE) return 'REBALANCE';
+      if (this.successData.modalType === MODAL_TYPE.INCREASE) return 'INCREASE';
+      if (this.successData.modalType === MODAL_TYPE.MERGE) return 'MERGE';
       return 'ZAPIN';
     },
   },
@@ -178,23 +192,25 @@ export default defineComponent({
     },
     successData(val) {
       if (val) {
-        this.initStakedList();
-        this.initReturnedList();
-        this.initSentList();
+        this.init();
       }
     },
   },
   mounted() {
-    this.initReturnedList();
-    this.initStakedList();
-    this.initSentList();
+    this.init();
   },
   methods: {
+    init() {
+      this.initReturnedList();
+      this.initStakedList();
+      this.initSentList();
+      this.initClaimedList();
+    },
     closeModal() {
       this.setShowFunc({ isShow: false });
 
       // If rebalance modal
-      if (this.lastParsedClaimedRewardsEvent && this.lastParsedBurnedTokenIdEvent) {
+      if (this.successData.modalType !== MODAL_TYPE.ZAPIN) {
         this.$router.replace('/positions');
         // Cleaning the state on close
         this.$store.commit('poolsData/changeState', {
@@ -210,6 +226,8 @@ export default defineComponent({
           val: '',
         });
       }
+
+      this.isInit = false;
     },
     // Comes from values computed locally befor tx
     initSentList() {
@@ -236,6 +254,17 @@ export default defineComponent({
           this.mergedTokenList,
         );
       }
+    },
+    // Comes from position info
+    initClaimedList(): void {
+      if (this.lastParsedClaimedRewardsEvent?.length > 0) {
+        this.tokensClaimedList = mapInputTokenData(
+          this.lastParsedClaimedRewardsEvent,
+        );
+      }
+    },
+    openPositionOnPool(pool: TPoolInfo): string {
+      return (pool.address || pool.platform[0]) ? getPlatformLink(pool.platform[0], pool.address) : '';
     },
   },
 });

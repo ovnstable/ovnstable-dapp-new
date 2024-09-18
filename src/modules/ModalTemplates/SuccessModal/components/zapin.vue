@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="success-modal-content-wrapper">
     <span class="divider" />
 
     <div class="zap-header-container">
@@ -20,7 +20,7 @@
           </div>
         </div>
         <a
-          :href="openPositionOnPool"
+          :href="openPositionOnPool(successData.pool)"
           target="_blank"
           rel="noopener noreferrer"
           class="view-position-link"
@@ -40,9 +40,12 @@
       class="modal-content__data"
     >
       <div class="modal-content__data-main">
-        <div class="data-row sent">
+        <div
+          v-if="!lastParsedBurnedTokenIdEvent && tokensSentList.length > 0"
+          class="data-row sent"
+        >
           <div class="success-row-title">
-            Sent
+            Sent:
           </div>
           <div class="success-data-list">
             <div
@@ -50,29 +53,34 @@
               :key="sentData.id"
               class="token-amount"
             >
-              - {{ sentData.value }}
-              {{ sentData.symbol }}
+              <span>{{ `${sentData.displayedValue} ${sentData.symbol}` }}</span>
+              <span class="usd-value">~ ${{ sentData.displayedUsdValue }}</span>
             </div>
           </div>
         </div>
 
         <div
-          v-if="lastParsedClaimedRewardsEvent"
+          v-if="tokensClaimedList.length > 0"
           class="data-row returned"
         >
           <div class="success-row-title">
-            Claimed
+            Claimed:
           </div>
           <div class="success-data-list">
-            <div class="token-amount">
-              ~ {{ getFixedPrice(lastParsedClaimedRewardsEvent) }} USD
+            <div
+              v-for="rewardToken in tokensClaimedList"
+              :key="rewardToken.symbol"
+              class="token-amount"
+            >
+              <span>{{ `${rewardToken.displayedValue} ${rewardToken.symbol}` }}</span>
+              <span class="usd-value">~ ${{ rewardToken.displayedUsdValue }}</span>
             </div>
           </div>
         </div>
 
         <div class="data-row returned">
           <div class="success-row-title">
-            Returned
+            Returned:
           </div>
           <div class="success-data-list">
             <div
@@ -80,15 +88,15 @@
               :key="returnData.id"
               class="token-amount"
             >
-              + {{ getFixedPrice(returnData.value) }}
-              {{ returnData.symbol }}
+              <span>{{ `${returnData.displayedValue} ${returnData.symbol}` }}</span>
+              <span class="usd-value">~ ${{ returnData.displayedUsdValue }}</span>
             </div>
           </div>
         </div>
 
         <div class="data-row staked">
           <div class="success-row-title">
-            Staked
+            Staked:
           </div>
           <div class="success-data-list">
             <div
@@ -96,8 +104,8 @@
               :key="stakeData.id"
               class="token-amount"
             >
-              + {{ getFixedPrice(stakeData.value) }}
-              {{ stakeData.symbol }}
+              <span>{{ `${stakeData.displayedValue} ${stakeData.symbol}` }}</span>
+              <span class="usd-value">~ ${{ stakeData.displayedUsdValue }}</span>
             </div>
           </div>
         </div>
@@ -112,9 +120,8 @@ import PoolLabel from '@/components/ZapModal/PoolLabel.vue';
 import { type PropType } from 'vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
-import BN from 'bignumber.js';
-import { fixedByPrice } from '@/utils/numbers.ts';
-import getPlatformLink from '../helpers.ts';
+import type { TFormatTokenInfo } from '../helpers';
+import type { TPoolInfo } from '@/types/common/pools';
 
 export default {
   name: 'ZapinContent',
@@ -125,15 +132,23 @@ export default {
   },
   props: {
     tokensSentList: {
-      type: Array as PropType<any>,
+      type: Array as PropType<TFormatTokenInfo[]>,
       required: true,
     },
     tokensStakedList: {
-      type: Array as PropType<any>,
+      type: Array as PropType<TFormatTokenInfo[]>,
       required: true,
     },
     tokensReturnedList: {
-      type: Array as PropType<any>,
+      type: Array as PropType<TFormatTokenInfo[]>,
+      required: true,
+    },
+    tokensClaimedList: {
+      type: Array as PropType<TFormatTokenInfo[]>,
+      required: true,
+    },
+    openPositionOnPool: {
+      type: Function as PropType<(pool: TPoolInfo) => string>,
       required: true,
     },
   },
@@ -144,21 +159,7 @@ export default {
     ]),
     ...mapState('poolsData', [
       'lastParsedBurnedTokenIdEvent',
-      'lastParsedClaimedRewardsEvent',
     ]),
-    getFixedPrice() {
-      return (val: string) => {
-        if (new BN(val).eq(0)) return 0;
-
-        return new BN(val).toFixed(fixedByPrice(+val));
-      };
-    },
-    openPositionOnPool(): string {
-      // eslint-disable-next-line prefer-destructuring
-      const pool = this.successData.pool;
-      if (pool.address || pool.platform[0]) return getPlatformLink(pool.platform[0], pool.address);
-      return '';
-    },
   },
 };
 </script>

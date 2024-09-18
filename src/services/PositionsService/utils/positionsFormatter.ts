@@ -117,6 +117,8 @@ export const formatPositionData = (
         rewardUsdTotal = getUsdStr(emissions, aeroTokenInfo?.decimals, aeroTokenInfo?.price);
         rewardTokensInfo = [
           {
+            id: aeroTokenInfo.id,
+            symbol: aeroTokenInfo.symbol,
             value: getUsdStr(emissions, aeroTokenInfo?.decimals),
             usdValue: getUsdStr(emissions, aeroTokenInfo?.decimals, aeroTokenInfo?.price),
             selectedToken: aeroTokenInfo,

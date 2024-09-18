@@ -14,7 +14,9 @@ export enum MODAL_TYPE {
   WITHDRAW,
   HARVEST,
   REBALANCE,
-  COMPOUND
+  COMPOUND,
+  INCREASE,
+  MERGE,
 }
 
 export const stateData = {

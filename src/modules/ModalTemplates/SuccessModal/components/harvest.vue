@@ -1,12 +1,12 @@
 <template>
-  <div>
+  <div class="success-modal-content-wrapper">
     <span class="divider" />
 
     <div class="zap-header-container">
       <PoolLabel :pool="successData.pool" />
       <div class="modal-content__data-row">
         <a
-          :href="openPositionOnPool"
+          :href="openPositionOnPool(successData.pool)"
           target="_blank"
           rel="noopener noreferrer"
           class="view-position-link"
@@ -30,9 +30,12 @@
           </div>
           <div class="success-data-list">
             <div
-              class="token-amount token-amount--green"
+              v-for="rewardToken in tokensClaimedList"
+              :key="rewardToken.symbol"
+              class="token-amount"
             >
-              {{ getSymbolToken }}
+              <span>{{ `${rewardToken.displayedValue} ${rewardToken.symbol}` }}</span>
+              <span class="usd-value">~ ${{ rewardToken.displayedUsdValue }}</span>
             </div>
           </div>
         </div>
@@ -47,8 +50,9 @@ import { mapState } from 'vuex';
 import PoolLabel from '@/components/ZapModal/PoolLabel.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
-import { REWARD_TOKEN } from '@/store/views/main/zapin/index.ts';
-import getPlatformLink from '../helpers.ts';
+import type { PropType } from 'vue';
+import type { TFormatTokenInfo } from '../helpers';
+import type { TPoolInfo } from '@/types/common/pools';
 
 export default {
   name: 'ZapinContent',
@@ -57,21 +61,20 @@ export default {
     BaseIcon,
     ButtonComponent,
   },
+  props: {
+    tokensClaimedList: {
+      type: Array as PropType<TFormatTokenInfo[]>,
+      required: true,
+    },
+    openPositionOnPool: {
+      type: Function as PropType<(pool: TPoolInfo) => string>,
+      required: true,
+    },
+  },
   computed: {
     ...mapState('odosData', [
       'successData',
     ]),
-    getSymbolToken() {
-      const { pool } = this.successData;
-      if (pool.platform[0] === 'Pancake') return REWARD_TOKEN.CAKE;
-      if (pool.platform[0] === 'Aerodrome') return REWARD_TOKEN.AERO;
-      return '';
-    },
-    openPositionOnPool(): string {
-      const { pool } = this.successData;
-      if (pool.address || pool.platform[0]) return getPlatformLink(pool.platform[0], pool.address);
-      return '';
-    },
   },
 };
 </script>

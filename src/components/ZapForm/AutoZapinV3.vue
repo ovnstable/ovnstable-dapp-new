@@ -826,8 +826,8 @@ export default defineComponent({
         this.triggerSuccessZapin(
           {
             isShow: true,
-            inputTokens: [...this.selectedInputTokens],
-            outputTokens: [...this.selectedOutputTokens],
+            inputTokens: [...this.inputTokens],
+            outputTokens: [...this.outputTokens],
             hash: tx.hash,
             pool: this.zapPool,
             modalType: MODAL_TYPE.ZAPIN,

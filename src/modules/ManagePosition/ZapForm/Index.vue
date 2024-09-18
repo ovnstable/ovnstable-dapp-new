@@ -593,7 +593,7 @@ export default {
 
         this.isSwapLoading = false;
         const inputTokens = [...this.inputTokens];
-        const outputTokens = [...this.selectedOutputTokens];
+        const outputTokens = [...this.outputTokens];
         this.triggerSuccessZapin(
           {
             isShow: true,

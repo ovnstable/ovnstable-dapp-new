@@ -75,10 +75,10 @@ const actions = {
         val: new BigNumber(pool?.tokenId).toString(10),
       });
     }
-    if (pool?.rewards?.usdValue) {
+    if (pool?.rewards) {
       commit('changeState', {
         field: 'lastParsedClaimedRewardsEvent',
-        val: new BigNumber(pool?.rewards?.usdValue).toString(10),
+        val: pool?.rewards?.tokensInfo,
       });
     }
   },

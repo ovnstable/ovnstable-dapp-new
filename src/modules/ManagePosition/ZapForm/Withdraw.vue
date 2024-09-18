@@ -259,9 +259,9 @@ export default defineComponent({
       return this.outputTokens.filter((item: any) => item.selectedToken).length;
     },
 
-    selectedOutputTokens() {
-      return this.outputTokens.filter((item: any) => item.selectedToken);
-    },
+    // selectedOutputTokens() {
+    //   return this.outputTokens.filter((item: any) => item.selectedToken);
+    // },
 
     isDisableButton() {
       return (this.outputTokensWithSelectedTokensCount === 0 || !this.isAvailableOnNetwork
@@ -401,7 +401,7 @@ export default defineComponent({
         this.isSwapLoading = false;
         this.closeWaitingModal();
         const inputTokens = [...this.inputTokens];
-        const outputTokens = [...this.selectedOutputTokens];
+        const outputTokens = [...this.outputTokens];
         this.triggerSuccessZapin(
           {
             isShow: true,
