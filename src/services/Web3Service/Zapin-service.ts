@@ -55,6 +55,7 @@ export enum ZAPIN_FUNCTIONS {
   ZAPIN = 'zapIn',
   REBALANCE = 'rebalance',
   INCREASE = 'increase',
+  MERGE = 'merge',
 }
 
 enum DEPOSIT_TYPES {
@@ -541,11 +542,15 @@ class ZapinService {
     params: any,
     method: ZAPIN_FUNCTIONS,
     tokenId?: string,
+    tokensMerge?: string[],
   ) {
     let txData = { ...argTxData };
     const gaugeData = { ...argGaugeData };
 
     try {
+      if (method === ZAPIN_FUNCTIONS.MERGE) {
+        await zapContract[method](txData, gaugeData, tokenId, tokensMerge);
+      }
       if (method === ZAPIN_FUNCTIONS.ZAPIN) {
         await zapContract[method](txData, gaugeData);
       }
@@ -568,6 +573,10 @@ class ZapinService {
     }
 
     try {
+      if (method === ZAPIN_FUNCTIONS.MERGE) {
+        const tx = await zapContract[method](txData, gaugeData, tokenId, tokensMerge, params);
+        return tx.wait();
+      }
       if (method === ZAPIN_FUNCTIONS.ZAPIN) {
         const tx = await zapContract[method](txData, gaugeData, params);
         return tx.wait();

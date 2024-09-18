@@ -243,7 +243,7 @@ import { defineComponent, type PropType } from 'vue';
 import { fixedByPrice } from '@/utils/numbers.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import {
-  getSymbolEmmToken, initOutputToken, initReqData, initZapinContracts,
+  getSymbolEmmToken, initOutputToken, initReqData, initZapData, initZapinContracts,
 } from '@/services/Web3Service/utils/index.ts';
 import SwapSlippageSettings from '@/components/SwapSlippage/Index.vue';
 import PositionsModal from '@/modules/ManagePosition/ZapForm/Merge/PositionsModal.vue';
@@ -251,7 +251,7 @@ import { usePositionsQuery } from '@/hooks/fetch/usePositionsQuery.ts';
 import { usePoolsQueryNew } from '@/hooks/fetch/usePoolsQuery.ts';
 import { awaitDelay } from '@/utils/const.ts';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
-import ZapinService, { ZAPIN_TYPE } from '@/services/Web3Service/Zapin-service.ts';
+import ZapinService, { ZAPIN_FUNCTIONS, ZAPIN_TYPE } from '@/services/Web3Service/Zapin-service.ts';
 import odosApiService from '@/services/odos-api-service.ts';
 import { ethers } from 'ethers';
 import { parseErrorLog } from '@/utils/errors.ts';
@@ -657,22 +657,17 @@ export default defineComponent({
         this.zapContract.target,
       );
 
-      const txData = {
-        inputs: requestData.inputT,
-        outputs: requestData.outputT.map((_, key: number) => ({
-          ..._,
-          amountMin: new BN(amountMins[key])
-            .times(1 - this.slippagePercent / 100)
-            .toFixed(0),
-        })),
-        data: responseData ? responseData.transaction.data : '0x',
-      };
-
-      const gaugeData = {
-        pair: this.zapPool.address,
-        tickRange: this.v3RangeTicks,
-        amountsOut: [proportions.amountToken0Out, proportions.amountToken1Out],
-      };
+      const { txData, gaugeData } = initZapData(
+        requestData,
+        responseData,
+        amountMins,
+        this.slippagePercent,
+        this.zapPool.address,
+        proportions,
+        {
+          ticks: this.v3RangeTicks,
+        },
+      );
 
       this.showWaitingModal('Staking in process');
 
@@ -696,16 +691,20 @@ export default defineComponent({
       );
 
       try {
-        const tx = await this.zapContract.merge(
-          txData,
-          gaugeData,
-          this.zapPool?.tokenId?.toString(),
-          tokensMerge,
-        );
+        const logsData = await ZapinService
+          .triggerZapin(
+            this.zapContract,
+            txData,
+            gaugeData,
+            params,
+            ZAPIN_FUNCTIONS.MERGE,
+            this.zapPool.tokenId?.toString(),
+            tokensMerge,
+          );
 
-        await tx.wait();
+        console.log(logsData, '___receipt');
+        if (!logsData) throw new Error('No Transaction');
 
-        console.log(tx, '___TX');
         this.approveForGauge();
         this.isMerged = true;
       } catch (e: any) {
