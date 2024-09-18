@@ -8,11 +8,17 @@ import { buildEvmContract } from '@/utils/contractsMap.ts';
 import { markRaw } from 'vue';
 
 const EVENT_SIG = ['address[]', 'uint256[]'];
+const ZAP_RESULT_SIG = [
+  'address[]', // tokens
+  'uint256[]', // initialAmounts
+  'uint256[]', // putAmounts
+  'uint256[]', // returnedAmounts
+];
 
 enum ZAP_EVENTS {
     'PutIntoPool',
     'ReturnedToUser',
-    'InputTokens'
+    'InputTokens',
 }
 
 interface IProportion {
@@ -52,6 +58,24 @@ const decodeTokenEvent = (data: string) => {
   };
 };
 
+const decodeReceiptEvent = (
+  data: string,
+  commitEventToStore: (storeField: string, data: any) => void,
+) => {
+  const decodedData = decodeEventData(ZAP_RESULT_SIG, data);
+
+  const [
+    addresses,
+    inputTokens,
+    putIntoPool,
+    retuernedToUser,
+  ] = decodedData;
+
+  commitEventToStore('lastParsedInputTokensEvent', { addresses, inputTokens });
+  commitEventToStore('lastParsedReturnedToUserEvent', { addresses, retuernedToUser });
+  commitEventToStore('lastParsedPutIntoPoolEvent', { addresses, putIntoPool });
+};
+
 const getStoreFieldName = (eventName: string) => `lastParsed${eventName}Event`;
 
 export const parseLogs = (
@@ -60,7 +84,8 @@ export const parseLogs = (
 ): void => {
   for (const item of logs) {
     const eventName = item?.eventName;
-    if (Object.values(ZAP_EVENTS).includes(eventName)) {
+    if (eventName === 'ZapResult') decodeReceiptEvent(item?.data, commitEventToStore);
+    else if (Object.values(ZAP_EVENTS).includes(eventName)) {
       const storeField = getStoreFieldName(eventName);
       const decodedData = decodeTokenEvent(item?.data);
       commitEventToStore(storeField, decodedData);
