@@ -281,9 +281,9 @@ import FeesBlock, { MIN_IMPACT } from '@/components/FeesBlock/Index.vue';
 import { parseErrorLog } from '@/utils/errors.ts';
 import ZapInStepsRow from '@/components/StepsRow/ZapinRow/CompoundRow.vue';
 import {
-  countPercentDiff, initReqData, initZapinContracts, parseLogs,
+  countPercentDiff, initReqData, initZapData, initZapinContracts, parseLogs,
 } from '@/services/Web3Service/utils/index.ts';
-import ZapinService, { ZAPIN_TYPE } from '@/services/Web3Service/Zapin-service.ts';
+import ZapinService, { ZAPIN_FUNCTIONS, ZAPIN_TYPE } from '@/services/Web3Service/Zapin-service.ts';
 import type { TPositionRewardTokenInfo } from '@/types/positions';
 
 enum zapMobileSection {
@@ -763,27 +763,22 @@ export default {
         this.zapContract.target,
       );
 
-      const txData = {
-        inputs: requestData.inputT,
-        outputs: requestData.outputT.map((_, key) => ({
-          ..._,
-          amountMin: new BN(amountMins[key] ?? 0)
-            .times(1 - this.getSlippagePercent() / 100)
-            .toFixed(0),
-        })),
-        data: responseData ? responseData.transaction.data : '0x',
-      };
-
       const ticks = [
         new BN(this.zapPool.ticks.tickLower).toFixed(),
         new BN(this.zapPool.ticks.tickUpper).toFixed(),
       ];
 
-      const gaugeData = {
-        pair: this.zapPool.address,
-        tickRange: ticks,
-        amountsOut: [proportions.amountToken0Out, proportions.amountToken1Out],
-      };
+      const { txData, gaugeData } = initZapData(
+        requestData,
+        responseData,
+        amountMins,
+        this.getSlippagePercent(),
+        this.zapPool.address,
+        proportions,
+        {
+          ticks,
+        },
+      );
 
       const params = {
         from: this.account,
@@ -797,10 +792,18 @@ export default {
 
       try {
         this.showWaitingModal('Increase');
-        const tx = await this.zapContract
-          .increase(txData, gaugeData, this.zapPool?.tokenId, params);
+        const logsData = await ZapinService
+          .triggerZapin(
+            this.zapContract,
+            txData,
+            gaugeData,
+            params,
+            ZAPIN_FUNCTIONS.INCREASE,
+            this.zapPool.tokenId?.toString(),
+          );
 
-        const logsData = await tx.wait();
+        console.log(logsData, '___receipt');
+        if (!logsData) throw new Error('No Transaction');
 
         this.$store.commit('odosData/changeState', {
           field: 'lastParsedZapResponseData',
