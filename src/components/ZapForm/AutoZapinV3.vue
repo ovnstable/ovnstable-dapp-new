@@ -293,10 +293,11 @@ import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import { useRefreshBalances } from '@/hooks/fetch/useRefreshBalances.ts';
 import FeesBlock, { MIN_IMPACT } from '@/components/FeesBlock/Index.vue';
 import { parseErrorLog } from '@/utils/errors.ts';
-import ZapinService from '@/services/Web3Service/Zapin-service.ts';
+import ZapinService, { ZAPIN_FUNCTIONS } from '@/services/Web3Service/Zapin-service.ts';
 import {
   getUpdatedTokenVal,
   initReqData,
+  initZapData,
   parseLogs,
   removeToken,
 } from '@/services/Web3Service/utils/index.ts';
@@ -612,11 +613,12 @@ export default defineComponent({
         this.zapPool.gauge,
       );
 
-      this.zapContract = buildEvmContract(
+      // without markRaw, we can't read contract error by interface
+      this.zapContract = markRaw(buildEvmContract(
         abiContractV3Zap.abi,
         this.evmSigner,
         abiContractV3Zap.address,
-      );
+      ));
 
       this.poolTokenContract = buildEvmContract(
         abiContractV3Nft.abi,
@@ -625,6 +627,8 @@ export default defineComponent({
       );
 
       this.poolTokens = [tokenA, tokenB];
+
+      console.log(this.zapContract);
     },
 
     firstInit() {
@@ -858,22 +862,15 @@ export default defineComponent({
         this.zapContract.target,
       );
 
-      const txData = {
-        inputs: requestData.inputT,
-        outputs: requestData.outputT.map((_, key) => ({
-          ..._,
-          amountMin: new BN(amountMins[key])
-            .times(1 - this.getSlippagePercent() / 100)
-            .toFixed(0),
-        })),
-        data: responseData ? responseData.transaction.data : '0x',
-      };
-
-      const gaugeData = {
-        pair: this.zapPool.address,
-        tickRange: this.v3Range.ticks,
-        amountsOut: [proportions.amountToken0Out, proportions.amountToken1Out],
-      };
+      const { txData, gaugeData } = initZapData(
+        requestData,
+        responseData,
+        amountMins,
+        this.getSlippagePercent(),
+        this.zapPool.address,
+        proportions,
+        this.v3Range,
+      );
 
       this.showWaitingModal('Staking in process');
 
@@ -889,8 +886,11 @@ export default defineComponent({
       console.log((params), 'params');
 
       try {
-        const tx = await this.zapContract.zapIn(txData, gaugeData, params);
-        const receipt = await tx.wait();
+        const receipt = await ZapinService
+          .triggerZapin(this.zapContract, txData, gaugeData, params, ZAPIN_FUNCTIONS.ZAPIN);
+
+        console.log(receipt, '___receipt');
+        if (!receipt) throw new Error('No Transaction');
 
         if (this.gaugeContract.target === '0x0000000000000000000000000000000000000000') {
           this.triggerSuccessZapin(
@@ -898,7 +898,7 @@ export default defineComponent({
               isShow: true,
               inputTokens: this.inputTokens,
               outputTokens: this.outputTokens,
-              hash: tx.hash,
+              hash: receipt.hash,
               pool: this.zapPool,
               modalType: MODAL_TYPE.ZAPIN,
             },

@@ -5,6 +5,7 @@ import { fixedByPrice } from '@/utils/numbers.ts';
 import { getNewOutputToken, getTokenByAddress, updateTokenValue } from '@/store/helpers/index.ts';
 import { loadAbi, REWARD_TOKEN, srcStringBuilder } from '@/store/views/main/zapin/index.ts';
 import { buildEvmContract } from '@/utils/contractsMap.ts';
+import { markRaw } from 'vue';
 
 const EVENT_SIG = ['address[]', 'uint256[]'];
 
@@ -348,6 +349,42 @@ export const getSourceLiquidityBlackList = (zapPool: any) => {
   return sourceBlacklist;
 };
 
+export const initZapData = (
+  requestData: any,
+  responseData: any,
+  amountMins: string[],
+  getSlippagePercent: number,
+  zapPoolAdd: string,
+  proportions: any,
+  v3Range: any,
+) => {
+  const txData = {
+    inputs: requestData.inputT,
+    outputs: requestData.outputT.map((_: any, key: number) => ({
+      ..._,
+      amountMin: new BN(amountMins[key])
+        .times(1 - getSlippagePercent / 100)
+        .toFixed(0),
+    })),
+    data: responseData ? responseData.transaction.data : '0x',
+    needToAdjust: true,
+    adjustSwapSide: false,
+    adjustSwapAmount: 0,
+  };
+
+  const gaugeData = {
+    pair: zapPoolAdd,
+    tickRange: v3Range.ticks,
+    amountsOut: [proportions.amountToken0Out, proportions.amountToken1Out],
+    isSimulation: true,
+  };
+
+  return {
+    gaugeData,
+    txData,
+  };
+};
+
 export const initReqData = (
   requestInputTokens: any[],
   requestOutputTokens: any[],
@@ -400,11 +437,12 @@ export const initZapinContracts = async (
     gaugeAddress,
   );
 
-  const zapContract = buildEvmContract(
+  // without markRaw, we can't read contract errors by interface
+  const zapContract = markRaw(buildEvmContract(
     abiContractV3Zap.abi,
     evmSigner,
     abiContractV3Zap.address,
-  );
+  ));
 
   const poolTokenContract = buildEvmContract(
     abiContractV3Nft.abi,

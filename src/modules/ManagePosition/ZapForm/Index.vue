@@ -220,9 +220,9 @@ import { parseErrorLog } from '@/utils/errors.ts';
 import FeesBlock, { MIN_IMPACT } from '@/components/FeesBlock/Index.vue';
 import SwapSlippageSettings from '@/components/SwapSlippage/Index.vue';
 import {
-  initReqData, initZapinContracts, parseLogs,
+  initReqData, initZapData, initZapinContracts, parseLogs,
 } from '@/services/Web3Service/utils/index.ts';
-import zapinService, { ZAPIN_TYPE } from '@/services/Web3Service/Zapin-service.ts';
+import ZapinService, { ZAPIN_FUNCTIONS, ZAPIN_TYPE } from '@/services/Web3Service/Zapin-service.ts';
 
 enum zapMobileSection {
   'TOKEN_FORM',
@@ -622,7 +622,7 @@ export default {
       this.odosDataLoading = true;
 
       try {
-        const data = await zapinService.recalculateProportionOdosV3(
+        const data = await ZapinService.recalculateProportionOdosV3(
           this.selectedInputTokens,
           this.selectedOutputTokens,
           this.zapPool,
@@ -742,22 +742,15 @@ export default {
         this.zapContract.target,
       );
 
-      const txData = {
-        inputs: requestData.inputT,
-        outputs: requestData.outputT.map((_, key) => ({
-          ..._,
-          amountMin: new BN(amountMins[key] ?? 0)
-            .times(1 - this.getSlippagePercent() / 100)
-            .toFixed(0),
-        })),
-        data: responseData ? responseData.transaction.data : '0x',
-      };
-
-      const gaugeData = {
-        pair: this.zapPool.address,
-        tickRange: this.v3Range.ticks,
-        amountsOut: [proportions.amountToken0Out, proportions.amountToken1Out],
-      };
+      const { txData, gaugeData } = initZapData(
+        requestData,
+        responseData,
+        amountMins,
+        this.getSlippagePercent(),
+        this.zapPool.address,
+        proportions,
+        this.v3Range,
+      );
 
       const params = {
         from: this.account,
@@ -773,10 +766,18 @@ export default {
 
       try {
         this.showWaitingModal('Rebalance');
-        const tx = await this.zapContract
-          .rebalance(txData, gaugeData, this.zapPool?.tokenId, params);
+        const logsData = await ZapinService
+          .triggerZapin(
+            this.zapContract,
+            txData,
+            gaugeData,
+            params,
+            ZAPIN_FUNCTIONS.REBALANCE,
+            this.zapPool.tokenId?.toString(),
+          );
 
-        const logsData = await tx.wait();
+        console.log(logsData, '___receipt');
+        if (!logsData) throw new Error('No Transaction');
 
         this.$store.commit('odosData/changeState', {
           field: 'lastParsedZapResponseData',
@@ -820,7 +821,7 @@ export default {
       this.odosDataLoading = true;
 
       try {
-        const data = await zapinService.recalculateProportionOdosV3(
+        const data = await ZapinService.recalculateProportionOdosV3(
           this.selectedInputTokens,
           this.selectedOutputTokens,
           this.zapPool,

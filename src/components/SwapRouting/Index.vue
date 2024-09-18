@@ -8,7 +8,11 @@
       >
         <div class="routing-wrap__row">
           <h2>Value difference ($)</h2>
-          <span class="red">{{ getSwapPrice }}$</span>
+          <span
+            :class="{
+              red: isBiggerZero(getSwapPrice),
+            }"
+          >{{ getSwapPrice }}$</span>
         </div>
         <div class="routing-wrap__row">
           <div class="routing-wrap__row">
@@ -135,6 +139,9 @@ export default {
     },
   },
   computed: {
+    isBiggerZero() {
+      return (val: string) => new BN(val).gt(0);
+    },
     getOutputUsd() {
       const outputUsd: string = this.swapData?.netOutValue;
 
@@ -148,7 +155,7 @@ export default {
 
       const diff = inputUsd.minus(outputUsd).toFixed();
 
-      return diff ? formatMoney(diff, getFixed(diff)) : 0;
+      return diff && new BN(diff).gt(0) ? formatMoney(diff, getFixed(diff)) : 0;
     },
     outputSwapList() {
       return (swapD: any) => swapD.outTokens.map((_: string, i: number) => {

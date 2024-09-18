@@ -51,6 +51,12 @@ export const ACTIVE_PROTOCOLS_V3 = {
   PANCAKE: [8453, 42161],
 };
 
+export enum ZAPIN_FUNCTIONS {
+  ZAPIN = 'zapIn',
+  REBALANCE = 'rebalance',
+  INCREASE = 'increase',
+}
+
 enum DEPOSIT_TYPES {
   DEPOSIT = 'deposit',
   TRANSFER = 'transfer',
@@ -526,6 +532,50 @@ class ZapinService {
         .div(sumReserves)
         .toFixed(),
     });
+  }
+
+  async triggerZapin(
+    zapContract: any,
+    argTxData: any,
+    argGaugeData: any,
+    params: any,
+    method: ZAPIN_FUNCTIONS,
+    tokenId?: string,
+  ) {
+    let txData = { ...argTxData };
+    const gaugeData = { ...argGaugeData };
+
+    try {
+      if (method === ZAPIN_FUNCTIONS.ZAPIN) {
+        await zapContract[method](txData, gaugeData);
+      }
+      if (method === ZAPIN_FUNCTIONS.REBALANCE && tokenId) {
+        await zapContract[method](txData, gaugeData, tokenId);
+      }
+    } catch (e: any) {
+      console.log(JSON.parse(JSON.stringify(e)), '___decoded1');
+      const decoded = zapContract.interface.parseError(e?.data);
+
+      console.log(decoded, '___decoded2');
+      if (!decoded) throw new Error(e);
+
+      txData = {
+        ...txData,
+        adjustSwapAmount: decoded.args[4],
+        adjustSwapSide: decoded.args[5],
+      };
+
+      gaugeData.isSimulation = false;
+    }
+
+    try {
+      const tx = await zapContract[method](txData, gaugeData, tokenId, params);
+      const receipt = await tx.wait();
+
+      return receipt;
+    } catch (e: any) {
+      throw new Error(e);
+    }
   }
 
   async recalculateProportionOdosV3(
