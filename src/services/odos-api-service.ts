@@ -32,7 +32,7 @@ class OdosApiService extends ApiService {
   }
 
   public async assembleRequest(requestData: any) {
-    return this.postJson('https://api.odos.xyz/sor/assemble', requestData);
+    return this.postJson(`${API_URL}/sor/assemble`, requestData);
   }
 
   public async swapRequest(requestData: any) {
