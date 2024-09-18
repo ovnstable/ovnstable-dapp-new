@@ -558,6 +558,7 @@ class ZapinService {
         await zapContract[method](txData, gaugeData, tokenId);
       }
     } catch (e: any) {
+      console.log(JSON.parse(JSON.stringify(e)), '___decoded1');
       const decoded = zapContract.interface.parseError(e?.data);
 
       console.log(decoded, '___decoded2');

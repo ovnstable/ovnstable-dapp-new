@@ -673,8 +673,8 @@ export default defineComponent({
 
       const params = {
         from: this.account,
-        // gasPrice: ethers.parseUnits('100', 'gwei'),
-        // gasLimit: 1000000,
+        gasPrice: ethers.parseUnits('100', 'gwei'),
+        gasLimit: 1000000,
       };
 
       console.log(this.zapContract, '-this.zapContract');
