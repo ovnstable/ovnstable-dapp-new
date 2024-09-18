@@ -549,11 +549,10 @@ class ZapinService {
       if (method === ZAPIN_FUNCTIONS.ZAPIN) {
         await zapContract[method](txData, gaugeData);
       }
-      if (method === ZAPIN_FUNCTIONS.REBALANCE && tokenId) {
+      if ([ZAPIN_FUNCTIONS.REBALANCE, ZAPIN_FUNCTIONS.INCREASE].includes(method) && tokenId) {
         await zapContract[method](txData, gaugeData, tokenId);
       }
     } catch (e: any) {
-      console.log(JSON.parse(JSON.stringify(e)), '___decoded1');
       const decoded = zapContract.interface.parseError(e?.data);
 
       console.log(decoded, '___decoded2');
@@ -569,10 +568,17 @@ class ZapinService {
     }
 
     try {
-      const tx = await zapContract[method](txData, gaugeData, tokenId, params);
-      const receipt = await tx.wait();
+      if (method === ZAPIN_FUNCTIONS.ZAPIN) {
+        const tx = await zapContract[method](txData, gaugeData, params);
+        return tx.wait();
+      }
 
-      return receipt;
+      if ([ZAPIN_FUNCTIONS.REBALANCE, ZAPIN_FUNCTIONS.INCREASE].includes(method) && tokenId) {
+        const tx = await zapContract[method](txData, gaugeData, tokenId, params);
+        return tx.wait();
+      }
+
+      throw new Error('Such method do not exist');
     } catch (e: any) {
       throw new Error(e);
     }
