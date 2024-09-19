@@ -119,6 +119,8 @@
               :merged-list="allTokensList"
               :input-tokens="selectedInputTokens"
               :output-tokens="outputTokens"
+              :routing-type="MODAL_TYPE.COMPOUND"
+              :zap-pool="zapPool"
             />
 
             <SwapSlippageSettings
@@ -239,6 +241,7 @@
 import { useEventBus } from '@vueuse/core';
 import {
   computed, markRaw,
+  type PropType,
 } from 'vue';
 import { ethers } from 'ethers';
 import {
@@ -274,7 +277,7 @@ import {
 } from '@/services/Web3Service/utils/index.ts';
 import ZapinService, { ZAPIN_FUNCTIONS, ZAPIN_TYPE } from '@/services/Web3Service/Zapin-service.ts';
 import SwapRouting from '@/components/SwapRouting/Index.vue';
-import type { TPositionRewardTokenInfo } from '@/types/positions';
+import type { IPositionsInfo, TPositionRewardTokenInfo } from '@/types/positions';
 
 enum zapMobileSection {
   'TOKEN_FORM',
@@ -296,9 +299,8 @@ export default {
   },
   props: {
     zapPool: {
-      type: Object,
-      required: false,
-      default: () => {},
+      type: Object as PropType<IPositionsInfo>,
+      required: true,
     },
     balanceList: {
       type: Array,
@@ -368,6 +370,7 @@ export default {
     isNftApproved: false,
     newTokenId: 0,
     isHasRewards: true as boolean,
+    MODAL_TYPE,
   }),
   computed: {
     ...mapGetters('odosData', [

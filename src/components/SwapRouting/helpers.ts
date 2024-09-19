@@ -16,3 +16,7 @@ export const getToken = (val: string) => {
   if (new BN(val).eq(0)) return 0;
   return formatMoney(val, getFixed(val));
 };
+
+export const getLiquiditySum = (tokens: any) => tokens
+  .reduce((acc: any, curr: any) => acc
+    .plus(new BN(curr.sum).times(curr.selectedToken?.price)), new BN(0)).toFixed();
