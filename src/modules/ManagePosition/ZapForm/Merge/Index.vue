@@ -215,6 +215,12 @@
       </div>
     </div>
 
+    <ZapInStepsRow
+      v-if="zapPool.chain === networkId"
+      class="zapin__modal-steps"
+      :current-stage="currentStage"
+    />
+
     <PositionsModal
       :is-show="showPositionsModal"
       :selected-positions="positionsSelected"
@@ -227,6 +233,7 @@
 <script lang="ts">
 import {
   mapActions, mapGetters,
+  mapMutations,
 } from 'vuex';
 import {
   getNewInputToken,
@@ -236,14 +243,15 @@ import {
 
 import ButtonComponent from '@/components/Button/Index.vue';
 import BN from 'bignumber.js';
-import { withdrawStep } from '@/store/modals/waiting-modal.ts';
+import { MANAGE_FUNC, mergeStep, withdrawStep } from '@/store/modals/waiting-modal.ts';
 import { formatInputTokens } from '@/utils/tokens.ts';
 import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
-import { defineComponent, type PropType } from 'vue';
+import { defineComponent, markRaw, type PropType } from 'vue';
 import { fixedByPrice } from '@/utils/numbers.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import {
   getSymbolEmmToken, initOutputToken, initReqData, initZapData, initZapinContracts,
+  parseLogs,
 } from '@/services/Web3Service/utils/index.ts';
 import SwapSlippageSettings from '@/components/SwapSlippage/Index.vue';
 import PositionsModal from '@/modules/ManagePosition/ZapForm/Merge/PositionsModal.vue';
@@ -256,6 +264,7 @@ import odosApiService from '@/services/odos-api-service.ts';
 import { ethers } from 'ethers';
 import { parseErrorLog } from '@/utils/errors.ts';
 import { loadTokenImage } from '@/utils/tokenLogo.ts';
+import ZapInStepsRow from '@/components/StepsRow/ZapinRow/MergeRow.vue';
 import type { IPositionsInfo } from '@/types/positions';
 import type { TFilterPoolsParams } from '@/types/common/pools';
 
@@ -266,6 +275,7 @@ export default defineComponent({
     PositionsModal,
     SwapSlippageSettings,
     BaseIcon,
+    ZapInStepsRow,
   },
   props: {
     zapPool: {
@@ -300,6 +310,7 @@ export default defineComponent({
   data() {
     return {
       isMerged: false,
+      currentStage: mergeStep.WITHDRAWNFT,
       showPositionsModal: false,
       positionsSelected: [] as string[],
       positionsData: [] as IPositionsInfo[],
@@ -312,7 +323,6 @@ export default defineComponent({
       gaugeContracts: [] as any[],
       zapContract: null as any,
       poolTokenContract: null as any,
-      currentStage: withdrawStep.WITHDRAW,
       isSwapLoading: false,
       odosDataLoading: false,
       slippagePercent: 1,
@@ -402,10 +412,9 @@ export default defineComponent({
   },
   mounted() {
     this.$store.commit('zapinData/changeState', { field: 'currentStage', val: withdrawStep.WITHDRAW });
-    // this.setStagesMap(MANAGE_FUNC.WITHDRAW);
-    this.setIsZapModalShow(false);
+    this.setStagesMap(MANAGE_FUNC.MERGE);
+    this.setIsZapModalShow(true);
 
-    console.log(this.zapPool, '__this.zapPool');
     this.initZapPoolData();
   },
   methods: {
@@ -415,9 +424,15 @@ export default defineComponent({
     ...mapActions('waitingModal', ['closeWaitingModal', 'showWaitingModal']),
     ...mapActions('walletAction', ['connectWallet']),
     ...mapActions('errorModal', ['showErrorModalWithMsg']),
-    // ...mapMutations('waitingModal', ['setStagesMap']),
     ...mapActions('poolsData', ['setFilterParams']),
+    ...mapMutations('waitingModal', ['setStagesMap']),
 
+    commitEventToStore(field: string, value: any) {
+      this.$store.commit('odosData/changeState', {
+        field,
+        val: value,
+      });
+    },
     async initZapPoolData() {
       if (this.zapPool?.isStaked) this.positionsStaked = [this.zapPool?.tokenId?.toString()];
       const contractsData = await initZapinContracts(
@@ -439,8 +454,10 @@ export default defineComponent({
       if (this.positionsNotApproved?.length > 0) {
         console.log(this.positionsNotApproved, '___this.positionsNotApproved');
         this.approveNftPosition(this.positionsNotApproved[0]);
+        this.currentStage = mergeStep.APPROVENFT;
       } else {
         this.mergeTrigger();
+        this.currentStage = mergeStep.MERGE;
       }
     },
     clearStaked(index: number) {
@@ -449,8 +466,10 @@ export default defineComponent({
 
       if (this.positionsStaked?.length > 0) {
         this.withdrawTrigger(this.positionsStaked[0]);
+        this.currentStage = mergeStep.WITHDRAWNFT;
       } else if (this.positionsNotApproved?.length > 0) {
         this.approveNftPosition(this.positionsNotApproved[0]);
+        this.currentStage = mergeStep.APPROVENFT;
       }
     },
     clearPos() {
@@ -520,7 +539,6 @@ export default defineComponent({
         this.isSwapLoading = false;
         this.closeWaitingModal();
         this.clearApprove(tokenId);
-        this.currentStage = withdrawStep.ZAPOUT;
       } catch (e) {
         console.log(e);
         this.closeWaitingModal('Approve');
@@ -705,8 +723,16 @@ export default defineComponent({
         console.log(logsData, '___receipt');
         if (!logsData) throw new Error('No Transaction');
 
+        this.$store.commit('odosData/changeState', {
+          field: 'lastParsedZapResponseData',
+          val: markRaw(logsData),
+        });
+
+        parseLogs(logsData, this.commitEventToStore);
+
         this.approveForGauge();
         this.isMerged = true;
+        this.currentStage = mergeStep.APPROVE_GAUGE;
       } catch (e: any) {
         this.isSwapLoading = false;
         this.closeWaitingModal();
@@ -741,7 +767,6 @@ export default defineComponent({
         this.isSwapLoading = false;
         this.closeWaitingModal();
         this.clearStaked(indexOfToken);
-        this.currentStage = withdrawStep.APPROVE;
       } catch (e) {
         console.log(e);
         this.closeWaitingModal();
@@ -766,6 +791,7 @@ export default defineComponent({
         await tx.wait();
         this.stakeTrigger();
         this.closeWaitingModal();
+        this.currentStage = mergeStep.STAKE_LP;
       } catch (e) {
         console.log(e);
         this.closeWaitingModal('Approve');

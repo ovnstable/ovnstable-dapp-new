@@ -70,10 +70,10 @@ export default {
           id: 0,
           name: 'ALL POOLS',
         },
-        {
-          id: 1,
-          name: 'OVERNIGHT POOLS',
-        },
+        // {
+        //   id: 1,
+        //   name: 'OVERNIGHT POOLS',
+        // },
       ],
       activeTab: 0,
       type: window.location.pathname.split('/').pop()?.toUpperCase(),

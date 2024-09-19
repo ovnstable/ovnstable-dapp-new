@@ -17,7 +17,7 @@
   <LiquiditySegment
     :total-usd-value="zapPool?.rewards?.usdValue ?? '0'"
     :output-tokens="zapPool.rewards.tokensInfo"
-    title="Harwest to wallet"
+    title="Harvest to wallet"
   />
 
   <span class="divider" />
@@ -80,4 +80,4 @@ export default {
 };
 </script>
 
-  <style src="./styles.scss" lang="scss" scoped />
+<style src="./styles.scss" lang="scss" scoped />

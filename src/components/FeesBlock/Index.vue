@@ -1,5 +1,5 @@
 <template>
-  <div class="slippage-block">
+  <div class="transaction-block">
     <div
       class="transaction-info-container"
     >
@@ -279,6 +279,10 @@ export default {
 </script>
 
 <style lang="scss">
+.transaction-block {
+  margin-bottom: auto;
+}
+
 .transaction-info-title {
   font-style: normal;
   font-weight: 400;
