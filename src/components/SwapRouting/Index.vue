@@ -10,12 +10,19 @@
         :zap-pool="zapPool"
       />
       <IncreaseRouting
-        v-if="routingType === MODAL_TYPE.INCREASE"
+        v-else-if="routingType === MODAL_TYPE.INCREASE"
         :swap-data="swapData"
         :input-tokens="inputTokens"
         :output-tokens="outputTokens"
         :zap-pool="zapPool"
         :initial-position-tokens="initialPositionTokens"
+      />
+      <CompoundRouting
+        v-else-if="routingType === MODAL_TYPE.COMPOUND"
+        :swap-data="swapData"
+        :input-tokens="inputTokens"
+        :output-tokens="outputTokens"
+        :zap-pool="zapPool"
       />
       <ZapinRouting
         v-else:
@@ -34,6 +41,7 @@ import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
 import type { PropType } from 'vue';
 import IncreaseRouting from './IncreaseRouting.vue';
 import type { IPositionsInfo } from '@/types/positions';
+import CompoundRouting from './CompoundRouting.vue';
 
 export default {
   name: 'SwapRouting',
@@ -41,6 +49,7 @@ export default {
     ZapinRouting,
     RebalanceRouting,
     IncreaseRouting,
+    CompoundRouting,
   },
   props: {
     routingType: {
