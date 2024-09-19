@@ -159,7 +159,7 @@
         class="swap-button-container"
       >
           <ButtonComponent
-          v-if="isDisableButton"
+          v-if="false"
           btn-size="large"
           full
           btn-styles="primary"
@@ -325,13 +325,13 @@ export default defineComponent({
     ...mapGetters('accountData', ['account']),
 
     disableButtonMessage() {
-      if (!this.zapPool.position.isInRange) return 'OUT OF RANGE, MERGE UNAVAILABLE';
+      // if (!this.zapPool.position.isInRange) return 'OUT OF RANGE, MERGE UNAVAILABLE';
 
       return null;
     },
-    isDisableButton() {
-      return !this.zapPool.position?.isInRange;
-    },
+    // isDisableButton() {
+    //   return !this.zapPool.position?.isInRange;
+    // },
     totalLiq() {
       if (this.inputTokens.length === 0) return 0;
 
