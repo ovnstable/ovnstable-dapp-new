@@ -41,67 +41,46 @@
               <div class="zapin-block__swap-wrapper">
                 <div class="out-swap-container pt-5">
                   <div class="input-swap-container">
-                <div class="swap-form__body-block">
-                  <div class="swap-form__body-block__title">
-                    <h3>
-                      You claim
-                    </h3>
-                  </div>
-                  <TransitionGroup
-                    name="staggered-fade"
-                    tag="div"
-                    :class="{ 'swap-form__body-block__inputs': true, 'block-inputs--scroll': outputTokens?.length > 3 }"
-                    :css="false"
-                    @before-enter="beforeEnterList"
-                    @enter="onEnterList"
-                    @on-leave="onLeaveList"
-                  >
-                    <div
-                      v-for="token in inputTokens"
-                      :key="token.id"
-                      :data-index="token.id"
-                      class="swap-form__body-block__inputs-item"
-                    >
-                      <TokenForm
-                        :token-info="token"
-                        :is-token-removable="false"
-                        :is-input-token="false"
-                        :disabled="true"
-                        :balances-loading="isAnyLoading"
-                      />
+                    <div class="swap-form__body-block">
+                      <div class="swap-form__body-block__title">
+                        <h3>
+                          You claim
+                        </h3>
+                      </div>
+                      <TransitionGroup
+                        name="staggered-fade"
+                        tag="div"
+                        :class="{ 'swap-form__body-block__inputs': true, 'block-inputs--scroll': outputTokens?.length > 3 }"
+                        :css="false"
+                        @before-enter="beforeEnterList"
+                        @enter="onEnterList"
+                        @on-leave="onLeaveList"
+                      >
+                        <div
+                          v-for="token in inputTokens"
+                          :key="token.id"
+                          :data-index="token.id"
+                          class="swap-form__body-block__inputs-item"
+                        >
+                          <TokenForm
+                            :token-info="token"
+                            :is-token-removable="false"
+                            :is-input-token="false"
+                            :disabled="true"
+                            :balances-loading="isAnyLoading"
+                          />
+                        </div>
+                      </TransitionGroup>
                     </div>
-                  </TransitionGroup>
-                </div>
-              </div>
-                </div>
-                <div class="out-swap-container pt-5">
-                  <h2>
-                    Tokens you get
-                  </h2>
-                  <div
-                    v-for="token in (outputTokens as any)"
-                    :key="token.id"
-                    class="input-component-container"
-                  >
-                    <TokenForm
-                      :token-info="token"
-                      :is-token-removable="false"
-                      :is-input-token="false"
-                      :disabled="true"
-                      :balances-loading="isBalancesLoading"
-                      :token-loading="odosDataLoading"
-                      hide-balance
-                      @remove-token="removeOutputToken"
-                    />
                   </div>
                 </div>
                 <div>
-            <div class="out-swap-container pt-5 new-position-tokens">
+                <div class="out-swap-container pt-5 new-position-tokens">
                   <h2>
                     New position
                   </h2>
                   <div
-                    v-for="token in (newPositionTokens as any)"
+                    v-for="token in newPositionTokens"
                     :key="token.id"
                     class="input-component-container"
                   >
@@ -117,7 +96,7 @@
                     />
                   </div>
                 </div>
-          </div>
+              </div>
               </div>
             </div>
             <FeesBlock
@@ -126,9 +105,11 @@
               :get-odos-fee="0"
               :multi-swap-odos-fee-percent="0"
               :selected-input-tokens="inputTokens"
-              :selected-output-tokens="selectedOutputTokens"
+              :selected-output-tokens="newPositionTokens"
               :odos-data="odosData"
               :agree-with-fees="agreeWithFees"
+              :current-position-tokens="initPositionTokens"
+              :is-loading="odosDataLoading"
               @change-agree="changeAgreeFees"
             />
 
@@ -281,7 +262,7 @@ import FeesBlock, { MIN_IMPACT } from '@/components/FeesBlock/Index.vue';
 import { parseErrorLog } from '@/utils/errors.ts';
 import ZapInStepsRow from '@/components/StepsRow/ZapinRow/CompoundRow.vue';
 import {
-  countPercentDiff, initReqData, initZapData, initZapinContracts, parseLogs,
+  initReqData, initZapData, initZapinContracts, parseLogs,
 } from '@/services/Web3Service/utils/index.ts';
 import ZapinService, { ZAPIN_FUNCTIONS, ZAPIN_TYPE } from '@/services/Web3Service/Zapin-service.ts';
 import type { TPositionRewardTokenInfo } from '@/types/positions';
@@ -348,6 +329,7 @@ export default {
     inputTokens: [] as any[],
     outputTokens: [] as any[],
     newPositionTokens: [] as any[],
+    initPositionTokens: [] as any[],
     gaugeContract: null as any,
     zapContract: null as any,
     poolTokenContract: null as any,
@@ -568,7 +550,8 @@ export default {
         sum: 0,
       }));
 
-      // this.outputTokens = [tokenA, tokenB];
+      this.outputTokens = [tokenA, tokenB];
+      this.initPositionTokens = [tokenA, tokenB];
       this.newPositionTokens = [tokenA, tokenB];
       this.inputTokens = this.zapPool.rewards.tokensInfo
         .map((token: TPositionRewardTokenInfo) => ({
@@ -579,11 +562,11 @@ export default {
           contractValue: new BN(token.value).times(10 ** 18).toFixed(),
         }));
 
-      if (this.newPositionTokens?.length > 0) {
+      if (this.initPositionTokens?.length > 0) {
         const symbName = this.zapPool?.name?.split('/');
-        this.newPositionTokens.forEach((_, key) => {
-          this.newPositionTokens[key].value = this.zapPool?.position?.tokens[key][symbName[key]];
-          this.newPositionTokens[key].sum = this.zapPool?.position?.tokens[key][symbName[key]];
+        this.initPositionTokens.forEach((_, key) => {
+          this.initPositionTokens[key].value = this.zapPool?.position?.tokens[key][symbName[key]];
+          this.initPositionTokens[key].sum = this.zapPool?.position?.tokens[key][symbName[key]];
         });
       }
 
@@ -868,18 +851,11 @@ export default {
           this.odosDataLoading = false;
           return;
         }
-        const totalInputUsd = this.selectedInputTokens
-          .reduce((acc: BN, curr:any) => acc.plus(curr.usdValue), new BN(0)).toFixed();
-        const totalOutputUsd = this.newPositionTokens
-          .reduce((acc: any, curr: any) => acc
-            .plus(new BN(curr.sum).times(curr.selectedToken?.price)), new BN(0))
-          .toFixed();
 
         this.outputTokens = data.outputTokens;
-
-        this.newPositionTokens = this.outputTokens.map((token: any, i) => ({
+        this.newPositionTokens = data.outputTokens.map((token: any, i) => ({
           ...token,
-          sum: new BN(token.sum).plus(new BN(this.newPositionTokens[i].sum)).toFixed(),
+          sum: new BN(token.sum).plus(new BN(this.initPositionTokens[i].sum)).toFixed(),
         }));
 
         const totalFinalOutputUsd = this.newPositionTokens
@@ -889,8 +865,7 @@ export default {
         this.outputTokens = data?.outputTokens;
         this.odosData = {
           ...data.odosData,
-          percentDiff: +countPercentDiff(new BN(totalOutputUsd)
-            .plus(totalInputUsd).toFixed(), totalFinalOutputUsd),
+          percentDiff: 0,
           netOutValue: totalFinalOutputUsd,
         };
         this.odosDataLoading = false;

@@ -41,85 +41,64 @@
               <div class="zapin-block__swap-wrapper">
                 <div class="out-swap-container pt-5">
                   <div class="input-swap-container">
-                <div class="swap-form__body-block">
-                  <div class="swap-form__body-block__title">
-                    <h3>
-                      You send
-                    </h3>
-                    <div
-                      v-if="!isEmptyForm"
-                      class="swap-form__body-block__inputs-max"
-                      @click="maxAllMethod"
-                      @keypress="maxAllMethod"
-                    >
-                      Max all
+                  <div class="swap-form__body-block">
+                    <div class="swap-form__body-block__title">
+                      <h3>
+                        You send
+                      </h3>
+                      <div
+                        v-if="!isEmptyForm"
+                        class="swap-form__body-block__inputs-max"
+                        @click="maxAllMethod"
+                        @keypress="maxAllMethod"
+                      >
+                        Max all
+                      </div>
                     </div>
+                    <TransitionGroup
+                      name="staggered-fade"
+                      tag="div"
+                      :class="{ 'swap-form__body-block__inputs': true, 'block-inputs--scroll': outputTokens?.length > 3 }"
+                      :css="false"
+                      @before-enter="beforeEnterList"
+                      @enter="onEnterList"
+                      @on-leave="onLeaveList"
+                    >
+                      <div
+                        v-for="token in inputTokens"
+                        :key="token.id"
+                        :data-index="token.id"
+                        class="swap-form__body-block__inputs-item"
+                      >
+                        <TokenForm
+                          :token-info="token"
+                          :is-token-removable="isInputTokensRemovable"
+                          :is-input-token="true"
+                          :disabled="false"
+                          :balances-loading="isAnyLoading"
+                          @select-token="selectFormToken"
+                          @remove-token="removeInputToken"
+                          @update-token="updateTokenValueMethod"
+                        />
+                      </div>
+                      <div
+                        v-if="isInputTokensAddAvailable"
+                        class="swap-form__body-block__inputs-add"
+                        @click="addNewInputToken"
+                        @keypress="addNewInputToken"
+                      >
+                        +
+                      </div>
+                    </TransitionGroup>
                   </div>
-                  <TransitionGroup
-                    name="staggered-fade"
-                    tag="div"
-                    :class="{ 'swap-form__body-block__inputs': true, 'block-inputs--scroll': outputTokens?.length > 3 }"
-                    :css="false"
-                    @before-enter="beforeEnterList"
-                    @enter="onEnterList"
-                    @on-leave="onLeaveList"
-                  >
-                    <div
-                      v-for="token in inputTokens"
-                      :key="token.id"
-                      :data-index="token.id"
-                      class="swap-form__body-block__inputs-item"
-                    >
-                      <TokenForm
-                        :token-info="token"
-                        :is-token-removable="isInputTokensRemovable"
-                        :is-input-token="true"
-                        :disabled="false"
-                        :balances-loading="isAnyLoading"
-                        @select-token="selectFormToken"
-                        @remove-token="removeInputToken"
-                        @update-token="updateTokenValueMethod"
-                      />
-                    </div>
-                    <div
-                      v-if="isInputTokensAddAvailable"
-                      class="swap-form__body-block__inputs-add"
-                      @click="addNewInputToken"
-                      @keypress="addNewInputToken"
-                    >
-                      +
-                    </div>
-                  </TransitionGroup>
                 </div>
-              </div>
-                </div>
-                <div class="out-swap-container pt-5">
-                  <h2>
-                    Tokens you get
-                  </h2>
-                  <div
-                    v-for="token in (outputTokens as any)"
-                    :key="token.id"
-                    class="input-component-container"
-                  >
-                    <TokenForm
-                      :token-info="token"
-                      :is-token-removable="false"
-                      :is-input-token="false"
-                      :disabled="true"
-                      :balances-loading="isBalancesLoading"
-                      :token-loading="odosDataLoading"
-                      hide-balance
-                      @remove-token="removeOutputToken"
-                    />
-                  </div>
                 </div>
                 <div class="out-swap-container pt-5 new-position-tokens">
                   <h2>
                     New position
                   </h2>
                   <div
-                    v-for="token in (newPositionTokens as any)"
+                    v-for="token in newPositionTokens"
                     :key="token.id"
                     class="input-component-container"
                   >
@@ -143,9 +122,11 @@
               :get-odos-fee="0"
               :multi-swap-odos-fee-percent="0"
               :selected-input-tokens="inputTokens"
-              :selected-output-tokens="selectedOutputTokens"
+              :selected-output-tokens="newPositionTokens"
               :odos-data="odosData"
+              :current-position-tokens="initPositionTokens"
               :agree-with-fees="agreeWithFees"
+              :is-loading="odosDataLoading"
               @change-agree="changeAgreeFees"
             />
 
@@ -323,7 +304,7 @@ import FeesBlock, { MIN_IMPACT } from '@/components/FeesBlock/Index.vue';
 import { parseErrorLog } from '@/utils/errors.ts';
 import ZapInStepsRow from '@/components/StepsRow/ZapinRow/IncreaseRow.vue';
 import {
-  countPercentDiff, getUpdatedTokenVal, initReqData, initZapData, initZapinContracts, parseLogs,
+  getUpdatedTokenVal, initReqData, initZapData, initZapinContracts, parseLogs,
 } from '@/services/Web3Service/utils/index.ts';
 import { approveToken, getAllowanceValue } from '@/utils/contractApprove.ts';
 import ZapinService, { ZAPIN_FUNCTIONS, ZAPIN_TYPE } from '@/services/Web3Service/Zapin-service.ts';
@@ -668,26 +649,24 @@ export default {
       const tokenA = this.addSelectedTokenToOutputList(poolSelectedToken, true, 50);
       const tokenB = this.addSelectedTokenToOutputList(ovnSelectSelectedToken, true, 50);
 
-      this.outputTokens = [tokenA, tokenB].map((token) => ({
+      this.outputTokens = [tokenA, tokenB];
+      this.initPositionTokens = [tokenA, tokenB];
+      this.newPositionTokens = [tokenA, tokenB].map((token) => ({
         ...token,
         value: 0,
         sum: 0,
       }));
 
-      this.initPositionTokens = [tokenA, tokenB];
-      this.newPositionTokens = [tokenA, tokenB];
-
-      this.$forceUpdate();
-      this.recalculateProportion();
-
-      if (this.newPositionTokens?.length > 0) {
+      if (this.initPositionTokens?.length > 0) {
         const symbName = this.zapPool?.name?.split('/');
-        this.newPositionTokens.forEach((_, key) => {
-          this.newPositionTokens[key].value = this.zapPool?.position?.tokens[key][symbName[key]];
-          this.newPositionTokens[key].sum = this.zapPool?.position?.tokens[key][symbName[key]];
+        this.initPositionTokens.forEach((_, key) => {
+          this.initPositionTokens[key].value = this.zapPool?.position?.tokens[key][symbName[key]];
+          this.initPositionTokens[key].sum = this.zapPool?.position?.tokens[key][symbName[key]];
         });
       }
 
+      this.$forceUpdate();
+      this.recalculateProportion();
       this.addNewInputToken();
     },
     removeOutputToken(id: string) {
@@ -958,29 +937,22 @@ export default {
           return;
         }
 
-        const totalInputUsd = this.selectedInputTokens
-          .reduce((acc: BN, curr:any) => acc.plus(curr.usdValue), new BN(0)).toFixed();
-        const totalOutputUsd = this.newPositionTokens
-          .reduce((acc: any, curr: any) => acc
-            .plus(new BN(curr.sum).times(curr.selectedToken?.price)), new BN(0))
-          .toFixed();
-
-        this.outputTokens = data.outputTokens;
-
-        this.newPositionTokens = this.outputTokens.map((token: any, i) => ({
+        const newPositionTokens = data.outputTokens.map((token: any, i) => ({
           ...token,
           sum: new BN(token.sum).plus(new BN(this.initPositionTokens[i].sum)).toFixed(),
         }));
+
+        console.log(this.initPositionTokens, '__data.outputTokens1');
+        console.log(data.outputTokens, '__data.outputTokens');
+
+        this.newPositionTokens = newPositionTokens;
 
         const totalFinalOutputUsd = this.newPositionTokens
           .reduce((acc: any, curr: any) => acc
             .plus(new BN(curr.sum).times(curr.selectedToken?.price)), new BN(0)).toFixed();
 
-        this.outputTokens = data?.outputTokens;
         this.odosData = {
           ...data.odosData,
-          percentDiff: +countPercentDiff(new BN(totalOutputUsd)
-            .plus(totalInputUsd).toFixed(), totalFinalOutputUsd),
           netOutValue: totalFinalOutputUsd,
         };
         this.odosDataLoading = false;
@@ -1038,7 +1010,7 @@ export default {
       const newInputToken = getNewInputToken();
       newInputToken.selectedToken = selectedToken;
       this.removeAllWithoutSelectedTokens(this.inputTokens);
-      this.inputTokens.unshift(newInputToken);
+      this.inputTokens.push(newInputToken);
 
       if (isAddAllBalance) {
         const newToken = updateTokenValue(
@@ -1091,6 +1063,8 @@ export default {
       this.isShowSelectTokensModal = isShow;
     },
     updateQuotaInfo() {
+      this.odosDataLoading = true;
+
       if (!this.tokensQuotaCounterId) {
       // first call
         this.tokensQuotaCounterId = -1;
@@ -1213,7 +1187,7 @@ export default {
           );
         }
 
-        this.outputTokens = data?.outputTokens;
+        // this.outputTokens = data?.outputTokens;
         this.odosData = data?.odosData;
         this.odosDataLoading = false;
         this.isSwapLoading = true;
