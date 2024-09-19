@@ -98,14 +98,23 @@
               @change-slippage="handleCurrentSlippageChanged"
             />
           </div>
-          <ZapinV3
-            :zap-pool="zapPool"
-            :zap-contract="zapContract"
-            :tokens-data="outputTokens"
-            :ticks-init="[zapPool?.ticks?.tickLower, zapPool?.ticks?.tickUpper]"
-            :class="currentSection === zapMobileSection.SET_PRICE_RANGE && 'mobile-active'"
-            @set-range="setRangeV3"
-          />
+          <div>
+            <ZapinV3
+              :zap-pool="zapPool"
+              :zap-contract="zapContract"
+              :tokens-data="outputTokens"
+              :ticks-init="[zapPool?.ticks?.tickLower, zapPool?.ticks?.tickUpper]"
+              :class="currentSection === zapMobileSection.SET_PRICE_RANGE && 'mobile-active'"
+              @set-range="setRangeV3"
+            />
+            <SwapRouting
+                v-if="odosData?.netOutValue"
+                :swap-data="odosData"
+                :merged-list="allTokensList"
+                :input-tokens="selectedInputTokens"
+                :output-tokens="selectedOutputTokens"
+              />
+          </div>
         </div>
       </div>
       <div class="swap-container__footer">
@@ -224,6 +233,7 @@ import {
   initReqData, initZapData, initZapinContracts, parseLogs,
 } from '@/services/Web3Service/utils/index.ts';
 import ZapinService, { ZAPIN_FUNCTIONS, ZAPIN_TYPE } from '@/services/Web3Service/Zapin-service.ts';
+import SwapRouting from '@/components/SwapRouting/Index.vue';
 
 enum zapMobileSection {
   'TOKEN_FORM',
@@ -242,6 +252,7 @@ export default {
     ChangeNetwork,
     Spinner,
     ZapInStepsRow,
+    SwapRouting,
   },
   props: {
     balanceList: {

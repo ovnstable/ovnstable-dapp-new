@@ -122,7 +122,7 @@
               :get-odos-fee="0"
               :multi-swap-odos-fee-percent="0"
               :selected-input-tokens="inputTokens"
-              :selected-output-tokens="newPositionTokens"
+              :selected-output-tokens="selectedOutputTokens"
               :odos-data="odosData"
               :current-position-tokens="initPositionTokens"
               :agree-with-fees="agreeWithFees"
@@ -143,6 +143,13 @@
               :ticks-init="[zapPool?.ticks?.tickLower, zapPool?.ticks?.tickUpper]"
               :class="currentSection === zapMobileSection.SET_PRICE_RANGE && 'mobile-active'"
               @set-range="setRangeV3"
+            />
+            <SwapRouting
+              v-if="odosData?.netOutValue"
+              :swap-data="odosData"
+              :merged-list="allTokensList"
+              :input-tokens="selectedInputTokens"
+              :output-tokens="outputTokens"
             />
           </div>
         </div>
@@ -308,6 +315,7 @@ import {
 } from '@/services/Web3Service/utils/index.ts';
 import { approveToken, getAllowanceValue } from '@/utils/contractApprove.ts';
 import ZapinService, { ZAPIN_FUNCTIONS, ZAPIN_TYPE } from '@/services/Web3Service/Zapin-service.ts';
+import SwapRouting from '@/components/SwapRouting/Index.vue';
 
 enum zapMobileSection {
   'TOKEN_FORM',
@@ -329,6 +337,7 @@ export default {
     ChangeNetwork,
     Spinner,
     ZapInStepsRow,
+    SwapRouting,
   },
   props: {
     zapPool: {
@@ -649,19 +658,20 @@ export default {
       const tokenA = this.addSelectedTokenToOutputList(poolSelectedToken, true, 50);
       const tokenB = this.addSelectedTokenToOutputList(ovnSelectSelectedToken, true, 50);
 
-      this.outputTokens = [tokenA, tokenB];
-      this.initPositionTokens = [tokenA, tokenB];
-      this.newPositionTokens = [tokenA, tokenB].map((token) => ({
+      this.outputTokens = [tokenA, tokenB].map((token) => ({
         ...token,
         value: 0,
         sum: 0,
       }));
 
-      if (this.initPositionTokens?.length > 0) {
+      this.initPositionTokens = [tokenA, tokenB];
+      this.newPositionTokens = [tokenA, tokenB];
+
+      if (this.newPositionTokens?.length > 0) {
         const symbName = this.zapPool?.name?.split('/');
-        this.initPositionTokens.forEach((_, key) => {
-          this.initPositionTokens[key].value = this.zapPool?.position?.tokens[key][symbName[key]];
-          this.initPositionTokens[key].sum = this.zapPool?.position?.tokens[key][symbName[key]];
+        this.newPositionTokens.forEach((_, key) => {
+          this.newPositionTokens[key].value = this.zapPool?.position?.tokens[key][symbName[key]];
+          this.newPositionTokens[key].sum = this.zapPool?.position?.tokens[key][symbName[key]];
         });
       }
 
@@ -937,20 +947,16 @@ export default {
           return;
         }
 
-        const newPositionTokens = data.outputTokens.map((token: any, i) => ({
+        this.newPositionTokens = data.outputTokens.map((token: any, i) => ({
           ...token,
           sum: new BN(token.sum).plus(new BN(this.initPositionTokens[i].sum)).toFixed(),
         }));
-
-        console.log(this.initPositionTokens, '__data.outputTokens1');
-        console.log(data.outputTokens, '__data.outputTokens');
-
-        this.newPositionTokens = newPositionTokens;
 
         const totalFinalOutputUsd = this.newPositionTokens
           .reduce((acc: any, curr: any) => acc
             .plus(new BN(curr.sum).times(curr.selectedToken?.price)), new BN(0)).toFixed();
 
+        this.outputTokens = data?.outputTokens;
         this.odosData = {
           ...data.odosData,
           netOutValue: totalFinalOutputUsd,
@@ -1187,7 +1193,7 @@ export default {
           );
         }
 
-        // this.outputTokens = data?.outputTokens;
+        this.outputTokens = data?.outputTokens;
         this.odosData = data?.odosData;
         this.odosDataLoading = false;
         this.isSwapLoading = true;
