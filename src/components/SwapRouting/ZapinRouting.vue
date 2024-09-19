@@ -1,12 +1,14 @@
 <template>
   <SwapRoutingSegment
     :swap-data="swapData"
-    :merged-list="mergedList"
     :input-tokens="inputTokens"
     :output-tokens="outputTokens"
   />
+
+  <span class="divider" />
+
   <LiquiditySegment
-    :swap-data="swapData"
+    :total-usd-value="swapData?.netOutValue ?? '0'"
     :output-tokens="outputTokens"
   />
 </template>
@@ -23,10 +25,6 @@ export default {
     LiquiditySegment,
   },
   props: {
-    mergedList: {
-      type: Array,
-      required: true,
-    },
     swapData: {
       type: Object,
       required: true,

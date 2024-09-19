@@ -4,8 +4,10 @@
     class="routing-wrap__content-col"
   >
     <div class="routing-wrap__row routing-wrap__row--title">
-      <h2>Add liquidity</h2>
-      <span>{{ getOutputUsd(swapData) }}$</span>
+      <h2 class="routing-segment-title">
+        {{ title }}
+      </h2>
+      <span>{{ getOutputUsd(totalUsdValue) }}$</span>
     </div>
     <div class="routing-wrap__content-col">
       <div
@@ -24,7 +26,7 @@
         </div>
         <div class="routing-wrap__row-item">
           <span>
-            {{ getToken(item.sum) }}
+            {{ getToken(item.value) }}
           </span>
           <span class="secondary">
             ${{ getTokenUsd(item) }}
@@ -43,8 +45,13 @@ export default {
   components: {
   },
   props: {
-    swapData: {
-      type: Object,
+    title: {
+      type: String,
+      required: false,
+      default: 'Add liquidity',
+    },
+    totalUsdValue: {
+      type: String,
       required: true,
     },
     outputTokens: {

@@ -114,6 +114,7 @@
                 :input-tokens="selectedInputTokens"
                 :output-tokens="selectedOutputTokens"
                 :routing-type="MODAL_TYPE.REBALANCE"
+                :zap-pool="zapPool"
               />
           </div>
         </div>
@@ -222,7 +223,7 @@ import TokenForm from '@/components/TokenForm/Index.vue';
 import { MANAGE_FUNC, rebalanceStep } from '@/store/modals/waiting-modal.ts';
 import ZapInStepsRow from '@/components/StepsRow/ZapinRow/RebalanceRow.vue';
 import { cloneDeep, isEmpty } from 'lodash';
-import { markRaw } from 'vue';
+import { markRaw, type PropType } from 'vue';
 import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
 import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
@@ -235,6 +236,7 @@ import {
 } from '@/services/Web3Service/utils/index.ts';
 import ZapinService, { ZAPIN_FUNCTIONS, ZAPIN_TYPE } from '@/services/Web3Service/Zapin-service.ts';
 import SwapRouting from '@/components/SwapRouting/Index.vue';
+import type { IPositionsInfo } from '@/types/positions';
 
 enum zapMobileSection {
   'TOKEN_FORM',
@@ -272,7 +274,7 @@ export default {
       default: '',
     },
     zapPool: {
-      type: Object,
+      type: Object as PropType<IPositionsInfo>,
       required: false,
       default: null,
     },

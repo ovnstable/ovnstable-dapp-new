@@ -5,14 +5,13 @@
       <RebalanceRouting
         v-if="routingType === MODAL_TYPE.REBALANCE"
         :swap-data="swapData"
-        :merged-list="mergedList"
         :input-tokens="inputTokens"
         :output-tokens="outputTokens"
+        :zap-pool="zapPool"
       />
       <ZapinRouting
         v-else:
         :swap-data="swapData"
-        :merged-list="mergedList"
         :input-tokens="inputTokens"
         :output-tokens="outputTokens"
       />
@@ -25,6 +24,7 @@ import ZapinRouting from '@/components/SwapRouting/ZapinRouting.vue';
 import RebalanceRouting from '@/components/SwapRouting/RebalanceRouting.vue';
 import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
 import type { PropType } from 'vue';
+import type { IPositionsInfo } from '@/types/positions';
 
 export default {
   name: 'SwapRouting',
@@ -38,10 +38,6 @@ export default {
       required: false,
       default: null,
     },
-    mergedList: {
-      type: Array,
-      required: true,
-    },
     swapData: {
       type: Object,
       required: true,
@@ -53,6 +49,11 @@ export default {
     outputTokens: {
       type: Array,
       required: true,
+    },
+    zapPool: {
+      type: Object as PropType<IPositionsInfo>,
+      required: false,
+      default: {} as IPositionsInfo,
     },
   },
   data() {

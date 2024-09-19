@@ -3,6 +3,9 @@
     v-if="swapData && swapData?.blockNumber"
     class="routing-wrap__content-col"
   >
+    <h2 class="routing-segment-title">
+      {{ title }}
+    </h2>
     <div class="routing-wrap__row">
       <h2>Value difference ($)</h2>
       <span
@@ -77,6 +80,11 @@ export default {
     BaseIcon,
   },
   props: {
+    title: {
+      type: String,
+      required: false,
+      default: 'Swap',
+    },
     swapData: {
       type: Object,
       required: true,
