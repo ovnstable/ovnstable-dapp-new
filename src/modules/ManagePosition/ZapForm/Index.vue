@@ -90,6 +90,7 @@
               :selected-output-tokens="selectedOutputTokens"
               :odos-data="odosData"
               :agree-with-fees="agreeWithFees"
+              :is-loading="odosDataLoading"
               @change-agree="changeAgreeFees"
             />
 

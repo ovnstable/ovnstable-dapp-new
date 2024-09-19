@@ -139,6 +139,7 @@
               :odos-data="odosData"
               :agree-with-fees="agreeWithFees"
               :pool-version="zapPool?.poolVersion"
+              :is-loading="odosDataLoading"
               @change-agree="changeAgreeFees"
             />
 
