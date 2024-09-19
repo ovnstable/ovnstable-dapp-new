@@ -113,6 +113,7 @@
                 :merged-list="allTokensList"
                 :input-tokens="selectedInputTokens"
                 :output-tokens="selectedOutputTokens"
+                :routing-type="MODAL_TYPE.REBALANCE"
               />
           </div>
         </div>
@@ -319,6 +320,7 @@ export default {
       // Mobile section switch
       zapMobileSection,
       currentSection: zapMobileSection.TOKEN_FORM,
+      MODAL_TYPE,
     };
   },
   computed: {
