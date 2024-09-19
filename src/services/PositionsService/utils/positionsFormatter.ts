@@ -120,6 +120,7 @@ export const formatPositionData = (
             id: aeroTokenInfo.id,
             symbol: aeroTokenInfo.symbol,
             value: getUsdStr(emissions, aeroTokenInfo?.decimals),
+            sum: getUsdStr(emissions, aeroTokenInfo?.decimals),
             usdValue: getUsdStr(emissions, aeroTokenInfo?.decimals, aeroTokenInfo?.price),
             selectedToken: aeroTokenInfo,
           },

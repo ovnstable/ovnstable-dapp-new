@@ -149,7 +149,10 @@
               :swap-data="odosData"
               :merged-list="allTokensList"
               :input-tokens="selectedInputTokens"
-              :output-tokens="outputTokens"
+              :output-tokens="selectedOutputTokens"
+              :initial-position-tokens="initPositionTokens"
+              :routing-type="MODAL_TYPE.INCREASE"
+              :zap-pool="zapPool"
             />
           </div>
         </div>
@@ -276,6 +279,7 @@
 import { useEventBus } from '@vueuse/core';
 import {
   computed, markRaw,
+  type PropType,
 } from 'vue';
 import { ethers } from 'ethers';
 import {
@@ -316,6 +320,7 @@ import {
 import { approveToken, getAllowanceValue } from '@/utils/contractApprove.ts';
 import ZapinService, { ZAPIN_FUNCTIONS, ZAPIN_TYPE } from '@/services/Web3Service/Zapin-service.ts';
 import SwapRouting from '@/components/SwapRouting/Index.vue';
+import type { IPositionsInfo } from '@/types/positions';
 
 enum zapMobileSection {
   'TOKEN_FORM',
@@ -341,9 +346,8 @@ export default {
   },
   props: {
     zapPool: {
-      type: Object,
-      required: false,
-      default: () => {},
+      type: Object as PropType<IPositionsInfo>,
+      required: true,
     },
     balanceList: {
       type: Array,
@@ -415,6 +419,7 @@ export default {
     positionStaked: true,
     isNftApproved: false,
     newTokenId: 0,
+    MODAL_TYPE,
   }),
   computed: {
     ...mapGetters('odosData', [
@@ -950,6 +955,7 @@ export default {
         this.newPositionTokens = data.outputTokens.map((token: any, i) => ({
           ...token,
           sum: new BN(token.sum).plus(new BN(this.initPositionTokens[i].sum)).toFixed(),
+          value: new BN(token.sum).plus(new BN(this.initPositionTokens[i].sum)).toFixed(),
         }));
 
         const totalFinalOutputUsd = this.newPositionTokens

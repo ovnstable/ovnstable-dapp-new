@@ -26,7 +26,7 @@
         </div>
         <div class="routing-wrap__row-item">
           <span>
-            {{ getToken(item.value) }}
+            {{ getToken(item.sum) }}
           </span>
           <span class="secondary">
             ${{ getTokenUsd(item) }}
