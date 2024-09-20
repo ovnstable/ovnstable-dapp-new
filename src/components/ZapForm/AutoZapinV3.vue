@@ -893,6 +893,16 @@ export default defineComponent({
         console.log(receipt, '___receipt');
         if (!receipt) throw new Error('No Transaction');
 
+        this.$store.commit('odosData/changeState', {
+          field: 'lastZapResponseData',
+          val: markRaw(receipt),
+        });
+
+        this.$store.commit('odosData/changeState', {
+          field: 'lastParsedZapResponseData',
+          val: markRaw(receipt),
+        });
+
         if (this.gaugeContract.target === '0x0000000000000000000000000000000000000000') {
           this.triggerSuccessZapin(
             {
@@ -904,18 +914,10 @@ export default defineComponent({
               modalType: MODAL_TYPE.ZAPIN,
             },
           );
+
+          this.closeWaitingModal();
           return;
         }
-
-        this.$store.commit('odosData/changeState', {
-          field: 'lastZapResponseData',
-          val: markRaw(receipt),
-        });
-
-        this.$store.commit('odosData/changeState', {
-          field: 'lastParsedZapResponseData',
-          val: markRaw(receipt),
-        });
 
         this.toApproveAndDepositSteps(this.lastZapResponseData);
       } catch (e: any) {
