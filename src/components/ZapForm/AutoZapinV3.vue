@@ -493,14 +493,8 @@ export default defineComponent({
     },
     isAmountEntered() {
       const tokens = this.selectedInputTokens;
-      for (let i = 0; i < tokens.length; i++) {
-        const token: any = tokens[i];
-        if (token.value > 0) {
-          return true;
-        }
-      }
 
-      return false;
+      return tokens.every((_) => _.value);
     },
     isAnyTokensBalanceIsInsufficient() {
       const tokens = this.selectedInputTokens;
@@ -930,6 +924,7 @@ export default defineComponent({
       }
     },
     async recalculateProportion() {
+      if (!this.isAmountEntered) return;
       if (!this.v3Range || this.selectedInputTokens?.length === 0) return;
 
       this.odosDataLoading = true;
