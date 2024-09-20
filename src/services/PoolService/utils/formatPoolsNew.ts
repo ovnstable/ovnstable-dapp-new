@@ -41,5 +41,5 @@ export const formatPools = (
     tickSpacing: pool.tickSpacing,
   }));
 
-  return poolsList;
+  return poolsList.filter((pool: TPool) => pool.platform[0] !== 'Pancake');
 };
