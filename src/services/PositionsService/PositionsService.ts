@@ -4,14 +4,13 @@ import { loadAbi, zapAbiSrcMap, rebalanceChainMap } from '@/store/views/main/zap
 import type { TTokenInfo } from '@/types/common/tokens';
 import type { TPoolInfo } from '@/types/common/pools';
 
-export const loadPositionContract = async (state: any) => {
+export const loadPositionContract = async (state: any, platformName: string) => {
   const chainName = state.network.networkName;
-  const platformName = rebalanceChainMap[chainName];
   const abiFileSrc = zapAbiSrcMap.v3?.(chainName, platformName);
 
   const abiFile = await loadAbi(abiFileSrc);
 
-  const positionContract = buildEvmContract(
+  const positionContract = await buildEvmContract(
     abiFile.abi,
     state.web3.evmSigner,
     abiFile.address,
@@ -22,12 +21,18 @@ export const loadPositionContract = async (state: any) => {
 
 class PositionsService {
   public static async fetchPositions(state: any) {
-    // console.log('__positionsServiceFetch');
-    const positionsContract = await loadPositionContract(state);
-    const rawPositionData = await positionsContract.getPositions(state.accountData.account);
+    const platformNames = rebalanceChainMap[state.network.networkName];
 
-    // console.log('__positions', rawPositionData);
-    return rawPositionData;
+    const rawPositionsData = await Promise.all(
+      platformNames.map(async (platform: string) => {
+        const positionsContract = await loadPositionContract(state, platform);
+        const positionsData = await positionsContract.getPositions(state.accountData.account);
+        console.log('__positionsData', positionsData, platform);
+        return positionsData;
+      }),
+    );
+
+    return rawPositionsData.flat();
   }
 
   public static formatPositions(
