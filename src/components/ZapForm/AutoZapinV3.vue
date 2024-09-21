@@ -494,7 +494,7 @@ export default defineComponent({
     isAmountEntered() {
       const tokens = this.selectedInputTokens;
 
-      return tokens.every((_) => _.value);
+      return tokens.every((_) => _.value && new BN(_?.value).gt(0));
     },
     isAnyTokensBalanceIsInsufficient() {
       const tokens = this.selectedInputTokens;
