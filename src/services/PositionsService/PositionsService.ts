@@ -1,19 +1,22 @@
 import { formatPositionData } from '@/services/PositionsService/utils/positionsFormatter.ts';
 import { buildEvmContract } from '@/utils/contractsMap.ts';
-import { loadAbi, zapAbiSrcMap, rebalanceChainMap } from '@/store/views/main/zapin/index.ts';
+import {
+  loadAbi, rebalanceChainMap, srcStringBuilder,
+} from '@/store/views/main/zapin/index.ts';
 import type { TTokenInfo } from '@/types/common/tokens';
 import type { TPoolInfo } from '@/types/common/pools';
+import { ZAPIN_SCHEME } from '../Web3Service/utils/scheme.ts';
 
 export const loadPositionContract = async (state: any, platformName: string) => {
-  const chainName = state.network.networkName;
-  const abiFileSrc = zapAbiSrcMap.v3?.(chainName, platformName);
+  const abiV3Zap = srcStringBuilder('Contract')('v3', 'Zapin');
+  const abiContractV3Zap = await loadAbi(abiV3Zap);
+  const abiZapAdd = ZAPIN_SCHEME[platformName?.toLowerCase() as keyof typeof ZAPIN_SCHEME]
+    ?.zapinAdd;
 
-  const abiFile = await loadAbi(abiFileSrc);
-
-  const positionContract = await buildEvmContract(
-    abiFile.abi,
+  const positionContract = buildEvmContract(
+    abiContractV3Zap.abi,
     state.web3.evmSigner,
-    abiFile.address,
+    abiZapAdd,
   );
 
   return positionContract;
