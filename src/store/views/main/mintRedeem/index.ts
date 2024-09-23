@@ -26,13 +26,13 @@ const actions = {
     if (!networkMintRedeemScheme || tokenList.length === 0) return;
 
     const tokenMap: {[key: string]: TTokenInfo} = tokenList.reduce((acc, token) => (
-      { ...acc, [token.address]: token }
+      { ...acc, [token.address?.toLowerCase()]: token }
     ), {});
 
     // eslint-disable-next-line array-callback-return, consistent-return
     const mintRedeemList = networkMintRedeemScheme.map((pair: any) => {
-      if (tokenMap[pair.token0] && tokenMap[pair.token1]) {
-        return [tokenMap[pair.token0], tokenMap[pair.token1]];
+      if (tokenMap[pair.token0?.toLowerCase()] && tokenMap[pair.token1?.toLowerCase()]) {
+        return [tokenMap[pair.token0?.toLowerCase()], tokenMap[pair.token1?.toLowerCase()]];
       }
     }).filter(Boolean);
 
