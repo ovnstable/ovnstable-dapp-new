@@ -33,6 +33,14 @@
         :output-tokens="outputTokens"
         :zap-pool="zapPool"
       />
+      <MergeRouting
+        v-else-if="routingType === MODAL_TYPE.MERGE"
+        :swap-data="swapData"
+        :input-tokens="inputTokens"
+        :output-tokens="outputTokens"
+        :zap-pool="zapPool"
+        :initial-position-tokens="initialPositionTokens"
+      />
       <ZapinRouting
         v-else:
         :swap-data="swapData"
@@ -53,6 +61,7 @@ import type { IPositionsInfo } from '@/types/positions';
 import CompoundRouting from './CompoundRouting.vue';
 import HarvestRouting from './HarvestRouting.vue';
 import WithdrawRouting from './WithdrawRouting.vue';
+import MergeRouting from './MergeRouting.vue';
 
 export default {
   name: 'SwapRouting',
@@ -63,6 +72,7 @@ export default {
     CompoundRouting,
     HarvestRouting,
     WithdrawRouting,
+    MergeRouting,
   },
   props: {
     routingType: {

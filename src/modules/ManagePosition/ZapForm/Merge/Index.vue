@@ -142,6 +142,16 @@
         @change-slippage="handleCurrentSlippageChanged"
       />
     </div>
+    <SwapRouting
+              v-if="odosData?.netOutValue"
+              :swap-data="odosData"
+              :merged-list="allTokensList"
+              :input-tokens="inputTokens"
+              :output-tokens="selectedOutputTokens"
+              :initial-position-tokens="positionsData"
+              :routing-type="MODAL_TYPE.MERGE"
+              :zap-pool="zapPool"
+            />
     <div class="swap-container__footer">
       <ButtonComponent
         v-if="!account"
@@ -265,6 +275,7 @@ import { ethers } from 'ethers';
 import { parseErrorLog } from '@/utils/errors.ts';
 import { loadTokenImage } from '@/utils/tokenLogo.ts';
 import ZapInStepsRow from '@/components/StepsRow/ZapinRow/MergeRow.vue';
+import SwapRouting from '@/components/SwapRouting/Index.vue';
 import type { IPositionsInfo } from '@/types/positions';
 import type { TFilterPoolsParams } from '@/types/common/pools';
 
@@ -276,6 +287,7 @@ export default defineComponent({
     SwapSlippageSettings,
     BaseIcon,
     ZapInStepsRow,
+    SwapRouting,
   },
   props: {
     zapPool: {
@@ -326,6 +338,8 @@ export default defineComponent({
       isSwapLoading: false,
       odosDataLoading: false,
       slippagePercent: 1,
+      MODAL_TYPE,
+      odosData: {} as any,
     };
   },
   computed: {
