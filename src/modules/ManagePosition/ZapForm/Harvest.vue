@@ -64,6 +64,15 @@
             {{ totalLiq }}
           </div>
         </div>
+        <SwapRouting
+        v-if="zapPool"
+              :swap-data="[]"
+              :merged-list="allTokensList"
+              :input-tokens="[]"
+              :output-tokens="[]"
+              :routing-type="MODAL_TYPE.HARVEST"
+              :zap-pool="zapPool"
+            />
         <div class="swap-container__footer">
           <ButtonComponent
             v-if="!account"
@@ -129,12 +138,16 @@ import { REWARD_TOKEN } from '@/store/views/main/zapin/index.ts';
 import { loadTokenImage } from '@/utils/tokenLogo.ts';
 import {
   defineComponent,
+  type PropType,
 } from 'vue';
 import { allTokensMap } from '@/hooks/fetch/useTokensQuery.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import { parseErrorLog } from '@/utils/errors.ts';
 import { initZapinContracts } from '@/services/Web3Service/utils/index.ts';
 import ZapinService from '@/services/Web3Service/Zapin-service.ts';
+import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
+import SwapRouting from '@/components/SwapRouting/Index.vue';
+import type { IPositionsInfo } from '@/types/positions';
 
 export default defineComponent({
   name: 'HarvestForm',
@@ -142,6 +155,7 @@ export default defineComponent({
     ChangeNetwork,
     ButtonComponent,
     Spinner,
+    SwapRouting,
   },
   props: {
     allTokensList: {
@@ -150,7 +164,7 @@ export default defineComponent({
       default: () => [],
     },
     zapPool: {
-      type: Object,
+      type: Object as PropType<IPositionsInfo>,
       required: false,
       default: null,
     },
@@ -176,6 +190,7 @@ export default defineComponent({
 
       isNftApproved: false,
       isSwapLoading: false,
+      MODAL_TYPE,
     };
   },
   computed: {

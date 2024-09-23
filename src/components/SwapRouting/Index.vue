@@ -24,6 +24,10 @@
         :output-tokens="outputTokens"
         :zap-pool="zapPool"
       />
+      <HarvestRouting
+        v-else-if="routingType === MODAL_TYPE.HARVEST"
+        :zap-pool="zapPool"
+      />
       <ZapinRouting
         v-else:
         :swap-data="swapData"
@@ -42,6 +46,7 @@ import type { PropType } from 'vue';
 import IncreaseRouting from './IncreaseRouting.vue';
 import type { IPositionsInfo } from '@/types/positions';
 import CompoundRouting from './CompoundRouting.vue';
+import HarvestRouting from './HarvestRouting.vue';
 
 export default {
   name: 'SwapRouting',
@@ -50,6 +55,7 @@ export default {
     RebalanceRouting,
     IncreaseRouting,
     CompoundRouting,
+    HarvestRouting,
   },
   props: {
     routingType: {
