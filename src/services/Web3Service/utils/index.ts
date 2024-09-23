@@ -6,6 +6,7 @@ import { getNewOutputToken, getTokenByAddress, updateTokenValue } from '@/store/
 import { loadAbi, REWARD_TOKEN, srcStringBuilder } from '@/store/views/main/zapin/index.ts';
 import { buildEvmContract } from '@/utils/contractsMap.ts';
 import { markRaw } from 'vue';
+import { ZAPIN_SCHEME } from './scheme.ts';
 
 const EVENT_SIG = ['address[]', 'uint256[]'];
 const ZAP_RESULT_SIG = [
@@ -442,32 +443,41 @@ export const initZapinContracts = async (
   zapPool: any,
   mergedAllTokens: any[],
   evmSigner: any,
-  gaugeAddress: string,
+  gaugeAddress?: string,
 ) => {
   const tokenA = getTokenByAddress(zapPool?.token0Add, mergedAllTokens);
   const tokenB = getTokenByAddress(zapPool?.token1Add, mergedAllTokens);
+  if (!zapPool.platform[0]) throw new Error('Platform not found');
+
+  const platform = zapPool.platform[0]?.toLowerCase();
 
   const abiGauge = srcStringBuilder('V3GaugeRebalance')(zapPool.chainName, zapPool.platform[0]);
   const abiGaugeContractFileV3 = await loadAbi(abiGauge);
 
-  const abiV3Zap = srcStringBuilder('V3Zap')(zapPool.chainName, zapPool.platform[0]);
+  const abiV3Zap = srcStringBuilder('Contract')('v3', 'Zapin');
   const abiContractV3Zap = await loadAbi(abiV3Zap);
+  const abiZapAdd = ZAPIN_SCHEME[platform as keyof typeof ZAPIN_SCHEME]?.zapinAdd;
 
+  if (!abiZapAdd) throw new Error('abiZapAdd not found');
+
+  // possible todo, make separate folder for it, if its same every time
   const abiV3Nft = srcStringBuilder('V3Nft')(zapPool.chainName, zapPool.platform[0]);
   const abiContractV3Nft = await loadAbi(abiV3Nft);
 
-  const gaugeContract = buildEvmContract(
+  const gaugeContract = gaugeAddress ? buildEvmContract(
     abiGaugeContractFileV3.abi,
     evmSigner,
     gaugeAddress,
-  );
+  ) : null;
 
   // without markRaw, we can't read contract errors by interface
   const zapContract = markRaw(buildEvmContract(
     abiContractV3Zap.abi,
     evmSigner,
-    abiContractV3Zap.address,
+    abiZapAdd,
   ));
+
+  console.log(zapContract, '__zapContract');
 
   const poolTokenContract = buildEvmContract(
     abiContractV3Nft.abi,

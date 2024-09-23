@@ -23,6 +23,13 @@ export enum ZAPIN_TYPE {
   REBALANCE,
 }
 
+export enum ZAPIN_FUNCTIONS {
+  ZAPIN = 'zapIn',
+  REBALANCE = 'rebalance',
+  INCREASE = 'increase',
+  MERGE = 'merge',
+}
+
 interface IZapinProportion {
   outputToken: any[]
   odosData: {
@@ -49,39 +56,6 @@ interface IPoolTokensData {
 export const ACTIVE_PROTOCOLS_V3 = {
   AERODROME: [8453],
   PANCAKE: [8453, 42161],
-};
-
-export enum ZAPIN_FUNCTIONS {
-  ZAPIN = 'zapIn',
-  REBALANCE = 'rebalance',
-  INCREASE = 'increase',
-  MERGE = 'merge',
-}
-
-enum DEPOSIT_TYPES {
-  DEPOSIT = 'deposit',
-  TRANSFER = 'transfer',
-  ADD = 'add',
-  NONE = ''
-}
-
-// for zapins
-const ZAPIN_SCHEME = {
-  BASE: {
-    stake: DEPOSIT_TYPES.DEPOSIT,
-    contract: 'gaugeContract',
-  },
-  PANCAKE: {
-    stake: DEPOSIT_TYPES.TRANSFER,
-    contract: 'poolTokenContract',
-  },
-  TRADERJOE: {
-    stake: DEPOSIT_TYPES.ADD,
-    contract: 'gaugeContract',
-  },
-  UNISWAP: {
-    stake: DEPOSIT_TYPES.NONE,
-  },
 };
 
 class ZapinService {

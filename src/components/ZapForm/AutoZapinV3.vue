@@ -266,7 +266,6 @@ import {
   maxAll,
   getNewOutputToken,
   getNewInputToken,
-  getTokenByAddress,
 } from '@/store/helpers/index.ts';
 import odosApiService from '@/services/odos-api-service.ts';
 
@@ -286,8 +285,6 @@ import { MANAGE_FUNC, zapInStep } from '@/store/modals/waiting-modal.ts';
 import SwapSlippageSettings from '@/components/SwapSlippage/Index.vue';
 import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
 import TokenService from '@/services/TokenService/TokenService.ts';
-import { loadAbi, srcStringBuilder } from '@/store/views/main/zapin/index.ts';
-import { buildEvmContract } from '@/utils/contractsMap.ts';
 import { isEmpty } from 'lodash';
 import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
@@ -299,6 +296,7 @@ import {
   getUpdatedTokenVal,
   initReqData,
   initZapData,
+  initZapinContracts,
   parseLogs,
   removeToken,
 } from '@/services/Web3Service/utils/index.ts';
@@ -590,38 +588,17 @@ export default defineComponent({
     },
 
     async initContracts() {
-      const tokens = (this.$route.query?.tokens as string)?.split('-');
-      const tokenA = getTokenByAddress(tokens[0], this.mergedTokenList);
-      const tokenB = getTokenByAddress(tokens[1], this.mergedTokenList);
-      const abiGauge = srcStringBuilder('V3GaugeRebalance')(this.zapPool.chainName, this.zapPool.platform[0]);
-      const abiGaugeContractFileV3 = await loadAbi(abiGauge);
-
-      const abiV3Zap = srcStringBuilder('V3Zap')(this.zapPool.chainName, this.zapPool.platform[0]);
-      const abiContractV3Zap = await loadAbi(abiV3Zap);
-
-      const abiV3Nft = srcStringBuilder('V3Nft')(this.zapPool.chainName, this.zapPool.platform[0]);
-      const abiContractV3Nft = await loadAbi(abiV3Nft);
-
-      this.gaugeContract = buildEvmContract(
-        abiGaugeContractFileV3.abi,
+      const contractsData = await initZapinContracts(
+        this.zapPool,
+        this.zapAllTokens,
         this.evmSigner,
         this.zapPool.gauge,
       );
 
-      // without markRaw, we can't read contract error by interface
-      this.zapContract = markRaw(buildEvmContract(
-        abiContractV3Zap.abi,
-        this.evmSigner,
-        abiContractV3Zap.address,
-      ));
-
-      this.poolTokenContract = buildEvmContract(
-        abiContractV3Nft.abi,
-        this.evmSigner,
-        abiContractV3Nft.address,
-      );
-
-      this.poolTokens = [tokenA, tokenB];
+      this.gaugeContract = contractsData.gaugeContract;
+      this.zapContract = contractsData.zapContract;
+      this.poolTokenContract = contractsData.poolTokenContract;
+      this.poolTokens = contractsData.poolTokens;
 
       console.log(this.zapContract);
     },
