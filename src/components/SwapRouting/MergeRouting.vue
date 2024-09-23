@@ -7,7 +7,7 @@
   <span class="divider" />
 
   <LiquiditySegment
-    :total-usd-value="swapData?.netOutValue ?? '0'"
+    :total-usd-value="getLiquiditySum(initialPositionTokens)"
     :output-tokens="initialPositionTokens ?? []"
     title="Remove liquidity"
   />

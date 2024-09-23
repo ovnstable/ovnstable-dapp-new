@@ -148,9 +148,9 @@
               :merged-list="allTokensList"
               :input-tokens="inputTokens"
               :output-tokens="selectedOutputTokens"
-              :initial-position-tokens="positionsData"
+              :initial-position-tokens="initPositionTokens"
               :routing-type="MODAL_TYPE.MERGE"
-              :zap-pool="zapPool"
+              :zap-pool="positionsData[0]"
             />
     <div class="swap-container__footer">
       <ButtonComponent
@@ -331,6 +331,8 @@ export default defineComponent({
       positionsNotApproved: [] as string[],
       inputTokens: [] as any[],
       outputTokens: [] as any[],
+      initPositionTokens: [] as any[],
+      newPositionTokens: [] as any[],
       poolTokens: [] as any[],
       gaugeContracts: [] as any[],
       zapContract: null as any,
@@ -593,12 +595,16 @@ export default defineComponent({
         };
       });
 
+      this.initPositionTokens = arrTokens;
+
       const inputTokenInfo = formatInputTokens(arrTokens);
       this.inputTokens = inputTokenInfo;
 
       const tokenA = initOutputToken(this.poolTokens[0], true, 50);
       const tokenB = initOutputToken(this.poolTokens[1], true, 50);
       this.outputTokens = [tokenA, tokenB];
+
+      this.recalculateProportion();
     },
     handleCurrentSlippageChanged(newSlippage: number) {
       this.slippagePercent = newSlippage;
@@ -859,6 +865,51 @@ export default defineComponent({
           this.positionsNotApproved.push(_);
         }
       });
+    },
+    async recalculateProportion() {
+      if (!this.v3RangeTicks || this.inputTokens?.length === 0) return;
+
+      this.odosDataLoading = true;
+
+      try {
+        const data = await ZapinService.recalculateProportionOdosV3(
+          this.inputTokens,
+          this.selectedOutputTokens,
+          this.zapPool,
+          this.zapContract,
+          this.v3RangeTicks,
+          this.networkId,
+          this.slippagePercent,
+          this.odosSwapRequest,
+          true,
+          ZAPIN_TYPE.ZAPIN,
+        );
+
+        if (!data || (data && !data.odosData)) {
+          this.odosDataLoading = false;
+          return;
+        }
+
+        this.newPositionTokens = data.outputTokens.map((token: any, i) => ({
+          ...token,
+          sum: new BN(token.sum).plus(new BN(this.inputTokens[i].sum)).toFixed(),
+          value: new BN(token.sum).plus(new BN(this.inputTokens[i].sum)).toFixed(),
+        }));
+
+        const totalFinalOutputUsd = this.newPositionTokens
+          .reduce((acc: any, curr: any) => acc
+            .plus(new BN(curr.sum).times(curr.selectedToken?.price)), new BN(0)).toFixed();
+
+        this.outputTokens = data?.outputTokens;
+        this.odosData = {
+          ...data.odosData,
+          netOutValue: totalFinalOutputUsd,
+        };
+        this.odosDataLoading = false;
+      } catch (e) {
+        this.showErrorModalWithMsg({ errorMsg: parseErrorLog(e) });
+        this.odosDataLoading = false;
+      }
     },
   },
 });
