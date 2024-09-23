@@ -89,6 +89,16 @@
               hide-balance
             />
           </div>
+          <SwapRouting
+              v-if="zapPool"
+              :swap-data="[]"
+              :merged-list="[]"
+              :input-tokens="[]"
+              :output-tokens="selectedOutputTokens"
+              :initial-position-tokens="[]"
+              :routing-type="MODAL_TYPE.WITHDRAW"
+              :zap-pool="zapPool"
+            />
         </div>
         <div class="swap-container__footer">
           <ButtonComponent
@@ -178,10 +188,12 @@ import BN from 'bignumber.js';
 import { MANAGE_FUNC, withdrawStep } from '@/store/modals/waiting-modal.ts';
 import { formatInputTokens } from '@/utils/tokens.ts';
 import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
-import { defineComponent } from 'vue';
+import { defineComponent, type PropType } from 'vue';
 import { fixedByPrice } from '@/utils/numbers.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import { initZapinContracts } from '@/services/Web3Service/utils/index.ts';
+import SwapRouting from '@/components/SwapRouting/Index.vue';
+import type { IPositionsInfo } from '@/types/positions';
 
 export default defineComponent({
   name: 'WithdrawForm',
@@ -190,6 +202,7 @@ export default defineComponent({
     TokenForm,
     ChangeNetwork,
     Spinner,
+    SwapRouting,
   },
   props: {
     allTokensList: {
@@ -203,9 +216,8 @@ export default defineComponent({
       default: () => [],
     },
     zapPool: {
-      type: Object,
-      required: false,
-      default: null,
+      type: Object as PropType<IPositionsInfo>,
+      required: true,
     },
     gaugeAddress: {
       type: String,
@@ -226,6 +238,7 @@ export default defineComponent({
       currentStage: withdrawStep.WITHDRAW,
       isNftApproved: false,
       isSwapLoading: false,
+      MODAL_TYPE,
     };
   },
   computed: {
@@ -259,9 +272,9 @@ export default defineComponent({
       return this.outputTokens.filter((item: any) => item.selectedToken).length;
     },
 
-    // selectedOutputTokens() {
-    //   return this.outputTokens.filter((item: any) => item.selectedToken);
-    // },
+    selectedOutputTokens() {
+      return this.outputTokens.filter((item: any) => item.selectedToken);
+    },
 
     isDisableButton() {
       return (this.outputTokensWithSelectedTokensCount === 0 || !this.isAvailableOnNetwork
@@ -380,8 +393,8 @@ export default defineComponent({
 
         return {
           ..._,
-          value: new BN(price).toFixed(fixedByPrice(price)),
-          sum: new BN(price).toFixed(fixedByPrice(price)),
+          value: new BN(price).toFixed(fixedByPrice(Number(price))),
+          sum: new BN(price).toFixed(fixedByPrice(Number(price))),
         };
       });
 
