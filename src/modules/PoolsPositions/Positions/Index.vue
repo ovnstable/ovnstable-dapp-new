@@ -109,6 +109,7 @@ import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import { usePoolsQueryNew } from '@/hooks/fetch/usePoolsQuery.ts';
 import type { TFilterPoolsParams, TPoolInfo } from '@/types/common/pools/index.ts';
 import ZapinService from '@/services/Web3Service/Zapin-service.ts';
+import type { IPositionsInfo } from '@/types/positions';
 
 interface IEnumIterator {
   next: () => number,
@@ -290,7 +291,7 @@ export default defineComponent({
       if (foundPool) return foundPool.gauge;
       return '';
     },
-    async handleClaim(pool: TPoolInfo) {
+    async handleClaim(pool: IPositionsInfo) {
       this.setIsZapModalShow(false);
       this.handleClickSearch(pool);
       await awaitDelay(500);
