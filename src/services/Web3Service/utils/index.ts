@@ -393,16 +393,15 @@ export const initZapData = (
         .toFixed(0),
     })),
     data: responseData ? responseData.transaction.data : '0x',
-    needToAdjust: true,
-    adjustSwapSide: false,
-    adjustSwapAmount: 0,
   };
 
   const gaugeData = {
-    pair: zapPoolAdd,
+    pool: zapPoolAdd,
     tickRange: v3Range.ticks,
     amountsOut: [proportions.amountToken0Out, proportions.amountToken1Out],
     isSimulation: true,
+    adjustSwapSide: false,
+    adjustSwapAmount: 0,
   };
 
   return {

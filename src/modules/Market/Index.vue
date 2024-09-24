@@ -209,7 +209,8 @@ export default {
 }
 .page-wrapper {
   display: flex;
-    flex-direction: row;
-    gap: 50px;
+  flex-direction: row;
+  gap: 50px;
+  margin-top: 24px;
 }
 </style>

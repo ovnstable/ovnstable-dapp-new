@@ -145,17 +145,17 @@
           v-else
           class="swap-button-container"
         >
-          <ButtonComponent
-            v-if="isDisabled"
-            btn-size="large"
-            btn-styles="primary"
-            full
-            disabled
-          >
-            NOT ENOUGH REWARDS TO COMPOUND
-          </ButtonComponent>
-          <ButtonComponent
-          v-if="isHasRewards"
+        <ButtonComponent
+          v-if="isDisabled"
+          btn-size="large"
+          btn-styles="primary"
+          full
+          disabled
+        >
+          NOT ENOUGH REWARDS TO COMPOUND
+        </ButtonComponent>
+        <ButtonComponent
+          v-else-if="isHasRewards"
           btn-size="large"
           btn-styles="primary"
           full

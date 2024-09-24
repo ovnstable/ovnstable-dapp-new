@@ -104,6 +104,18 @@ class ZapinService {
       .getProportionForRebalance(Number(tokenId), poolAddress, tickRange, inputSwapTokens);
   }
 
+  async getV3PositionAmounts(
+    zapContract: any,
+    tokenId: string,
+  ) {
+    return zapContract
+      .getPositionAmounts(tokenId)
+      .then((data: any) => data)
+      .catch((e: any) => {
+        console.error('Error get proportion for V3', e);
+      });
+  }
+
   async getV3Proportion(
     poolAddress: string,
     tickRange: string[],
@@ -520,8 +532,8 @@ class ZapinService {
     tokenId?: string,
     tokensMerge?: string[],
   ) {
-    let txData = { ...argTxData };
-    const gaugeData = { ...argGaugeData };
+    const txData = { ...argTxData };
+    let gaugeData = { ...argGaugeData };
 
     try {
       if (method === ZAPIN_FUNCTIONS.MERGE) {
@@ -540,13 +552,12 @@ class ZapinService {
       console.log(decoded, '___decoded2');
       if (!decoded) throw new Error(e);
 
-      txData = {
-        ...txData,
+      gaugeData = {
+        ...gaugeData,
+        isSimulation: false,
         adjustSwapAmount: decoded.args[4],
         adjustSwapSide: decoded.args[5],
       };
-
-      gaugeData.isSimulation = false;
     }
 
     try {
@@ -590,11 +601,6 @@ class ZapinService {
 
     if (emptyVals.every((_) => !_)) return null;
 
-    const outputTokensForRebalance = selectedOutputTokens.map((_) => ({
-      tokenAddress: _?.selectedToken?.address,
-      price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
-    }));
-
     let resp: any = null;
 
     if (typeFunc === ZAPIN_TYPE.ZAPIN) {
@@ -610,6 +616,7 @@ class ZapinService {
         }),
         'LOOGS___',
       );
+
       resp = await this.getV3Proportion(
         zapPool.address,
         v3RangeTicks,
@@ -623,11 +630,32 @@ class ZapinService {
     }
 
     if (typeFunc === ZAPIN_TYPE.REBALANCE) {
-      resp = await this.getV3Rebalance(
+      const amounts = await this.getV3PositionAmounts(
+        zapContract,
         zapPool.tokenId?.toString(),
+      );
+
+      console.log(
+        JSON.stringify({
+          add: zapPool.address,
+          ticks: v3RangeTicks,
+          tokens: selectedInputTokens.map((_, key) => ({
+            tokenAddress: _?.selectedToken?.address,
+            amount: amounts[key]?.toString(),
+            price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
+          })),
+        }),
+        'LOOGS___',
+      );
+
+      resp = await this.getV3Proportion(
         zapPool.address,
         v3RangeTicks,
-        outputTokensForRebalance,
+        selectedInputTokens.map((_, key) => ({
+          tokenAddress: _?.selectedToken?.address,
+          amount: amounts[key],
+          price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
+        })),
         zapContract,
       );
     }

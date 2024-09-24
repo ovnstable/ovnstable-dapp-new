@@ -29,9 +29,14 @@ class PositionsService {
     const rawPositionsData = await Promise.all(
       platformNames.map(async (platform: string) => {
         const positionsContract = await loadPositionContract(state, platform);
-        const positionsData = await positionsContract.getPositions(state.accountData.account);
-        // console.log('__positionsData', positionsData, platform);
-        return positionsData;
+        try {
+          const positionsData = await positionsContract.getPositions(state.accountData.account);
+          // console.log('__positionsData', positionsData, platform);
+          return positionsData;
+        } catch (e) {
+          console.log(e, positionsContract, '___e');
+          return [];
+        }
       }),
     );
 
@@ -44,7 +49,6 @@ class PositionsService {
     tokens: TTokenInfo[],
     networkId: number,
   ) {
-    // console.log('__positionsServiceFormat');
     const tokenMap = new Map(tokens.map((token) => [token.address, token]));
     const poolsMap = pools.reduce((acc: any, pool: any) => ({ ...acc, [pool.address]: pool }), {});
 

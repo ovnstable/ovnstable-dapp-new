@@ -2,7 +2,7 @@
   <LiquiditySegment
     :total-usd-value="zapPool?.rewards?.usdValue ?? '0'"
     :output-tokens="zapPool.rewards.tokensInfo"
-    title="Harwest to compound"
+    title="Harvest to compound"
   />
 
   <span class="divider" />
