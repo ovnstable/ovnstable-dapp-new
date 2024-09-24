@@ -30,7 +30,7 @@ class PositionsService {
       platformNames.map(async (platform: string) => {
         const positionsContract = await loadPositionContract(state, platform);
         const positionsData = await positionsContract.getPositions(state.accountData.account);
-        console.log('__positionsData', positionsData, platform);
+        // console.log('__positionsData', positionsData, platform);
         return positionsData;
       }),
     );
