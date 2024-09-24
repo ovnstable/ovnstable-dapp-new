@@ -11,7 +11,6 @@ import App from '@/App.vue';
 import VueApexCharts from 'vue3-apexcharts';
 import { VueQueryPlugin } from '@tanstack/vue-query';
 import { createContext } from '@/context.ts';
-import PosthogService from './services/PosthogService/PosthogService.ts';
 
 const app = createApp(App);
 
@@ -36,14 +35,9 @@ const ctx = createContext();
 app.provide('poolService', ctx.PoolService);
 app.provide('tokenService', ctx.TokenService);
 app.provide('balanceService', ctx.BalanceService);
+app.provide('posthogService', ctx.PosthogService);
 
-async function initPosthog() {
-  try {
-    store.dispatch('posthog/initPosthog', PosthogService.getInstance(), { root: true });
-  } catch (e) {
-    console.log('Error init posthog:', e);
-  }
-}
+// TODO: solve without setting instance directly
+store.dispatch('accountData/initPosthog', ctx.PosthogService);
 
-initPosthog();
 app.mount('#app');

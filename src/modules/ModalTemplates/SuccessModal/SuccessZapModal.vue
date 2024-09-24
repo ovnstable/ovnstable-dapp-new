@@ -67,16 +67,15 @@
 import ModalComponent from '@/components/Modal/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
-import { mapGetters, mapState } from 'vuex';
+import { mapState } from 'vuex';
 import {
   computed, defineComponent,
 } from 'vue';
-import { getAllTokensString, getTransactionTotal } from '@/utils/tokens.ts';
-import { checkIsEveryStable } from '@/store/views/main/pools/helpers.ts';
 import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
 import { useTokensQuery, useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import type { TPoolInfo } from '@/types/common/pools/index.ts';
+import { useDispatchManagePositionEvents } from '@/hooks/analytics/useDispatchManagePositionEvents.ts';
 import ZapinContent from './components/zapin.vue';
 import WithdrawContent from './components/withdraw.vue';
 import HarvestContent from './components/harvest.vue';
@@ -120,6 +119,7 @@ export default defineComponent({
       isAllDataLoaded: computed(() => !isLoading.value),
       isAllDataTrigger: computed(() => !isLoading.value),
       isBalancesLoading,
+      dispatchManagePositionEvent: useDispatchManagePositionEvents(),
     };
   },
   data() {
@@ -139,14 +139,10 @@ export default defineComponent({
       'showSuccessZapin',
       'lastParsedReturnedToUserEvent',
       'lastParsedPutIntoPoolEvent',
-      'lastParsedZapResponseData',
     ]),
     ...mapState('poolsData', [
       'lastParsedClaimedRewardsEvent',
     ]),
-    ...mapGetters('accountData', ['account']),
-    ...mapGetters('posthog', ['posthogService']),
-    ...mapGetters('network', ['explorerUrl']),
 
     mergedTokenList() {
       return mergedTokens(this.allTokensList, this.balancesList as any[]);
@@ -166,29 +162,7 @@ export default defineComponent({
     showSuccessZapin(currVal: boolean) {
       this.showModal = currVal;
 
-      if (!this.isInit && currVal) {
-        // TODO: move Posthog logic up to store
-        const posthogEventData = {
-          txUrl: `${this.explorerUrl}tx/${this.lastParsedZapResponseData?.hash || ''}`,
-          token0: this.successData.inputTokens ? getAllTokensString(this.successData.inputTokens
-            .map((token: any) => token.selectedToken)) : '',
-          token1: this.successData.outputTokens ? getAllTokensString(this.successData.outputTokens
-            .map((token: any) => token.selectedToken)) : '',
-          poolName: this.successData.pool.name,
-          poolVersion: this.successData.pool.poolVersion,
-          usdTotal: getTransactionTotal(this.successData.inputTokens),
-          poolType: checkIsEveryStable(this.successData.pool) ? 'Stable' : 'Volatile',
-          walletAddress: this.account,
-          chainName: this.successData.pool.chainName,
-          poolPlatform: this.successData.pool.platform.toString(),
-        };
-
-        if (this.lastParsedClaimedRewardsEvent) {
-          this.posthogService
-            .rebalanceSuccessTrigger(posthogEventData);
-        }
-        this.posthogService.zapinSuccessTrigger(posthogEventData);
-      }
+      if (!this.isInit && currVal) this.dispatchManagePositionEvent(this.successData.modalType);
     },
     successData(val) {
       if (val) {

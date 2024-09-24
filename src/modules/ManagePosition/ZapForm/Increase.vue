@@ -803,7 +803,7 @@ export default {
             outputTokens,
             hash: tx.hash,
             pool: this.zapPool,
-            modalType: MODAL_TYPE.ZAPIN,
+            modalType: MODAL_TYPE.INCREASE,
           },
         );
         this.clearZapData();

@@ -831,7 +831,7 @@ export default defineComponent({
           this.gaugeAddress,
         );
 
-        const tx = await contractsData.gaugeContract.deposit(this.zapPool.tokenId?.toString());
+        const tx = await contractsData!.gaugeContract!.deposit(this.zapPool.tokenId?.toString());
 
         await tx.wait();
 
@@ -845,7 +845,7 @@ export default defineComponent({
             outputTokens,
             hash: tx.hash,
             pool: this.zapPool,
-            modalType: MODAL_TYPE.REBALANCE,
+            modalType: MODAL_TYPE.MERGE,
           },
         );
         this.closeWaitingModal();

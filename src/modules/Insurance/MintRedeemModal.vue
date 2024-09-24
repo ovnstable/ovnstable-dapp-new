@@ -509,7 +509,6 @@ export default defineComponent({
 
             await tx.wait();
 
-            // self.refreshBalances();
             self.showSuccessModal({
               successTxHash: tx.hash,
               successAction: 'mintInsurance',

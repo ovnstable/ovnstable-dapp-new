@@ -62,6 +62,26 @@ class PosthogService {
     this.captureEvent('Rebalance success event', props);
   }
 
+  increaseSuccessTrigger(props: TZapinSuccessTriggerProps): void {
+    this.captureEvent('Increase success event', props);
+  }
+
+  withdrawSuccessTrigger(props: TZapinSuccessTriggerProps): void {
+    this.captureEvent('Withdraw success event', props);
+  }
+
+  mergeSuccessTrigger(props: TZapinSuccessTriggerProps): void {
+    this.captureEvent('Merge success event', props);
+  }
+
+  compoundSuccessTrigger(props: TZapinSuccessTriggerProps): void {
+    this.captureEvent('Compound success event', props);
+  }
+
+  harvestSuccessTrigger(props: TZapinSuccessTriggerProps): void {
+    this.captureEvent('Harvest success event', props);
+  }
+
   identyfyByWalletTrigger({ address }: TIdentyfyByWalletTriggerProps): void {
     this.identifyUser(address);
   }

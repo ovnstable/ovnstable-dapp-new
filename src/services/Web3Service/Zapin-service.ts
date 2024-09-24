@@ -8,8 +8,9 @@ import BN from 'bignumber.js';
 import { fixedByPrice, formatMoney } from '@/utils/numbers.ts';
 import { WHITE_LIST_ODOS } from '@/store/helpers/index.ts';
 import { ethers } from 'ethers';
-import { MODAL_TYPE, ODOS_REF_CODE } from '@/store/views/main/odos/index.ts';
+import { MODAL_TYPE, ODOS_REF_CODE, type ITriggerSuccessZapin } from '@/store/views/main/odos/index.ts';
 import { parseErrorLog } from '@/utils/errors.ts';
+import type { IPositionsInfo } from '@/types/positions/index.ts';
 import {
   calculateProportionForPool,
   countPercentDiff,
@@ -60,11 +61,11 @@ export const ACTIVE_PROTOCOLS_V3 = {
 
 class ZapinService {
   async claimPosition(
-    zapPool: any,
+    zapPool: IPositionsInfo,
     gaugeContract: any,
     poolTokenContract: any,
-    triggerSuccess: Function,
-    inputTokens?: any,
+    triggerSuccess: (successData: ITriggerSuccessZapin) => void,
+    inputTokens?: any[],
   ) {
     let tx = null;
 
@@ -74,19 +75,20 @@ class ZapinService {
       tx = await poolTokenContract.collect(zapPool.tokenId);
     }
 
-    console.log(tx, '__TX');
     await tx.wait();
 
-    console.log('__TX2');
-    triggerSuccess(
-      {
-        isShow: true,
-        inputTokens: inputTokens ?? [],
-        hash: tx.hash,
-        pool: zapPool,
-        modalType: MODAL_TYPE.HARVEST,
-      },
-    );
+    const successData = {
+      isShow: true,
+      inputTokens: inputTokens ?? [],
+      outputTokens: inputTokens ?? [],
+      hash: tx.hash,
+      pool: zapPool,
+      modalType: MODAL_TYPE.HARVEST,
+      putIntoPoolEvent: {},
+      returnedToUserEvent: {},
+    };
+
+    triggerSuccess(successData);
 
     return tx;
   }

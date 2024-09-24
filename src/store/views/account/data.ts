@@ -1,5 +1,27 @@
+import type { IPosthogService } from '@/types/posthog';
+
+const isSwitchedToOtherAccount = (
+  account: string,
+  walletAddress: string,
+) => account && walletAddress && (account !== walletAddress);
+
+const dispatchWalletDataToPosthog = (
+  account: string,
+  walletAddress: string,
+  posthogInstance: IPosthogService,
+) => {
+  if (!account && walletAddress) {
+    posthogInstance
+      .identyfyByWalletTrigger({ address: walletAddress });
+  } else if (isSwitchedToOtherAccount(account, walletAddress)) {
+    posthogInstance
+      .linkWalletsTrigger({ address0: account, address1: walletAddress });
+  }
+};
+
 const state = {
   account: null,
+  posthogInstance: {} as IPosthogService,
 
   // Actual value doesnt matter, just a reactivity trigger
   balanceRefreshTrigger: false as boolean,
@@ -13,22 +35,16 @@ const getters = {
 
 const actions = {
   handleSwitchAccount({
-    commit, state, rootGetters,
+    commit, state,
   }: any, walletAddress: string) {
-    // Posthog sideeffects
-    const posthog = rootGetters['posthog/posthogService'];
-    if (!state.account && walletAddress) {
-    // First wallet connection
-      posthog
-        .identyfyByWalletTrigger({ address: walletAddress });
-    } else if (state.account && walletAddress && (state.account !== walletAddress)) {
-      posthog
-        .linkWalletsTrigger({ address0: state.account, address1: walletAddress });
-    }
+    dispatchWalletDataToPosthog(state.account, walletAddress, state.posthogInstance);
     commit('setAccount', walletAddress);
   },
   handleRefreshBalances({ commit }: any) {
     commit('toggleBalanceRefresh');
+  },
+  initPosthog({ commit }: any, posthogService: IPosthogService) {
+    commit('setPosthogInstance', posthogService);
   },
 };
 
@@ -38,6 +54,9 @@ const mutations = {
   },
   toggleBalanceRefresh(state: any) {
     state.balanceRefreshTrigger = !state.balanceRefreshTrigger;
+  },
+  setPosthogInstance(state: any, posthogService: IPosthogService) {
+    state.posthogInstance = posthogService;
   },
 };
 

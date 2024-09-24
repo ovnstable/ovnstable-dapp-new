@@ -49,6 +49,11 @@ export interface IPosthogService {
     swapSuccessTrigger(props: TSwapSuccessTriggerProps): void
     zapinSuccessTrigger(props: TZapinSuccessTriggerProps): void
     rebalanceSuccessTrigger(props: TZapinSuccessTriggerProps): void
+    increaseSuccessTrigger(props: TZapinSuccessTriggerProps): void
+    withdrawSuccessTrigger(props: TZapinSuccessTriggerProps): void
+    mergeSuccessTrigger(props: TZapinSuccessTriggerProps): void
+    compoundSuccessTrigger(props: TZapinSuccessTriggerProps): void
+    harvestSuccessTrigger(props: TZapinSuccessTriggerProps): void
     mintredeemSuccessTrigger(props: TMintRedeemSuccessTriggerProps): void
     wrapUnwrapSuccessTrigger(props: TMintRedeemSuccessTriggerProps): void
     identyfyByWalletTrigger(props: TIdentyfyByWalletTriggerProps): void
