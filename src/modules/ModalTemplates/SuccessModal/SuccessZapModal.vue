@@ -16,7 +16,7 @@
 
       <template v-if="successData">
         <ZapinContent
-          v-if="[MODAL_TYPE.ZAPIN, MODAL_TYPE.REBALANCE, MODAL_TYPE.INCREASE]
+          v-if="[MODAL_TYPE.ZAPIN, MODAL_TYPE.REBALANCE, MODAL_TYPE.INCREASE, MODAL_TYPE.MERGE]
             .includes(successData.modalType)"
           :tokens-staked-list="tokensStakedList"
           :tokens-sent-list="tokensSentList"
@@ -183,23 +183,21 @@ export default defineComponent({
     closeModal() {
       this.setShowFunc({ isShow: false });
 
-      // If rebalance modal
-      if (this.successData.modalType !== MODAL_TYPE.ZAPIN) {
-        this.$router.replace('/positions');
-        // Cleaning the state on close
-        this.$store.commit('poolsData/changeState', {
-          field: 'lastParsedBurnedTokenIdEvent',
-          val: '',
-        });
-        this.$store.commit('poolsData/changeState', {
-          field: 'lastParsedTokenIdEvent',
-          val: '',
-        });
-        this.$store.commit('poolsData/changeState', {
-          field: 'lastParsedClaimedRewardsEvent',
-          val: '',
-        });
-      }
+      // Cleaning the state on close
+      this.$store.commit('poolsData/changeState', {
+        field: 'lastParsedBurnedTokenIdEvent',
+        val: '',
+      });
+      this.$store.commit('poolsData/changeState', {
+        field: 'lastParsedTokenIdEvent',
+        val: '',
+      });
+      this.$store.commit('poolsData/changeState', {
+        field: 'lastParsedClaimedRewardsEvent',
+        val: '',
+      });
+
+      if (this.successData.modalType !== MODAL_TYPE.ZAPIN) this.$router.replace('/positions');
 
       this.isInit = false;
     },

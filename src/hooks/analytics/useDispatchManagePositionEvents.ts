@@ -1,16 +1,14 @@
 /* eslint-disable vue/max-len */
 /* eslint-disable import/prefer-default-export */
-import { computed, inject } from 'vue';
+import { computed, inject, type Ref } from 'vue';
 import { useStore } from 'vuex';
 import { getTransactionTotal } from '@/utils/tokens.ts';
-import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
+import { MODAL_TYPE, type ITriggerSuccessZapin } from '@/store/views/main/odos/index.ts';
 import type { IPosthogService, TZapinSuccessTriggerProps } from '@/types/posthog';
 import { getSumTokens, getTokenType, getTxExplorerUrl } from './helpers.ts';
 
 export const useDispatchManagePositionEvents = () => {
   const posthogService = inject('posthogService') as IPosthogService;
-
-  console.log('__initManagePosition');
 
   const posthogActionMap = {
     [MODAL_TYPE.HARVEST]: (posthogEventData: TZapinSuccessTriggerProps) => posthogService.harvestSuccessTrigger(posthogEventData),
@@ -23,7 +21,7 @@ export const useDispatchManagePositionEvents = () => {
   };
   // Necessary state data
   const { state: stateData } = useStore();
-  const successData = computed(() => stateData.odosData.successData);
+  const successData: Ref<ITriggerSuccessZapin> = computed(() => stateData.odosData.successData);
   const account = computed(() => stateData.accountData.account);
   const explorerUrl = computed(() => stateData.network.explorerUrl);
   const lastParsedZapResponseData = computed(() => stateData.odosData.lastParsedZapResponseData);
@@ -31,11 +29,11 @@ export const useDispatchManagePositionEvents = () => {
   return (modalType: MODAL_TYPE) => {
     try {
       const posthogEventData = {
-        txUrl: getTxExplorerUrl(explorerUrl.value, lastParsedZapResponseData.value?.hash),
+        txUrl: getTxExplorerUrl(explorerUrl.value, successData.value.hash ?? lastParsedZapResponseData.value?.hash),
         token0: getSumTokens(successData.value.inputTokens),
         token1: getSumTokens(successData.value.outputTokens),
         poolName: successData.value.pool.name,
-        poolVersion: successData.value.pool.poolVersion,
+        poolVersion: successData.value.pool.poolVersion ?? 'v3',
         usdTotal: getTransactionTotal(successData.value.inputTokens),
         poolType: getTokenType(successData.value.pool),
         walletAddress: account.value,

@@ -79,8 +79,8 @@ class ZapinService {
 
     const successData = {
       isShow: true,
-      inputTokens: inputTokens ?? [],
-      outputTokens: inputTokens ?? [],
+      inputTokens: inputTokens ?? zapPool.rewards.tokensInfo ?? [],
+      outputTokens: inputTokens ?? zapPool.rewards.tokensInfo ?? [],
       hash: tx.hash,
       pool: zapPool,
       modalType: MODAL_TYPE.HARVEST,
