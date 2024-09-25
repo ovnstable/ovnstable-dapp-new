@@ -14,11 +14,24 @@
     <div class="divider" />
     <div
       v-if="errorMsg"
-      class="error-content__msg"
+      class="error-text-container"
     >
-      <div class="error-message">
-        {{ errorMsg?.message ? errorMsg?.message : errorMsg }}
+      <div class="error-content__msg">
+        <div class="error-message">
+          {{ errorMsg?.message ? errorMsg?.message : errorMsg }}
+        </div>
       </div>
+      <ButtonComponent
+        class="btn-clipboard"
+        btn-styles="link"
+        @click="copyError()"
+        @keypress="copyError()"
+      >
+        Copy error to clipboard
+        <!-- <BaseIcon
+          name="Copy"
+        /> -->
+      </ButtonComponent>
     </div>
 
     <div class="error-content__submit">
@@ -46,7 +59,7 @@ export default {
     BaseIcon,
     ButtonComponent,
   },
-  props: ['errorMsg', 'errorTitle'],
+  props: ['errorMsg'],
 };
 </script>
 
@@ -115,5 +128,27 @@ h1 {
       color: var(--color-18);
     }
   }
+}
+.error-message {
+  max-height: 100px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+  overflow: hidden;
+  line-height: normal;
+}
+.btn-clipboard {
+  svg {
+    path {
+      color: var(--color-17);
+    }
+  }
+}
+.error-text-container {
+  display: flex;
+    width: 100%;
+    flex-direction: column;
+    margin: 20px 0;
+    gap: 15px;
 }
 </style>

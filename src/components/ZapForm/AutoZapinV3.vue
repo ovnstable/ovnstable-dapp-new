@@ -896,12 +896,12 @@ export default defineComponent({
 
         this.toApproveAndDepositSteps(this.lastZapResponseData);
       } catch (e: any) {
-        this.isSwapLoading = false;
         this.closeWaitingModal();
         this.showErrorModalWithMsg({
           errorType: 'zap',
           errorMsg: parseErrorLog(e),
         });
+        this.isSwapLoading = false;
       }
     },
     async recalculateProportion() {

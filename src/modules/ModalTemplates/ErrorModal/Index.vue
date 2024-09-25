@@ -158,6 +158,11 @@ export default {
         return;
       }
 
+      if (this.errorMsg === 'rejected' || this.errorMsg?.message?.includes('reason="rejected"')) {
+        this.errorViewType = 'rejected';
+        return;
+      }
+
       this.errorCode = this.errorMsg.code;
       // eslint-disable-next-line no-nested-ternary
       this.errorText = this.errorMsg
@@ -202,12 +207,6 @@ export default {
         return;
       }
 
-      if (this.errorMsg === 'rejected') {
-        console.log('this.errorMsg', this.errorMsg);
-        this.errorViewType = 'rejected';
-        return;
-      }
-
       if (this.isRpcError(this.errorMsg)) {
         this.errorViewType = 'rpc';
         return;
@@ -239,25 +238,8 @@ export default {
       return false;
     },
 
-    async copyErrorToClipboard(copyTooltip: string) {
-      if (copyTooltip === 'container') {
-        this.showCopyTooltipContainer = true;
-      }
-      if (copyTooltip === 'link') {
-        this.showCopyTooltip = true;
-      }
-
+    async copyErrorToClipboard() {
       await navigator.clipboard.writeText(JSON.stringify(this.errorMsg));
-
-      // eslint-disable-next-line no-promise-executor-return
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      if (copyTooltip === 'container') {
-        this.showCopyTooltipContainer = false;
-      }
-      if (copyTooltip === 'link') {
-        this.showCopyTooltip = false;
-      }
     },
 
     close() {

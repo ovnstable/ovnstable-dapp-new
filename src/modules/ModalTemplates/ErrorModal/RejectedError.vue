@@ -13,26 +13,12 @@
 
     <div class="divider" />
     <div
-      v-if="errorMsg"
       class="error-content__msg"
     >
       <div class="error-message">
         Rejected by user
       </div>
     </div>
-
-    <!-- <div class="error-content__submit">
-      <p>Please, make a ticket in our Discord</p>
-      <a
-        target="_blank"
-        rel="noopener noreferrer"
-        href="https://discord.com/channels/933003627444969552/967813123149033542/967813482684760135/"
-      >
-        <ButtonComponent btn-styles="link">
-          # | submit-ticket
-        </ButtonComponent>
-      </a>
-    </div> -->
   </div>
 </template>
 
@@ -51,11 +37,6 @@ export default {
       type: String,
       required: false,
       default: 'Transaction reverted',
-    },
-    errorMsg: {
-      type: String,
-      required: false,
-      default: 'User rejected transaction',
     },
   },
 };
