@@ -176,6 +176,7 @@ import { fixedByPrice } from '@/utils/numbers.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import { initZapinContracts } from '@/services/Web3Service/utils/index.ts';
 import SwapRouting from '@/components/SwapRouting/Index.vue';
+import { parseErrorLog } from '@/utils/errors.ts';
 import type { IPositionsInfo } from '@/types/positions';
 
 export default defineComponent({
@@ -304,6 +305,7 @@ export default defineComponent({
     ...mapActions('waitingModal', ['closeWaitingModal', 'showWaitingModal']),
     ...mapActions('walletAction', ['connectWallet']),
     ...mapMutations('waitingModal', ['setStagesMap']),
+    ...mapActions('errorModal', ['showErrorModalWithMsg']),
 
     async initContracts() {
       const contractsData = await initZapinContracts(
@@ -340,6 +342,7 @@ export default defineComponent({
         console.log(e);
         this.closeWaitingModal('Approve');
         this.isSwapLoading = false;
+        this.showErrorModalWithMsg({ errorType: 'approve', errorMsg: parseErrorLog(e) });
       }
     },
     mintAction() {
@@ -411,6 +414,7 @@ export default defineComponent({
         this.positionFinish = true;
       } catch (e) {
         console.log(e);
+        this.showErrorModalWithMsg({ errorMsg: parseErrorLog(e) });
         this.closeWaitingModal();
         this.isSwapLoading = false;
       }
@@ -435,6 +439,7 @@ export default defineComponent({
         this.approveNftPosition(false);
       } catch (e) {
         console.log(e);
+        this.showErrorModalWithMsg({ errorMsg: parseErrorLog(e) });
         this.closeWaitingModal();
         this.isSwapLoading = false;
       }
