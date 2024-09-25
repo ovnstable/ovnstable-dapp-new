@@ -696,7 +696,7 @@ export default {
             );
           });
       } catch (e) {
-        this.showErrorModalWithMsg({ errorMsg: parseErrorLog(e) });
+        this.showErrorModalWithMsg({ errorType: 'zap', errorMsg: parseErrorLog(e) });
         this.odosDataLoading = false;
         this.isSwapLoading = true;
       }
@@ -867,7 +867,7 @@ export default {
         this.odosData = data.odosData;
         this.odosDataLoading = false;
       } catch (e) {
-        this.showErrorModalWithMsg({ errorMsg: parseErrorLog(e) });
+        this.showErrorModalWithMsg({ errorType: 'zap', errorMsg: parseErrorLog(e) });
         this.odosDataLoading = false;
       }
     },
