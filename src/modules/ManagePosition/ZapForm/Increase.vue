@@ -971,7 +971,7 @@ export default {
         };
         this.odosDataLoading = false;
       } catch (e) {
-        this.showErrorModalWithMsg({ errorMsg: parseErrorLog(e) });
+        this.showErrorModalWithMsg({ errorType: 'zap', errorMsg: parseErrorLog(e) });
         this.odosDataLoading = false;
       }
     },
@@ -1132,6 +1132,7 @@ export default {
       } catch (e) {
         console.log(e);
         this.closeWaitingModal();
+        this.showErrorModalWithMsg({ errorType: 'zap', errorMsg: parseErrorLog(e) });
         this.isSwapLoading = false;
       }
     },
@@ -1161,6 +1162,7 @@ export default {
       } catch (e) {
         console.log(e);
         this.closeWaitingModal('Approve');
+        this.showErrorModalWithMsg({ errorType: 'approve', errorMsg: parseErrorLog(e) });
         this.isSwapLoading = false;
       }
     },
@@ -1228,7 +1230,7 @@ export default {
             );
           });
       } catch (e) {
-        this.showErrorModalWithMsg({ errorMsg: parseErrorLog(e) });
+        this.showErrorModalWithMsg({ errorType: 'zap', errorMsg: parseErrorLog(e) });
         this.odosDataLoading = false;
         this.isSwapLoading = true;
       }

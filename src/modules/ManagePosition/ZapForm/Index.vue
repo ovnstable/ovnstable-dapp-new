@@ -741,6 +741,7 @@ export default {
       } catch (e) {
         console.log(e);
         this.closeWaitingModal('Approve');
+        this.showErrorModalWithMsg({ errorType: 'approve', errorMsg: parseErrorLog(e) });
         this.isSwapLoading = false;
       }
     },
