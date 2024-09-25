@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable class-methods-use-this */
-
 import { poolsInfoMap } from '@/store/views/main/zapin/mocks.ts';
 import { approveToken, getAllowanceValue } from '@/utils/contractApprove.ts';
 import BN from 'bignumber.js';
