@@ -81,15 +81,24 @@ class ZapinService {
     gaugeContract: any,
     poolTokenContract: any,
     triggerSuccess: (successData: ITriggerSuccessZapin) => void,
+    account: string,
     inputTokens?: any[],
   ) {
     let tx = null;
 
-    if (zapPool.isStaked) {
+    if (zapPool?.platform[0] === PLATFORMS.PANCAKE && zapPool.isStaked) {
+      tx = await gaugeContract.harvest(zapPool.tokenId, account);
+    }
+
+    if (zapPool?.platform[0] === PLATFORMS.AERO && zapPool.isStaked) {
       tx = await gaugeContract.getReward(zapPool.tokenId);
-    } else {
+    }
+
+    if (zapPool?.platform[0] === PLATFORMS.AERO && !zapPool.isStaked) {
       tx = await poolTokenContract.collect(zapPool.tokenId);
     }
+
+    if (!tx) throw new Error("Can't be claimed");
 
     await tx.wait();
 
@@ -555,14 +564,12 @@ class ZapinService {
 
       console.log(poolTokenContract, '___poolTokenContract');
       console.log(gaugeContract, '___this.gaugeContract');
-      if (zapPlatform === PLATFORMS.AERO) {
-        tx = await gaugeContract.deposit(newTokenId);
-      }
+      if (zapPlatform === PLATFORMS.AERO) tx = await gaugeContract.deposit(newTokenId);
 
       if (zapPlatform === PLATFORMS.PANCAKE) {
         const data = {
           from: account,
-          to: ZAPIN_SCHEME.pancake.stakeAddress,
+          to: gaugeContract.target,
           tokenId: newTokenId,
           _data: '0x0000000000000000000000000000000000000000000000000000000000000000',
         };

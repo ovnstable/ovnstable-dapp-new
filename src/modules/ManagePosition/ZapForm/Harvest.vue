@@ -317,6 +317,7 @@ export default defineComponent({
           this.gaugeContract,
           this.poolTokenContract,
           this.triggerSuccessZapin,
+          this.account,
         );
 
         this.closeWaitingModal();

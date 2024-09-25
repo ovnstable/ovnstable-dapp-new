@@ -213,6 +213,7 @@ import {
 import ZapinService, { ZAPIN_FUNCTIONS, ZAPIN_TYPE } from '@/services/Web3Service/Zapin-service.ts';
 import SwapRouting from '@/components/SwapRouting/Index.vue';
 import type { IPositionsInfo, TPositionRewardTokenInfo } from '@/types/positions';
+import type { PLATFORMS } from '@/types/common/pools';
 
 enum zapMobileSection {
   'TOKEN_FORM',
@@ -572,20 +573,15 @@ export default {
       try {
         this.showWaitingModal('staking');
 
-        const data = {
-          from: this.account,
-          to: this.poolTokenContract.target,
-          tokenId: this.zapPool.tokenId,
-          _data: '0x0000000000000000000000000000000000000000000000000000000000000000',
-        };
+        const tx = await ZapinService.stakeTrigger(
+          this.zapPool.platform[0] as PLATFORMS,
+          this.gaugeContract,
+          this.newTokenId,
+          this.account,
+          this.poolTokenContract,
+        );
 
-        let tx;
-
-        if (this.zapPool.chainName === 'base') tx = await this.gaugeContract.deposit(this.zapPool.tokenId);
-        // eslint-disable-next-line no-underscore-dangle
-        else if (this.zapPool.chainName === 'arbitrum') tx = await this.gaugeContract.safeTransferFrom(data.from, data.to, data.tokenId, data._data, { from: this.account });
-
-        await tx.wait();
+        if (!tx) throw new Error('no stake transaction');
 
         this.isSwapLoading = false;
         const inputTokens = [...this.inputTokens];
@@ -879,12 +875,13 @@ export default {
       try {
         this.showWaitingModal('unstaking');
 
-        let tx;
+        await ZapinService.withdrawTrigger(
+          this.zapPool,
+          this.zapPool?.tokenId?.toString(),
+          this.gaugeContract,
+          this.account,
+        );
 
-        if (this.zapPool.chainName === 'base') tx = await this.gaugeContract.withdraw(this.zapPool.tokenId);
-        else if (this.zapPool.chainName === 'arbitrum') tx = await this.gaugeContract.withdraw(this.zapPool.tokenId, this.account);
-
-        await tx.wait();
         this.isSwapLoading = false;
         this.closeWaitingModal();
         this.positionStaked = false;
@@ -1011,6 +1008,7 @@ export default {
           this.gaugeContract,
           this.poolTokenContract,
           () => {},
+          this.account,
         );
 
         this.isHasRewards = false;
