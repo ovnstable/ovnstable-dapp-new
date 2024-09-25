@@ -62,6 +62,12 @@
           :copy-error="copyErrorToClipboard"
         />
       </div>
+      <div v-else-if="errorViewType === 'zap'">
+        <ZapError
+          :error-msg="errorMsg"
+          :copy-error="copyErrorToClipboard"
+        />
+      </div>
       <div v-else>
         <UndefinedError
           :error-msg="errorMsg"
@@ -84,6 +90,7 @@ import HighLoadInfo from '@/modules/ModalTemplates/ErrorModal/HighLoadInfo.vue';
 import GasPriceIncreaseInfo from '@/modules/ModalTemplates/ErrorModal/GasPriceIncreaseInfo.vue';
 import OverRateLimitInfo from '@/modules/ModalTemplates/ErrorModal/OverRateLimitInfo.vue';
 import InsufficientFundsInfo from '@/modules/ModalTemplates/ErrorModal/InsufficientFundsInfo.vue';
+import ZapError from '@/modules/ModalTemplates/ErrorModal/ZapError.vue';
 
 export default {
   name: 'ErrorModal',
@@ -98,6 +105,7 @@ export default {
     RpcError,
     UndefinedError,
     ModalComponent,
+    ZapError,
   },
 
   props: {
@@ -168,6 +176,11 @@ export default {
 
       if (this.errorType === 'insufficient-funds') {
         this.errorViewType = 'insufficient-funds';
+        return;
+      }
+
+      if (this.errorType === 'zap') {
+        this.errorViewType = 'zap';
         return;
       }
 
@@ -245,7 +258,7 @@ export default {
 <style lang="scss" scoped>
 .modal-content {
   padding: 50px 70px 30px 70px;
-  max-width: 538px;
+  max-width: 800px;
   [data-theme="dark"] & {
     background-color: var(--color-17);
     border-color: var(--color-4);

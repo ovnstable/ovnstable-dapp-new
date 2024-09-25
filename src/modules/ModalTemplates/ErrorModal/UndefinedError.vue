@@ -8,7 +8,7 @@
     />
 
     <h1>
-      Oops! Undefined Error
+      {{ errorTitle }}
     </h1>
 
     <div class="divider" />
@@ -46,32 +46,16 @@ export default {
     BaseIcon,
     ButtonComponent,
   },
-  props: ['errorMsg', 'copyError'],
-
-  data() {
-    return {
-      showCopyTooltip: false,
-      showCopyTooltipContainer: false,
-      isCopied: false,
-    };
-  },
-  methods: {
-    shortAddress(address: any) {
-      if (address) {
-        return `${address.substring(0, 5)}...${address.substring(address.length - 4)}`;
-      }
-      return null;
+  props: {
+    errorTitle: {
+      type: String,
+      required: false,
+      default: 'Oops! Undefined Error',
     },
-    copyErrorToClipboard(copyTooltip: any, errorMsg: any) {
-      if (typeof this.copyError === 'function') {
-        this.copyError(copyTooltip, errorMsg);
-
-        this.isCopied = true;
-
-        setTimeout(() => {
-          this.isCopied = false;
-        }, 2000); // 2000 milliseconds (2 seconds)
-      }
+    errorMsg: {
+      type: String,
+      required: false,
+      default: 'No error description provided',
     },
   },
 };

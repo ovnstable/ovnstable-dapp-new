@@ -322,7 +322,7 @@ import {
   parseLogs,
   removeToken,
 } from '@/services/Web3Service/utils/index.ts';
-import ZapinService from '@/services/Web3Service/Zapin-service.ts';
+import ZapinService, { ZAPIN_TYPE } from '@/services/Web3Service/Zapin-service.ts';
 
 enum zapMobileSection {
   'TOKEN_FORM',
@@ -778,17 +778,21 @@ export default defineComponent({
       this.odosDataLoading = true;
 
       try {
-        const data = await ZapinService.recalculateProportionOdosV3(
-          this.selectedInputTokens,
-          this.selectedOutputTokens,
-          this.zapPool,
-          this.zapContract,
-          this.v3Range.ticks,
-          this.networkId,
-          this.getSlippagePercent(),
-          this.odosSwapRequest,
-          false,
-        );
+        const recalculateProportionParams = {
+          selectedInputTokens: this.selectedInputTokens,
+          selectedOutputTokens: this.selectedOutputTokens,
+          zapPool: this.zapPool,
+          zapContract: this.zapContract,
+          v3RangeTicks: this.v3Range.ticks,
+          networkId: this.networkId,
+          slippageLimitPercent: this.getSlippagePercent(),
+          odosSwapRequest: this.odosSwapRequest,
+          simulateSwap: false,
+          typeFunc: ZAPIN_TYPE.ZAPIN,
+          showErrorModalWithMsg: this.showErrorModalWithMsg,
+        };
+
+        const data = await ZapinService.recalculateProportionOdosV3(recalculateProportionParams);
 
         if (!data || (data && !data.odosData)) {
           this.odosDataLoading = false;
@@ -1405,17 +1409,21 @@ export default defineComponent({
       this.odosDataLoading = true;
 
       try {
-        const data = await ZapinService.recalculateProportionOdosV3(
-          this.selectedInputTokens,
-          this.selectedOutputTokens,
-          this.zapPool,
-          this.zapContract,
-          this.v3Range.ticks,
-          this.networkId,
-          this.getSlippagePercent(),
-          this.odosSwapRequest,
-          true,
-        );
+        const recalculateProportionParams = {
+          selectedInputTokens: this.selectedInputTokens,
+          selectedOutputTokens: this.selectedOutputTokens,
+          zapPool: this.zapPool,
+          zapContract: this.zapContract,
+          v3RangeTicks: this.v3Range.ticks,
+          networkId: this.networkId,
+          slippageLimitPercent: this.getSlippagePercent(),
+          odosSwapRequest: this.odosSwapRequest,
+          simulateSwap: true,
+          typeFunc: ZAPIN_TYPE.ZAPIN,
+          showErrorModalWithMsg: this.showErrorModalWithMsg,
+        };
+
+        const data = await ZapinService.recalculateProportionOdosV3(recalculateProportionParams);
 
         if (!data || (data && !data.odosData)) {
           this.odosDataLoading = false;

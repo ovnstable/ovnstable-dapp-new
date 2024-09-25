@@ -42,6 +42,20 @@ interface IZapinProportion {
   amountMins: string[]
 }
 
+interface IRecalculateProportionOdosV3 {
+  selectedInputTokens: any[],
+  selectedOutputTokens: any[],
+  zapPool: any,
+  zapContract: any,
+  v3RangeTicks: string[],
+  networkId: number,
+  slippageLimitPercent: number,
+  odosSwapRequest: Function,
+  simulateSwap: boolean,
+  typeFunc: ZAPIN_TYPE,
+  showErrorModalWithMsg: (val: any) => void,
+}
+
 interface ISwapData {
   tokenAddress: string,
   price: string;
@@ -581,18 +595,19 @@ class ZapinService {
     }
   }
 
-  async recalculateProportionOdosV3(
-    selectedInputTokens: any[],
-    selectedOutputTokens: any[],
-    zapPool: any,
-    zapContract: any,
-    v3RangeTicks: string[],
-    networkId: number,
-    slippageLimitPercent: number,
-    odosSwapRequest: Function,
-    simulateSwap: boolean,
+  async recalculateProportionOdosV3({
+    selectedInputTokens,
+    selectedOutputTokens,
+    zapPool,
+    zapContract,
+    v3RangeTicks,
+    networkId,
+    slippageLimitPercent,
+    odosSwapRequest,
+    simulateSwap,
     typeFunc = ZAPIN_TYPE.ZAPIN,
-  ) {
+    showErrorModalWithMsg,
+  }: IRecalculateProportionOdosV3) {
     const emptyVals = selectedInputTokens.map((_) => {
       if (new BN(_?.value).eq(0) || !_?.value) return null;
 
@@ -662,7 +677,13 @@ class ZapinService {
 
     console.log(resp, '___resp');
 
-    if (!resp) throw Error('No response v3, smth wrong');
+    if (!resp) {
+      showErrorModalWithMsg({
+        errorType: 'zap',
+        errorMsg: 'Smart contract error. Empty response when calculating proportion',
+      });
+      return null;
+    }
 
     let inputTokens = [];
 
@@ -752,7 +773,13 @@ class ZapinService {
 
     const data: any = await odosSwapRequest(requestData);
 
-    if (!data) throw Error('No odos data v3');
+    if (!data) {
+      showErrorModalWithMsg({
+        errorType: 'zap',
+        errorMsg: 'Odos error. Swap request failed',
+      });
+      return null;
+    }
 
     const finalOutput = this.getZapinOutputTokens(
       data,
@@ -761,19 +788,25 @@ class ZapinService {
       selectedInputTokens,
     );
 
-    if (!finalOutput) throw Error('No final output v3');
+    if (!finalOutput) {
+      showErrorModalWithMsg({
+        errorType: 'zap',
+        errorMsg: 'Smart contract error. Empty response when estimating output liquidity',
+      });
+      return null;
+    }
 
     return {
       inputTokens,
       outputTokens: finalOutput?.outputToken,
       outputTokensForZap: outputTokens,
       amountOut: {
-        amountToken0Out: finalOutput.outputToken[0]?.tokenOut,
-        amountToken1Out: finalOutput.outputToken[1]?.tokenOut,
+        amountToken0Out: finalOutput?.outputToken[0]?.tokenOut,
+        amountToken1Out: finalOutput?.outputToken[1]?.tokenOut,
       },
       responseProportionV3: resp,
-      amountMins: finalOutput.amountMins,
-      odosData: finalOutput.odosData,
+      amountMins: finalOutput?.amountMins,
+      odosData: finalOutput?.odosData,
     };
   }
 }

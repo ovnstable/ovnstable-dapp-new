@@ -636,18 +636,21 @@ export default defineComponent({
       try {
         this.showWaitingModal('unstaking');
 
-        const data = await ZapinService.recalculateProportionOdosV3(
-          this.inputTokens,
-          this.selectedOutputTokens,
-          this.zapPool,
-          this.zapContract,
-          this.v3RangeTicks,
-          this.networkId,
-          this.slippagePercent,
-          this.odosSwapRequest,
-          true,
-          ZAPIN_TYPE.ZAPIN,
-        );
+        const recalculateProportionParams = {
+          selectedInputTokens: this.inputTokens,
+          selectedOutputTokens: this.selectedOutputTokens,
+          zapPool: this.zapPool,
+          zapContract: this.zapContract,
+          v3RangeTicks: this.v3RangeTicks,
+          networkId: this.networkId,
+          slippageLimitPercent: this.slippagePercent,
+          odosSwapRequest: this.odosSwapRequest,
+          simulateSwap: true,
+          typeFunc: ZAPIN_TYPE.ZAPIN,
+          showErrorModalWithMsg: this.showErrorModalWithMsg,
+        };
+
+        const data = await ZapinService.recalculateProportionOdosV3(recalculateProportionParams);
 
         if (!data || (data && !data.odosData)) {
           this.odosDataLoading = false;
@@ -872,18 +875,21 @@ export default defineComponent({
       this.odosDataLoading = true;
 
       try {
-        const data = await ZapinService.recalculateProportionOdosV3(
-          this.inputTokens,
-          this.selectedOutputTokens,
-          this.zapPool,
-          this.zapContract,
-          this.v3RangeTicks,
-          this.networkId,
-          this.slippagePercent,
-          this.odosSwapRequest,
-          true,
-          ZAPIN_TYPE.ZAPIN,
-        );
+        const recalculateProportionParams = {
+          selectedInputTokens: this.inputTokens,
+          selectedOutputTokens: this.selectedOutputTokens,
+          zapPool: this.zapPool,
+          zapContract: this.zapContract,
+          v3RangeTicks: this.v3RangeTicks,
+          networkId: this.networkId,
+          slippageLimitPercent: this.slippagePercent,
+          odosSwapRequest: this.odosSwapRequest,
+          simulateSwap: true,
+          typeFunc: ZAPIN_TYPE.ZAPIN,
+          showErrorModalWithMsg: this.showErrorModalWithMsg,
+        };
+
+        const data = await ZapinService.recalculateProportionOdosV3(recalculateProportionParams);
 
         if (!data || (data && !data.odosData)) {
           this.odosDataLoading = false;

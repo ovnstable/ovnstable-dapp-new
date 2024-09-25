@@ -291,7 +291,7 @@ import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import { useRefreshBalances } from '@/hooks/fetch/useRefreshBalances.ts';
 import FeesBlock, { MIN_IMPACT } from '@/components/FeesBlock/Index.vue';
 import { parseErrorLog } from '@/utils/errors.ts';
-import ZapinService, { ZAPIN_FUNCTIONS } from '@/services/Web3Service/Zapin-service.ts';
+import ZapinService, { ZAPIN_FUNCTIONS, ZAPIN_TYPE } from '@/services/Web3Service/Zapin-service.ts';
 import {
   getUpdatedTokenVal,
   initReqData,
@@ -650,18 +650,22 @@ export default defineComponent({
       if (!this.v3Range || this.selectedInputTokens?.length === 0) return;
       this.odosDataLoading = true;
 
+      const recalculateProportionParams = {
+        selectedInputTokens: this.selectedInputTokens,
+        selectedOutputTokens: this.selectedOutputTokens,
+        zapPool: this.zapPool,
+        zapContract: this.zapContract,
+        v3RangeTicks: this.v3Range.ticks,
+        networkId: this.networkId,
+        slippageLimitPercent: this.getSlippagePercent(),
+        odosSwapRequest: this.odosSwapRequest,
+        simulateSwap: false,
+        typeFunc: ZAPIN_TYPE.ZAPIN,
+        showErrorModalWithMsg: this.showErrorModalWithMsg,
+      };
+
       try {
-        const data = await ZapinService.recalculateProportionOdosV3(
-          this.selectedInputTokens,
-          this.selectedOutputTokens,
-          this.zapPool,
-          this.zapContract,
-          this.v3Range.ticks,
-          this.networkId,
-          this.getSlippagePercent(),
-          this.odosSwapRequest,
-          false,
-        );
+        const data = await ZapinService.recalculateProportionOdosV3(recalculateProportionParams);
 
         if (!data || (data && !data.odosData)) {
           this.odosDataLoading = false;
@@ -907,17 +911,21 @@ export default defineComponent({
       this.odosDataLoading = true;
 
       try {
-        const data = await ZapinService.recalculateProportionOdosV3(
-          this.selectedInputTokens,
-          this.selectedOutputTokens,
-          this.zapPool,
-          this.zapContract,
-          this.v3Range.ticks,
-          this.networkId,
-          this.getSlippagePercent(),
-          this.odosSwapRequest,
-          true,
-        );
+        const recalculateProportionParams = {
+          selectedInputTokens: this.selectedInputTokens,
+          selectedOutputTokens: this.selectedOutputTokens,
+          zapPool: this.zapPool,
+          zapContract: this.zapContract,
+          v3RangeTicks: this.v3Range.ticks,
+          networkId: this.networkId,
+          slippageLimitPercent: this.getSlippagePercent(),
+          odosSwapRequest: this.odosSwapRequest,
+          simulateSwap: true,
+          typeFunc: ZAPIN_TYPE.ZAPIN,
+          showErrorModalWithMsg: this.showErrorModalWithMsg,
+        };
+
+        const data = await ZapinService.recalculateProportionOdosV3(recalculateProportionParams);
 
         if (!data || (data && !data.odosData)) {
           this.odosDataLoading = false;
