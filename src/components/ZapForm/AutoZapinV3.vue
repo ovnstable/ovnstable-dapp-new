@@ -127,9 +127,12 @@
                 </div>
               </div>
             </div>
+            <SwapSlippageSettings
+              @change-slippage="handleCurrentSlippageChanged"
+            />
 
             <FeesBlock
-              v-if="ifMoreThanOneSelectedTokensAdded && odosData"
+              v-if="ifMoreThanOneSelectedTokensAdded && odosData?.netOutValue"
               :slippage-percent="slippagePercent"
               :get-odos-fee="getOdosFee"
               :multi-swap-odos-fee-percent="multiSwapOdosFeePercent"
@@ -139,9 +142,6 @@
               :agree-with-fees="agreeWithFees"
               :is-loading="odosDataLoading"
               @change-agree="changeAgreeFees"
-            />
-            <SwapSlippageSettings
-              @change-slippage="handleCurrentSlippageChanged"
             />
           </div>
           <div class="zapin-block__counts">

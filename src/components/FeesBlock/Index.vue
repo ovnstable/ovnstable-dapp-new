@@ -1,87 +1,120 @@
 <template>
   <div class="transaction-block">
+    <h1 class="transaction-info-heading">
+      Agree with swap terms
+    </h1>
     <div
       class="transaction-info-container"
     >
       <div class="transaction-info-body">
-        <div
-          v-if="selectedInputTokens?.length > 1"
-          class="zap-row"
-        >
-          <div class="transaction-info-title">
-            Multi-swap Odos fee
+        <div class="transaction-info-row-container">
+          <div
+            v-if="selectedInputTokens?.length > 1"
+            class="zap-row"
+          >
+            <div class="transaction-info-title">
+              Multi-swap Odos fee
+            </div>
+            <div class="transaction-info">
+              {{ multiSwapOdosFeePercent * 1 }}%
+              <span class="transaction-info-additional">
+                ({{ formatMoney(getOdosFee, 3) }})$
+              </span>
+            </div>
           </div>
-          <div class="transaction-info">
-            {{ multiSwapOdosFeePercent * 1 }}%
-            <span class="transaction-info-additional">
-              ({{ formatMoney(getOdosFee, 3) }})$
-            </span>
-          </div>
-        </div>
 
-        <div
-          class="zap-row"
-        >
-          <div class="transaction-info-title">
-            Input Token Value (USD)
-          </div>
           <div
-            v-if="isLoading"
-            class="lineLoader lineLoader--balance lineLoader--balance-orig"
-          />
-          <div
-            v-else
-            class="transaction-info"
+            class="zap-row"
           >
-            <span>
-              ~{{ getTotal(getInputUsdValue) }}$
-            </span>
-          </div>
-        </div>
-        <div
-          v-if="v3Pool"
-          class="zap-row"
-        >
-          <div class="transaction-info-title">
-            Output Token Value (USD)
-          </div>
-          <div
-            v-if="isLoading"
-            class="lineLoader lineLoader--balance lineLoader--balance-orig"
-          />
-          <div
-            v-else
-            class="transaction-info"
-          >
-            <span>
-              ~{{ getTotal(getOutputValue) }}$
-            </span>
-          </div>
-        </div>
-        <div
-          class="zap-row"
-        >
-          <div class="transaction-info-title">
-            Value difference (%)
-          </div>
-          <div
-            v-if="isLoading"
-            class="lineLoader lineLoader--balance lineLoader--balance-orig"
-          />
-          <div
-            v-else
-            class="transaction-info"
-          >
-            <span
-              :class="{
-                'tx-info--red': critImpact(getValueDiff) === 'red',
-                'tx-info--yellow': critImpact(getValueDiff) === 'yellow',
-              }"
+            <div class="transaction-info-title">
+              Input Token Value (USD)
+            </div>
+            <div
+              v-if="isLoading"
+              class="lineLoader lineLoader--balance lineLoader--balance-orig"
+            />
+            <div
+              v-else
+              class="transaction-info"
             >
-              (-{{ getValueDiff }}%)
-            </span>
+              <span>
+                ~{{ getTotal(getInputUsdValue) }}$
+              </span>
+            </div>
+          </div>
+          <div
+            v-if="v3Pool"
+            class="zap-row"
+          >
+            <div class="transaction-info-title">
+              Output Token Value (USD)
+            </div>
+            <div
+              v-if="isLoading"
+              class="lineLoader lineLoader--balance lineLoader--balance-orig"
+            />
+            <div
+              v-else
+              class="transaction-info"
+            >
+              <span>
+                ~{{ getTotal(getOutputValue) }}$
+              </span>
+            </div>
+          </div>
+          <div
+            class="zap-row"
+          >
+            <div class="transaction-info-title">
+              Value difference (%)
+            </div>
+            <div
+              v-if="isLoading"
+              class="lineLoader lineLoader--balance lineLoader--balance-orig"
+            />
+            <div
+              v-else
+              class="transaction-info"
+            >
+              <span
+                :class="{
+                  'tx-info--red': critImpact(getValueDiff) === 'red',
+                  'tx-info--yellow': critImpact(getValueDiff) === 'yellow',
+                }"
+              >
+                (-{{ getValueDiff }}%)
+              </span>
+            </div>
           </div>
         </div>
+        <span class="divider" />
+        <template
+          v-if="v3Pool"
+        >
+          <div class="transaction-info-row-container">
+            <div
+              v-for="(item, key) in getOutTokens as any"
+              :key="key"
+              class="zap-row"
+            >
+              <div class="transaction-info-title">
+                Minimum received Token {{ key + 1 }}
+              </div>
+              <div
+                v-if="isLoading"
+                class="lineLoader lineLoader--balance lineLoader--balance-orig"
+              />
+              <div
+                v-else
+                class="transaction-info"
+              >
+                <span>
+                  {{ getToken(item.sum) }} {{ item.selectedToken.symbol }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </template>
 
         <div
           class="zap-row zap-row--mt"
@@ -94,31 +127,6 @@
             @change-switch="changeAgree"
           />
         </div>
-        <template
-          v-if="v3Pool"
-        >
-          <div
-            v-for="(item, key) in getOutTokens as any"
-            :key="key"
-            class="zap-row"
-          >
-            <div class="transaction-info-title">
-              Minimum received Token {{ key + 1 }}
-            </div>
-            <div
-              v-if="isLoading"
-              class="lineLoader lineLoader--balance lineLoader--balance-orig"
-            />
-            <div
-              v-else
-              class="transaction-info"
-            >
-              <span>
-                {{ getToken(item.sum) }} {{ item.selectedToken.symbol }}
-              </span>
-            </div>
-          </div>
-        </template>
       </div>
     </div>
   </div>
@@ -280,7 +288,7 @@ export default {
 
 <style lang="scss">
 .transaction-block {
-  margin-bottom: auto;
+  margin-top: auto;
 }
 
 .transaction-info-title {
@@ -340,5 +348,39 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.transaction-info-container {
+  background-color: var(--color-4);
+  border: 1px solid var(--color-3);
+  padding: 20px;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.divider {
+  display: block;
+  width: 100%;
+  height: 1px;
+  background-color: var(--color-7);
+}
+
+.transaction-info-heading {
+  margin-bottom: 10px;
+  font-size: 15px;
+}
+
+.transaction-info-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.transaction-info-row-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 </style>
