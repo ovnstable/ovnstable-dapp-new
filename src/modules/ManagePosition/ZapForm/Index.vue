@@ -571,8 +571,12 @@ export default {
 
       try {
         this.showWaitingModal('unstaking');
-        await ZapinService.withdrawTrigger(this.zapPool, this.gaugeContract, this.account);
-
+        await ZapinService.withdrawTrigger(
+          this.zapPool,
+          this.zapPool?.tokenId?.toString(),
+          this.gaugeContract,
+          this.account,
+        );
         console.log('WITHDRAW');
         this.isSwapLoading = false;
         this.closeWaitingModal();

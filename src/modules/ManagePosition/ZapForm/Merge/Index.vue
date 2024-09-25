@@ -277,7 +277,7 @@ import { loadTokenImage } from '@/utils/tokenLogo.ts';
 import ZapInStepsRow from '@/components/StepsRow/ZapinRow/MergeRow.vue';
 import SwapRouting from '@/components/SwapRouting/Index.vue';
 import type { IPositionsInfo } from '@/types/positions';
-import type { TFilterPoolsParams } from '@/types/common/pools';
+import type { PLATFORMS, TFilterPoolsParams } from '@/types/common/pools';
 
 export default defineComponent({
   name: 'MergeForm',
@@ -412,6 +412,7 @@ export default defineComponent({
       if (!this.zapPool || this.positionsList?.length === 0) return [];
 
       return this.positionsList
+        .filter((_) => _?.platform[0] === this.zapPool?.platform[0])
         .filter((_) => _?.tokenId?.toString() !== this.zapPool?.tokenId?.toString());
     },
     zapAllTokens() {
@@ -779,14 +780,14 @@ export default defineComponent({
       try {
         this.showWaitingModal('unstaking');
 
-        let tx;
+        await ZapinService.withdrawTrigger(
+          this.zapPool,
+          tokenId,
+          this.gaugeContracts[indexOfToken],
+          this.account,
+        );
 
-        if (this.zapPool.chainName === 'base') tx = await this.gaugeContracts[indexOfToken].withdraw(tokenId);
-        else if (this.zapPool.chainName === 'arbitrum') {
-          tx = await this.gaugeContracts[indexOfToken].withdraw(tokenId, this.account);
-        }
-
-        await tx.wait();
+        console.log('WITHDRAW');
         this.isSwapLoading = false;
         this.closeWaitingModal();
         this.clearStaked(indexOfToken);
@@ -834,9 +835,15 @@ export default defineComponent({
           this.gaugeAddress,
         );
 
-        const tx = await contractsData!.gaugeContract!.deposit(this.zapPool.tokenId?.toString());
+        const tx = await ZapinService.stakeTrigger(
+          this.zapPool.platform[0] as PLATFORMS,
+          contractsData.gaugeContract,
+          this.zapPool.tokenId?.toString(),
+          this.account,
+          this.poolTokenContract,
+        );
 
-        await tx.wait();
+        if (!tx) throw new Error('no stake transaction');
 
         this.isSwapLoading = false;
         const inputTokens = [...this.inputTokens];

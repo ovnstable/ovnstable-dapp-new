@@ -579,17 +579,22 @@ class ZapinService {
     }
   }
 
-  async withdrawTrigger(zapPool: IPositionsInfo, gaugeContract: any, account?: string) {
+  async withdrawTrigger(
+    zapPool: IPositionsInfo,
+    tokenId: string,
+    gaugeContract: any,
+    account?: string,
+  ) {
     try {
       let tx: any = null;
 
       console.log(gaugeContract, '___this.gaugeContract');
       if (zapPool.platform[0] === PLATFORMS.AERO) {
-        tx = await gaugeContract.withdraw(zapPool.tokenId);
+        tx = await gaugeContract.withdraw(tokenId);
       }
 
       if (zapPool.platform[0] === PLATFORMS.PANCAKE) {
-        tx = await gaugeContract.withdraw(zapPool.tokenId, account);
+        tx = await gaugeContract.withdraw(tokenId, account);
       }
 
       return await tx.wait();
