@@ -8,7 +8,7 @@
     />
 
     <h1>
-      {{ errorTitle }}
+      Oops! Undefined Error
     </h1>
 
     <div class="divider" />
@@ -17,7 +17,7 @@
       class="error-content__msg"
     >
       <div class="error-message">
-        {{errorMsg.message ? errorMsg.message : errorMsg}}
+        {{ errorMsg?.message ? errorMsg?.message : errorMsg }}
       </div>
     </div>
 
@@ -28,7 +28,7 @@
         rel="noopener noreferrer"
         href="https://discord.com/channels/933003627444969552/967813123149033542/967813482684760135/"
       >
-        <ButtonComponent btnStyles="link">
+        <ButtonComponent btn-styles="link">
           # | submit-ticket
         </ButtonComponent>
       </a>
@@ -46,18 +46,7 @@ export default {
     BaseIcon,
     ButtonComponent,
   },
-  props: {
-    errorTitle: {
-      type: String,
-      required: false,
-      default: 'Oops! Undefined Error',
-    },
-    errorMsg: {
-      type: String,
-      required: false,
-      default: 'No error description provided',
-    },
-  },
+  props: ['errorMsg', 'errorTitle'],
 };
 </script>
 

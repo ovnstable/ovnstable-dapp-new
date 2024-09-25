@@ -17,7 +17,7 @@
       class="error-content__msg"
     >
       <div class="error-message">
-        {{ errorMsg.message ? errorMsg.message : errorMsg }}
+        {{ errorMsg }}
       </div>
     </div>
 
