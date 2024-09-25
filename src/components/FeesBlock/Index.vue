@@ -288,7 +288,7 @@ export default {
 
 <style lang="scss">
 .transaction-block {
-  margin-top: auto;
+  margin-bottom: auto;
 }
 
 .transaction-info-title {
