@@ -494,7 +494,7 @@ export default {
     this.isStablePool = checkIsEveryStable(this.zapPool);
 
     this.$emit('set-range', {
-      ticks: [this.tickLeft, this.tickRight],
+      ticks: [this.tickLeft?.toString(), this.tickRight?.toString()],
     });
 
     if (this.ticksInit?.length > 0) this.ticksAmount = '0';
@@ -615,7 +615,7 @@ export default {
       this.centerPrice = center.toFixed(6);
 
       this.$emit('set-range', {
-        ticks: [this.tickLeft, this.tickRight],
+        ticks: [this.tickLeft?.toString(), this.tickRight?.toString()],
       });
 
       if (updateData) return;
@@ -855,17 +855,21 @@ export default {
 
         const decimals = self.lowPoolPrice ? 6 : 0;
 
+        console.log(minPriceTickPrice, maxPriceTickPrice, '__minPrice');
+        console.log(self.pairTokensData, '__minPrice');
         self.tickLeft = leftTick;
         self.tickRight = rightTick;
-        self.minPrice = new BN(minPriceTickPrice)
+        self.minPrice = new BN(minPriceTickPrice?.toString())
           .div(10 ** self.pairTokensData[1].decimals).toFixed(decimals);
-        self.maxPrice = new BN(maxPriceTickPrice)
+        self.maxPrice = new BN(maxPriceTickPrice?.toString())
           .div(10 ** self.pairTokensData[1].decimals).toFixed(decimals);
         self.isLoading = false;
+        console.log('__minPrice');
       }
 
+      console.log(maxPrice, '__minPrice');
       self.$emit('set-range', {
-        ticks: [self.tickLeft, self.tickRight],
+        ticks: [self.tickLeft?.toString(), self.tickRight?.toString()],
       });
 
       (self.$refs?.zapinChart as any)?.updateOptions(
@@ -948,7 +952,7 @@ export default {
       this.currentRange = val;
 
       this.$emit('set-range', {
-        ticks: [this.tickLeft, this.tickRight],
+        ticks: [this.tickLeft?.toString(), this.tickRight?.toString()],
       });
     },
   },

@@ -635,6 +635,8 @@ export default {
 
       this.odosDataLoading = true;
 
+      console.log('recalculateProportionParams__');
+
       try {
         const recalculateProportionParams = {
           selectedInputTokens: this.selectedInputTokens,
