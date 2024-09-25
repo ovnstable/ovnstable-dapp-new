@@ -2,20 +2,20 @@
   <div class="steps-row">
     <p
       :class="{
-        'active-stage': currentStage === CompoundStep.CLAIM,
-        'active-color': isActiveTab(CompoundStep.CLAIM),
-      }"
-    >
-      CLAIM
-    </p>
-    <BaseIcon name="InsuranceModalArrowRight" />
-    <p
-      :class="{
         'active-stage': currentStage === CompoundStep.APPROVE,
         'active-color': isActiveTab(CompoundStep.APPROVE),
       }"
     >
       Approve tokens
+    </p>
+    <BaseIcon name="InsuranceModalArrowRight" />
+    <p
+      :class="{
+        'active-stage': currentStage === CompoundStep.CLAIM,
+        'active-color': isActiveTab(CompoundStep.CLAIM),
+      }"
+    >
+      CLAIM
     </p>
     <BaseIcon name="InsuranceModalArrowRight" />
     <p

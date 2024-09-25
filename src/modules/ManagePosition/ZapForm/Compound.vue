@@ -92,18 +92,6 @@
           NOT ENOUGH REWARDS TO COMPOUND
         </ButtonComponent>
         <ButtonComponent
-          v-else-if="isHasRewards"
-          btn-size="large"
-          btn-styles="primary"
-          full
-          :loading="isSwapLoading"
-          :disabled="!agreeWithFees"
-          @click="claimTrigger"
-          @keypress="claimTrigger"
-          >
-          CLAIM
-        </ButtonComponent>
-        <ButtonComponent
           v-else-if="isAnyInputsNeedApprove"
           btn-size="large"
           btn-styles="primary"
@@ -114,6 +102,18 @@
         >
           APPROVE
           {{ firstInputInQueueForToApprove.selectedToken?.symbol }}
+        </ButtonComponent>
+        <ButtonComponent
+          v-else-if="isHasRewards"
+          btn-size="large"
+          btn-styles="primary"
+          full
+          :loading="isSwapLoading"
+          :disabled="!agreeWithFees"
+          @click="claimTrigger"
+          @keypress="claimTrigger"
+          >
+          CLAIM
         </ButtonComponent>
           <ButtonComponent
             v-else-if="positionStaked"
@@ -294,7 +294,7 @@ export default {
     tokensQuotaCheckerSec: 0,
     poolTokens: [] as any[],
 
-    currentStage: CompoundStep.CLAIM,
+    currentStage: CompoundStep.APPROVE,
     // Mobile section switch
     zapMobileSection,
     currentSection: zapMobileSection.TOKEN_FORM,
@@ -783,7 +783,6 @@ export default {
     getSlippagePercent() {
       return this.slippagePercent;
     },
-    // eslint-disable-next-line vue/no-unused-properties
     async checkApproveForToken(token: any, checkedAllowanceValue: any) {
       // checkedAllowanceValue in wei
       const { selectedToken } = token;
@@ -1069,7 +1068,7 @@ export default {
 
       await tx.wait();
       finishTx();
-      this.currentStage = CompoundStep.UNSTAKE;
+      this.currentStage = CompoundStep.CLAIM;
     },
   },
 };
