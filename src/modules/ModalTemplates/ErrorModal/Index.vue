@@ -13,6 +13,13 @@
           :copy-error="copyErrorToClipboard"
         />
       </div>
+      <div v-else-if="errorViewType === 'rejected'">
+        <RejectedError
+          :error-msg="errorText"
+          :error-code="errorCode"
+          :copy-error="copyErrorToClipboard"
+        />
+      </div>
       <div v-else-if="errorViewType === 'rpc'">
         <RpcError
           :error-msg="errorText"
@@ -91,6 +98,7 @@ import GasPriceIncreaseInfo from '@/modules/ModalTemplates/ErrorModal/GasPriceIn
 import OverRateLimitInfo from '@/modules/ModalTemplates/ErrorModal/OverRateLimitInfo.vue';
 import InsufficientFundsInfo from '@/modules/ModalTemplates/ErrorModal/InsufficientFundsInfo.vue';
 import ZapError from '@/modules/ModalTemplates/ErrorModal/ZapError.vue';
+import RejectedError from '@/modules/ModalTemplates/ErrorModal/RejectedError.vue';
 
 export default {
   name: 'ErrorModal',
@@ -106,6 +114,7 @@ export default {
     UndefinedError,
     ModalComponent,
     ZapError,
+    RejectedError,
   },
 
   props: {
@@ -145,7 +154,7 @@ export default {
     ...mapActions('errorModal', ['closeErrorModal']),
 
     initError() {
-      if (!this.errorMsg || !this.errorType) {
+      if (!this.errorMsg && !this.errorType) {
         return;
       }
 
@@ -190,6 +199,11 @@ export default {
       }
 
       if (this.errorMsg.code === 4001) {
+        return;
+      }
+
+      if (this.errorMsg === 'rejected') {
+        this.errorViewType = 'rejected';
         return;
       }
 
