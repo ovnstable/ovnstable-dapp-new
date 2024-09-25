@@ -135,12 +135,16 @@ class ZapinService {
     tickRange: string[],
     inputSwapTokens: ISwapData[],
     zapContract: any,
+    tokenIds = [] as string[],
   ) {
+    console.log(poolAddress, tickRange, inputSwapTokens, tokenIds, '___ARGS');
     return zapContract
-      .getProportionForZap(poolAddress, tickRange, inputSwapTokens)
+      .getProportionForZap(poolAddress, tickRange, inputSwapTokens, tokenIds)
       .then((data: any) => data)
       .catch((e: any) => {
-        console.error('Error get proportion for V3', e);
+        console.log(JSON.parse(JSON.stringify(e)), '___decoded1');
+        const decoded = zapContract.interface.parseError(e?.data);
+        console.log(decoded, '__ERR');
       });
   }
 
@@ -645,33 +649,32 @@ class ZapinService {
     }
 
     if (typeFunc === ZAPIN_TYPE.REBALANCE) {
-      const amounts = await this.getV3PositionAmounts(
-        zapContract,
-        zapPool.tokenId?.toString(),
-      );
-
       console.log(
         JSON.stringify({
           add: zapPool.address,
           ticks: v3RangeTicks,
           tokens: selectedInputTokens.map((_, key) => ({
             tokenAddress: _?.selectedToken?.address,
-            amount: amounts[key]?.toString(),
+            amount: '0',
             price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
           })),
+          tokenIds: [zapPool.tokenId?.toString()],
         }),
         'LOOGS___',
       );
+
+      console.log(zapPool, '__zapPool');
 
       resp = await this.getV3Proportion(
         zapPool.address,
         v3RangeTicks,
         selectedInputTokens.map((_, key) => ({
           tokenAddress: _?.selectedToken?.address,
-          amount: amounts[key],
+          amount: '0',
           price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
         })),
         zapContract,
+        [zapPool.tokenId?.toString()],
       );
     }
 

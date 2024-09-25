@@ -285,7 +285,8 @@
       ],
       "outputs": [
         {
-          "type": "int24"
+          "type": "int24",
+          "name": "tick"
         }
       ]
     },
@@ -331,7 +332,8 @@
       ],
       "outputs": [
         {
-          "type": "uint256"
+          "type": "uint256",
+          "name": "result"
         }
       ]
     },
@@ -350,7 +352,8 @@
       ],
       "outputs": [
         {
-          "type": "uint160"
+          "type": "uint160",
+          "name": "z"
         }
       ]
     },
@@ -463,6 +466,30 @@
     },
     {
       "type": "function",
+      "name": "getPositionTokens",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 20000000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "tokenId"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "address",
+          "name": "token0"
+        },
+        {
+          "type": "address",
+          "name": "token1"
+        }
+      ]
+    },
+    {
+      "type": "function",
       "name": "getPositions",
       "constant": true,
       "stateMutability": "view",
@@ -471,7 +498,7 @@
       "inputs": [
         {
           "type": "address",
-          "name": "owner"
+          "name": "wallet"
         }
       ],
       "outputs": [
@@ -536,30 +563,6 @@
               "name": "isStaked"
             }
           ]
-        }
-      ]
-    },
-    {
-      "type": "function",
-      "name": "getTokens",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "gas": 20000000,
-      "inputs": [
-        {
-          "type": "uint256",
-          "name": "tokenId"
-        }
-      ],
-      "outputs": [
-        {
-          "type": "address",
-          "name": "token0"
-        },
-        {
-          "type": "address",
-          "name": "token1"
         }
       ]
     },
@@ -832,6 +835,28 @@
     },
     {
       "type": "function",
+      "name": "pancakeV3SwapCallback",
+      "constant": false,
+      "payable": false,
+      "gas": 20000000,
+      "inputs": [
+        {
+          "type": "int256",
+          "name": "amount0Delta"
+        },
+        {
+          "type": "int256",
+          "name": "amount1Delta"
+        },
+        {
+          "type": "bytes",
+          "name": "_data"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
       "name": "simulateSwap",
       "constant": false,
       "payable": false,
@@ -839,7 +864,7 @@
       "inputs": [
         {
           "type": "address",
-          "name": "pool"
+          "name": "pair"
         },
         {
           "type": "uint256",
@@ -869,7 +894,7 @@
       "inputs": [
         {
           "type": "address",
-          "name": "pool"
+          "name": "pair"
         },
         {
           "type": "uint256",
@@ -882,28 +907,6 @@
         {
           "type": "bool",
           "name": "zeroForOne"
-        }
-      ],
-      "outputs": []
-    },
-    {
-      "type": "function",
-      "name": "uniswapV3SwapCallback",
-      "constant": false,
-      "payable": false,
-      "gas": 20000000,
-      "inputs": [
-        {
-          "type": "int256",
-          "name": "amount0Delta"
-        },
-        {
-          "type": "int256",
-          "name": "amount1Delta"
-        },
-        {
-          "type": "bytes",
-          "name": "_data"
         }
       ],
       "outputs": []
@@ -1127,6 +1130,10 @@
               "name": "price"
             }
           ]
+        },
+        {
+          "type": "uint256[]",
+          "name": "tokenIds"
         }
       ],
       "outputs": [
