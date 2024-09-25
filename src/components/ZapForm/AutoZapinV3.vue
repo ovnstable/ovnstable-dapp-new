@@ -1,3 +1,4 @@
+<!-- eslint-disable no-restricted-syntax -->
 <template>
   <div class="zapin-wrap">
     <div
@@ -216,8 +217,8 @@
             btn-styles="primary"
             full
             :loading="isSwapLoading || !agreeWithFees"
-            @click="depositGauge(lastNftTokenId)"
-            @keypress="depositGauge(lastNftTokenId)"
+            @click="depositGauge"
+            @keypress="depositGauge"
           >
             STAKE LP
           </ButtonComponent>
@@ -353,6 +354,7 @@ export default defineComponent({
   data: () => ({
     approvingPending: false,
     agreeWithFees: true,
+    newTokenId: 0,
     inputTokens: [] as any[],
     outputTokens: [] as any[],
     v3Range: null as any,
@@ -384,7 +386,6 @@ export default defineComponent({
     ...mapState('odosData', [
       'additionalSwapStepType',
       'lastZapResponseData',
-      'lastNftTokenId',
     ]),
 
     ...mapGetters('odosData', [
@@ -721,9 +722,19 @@ export default defineComponent({
       });
     },
     async toApproveAndDepositSteps(data: any) {
-      const nftId = '';
-
       parseLogs(data.logs, this.commitEventToStore);
+
+      console.log(data.logs, '___LOGS');
+      // eslint-disable-next-line no-restricted-syntax
+      for (const item of data.logs) {
+        const eventName = item?.eventName;
+        if (eventName === 'TokenId') {
+          // eslint-disable-next-line prefer-destructuring
+          this.newTokenId = item.args[0];
+          this.commitEventToStore('lastParsedTokenIdEvent', new BN(item.args[0]).toString(10));
+        }
+      }
+
       this.currentStage = zapInStep.APPROVE_GAUGE;
       this.isSwapLoading = true;
 
@@ -732,71 +743,59 @@ export default defineComponent({
         val: 'APPROVE',
       });
 
-      this.approveNftGauge(nftId);
+      this.approveNftGauge();
     },
-    async approveNftGauge(nftId: string) {
+    async approveNftGauge() {
       this.showWaitingModal('Approving NFT in process');
       this.isSwapLoading = true;
 
-      if (!this.lastNftTokenId || nftId) {
-        try {
-          const tokenId = nftId || await this.getLastNftId();
+      try {
+        const params = { from: this.account };
+        const tx = await this.poolTokenContract
+          .approve(this.gaugeContract?.target, this.newTokenId, params);
 
-          this.$store.commit('odosData/changeState', {
-            field: 'lastNftTokenId',
-            val: tokenId,
-          });
+        await tx.wait();
 
-          const params = { from: this.account };
-          const tx = await this.poolTokenContract
-            .approve(this.gaugeContract?.target, tokenId, params);
-
-          await tx.wait();
-
-          this.isSwapLoading = false;
-          this.$store.commit('odosData/changeState', {
-            field: 'additionalSwapStepType',
-            val: 'DEPOSIT',
-          });
-          this.currentStage = zapInStep.DEPOSIT;
-          this.closeWaitingModal();
-          this.depositGauge(
-            this.lastNftTokenId,
-          );
-        } catch (e) {
-          console.error('Approve nft gauge failed', e);
-          this.$store.commit('odosData/changeState', {
-            field: 'lastNftTokenId',
-            val: null,
-          });
-          this.closeWaitingModal();
-        }
-      } else {
+        this.isSwapLoading = false;
         this.$store.commit('odosData/changeState', {
           field: 'additionalSwapStepType',
           val: 'DEPOSIT',
         });
         this.currentStage = zapInStep.DEPOSIT;
-        this.depositGauge(
-          this.lastNftTokenId,
-        );
+        this.closeWaitingModal();
+        this.depositGauge();
+      } catch (e) {
+        console.error('Approve nft gauge failed', e);
+        this.$store.commit('odosData/changeState', {
+          field: 'lastNftTokenId',
+          val: null,
+        });
+        this.closeWaitingModal();
       }
     },
-    async getLastNftId() {
-      const tokens = await this.poolTokenContract.balanceOf(this.account);
-      const tokenId = await this.poolTokenContract
-        .tokenOfOwnerByIndex(this.account, Number(tokens) - 1);
-      return tokenId;
-    },
-    async depositGauge(
-      lastNftTokenId: any,
-    ) {
+    async depositGauge() {
       try {
         this.currentStage = zapInStep.STAKE_LP;
         this.showWaitingModal('Stake LP in process');
         this.isSwapLoading = true;
-        const tx = await this.gaugeContract.deposit(Number(lastNftTokenId));
-        await tx.wait();
+
+        console.log(
+          this.zapPool.platform[0],
+          this.gaugeContract,
+          this.newTokenId?.toString(),
+          this.account,
+          this.poolTokenContract,
+          '___TEST',
+        );
+        const tx = await ZapinService.stakeTrigger(
+          this.zapPool.platform[0],
+          this.gaugeContract,
+          this.newTokenId?.toString(),
+          this.account,
+          this.poolTokenContract,
+        );
+
+        if (!tx) throw new Error('no stake transaction');
 
         this.isSwapLoading = false;
         this.triggerSuccessZapin(

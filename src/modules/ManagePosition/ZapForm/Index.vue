@@ -237,6 +237,7 @@ import {
 import ZapinService, { ZAPIN_FUNCTIONS, ZAPIN_TYPE } from '@/services/Web3Service/Zapin-service.ts';
 import SwapRouting from '@/components/SwapRouting/Index.vue';
 import type { IPositionsInfo } from '@/types/positions';
+import type { PLATFORMS } from '@/types/common/pools';
 
 enum zapMobileSection {
   'TOKEN_FORM',
@@ -570,13 +571,9 @@ export default {
 
       try {
         this.showWaitingModal('unstaking');
+        await ZapinService.withdrawTrigger(this.zapPool, this.gaugeContract, this.account);
 
-        let tx;
-
-        if (this.zapPool.chainName === 'base') tx = await this.gaugeContract.withdraw(this.zapPool.tokenId);
-        else if (this.zapPool.chainName === 'arbitrum') tx = await this.gaugeContract.withdraw(this.zapPool.tokenId, this.account);
-
-        await tx.wait();
+        console.log('WITHDRAW');
         this.isSwapLoading = false;
         this.closeWaitingModal();
         this.positionStaked = false;
@@ -594,20 +591,15 @@ export default {
       try {
         this.showWaitingModal('staking');
 
-        const data = {
-          from: this.account,
-          to: this.poolTokenContract.target,
-          tokenId: this.newTokenId,
-          _data: '0x0000000000000000000000000000000000000000000000000000000000000000',
-        };
+        const tx = await ZapinService.stakeTrigger(
+          this.zapPool.platform[0] as PLATFORMS,
+          this.gaugeContract,
+          this.newTokenId,
+          this.account,
+          this.poolTokenContract,
+        );
 
-        let tx;
-
-        if (this.zapPool.chainName === 'base') tx = await this.gaugeContract.deposit(this.newTokenId);
-        // eslint-disable-next-line no-underscore-dangle
-        else if (this.zapPool.chainName === 'arbitrum') tx = await this.gaugeContract.safeTransferFrom(data.from, data.to, data.tokenId, data._data, { from: this.account });
-
-        await tx.wait();
+        if (!tx) throw new Error('no stake transaction');
 
         this.isSwapLoading = false;
         const inputTokens = [...this.inputTokens];
@@ -727,6 +719,7 @@ export default {
 
         await tx.wait();
 
+        console.log(approveToGauge, '__approveToGauge');
         if (approveToGauge) {
           this.gaugeNftApproved = true;
           this.currentStage = rebalanceStep.STAKE;

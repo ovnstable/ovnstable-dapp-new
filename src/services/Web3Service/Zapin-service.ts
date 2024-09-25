@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable class-methods-use-this */
@@ -10,6 +11,7 @@ import { ethers } from 'ethers';
 import { MODAL_TYPE, ODOS_REF_CODE, type ITriggerSuccessZapin } from '@/store/views/main/odos/index.ts';
 import { parseErrorLog } from '@/utils/errors.ts';
 import type { IPositionsInfo } from '@/types/positions/index.ts';
+import { PLATFORMS } from '@/types/common/pools/index.ts';
 import {
   calculateProportionForPool,
   countPercentDiff,
@@ -17,6 +19,7 @@ import {
   sumOfAllSelectedTokensInUsd,
 } from './utils/index.ts';
 import odosApiService from '../odos-api-service.ts';
+import { ZAPIN_SCHEME } from './utils/scheme.ts';
 
 export enum ZAPIN_TYPE {
   ZAPIN,
@@ -538,6 +541,61 @@ class ZapinService {
         .div(sumReserves)
         .toFixed(),
     });
+  }
+
+  async stakeTrigger(
+    zapPlatform: PLATFORMS,
+    gaugeContract: any,
+    newTokenId: number | string,
+    account: string,
+    poolTokenContract: any,
+  ) {
+    try {
+      let tx: any = null;
+
+      console.log(poolTokenContract, '___poolTokenContract');
+      console.log(gaugeContract, '___this.gaugeContract');
+      if (zapPlatform === PLATFORMS.AERO) {
+        tx = await gaugeContract.deposit(newTokenId);
+      }
+
+      if (zapPlatform === PLATFORMS.PANCAKE) {
+        const data = {
+          from: account,
+          to: ZAPIN_SCHEME.pancake.stakeAddress,
+          tokenId: newTokenId,
+          _data: '0x0000000000000000000000000000000000000000000000000000000000000000',
+        };
+
+        tx = await poolTokenContract
+          .safeTransferFrom(data.from, data.to, data.tokenId, data._data, { from: account });
+      }
+
+      await tx.wait();
+
+      return tx;
+    } catch (e: any) {
+      throw new Error(e);
+    }
+  }
+
+  async withdrawTrigger(zapPool: IPositionsInfo, gaugeContract: any, account?: string) {
+    try {
+      let tx: any = null;
+
+      console.log(gaugeContract, '___this.gaugeContract');
+      if (zapPool.platform[0] === PLATFORMS.AERO) {
+        tx = await gaugeContract.withdraw(zapPool.tokenId);
+      }
+
+      if (zapPool.platform[0] === PLATFORMS.PANCAKE) {
+        tx = await gaugeContract.withdraw(zapPool.tokenId, account);
+      }
+
+      return await tx.wait();
+    } catch (e: any) {
+      throw new Error(e);
+    }
   }
 
   async triggerZapin(

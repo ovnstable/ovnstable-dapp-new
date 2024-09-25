@@ -13,6 +13,7 @@ export const ZAPIN_SCHEME = {
   },
   pancake: {
     zapinAdd: '0xB1b2F63ADD990d792d436143a07b8E0c06d8Fa09',
+    stakeAddress: '0xc6a2db661d5a5690172d8eb0a7dea2d3008665a3',
     stake: DEPOSIT_TYPES.TRANSFER,
   },
   uniswap: {
