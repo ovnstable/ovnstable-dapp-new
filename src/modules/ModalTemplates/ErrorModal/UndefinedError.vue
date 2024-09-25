@@ -59,7 +59,7 @@ export default {
     BaseIcon,
     ButtonComponent,
   },
-  props: ['errorMsg'],
+  props: ['errorMsg', 'copyError'],
 };
 </script>
 
