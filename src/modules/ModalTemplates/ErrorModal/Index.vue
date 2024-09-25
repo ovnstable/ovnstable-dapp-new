@@ -203,6 +203,7 @@ export default {
       }
 
       if (this.errorMsg === 'rejected') {
+        console.log('this.errorMsg', this.errorMsg);
         this.errorViewType = 'rejected';
         return;
       }
@@ -264,6 +265,14 @@ export default {
 
       this.$emit('input', false);
       this.$emit('m-close');
+
+      // Clean modal state
+      this.showCopyTooltip = false;
+      this.showCopyTooltipContainer = false;
+
+      this.errorText = '';
+      this.errorCode = 0;
+      this.errorViewType = '';
     },
   },
 };
