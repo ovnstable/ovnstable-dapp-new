@@ -32,73 +32,11 @@
           @click="toggleMobileSection"
           />
         </div>
-        <div class="zapin-block__row">
+        <div class="manage-wrap__content">
           <div
-          class="zapin-block__content"
+          class="zapin-block__content compound-wrap__content"
           :class="currentSection === zapMobileSection.TOKEN_FORM && 'mobile-active'"
           >
-            <div class="zapin-block__wrapper">
-              <div class="zapin-block__swap-wrapper">
-                <div class="out-swap-container pt-5">
-                  <div class="input-swap-container">
-                    <div class="swap-form__body-block">
-                      <div class="swap-form__body-block__title">
-                        <h3>
-                          You claim
-                        </h3>
-                      </div>
-                      <TransitionGroup
-                        name="staggered-fade"
-                        tag="div"
-                        :class="{ 'swap-form__body-block__inputs': true, 'block-inputs--scroll': outputTokens?.length > 3 }"
-                        :css="false"
-                        @before-enter="beforeEnterList"
-                        @enter="onEnterList"
-                        @on-leave="onLeaveList"
-                      >
-                        <div
-                          v-for="token in inputTokens"
-                          :key="token.id"
-                          :data-index="token.id"
-                          class="swap-form__body-block__inputs-item"
-                        >
-                          <TokenForm
-                            :token-info="token"
-                            :is-token-removable="false"
-                            :is-input-token="false"
-                            :disabled="true"
-                            :balances-loading="isAnyLoading"
-                          />
-                        </div>
-                      </TransitionGroup>
-                    </div>
-                  </div>
-                </div>
-                <div>
-                <div class="out-swap-container pt-5 new-position-tokens">
-                  <h2>
-                    New position
-                  </h2>
-                  <div
-                    v-for="token in newPositionTokens"
-                    :key="token.id"
-                    class="input-component-container"
-                  >
-                    <TokenForm
-                      :token-info="token"
-                      :is-token-removable="false"
-                      :is-input-token="false"
-                      :disabled="true"
-                      :balances-loading="isBalancesLoading"
-                      :token-loading="odosDataLoading"
-                      hide-balance
-                      @remove-token="removeOutputToken"
-                    />
-                  </div>
-                </div>
-              </div>
-              </div>
-            </div>
             <FeesBlock
               v-if="odosData"
               :slippage-percent="slippagePercent"
@@ -116,17 +54,16 @@
             <SwapRouting
               v-if="odosData?.netOutValue"
               :swap-data="odosData"
-              :merged-list="allTokensList"
+              :merged-list="[]"
               :input-tokens="selectedInputTokens"
               :output-tokens="outputTokens"
               :routing-type="MODAL_TYPE.COMPOUND"
               :zap-pool="zapPool"
             />
-
-            <SwapSlippageSettings
-              @change-slippage="handleCurrentSlippageChanged"
-            />
           </div>
+          <SwapSlippageSettings
+            @change-slippage="handleCurrentSlippageChanged"
+          />
         </div>
       </div>
       <div class="swap-container__footer">
@@ -257,10 +194,8 @@ import Spinner from '@/components/Spinner/Index.vue';
 import ChangeNetwork from '@/components/ZapForm/ChangeNetwork.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
-import TokenForm from '@/components/TokenForm/Index.vue';
 import BN from 'bignumber.js';
 import { approveToken, getAllowanceValue } from '@/utils/contractApprove.ts';
-import { onLeaveList, onEnterList, beforeEnterList } from '@/utils/animations.ts';
 import { CompoundStep, MANAGE_FUNC } from '@/store/modals/waiting-modal.ts';
 import SwapSlippageSettings from '@/components/SwapSlippage/Index.vue';
 import { useTokensQuery } from '@/hooks/fetch/useTokensQuery.ts';
@@ -291,7 +226,6 @@ export default {
     FeesBlock,
     ButtonComponent,
     SwapSlippageSettings,
-    TokenForm,
     ChangeNetwork,
     Spinner,
     ZapInStepsRow,
@@ -501,10 +435,6 @@ export default {
     ...mapActions('walletAction', ['connectWallet']),
 
     ...mapMutations('waitingModal', ['setStagesMap']),
-    onLeaveList,
-    beforeEnterList,
-    onEnterList,
-
     changeAgreeFees() {
       this.agreeWithFees = !this.agreeWithFees;
     },
@@ -594,25 +524,6 @@ export default {
         this.checkApproveForToken(this.firstInputInQueueForToApprove, approveValue),
       );
     },
-    removeOutputToken(id: string) {
-      this.removeToken(this.outputTokens, id);
-      this.resetOutputs();
-    },
-
-    removeToken(tokens: any[], id: string) {
-    // removing by token.id or token.selectedToken.id
-      const index = tokens.findIndex(
-        (item: any) => item.id === id
-          || (item.selectedToken ? item.selectedToken.id === id : false),
-      );
-      if (index !== -1) {
-        if (tokens[index].selectedToken) {
-          tokens[index].selectedToken.selected = false;
-        }
-
-        tokens.splice(index, 1);
-      }
-    },
     odosAssembleRequest(requestData: any) {
       return odosApiService
         .assembleRequest(requestData)
@@ -654,27 +565,6 @@ export default {
     clearAndInitForm() {
       this.clearAllSelectedTokens();
       this.addDefaultPoolToken();
-    },
-    resetOutputs() {
-      if (!this.selectedOutputTokens.length) {
-        return;
-      }
-
-      if (this.selectedOutputTokens.length === 2) {
-        for (let i = 0; i < this.selectedOutputTokens.length; i++) {
-          const token: any = this.selectedOutputTokens[i];
-          token.value = 50;
-        }
-        return;
-      }
-
-      for (let i = 0; i < this.selectedOutputTokens.length; i++) {
-        const token: any = this.selectedOutputTokens[i];
-        token.value = 0;
-      }
-
-      // init first token value
-      this.selectedOutputTokens[0].value = 100;
     },
     async stakeTrigger() {
       this.isSwapLoading = true;

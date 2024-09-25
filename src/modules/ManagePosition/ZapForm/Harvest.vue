@@ -20,7 +20,7 @@
       v-else
       class="swap-block"
     >
-      <div class="swap-block__full">
+      <div class="swap-block__part">
         <h2>
           You have
         </h2>
@@ -56,67 +56,69 @@
             </div>
           </div>
         </div>
-        <div class="swap-block__part-total">
-          <h2>
-            Total amount
-          </h2>
-          <div>
-            {{ totalLiq }}
-          </div>
-        </div>
-        <SwapRouting
-        v-if="zapPool"
-              :swap-data="[]"
-              :merged-list="allTokensList"
-              :input-tokens="[]"
-              :output-tokens="[]"
-              :routing-type="MODAL_TYPE.HARVEST"
-              :zap-pool="zapPool"
-            />
-        <div class="swap-container__footer">
-          <ButtonComponent
-            v-if="!account"
-            class="swap-button-container"
-            btn-size="large"
-            btn-styles="primary"
-            full
-            @click="connectWallet"
-            @keypress="connectWallet"
-          >
-            CONNECT WALLET
-          </ButtonComponent>
-          <div
-            v-else
-            class="swap-button-container"
-          >
-            <ButtonComponent
-              v-if="!positionFinish"
-              btn-size="large"
-              btn-styles="primary"
-              full
-              :loading="isSwapLoading"
-              @click="claimTrigger"
-              @keypress="claimTrigger"
-            >
-              CLAIM REWARDS
-            </ButtonComponent>
-            <RouterLink
-              v-else-if="positionFinish"
-              to="/positions"
-            >
-              <ButtonComponent
-                btn-size="large"
-                btn-styles="primary"
-                full
-              >
-                RETURN TO POSITIONS
-              </ButtonComponent>
-            </RouterLink>
-          </div>
+      </div>
+      <div class="swap-block__part-total">
+        <h2>
+          Total amount
+        </h2>
+        <div>
+          {{ totalLiq }}
         </div>
       </div>
     </div>
-  </div>
+    <div class="swap-block__part">
+      <SwapRouting
+      v-if="zapPool"
+            :swap-data="[]"
+            :merged-list="[]"
+            :input-tokens="[]"
+            :output-tokens="[]"
+            :routing-type="MODAL_TYPE.HARVEST"
+            :zap-pool="zapPool"
+          />
+        </div>
+      </div>
+      <div class="swap-container__footer">
+        <ButtonComponent
+          v-if="!account"
+          class="swap-button-container"
+          btn-size="large"
+          btn-styles="primary"
+          full
+          @click="connectWallet"
+          @keypress="connectWallet"
+        >
+          CONNECT WALLET
+        </ButtonComponent>
+        <div
+          v-else
+          class="swap-button-container"
+        >
+          <ButtonComponent
+            v-if="!positionFinish"
+            btn-size="large"
+            btn-styles="primary"
+            full
+            :loading="isSwapLoading"
+            @click="claimTrigger"
+            @keypress="claimTrigger"
+          >
+            CLAIM REWARDS
+          </ButtonComponent>
+          <RouterLink
+            v-else-if="positionFinish"
+            to="/positions"
+          >
+            <ButtonComponent
+              btn-size="large"
+              btn-styles="primary"
+              full
+            >
+              RETURN TO POSITIONS
+            </ButtonComponent>
+          </RouterLink>
+        </div>
+      </div>
 </div>
 </template>
 <!-- eslint-disable no-restricted-syntax -->

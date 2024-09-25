@@ -61,7 +61,7 @@
     </div>
     <div
       v-else-if="activeTab === manageTab.HARVEST"
-      class="manage-wrap__content manage-wrap__content--harvest"
+      class="manage-wrap__content"
     >
       <HarvestForm
         :zap-pool="zapPool"

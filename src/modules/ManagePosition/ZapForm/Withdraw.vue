@@ -72,97 +72,81 @@
         </div>
       </div>
       <div class="swap-block__part">
-        <h2>
-          You receive
-        </h2>
         <div class="swap-block__get-col">
-          <div
-            v-for="token in (outputTokens as any)"
-            :key="token.id"
-            class="input-component-container"
-          >
-            <TokenForm
-              :token-info="token"
-              :is-token-removable="false"
-              :is-input-token="false"
-              :disabled="true"
-              hide-balance
-            />
-          </div>
           <SwapRouting
               v-if="zapPool"
               :swap-data="[]"
               :merged-list="[]"
               :input-tokens="[]"
               :output-tokens="selectedOutputTokens"
-              :initial-position-tokens="[]"
+              :initial-position-routing-wrap="[]"
               :routing-type="MODAL_TYPE.WITHDRAW"
               :zap-pool="zapPool"
             />
         </div>
-        <div class="swap-container__footer">
+      </div>
+    </div>
+    <div class="swap-container__footer">
+      <ButtonComponent
+        v-if="!account"
+        class="swap-button-container"
+        btn-size="large"
+        btn-styles="primary"
+        full
+        @click="connectWallet"
+        @keypress="connectWallet"
+      >
+        CONNECT WALLET
+      </ButtonComponent>
+      <div
+        v-else
+        class="swap-button-container"
+      >
+        <ButtonComponent
+          v-if="positionStaked"
+          btn-size="large"
+          btn-styles="primary"
+          full
+          :loading="isSwapLoading"
+          @click="withdrawTrigger"
+          @keypress="withdrawTrigger"
+        >
+          WITHDRAW
+        </ButtonComponent>
+        <ButtonComponent
+          v-else-if="!isNftApproved"
+          btn-size="large"
+          btn-styles="primary"
+          full
+          :loading="isSwapLoading"
+          @click="approveNftPosition(false)"
+          @keypress="approveNftPosition(false)"
+        >
+          APPROVE
+        </ButtonComponent>
+        <RouterLink
+          v-else-if="positionFinish"
+          to="/positions"
+        >
           <ButtonComponent
-            v-if="!account"
-            class="swap-button-container"
             btn-size="large"
             btn-styles="primary"
             full
-            @click="connectWallet"
-            @keypress="connectWallet"
           >
-            CONNECT WALLET
+            RETURN TO POSITIONS
           </ButtonComponent>
-          <div
-            v-else
-            class="swap-button-container"
-          >
-            <ButtonComponent
-              v-if="positionStaked"
-              btn-size="large"
-              btn-styles="primary"
-              full
-              :loading="isSwapLoading"
-              @click="withdrawTrigger"
-              @keypress="withdrawTrigger"
-            >
-              WITHDRAW
-            </ButtonComponent>
-            <ButtonComponent
-              v-else-if="!isNftApproved"
-              btn-size="large"
-              btn-styles="primary"
-              full
-              :loading="isSwapLoading"
-              @click="approveNftPosition(false)"
-              @keypress="approveNftPosition(false)"
-            >
-              APPROVE
-            </ButtonComponent>
-            <RouterLink
-              v-else-if="positionFinish"
-              to="/positions"
-            >
-              <ButtonComponent
-                btn-size="large"
-                btn-styles="primary"
-                full
-              >
-                RETURN TO POSITIONS
-              </ButtonComponent>
-            </RouterLink>
-            <ButtonComponent
-              v-else
-              btn-size="large"
-              btn-styles="primary"
-              full
-              :loading="isSwapLoading"
-              @click="zapOutTrigger"
-              @keypress="zapOutTrigger"
-            >
-              ZAP OUT
-            </ButtonComponent>
-          </div>
-        </div>
+        </RouterLink>
+        <ButtonComponent
+          v-else
+          btn-size="large"
+          btn-styles="primary"
+          full
+          :loading="isSwapLoading"
+          @click="zapOutTrigger"
+          @keypress="zapOutTrigger"
+        >
+          ZAP OUT
+        </ButtonComponent>
       </div>
     </div>
   </div>
@@ -182,7 +166,6 @@ import {
 import Spinner from '@/components/Spinner/Index.vue';
 import ChangeNetwork from '@/components/ZapForm/ChangeNetwork.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
-import TokenForm from '@/components/TokenForm/Index.vue';
 import { cloneDeep } from 'lodash';
 import BN from 'bignumber.js';
 import { MANAGE_FUNC, withdrawStep } from '@/store/modals/waiting-modal.ts';
@@ -199,7 +182,6 @@ export default defineComponent({
   name: 'WithdrawForm',
   components: {
     ButtonComponent,
-    TokenForm,
     ChangeNetwork,
     Spinner,
     SwapRouting,
