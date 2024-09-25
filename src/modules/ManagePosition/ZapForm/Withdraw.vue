@@ -177,6 +177,7 @@ import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import { initZapinContracts } from '@/services/Web3Service/utils/index.ts';
 import SwapRouting from '@/components/SwapRouting/Index.vue';
 import { parseErrorLog } from '@/utils/errors.ts';
+import ZapinService from '@/services/Web3Service/Zapin-service.ts';
 import type { IPositionsInfo } from '@/types/positions';
 
 export default defineComponent({
@@ -426,12 +427,13 @@ export default defineComponent({
       try {
         this.showWaitingModal('unstaking');
 
-        let tx;
+        await ZapinService.withdrawTrigger(
+          this.zapPool,
+          this.zapPool.tokenId?.toString(),
+          this.gaugeContract,
+          this.account,
+        );
 
-        if (this.zapPool.chainName === 'base') tx = await this.gaugeContract.withdraw(this.zapPool.tokenId);
-        else if (this.zapPool.chainName === 'arbitrum') tx = await this.gaugeContract.withdraw(this.zapPool.tokenId, this.account);
-
-        await tx.wait();
         this.isSwapLoading = false;
         this.closeWaitingModal();
         this.positionStaked = false;
