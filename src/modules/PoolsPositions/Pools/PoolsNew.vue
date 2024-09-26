@@ -18,7 +18,7 @@
         :is-show-apr-limit="isShowAprLimit"
         :open-zap-in-func="openZapIn"
         :set-order-type-func="setOrderType"
-        :order-type="orderType as any"
+        :order-type="orderType"
       />
     </div>
 
@@ -76,18 +76,20 @@ export default defineComponent({
     isShowOnlyZap: false,
     isShowAprLimit: false,
 
-    networkIds: [] as number[], // [] for ALL or networks,
-    category: POOL_CATEGORIES.ALL as POOL_CATEGORIES,
+    networkIds: [] as number[],
+    category: POOL_CATEGORIES.ALL,
     searchQuery: '',
 
     orderType: ORDER_TYPE.TVL_UP,
-    isDefaultOrder: true as boolean,
+    isDefaultOrder: true,
   }),
 
   computed: {
-    ...mapState('poolsData', ['currentZapPool', 'isZapModalShow']),
+    ...mapState('poolsData', ['currentZapPool', 'isZapModalShow', 'activeChain']),
     displayedPools() {
-      return this.poolList;
+      if (this.activeChain === 'all') return this.poolList;
+      return this.poolList
+        .filter((_) => _.chain === this.activeChain);
     },
   },
 
