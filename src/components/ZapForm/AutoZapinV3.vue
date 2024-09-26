@@ -596,6 +596,8 @@ export default defineComponent({
         this.zapPool.gauge,
       );
 
+      console.log(contractsData, '____contractsData');
+
       this.gaugeContract = contractsData.gaugeContract;
       this.zapContract = contractsData.zapContract;
       this.poolTokenContract = contractsData.poolTokenContract;

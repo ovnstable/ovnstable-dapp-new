@@ -455,7 +455,9 @@ export const initZapinContracts = async (
 
   const abiV3Zap = srcStringBuilder('Contract')('v3', 'Zapin');
   const abiContractV3Zap = await loadAbi(abiV3Zap);
-  const abiZapAdd = ZAPIN_SCHEME[platform as keyof typeof ZAPIN_SCHEME]?.zapinAdd;
+  const abiZapAdd = ZAPIN_SCHEME[zapPool.chainName as keyof typeof ZAPIN_SCHEME][
+    platform as keyof typeof ZAPIN_SCHEME.arbitrum
+  ]?.zapinAdd;
 
   if (!abiZapAdd) throw new Error('abiZapAdd not found');
 

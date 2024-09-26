@@ -57,7 +57,7 @@ interface IRecalculateProportionOdosV3 {
   simulateSwap: boolean,
   typeFunc: ZAPIN_TYPE,
   showErrorModalWithMsg: (val: any) => void,
-  mergeIds: string[]
+  mergeIds?: string[]
 }
 
 interface ISwapData {
@@ -682,7 +682,7 @@ class ZapinService {
     simulateSwap,
     typeFunc = ZAPIN_TYPE.ZAPIN,
     showErrorModalWithMsg,
-    mergeIds,
+    mergeIds = [],
   }: IRecalculateProportionOdosV3) {
     const emptyVals = selectedInputTokens.map((_) => {
       if (new BN(_?.value).eq(0) || !_?.value) return null;
@@ -735,8 +735,6 @@ class ZapinService {
         'LOOGS___',
       );
 
-      console.log(zapPool, '__zapPool');
-
       resp = await this.getV3Proportion(
         zapPool.address,
         v3RangeTicks,
@@ -764,8 +762,6 @@ class ZapinService {
         }),
         'LOOGS___',
       );
-
-      console.log(zapPool, '__zapPool');
 
       resp = await this.getV3Proportion(
         zapPool.address,
