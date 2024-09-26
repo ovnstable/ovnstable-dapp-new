@@ -9,6 +9,9 @@ import type { TTokenInfo } from '@/types/common/tokens';
 import type { IPositionsInfo, TPositionData, TTicks } from '@/types/positions';
 
 const REWARDS_LIST = {
+  arbitrum: {
+    pcs: '0x1b896893dfc86bb67cf57767298b9073d2c1ba2c',
+  },
   base: {
     pcs: '0x3055913c90fcc1a6ce9a358911721eeb942013a1',
     aerodrome: '0x940181a94A35A4569E4529A3CDfB74e38FD98631',
@@ -119,7 +122,7 @@ export const formatPositionData = (
 
       const chainName = network?.networkName?.toLowerCase();
       const rewardAdd = REWARDS_LIST[chainName as keyof typeof REWARDS_LIST][
-        platform?.toLowerCase() as keyof typeof REWARDS_LIST.base
+        platform?.toLowerCase() as keyof typeof REWARDS_LIST.arbitrum
       ];
 
       if (platformName === 'PCS') {

@@ -10,8 +10,13 @@ import { ZAPIN_SCHEME } from '../Web3Service/utils/scheme.ts';
 export const loadPositionContract = async (state: any, platformName: string) => {
   const abiV3Zap = srcStringBuilder('Contract')('v3', 'Zapin');
   const abiContractV3Zap = await loadAbi(abiV3Zap);
-  const abiZapAdd = ZAPIN_SCHEME[platformName?.toLowerCase() as keyof typeof ZAPIN_SCHEME]
-    ?.zapinAdd;
+
+  console.log(platformName, '___platformName');
+  const abiZapAdd = ZAPIN_SCHEME[
+    state.network.networkName?.toLowerCase() as keyof typeof ZAPIN_SCHEME
+  ][
+    platformName?.toLowerCase() as keyof typeof ZAPIN_SCHEME.arbitrum
+  ]?.zapinAdd;
 
   const positionContract = buildEvmContract(
     abiContractV3Zap.abi,
