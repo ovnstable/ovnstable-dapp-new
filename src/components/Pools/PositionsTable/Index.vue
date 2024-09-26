@@ -95,7 +95,6 @@
                 {{ pool.rewards.displayedUsdValue }}$
               </div>
               <div
-                v-if="pool.chain === 8453"
                 class="pools-table__btn"
                 :class="{ 'pools-table__btn--disabled': lessThanMin(pool.rewards.usdValue) }"
                 @click="emitClaim(pool)"
@@ -121,7 +120,6 @@
             </div>
 
             <ButtonComponent
-              :disabled="pool.chain !== 8453"
               btn-styles="faded"
               @click="handleOpen(pool)"
             >
