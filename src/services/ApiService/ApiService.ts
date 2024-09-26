@@ -2,7 +2,7 @@
 import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse } from 'axios';
 
 export interface IApiService {
-    get<T>(url: string, params?: any): Promise<AxiosResponse<T>>;
+    get<T>(url: string, params?: any): Promise<T>;
   }
 
 abstract class ApiService implements IApiService {
@@ -12,7 +12,7 @@ abstract class ApiService implements IApiService {
     this.axiosInstance = axios.create();
   }
 
-  public async get<T>(url: string, params?: Record<string, any>): Promise<AxiosResponse<T>> {
+  public async get<T>(url: string, params?: Record<string, any>): Promise<T> {
     try {
       const response = await this.axiosInstance.get<T>(url, { params });
       return response.data as any;

@@ -17,5 +17,6 @@ export const createContext = () => {
     TokenService: tokenService,
     BalanceService: balanceService,
     PosthogService: posthogService,
+    OvernightApi: overnightApi,
   };
 };

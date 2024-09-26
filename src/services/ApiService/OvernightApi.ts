@@ -1,7 +1,13 @@
 import ApiService from '@/services/ApiService/ApiService.ts';
+import type {
+  IInsPayoutResponse, IInsPayoutResponseOld, IInsStatResponse, IStrategyResponse,
+  IStrategyResponseOld,
+} from '@/types/api/overnightApi';
 import type { TFilterPoolsParams } from '@/types/common/pools';
+import { tranformPayoutResponse, tranformStrategyResponse } from './utils/apiComatibility.ts';
 
 const API_URL = process.env.OVERNIGHT_API_URL;
+const API_URL_NEW = process.env.OVERNIGHT_API_URL_NEW;
 const OVERNIGHT_POOLS_API_URL = process.env!.OVERNIGHT_POOLS_API_URL as string;
 const API_URL_ODOS = `${API_URL}/root/odos`;
 
@@ -21,17 +27,15 @@ export interface IOvernightApi {
   swapRequest(requestData: any): any,
 
   // Market
-  loadStrategies(chain: string, token: string): any,
+  loadStrategies(): Promise<IStrategyResponseOld[]>,
   loadPayouts(chain: string, token: string): any,
   loadTotalPlusToken(chain: string, token: string): any,
   loadCollaterlPlusToken(chain: string, token: string): any,
 
   // Insurance
-  loadInsuranceData(chain: string): any,
+  loadInsuranceData(): Promise<IInsStatResponse>,
   loadOvnPrice(): any,
-  // Duplicate name !!!
-  $_loadPayouts(chain: string): any,
-  loadInsurancePremiusm(chain: string): any,
+  loadInsurancePayouts(): Promise<IInsPayoutResponseOld[]>,
 
   // Dashboard
   loadBalanceChange(chain: string, token: string, address: string, dop?: string): any,
@@ -48,11 +52,11 @@ export interface IOvernightApi {
 export class OvernightApi extends ApiService implements IOvernightApi {
 // Slider
   public async loadApyName() {
-    return this.get(`${API_URL}landing/main-widget/data`);
+    return this.get(`${API_URL}/landing/main-widget/data`);
   }
 
   public async loadTVL() {
-    return this.get(`${API_URL}tvl/product/total`);
+    return this.get(`${API_URL}/tvl/product/total`);
   }
 
   // Odos
@@ -91,12 +95,12 @@ export class OvernightApi extends ApiService implements IOvernightApi {
 
   // Market
 
-  public async loadStrategies(chain: string, token: string) {
-    return this.get(`${API_URL}/${chain}/${token}/dapp/strategies`);
+  public async loadStrategies(): Promise<IStrategyResponseOld[]> {
+    return tranformStrategyResponse(this.get<IStrategyResponse[]>(`${API_URL_NEW}/strategy/arbitrum/USD+/list`));
   }
 
-  public async loadPayouts(chain: string, token: string) {
-    return this.get(`${API_URL}/${chain}/${token}/dapp/payouts`);
+  public async loadPayouts(chain: string) {
+    return this.get(`${API_URL_NEW}/insurance/${chain}`);
   }
 
   public async loadTotalPlusToken(chain: string, token: string) {
@@ -109,21 +113,16 @@ export class OvernightApi extends ApiService implements IOvernightApi {
 
   // Insurance
 
-  public async loadInsuranceData(chain: string) {
-    return this.get(`${API_URL}/${chain}/usd+/ins/data`);
+  public async loadInsuranceData(): Promise<IInsStatResponse> {
+    return this.get(`${API_URL_NEW}/insurance/arbitrum/stats`);
   }
 
   public async loadOvnPrice() {
     return this.get(`${API_URL}/root/dapp/price/ovn`);
   }
 
-  // Duplicate name !!!
-  public async $_loadPayouts(chain: string) {
-    return this.get(`${API_URL}/${chain}/usd+/ins/payouts`);
-  }
-
-  public async loadInsurancePremiusm(chain: string) {
-    return this.get(`${API_URL}/${chain}/usd+/dapp/strategies`);
+  public async loadInsurancePayouts(): Promise<IInsPayoutResponseOld[]> {
+    return tranformPayoutResponse(this.get<IInsPayoutResponse[]>(`${API_URL_NEW}/insurance/arbitrum`));
   }
 
   // Dashboard

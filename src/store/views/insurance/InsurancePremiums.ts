@@ -1,13 +1,16 @@
-import InsuranceApiService from '@/services/insurance-api-service.ts';
+import { OvernightApi } from '@/services/ApiService/OvernightApi.ts';
 
 const state = {
   insurancePremiums: {},
 };
 
 const actions = {
-  async fetchInsurancePremiums({ commit }: any, { networkName }: any) {
+  async fetchInsurancePremiums(
+    { commit }: any,
+  ) {
     try {
-      const data = await InsuranceApiService.loadInsurancePremiusm(networkName);
+      const OvernightApiInstance = new OvernightApi();
+      const data = await OvernightApiInstance.loadStrategies();
       commit('setInsurancePremiums', data);
     } catch (error) {
       console.error('Failed to fetch insurance premiums:', error);

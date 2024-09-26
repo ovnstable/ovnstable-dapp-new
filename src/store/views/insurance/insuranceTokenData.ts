@@ -1,4 +1,5 @@
-import InsuranceApiService from '@/services/insurance-api-service.ts';
+import { OvernightApi } from '@/services/ApiService/OvernightApi.ts';
+import type { IInsPayoutResponseOld } from '@/types/api/overnightApi';
 
 const state = {
   insuranceTokenData: {},
@@ -16,13 +17,13 @@ function generateInsuranceImageName(networkName: string) {
   return `Insurance${capitalizedNetworkName}`;
 }
 
-function getLastPayout(payouts: any) {
+function getLastPayout(payouts: IInsPayoutResponseOld[]) {
   if (payouts.length === 0) {
     return { lastPayoutTime: 'No payouts', lastPayoutType: 'No payouts' };
   }
 
   const lastPayout = payouts[0];
-  const payoutDate = new Date(lastPayout.date);
+  const payoutDate = new Date(lastPayout.timestamp);
   const now = new Date();
 
   const diffMinutes = Math.abs(now.getTime() - payoutDate.getTime()) / (1000 * 60);
@@ -37,19 +38,22 @@ function getLastPayout(payouts: any) {
 }
 
 const actions = {
-  async fetchInsuranceTokenData({ commit }: any, { networkName }: any) {
+  async fetchInsuranceTokenData(
+    { commit }: any,
+  ) {
     try {
-      const data = await InsuranceApiService.loadInsuranceData(networkName);
-      const insurancePayouts = await InsuranceApiService.loadPayouts(networkName);
-      const ovnPrice = await InsuranceApiService.loadOvnPrice();
-      const insImage = generateInsuranceImageName(networkName);
+      const OvernightApiInstance = new OvernightApi();
+      const data = await OvernightApiInstance.loadInsuranceData();
+      const insurancePayouts = await OvernightApiInstance.loadInsurancePayouts();
+      // const ovnPrice = await OvernightApiInstance.loadOvnPrice();
+      const insImage = generateInsuranceImageName('arbitrum');
       const { lastPayoutType, lastPayoutTime } = getLastPayout(insurancePayouts);
       const combinedData = {
         insImage,
         lastPayoutType,
         lastPayoutTime,
         data,
-        ovnPrice,
+        ovnPrice: 40,
       };
       commit('setInsuranceTokenData', { combinedData });
     } catch (error) {
