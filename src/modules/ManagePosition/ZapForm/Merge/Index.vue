@@ -647,12 +647,14 @@ export default defineComponent({
           slippageLimitPercent: this.slippagePercent,
           odosSwapRequest: this.odosSwapRequest,
           simulateSwap: true,
-          typeFunc: ZAPIN_TYPE.ZAPIN,
+          typeFunc: ZAPIN_TYPE.MERGE,
           showErrorModalWithMsg: this.showErrorModalWithMsg,
+          mergeIds: this.positionsSelected,
         };
 
         const data = await ZapinService.recalculateProportionOdosV3(recalculateProportionParams);
 
+        console.log(data, '__data');
         if (!data || (data && !data.odosData)) {
           this.odosDataLoading = false;
           this.isSwapLoading = false;
@@ -882,6 +884,7 @@ export default defineComponent({
       this.odosDataLoading = true;
 
       try {
+        console.log(this.positionsSelected, '__POS');
         const recalculateProportionParams = {
           selectedInputTokens: this.inputTokens,
           selectedOutputTokens: this.selectedOutputTokens,
@@ -892,8 +895,9 @@ export default defineComponent({
           slippageLimitPercent: this.slippagePercent,
           odosSwapRequest: this.odosSwapRequest,
           simulateSwap: true,
-          typeFunc: ZAPIN_TYPE.ZAPIN,
+          typeFunc: ZAPIN_TYPE.MERGE,
           showErrorModalWithMsg: this.showErrorModalWithMsg,
+          mergeIds: this.positionsSelected,
         };
 
         const data = await ZapinService.recalculateProportionOdosV3(recalculateProportionParams);

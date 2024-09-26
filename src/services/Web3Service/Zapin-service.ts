@@ -24,6 +24,7 @@ import { ZAPIN_SCHEME } from './utils/scheme.ts';
 export enum ZAPIN_TYPE {
   ZAPIN,
   REBALANCE,
+  MERGE,
 }
 
 export enum ZAPIN_FUNCTIONS {
@@ -56,6 +57,7 @@ interface IRecalculateProportionOdosV3 {
   simulateSwap: boolean,
   typeFunc: ZAPIN_TYPE,
   showErrorModalWithMsg: (val: any) => void,
+  mergeIds: string[]
 }
 
 interface ISwapData {
@@ -680,6 +682,7 @@ class ZapinService {
     simulateSwap,
     typeFunc = ZAPIN_TYPE.ZAPIN,
     showErrorModalWithMsg,
+    mergeIds,
   }: IRecalculateProportionOdosV3) {
     const emptyVals = selectedInputTokens.map((_) => {
       if (new BN(_?.value).eq(0) || !_?.value) return null;
@@ -747,6 +750,36 @@ class ZapinService {
       );
     }
 
+    if (typeFunc === ZAPIN_TYPE.MERGE) {
+      console.log(
+        JSON.stringify({
+          add: zapPool.address,
+          ticks: v3RangeTicks,
+          tokens: selectedInputTokens.map((_, key) => ({
+            tokenAddress: _?.selectedToken?.address,
+            amount: '0',
+            price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
+          })),
+          tokenIds: mergeIds,
+        }),
+        'LOOGS___',
+      );
+
+      console.log(zapPool, '__zapPool');
+
+      resp = await this.getV3Proportion(
+        zapPool.address,
+        v3RangeTicks,
+        selectedInputTokens.map((_, key) => ({
+          tokenAddress: _?.selectedToken?.address,
+          amount: '0',
+          price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
+        })),
+        zapContract,
+        mergeIds,
+      );
+    }
+
     console.log(resp, '___resp');
 
     if (!resp) {
@@ -770,7 +803,7 @@ class ZapinService {
         );
     }
 
-    if (typeFunc === ZAPIN_TYPE.REBALANCE) {
+    if ([ZAPIN_TYPE.REBALANCE, ZAPIN_TYPE.MERGE].includes(typeFunc)) {
       inputTokens = resp[0].map((_: any, key: number) => ({
         tokenAddress: _,
         amount: resp[1][key]?.toString(),
