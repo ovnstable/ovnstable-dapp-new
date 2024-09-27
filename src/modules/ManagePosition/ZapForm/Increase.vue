@@ -431,6 +431,10 @@ export default {
     ...mapGetters('network', ['networkId']),
     ...mapGetters('accountData', ['account']),
 
+    isAmountEntered() {
+      const tokens = this.selectedInputTokens;
+      return tokens.every((_) => _.value && new BN(_?.value).gt(0));
+    },
     zapsLoaded() {
       return !isEmpty(this.allTokensList)
         && !isEmpty(this.outputTokens)
@@ -475,17 +479,6 @@ export default {
         || !this.isAnyTokensBalanceIsInsufficient
         || !this.isAmountEntered
       );
-    },
-    isAmountEntered() {
-      const tokens = this.selectedInputTokens;
-      for (let i = 0; i < tokens.length; i++) {
-        const token: any = tokens[i];
-        if (token.value > 0) {
-          return true;
-        }
-      }
-
-      return false;
     },
     isAnyTokensBalanceIsInsufficient() {
       const tokens = this.selectedInputTokens;
@@ -926,12 +919,13 @@ export default {
     },
     async recalculateProportion() {
       if (!this.v3Range || this.inputTokens?.length === 0) return;
+      if (!this.isAmountEntered) return;
 
       this.odosDataLoading = true;
 
       try {
         const recalculateProportionParams = {
-          selectedInputTokens: this.selectedInputTokens,
+          selectedInputTokens: this.selectedInputTokens.filter((_) => (!!new BN(_.value).gt(0))),
           selectedOutputTokens: this.selectedOutputTokens,
           zapPool: this.zapPool,
           zapContract: this.zapContract,
@@ -1174,7 +1168,7 @@ export default {
 
       try {
         const recalculateProportionParams = {
-          selectedInputTokens: this.selectedInputTokens,
+          selectedInputTokens: this.selectedInputTokens.filter((_) => (!!new BN(_.value).gt(0))),
           selectedOutputTokens: this.selectedOutputTokens,
           zapPool: this.zapPool,
           zapContract: this.zapContract,

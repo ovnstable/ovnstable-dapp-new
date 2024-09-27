@@ -640,7 +640,7 @@ export default {
 
       try {
         const recalculateProportionParams = {
-          selectedInputTokens: this.selectedInputTokens,
+          selectedInputTokens: this.selectedInputTokens.filter((_) => (!!new BN(_.value).gt(0))),
           selectedOutputTokens: this.selectedOutputTokens,
           zapPool: this.zapPool,
           zapContract: this.zapContract,
@@ -845,7 +845,7 @@ export default {
 
       try {
         const recalculateProportionParams = {
-          selectedInputTokens: this.selectedInputTokens,
+          selectedInputTokens: this.selectedInputTokens.filter((_) => (!!new BN(_.value).gt(0))),
           selectedOutputTokens: this.selectedOutputTokens,
           zapPool: this.zapPool,
           zapContract: this.zapContract,
