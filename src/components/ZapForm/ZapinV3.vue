@@ -583,7 +583,7 @@ export default {
         return {
           id: key,
           value: new BN(item.value).times(tSpace).toNumber(),
-          label: new BN(item.label).times(tSpace).toFixed(),
+          label: new BN(item.label).toFixed(),
           tick: item.tick,
         };
       });

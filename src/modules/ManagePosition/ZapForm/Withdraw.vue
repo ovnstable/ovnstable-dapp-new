@@ -178,6 +178,7 @@ import { initZapinContracts } from '@/services/Web3Service/utils/index.ts';
 import SwapRouting from '@/components/SwapRouting/Index.vue';
 import { parseErrorLog } from '@/utils/errors.ts';
 import ZapinService from '@/services/Web3Service/Zapin-service.ts';
+import { awaitDelay } from '@/utils/const.ts';
 import type { IPositionsInfo } from '@/types/positions';
 
 export default defineComponent({
@@ -334,6 +335,7 @@ export default defineComponent({
           .approve(this.zapContract?.target, this.zapPool.tokenId);
 
         await tx.wait();
+        await awaitDelay(1000);
         this.isNftApproved = true;
         this.isSwapLoading = false;
         this.closeWaitingModal();

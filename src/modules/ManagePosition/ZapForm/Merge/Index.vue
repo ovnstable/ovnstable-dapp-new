@@ -553,6 +553,7 @@ export default defineComponent({
         const tx = await this.poolTokenContract.approve(this.zapContract?.target, tokenId);
 
         await tx.wait();
+        await awaitDelay(1000);
         this.isSwapLoading = false;
         this.closeWaitingModal();
         this.clearApprove(tokenId);

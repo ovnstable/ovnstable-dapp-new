@@ -320,6 +320,7 @@ import {
 import { approveToken, getAllowanceValue } from '@/utils/contractApprove.ts';
 import ZapinService, { ZAPIN_FUNCTIONS, ZAPIN_TYPE } from '@/services/Web3Service/Zapin-service.ts';
 import SwapRouting from '@/components/SwapRouting/Index.vue';
+import { awaitDelay } from '@/utils/const.ts';
 import type { IPositionsInfo } from '@/types/positions';
 import type { PLATFORMS } from '@/types/common/pools';
 
@@ -1144,6 +1145,7 @@ export default {
           : await this.poolTokenContract.approve(this.zapContract?.target, this.zapPool?.tokenId);
 
         await tx.wait();
+        await awaitDelay(1000);
 
         if (approveToGauge) {
           this.gaugeNftApproved = true;
