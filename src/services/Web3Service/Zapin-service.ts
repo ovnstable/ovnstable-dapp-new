@@ -696,7 +696,7 @@ class ZapinService {
       return _;
     });
 
-    if (emptyVals.every((_) => !_)) return null;
+    if (emptyVals.some((_) => !_)) return null;
 
     let resp: any = null;
 
