@@ -285,8 +285,7 @@
       ],
       "outputs": [
         {
-          "type": "int24",
-          "name": "tick"
+          "type": "int24"
         }
       ]
     },
@@ -332,8 +331,7 @@
       ],
       "outputs": [
         {
-          "type": "uint256",
-          "name": "result"
+          "type": "uint256"
         }
       ]
     },
@@ -352,8 +350,7 @@
       ],
       "outputs": [
         {
-          "type": "uint160",
-          "name": "z"
+          "type": "uint160"
         }
       ]
     },
@@ -395,6 +392,20 @@
         }
       ],
       "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "getNpm",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 20000000,
+      "inputs": [],
+      "outputs": [
+        {
+          "type": "address"
+        }
+      ]
     },
     {
       "type": "function",
@@ -498,7 +509,7 @@
       "inputs": [
         {
           "type": "address",
-          "name": "wallet"
+          "name": "owner"
         }
       ],
       "outputs": [
@@ -835,28 +846,6 @@
     },
     {
       "type": "function",
-      "name": "pancakeV3SwapCallback",
-      "constant": false,
-      "payable": false,
-      "gas": 20000000,
-      "inputs": [
-        {
-          "type": "int256",
-          "name": "amount0Delta"
-        },
-        {
-          "type": "int256",
-          "name": "amount1Delta"
-        },
-        {
-          "type": "bytes",
-          "name": "_data"
-        }
-      ],
-      "outputs": []
-    },
-    {
-      "type": "function",
       "name": "simulateSwap",
       "constant": false,
       "payable": false,
@@ -864,7 +853,7 @@
       "inputs": [
         {
           "type": "address",
-          "name": "pair"
+          "name": "pool"
         },
         {
           "type": "uint256",
@@ -907,6 +896,28 @@
         {
           "type": "bool",
           "name": "zeroForOne"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "uniswapV3SwapCallback",
+      "constant": false,
+      "payable": false,
+      "gas": 20000000,
+      "inputs": [
+        {
+          "type": "int256",
+          "name": "amount0Delta"
+        },
+        {
+          "type": "int256",
+          "name": "amount1Delta"
+        },
+        {
+          "type": "bytes",
+          "name": "_data"
         }
       ],
       "outputs": []

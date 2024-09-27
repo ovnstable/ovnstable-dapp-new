@@ -632,6 +632,12 @@ class ZapinService {
         await zapContract[method](txData, gaugeData);
       }
       if ([ZAPIN_FUNCTIONS.REBALANCE, ZAPIN_FUNCTIONS.INCREASE].includes(method) && tokenId) {
+        console.log(zapContract, '__zap');
+        console.log({
+          txData,
+          gaugeData,
+          tokenId,
+        }, '__zap');
         await zapContract[method](txData, gaugeData, tokenId);
       }
     } catch (e: any) {

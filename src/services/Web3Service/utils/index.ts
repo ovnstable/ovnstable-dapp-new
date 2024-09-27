@@ -387,7 +387,7 @@ export const initZapData = (
   const txData = {
     inputs: requestData.inputT,
     outputs: requestData.outputT.map((_: any, key: number) => ({
-      ..._,
+      tokenAddress: _.tokenAddress,
       amountMin: new BN(amountMins[key])
         .times(1 - getSlippagePercent / 100)
         .toFixed(0),
