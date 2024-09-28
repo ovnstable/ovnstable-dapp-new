@@ -753,6 +753,7 @@ export default {
       }
 
       const dataDec = this.reversePrice ? 8 : 6;
+      console.log(minVal, maxVal, dataDec, this.zoomType, '__ARGS');
       const buildData = createScaledArray(Number(minVal), Number(maxVal), dataDec);
 
       if (buildData?.length === 0) return;
@@ -825,7 +826,7 @@ export default {
     },
     selectEvent(e: any, o: any) {
       if (this.reverseTriggered) return;
-      const decimals = this.reversePrice ? 6 : 0;
+      const decimals = this.reversePrice ? 6 : 2;
       const minPrice = new BN(o.xaxis?.min).toFixed(this.lowPoolPrice ? 6 : decimals);
       const maxPrice = new BN(o.xaxis?.max).toFixed(this.lowPoolPrice ? 6 : decimals);
 
@@ -855,6 +856,7 @@ export default {
       const maxPrice = new BN(maxPriceVal).times(10 ** self.pairTokensData[1].decimals).toFixed(0);
 
       console.log(minPrice, '__minPrice');
+      console.log(maxPrice, '__maxPrice');
       // loading need, when we converting front price to real contract ticks
       if (!skipLoading) {
         self.isLoading = true;
