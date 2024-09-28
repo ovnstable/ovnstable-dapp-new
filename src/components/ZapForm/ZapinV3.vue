@@ -499,9 +499,22 @@ export default {
 
     if (this.ticksInit?.length > 0) this.ticksAmount = '0';
 
+    console.log(center.toString(), '___center');
     // if center price lower than 2$, doing higher zoom
     if (center.lt(2)) {
-      buildData = Array.from({ length: 22 }).map((_, key) => [key / 10, 0]);
+      if (center.lt(0.1)) {
+        buildData = buildData.concat(Array
+          .from({ length: 4 })
+          .map((_, key) => [Number((center.div(key + 1)).minus(center.div(5)).toFixed(8)), 0])
+          .reverse());
+        buildData = buildData.concat(Array
+          .from({ length: 4 })
+          .map((_, key) => [Number((center.div(key + 1)).plus(center).toFixed(8)), 0]).reverse());
+      } else {
+        buildData = Array.from({ length: 22 }).map((_, key) => [key / 10, 0]);
+      }
+
+      console.log(buildData, '___buildData2');
       this.optionsChart.series = [
         {
           data: buildData,
@@ -573,7 +586,7 @@ export default {
     }
 
     this.initialLoading = false;
-    if (this.isStablePool) this.maxZoom();
+    this.maxZoom();
   },
   methods: {
     initTicks(tSpace: string) {
@@ -599,7 +612,7 @@ export default {
       this.maxZoom();
     },
     async maxZoom(num = 4) {
-      await awaitDelay(100);
+      await awaitDelay(1000);
       this.zoomType = num;
       this.zoomInOut(true);
     },
@@ -646,6 +659,7 @@ export default {
       if (this.isStablePool || this.lowPoolPrice) {
         const buildData = Array.from({ length: 22 }).map((_, key) => [key / 10, 0]);
 
+        console.log(buildData, '___buildData23');
         (this.$refs?.zapinChart as any)!.updateSeries([{
           data: buildData,
         }], false, true);
@@ -714,20 +728,20 @@ export default {
       }
 
       if (this.zoomType === 2) {
-        const highPricePool = this.reversePrice ? 8 : 0;
-        const dec = this.lowPoolPrice ? 1 : highPricePool;
+        const highPricePool = this.reversePrice ? 8 : 4;
+        const dec = this.lowPoolPrice ? 4 : highPricePool;
         minVal = new BN(this.getCenterPrice).times(0.8).toFixed(dec);
         maxVal = new BN(this.getCenterPrice).times(1.2).toFixed(dec);
       }
       if (this.zoomType === 3) {
-        const highPricePool = this.reversePrice ? 8 : 0;
-        const dec = this.lowPoolPrice ? 2 : highPricePool;
+        const highPricePool = this.reversePrice ? 8 : 4;
+        const dec = this.lowPoolPrice ? 4 : highPricePool;
         minVal = new BN(this.getCenterPrice).times(0.99).toFixed(dec);
         maxVal = new BN(this.getCenterPrice).times(1.01).toFixed(dec);
       }
       if (this.zoomType === 4) {
-        const highPricePool = this.reversePrice ? 8 : 0;
-        const dec = this.lowPoolPrice ? 3 : highPricePool;
+        const highPricePool = this.reversePrice ? 8 : 4;
+        const dec = this.lowPoolPrice ? 4 : highPricePool;
         minVal = new BN(this.getCenterPrice).times(0.999).toFixed(dec);
         maxVal = new BN(this.getCenterPrice).times(1.001).toFixed(dec);
       }
@@ -738,7 +752,7 @@ export default {
         maxVal = new BN(this.getCenterPrice).times(1.0005).toFixed(dec);
       }
 
-      const dataDec = this.reversePrice ? 8 : 4;
+      const dataDec = this.reversePrice ? 8 : 6;
       const buildData = createScaledArray(Number(minVal), Number(maxVal), dataDec);
 
       if (buildData?.length === 0) return;
