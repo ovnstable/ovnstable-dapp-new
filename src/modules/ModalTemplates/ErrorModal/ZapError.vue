@@ -63,7 +63,7 @@ export default {
     errorTitle: {
       type: String,
       required: false,
-      default: 'Oops! Smart contract error',
+      default: 'Oops! Simulation error, transaction reverted',
     },
     copyError: {
       type: Function,
