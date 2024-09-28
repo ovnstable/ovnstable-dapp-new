@@ -215,6 +215,7 @@ import { awaitDelay } from '@/utils/const.ts';
 import { checkIsEveryStable } from '@/store/views/main/pools/helpers.ts';
 import getZapinChartConfig from '@/services/Web3Service/utils/chart.ts';
 import { createScaledArray } from '@/services/Web3Service/utils/index.ts';
+import { fixedByPriceChart } from '@/utils/numbers.ts';
 
 export default {
   name: 'ZapinV3',
@@ -329,6 +330,7 @@ export default {
       if (!this.reversePrice) return this.centerPrice;
 
       const dec = this.lowPoolPrice ? 8 : 6;
+      console.log(this.centerPrice, dec, '___DEC');
       return new BN(1).div(this.centerPrice).toFixed(dec);
     },
     frontMinPrice() {
@@ -365,11 +367,20 @@ export default {
       let buildData: any[] = (this.$refs?.zapinChart as any)?.series[0]?.data;
       this.isLoading = true;
       this.reverseTriggered = true;
+      const center = new BN(this.getCenterPrice);
 
-      if (val) {
-        buildData = buildData
-          .slice(2, buildData.length)
-          .map((_) => [Number(new BN(1).div(_[0]).toFixed(6)), _[1]]);
+      console.log(this.getCenterPrice, val, '__val');
+      if (center.lt(0.1)) {
+        buildData = buildData.concat(Array
+          .from({ length: 4 })
+          .map((_, key) => [(+(center.div(key + 1)).minus(center.div(5)).toFixed(8)), '0'])
+          .filter((_) => (!_[0].toString().includes('e')))
+          .reverse());
+        buildData = buildData.concat(Array
+          .from({ length: 4 })
+          .map((_, key) => [(+(center.div(key + 1)).plus(center).toFixed(8)), '0']).reverse());
+      } else {
+        buildData = Array.from({ length: 22 }).map((_, key) => [key / 10, 0]);
       }
 
       if (val && this?.$refs?.zapinChart) {
@@ -486,6 +497,7 @@ export default {
     this.ticksAmount = tickSpace.toString();
     this.centerTick = centerTick.toString();
 
+    console.log(center.toString(), '___this.center');
     console.log(this.tickLeft, '___this.tickLeft');
     console.log(this.tickRight, '___this.tickRight');
     const minPrice = new BN(await this.zapContract
@@ -496,6 +508,7 @@ export default {
     let buildData: any = [];
     this.isStablePool = checkIsEveryStable(this.zapPool);
 
+    console.log(checkIsEveryStable(this.zapPool), '__checkIsEveryStable(this.zapPool);');
     this.$emit('set-range', {
       ticks: [this.tickLeft?.toString(), this.tickRight?.toString()],
     });
@@ -508,11 +521,11 @@ export default {
       if (center.lt(0.1)) {
         buildData = buildData.concat(Array
           .from({ length: 4 })
-          .map((_, key) => [Number((center.div(key + 1)).minus(center.div(5)).toFixed(8)), 0])
+          .map((_, key) => [(+(center.div(key + 1)).minus(center.div(5)).toFixed(8)), '0'])
           .reverse());
         buildData = buildData.concat(Array
           .from({ length: 4 })
-          .map((_, key) => [Number((center.div(key + 1)).plus(center).toFixed(8)), 0]).reverse());
+          .map((_, key) => [(+(center.div(key + 1)).plus(center).toFixed(8)), '0']).reverse());
       } else {
         buildData = Array.from({ length: 22 }).map((_, key) => [key / 10, 0]);
       }
@@ -532,7 +545,7 @@ export default {
         return;
       }
 
-      this.centerPrice = center.toFixed(6);
+      this.centerPrice = center.toFixed(8);
 
       this.minPrice = minPrice.div(10 ** this.pairTokensData[1].decimals).toFixed(6);
       this.maxPrice = maxPrice.div(10 ** this.pairTokensData[1].decimals).toFixed(6);
@@ -573,11 +586,11 @@ export default {
       // building data before and after center
       buildData = buildData.concat(Array
         .from({ length: 4 })
-        .map((_, key) => [Number((center.div(key + 1)).minus(center.div(5)).toFixed(0)), 0])
+        .map((_, key) => [(+(center.div(key + 1)).minus(center.div(5)).toFixed(8)), '0'])
         .reverse());
       buildData = buildData.concat(Array
         .from({ length: 4 })
-        .map((_, key) => [Number((center.div(key + 1)).plus(center).toFixed(0)), 0]).reverse());
+        .map((_, key) => [(+(center.div(key + 1)).plus(center).toFixed(8)), '0']).reverse());
 
       this.optionsChart.series = [
         {
@@ -625,10 +638,10 @@ export default {
       maxPrice: BN,
       updateData?: boolean,
     ) {
-      const dec = this.lowPoolPrice ? 6 : 0;
+      const dec = this.lowPoolPrice ? 8 : 0;
       this.minPrice = minPrice.div(10 ** this.pairTokensData[1].decimals).toFixed(dec);
       this.maxPrice = maxPrice.div(10 ** this.pairTokensData[1].decimals).toFixed(dec);
-      this.centerPrice = center.toFixed(6);
+      this.centerPrice = center.toFixed(8);
 
       this.$emit('set-range', {
         ticks: [this.tickLeft?.toString(), this.tickRight?.toString()],
@@ -660,7 +673,20 @@ export default {
     initBuildData() {
       if (this.reversePrice) return;
       if (this.isStablePool || this.lowPoolPrice) {
-        const buildData = Array.from({ length: 22 }).map((_, key) => [key / 10, 0]);
+        const center = new BN(this.getCenterPrice);
+        let buildData = [] as any[];
+
+        if (center.lt(0.1)) {
+          buildData = buildData.concat(Array
+            .from({ length: 4 })
+            .map((_, key) => [(+(center.div(key + 1)).minus(center.div(5)).toFixed(8)), '0'])
+            .reverse());
+          buildData = buildData.concat(Array
+            .from({ length: 4 })
+            .map((_, key) => [(+(center.div(key + 1)).plus(center).toFixed(8)), '0']).reverse());
+        } else {
+          buildData = Array.from({ length: 22 }).map((_, key) => [key / 10, 0]);
+        }
 
         console.log(buildData, '___buildData23');
         (this.$refs?.zapinChart as any)!.updateSeries([{
@@ -672,8 +698,11 @@ export default {
             xaxis: {
               labels: {
                 formatter(value: number) {
+                  const formVal = Number(new BN(value).toFixed(8));
+                  const find = buildData.find((_: any) => _[0] % formVal === 0);
+                  console.log(find, formVal, '__find');
                   if (value === 0) return '0';
-                  return +(value.toFixed(1)) % 0.5 === 0 ? value.toFixed(2) : '';
+                  return value;
                 },
                 style: {
                   colors: '#687386',
@@ -687,18 +716,15 @@ export default {
         );
       } else {
         let buildData: any = [];
+        const center = new BN(this.getCenterPrice);
         // building data before and after center
         buildData = buildData.concat(Array
           .from({ length: 4 })
-          .map((_, key) => [Number((new BN(this.centerPrice)
-            .div(key + 1))
-            .minus(new BN(this.centerPrice).div(5)).toFixed(0)), 0])
+          .map((_, key) => [(+(center.div(key + 1)).minus(center.div(5)).toFixed(8)), '0'])
           .reverse());
         buildData = buildData.concat(Array
           .from({ length: 4 })
-          .map((_, key) => [Number((new BN(this.centerPrice)
-            .div(key + 1))
-            .plus(new BN(this.centerPrice)).toFixed(0)), 0]).reverse());
+          .map((_, key) => [(+(center.div(key + 1)).plus(center).toFixed(8)), '0']).reverse());
 
         this.optionsChart.series = [
           {
@@ -724,6 +750,7 @@ export default {
             || (new BN(newZoomType).lt(1) && !scaleIn)) return;
 
       this.zoomType = newZoomType;
+      const dec = fixedByPriceChart(+this.getCenterPrice, this.zoomType);
 
       if (this.zoomType === 1) {
         this.initBuildData();
@@ -731,33 +758,26 @@ export default {
       }
 
       if (this.zoomType === 2) {
-        const highPricePool = this.reversePrice ? 8 : 4;
-        const dec = this.lowPoolPrice ? 4 : highPricePool;
         minVal = new BN(this.getCenterPrice).times(0.8).toFixed(dec);
         maxVal = new BN(this.getCenterPrice).times(1.2).toFixed(dec);
       }
       if (this.zoomType === 3) {
-        const highPricePool = this.reversePrice ? 8 : 4;
-        const dec = this.lowPoolPrice ? 4 : highPricePool;
         minVal = new BN(this.getCenterPrice).times(0.99).toFixed(dec);
         maxVal = new BN(this.getCenterPrice).times(1.01).toFixed(dec);
       }
       if (this.zoomType === 4) {
-        const highPricePool = this.reversePrice ? 8 : 4;
-        const dec = this.lowPoolPrice ? 4 : highPricePool;
         minVal = new BN(this.getCenterPrice).times(0.999).toFixed(dec);
         maxVal = new BN(this.getCenterPrice).times(1.001).toFixed(dec);
       }
       if (this.zoomType === 5) {
-        const highPricePool = this.reversePrice ? 8 : 4;
-        const dec = this.lowPoolPrice ? 4 : highPricePool;
         minVal = new BN(this.getCenterPrice).times(0.9995).toFixed(dec);
         maxVal = new BN(this.getCenterPrice).times(1.0005).toFixed(dec);
       }
 
-      const dataDec = this.reversePrice ? 8 : 6;
-      console.log(minVal, maxVal, dataDec, this.zoomType, '__ARGS');
-      const buildData = createScaledArray(Number(minVal), Number(maxVal), dataDec);
+      // console.log(dec, '__this.lowPoolPrice');
+      // console.log(this.getCenterPrice, '__this.this.getCenterPrice');
+      // console.log(minVal, maxVal, this.zoomType, '__ARGS');
+      const buildData = createScaledArray(Number(minVal), Number(maxVal), dec);
 
       if (buildData?.length === 0) return;
 
@@ -781,10 +801,10 @@ export default {
                 if (self.lowPoolPrice) {
                   const modulo = self.zoomType <= 5 ? 0.0002 : 0.5;
                   const num = new BN(value.toFixed(1)).times(10);
-                  return num.modulo(modulo).toNumber() === 0 ? value.toFixed(modulo === 0.0002 ? 4 : 2) : '';
+                  return num.modulo(modulo).toNumber() === 0 ? value.toFixed(modulo === 0.0002 ? dec : 2) : '';
                 }
 
-                return value.toFixed(0);
+                return value.toFixed(dec);
               },
             },
           },
@@ -836,7 +856,6 @@ export default {
       const prevMinPrice = new BN(this.frontMinPrice).toFixed(this.lowPoolPrice ? 6 : decimals);
       const prevMaxPrice = new BN(this.frontMaxPrice).toFixed(this.lowPoolPrice ? 6 : decimals);
 
-      console.log(o, '___o');
       if (new BN(minPrice).eq(prevMinPrice) && new BN(maxPrice).eq(prevMaxPrice)) {
         return;
       }

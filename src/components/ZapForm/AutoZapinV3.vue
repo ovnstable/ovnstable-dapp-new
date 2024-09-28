@@ -415,7 +415,7 @@ export default defineComponent({
       return mergedTokens(this.allTokensList as any[], this.balanceList as any[], selectedAdd);
     },
     mergedTokenList() {
-      return mergedTokens(this.allTokensList as any[], this.balanceList as any[]);
+      return mergedTokens(this.balanceList as any[], this.allTokensList as any[]);
     },
     isInputTokensRemovable() {
       return this.inputTokens.length > 1;
@@ -591,7 +591,7 @@ export default defineComponent({
     async initContracts() {
       const contractsData = await initZapinContracts(
         this.zapPool,
-        this.zapAllTokens,
+        this.mergedTokenList,
         this.evmSigner,
         this.zapPool.gauge,
       );
