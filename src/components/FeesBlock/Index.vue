@@ -360,7 +360,7 @@ export default {
   gap: 20px;
     [data-theme="dark"] & {
       background-color: var(--color-6);
-      border: 1px solid var(--color-3);
+      border: 1px solid var(--color-2);
     }
 }
 

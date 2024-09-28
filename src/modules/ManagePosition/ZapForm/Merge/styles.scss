@@ -5,6 +5,9 @@
   padding: 26px 16px;
   border-radius: 12px;
   margin: 20px 0;
+  [data-theme="dark"] & {
+    background-color: var(--color-17);
+  }
 }
 
 .swap-block__select-trigger {
