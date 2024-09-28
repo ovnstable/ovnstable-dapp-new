@@ -101,6 +101,9 @@ h1 {
   font-size: 20px;
   margin-bottom: 20px;
   color: var(--color-7);
+    [data-theme="dark"] & {
+      color: var(--color-4);
+    }
 }
 
 .error-content__submit {

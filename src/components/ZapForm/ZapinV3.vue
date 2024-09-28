@@ -88,6 +88,7 @@
           <div
             v-if="isInteractive"
             class="zapin-v3__clicker"
+            :class="{ 'zapin-v3__clicker--dis': reversePrice }"
             @click="reversePrice ? handleRightTick(false) : handleLeftTick(true)"
             @keypress="reversePrice ? handleRightTick(false) : handleLeftTick(true)"
           >
@@ -100,13 +101,13 @@
             full-width
             is-center
             input-size="lg"
-            :disabled="isInteractive"
-            :readonly="true"
+            :disabled="!isInteractive || reversePrice"
             @input="setMinPrice"
           />
           <div
             v-if="isInteractive"
             class="zapin-v3__clicker"
+            :class="{ 'zapin-v3__clicker--dis': reversePrice }"
             @click="reversePrice ? handleRightTick(true) : handleLeftTick(false)"
             @keypress="reversePrice ? handleRightTick(true) : handleLeftTick(false)"
           >
@@ -125,6 +126,7 @@
           <div
             v-if="isInteractive"
             class="zapin-v3__clicker"
+            :class="{ 'zapin-v3__clicker--dis': reversePrice }"
             @click="reversePrice ? handleLeftTick(false) : handleRightTick(true)"
             @keypress="reversePrice ? handleLeftTick(false) : handleRightTick(true)"
           >
@@ -137,13 +139,13 @@
             full-width
             is-center
             input-size="lg"
-            :disabled="isInteractive"
-            :readonly="true"
+            :disabled="!isInteractive || reversePrice"
             @input="setMaxPrice"
           />
           <div
             v-if="isInteractive"
             class="zapin-v3__clicker"
+            :class="{ 'zapin-v3__clicker--dis': reversePrice }"
             @click="reversePrice ? handleLeftTick(true) : handleRightTick(false)"
             @keypress="reversePrice ? handleLeftTick(true) : handleRightTick(false)"
           >
@@ -689,6 +691,7 @@ export default {
         }
 
         console.log(buildData, '___buildData23');
+        const dec = fixedByPriceChart(+this.getCenterPrice, this.zoomType);
         (this.$refs?.zapinChart as any)!.updateSeries([{
           data: buildData,
         }], false, true);
@@ -698,11 +701,8 @@ export default {
             xaxis: {
               labels: {
                 formatter(value: number) {
-                  const formVal = Number(new BN(value).toFixed(8));
-                  const find = buildData.find((_: any) => _[0] % formVal === 0);
-                  console.log(find, formVal, '__find');
                   if (value === 0) return '0';
-                  return value;
+                  return value.toFixed(dec);
                 },
                 style: {
                   colors: '#687386',
@@ -925,9 +925,11 @@ export default {
     }, 500),
     setMinPrice(val: string) {
       this.minPrice = val;
+      this.debouncePriceChange(this, val, this.maxPrice, true);
     },
     setMaxPrice(val: string) {
       this.maxPrice = val;
+      this.debouncePriceChange(this, this.minPrice, val, true);
     },
     async setRange(val: number, isTick: boolean) {
       let tickVal = isTick ? val : 0;
@@ -1068,6 +1070,11 @@ export default {
     background-color: var(--color-3);
     color: var(--color-4);
   }
+}
+
+.zapin-v3__clicker--dis {
+  opacity: .5;
+  pointer-events: none;
 }
 
 .zapin-v3__row-block {

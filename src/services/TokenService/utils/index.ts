@@ -159,7 +159,6 @@ export const loadContractForToken = (tokenAddress: string, evmSigner: any) => bu
 export const formatTokenInfoNew = (
   tokenMap: {[key: string]: TTokenData},
 ): TTokenInfo[] => {
-  console.log(tokenMap, '__tokenMap');
   const tokenInfoList = Object.values(tokenMap).map((token: TTokenData) => (
     {
       id: token.id,

@@ -358,6 +358,10 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 20px;
+    [data-theme="dark"] & {
+      background-color: var(--color-6);
+      border: 1px solid var(--color-2);
+    }
 }
 
 .divider {

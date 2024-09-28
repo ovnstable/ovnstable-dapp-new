@@ -787,7 +787,7 @@ class ZapinService {
     if (!resp) {
       showErrorModalWithMsg({
         errorType: 'zap',
-        errorMsg: 'Smart contract error. Empty response when calculating proportion',
+        errorMsg: 'Simulation error. Empty response when calculating proportion',
       });
       return null;
     }
@@ -898,7 +898,7 @@ class ZapinService {
     if (!finalOutput) {
       showErrorModalWithMsg({
         errorType: 'zap',
-        errorMsg: 'Smart contract error. Empty response when estimating output liquidity',
+        errorMsg: 'Simulation error. Empty response when estimating output liquidity',
       });
       return null;
     }

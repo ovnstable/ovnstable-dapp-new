@@ -275,6 +275,7 @@ export default {
   border: 2px solid var(--color-1);
   [data-theme="dark"] & {
         background-color: var(--color-6);
+        border: 2px solid var(--color-2);
         background-blend-mode: unset;
     }
 }
