@@ -17,4 +17,4 @@ export const getQueryStates = (queries: TQuery[]) => ({
 export const isAllQueryDataAvailable = (
   queries: TQuery[],
 ) => queries
-  .every((query) => query?.data?.value && query?.data?.value);
+  .every((query) => query?.data?.value);

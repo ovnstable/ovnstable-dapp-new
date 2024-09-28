@@ -1,4 +1,3 @@
-import { getAllTokensString, getTransactionTotal, getUsdStrFromValue } from '@/utils/tokens.ts';
 import type { ISuccessTokenInfo } from '@/types/common/tokens';
 
 const stateData = {
@@ -40,11 +39,11 @@ const getters = {
   },
 };
 
-type TSwapSuccessData = {
+export type TSwapSuccessData = {
     successTxHash: string,
     from: ISuccessTokenInfo[],
     to: ISuccessTokenInfo[],
-    type: 'MINT' | 'REDEEM' | 'WRAP' | 'UNWRAP' | 'SWAP';
+    type: string;
     successAction?: any,
     etsData?: any,
     zksyncFeeHistory?: any,
@@ -52,9 +51,8 @@ type TSwapSuccessData = {
 
 const actions = {
   showSuccessModal({
-    commit, rootState, rootGetters,
+    commit,
   }: any, successParams: TSwapSuccessData) {
-    console.log(successParams, '_showSuccessModal');
     commit('setShow', true);
     commit('setSwapData', {
       from: successParams.from,
@@ -63,27 +61,6 @@ const actions = {
     commit('setSuccessAction', successParams?.successAction);
     commit('setEtsData', successParams?.etsData);
     commit('setZksyncFeeHistory', successParams?.zksyncFeeHistory);
-
-    const calculateTokenUsdValues = (tokens: any) => tokens.map((token: any) => ({
-      ...token,
-      usdValue: getUsdStrFromValue(token.value, token.price),
-    }));
-
-    const posthogEventData = {
-      txUrl: `${rootGetters['network/explorerUrl']}tx/${successParams.successTxHash}`,
-      token0: getAllTokensString(successParams.from),
-      token1: getAllTokensString(successParams.to),
-      usdTotal: getTransactionTotal(calculateTokenUsdValues(successParams.to)),
-      chainName: rootState.network.networkName,
-      walletAddress: rootState.accountData.account,
-    };
-
-    const posthogService = rootGetters['posthog/posthogService'];
-
-    const eventType = successParams.type;
-    if (eventType === 'MINT' || eventType === 'REDEEM') posthogService.mintredeemSuccessTrigger(posthogEventData);
-    if (eventType === 'WRAP' || eventType === 'UNWRAP') posthogService.wrapUnwrapSuccessTrigger(posthogEventData);
-    if (eventType === 'SWAP') posthogService.swapSuccessTrigger(posthogEventData);
   },
 
   closeSuccessModal({ commit }: any) {

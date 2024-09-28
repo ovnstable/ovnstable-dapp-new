@@ -1,15 +1,17 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable class-methods-use-this */
-
 import { poolsInfoMap } from '@/store/views/main/zapin/mocks.ts';
 import { approveToken, getAllowanceValue } from '@/utils/contractApprove.ts';
 import BN from 'bignumber.js';
 import { fixedByPrice, formatMoney } from '@/utils/numbers.ts';
 import { WHITE_LIST_ODOS } from '@/store/helpers/index.ts';
 import { ethers } from 'ethers';
-import { MODAL_TYPE, ODOS_REF_CODE } from '@/store/views/main/odos/index.ts';
+import { MODAL_TYPE, ODOS_REF_CODE, type ITriggerSuccessZapin } from '@/store/views/main/odos/index.ts';
 import { parseErrorLog } from '@/utils/errors.ts';
+import type { IPositionsInfo } from '@/types/positions/index.ts';
+import { PLATFORMS } from '@/types/common/pools/index.ts';
 import {
   calculateProportionForPool,
   countPercentDiff,
@@ -17,10 +19,19 @@ import {
   sumOfAllSelectedTokensInUsd,
 } from './utils/index.ts';
 import odosApiService from '../odos-api-service.ts';
+import { ZAPIN_SCHEME } from './utils/scheme.ts';
 
 export enum ZAPIN_TYPE {
   ZAPIN,
   REBALANCE,
+  MERGE,
+}
+
+export enum ZAPIN_FUNCTIONS {
+  ZAPIN = 'zapIn',
+  REBALANCE = 'rebalance',
+  INCREASE = 'increase',
+  MERGE = 'merge',
 }
 
 interface IZapinProportion {
@@ -32,6 +43,21 @@ interface IZapinProportion {
     pathId: string | null
   }
   amountMins: string[]
+}
+
+interface IRecalculateProportionOdosV3 {
+  selectedInputTokens: any[],
+  selectedOutputTokens: any[],
+  zapPool: any,
+  zapContract: any,
+  v3RangeTicks: string[],
+  networkId: number,
+  slippageLimitPercent: number,
+  odosSwapRequest: Function,
+  simulateSwap: boolean,
+  typeFunc: ZAPIN_TYPE,
+  showErrorModalWithMsg: (val: any) => void,
+  mergeIds?: string[]
 }
 
 interface ISwapData {
@@ -51,61 +77,45 @@ export const ACTIVE_PROTOCOLS_V3 = {
   PANCAKE: [8453, 42161],
 };
 
-enum DEPOSIT_TYPES {
-  DEPOSIT = 'deposit',
-  TRANSFER = 'transfer',
-  ADD = 'add',
-  NONE = ''
-}
-
-// for zapins
-const ZAPIN_SCHEME = {
-  BASE: {
-    stake: DEPOSIT_TYPES.DEPOSIT,
-    contract: 'gaugeContract',
-  },
-  PANCAKE: {
-    stake: DEPOSIT_TYPES.TRANSFER,
-    contract: 'poolTokenContract',
-  },
-  TRADERJOE: {
-    stake: DEPOSIT_TYPES.ADD,
-    contract: 'gaugeContract',
-  },
-  UNISWAP: {
-    stake: DEPOSIT_TYPES.NONE,
-  },
-};
-
 class ZapinService {
   async claimPosition(
-    zapPool: any,
+    zapPool: IPositionsInfo,
     gaugeContract: any,
     poolTokenContract: any,
-    triggerSuccess: Function,
-    inputTokens?: any,
+    triggerSuccess: (successData: ITriggerSuccessZapin) => void,
+    account: string,
+    inputTokens?: any[],
   ) {
     let tx = null;
 
-    if (zapPool.isStaked) {
+    if (zapPool?.platform[0] === PLATFORMS.PANCAKE && zapPool.isStaked) {
+      tx = await gaugeContract.harvest(zapPool.tokenId, account);
+    }
+
+    if (zapPool?.platform[0] === PLATFORMS.AERO && zapPool.isStaked) {
       tx = await gaugeContract.getReward(zapPool.tokenId);
-    } else {
+    }
+
+    if (zapPool?.platform[0] === PLATFORMS.AERO && !zapPool.isStaked) {
       tx = await poolTokenContract.collect(zapPool.tokenId);
     }
 
-    console.log(tx, '__TX');
+    if (!tx) throw new Error("Can't be claimed");
+
     await tx.wait();
 
-    console.log('__TX2');
-    triggerSuccess(
-      {
-        isShow: true,
-        inputTokens: inputTokens ?? [],
-        hash: tx.hash,
-        pool: zapPool,
-        modalType: MODAL_TYPE.HARVEST,
-      },
-    );
+    const successData = {
+      isShow: true,
+      inputTokens: inputTokens ?? zapPool.rewards.tokensInfo ?? [],
+      outputTokens: inputTokens ?? zapPool.rewards.tokensInfo ?? [],
+      hash: tx.hash,
+      pool: zapPool,
+      modalType: MODAL_TYPE.HARVEST,
+      putIntoPoolEvent: {},
+      returnedToUserEvent: {},
+    };
+
+    triggerSuccess(successData);
 
     return tx;
   }
@@ -121,18 +131,33 @@ class ZapinService {
       .getProportionForRebalance(Number(tokenId), poolAddress, tickRange, inputSwapTokens);
   }
 
+  async getV3PositionAmounts(
+    zapContract: any,
+    tokenId: string,
+  ) {
+    return zapContract
+      .getPositionAmounts(tokenId)
+      .then((data: any) => data)
+      .catch((e: any) => {
+        console.error('Error get proportion for V3', e);
+      });
+  }
+
   async getV3Proportion(
     poolAddress: string,
     tickRange: string[],
     inputSwapTokens: ISwapData[],
     zapContract: any,
-    tokenPrices: IPoolTokensData[],
+    tokenIds = [] as string[],
   ) {
+    console.log(poolAddress, tickRange, inputSwapTokens, tokenIds, '___ARGS');
     return zapContract
-      .getProportionForZap(poolAddress, tickRange, inputSwapTokens, tokenPrices)
+      .getProportionForZap(poolAddress, tickRange, inputSwapTokens, tokenIds)
       .then((data: any) => data)
       .catch((e: any) => {
-        console.error('Error get proportion for V3', e);
+        console.log(JSON.parse(JSON.stringify(e)), '___decoded1');
+        const decoded = zapContract.interface.parseError(e?.data);
+        console.log(decoded, '__ERR');
       });
   }
 
@@ -529,18 +554,142 @@ class ZapinService {
     });
   }
 
-  async recalculateProportionOdosV3(
-    selectedInputTokens: any[],
-    selectedOutputTokens: any[],
-    zapPool: any,
-    zapContract: any,
-    v3RangeTicks: string[],
-    networkId: number,
-    slippageLimitPercent: number,
-    odosSwapRequest: Function,
-    simulateSwap: boolean,
-    typeFunc = ZAPIN_TYPE.ZAPIN,
+  async stakeTrigger(
+    zapPlatform: PLATFORMS,
+    gaugeContract: any,
+    newTokenId: number | string,
+    account: string,
+    poolTokenContract: any,
   ) {
+    try {
+      let tx: any = null;
+
+      console.log(poolTokenContract, '___poolTokenContract');
+      console.log(gaugeContract, '___this.gaugeContract');
+      if (zapPlatform === PLATFORMS.AERO) tx = await gaugeContract.deposit(newTokenId);
+
+      if (zapPlatform === PLATFORMS.PANCAKE) {
+        const data = {
+          from: account,
+          to: gaugeContract.target,
+          tokenId: newTokenId,
+          _data: '0x0000000000000000000000000000000000000000000000000000000000000000',
+        };
+
+        tx = await poolTokenContract
+          .safeTransferFrom(data.from, data.to, data.tokenId, data._data, { from: account });
+      }
+
+      await tx.wait();
+
+      return tx;
+    } catch (e: any) {
+      throw new Error(e);
+    }
+  }
+
+  async withdrawTrigger(
+    zapPool: IPositionsInfo,
+    tokenId: string,
+    gaugeContract: any,
+    account?: string,
+  ) {
+    try {
+      let tx: any = null;
+
+      console.log(gaugeContract, '___this.gaugeContract');
+      if (zapPool.platform[0] === PLATFORMS.AERO) {
+        tx = await gaugeContract.withdraw(tokenId);
+      }
+
+      if (zapPool.platform[0] === PLATFORMS.PANCAKE) {
+        tx = await gaugeContract.withdraw(tokenId, account);
+      }
+
+      return await tx.wait();
+    } catch (e: any) {
+      throw new Error(e);
+    }
+  }
+
+  async triggerZapin(
+    zapContract: any,
+    argTxData: any,
+    argGaugeData: any,
+    params: any,
+    method: ZAPIN_FUNCTIONS,
+    tokenId?: string,
+    tokensMerge?: string[],
+  ) {
+    const txData = { ...argTxData };
+    let gaugeData = { ...argGaugeData };
+
+    try {
+      if (method === ZAPIN_FUNCTIONS.MERGE) {
+        await zapContract[method](txData, gaugeData, tokenId, tokensMerge);
+      }
+      if (method === ZAPIN_FUNCTIONS.ZAPIN) {
+        await zapContract[method](txData, gaugeData);
+      }
+      if ([ZAPIN_FUNCTIONS.REBALANCE, ZAPIN_FUNCTIONS.INCREASE].includes(method) && tokenId) {
+        console.log(zapContract, '__zap');
+        console.log({
+          txData,
+          gaugeData,
+          tokenId,
+        }, '__zap');
+        await zapContract[method](txData, gaugeData, tokenId);
+      }
+    } catch (e: any) {
+      console.log(JSON.parse(JSON.stringify(e)), '___decoded1');
+      const decoded = zapContract.interface.parseError(e?.data);
+
+      console.log(decoded, '___decoded2');
+      if (!decoded) throw new Error(e);
+
+      gaugeData = {
+        ...gaugeData,
+        isSimulation: false,
+        adjustSwapAmount: decoded.args[4],
+        adjustSwapSide: decoded.args[5],
+      };
+    }
+
+    try {
+      if (method === ZAPIN_FUNCTIONS.MERGE) {
+        const tx = await zapContract[method](txData, gaugeData, tokenId, tokensMerge, params);
+        return tx.wait();
+      }
+      if (method === ZAPIN_FUNCTIONS.ZAPIN) {
+        const tx = await zapContract[method](txData, gaugeData, params);
+        return tx.wait();
+      }
+
+      if ([ZAPIN_FUNCTIONS.REBALANCE, ZAPIN_FUNCTIONS.INCREASE].includes(method) && tokenId) {
+        const tx = await zapContract[method](txData, gaugeData, tokenId, params);
+        return tx.wait();
+      }
+
+      throw new Error('Such method do not exist');
+    } catch (e: any) {
+      throw new Error(e);
+    }
+  }
+
+  async recalculateProportionOdosV3({
+    selectedInputTokens,
+    selectedOutputTokens,
+    zapPool,
+    zapContract,
+    v3RangeTicks,
+    networkId,
+    slippageLimitPercent,
+    odosSwapRequest,
+    simulateSwap,
+    typeFunc = ZAPIN_TYPE.ZAPIN,
+    showErrorModalWithMsg,
+    mergeIds = [],
+  }: IRecalculateProportionOdosV3) {
     const emptyVals = selectedInputTokens.map((_) => {
       if (new BN(_?.value).eq(0) || !_?.value) return null;
 
@@ -549,29 +698,22 @@ class ZapinService {
 
     if (emptyVals.every((_) => !_)) return null;
 
-    const outputTokensForRebalance = selectedOutputTokens.map((_) => ({
-      tokenAddress: _?.selectedToken?.address,
-      price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
-    }));
-
     let resp: any = null;
 
     if (typeFunc === ZAPIN_TYPE.ZAPIN) {
       console.log(
-        JSON.stringify(
-          {
-            add: zapPool.address,
-            ticks: v3RangeTicks,
-            inputSwapTokens: selectedInputTokens.map((_) => ({
-              tokenAddress: _?.selectedToken?.address,
-              amount: _?.contractValue,
-              price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
-            })),
-          },
-        ),
-
-        '___PARAM',
+        JSON.stringify({
+          add: zapPool.address,
+          ticks: v3RangeTicks,
+          tokens: selectedInputTokens.map((_) => ({
+            tokenAddress: _?.selectedToken?.address,
+            amount: _?.contractValue,
+            price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
+          })),
+        }),
+        'LOOGS___',
       );
+
       resp = await this.getV3Proportion(
         zapPool.address,
         v3RangeTicks,
@@ -581,21 +723,74 @@ class ZapinService {
           price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
         })),
         zapContract,
-        outputTokensForRebalance,
       );
     }
 
     if (typeFunc === ZAPIN_TYPE.REBALANCE) {
-      resp = await this.getV3Rebalance(
-        zapPool.tokenId?.toString(),
+      console.log(
+        JSON.stringify({
+          add: zapPool.address,
+          ticks: v3RangeTicks,
+          tokens: selectedInputTokens.map((_, key) => ({
+            tokenAddress: _?.selectedToken?.address,
+            amount: '0',
+            price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
+          })),
+          tokenIds: [zapPool.tokenId?.toString()],
+        }),
+        'LOOGS___',
+      );
+
+      resp = await this.getV3Proportion(
         zapPool.address,
         v3RangeTicks,
-        outputTokensForRebalance,
+        selectedInputTokens.map((_, key) => ({
+          tokenAddress: _?.selectedToken?.address,
+          amount: '0',
+          price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
+        })),
         zapContract,
+        [zapPool.tokenId?.toString()],
       );
     }
 
-    if (!resp) throw Error('No response v3, smth wrong');
+    if (typeFunc === ZAPIN_TYPE.MERGE) {
+      console.log(
+        JSON.stringify({
+          add: zapPool.address,
+          ticks: v3RangeTicks,
+          tokens: selectedInputTokens.map((_, key) => ({
+            tokenAddress: _?.selectedToken?.address,
+            amount: '0',
+            price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
+          })),
+          tokenIds: mergeIds,
+        }),
+        'LOOGS___',
+      );
+
+      resp = await this.getV3Proportion(
+        zapPool.address,
+        v3RangeTicks,
+        selectedInputTokens.map((_, key) => ({
+          tokenAddress: _?.selectedToken?.address,
+          amount: '0',
+          price: new BN(_?.selectedToken?.price).times(10 ** 18).toFixed(),
+        })),
+        zapContract,
+        mergeIds,
+      );
+    }
+
+    console.log(resp, '___resp');
+
+    if (!resp) {
+      showErrorModalWithMsg({
+        errorType: 'zap',
+        errorMsg: 'Smart contract error. Empty response when calculating proportion',
+      });
+      return null;
+    }
 
     let inputTokens = [];
 
@@ -610,7 +805,7 @@ class ZapinService {
         );
     }
 
-    if (typeFunc === ZAPIN_TYPE.REBALANCE) {
+    if ([ZAPIN_TYPE.REBALANCE, ZAPIN_TYPE.MERGE].includes(typeFunc)) {
       inputTokens = resp[0].map((_: any, key: number) => ({
         tokenAddress: _,
         amount: resp[1][key]?.toString(),
@@ -685,7 +880,13 @@ class ZapinService {
 
     const data: any = await odosSwapRequest(requestData);
 
-    if (!data) throw Error('No odos data v3');
+    if (!data) {
+      showErrorModalWithMsg({
+        errorType: 'zap',
+        errorMsg: 'Odos error. Swap request failed',
+      });
+      return null;
+    }
 
     const finalOutput = this.getZapinOutputTokens(
       data,
@@ -694,19 +895,25 @@ class ZapinService {
       selectedInputTokens,
     );
 
-    if (!finalOutput) throw Error('No final output v3');
+    if (!finalOutput) {
+      showErrorModalWithMsg({
+        errorType: 'zap',
+        errorMsg: 'Smart contract error. Empty response when estimating output liquidity',
+      });
+      return null;
+    }
 
     return {
       inputTokens,
       outputTokens: finalOutput?.outputToken,
       outputTokensForZap: outputTokens,
       amountOut: {
-        amountToken0Out: finalOutput.outputToken[0]?.tokenOut,
-        amountToken1Out: finalOutput.outputToken[1]?.tokenOut,
+        amountToken0Out: finalOutput?.outputToken[0]?.tokenOut,
+        amountToken1Out: finalOutput?.outputToken[1]?.tokenOut,
       },
       responseProportionV3: resp,
-      amountMins: finalOutput.amountMins,
-      odosData: finalOutput.odosData,
+      amountMins: finalOutput?.amountMins,
+      odosData: finalOutput?.odosData,
     };
   }
 }

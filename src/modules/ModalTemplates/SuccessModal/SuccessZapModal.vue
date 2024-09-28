@@ -16,22 +16,33 @@
 
       <template v-if="successData">
         <ZapinContent
-          v-if="[modalType.ZAPIN, modalType.REBALANCE].includes(successData.modalType)"
+          v-if="[MODAL_TYPE.ZAPIN, MODAL_TYPE.REBALANCE, MODAL_TYPE.INCREASE, MODAL_TYPE.MERGE]
+            .includes(successData.modalType)"
           :tokens-staked-list="tokensStakedList"
           :tokens-sent-list="tokensSentList"
           :tokens-returned-list="tokensReturnedList"
+          :tokens-claimed-list="tokensClaimedList"
+          :open-position-on-pool="openPositionOnPool"
         />
         <WithdrawContent
-          v-else-if="successData.modalType === modalType.WITHDRAW"
+          v-else-if="successData.modalType === MODAL_TYPE.WITHDRAW"
           :tokens-staked-list="tokensStakedList"
           :tokens-sent-list="tokensSentList"
           :tokens-returned-list="tokensReturnedList"
+          :tokens-claimed-list="tokensClaimedList"
+          :open-position-on-pool="openPositionOnPool"
         />
         <CompoundContent
-          v-else-if="successData.modalType === modalType.COMPOUND"
+          v-else-if="successData.modalType === MODAL_TYPE.COMPOUND"
+          :tokens-staked-list="tokensStakedList"
+          :tokens-returned-list="tokensReturnedList"
+          :tokens-claimed-list="tokensClaimedList"
+          :open-position-on-pool="openPositionOnPool"
         />
         <HarvestContent
-          v-else-if="successData.modalType === modalType.HARVEST"
+          v-else-if="successData.modalType === MODAL_TYPE.HARVEST"
+          :tokens-claimed-list="tokensClaimedList"
+          :open-position-on-pool="openPositionOnPool"
         />
       </template>
       <div class="zap-modal-footer">
@@ -56,20 +67,20 @@
 import ModalComponent from '@/components/Modal/Index.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
-import { mapGetters, mapState } from 'vuex';
+import { mapState } from 'vuex';
 import {
   computed, defineComponent,
 } from 'vue';
-import { getAllTokensString, getTransactionTotal } from '@/utils/tokens.ts';
-import { checkIsEveryStable } from '@/store/views/main/pools/helpers.ts';
 import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
 import { useTokensQuery, useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
+import type { TPoolInfo } from '@/types/common/pools/index.ts';
+import { useDispatchManagePositionEvents } from '@/hooks/analytics/useDispatchManagePositionEvents.ts';
 import ZapinContent from './components/zapin.vue';
 import WithdrawContent from './components/withdraw.vue';
 import HarvestContent from './components/harvest.vue';
 import CompoundContent from './components/compound.vue';
-import {
+import getPlatformLink, {
   mapEventTokenData, mapInputTokenData, type TFormatTokenInfo,
 } from './helpers.ts';
 
@@ -108,6 +119,7 @@ export default defineComponent({
       isAllDataLoaded: computed(() => !isLoading.value),
       isAllDataTrigger: computed(() => !isLoading.value),
       isBalancesLoading,
+      dispatchManagePositionEvent: useDispatchManagePositionEvents(),
     };
   },
   data() {
@@ -115,9 +127,10 @@ export default defineComponent({
       tokensSentList: [] as TFormatTokenInfo[],
       tokensReturnedList: [] as TFormatTokenInfo[],
       tokensStakedList: [] as TFormatTokenInfo[],
+      tokensClaimedList: [] as TFormatTokenInfo[],
       showModal: false,
       isInit: false,
-      modalType: MODAL_TYPE,
+      MODAL_TYPE,
     };
   },
   computed: {
@@ -126,15 +139,10 @@ export default defineComponent({
       'showSuccessZapin',
       'lastParsedReturnedToUserEvent',
       'lastParsedPutIntoPoolEvent',
-      'lastParsedZapResponseData',
     ]),
     ...mapState('poolsData', [
-      'lastParsedBurnedTokenIdEvent',
       'lastParsedClaimedRewardsEvent',
     ]),
-    ...mapGetters('accountData', ['account']),
-    ...mapGetters('posthog', ['posthogService']),
-    ...mapGetters('network', ['explorerUrl']),
 
     mergedTokenList() {
       return mergedTokens(this.allTokensList, this.balancesList as any[]);
@@ -145,6 +153,8 @@ export default defineComponent({
       if (this.successData.modalType === MODAL_TYPE.WITHDRAW) return 'WITHDRAW';
       if (this.successData.modalType === MODAL_TYPE.COMPOUND) return 'COMPOUND';
       if (this.successData.modalType === MODAL_TYPE.REBALANCE) return 'REBALANCE';
+      if (this.successData.modalType === MODAL_TYPE.INCREASE) return 'INCREASE';
+      if (this.successData.modalType === MODAL_TYPE.MERGE) return 'MERGE';
       return 'ZAPIN';
     },
   },
@@ -152,64 +162,44 @@ export default defineComponent({
     showSuccessZapin(currVal: boolean) {
       this.showModal = currVal;
 
-      if (!this.isInit && currVal) {
-        // TODO: move Posthog logic up to store
-        const posthogEventData = {
-          txUrl: `${this.explorerUrl}tx/${this.lastParsedZapResponseData?.hash || ''}`,
-          token0: this.successData.inputTokens ? getAllTokensString(this.successData.inputTokens
-            .map((token: any) => token.selectedToken)) : '',
-          token1: this.successData.outputTokens ? getAllTokensString(this.successData.outputTokens
-            .map((token: any) => token.selectedToken)) : '',
-          poolName: this.successData.pool.name,
-          poolVersion: this.successData.pool.poolVersion,
-          usdTotal: getTransactionTotal(this.successData.inputTokens),
-          poolType: checkIsEveryStable(this.successData.pool) ? 'Stable' : 'Volatile',
-          walletAddress: this.account,
-          chainName: this.successData.pool.chainName,
-          poolPlatform: this.successData.pool.platform.toString(),
-        };
-
-        if (this.lastParsedClaimedRewardsEvent) {
-          this.posthogService
-            .rebalanceSuccessTrigger(posthogEventData);
-        }
-        this.posthogService.zapinSuccessTrigger(posthogEventData);
-      }
+      if (!this.isInit && currVal) this.dispatchManagePositionEvent(this.successData.modalType);
     },
     successData(val) {
       if (val) {
-        this.initStakedList();
-        this.initReturnedList();
-        this.initSentList();
+        this.init();
       }
     },
   },
   mounted() {
-    this.initReturnedList();
-    this.initStakedList();
-    this.initSentList();
+    this.init();
   },
   methods: {
+    init() {
+      this.initReturnedList();
+      this.initStakedList();
+      this.initSentList();
+      this.initClaimedList();
+    },
     closeModal() {
       this.setShowFunc({ isShow: false });
 
-      // If rebalance modal
-      if (this.lastParsedClaimedRewardsEvent && this.lastParsedBurnedTokenIdEvent) {
-        this.$router.replace('/positions');
-        // Cleaning the state on close
-        this.$store.commit('poolsData/changeState', {
-          field: 'lastParsedBurnedTokenIdEvent',
-          val: '',
-        });
-        this.$store.commit('poolsData/changeState', {
-          field: 'lastParsedTokenIdEvent',
-          val: '',
-        });
-        this.$store.commit('poolsData/changeState', {
-          field: 'lastParsedClaimedRewardsEvent',
-          val: '',
-        });
-      }
+      // Cleaning the state on close
+      this.$store.commit('poolsData/changeState', {
+        field: 'lastParsedBurnedTokenIdEvent',
+        val: '',
+      });
+      this.$store.commit('poolsData/changeState', {
+        field: 'lastParsedTokenIdEvent',
+        val: '',
+      });
+      this.$store.commit('poolsData/changeState', {
+        field: 'lastParsedClaimedRewardsEvent',
+        val: '',
+      });
+
+      if (this.successData.modalType !== MODAL_TYPE.ZAPIN) this.$router.replace('/positions');
+
+      this.isInit = false;
     },
     // Comes from values computed locally befor tx
     initSentList() {
@@ -236,6 +226,17 @@ export default defineComponent({
           this.mergedTokenList,
         );
       }
+    },
+    // Comes from position info
+    initClaimedList(): void {
+      if (this.lastParsedClaimedRewardsEvent?.length > 0) {
+        this.tokensClaimedList = mapInputTokenData(
+          this.lastParsedClaimedRewardsEvent,
+        );
+      }
+    },
+    openPositionOnPool(pool: TPoolInfo): string {
+      return (pool.address || pool.platform[0]) ? getPlatformLink(pool.platform[0], pool.address) : '';
     },
   },
 });

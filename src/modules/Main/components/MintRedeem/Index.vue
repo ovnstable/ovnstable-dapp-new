@@ -158,6 +158,7 @@ import { getAllowanceValue, approveToken } from '@/utils/contractApprove.ts';
 import TokenService from '@/services/TokenService/TokenService.ts';
 import { useRefreshBalances } from '@/hooks/fetch/useRefreshBalances.ts';
 import { parseErrorLog } from '@/utils/errors.ts';
+import { useDispatchSwapEvents } from '@/hooks/analytics/useDispatchSwapEvents.ts';
 
 export default {
   name: 'MintRedeem',
@@ -174,9 +175,12 @@ export default {
       required: true,
     },
   },
+  setup: () => ({
+    dispatchSwapEvent: useDispatchSwapEvents(),
+    refreshBalances: useRefreshBalances(),
+  }),
   data() {
     return {
-      refreshBalances: useRefreshBalances(),
       inputToken: getNewInputToken(),
       outputToken: getNewInputToken(),
       activeMintTab: mintWrapStatus.MINT as mintWrapStatus | -1,
@@ -610,8 +614,6 @@ export default {
 
         if (!method) return;
 
-        console.log(method, '__METH');
-        console.log(exchangeContract, '__METH2');
         const txData = method.iterateArgs
           ? await exchangeContract[method.name](
             ...Object.values(method.params),
@@ -625,16 +627,18 @@ export default {
         if (txData) {
           await txData.wait();
 
-          this.showSuccessModal({
+          const successData = {
             successTxHash: txData.hash,
             from: [this.inputToken],
             to: [this.outputToken],
             type: this.swapMsg.toUpperCase(),
-          });
+          };
+
+          this.showSuccessModal(successData);
+          this.dispatchSwapEvent(successData);
           this.closeWaitingModal();
         }
 
-        console.log('__mintRedeemRefresh');
         this.initForm();
         this.refreshBalances();
       } catch (e) {

@@ -1,18 +1,11 @@
 /* eslint-disable import/prefer-default-export */
 import BN from 'bignumber.js';
 import type { TTokenInfo } from '@/types/common/tokens/index.ts';
-import type {
-  TTicks,
-} from '@/types/positions/index.ts';
 
 export const getTokenInfo = (
   address: string,
   tokenMap: Map<string, TTokenInfo>,
 ):TTokenInfo => tokenMap.get(address)!;
-
-export const isInRange = ({ tickLower, tickUpper, centerTick }: TTicks) => !(
-  new BN(centerTick).gte(new BN(tickUpper)) || new BN(centerTick).lt(new BN(tickLower))
-);
 
 const getPercentage = (value: string, total: string) => new BN((value))
   .dividedBy(new BN(total)).multipliedBy(100).toFixed(0);

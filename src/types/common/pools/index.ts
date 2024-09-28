@@ -1,3 +1,8 @@
+export enum PLATFORMS {
+    AERO = 'Aerodrome',
+    PANCAKE = 'Pancake'
+}
+
 export type TPool = {
     id: string,
     name: string,

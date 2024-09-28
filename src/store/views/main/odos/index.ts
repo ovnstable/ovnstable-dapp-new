@@ -5,6 +5,8 @@ import { buildEvmContract } from '@/utils/contractsMap.ts';
 import { useEventBus } from '@vueuse/core';
 import BigNumber from 'bignumber.js';
 import _ from 'lodash';
+import type { IPositionsInfo } from '@/types/positions';
+import type { TPool } from '@/types/common/pools';
 
 export const ODOS_REF_CODE = 7777777;
 const ODOS_DURATION_CONFIRM_REQUEST = 60;
@@ -14,7 +16,19 @@ export enum MODAL_TYPE {
   WITHDRAW,
   HARVEST,
   REBALANCE,
-  COMPOUND
+  COMPOUND,
+  INCREASE,
+  MERGE,
+}
+export interface ITriggerSuccessZapin {
+  isShow: boolean,
+  inputTokens: any[],
+  outputTokens: any[],
+  hash: string,
+  putIntoPoolEvent: {},
+  returnedToUserEvent: {},
+  pool: TPool | IPositionsInfo,
+  modalType: MODAL_TYPE,
 }
 
 export const stateData = {
@@ -128,7 +142,7 @@ const actions = {
       returnedToUserEvent,
       pool,
       modalType,
-    }: any,
+    }: ITriggerSuccessZapin,
   ) {
     commit('changeState', {
       field: 'successData',

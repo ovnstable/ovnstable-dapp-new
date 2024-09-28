@@ -201,6 +201,7 @@ export default {
 .page-wrapper {
   display: flex;
   gap: 50px;
+  margin-top: 24px;
 }
 
 </style>

@@ -2,252 +2,114 @@
   <div class="routing-wrap">
     <h1>Transaction route</h1>
     <div class="routing-wrap__content">
-      <div
-        v-if="swapData && swapData?.blockNumber"
-        class="routing-wrap__content-col"
-      >
-        <div class="routing-wrap__row">
-          <h2>Value difference ($)</h2>
-          <span class="red">{{ getSwapPrice }}$</span>
-        </div>
-        <div class="routing-wrap__row">
-          <div class="routing-wrap__row">
-            <div class="routing-wrap__content-col">
-              <div
-                v-for="(inputT, key) in inputTokens as any"
-                :key="key"
-                class="routing-wrap__row-item"
-              >
-                <img
-                  :src="inputT?.selectedToken?.logoUrl"
-                  alt="logourl"
-                />
-                <span>
-                  {{ getToken(inputT.value) }}
-                </span>
-                <span class="secondary">
-                  ${{ getTokenUsd(inputT) }}
-                </span>
-              </div>
-            </div>
-            <BaseIcon
-              name="ArrowRightPath"
-            />
-            <div class="routing-wrap__content-col">
-              <div
-                v-for="(item, key) in outputTokens as any"
-                :key="key"
-                class="routing-wrap__row-item"
-              >
-                <img
-                  :src="item?.selectedToken?.logoUrl"
-                  alt="logourl"
-                />
-                <span>
-                  {{ getToken(item.sum) }}
-                </span>
-                <span class="secondary">
-                  $
-                  ${{ getTokenUsd(item) }}
-                </span>
-              </div>
-            </div>
-          </div>
-          <div class="routing-wrap__row">
-            <h2>via Odos</h2>
-
-            <BaseIcon
-              name="OdosLogo"
-            />
-          </div>
-        </div>
-      </div>
-      <div
-        v-if="outputTokens && outputTokens?.length > 0"
-        class="routing-wrap__content-col"
-      >
-        <div class="routing-wrap__row routing-wrap__row--title">
-          <h2>Add liquidity</h2>
-          <span>{{ getOutputUsd }}$</span>
-        </div>
-        <div class="routing-wrap__content-col">
-          <div
-            v-for="(item, key) in (outputTokens as any)"
-            :key="key"
-            class="routing-wrap__row routing-wrap__row--liq"
-          >
-            <div class="routing-wrap__row-item">
-              <img
-                :src="item?.selectedToken?.logoUrl"
-                alt="logourl"
-              />
-              <span>
-                {{ item?.selectedToken?.symbol }}
-              </span>
-            </div>
-            <div class="routing-wrap__row-item">
-              <span>
-                {{ getToken(item.sum) }}
-              </span>
-              <span class="secondary">
-                ${{ getTokenUsd(item) }}
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <RebalanceRouting
+        v-if="routingType === MODAL_TYPE.REBALANCE"
+        :swap-data="swapData"
+        :input-tokens="inputTokens"
+        :output-tokens="outputTokens"
+        :zap-pool="zapPool"
+      />
+      <IncreaseRouting
+        v-else-if="routingType === MODAL_TYPE.INCREASE"
+        :swap-data="swapData"
+        :input-tokens="inputTokens"
+        :output-tokens="outputTokens"
+        :zap-pool="zapPool"
+        :initial-position-tokens="initialPositionTokens"
+      />
+      <CompoundRouting
+        v-else-if="routingType === MODAL_TYPE.COMPOUND"
+        :swap-data="swapData"
+        :input-tokens="inputTokens"
+        :output-tokens="outputTokens"
+        :zap-pool="zapPool"
+      />
+      <HarvestRouting
+        v-else-if="routingType === MODAL_TYPE.HARVEST"
+        :zap-pool="zapPool"
+      />
+      <WithdrawRouting
+        v-else-if="routingType === MODAL_TYPE.WITHDRAW"
+        :output-tokens="outputTokens"
+        :zap-pool="zapPool"
+      />
+      <MergeRouting
+        v-else-if="routingType === MODAL_TYPE.MERGE"
+        :swap-data="swapData"
+        :input-tokens="inputTokens"
+        :output-tokens="outputTokens"
+        :zap-pool="zapPool"
+        :initial-position-tokens="initialPositionTokens"
+      />
+      <ZapinRouting
+        v-else:
+        :swap-data="swapData"
+        :input-tokens="inputTokens"
+        :output-tokens="outputTokens"
+      />
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { getTokenByAddress } from '@/store/helpers/index.ts';
-import BN from 'bignumber.js';
-import { formatMoney, getFixed } from '@/utils/numbers.ts';
-import BaseIcon from '@/components/Icon/BaseIcon.vue';
+import ZapinRouting from '@/components/SwapRouting/ZapinRouting.vue';
+import RebalanceRouting from '@/components/SwapRouting/RebalanceRouting.vue';
+import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
+import type { PropType } from 'vue';
+import IncreaseRouting from './IncreaseRouting.vue';
+import type { IPositionsInfo } from '@/types/positions';
+import CompoundRouting from './CompoundRouting.vue';
+import HarvestRouting from './HarvestRouting.vue';
+import WithdrawRouting from './WithdrawRouting.vue';
+import MergeRouting from './MergeRouting.vue';
 
 export default {
   name: 'SwapRouting',
   components: {
-    BaseIcon,
+    ZapinRouting,
+    RebalanceRouting,
+    IncreaseRouting,
+    CompoundRouting,
+    HarvestRouting,
+    WithdrawRouting,
+    MergeRouting,
   },
-  // list of possible transactions, different manage functions, have different flow
-  // if smth new, add in props and pass it to template
   props: {
-    mergedList: {
-      type: Array,
-      required: true,
+    routingType: {
+      type: Number as PropType<MODAL_TYPE> | null,
+      required: false,
+      default: null,
     },
     swapData: {
       type: Object,
-      required: false,
-      default: () => ({}),
+      required: true,
     },
     inputTokens: {
       type: Array,
-      required: false,
-      default: () => ([]),
+      required: true,
     },
     outputTokens: {
       type: Array,
+      required: true,
+    },
+    zapPool: {
+      type: Object as PropType<IPositionsInfo>,
       required: false,
-      default: () => ([]),
+      default: {} as IPositionsInfo,
+    },
+    // Specifically for Increase
+    initialPositionTokens: {
+      type: Array,
+      required: false,
+      default: [] as any,
     },
   },
-  computed: {
-    getOutputUsd() {
-      const outputUsd: string = this.swapData?.netOutValue;
-
-      return new BN(outputUsd).gt(0) ? formatMoney(outputUsd, getFixed(outputUsd)) : 0;
-    },
-    getSwapPrice() {
-      const inputUsd = this.swapData.inValues
-        .reduce((acc: BN, curr: string) => acc.plus(curr), new BN(0));
-      const outputUsd = this.swapData.outValues
-        .reduce((acc: BN, curr: string) => acc.plus(curr), new BN(0));
-
-      const diff = inputUsd.minus(outputUsd).toFixed();
-
-      return diff ? formatMoney(diff, getFixed(diff)) : 0;
-    },
-    outputSwapList() {
-      return (swapD: any) => swapD.outTokens.map((_: string, i: number) => {
-        const tokenData = getTokenByAddress(_, this.mergedList);
-        const origVal = new BN(swapD?.outAmounts[i]).div(10 ** tokenData.decimals).toFixed();
-        const usdVal = new BN(swapD?.outValues[i]).toFixed();
-
-        return {
-          tokenData,
-          usdVal,
-          val: origVal,
-        };
-      });
-    },
-    getTokenUsd() {
-      return (val: any) => {
-        if (new BN(val).eq(0)) return 0;
-        const usdVal = new BN(val.sum ? val.sum : val.value)
-          .times(val?.selectedToken?.price).toFixed();
-
-        return formatMoney(usdVal, getFixed(usdVal));
-      };
-    },
-    getToken() {
-      return (val: string) => {
-        if (new BN(val).eq(0)) return 0;
-        return formatMoney(val, getFixed(val));
-      };
-    },
-  },
-  mounted() {
-    console.log(this.outputSwapList(this.swapData), '__INPUT');
+  data() {
+    return {
+      MODAL_TYPE,
+    };
   },
 };
 </script>
 
-<style lang="scss" scoped>
-.routing-wrap {
-  margin-top: 20px;
-}
-
-h1 {
-  margin-bottom: 10px;
-}
-
-.red {
-  color: var(--color-10);
-  font-weight: 700;
-  font-size: 14px;
-}
-
-.routing-wrap__content {
-  background-color: var(--color-4);
-  border: 1px solid var(--color-3);
-  padding: 20px;
-  border-radius: 20px;
-}
-
-.routing-wrap__content-col {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.routing-wrap__row--title {
-  margin-top: 20px;
-}
-
-.routing-wrap__row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-}
-
-.routing-wrap__row-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-
-  img {
-    width: 18px;
-    height: 18px;
-    min-width: 18px;
-    min-height: 18px;
-  }
-}
-
-.routing-prices {
-  display: flex;
-  gap: 6px;
-}
-
-.routing-wrap__row--liq {
-  justify-content: space-between;
-  width: 100%;
-}
-
-.secondary {
-  color: var(--color-19);
-}
-</style>
+<style src="./styles.scss" lang="scss" scoped />

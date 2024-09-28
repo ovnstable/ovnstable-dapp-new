@@ -8,7 +8,16 @@ import type { TPoolInfo } from '@/types/common/pools';
 import type { TTokenInfo } from '@/types/common/tokens';
 import type { IPositionsInfo, TPositionData, TTicks } from '@/types/positions';
 
-const AERO_ADDR = '0x940181a94A35A4569E4529A3CDfB74e38FD98631';
+const REWARDS_LIST = {
+  arbitrum: {
+    pcs: '0x1b896893dfc86bb67cf57767298b9073d2c1ba2c',
+  },
+  base: {
+    pcs: '0x3055913c90fcc1a6ce9a358911721eeb942013a1',
+    aerodrome: '0x940181a94A35A4569E4529A3CDfB74e38FD98631',
+  },
+};
+
 // const BN_USD_STRING_BASE = 2;
 
 const getTokenNames = (poolName: string) => {
@@ -26,9 +35,19 @@ export const getTokenInfo = (
 
 const getMinVal = (val: string | number) => (new BN(val).gt(0.1) ? new BN(val).toFixed(2) : '< 0.1');
 
-export const isInRange = ({ tickLower, tickUpper, centerTick }: TTicks) => !(
-  new BN(centerTick).gte(new BN(tickUpper)) || new BN(centerTick).lt(new BN(tickLower))
-);
+export const isInRange = ({ tickLower, tickUpper, centerTick }: TTicks) => {
+  if (new BN(centerTick).lt(0)) {
+    return (
+      new BN(centerTick)
+        .lte(new BN(tickUpper)) && new BN(centerTick).gte(new BN(tickLower))
+    );
+  }
+
+  return (
+    new BN(centerTick)
+      .lte(new BN(tickUpper)) && new BN(centerTick).gte(new BN(tickLower))
+  );
+};
 
 const getPercentage = (value: string, total: string) => new BN((value))
   .dividedBy(new BN(total)).multipliedBy(100).toFixed(0);
@@ -101,13 +120,26 @@ export const formatPositionData = (
       let platformName = platform;
       let rewardTokensInfo;
 
-      if (platformName === 'PCS') platformName = 'Pancake';
-      if (platform === 'Aerodrome') {
-        const aeroTokenInfo = getTokenInfo(AERO_ADDR, tokenMap);
+      const chainName = network?.networkName?.toLowerCase();
+      const rewardAdd = REWARDS_LIST[chainName as keyof typeof REWARDS_LIST][
+        platform?.toLowerCase() as keyof typeof REWARDS_LIST.arbitrum
+      ];
+
+      if (platformName === 'PCS') {
+        platformName = 'Pancake';
+      }
+
+      console.log(rewardAdd, '__rewardAdd');
+
+      if (rewardAdd) {
+        const aeroTokenInfo = getTokenInfo(rewardAdd, tokenMap);
         rewardUsdTotal = getUsdStr(emissions, aeroTokenInfo?.decimals, aeroTokenInfo?.price);
         rewardTokensInfo = [
           {
+            id: aeroTokenInfo.id,
+            symbol: aeroTokenInfo.symbol,
             value: getUsdStr(emissions, aeroTokenInfo?.decimals),
+            sum: getUsdStr(emissions, aeroTokenInfo?.decimals),
             usdValue: getUsdStr(emissions, aeroTokenInfo?.decimals, aeroTokenInfo?.price),
             selectedToken: aeroTokenInfo,
           },
@@ -128,7 +160,7 @@ export const formatPositionData = (
         chain: networkId,
         token0Add: token0Info?.address,
         token1Add: token1Info?.address,
-        chainName: network?.networkName?.toLowerCase(),
+        chainName,
         token0Icon: token0Info?.logoUrl ?? loadEmptyImg(),
         token1Icon: token1Info?.logoUrl ?? loadEmptyImg(),
         platform: [platformName],

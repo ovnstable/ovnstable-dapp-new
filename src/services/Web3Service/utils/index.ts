@@ -5,13 +5,21 @@ import { fixedByPrice } from '@/utils/numbers.ts';
 import { getNewOutputToken, getTokenByAddress, updateTokenValue } from '@/store/helpers/index.ts';
 import { loadAbi, REWARD_TOKEN, srcStringBuilder } from '@/store/views/main/zapin/index.ts';
 import { buildEvmContract } from '@/utils/contractsMap.ts';
+import { markRaw } from 'vue';
+import { ZAPIN_SCHEME } from './scheme.ts';
 
-const EVENT_SIG = ['uint256[]', 'address[]'];
+const EVENT_SIG = ['address[]', 'uint256[]'];
+const ZAP_RESULT_SIG = [
+  'address[]', // tokens
+  'uint256[]', // initialAmounts
+  'uint256[]', // putAmounts
+  'uint256[]', // returnedAmounts
+];
 
 enum ZAP_EVENTS {
     'PutIntoPool',
     'ReturnedToUser',
-    'InputTokens'
+    'InputTokens',
 }
 
 interface IProportion {
@@ -51,6 +59,24 @@ const decodeTokenEvent = (data: string) => {
   };
 };
 
+const decodeReceiptEvent = (
+  data: string,
+  commitEventToStore: (storeField: string, data: any) => void,
+) => {
+  const decodedData = decodeEventData(ZAP_RESULT_SIG, data);
+
+  const [
+    addresses,
+    inputTokens,
+    putIntoPool,
+    retuernedToUser,
+  ] = decodedData;
+
+  commitEventToStore('lastParsedInputTokensEvent', { addresses, amounts: inputTokens });
+  commitEventToStore('lastParsedReturnedToUserEvent', { addresses, amounts: retuernedToUser });
+  commitEventToStore('lastParsedPutIntoPoolEvent', { addresses, amounts: putIntoPool });
+};
+
 const getStoreFieldName = (eventName: string) => `lastParsed${eventName}Event`;
 
 export const parseLogs = (
@@ -59,7 +85,8 @@ export const parseLogs = (
 ): void => {
   for (const item of logs) {
     const eventName = item?.eventName;
-    if (Object.values(ZAP_EVENTS).includes(eventName)) {
+    if (eventName === 'ZapResult') decodeReceiptEvent(item?.data, commitEventToStore);
+    else if (Object.values(ZAP_EVENTS).includes(eventName)) {
       const storeField = getStoreFieldName(eventName);
       const decodedData = decodeTokenEvent(item?.data);
       commitEventToStore(storeField, decodedData);
@@ -348,6 +375,41 @@ export const getSourceLiquidityBlackList = (zapPool: any) => {
   return sourceBlacklist;
 };
 
+export const initZapData = (
+  requestData: any,
+  responseData: any,
+  amountMins: string[],
+  getSlippagePercent: number,
+  zapPoolAdd: string,
+  proportions: any,
+  v3Range: any,
+) => {
+  const txData = {
+    inputs: requestData.inputT,
+    outputs: requestData.outputT.map((_: any, key: number) => ({
+      tokenAddress: _.tokenAddress,
+      amountMin: new BN(amountMins[key])
+        .times(1 - getSlippagePercent / 100)
+        .toFixed(0),
+    })),
+    data: responseData ? responseData.transaction.data : '0x',
+  };
+
+  const gaugeData = {
+    pool: zapPoolAdd,
+    tickRange: v3Range.ticks,
+    amountsOut: [proportions.amountToken0Out, proportions.amountToken1Out],
+    isSimulation: true,
+    adjustSwapSide: false,
+    adjustSwapAmount: 0,
+  };
+
+  return {
+    gaugeData,
+    txData,
+  };
+};
+
 export const initReqData = (
   requestInputTokens: any[],
   requestOutputTokens: any[],
@@ -380,31 +442,43 @@ export const initZapinContracts = async (
   zapPool: any,
   mergedAllTokens: any[],
   evmSigner: any,
-  gaugeAddress: string,
+  gaugeAddress?: string,
 ) => {
   const tokenA = getTokenByAddress(zapPool?.token0Add, mergedAllTokens);
   const tokenB = getTokenByAddress(zapPool?.token1Add, mergedAllTokens);
+  if (!zapPool.platform[0]) throw new Error('Platform not found');
+
+  const platform = zapPool.platform[0]?.toLowerCase();
 
   const abiGauge = srcStringBuilder('V3GaugeRebalance')(zapPool.chainName, zapPool.platform[0]);
   const abiGaugeContractFileV3 = await loadAbi(abiGauge);
 
-  const abiV3Zap = srcStringBuilder('V3Zap')(zapPool.chainName, zapPool.platform[0]);
+  const abiV3Zap = srcStringBuilder('Contract')('v3', 'Zapin');
   const abiContractV3Zap = await loadAbi(abiV3Zap);
+  const abiZapAdd = ZAPIN_SCHEME[zapPool.chainName as keyof typeof ZAPIN_SCHEME][
+    platform as keyof typeof ZAPIN_SCHEME.arbitrum
+  ]?.zapinAdd;
 
+  if (!abiZapAdd) throw new Error('abiZapAdd not found');
+
+  // possible todo, make separate folder for it, if its same every time
   const abiV3Nft = srcStringBuilder('V3Nft')(zapPool.chainName, zapPool.platform[0]);
   const abiContractV3Nft = await loadAbi(abiV3Nft);
 
-  const gaugeContract = buildEvmContract(
+  const gaugeContract = gaugeAddress ? buildEvmContract(
     abiGaugeContractFileV3.abi,
     evmSigner,
     gaugeAddress,
-  );
+  ) : null;
 
-  const zapContract = buildEvmContract(
+  // without markRaw, we can't read contract errors by interface
+  const zapContract = markRaw(buildEvmContract(
     abiContractV3Zap.abi,
     evmSigner,
-    abiContractV3Zap.address,
-  );
+    abiZapAdd,
+  ));
+
+  console.log(zapContract, '__zapContract');
 
   const poolTokenContract = buildEvmContract(
     abiContractV3Nft.abi,

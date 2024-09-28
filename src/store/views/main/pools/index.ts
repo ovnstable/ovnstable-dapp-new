@@ -15,6 +15,7 @@ export enum POOL_TYPES {
 const stateData = {
   allPools: [],
   isPoolsLoading: true,
+  activeChain: 'all',
 
   topPool: null,
 
@@ -75,12 +76,18 @@ const actions = {
         val: new BigNumber(pool?.tokenId).toString(10),
       });
     }
-    if (pool?.rewards?.usdValue) {
+    if (pool?.rewards) {
       commit('changeState', {
         field: 'lastParsedClaimedRewardsEvent',
-        val: new BigNumber(pool?.rewards?.usdValue).toString(10),
+        val: pool?.rewards?.tokensInfo,
       });
     }
+  },
+  setFilterChain({ commit }: any, params: number) {
+    commit('changeState', {
+      field: 'activeChain',
+      val: params,
+    });
   },
   setFilterParams({ commit }: any, params: Partial<TFilterPoolsParams>) {
     commit('setFilterParams', params);

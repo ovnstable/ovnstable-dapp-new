@@ -14,11 +14,24 @@
     <div class="divider" />
     <div
       v-if="errorMsg"
-      class="error-content__msg"
+      class="error-text-container"
     >
-      <div class="error-message">
-        {{errorMsg.message ? errorMsg.message : errorMsg}}
+      <div class="error-content__msg">
+        <div class="error-message">
+          {{ errorMsg?.message ? errorMsg?.message : errorMsg }}
+        </div>
       </div>
+      <ButtonComponent
+        class="btn-clipboard"
+        btn-styles="link"
+        @click="copyError()"
+        @keypress="copyError()"
+      >
+        Copy error to clipboard
+        <!-- <BaseIcon
+          name="Copy"
+        /> -->
+      </ButtonComponent>
     </div>
 
     <div class="error-content__submit">
@@ -28,7 +41,7 @@
         rel="noopener noreferrer"
         href="https://discord.com/channels/933003627444969552/967813123149033542/967813482684760135/"
       >
-        <ButtonComponent btnStyles="link">
+        <ButtonComponent btn-styles="link">
           # | submit-ticket
         </ButtonComponent>
       </a>
@@ -47,33 +60,6 @@ export default {
     ButtonComponent,
   },
   props: ['errorMsg', 'copyError'],
-
-  data() {
-    return {
-      showCopyTooltip: false,
-      showCopyTooltipContainer: false,
-      isCopied: false,
-    };
-  },
-  methods: {
-    shortAddress(address: any) {
-      if (address) {
-        return `${address.substring(0, 5)}...${address.substring(address.length - 4)}`;
-      }
-      return null;
-    },
-    copyErrorToClipboard(copyTooltip: any, errorMsg: any) {
-      if (typeof this.copyError === 'function') {
-        this.copyError(copyTooltip, errorMsg);
-
-        this.isCopied = true;
-
-        setTimeout(() => {
-          this.isCopied = false;
-        }, 2000); // 2000 milliseconds (2 seconds)
-      }
-    },
-  },
 };
 </script>
 
@@ -142,5 +128,27 @@ h1 {
       color: var(--color-18);
     }
   }
+}
+.error-message {
+  max-height: 100px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+  overflow: hidden;
+  line-height: normal;
+}
+.btn-clipboard {
+  svg {
+    path {
+      color: var(--color-17);
+    }
+  }
+}
+.error-text-container {
+  display: flex;
+    width: 100%;
+    flex-direction: column;
+    margin: 20px 0;
+    gap: 15px;
 }
 </style>

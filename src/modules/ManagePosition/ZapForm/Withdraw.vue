@@ -72,87 +72,81 @@
         </div>
       </div>
       <div class="swap-block__part">
-        <h2>
-          You receive
-        </h2>
         <div class="swap-block__get-col">
-          <div
-            v-for="token in (outputTokens as any)"
-            :key="token.id"
-            class="input-component-container"
-          >
-            <TokenForm
-              :token-info="token"
-              :is-token-removable="false"
-              :is-input-token="false"
-              :disabled="true"
-              hide-balance
+          <SwapRouting
+              v-if="zapPool"
+              :swap-data="[]"
+              :merged-list="[]"
+              :input-tokens="[]"
+              :output-tokens="selectedOutputTokens"
+              :initial-position-routing-wrap="[]"
+              :routing-type="MODAL_TYPE.WITHDRAW"
+              :zap-pool="zapPool"
             />
-          </div>
         </div>
-        <div class="swap-container__footer">
+      </div>
+    </div>
+    <div class="swap-container__footer">
+      <ButtonComponent
+        v-if="!account"
+        class="swap-button-container"
+        btn-size="large"
+        btn-styles="primary"
+        full
+        @click="connectWallet"
+        @keypress="connectWallet"
+      >
+        CONNECT WALLET
+      </ButtonComponent>
+      <div
+        v-else
+        class="swap-button-container"
+      >
+        <ButtonComponent
+          v-if="positionStaked"
+          btn-size="large"
+          btn-styles="primary"
+          full
+          :loading="isSwapLoading"
+          @click="withdrawTrigger"
+          @keypress="withdrawTrigger"
+        >
+          WITHDRAW
+        </ButtonComponent>
+        <ButtonComponent
+          v-else-if="!isNftApproved"
+          btn-size="large"
+          btn-styles="primary"
+          full
+          :loading="isSwapLoading"
+          @click="approveNftPosition(false)"
+          @keypress="approveNftPosition(false)"
+        >
+          APPROVE
+        </ButtonComponent>
+        <RouterLink
+          v-else-if="positionFinish"
+          to="/positions"
+        >
           <ButtonComponent
-            v-if="!account"
-            class="swap-button-container"
             btn-size="large"
             btn-styles="primary"
             full
-            @click="connectWallet"
-            @keypress="connectWallet"
           >
-            CONNECT WALLET
+            RETURN TO POSITIONS
           </ButtonComponent>
-          <div
-            v-else
-            class="swap-button-container"
-          >
-            <ButtonComponent
-              v-if="positionStaked"
-              btn-size="large"
-              btn-styles="primary"
-              full
-              :loading="isSwapLoading"
-              @click="withdrawTrigger"
-              @keypress="withdrawTrigger"
-            >
-              WITHDRAW
-            </ButtonComponent>
-            <ButtonComponent
-              v-else-if="!isNftApproved"
-              btn-size="large"
-              btn-styles="primary"
-              full
-              :loading="isSwapLoading"
-              @click="approveNftPosition(false)"
-              @keypress="approveNftPosition(false)"
-            >
-              APPROVE
-            </ButtonComponent>
-            <RouterLink
-              v-else-if="positionFinish"
-              to="/positions"
-            >
-              <ButtonComponent
-                btn-size="large"
-                btn-styles="primary"
-                full
-              >
-                RETURN TO POSITIONS
-              </ButtonComponent>
-            </RouterLink>
-            <ButtonComponent
-              v-else
-              btn-size="large"
-              btn-styles="primary"
-              full
-              :loading="isSwapLoading"
-              @click="zapOutTrigger"
-              @keypress="zapOutTrigger"
-            >
-              ZAP OUT
-            </ButtonComponent>
-          </div>
-        </div>
+        </RouterLink>
+        <ButtonComponent
+          v-else
+          btn-size="large"
+          btn-styles="primary"
+          full
+          :loading="isSwapLoading"
+          @click="zapOutTrigger"
+          @keypress="zapOutTrigger"
+        >
+          ZAP OUT
+        </ButtonComponent>
       </div>
     </div>
   </div>
@@ -172,24 +166,28 @@ import {
 import Spinner from '@/components/Spinner/Index.vue';
 import ChangeNetwork from '@/components/ZapForm/ChangeNetwork.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
-import TokenForm from '@/components/TokenForm/Index.vue';
 import { cloneDeep } from 'lodash';
 import BN from 'bignumber.js';
 import { MANAGE_FUNC, withdrawStep } from '@/store/modals/waiting-modal.ts';
 import { formatInputTokens } from '@/utils/tokens.ts';
 import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
-import { defineComponent } from 'vue';
+import { defineComponent, type PropType } from 'vue';
 import { fixedByPrice } from '@/utils/numbers.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import { initZapinContracts } from '@/services/Web3Service/utils/index.ts';
+import SwapRouting from '@/components/SwapRouting/Index.vue';
+import { parseErrorLog } from '@/utils/errors.ts';
+import ZapinService from '@/services/Web3Service/Zapin-service.ts';
+import { awaitDelay } from '@/utils/const.ts';
+import type { IPositionsInfo } from '@/types/positions';
 
 export default defineComponent({
   name: 'WithdrawForm',
   components: {
     ButtonComponent,
-    TokenForm,
     ChangeNetwork,
     Spinner,
+    SwapRouting,
   },
   props: {
     allTokensList: {
@@ -203,9 +201,8 @@ export default defineComponent({
       default: () => [],
     },
     zapPool: {
-      type: Object,
-      required: false,
-      default: null,
+      type: Object as PropType<IPositionsInfo>,
+      required: true,
     },
     gaugeAddress: {
       type: String,
@@ -226,6 +223,7 @@ export default defineComponent({
       currentStage: withdrawStep.WITHDRAW,
       isNftApproved: false,
       isSwapLoading: false,
+      MODAL_TYPE,
     };
   },
   computed: {
@@ -309,6 +307,7 @@ export default defineComponent({
     ...mapActions('waitingModal', ['closeWaitingModal', 'showWaitingModal']),
     ...mapActions('walletAction', ['connectWallet']),
     ...mapMutations('waitingModal', ['setStagesMap']),
+    ...mapActions('errorModal', ['showErrorModalWithMsg']),
 
     async initContracts() {
       const contractsData = await initZapinContracts(
@@ -336,6 +335,7 @@ export default defineComponent({
           .approve(this.zapContract?.target, this.zapPool.tokenId);
 
         await tx.wait();
+        await awaitDelay(1000);
         this.isNftApproved = true;
         this.isSwapLoading = false;
         this.closeWaitingModal();
@@ -345,6 +345,7 @@ export default defineComponent({
         console.log(e);
         this.closeWaitingModal('Approve');
         this.isSwapLoading = false;
+        this.showErrorModalWithMsg({ errorType: 'approve', errorMsg: parseErrorLog(e) });
       }
     },
     mintAction() {
@@ -380,8 +381,8 @@ export default defineComponent({
 
         return {
           ..._,
-          value: new BN(price).toFixed(fixedByPrice(price)),
-          sum: new BN(price).toFixed(fixedByPrice(price)),
+          value: new BN(price).toFixed(fixedByPrice(Number(price))),
+          sum: new BN(price).toFixed(fixedByPrice(Number(price))),
         };
       });
 
@@ -401,7 +402,7 @@ export default defineComponent({
         this.isSwapLoading = false;
         this.closeWaitingModal();
         const inputTokens = [...this.inputTokens];
-        const outputTokens = [...this.selectedOutputTokens];
+        const outputTokens = [...this.outputTokens];
         this.triggerSuccessZapin(
           {
             isShow: true,
@@ -416,6 +417,7 @@ export default defineComponent({
         this.positionFinish = true;
       } catch (e) {
         console.log(e);
+        this.showErrorModalWithMsg({ errorMsg: parseErrorLog(e) });
         this.closeWaitingModal();
         this.isSwapLoading = false;
       }
@@ -427,12 +429,13 @@ export default defineComponent({
       try {
         this.showWaitingModal('unstaking');
 
-        let tx;
+        await ZapinService.withdrawTrigger(
+          this.zapPool,
+          this.zapPool.tokenId?.toString(),
+          this.gaugeContract,
+          this.account,
+        );
 
-        if (this.zapPool.chainName === 'base') tx = await this.gaugeContract.withdraw(this.zapPool.tokenId);
-        else if (this.zapPool.chainName === 'arbitrum') tx = await this.gaugeContract.withdraw(this.zapPool.tokenId, this.account);
-
-        await tx.wait();
         this.isSwapLoading = false;
         this.closeWaitingModal();
         this.positionStaked = false;
@@ -440,6 +443,7 @@ export default defineComponent({
         this.approveNftPosition(false);
       } catch (e) {
         console.log(e);
+        this.showErrorModalWithMsg({ errorMsg: parseErrorLog(e) });
         this.closeWaitingModal();
         this.isSwapLoading = false;
       }

@@ -41,27 +41,7 @@
 <script lang="ts">
 export default {
   name: 'SlippageError',
-  props: ['errorMsg', 'errorCode', 'copyError'],
-
-  data: () => ({
-    isCopied: false, // Initialize it as false
-  }),
-
-  methods: {
-    copyErrorToClipboard(copyTooltip: any, errorMsg: any) {
-      if (typeof this.copyError === 'function') {
-        this.copyError(copyTooltip, errorMsg); // Pass the error message as an argument
-
-        // Set isCopied to true when the icon is clicked
-        this.isCopied = true;
-
-        // Use a setTimeout to reset isCopied after a certain time (e.g., 2 seconds)
-        setTimeout(() => {
-          this.isCopied = false;
-        }, 2000); // 2000 milliseconds (2 seconds)
-      }
-    },
-  },
+  props: ['errorMsg'],
 };
 </script>
 

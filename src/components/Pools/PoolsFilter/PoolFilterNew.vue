@@ -27,10 +27,19 @@
       <div class="network-filter-wrap">
         <div class="pools-wrap__filters-networks">
           <div
+            :class="activeChain === 'all' ? 'pools-wrap__filters-item--selected' : ''"
+            @click="handleClickChain('all')"
+            @keypress="handleClickChain('all')"
+          >
+            All
+          </div>
+          <div
             v-for="networkConfig in sortedChains"
             :key="networkConfig.chainId"
-            :class="networkConfig.enabled ? 'pools-wrap__filters-item--selected' : ''"
+            :class="activeChain === networkConfig.chainId ? 'pools-wrap__filters-item--selected' : ''"
             class="pools-wrap__filters-item"
+            @click="handleClickChain(networkConfig.chainId)"
+            @keypress="handleClickChain(networkConfig.chainId)"
           >
             <BaseIcon :name="networkConfig.name.toLowerCase()" />
           </div>
@@ -76,7 +85,7 @@
 
 <script lang="ts">
 import ButtonComponent from '@/components/Button/Index.vue';
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import SelectTokensModal from '@/components/TokensModal/Index.vue';
 import { computed } from 'vue';
@@ -98,7 +107,7 @@ export const networkList = [
   {
     chainId: 8453,
     name: 'Base',
-    enabled: true,
+    enabled: false,
   },
   {
     chainId: 42161,
@@ -143,12 +152,13 @@ export default {
   },
   computed: {
     ...mapGetters('accountData', ['account']),
+    ...mapState('poolsData', ['activeChain']),
     mergedTokenList() {
       return mergedTokens(this.allTokensList, this.balancesList as any[]);
     },
   },
   methods: {
-    ...mapActions('poolsData', ['setFilterParams']),
+    ...mapActions('poolsData', ['setFilterParams', 'setFilterChain']),
     toggleShowTokensModal(tokenToSelect: number) {
       this.isShowTokensModal = !this.isShowTokensModal;
       this.selectingTokenIndex = tokenToSelect;
@@ -162,6 +172,9 @@ export default {
         token1: this.selectedTokens[1]?.symbol ?? '',
       };
       this.setFilterParams(filterParams);
+    },
+    handleClickChain(chain: number | string) {
+      this.setFilterChain(chain);
     },
     handleClickSearch() {
       const filterParams: Partial<TFilterPoolsParams> = {

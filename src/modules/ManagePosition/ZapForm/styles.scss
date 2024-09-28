@@ -382,6 +382,9 @@
       flex-direction: column;
       gap: 8px;
       justify-content: space-between;
+      &.compound-wrap__content {
+        gap: 40px;
+      }
       .zapin-block__wrapper {
         display: flex;
         flex-direction: column;
@@ -506,7 +509,6 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-top: 16px;
 }
 
 .swap-block__item-row {
@@ -621,4 +623,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.zapin-block__counts {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }

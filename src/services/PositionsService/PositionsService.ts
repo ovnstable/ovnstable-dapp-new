@@ -1,20 +1,27 @@
 import { formatPositionData } from '@/services/PositionsService/utils/positionsFormatter.ts';
 import { buildEvmContract } from '@/utils/contractsMap.ts';
-import { loadAbi, zapAbiSrcMap, rebalanceChainMap } from '@/store/views/main/zapin/index.ts';
+import {
+  loadAbi, rebalanceChainMap, srcStringBuilder,
+} from '@/store/views/main/zapin/index.ts';
 import type { TTokenInfo } from '@/types/common/tokens';
 import type { TPoolInfo } from '@/types/common/pools';
+import { ZAPIN_SCHEME } from '../Web3Service/utils/scheme.ts';
 
-export const loadPositionContract = async (state: any) => {
-  const chainName = state.network.networkName;
-  const platformName = rebalanceChainMap[chainName];
-  const abiFileSrc = zapAbiSrcMap.v3?.(chainName, platformName);
+export const loadPositionContract = async (state: any, platformName: string) => {
+  const abiV3Zap = srcStringBuilder('Contract')('v3', 'Zapin');
+  const abiContractV3Zap = await loadAbi(abiV3Zap);
 
-  const abiFile = await loadAbi(abiFileSrc);
+  console.log(platformName, '___platformName');
+  const abiZapAdd = ZAPIN_SCHEME[
+    state.network.networkName?.toLowerCase() as keyof typeof ZAPIN_SCHEME
+  ][
+    platformName?.toLowerCase() as keyof typeof ZAPIN_SCHEME.arbitrum
+  ]?.zapinAdd;
 
   const positionContract = buildEvmContract(
-    abiFile.abi,
+    abiContractV3Zap.abi,
     state.web3.evmSigner,
-    abiFile.address,
+    abiZapAdd,
   );
 
   return positionContract;
@@ -22,12 +29,23 @@ export const loadPositionContract = async (state: any) => {
 
 class PositionsService {
   public static async fetchPositions(state: any) {
-    // console.log('__positionsServiceFetch');
-    const positionsContract = await loadPositionContract(state);
-    const rawPositionData = await positionsContract.getPositions(state.accountData.account);
+    const platformNames = rebalanceChainMap[state.network.networkName];
 
-    // console.log('__positions', rawPositionData);
-    return rawPositionData;
+    const rawPositionsData = await Promise.all(
+      platformNames.map(async (platform: string) => {
+        const positionsContract = await loadPositionContract(state, platform);
+        try {
+          const positionsData = await positionsContract.getPositions(state.accountData.account);
+          // console.log('__positionsData', positionsData, platform);
+          return positionsData;
+        } catch (e) {
+          console.log(e, positionsContract, '___e');
+          return [];
+        }
+      }),
+    );
+
+    return rawPositionsData.flat();
   }
 
   public static formatPositions(
@@ -36,7 +54,6 @@ class PositionsService {
     tokens: TTokenInfo[],
     networkId: number,
   ) {
-    // console.log('__positionsServiceFormat');
     const tokenMap = new Map(tokens.map((token) => [token.address, token]));
     const poolsMap = pools.reduce((acc: any, pool: any) => ({ ...acc, [pool.address]: pool }), {});
 

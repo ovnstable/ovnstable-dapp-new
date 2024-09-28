@@ -61,7 +61,7 @@
     </div>
     <div
       v-else-if="activeTab === manageTab.HARVEST"
-      class="manage-wrap__content manage-wrap__content--harvest"
+      class="manage-wrap__content"
     >
       <HarvestForm
         :zap-pool="zapPool"
@@ -197,10 +197,10 @@ export default {
           id: MANAGE_TAB.INCREASE,
           name: 'Increase',
         },
-        // {
-        //   id: MANAGE_TAB.MERGE,
-        //   name: 'Merge',
-        // },
+        {
+          id: MANAGE_TAB.MERGE,
+          name: 'Merge',
+        },
         {
           id: MANAGE_TAB.COMPOUND,
           name: 'Compound',

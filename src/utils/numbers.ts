@@ -17,6 +17,17 @@ export const formatMoney = (number: number | string = 0, count = 6) => {
 };
 
 // fixed by amount of numbers after dot
+export const fixedByPriceChart = (price: number, zoomType: number) => {
+  if (new BN(price).gt(100)) return 0;
+  if (new BN(price).gt(10)) return 2 + zoomType;
+  if (new BN(price).gt(2)) return 4 + zoomType;
+  if (price == null) return 2;
+  const orderOfMagnitude = Math.floor(Math.log10(price));
+  const num = Math.max(2, orderOfMagnitude > 0 ? orderOfMagnitude + 3 : orderOfMagnitude * -1 + 3);
+  return num > 8 ? 8 : num;
+};
+
+// fixed by amount of numbers after dot
 export const fixedByPrice = (price: number) => {
   if (price == null) return 2;
   const orderOfMagnitude = Math.floor(Math.log10(price));

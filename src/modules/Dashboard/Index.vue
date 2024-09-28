@@ -266,6 +266,7 @@ export default {
   flex-direction: column;
   width: 100%;
   z-index: 1;
+  margin-top: 24px;
 }
 
 .dashboard__payouts {

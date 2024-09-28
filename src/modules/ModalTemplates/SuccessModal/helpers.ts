@@ -3,6 +3,8 @@
 
 import BigNumber from 'bignumber.js';
 import { getTokenByAddress } from '@/store/helpers/index.ts';
+import { getUsdStr } from '@/utils/tokens.ts';
+import { formatMoney } from '@/utils/numbers.ts';
 import type { TTokenInfo } from '@/types/common/tokens';
 
 const DEFAULT_DECIMALS = 18;
@@ -31,6 +33,9 @@ export type TFormatTokenInfo = {
     id: string,
     symbol: string,
     value: string,
+    usdValue: string,
+    displayedValue: string,
+    displayedUsdValue: string,
 };
 
 const platformLinkMap: TPlatformLinkMap = {
@@ -80,19 +85,37 @@ export const mapEventTokenData = (
   .map((addr: string, index: number) => {
     const token = getTokenByAddress(addr.toString(), allTokenList);
     const value = formatBN(eventList.amounts[index], token?.decimals);
+    const usdValue = getUsdStr(value, 0, token.price);
+    const displayedValue = formatMoney(value);
+    const displayedUsdValue = formatMoney(usdValue);
     return {
       id: `${token?.id}_return`,
       symbol: token?.symbol,
       value,
+      usdValue,
+      displayedValue,
+      displayedUsdValue,
     };
   });
 
-export const mapInputTokenData = (inputTokens: TSuccessTokenInfo[]) => inputTokens.map(
-  (token: TSuccessTokenInfo) => ({
-    id: `${token?.id}_return`,
-    symbol: token.selectedToken.symbol,
-    value: token.value,
-  }),
+export const mapInputTokenData = (
+  inputTokens: TSuccessTokenInfo[],
+): TFormatTokenInfo[] => inputTokens.map(
+  (token: TSuccessTokenInfo) => {
+    const usdValue = getUsdStr(
+      token.value,
+      0,
+      token.selectedToken.price,
+    );
+    return {
+      id: `${token?.id}_return`,
+      symbol: token.selectedToken.symbol,
+      value: token.value,
+      usdValue,
+      displayedValue: formatMoney(token.value),
+      displayedUsdValue: formatMoney(usdValue),
+    };
+  },
 );
 
 export default getPlatformLink;

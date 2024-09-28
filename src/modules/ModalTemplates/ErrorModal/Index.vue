@@ -13,6 +13,13 @@
           :copy-error="copyErrorToClipboard"
         />
       </div>
+      <div v-else-if="errorViewType === 'rejected'">
+        <RejectedError
+          :error-msg="errorText"
+          :error-code="errorCode"
+          :copy-error="copyErrorToClipboard"
+        />
+      </div>
       <div v-else-if="errorViewType === 'rpc'">
         <RpcError
           :error-msg="errorText"
@@ -62,6 +69,12 @@
           :copy-error="copyErrorToClipboard"
         />
       </div>
+      <div v-else-if="errorViewType === 'zap'">
+        <ZapError
+          :error-msg="errorMsg"
+          :copy-error="copyErrorToClipboard"
+        />
+      </div>
       <div v-else>
         <UndefinedError
           :error-msg="errorMsg"
@@ -84,6 +97,8 @@ import HighLoadInfo from '@/modules/ModalTemplates/ErrorModal/HighLoadInfo.vue';
 import GasPriceIncreaseInfo from '@/modules/ModalTemplates/ErrorModal/GasPriceIncreaseInfo.vue';
 import OverRateLimitInfo from '@/modules/ModalTemplates/ErrorModal/OverRateLimitInfo.vue';
 import InsufficientFundsInfo from '@/modules/ModalTemplates/ErrorModal/InsufficientFundsInfo.vue';
+import ZapError from '@/modules/ModalTemplates/ErrorModal/ZapError.vue';
+import RejectedError from '@/modules/ModalTemplates/ErrorModal/RejectedError.vue';
 
 export default {
   name: 'ErrorModal',
@@ -98,6 +113,8 @@ export default {
     RpcError,
     UndefinedError,
     ModalComponent,
+    ZapError,
+    RejectedError,
   },
 
   props: {
@@ -137,7 +154,12 @@ export default {
     ...mapActions('errorModal', ['closeErrorModal']),
 
     initError() {
-      if (!this.errorMsg || !this.errorType) {
+      if (!this.errorMsg && !this.errorType) {
+        return;
+      }
+
+      if (this.errorMsg === 'rejected' || this.errorMsg?.message?.includes('reason="rejected"')) {
+        this.errorViewType = 'rejected';
         return;
       }
 
@@ -168,6 +190,11 @@ export default {
 
       if (this.errorType === 'insufficient-funds') {
         this.errorViewType = 'insufficient-funds';
+        return;
+      }
+
+      if (this.errorType === 'zap') {
+        this.errorViewType = 'zap';
         return;
       }
 
@@ -211,25 +238,8 @@ export default {
       return false;
     },
 
-    async copyErrorToClipboard(copyTooltip: string) {
-      if (copyTooltip === 'container') {
-        this.showCopyTooltipContainer = true;
-      }
-      if (copyTooltip === 'link') {
-        this.showCopyTooltip = true;
-      }
-
+    async copyErrorToClipboard() {
       await navigator.clipboard.writeText(JSON.stringify(this.errorMsg));
-
-      // eslint-disable-next-line no-promise-executor-return
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      if (copyTooltip === 'container') {
-        this.showCopyTooltipContainer = false;
-      }
-      if (copyTooltip === 'link') {
-        this.showCopyTooltip = false;
-      }
     },
 
     close() {
@@ -237,6 +247,14 @@ export default {
 
       this.$emit('input', false);
       this.$emit('m-close');
+
+      // Clean modal state
+      this.showCopyTooltip = false;
+      this.showCopyTooltipContainer = false;
+
+      this.errorText = '';
+      this.errorCode = 0;
+      this.errorViewType = '';
     },
   },
 };
@@ -245,7 +263,7 @@ export default {
 <style lang="scss" scoped>
 .modal-content {
   padding: 50px 70px 30px 70px;
-  max-width: 538px;
+  max-width: 800px;
   [data-theme="dark"] & {
     background-color: var(--color-17);
     border-color: var(--color-4);
