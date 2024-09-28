@@ -154,7 +154,7 @@ export default {
     ...mapGetters('accountData', ['account']),
     ...mapState('poolsData', ['activeChain']),
     mergedTokenList() {
-      return mergedTokens(this.allTokensList, this.balancesList as any[]);
+      return mergedTokens(this.balancesList as any[], this.allTokensList);
     },
   },
   methods: {
