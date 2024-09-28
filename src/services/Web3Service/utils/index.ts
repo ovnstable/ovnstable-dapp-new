@@ -54,8 +54,8 @@ const decodeTokenEvent = (data: string) => {
   const decodedData = decodeEventData(EVENT_SIG, data);
 
   return {
-    amounts: decodedData[0],
-    addresses: decodedData[1],
+    amounts: decodedData[1],
+    addresses: decodedData[0],
   };
 };
 
