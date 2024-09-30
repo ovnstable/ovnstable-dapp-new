@@ -41,7 +41,7 @@ export interface IStrategyResponseOld {
     name: string,
     type: string,
     fullName: string,
-    weight: Number,
+    weight: number,
     address: string,
     explorerAddress: string,
     netAssetValue: Number,
@@ -153,6 +153,38 @@ export interface IClientBalanceChangeResponseOld {
     apy: Number,
     elapsed_time: Number
  }
+
+export interface IPayoutResponseOld {
+    transactionHash: string;
+    payableDate: string;
+    dailyProfit: number;
+    annualizedYield: number;
+    liquidationValue: number;
+    totalUsdPlus: number;
+    netAssetValue: number;
+    totalUsdc: number;
+    duration: number;
+  }
+
+export interface IPayoutResponse {
+    transactionHash: string,
+    payableDate: string,
+    dailyProfit: BigNumber,
+    annualizedYield: BigNumber,
+    totalUsdPlus: BigNumber,
+    totalUsdc: BigNumber
+    duration: BigNumber,
+}
+
+export interface IStatTvlResponse {
+        chainName: string,
+        values: [
+            {
+                name: string,
+                value: number,
+            },
+        ]
+}
 
 // Old API
 export type TChainTokenMap = {

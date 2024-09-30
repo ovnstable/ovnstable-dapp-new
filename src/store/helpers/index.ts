@@ -1,7 +1,6 @@
 /* eslint-disable no-param-reassign */
 import BigNumber from 'bignumber.js';
 import { loadTokenImage, loadOvernightTokenImage } from '@/utils/tokenLogo.ts';
-import SliderApiService from '@/services/slider-api-service.ts';
 import { DEPRECATED_NETWORKS } from '@/utils/const.ts';
 import { OvernightApi } from '@/services/ApiService/OvernightApi.ts';
 
@@ -366,7 +365,8 @@ export const sortedChainsByTVL = async (
   chains: any,
   showDeprecated: boolean,
 ) => {
-  const tvl = await SliderApiService.loadTVL();
+  const overnightApiInstance = new OvernightApi();
+  const tvl = await overnightApiInstance.loadTVL();
   const filterDeprecated = chains.filter((_: any) => {
     if (showDeprecated) return chains;
 

@@ -3,10 +3,10 @@ import type {
   IClientBalanceChangeResponse,
   IClientBalanceChangeResponseOld,
   IInsPayoutResponse, IInsPayoutResponseOld, IInsStatResponse,
-  IInsStatResponseOld, IStrategyResponse, IStrategyResponseOld,
+  IInsStatResponseOld, IPayoutResponse, IPayoutResponseOld, IStrategyResponse, IStrategyResponseOld,
 } from '@/types/api/overnightApi';
 
-export const tranformPayoutResponse = async (
+export const tranformInsPayoutResponse = async (
   response: Promise<IInsPayoutResponse[]>,
 ): Promise<IInsPayoutResponseOld[]> => {
   const payoutResponses = await response;
@@ -79,3 +79,20 @@ export const tranformInsuranceStatsResponse = (
   coverage: 0,
   insuredList: ['USD+'],
 });
+
+export const tranformPayoutResponse = async (
+  response: Promise<IPayoutResponse[]>,
+): Promise<IPayoutResponseOld[]> => {
+  const payoutResponses = await response;
+  return payoutResponses.map((payoutEntity: IPayoutResponse) => ({
+    transactionHash: payoutEntity.transactionHash,
+    payableDate: payoutEntity.payableDate,
+    dailyProfit: Number(payoutEntity.dailyProfit),
+    annualizedYield: Number(payoutEntity.annualizedYield),
+    liquidationValue: 0,
+    totalUsdPlus: Number(payoutEntity.totalUsdPlus),
+    netAssetValue: 0,
+    totalUsdc: Number(payoutEntity.totalUsdc),
+    duration: 0,
+  }));
+};

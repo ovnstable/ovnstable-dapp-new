@@ -1,13 +1,20 @@
 /* eslint-disable vue/max-len */
 import ApiService from '@/services/ApiService/ApiService.ts';
+import type { Collateral } from '@/modules/Market/types/index.ts';
 import type {
   IClientBalanceChangeResponseOld,
   IInsPayoutResponseOld, IInsStatResponse,
   IOdosTokenPriceResponse,
+  IPayoutResponseOld,
+  IStatTvlResponse,
   IStrategyResponseOld,
 } from '@/types/api/overnightApi';
 import type { TFilterPoolsParams } from '@/types/common/pools';
-import { tranformClientBalanceChangeResponse, tranformPayoutResponse, tranformStrategyResponse } from './utils/apiComatibility.ts';
+import {
+  tranformClientBalanceChangeResponse,
+  tranformInsPayoutResponse, tranformPayoutResponse,
+  tranformStrategyResponse,
+} from './utils/apiComatibility.ts';
 
 const API_URL = process.env.OVERNIGHT_API_URL;
 const API_URL_NEW = process.env.OVERNIGHT_API_URL_NEW;
@@ -17,7 +24,7 @@ const API_URL_ODOS_NEW = `${API_URL_NEW}/odos`;
 export interface IOvernightApi {
   // Slider
   loadApyName(): any,
-  loadTVL(): any
+  loadTVL(): Promise<IStatTvlResponse[]>,
 
   // Odos
   loadTokens(): any,
@@ -32,8 +39,8 @@ export interface IOvernightApi {
   // Market
   loadStrategies(): Promise<IStrategyResponseOld[]>,
   loadPayouts(chain: string, token: string): any,
-  loadTotalPlusToken(chain: string, token: string): any,
-  loadCollaterlPlusToken(chain: string, token: string): any,
+  loadTotalPlusToken(chain: string, token: string): Promise<number>,
+  loadCollaterlPlusToken(chain: string, token: string): Promise<Collateral[]>,
 
   // Insurance
   loadInsuranceData(): Promise<IInsStatResponse>,
@@ -58,7 +65,7 @@ export class OvernightApi extends ApiService implements IOvernightApi {
     return this.get(`${API_URL_NEW}/stat/widget-data`);
   }
 
-  public async loadTVL() {
+  public async loadTVL(): Promise<IStatTvlResponse[]> {
     return this.get(`${API_URL_NEW}/stat/tvl-data`);
   }
 
@@ -102,15 +109,15 @@ export class OvernightApi extends ApiService implements IOvernightApi {
     return tranformStrategyResponse(this.get(`${API_URL_NEW}/strategy/arbitrum/USD+/list`));
   }
 
-  public async loadPayouts(chain: string) {
-    return this.get(`${API_URL_NEW}/insurance/${chain}`);
+  public async loadPayouts(chain: string): Promise<IPayoutResponseOld[]> {
+    return tranformPayoutResponse(this.get(`${API_URL_NEW}/payout/${chain}/USD+`));
   }
 
-  public async loadTotalPlusToken(chain: string, token: string) {
-    return this.get(`${API_URL}/${chain}/${token}/dapp/getTotalUsdPlusValue`);
+  public async loadTotalPlusToken(chain: string, token: string): Promise<number> {
+    return this.get(`${API_URL_NEW}/stat/${chain}/${token}/total-supply`);
   }
 
-  public async loadCollaterlPlusToken(chain: string, token: string) {
+  public async loadCollaterlPlusToken(chain: string, token: string): Promise<Collateral[]> {
     return this.get(`${API_URL}/${chain}/${token}/dapp/collateral/total`);
   }
 
@@ -125,7 +132,7 @@ export class OvernightApi extends ApiService implements IOvernightApi {
   }
 
   public async loadInsurancePayouts(): Promise<IInsPayoutResponseOld[]> {
-    return tranformPayoutResponse(this.get(`${API_URL_NEW}/insurance/arbitrum`));
+    return tranformInsPayoutResponse(this.get(`${API_URL_NEW}/insurance/arbitrum`));
   }
 
   // Dashboard

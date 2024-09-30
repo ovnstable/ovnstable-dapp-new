@@ -1,6 +1,5 @@
-import MarketApiService from '@/services/market-api-service.ts';
 import { TOKENS } from '@/store/views/market/mock.ts';
-import { type Collateral } from '@/modules/Market/types/index.ts';
+import { OvernightApi } from '@/services/ApiService/OvernightApi.ts';
 
 const state = {
   collateralData: {},
@@ -9,8 +8,9 @@ const state = {
 const actions = {
   async fetchCollateralData({ commit }: any, { marketId, networkName }: any) {
     try {
+      const overnightApiInstance = new OvernightApi();
       const { tokenName, collateralToken } = TOKENS[marketId];
-      const colleterals: Collateral[] = await MarketApiService.loadCollaterlPlusToken(networkName, `${marketId}+`);
+      const colleterals = await overnightApiInstance.loadCollaterlPlusToken(networkName, `${marketId}+`);
       const combinedData = {
         tokenName,
         collateralToken,
