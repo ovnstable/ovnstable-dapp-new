@@ -1,4 +1,5 @@
 import { OvernightApi } from '@/services/ApiService/OvernightApi.ts';
+import { tranformInsuranceStatsResponse } from '@/services/ApiService/utils/apiComatibility.ts';
 import type { IInsPayoutResponseOld } from '@/types/api/overnightApi';
 
 const state = {
@@ -43,17 +44,18 @@ const actions = {
   ) {
     try {
       const OvernightApiInstance = new OvernightApi();
-      const data = await OvernightApiInstance.loadInsuranceData();
+      const insuranceStatsResponse = await OvernightApiInstance.loadInsuranceData();
+      const ovnPrice = (await OvernightApiInstance.loadPriceOfToken('42161', '0xA3d1a8DEB97B111454B294E2324EfAD13a9d8396')).price;
+      const insuranceStats = tranformInsuranceStatsResponse(insuranceStatsResponse, ovnPrice);
       const insurancePayouts = await OvernightApiInstance.loadInsurancePayouts();
-      // const ovnPrice = await OvernightApiInstance.loadOvnPrice();
       const insImage = generateInsuranceImageName('arbitrum');
       const { lastPayoutType, lastPayoutTime } = getLastPayout(insurancePayouts);
       const combinedData = {
         insImage,
         lastPayoutType,
         lastPayoutTime,
-        data,
-        ovnPrice: 40,
+        data: insuranceStats,
+        ovnPrice,
       };
       commit('setInsuranceTokenData', { combinedData });
     } catch (error) {

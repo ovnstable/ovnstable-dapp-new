@@ -122,6 +122,38 @@ export interface IInsStatResponse {
     supply: BigNumber,
 }
 
+export interface IInsStatResponseOld {
+    insuredList: string[],
+    apy: Number,
+    apyAll: Number,
+    apyMonth: Number,
+    supply: Number,
+    supplyUSD: Number,
+    coverage: Number
+}
+export interface IClientBalanceChangeResponse {
+   hash: string,
+   amount: BigNumber,
+   timestamp: Date,
+   block: BigNumber,
+   type: string,
+   balanceBefore: BigNumber,
+   balanceAfter: BigNumber
+}
+
+export interface IClientBalanceChangeResponseOld {
+    address: string,
+    transaction_hash: string,
+    date: Date,
+    type: string,
+    opening_balance: Number,
+    change_balance: Number,
+    closing_balance: Number,
+    fee: Number,
+    apy: Number,
+    elapsed_time: Number
+ }
+
 // Old API
 export type TChainTokenMap = {
     chainTokenMap: {
@@ -131,4 +163,10 @@ export type TChainTokenMap = {
             }
         },
     }
+}
+
+// Odos
+export interface IOdosTokenPriceResponse {
+    currencyId: string,
+    price: BigNumber,
 }

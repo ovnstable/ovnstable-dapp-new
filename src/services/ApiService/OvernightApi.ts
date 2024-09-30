@@ -1,15 +1,19 @@
+/* eslint-disable vue/max-len */
 import ApiService from '@/services/ApiService/ApiService.ts';
 import type {
-  IInsPayoutResponse, IInsPayoutResponseOld, IInsStatResponse, IStrategyResponse,
+  IClientBalanceChangeResponseOld,
+  IInsPayoutResponseOld, IInsStatResponse,
+  IOdosTokenPriceResponse,
   IStrategyResponseOld,
 } from '@/types/api/overnightApi';
 import type { TFilterPoolsParams } from '@/types/common/pools';
-import { tranformPayoutResponse, tranformStrategyResponse } from './utils/apiComatibility.ts';
+import { tranformClientBalanceChangeResponse, tranformPayoutResponse, tranformStrategyResponse } from './utils/apiComatibility.ts';
 
 const API_URL = process.env.OVERNIGHT_API_URL;
 const API_URL_NEW = process.env.OVERNIGHT_API_URL_NEW;
 const OVERNIGHT_POOLS_API_URL = process.env!.OVERNIGHT_POOLS_API_URL as string;
 const API_URL_ODOS = `${API_URL}/root/odos`;
+const API_URL_ODOS_NEW = `${API_URL_NEW}/odos`;
 
 export interface IOvernightApi {
   // Slider
@@ -20,7 +24,7 @@ export interface IOvernightApi {
   loadTokens(): any,
   loadContractData(chainId: string | number): any,
   loadPrices(chainId: any): any,
-  loadPriceOfToken(chainId: any, tokenAddr: any): any,
+  loadPriceOfToken(chainId: any, tokenAddr: any): Promise<IOdosTokenPriceResponse>,
   getActualGasPrice(chainId: any): any,
   quoteRequest(requestData: any): any,
   assembleRequest(requestData: any): any,
@@ -38,7 +42,7 @@ export interface IOvernightApi {
   loadInsurancePayouts(): Promise<IInsPayoutResponseOld[]>,
 
   // Dashboard
-  loadBalanceChange(chain: string, token: string, address: string, dop?: string): any,
+  loadBalanceChange(chain: string, token: string, address: string): Promise<IClientBalanceChangeResponseOld[]>,
 
   // Pools
 
@@ -73,8 +77,8 @@ export class OvernightApi extends ApiService implements IOvernightApi {
     return this.get(`${API_URL_ODOS}/pricing/token/${chainId}`);
   }
 
-  public async loadPriceOfToken(chainId: any, tokenAddr: any) {
-    return this.get(`${API_URL_ODOS}/pricing/token/${chainId}/${tokenAddr}`);
+  public async loadPriceOfToken(chainId: any, tokenAddr: any): Promise<IOdosTokenPriceResponse> {
+    return this.get(`${API_URL_ODOS_NEW}/pricing/token/${chainId}/${tokenAddr}`);
   }
 
   public async getActualGasPrice(chainId: any) {
@@ -96,7 +100,7 @@ export class OvernightApi extends ApiService implements IOvernightApi {
   // Market
 
   public async loadStrategies(): Promise<IStrategyResponseOld[]> {
-    return tranformStrategyResponse(this.get<IStrategyResponse[]>(`${API_URL_NEW}/strategy/arbitrum/USD+/list`));
+    return tranformStrategyResponse(this.get(`${API_URL_NEW}/strategy/arbitrum/USD+/list`));
   }
 
   public async loadPayouts(chain: string) {
@@ -122,14 +126,13 @@ export class OvernightApi extends ApiService implements IOvernightApi {
   }
 
   public async loadInsurancePayouts(): Promise<IInsPayoutResponseOld[]> {
-    return tranformPayoutResponse(this.get<IInsPayoutResponse[]>(`${API_URL_NEW}/insurance/arbitrum`));
+    return tranformPayoutResponse(this.get(`${API_URL_NEW}/insurance/arbitrum`));
   }
 
   // Dashboard
 
-  public async loadBalanceChange(chain: string, token: string, address: string, dop?: string) {
-    const dopSegment = dop ? `&product=${encodeURIComponent(`${dop}+`)}` : '';
-    return this.get(`${API_URL}/${chain}/${token}/dapp/clientBalanceChanges?address=${address}${dopSegment}`);
+  public async loadBalanceChange(chain: string, token: string, address: string): Promise<IClientBalanceChangeResponseOld[]> {
+    return tranformClientBalanceChangeResponse(this.get(`${API_URL_NEW}/stat/client-balance/${chain}/${token.toUpperCase()}/${address}`));
   }
 
   // Pools
