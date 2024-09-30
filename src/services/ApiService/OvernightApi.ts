@@ -55,11 +55,11 @@ export interface IOvernightApi {
 export class OvernightApi extends ApiService implements IOvernightApi {
 // Slider
   public async loadApyName() {
-    return this.get(`${API_URL}/landing/main-widget/data`);
+    return this.get(`${API_URL_NEW}/stat/widget-data`);
   }
 
   public async loadTVL() {
-    return this.get(`${API_URL}/tvl/product/total`);
+    return this.get(`${API_URL_NEW}/stat/tvl-data`);
   }
 
   // Odos
