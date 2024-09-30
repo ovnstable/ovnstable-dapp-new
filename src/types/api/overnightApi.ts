@@ -197,6 +197,22 @@ export type TChainTokenMap = {
     }
 }
 
+export interface IWidgetDataResponse {
+    tvl: number,
+    totalProfit: number,
+    'usdPlusProduct': {
+        apy: BigNumber,
+        chain: string,
+        productType: string
+    },
+    'ethPlusProduct': {
+        apy: BigNumber,
+        chain: string,
+        productType: string
+    },
+    lastPayoutDate: Date
+}
+
 // Odos
 export interface IOdosTokenPriceResponse {
     currencyId: string,

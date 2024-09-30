@@ -12,9 +12,13 @@ abstract class ApiService implements IApiService {
     this.axiosInstance = axios.create();
   }
 
-  public async get<T>(url: string, params?: Record<string, any>): Promise<T> {
+  public async get<T>(
+    url: string,
+    params?: Record<string, any>,
+    headers?: Record<string, any>,
+  ): Promise<T> {
     try {
-      const response = await this.axiosInstance.get<T>(url, { params });
+      const response = await this.axiosInstance.get<T>(url, { params, headers });
       return response.data as any;
     } catch (error) {
       throw new Error(`GET request failed: ${error}`);

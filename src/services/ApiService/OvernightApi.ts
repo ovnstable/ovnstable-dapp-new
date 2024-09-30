@@ -8,6 +8,7 @@ import type {
   IPayoutResponseOld,
   IStatTvlResponse,
   IStrategyResponseOld,
+  IWidgetDataResponse,
 } from '@/types/api/overnightApi';
 import type { TFilterPoolsParams } from '@/types/common/pools';
 import {
@@ -23,7 +24,7 @@ const API_URL_ODOS_NEW = `${API_URL_NEW}/odos`;
 
 export interface IOvernightApi {
   // Slider
-  loadApyName(): any,
+  loadWidgetData(): Promise<IWidgetDataResponse>,
   loadTVL(): Promise<IStatTvlResponse[]>,
 
   // Odos
@@ -44,7 +45,6 @@ export interface IOvernightApi {
 
   // Insurance
   loadInsuranceData(): Promise<IInsStatResponse>,
-  loadOvnPrice(): any,
   loadInsurancePayouts(): Promise<IInsPayoutResponseOld[]>,
 
   // Dashboard
@@ -61,7 +61,7 @@ export interface IOvernightApi {
 
 export class OvernightApi extends ApiService implements IOvernightApi {
 // Slider
-  public async loadApyName() {
+  public async loadWidgetData(): Promise<IWidgetDataResponse> {
     return this.get(`${API_URL_NEW}/stat/widget-data`);
   }
 
@@ -125,10 +125,6 @@ export class OvernightApi extends ApiService implements IOvernightApi {
 
   public async loadInsuranceData(): Promise<IInsStatResponse> {
     return this.get(`${API_URL_NEW}/insurance/arbitrum/stats`);
-  }
-
-  public async loadOvnPrice() {
-    return this.get(`${API_URL}/root/dapp/price/ovn`);
   }
 
   public async loadInsurancePayouts(): Promise<IInsPayoutResponseOld[]> {

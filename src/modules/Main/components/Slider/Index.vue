@@ -182,6 +182,7 @@ import 'swiper/swiper.min.css';
 import { getImageUrl } from '@/utils/const.ts';
 import BigNumber from 'bignumber.js';
 import type { IOvernightApi } from '@/services/ApiService/OvernightApi';
+import type { IWidgetDataResponse } from '@/types/api/overnightApi';
 
 SwiperClass.use([Autoplay]);
 
@@ -241,13 +242,14 @@ export default {
     getImageUrl,
     async loadDataSlider() {
       try {
-        const nameApyData = await this.overnightApiInstance.loadApyName();
+        const nameApyData = await this.overnightApiInstance.loadWidgetData();
 
         const products = ['usdPlusProduct'];
         const sliderDataFromLoad = products.map((productKey): SlideData | null => {
-          if (nameApyData[productKey]) {
-            const productType = nameApyData[productKey].productType.replace('_PLUS', '+');
-            const apy = new BigNumber(nameApyData[productKey].apy).toNumber();
+          const product = nameApyData[productKey as keyof IWidgetDataResponse];
+          if (product && typeof product === 'object' && 'productType' in product && 'apy' in product) {
+            const productType = product.productType.replace('_PLUS', '+');
+            const apy = new BigNumber(product.apy).toNumber();
             const lastPayout = nameApyData.lastPayoutDate;
             const totalTvl = nameApyData.tvl;
 
