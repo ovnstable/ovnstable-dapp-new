@@ -18,8 +18,8 @@ import {
   getSourceLiquidityBlackList,
   sumOfAllSelectedTokensInUsd,
 } from './utils/index.ts';
-import odosApiService from '../odos-api-service.ts';
 import { ZAPIN_SCHEME } from './utils/scheme.ts';
+import { OvernightApi, type IOvernightApi } from '../ApiService/OvernightApi.ts';
 
 export enum ZAPIN_TYPE {
   ZAPIN,
@@ -76,6 +76,12 @@ export const ACTIVE_PROTOCOLS_V3 = {
 };
 
 class ZapinService {
+  private overnightApi: IOvernightApi;
+
+  constructor() {
+    this.overnightApi = new OvernightApi();
+  }
+
   async claimPosition(
     zapPool: IPositionsInfo,
     gaugeContract: any,
@@ -825,7 +831,7 @@ class ZapinService {
     }
 
     if (!simulateSwap) {
-      const actualGas = await odosApiService.getActualGasPrice(networkId) as any;
+      const actualGas = await this.overnightApi.getActualGasPrice(networkId) as any;
 
       requestData = {
         chainId: networkId,

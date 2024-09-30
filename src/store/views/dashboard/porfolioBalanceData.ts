@@ -1,6 +1,6 @@
 import { OvernightApi } from '@/services/ApiService/OvernightApi.ts';
-import OdosApiService from '@/services/odos-api-service.ts';
 import { chainContractsMap } from '@/utils/contractsMap.ts';
+import BigNumber from 'bignumber.js';
 import type { IClientBalanceChangeResponseOld } from '@/types/api/overnightApi';
 
 const state = {
@@ -37,16 +37,20 @@ function getTokenPrices(apiResponse: any, contractsMap: any, chainToCheck: any) 
 }
 
 const actions = {
-  async fetchBalanceData({ commit }: any, { account, networkName }: any) {
+  async fetchBalanceData(
+    { commit }: any,
+    { account, networkName }: {account: string, networkName: string},
+  ) {
     try {
+      if (!account || new BigNumber(account).eq(0)) return;
       const OvernightApiInstance = new OvernightApi();
       let dataUSDPlus = [] as IClientBalanceChangeResponseOld[];
       let dataETHPlus = [] as IClientBalanceChangeResponseOld[];
       let dataDAIPlus = [] as IClientBalanceChangeResponseOld[];
       let dataUSDTPlus = [] as IClientBalanceChangeResponseOld[];
       let dataUSDCPlus = [] as IClientBalanceChangeResponseOld[];
-      const pricesResponse = await OdosApiService.loadPrices(42161);
-      const pricesResponseForUSDC = await OdosApiService.loadPrices(8453);
+      const pricesResponse = await OvernightApiInstance.loadPrices(42161);
+      const pricesResponseForUSDC = await OvernightApiInstance.loadPrices(8453);
       const pricesWithoutUSDC = getTokenPrices(pricesResponse, chainContractsMap, 'arbitrum');
       const pricesWithUSDC = getTokenPrices(pricesResponseForUSDC, chainContractsMap, 'base');
       const prices = { ...pricesWithoutUSDC, ...pricesWithUSDC };

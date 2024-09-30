@@ -278,7 +278,7 @@
 <script lang="ts">
 import { useEventBus } from '@vueuse/core';
 import {
-  computed, markRaw,
+  computed, inject, markRaw,
   type PropType,
 } from 'vue';
 import { ethers } from 'ethers';
@@ -292,7 +292,6 @@ import {
   getNewInputToken,
   getTokenByAddress,
 } from '@/store/helpers/index.ts';
-import odosApiService from '@/services/odos-api-service.ts';
 
 import Spinner from '@/components/Spinner/Index.vue';
 import ChangeNetwork from '@/components/ZapForm/ChangeNetwork.vue';
@@ -322,6 +321,7 @@ import ZapinService, { ZAPIN_FUNCTIONS, ZAPIN_TYPE } from '@/services/Web3Servic
 import SwapRouting from '@/components/SwapRouting/Index.vue';
 import type { IPositionsInfo } from '@/types/positions';
 import type { PLATFORMS } from '@/types/common/pools';
+import type { IOvernightApi } from '@/services/ApiService/OvernightApi';
 
 enum zapMobileSection {
   'TOKEN_FORM',
@@ -377,10 +377,13 @@ export default {
       isBalancesLoading, isLoading: isAnyLoading,
     } = useTokensQuery();
 
+    const overnightApiInstance = inject('overnightApi') as IOvernightApi;
+
     return {
       isBalancesLoading,
       isAnyLoading: computed(() => isAnyLoading.value),
       refreshBalances: useRefreshBalances(),
+      overnightApiInstance,
     };
   },
   data: () => ({
@@ -711,24 +714,24 @@ export default {
       }
     },
     odosAssembleRequest(requestData: any) {
-      return odosApiService
+      return this.overnightApiInstance
         .assembleRequest(requestData)
-        .then((data) => data)
-        .catch((e) => {
+        .then((data: any) => data)
+        .catch((e: any) => {
           console.log('Assemble request error: ', e);
         });
     },
     async odosSwapRequest(requestData: any) {
-      return odosApiService
+      return this.overnightApiInstance
         .quoteRequest(requestData)
-        .then((data) => {
+        .then((data: any) => {
           this.$store.commit('odosData/changeState', {
             field: 'swapResponseInfo',
             val: data,
           });
           return data;
         })
-        .catch((e) => {
+        .catch((e: any) => {
           this.closeWaitingModal();
           if (e && e.message && e.message.includes('path')) {
             this.showErrorModalWithMsg({ errorType: 'odos-path', errorMsg: e });
@@ -1217,7 +1220,7 @@ export default {
         };
 
         this.odosAssembleRequest(assembleData)
-          .then(async (responseAssembleData) => {
+          .then(async (responseAssembleData: any) => {
             await this.initZapInTransaction(
               responseAssembleData,
               data.inputTokens,

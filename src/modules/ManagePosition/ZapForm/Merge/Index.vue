@@ -256,7 +256,9 @@ import BN from 'bignumber.js';
 import { MANAGE_FUNC, mergeStep, withdrawStep } from '@/store/modals/waiting-modal.ts';
 import { formatInputTokens } from '@/utils/tokens.ts';
 import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
-import { defineComponent, markRaw, type PropType } from 'vue';
+import {
+  defineComponent, inject, markRaw, type PropType,
+} from 'vue';
 import { fixedByPrice } from '@/utils/numbers.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import {
@@ -270,7 +272,6 @@ import { usePoolsQueryNew } from '@/hooks/fetch/usePoolsQuery.ts';
 import { awaitDelay } from '@/utils/const.ts';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ZapinService, { ZAPIN_FUNCTIONS, ZAPIN_TYPE } from '@/services/Web3Service/Zapin-service.ts';
-import odosApiService from '@/services/odos-api-service.ts';
 import { ethers } from 'ethers';
 import { parseErrorLog } from '@/utils/errors.ts';
 import { loadTokenImage } from '@/utils/tokenLogo.ts';
@@ -278,6 +279,7 @@ import ZapInStepsRow from '@/components/StepsRow/ZapinRow/MergeRow.vue';
 import SwapRouting from '@/components/SwapRouting/Index.vue';
 import type { IPositionsInfo } from '@/types/positions';
 import type { PLATFORMS, TFilterPoolsParams } from '@/types/common/pools';
+import type { IOvernightApi } from '@/services/ApiService/OvernightApi';
 
 export default defineComponent({
   name: 'MergeForm',
@@ -313,10 +315,12 @@ export default defineComponent({
   setup() {
     const { data: positionData } = usePositionsQuery();
     const { data: poolList } = usePoolsQueryNew();
+    const overnightApiInstance = inject('overnightApi') as IOvernightApi;
 
     return {
       positionsList: positionData,
       poolList,
+      overnightApiInstance,
     };
   },
   data() {
@@ -611,16 +615,16 @@ export default defineComponent({
       this.slippagePercent = newSlippage;
     },
     async odosSwapRequest(requestData: any) {
-      return odosApiService
+      return this.overnightApiInstance
         .quoteRequest(requestData)
-        .then((data) => {
+        .then((data: any) => {
           this.$store.commit('odosData/changeState', {
             field: 'swapResponseInfo',
             val: data,
           });
           return data;
         })
-        .catch((e) => {
+        .catch((e: any) => {
           this.closeWaitingModal();
           if (e && e.message && e.message.includes('path')) {
             this.showErrorModalWithMsg({ errorType: 'odos-path', errorMsg: e });
@@ -667,9 +671,9 @@ export default defineComponent({
           simulate: true,
         };
 
-        odosApiService
+        this.overnightApiInstance
           .assembleRequest(assembleData)
-          .then(async (responseAssembleData) => {
+          .then(async (responseAssembleData: any) => {
             await this.initZapInTransaction(
               responseAssembleData,
               data.inputTokens,

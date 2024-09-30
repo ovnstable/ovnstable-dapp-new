@@ -12,7 +12,6 @@ import { tranformClientBalanceChangeResponse, tranformPayoutResponse, tranformSt
 const API_URL = process.env.OVERNIGHT_API_URL;
 const API_URL_NEW = process.env.OVERNIGHT_API_URL_NEW;
 const OVERNIGHT_POOLS_API_URL = process.env!.OVERNIGHT_POOLS_API_URL as string;
-const API_URL_ODOS = `${API_URL}/root/odos`;
 const API_URL_ODOS_NEW = `${API_URL_NEW}/odos`;
 
 export interface IOvernightApi {
@@ -66,15 +65,15 @@ export class OvernightApi extends ApiService implements IOvernightApi {
   // Odos
 
   public async loadTokens() {
-    return this.get(`${API_URL_ODOS}/info/tokens`);
+    return this.get(`${API_URL_ODOS_NEW}/info/tokens`);
   }
 
   public async loadContractData(chainId: string | number) {
-    return this.get(`${API_URL_ODOS}/info/contract-info/v2/${chainId}`);
+    return this.get(`${API_URL_ODOS_NEW}/info/contract-info/v2/${chainId}`);
   }
 
   public async loadPrices(chainId: any) {
-    return this.get(`${API_URL_ODOS}/pricing/token/${chainId}`);
+    return this.get(`${API_URL_ODOS_NEW}/pricing/token/${chainId}`);
   }
 
   public async loadPriceOfToken(chainId: any, tokenAddr: any): Promise<IOdosTokenPriceResponse> {
@@ -82,19 +81,19 @@ export class OvernightApi extends ApiService implements IOvernightApi {
   }
 
   public async getActualGasPrice(chainId: any) {
-    return this.get(`${API_URL_ODOS}/gas/price/${chainId}`);
+    return this.get(`${API_URL_ODOS_NEW}/gas/price/${chainId}`);
   }
 
   public async quoteRequest(requestData: any) {
-    return this.post(`${API_URL_ODOS}/sor/quote/v2`, requestData);
+    return this.post(`${API_URL_ODOS_NEW}/sor/quote/v2`, requestData);
   }
 
   public async assembleRequest(requestData: any) {
-    return this.post(`${API_URL_ODOS}/sor/assemble`, requestData);
+    return this.post(`${API_URL_ODOS_NEW}/sor/assemble`, requestData);
   }
 
   public async swapRequest(requestData: any) {
-    return this.post(`${API_URL_ODOS}/sor/swap`, requestData);
+    return this.post(`${API_URL_ODOS_NEW}/sor/swap`, requestData);
   }
 
   // Market
