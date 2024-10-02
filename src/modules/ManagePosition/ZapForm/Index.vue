@@ -336,7 +336,7 @@ export default {
     ...mapGetters('accountData', ['account']),
 
     zapAllTokens() {
-      return mergedTokens(this.allTokensList as any[], this.balanceList as any[]);
+      return mergedTokens(this.balanceList as any[], this.allTokensList as any[]);
     },
     isDisabled() {
       // if (this.currentStage === rebalanceStep.UNSTAKE && !this.positionStaked) return true;
