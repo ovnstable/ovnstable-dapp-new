@@ -93,7 +93,6 @@ export default defineComponent({
         sortedPools = sortedPools.filter((_) => _.chain === this.activeChain);
       };
 
-      console.log(this.activePlat, sortedPools, '__this.activePlat')
       if (this.activePlat !== 'ALL') {
         sortedPools = sortedPools.filter((_) => _.platform[0] === this.activePlat);
       };
