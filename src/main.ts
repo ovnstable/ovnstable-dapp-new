@@ -24,6 +24,7 @@ Sentry.init({
     Sentry.browserTracingIntegration({ router }),
     Sentry.replayIntegration(),
   ],
+  tracePropagationTargets: ["*"],
   replaysSessionSampleRate: 0.1,
   replaysOnErrorSampleRate: 1.0,
 });
