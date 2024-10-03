@@ -193,7 +193,7 @@ export default {
       immediate: true,
       handler: function handleNetworkNameChange(newVal, oldVal) {
         if (newVal !== oldVal) {
-          this.fetchDataForOVN(this.$store.state.network.ovnNetwork);
+          // this.fetchDataForOVN(this.$store.state.network.ovnNetwork);
         }
       },
     },
@@ -202,18 +202,18 @@ export default {
     changeTab(id: number) {
       this.activeTab = id;
     },
-    async fetchDataForOVN(networkName: string) {
-      this.loadedDataDashboard = false;
-      try {
-        await Promise.all([
-          this.$store.dispatch('ovnTokenData/fetchOVNTokenData', { networkName }),
-        ]);
-        this.loadedDataDashboard = true;
-      } catch (error) {
-        this.loadedDataDashboard = false;
-        console.error('Error fetching data:', error);
-      }
-    },
+    // async fetchDataForOVN(networkName: string) {
+    //   this.loadedDataDashboard = false;
+    //   try {
+    //     await Promise.all([
+    //       this.$store.dispatch('ovnTokenData/fetchOVNTokenData', { networkName }),
+    //     ]);
+    //     this.loadedDataDashboard = true;
+    //   } catch (error) {
+    //     this.loadedDataDashboard = false;
+    //     console.error('Error fetching data:', error);
+    //   }
+    // },
   },
 };
 
