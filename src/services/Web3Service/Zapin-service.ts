@@ -630,35 +630,37 @@ class ZapinService {
     const txData = { ...argTxData };
     let gaugeData = { ...argGaugeData };
 
-    try {
-      if (method === ZAPIN_FUNCTIONS.MERGE) {
-        await zapContract[method](txData, gaugeData, tokenId, tokensMerge);
-      }
-      if (method === ZAPIN_FUNCTIONS.ZAPIN) {
-        await zapContract[method](txData, gaugeData);
-      }
-      if ([ZAPIN_FUNCTIONS.REBALANCE, ZAPIN_FUNCTIONS.INCREASE].includes(method) && tokenId) {
-        console.log(zapContract, '__zap');
-        console.log({
-          txData,
-          gaugeData,
-          tokenId,
-        }, '__zap');
-        await zapContract[method](txData, gaugeData, tokenId);
-      }
-    } catch (e: any) {
-      console.log(JSON.parse(JSON.stringify(e)), '___decoded1');
-      const decoded = zapContract.interface.parseError(e?.data);
+    if (gaugeData.isSimulation) {
+      try {
+        if (method === ZAPIN_FUNCTIONS.MERGE) {
+          await zapContract[method](txData, gaugeData, tokenId, tokensMerge);
+        }
+        if (method === ZAPIN_FUNCTIONS.ZAPIN) {
+          await zapContract[method](txData, gaugeData);
+        }
+        if ([ZAPIN_FUNCTIONS.REBALANCE, ZAPIN_FUNCTIONS.INCREASE].includes(method) && tokenId) {
+          console.log(zapContract, '__zap');
+          console.log({
+            txData,
+            gaugeData,
+            tokenId,
+          }, '__zap');
+          await zapContract[method](txData, gaugeData, tokenId);
+        }
+      } catch (e: any) {
+        console.log(JSON.parse(JSON.stringify(e)), '___decoded1');
+        const decoded = zapContract.interface.parseError(e?.data);
 
-      console.log(decoded, '___decoded2');
-      if (!decoded) throw new Error(e);
+        console.log(decoded, '___decoded2');
+        if (!decoded) throw new Error(e);
 
-      gaugeData = {
-        ...gaugeData,
-        isSimulation: false,
-        adjustSwapAmount: decoded.args[4],
-        adjustSwapSide: decoded.args[5],
-      };
+        gaugeData = {
+          ...gaugeData,
+          isSimulation: false,
+          adjustSwapAmount: decoded.args[4],
+          adjustSwapSide: decoded.args[5],
+        };
+      }
     }
 
     try {

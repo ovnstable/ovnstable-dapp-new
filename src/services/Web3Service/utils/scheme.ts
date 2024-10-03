@@ -5,6 +5,30 @@ export enum DEPOSIT_TYPES {
   NONE = ''
 }
 
+// DEV
+// export const ZAPIN_SCHEME = {
+//   arbitrum: {
+//     pancake: {
+//       zapinAdd: '0x2540E54C91F24a8E89c36fCA9073447a291E1CC3',
+//       stake: DEPOSIT_TYPES.TRANSFER,
+//     },
+//   },
+//   base: {
+//     aerodrome: {
+//       zapinAdd: '0xb63F93A8020d0495fE9EDfE23Da3b7833F632c49',
+//       stake: DEPOSIT_TYPES.DEPOSIT,
+//     },
+//     pancake: {
+//       zapinAdd: '0x7E7F8D5547B93F38bd3B893C09A80BD0233265Dc',
+//       stake: DEPOSIT_TYPES.TRANSFER,
+//     },
+//     uniswap: {
+//       zapinAdd: '',
+//       stake: DEPOSIT_TYPES.NONE,
+//     },
+//   },
+// };
+
 // for zapins
 export const ZAPIN_SCHEME = {
   arbitrum: {

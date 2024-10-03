@@ -85,11 +85,20 @@ export default defineComponent({
   }),
 
   computed: {
-    ...mapState('poolsData', ['currentZapPool', 'isZapModalShow', 'activeChain']),
+    ...mapState('poolsData', ['currentZapPool', 'isZapModalShow', 'activeChain', 'activePlat']),
     displayedPools() {
-      if (this.activeChain === 'all') return this.poolList;
-      return this.poolList
-        .filter((_) => _.chain === this.activeChain);
+      let sortedPools = this.poolList
+
+      if (this.activeChain !== 'ALL') {
+        sortedPools = sortedPools.filter((_) => _.chain === this.activeChain);
+      };
+
+      console.log(this.activePlat, sortedPools, '__this.activePlat')
+      if (this.activePlat !== 'ALL') {
+        sortedPools = sortedPools.filter((_) => _.platform[0] === this.activePlat);
+      };
+
+      return sortedPools
     },
   },
 
