@@ -256,7 +256,7 @@
 <!-- eslint-disable no-continue -->
 <script lang="ts">
 import {
-  computed, defineComponent, markRaw,
+  computed, defineComponent, inject, markRaw,
 } from 'vue';
 import { ethers } from 'ethers';
 import {
@@ -268,7 +268,7 @@ import {
   getNewOutputToken,
   getNewInputToken,
 } from '@/store/helpers/index.ts';
-import odosApiService from '@/services/odos-api-service.ts';
+import { type IOvernightApi } from '@/services/ApiService/OvernightApi.ts';
 
 import SwapRouting from '@/components/SwapRouting/Index.vue';
 import Spinner from '@/components/Spinner/Index.vue';
@@ -346,9 +346,12 @@ export default defineComponent({
       isLoading: isAnyLoading,
     } = useTokensQuery();
 
+    const overnightApiInstance = inject('overnightApi') as IOvernightApi;
+
     return {
       isAnyLoading: computed(() => isAnyLoading.value),
       refreshBalances: useRefreshBalances(),
+      overnightApiInstance,
     };
   },
   data: () => ({
@@ -627,10 +630,10 @@ export default defineComponent({
       removeToken(this.inputTokens, id);
     },
     async odosSwapRequest(requestData: any) {
-      return odosApiService
+      return this.overnightApiInstance
         .quoteRequest(requestData)
-        .then((data) => data)
-        .catch((e) => {
+        .then((data: any) => data)
+        .catch((e: any) => {
           this.closeWaitingModal();
           if (e && e.message && e.message.includes('path')) {
             this.showErrorModalWithMsg({ errorType: 'odos-path', errorMsg: e });
@@ -699,9 +702,9 @@ export default defineComponent({
           simulate: true,
         };
 
-        odosApiService
+        this.overnightApiInstance
           .assembleRequest(assembleData)
-          .then(async (responseAssembleData) => {
+          .then(async (responseAssembleData: any) => {
             await this.initZapInTransaction(
               responseAssembleData,
               data.inputTokens,

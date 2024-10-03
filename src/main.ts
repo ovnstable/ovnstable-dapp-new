@@ -36,6 +36,7 @@ app.provide('poolService', ctx.PoolService);
 app.provide('tokenService', ctx.TokenService);
 app.provide('balanceService', ctx.BalanceService);
 app.provide('posthogService', ctx.PosthogService);
+app.provide('overnightApi', ctx.OvernightApi);
 
 // TODO: solve without setting instance directly
 store.dispatch('accountData/initPosthog', ctx.PosthogService);

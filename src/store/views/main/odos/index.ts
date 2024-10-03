@@ -1,15 +1,14 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-unused-vars */
-import odosApiService from '@/services/odos-api-service.ts';
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { buildEvmContract } from '@/utils/contractsMap.ts';
 import { useEventBus } from '@vueuse/core';
 import BigNumber from 'bignumber.js';
 import _ from 'lodash';
+import { OvernightApi } from '@/services/ApiService/OvernightApi.ts';
 import type { IPositionsInfo } from '@/types/positions';
 import type { TPool } from '@/types/common/pools';
 
 export const ODOS_REF_CODE = 7777777;
-const ODOS_DURATION_CONFIRM_REQUEST = 60;
 
 export enum MODAL_TYPE {
   ZAPIN,
@@ -100,8 +99,9 @@ const actions = {
     if (state.isContractLoading) return;
     commit('changeState', { field: 'isContractLoading', val: true });
 
+    const overnightApiInstance = new OvernightApi();
     // eslint-disable-next-line consistent-return
-    return odosApiService
+    return overnightApiInstance
       .loadContractData(chainId)
       .then((data: any) => {
         commit('changeState', { field: 'contractData', val: data });
@@ -131,7 +131,7 @@ const actions = {
   },
   triggerSuccessZapin(
     {
-      commit, state, dispatch, rootState,
+      commit, rootState,
     }: any,
     {
       isShow,
@@ -168,7 +168,8 @@ const actions = {
   quoteRequest({
     commit,
   }: any, requestData: any) {
-    return odosApiService
+    const overnightApiInstance = new OvernightApi();
+    return overnightApiInstance
       .quoteRequest(requestData)
       .then((data) => {
         commit('changeState', { field: 'quotaResponseInfo', val: data });
@@ -230,7 +231,8 @@ const actions = {
   async getActualGasPrice({
     commit, state, dispatch, rootState,
   }: any, networkId: number | string) {
-    const actualGasPriceObject: any = await odosApiService.getActualGasPrice(
+    const overnightApiInstance = new OvernightApi();
+    const actualGasPriceObject: any = await overnightApiInstance.getActualGasPrice(
       networkId,
     );
     if (

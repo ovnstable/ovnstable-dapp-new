@@ -1,14 +1,15 @@
 import { TOKENS } from '@/store/views/market/mock.ts';
-import { type Strategy, type Payout } from '@/modules/Market/types/index.ts';
-import MarketApiService from '@/services/market-api-service.ts';
+import { type Payout } from '@/modules/Market/types/index.ts';
+import { OvernightApi } from '@/services/ApiService/OvernightApi.ts';
+import type { IStrategyResponseOld } from '@/types/api/overnightApi';
 
 const state = {
   tokenData: {},
 };
-function calculateTvl(strategies: Strategy[]) {
-  const totalTvl = strategies.reduce((total: number, strategy: Strategy) => {
+function calculateTvl(strategies: IStrategyResponseOld[]) {
+  const totalTvl = strategies.reduce((total: number, strategy: IStrategyResponseOld) => {
     const { netAssetValue } = strategy;
-    return total + (Number.isNaN(netAssetValue) ? 0 : netAssetValue);
+    return total + (Number(netAssetValue));
   }, 0);
   return new Intl.NumberFormat('en-EN', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(totalTvl);
 }
@@ -37,10 +38,11 @@ function getLastPayout(payouts: Payout[]) {
 const actions = {
   async fetchTokenData({ commit }: any, { marketId, networkName }: any) {
     try {
+      const overnightApiInstance = new OvernightApi();
       const staticData = TOKENS[marketId] || {};
-      const strategies: Strategy[] = await MarketApiService.loadStrategies(networkName, `${marketId}+`);
+      const strategies = await overnightApiInstance.loadStrategies();
       const tvl = calculateTvl(strategies);
-      const payouts: Payout[] = await MarketApiService.loadPayouts(networkName, `${marketId}+`);
+      const payouts = await overnightApiInstance.loadPayouts(networkName);
       const { lastPayoutType, lastPayoutTime, dailyApy } = getLastPayout(payouts);
       const combinedData = {
         ...staticData,

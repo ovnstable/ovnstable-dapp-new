@@ -41,7 +41,7 @@
             STATS
           </router-link>
           <router-link
-            to="/ovn"
+            to="/insurance"
             class="app-header__dashboard"
             active-class="active-link"
           >

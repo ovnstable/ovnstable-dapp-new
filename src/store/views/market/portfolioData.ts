@@ -1,6 +1,5 @@
-import MarketApiService from '@/services/market-api-service.ts';
 import { TOKENS } from '@/store/views/market/mock.ts';
-import { type Strategy } from '@/modules/Market/types/index.ts';
+import { OvernightApi } from '@/services/ApiService/OvernightApi.ts';
 
 const state = {
   portfolioData: {},
@@ -9,9 +8,10 @@ const state = {
 const actions = {
   async fetchPortfolioData({ commit }: any, { marketId, networkName }: any) {
     try {
+      const overnightApiInstance = new OvernightApi();
       const { tokenName, collateralToken } = TOKENS[marketId];
-      const strategies: Strategy[] = await MarketApiService.loadStrategies(networkName, `${marketId}+`);
-      const totalPlusToken: number = await MarketApiService.loadTotalPlusToken(networkName, `${marketId}+`);
+      const strategies = await overnightApiInstance.loadStrategies();
+      const totalPlusToken = await overnightApiInstance.loadTotalPlusToken(networkName, `${marketId}+`);
       const combinedData = {
         totalPlusToken,
         tokenName,

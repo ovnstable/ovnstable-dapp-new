@@ -166,7 +166,7 @@
   </div>
 </template>
 <script lang="ts">
-import { ref } from 'vue';
+import { inject, ref } from 'vue';
 
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import { Swiper, SwiperSlide } from 'swiper/vue';
@@ -178,9 +178,11 @@ import {
 // import { Autoplay } from 'swiper/modules';
 import { deviceType } from '@/utils/deviceType.ts';
 import Spinner from '@/components/Spinner/Index.vue';
-import SliderApiService from '@/services/slider-api-service.ts';
 import 'swiper/swiper.min.css';
 import { getImageUrl } from '@/utils/const.ts';
+import BigNumber from 'bignumber.js';
+import type { IOvernightApi } from '@/services/ApiService/OvernightApi';
+import type { IWidgetDataResponse } from '@/types/api/overnightApi';
 
 SwiperClass.use([Autoplay]);
 
@@ -209,6 +211,12 @@ export default {
     SwiperSlide,
     Spinner,
   },
+  setup() {
+    const overnightApiInstance = inject('overnightApi') as IOvernightApi;
+    return {
+      overnightApiInstance,
+    };
+  },
   data() {
     return {
       currentIndex: 0,
@@ -234,15 +242,16 @@ export default {
     getImageUrl,
     async loadDataSlider() {
       try {
-        const nameApyData = await SliderApiService.loadApyName();
-        const tvlData = await SliderApiService.loadTVL();
+        const nameApyData = await this.overnightApiInstance.loadWidgetData();
 
         const products = ['usdPlusProduct'];
         const sliderDataFromLoad = products.map((productKey): SlideData | null => {
-          if (nameApyData[productKey]) {
-            const productType = nameApyData[productKey].productType.replace('_PLUS', '+');
-            const apy = nameApyData[productKey].value;
+          const product = nameApyData[productKey as keyof IWidgetDataResponse];
+          if (product && typeof product === 'object' && 'productType' in product && 'apy' in product) {
+            const productType = product.productType.replace('_PLUS', '+');
+            const apy = new BigNumber(product.apy).toNumber();
             const lastPayout = nameApyData.lastPayoutDate;
+            const totalTvl = nameApyData.tvl;
 
             const lastPayoutDatetime = new Date(lastPayout);
             const now = new Date();
@@ -264,13 +273,6 @@ export default {
               payoutAgoText = 'hours ago';
             }
 
-            let totalTvl = 0;
-            tvlData.forEach((chain: any) => {
-              const valueObj = chain.values.find((v: any) => v.name === productType);
-              if (valueObj) {
-                totalTvl += valueObj.value;
-              }
-            });
             const description = sliderDescriptionForWrapped(productType);
             return {
               tokenName: productType,

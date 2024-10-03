@@ -277,7 +277,7 @@
 <script lang="ts">
 import { useEventBus } from '@vueuse/core';
 import {
-  computed, defineComponent, markRaw,
+  computed, defineComponent, inject, markRaw,
 } from 'vue';
 import { ethers } from 'ethers';
 import {
@@ -291,7 +291,7 @@ import {
   getTokenByAddress,
   WHITE_LIST_ODOS,
 } from '@/store/helpers/index.ts';
-import odosApiService from '@/services/odos-api-service.ts';
+import { OvernightApi, type IOvernightApi } from '@/services/ApiService/OvernightApi.ts';
 
 import Spinner from '@/components/Spinner/Index.vue';
 import ChangeNetwork from '@/components/ZapForm/ChangeNetwork.vue';
@@ -369,11 +369,14 @@ export default defineComponent({
       data: allTokensList,
     } = useTokensQueryNew();
 
+    const overnightApiInstance = inject('overnightApi') as IOvernightApi;
+
     return {
       allTokensList,
       balanceList,
       isAnyLoading: computed(() => isAnyLoading.value),
       refreshBalances: useRefreshBalances(),
+      overnightApiInstance,
     };
   },
   data: () => ({
@@ -403,6 +406,7 @@ export default defineComponent({
     // Mobile section switch
     zapMobileSection,
     currentSection: zapMobileSection.TOKEN_FORM,
+    overnightApiInstance: new OvernightApi(),
   }),
   computed: {
     ...mapState('odosData', [
@@ -740,16 +744,16 @@ export default defineComponent({
       removeToken(this.inputTokens, id);
     },
     async odosSwapRequest(requestData: any) {
-      return odosApiService
+      return this.overnightApiInstance
         .quoteRequest(requestData)
-        .then((data) => {
+        .then((data: any) => {
           this.$store.commit('odosData/changeState', {
             field: 'swapResponseInfo',
             val: data,
           });
           return data;
         })
-        .catch((e) => {
+        .catch((e: any) => {
           this.closeWaitingModal();
           if (e && e.message && e.message.includes('path')) {
             this.showErrorModalWithMsg({ errorType: 'odos-path', errorMsg: e });
@@ -824,9 +828,9 @@ export default defineComponent({
           simulate: true,
         };
 
-        odosApiService
+        this.overnightApiInstance
           .assembleRequest(assembleData)
-          .then(async (responseAssembleData) => {
+          .then(async (responseAssembleData: any) => {
             await this.initZapInTransaction(
               responseAssembleData,
               data.inputTokens,
@@ -844,7 +848,7 @@ export default defineComponent({
       }
     },
     async stakeTriggerV2() {
-      const actualGas = await odosApiService.getActualGasPrice(this.networkId);
+      const actualGas = await this.overnightApiInstance.getActualGasPrice(this.networkId);
 
       const userInputTokens = this.selectedInputTokens;
       const poolOutputTokens = this.selectedOutputTokens;
@@ -893,8 +897,8 @@ export default defineComponent({
             simulate: true,
           };
 
-          odosApiService.assembleRequest(assembleData)
-            .then(async (responseAssembleData) => {
+          this.overnightApiInstance.assembleRequest(assembleData)
+            .then(async (responseAssembleData: any) => {
               await this.initZapInTransaction(
                 responseAssembleData,
                 proportions.inputTokens,

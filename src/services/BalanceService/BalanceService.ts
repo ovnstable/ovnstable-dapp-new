@@ -35,7 +35,7 @@ class BalanceService implements IBalanceService {
     account: string,
     tokenList: string[] = [],
   ) {
-    console.log('__BalanceServiceFetchBalances');
+    // console.log('__BalanceServiceFetchBalances');
     const balancesData = await fetchTokenBalancesMulticall(provider, tokenList, account);
 
     const nativeTokenBalance = await this.fetchNativeBalance(provider, account);
