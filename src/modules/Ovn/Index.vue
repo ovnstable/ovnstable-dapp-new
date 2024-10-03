@@ -12,7 +12,7 @@
     <Sidebar
       sidebar-contents="ovn"
     />
-    <div
+    <!-- <div
       class="ovn-wrapper"
     >
       <div
@@ -35,55 +35,55 @@
           class="ovn__pools-inner"
         />
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
 <script lang="ts">
-import OvnInfo from '@/modules/Ovn/Info.vue';
-import OvnBenefits from '@/modules/Ovn/Benefits.vue';
-import OvnTokenomics from '@/modules/Ovn/Tokenomics.vue';
+// import OvnInfo from '@/modules/Ovn/Info.vue';
+// import OvnBenefits from '@/modules/Ovn/Benefits.vue';
+// import OvnTokenomics from '@/modules/Ovn/Tokenomics.vue';
 import Spinner from '@/components/Spinner/Index.vue';
-import { POOL_TYPES } from '@/store/views/main/pools/index.ts';
-import PoolsContainer from '@/modules/PoolsPositions/Pools/Index.vue';
+// import { POOL_TYPES } from '@/store/views/main/pools/index.ts';
+// import PoolsContainer from '@/modules/PoolsPositions/Pools/Index.vue';
 import Sidebar from '@/components/Layout/Sidebar/Index.vue';
 
 export default {
   name: 'OvnPage',
   components: {
-    OvnInfo,
-    OvnBenefits,
-    OvnTokenomics,
+    // OvnInfo,
+    // OvnBenefits,
+    // OvnTokenomics,
     Spinner,
-    PoolsContainer,
+    // PoolsContainer,
     Sidebar,
   },
   props: {
-    tokenData: {
-      type: Object,
-      default: () => ({}),
-    },
+    // tokenData: {
+    //   type: Object,
+    //   default: () => ({}),
+    // },
     firstLoad: {
       type: Boolean,
       required: true,
     },
-    loaded: {
-      type: Boolean,
-      default: false,
-    },
+    // loaded: {
+    //   type: Boolean,
+    //   default: false,
+    // },
   },
-  data() {
-    return {
-      poolTypes: POOL_TYPES,
-    };
-  },
+  // data() {
+  //   return {
+  //     poolTypes: POOL_TYPES,
+  //   };
+  // },
   computed: {
-    insuranceIsMobileMintRedeem() {
-      return this.$store.state.insuranceTokenData.isMobileMintRedeem.value;
-    },
-    insuranceIsMobileOvnDashboard() {
-      return this.$store.state.insuranceTokenData.isMobileOvnDashboard.value;
-    },
+    // insuranceIsMobileMintRedeem() {
+    //   return this.$store.state.insuranceTokenData.isMobileMintRedeem.value;
+    // },
+    // insuranceIsMobileOvnDashboard() {
+    //   return this.$store.state.insuranceTokenData.isMobileOvnDashboard.value;
+    // },
   },
 };
 

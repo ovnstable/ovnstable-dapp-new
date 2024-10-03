@@ -33,7 +33,14 @@
         >
           OVN
         </p>
-
+        <a
+          :href="'https://docs.overnight.fi/governance/ovn-token/overnight-tokenomics'"
+          class="sidebar__text-top"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          OVN overview
+        </a>
         <router-link
           v-for="(link, index) in ovnAndInsuranceLinks"
           :key="index"
@@ -68,7 +75,7 @@ export default {
         { name: 'DAI+', to: '/market/dai' },
       ],
       ovnAndInsuranceLinks: [
-        { name: 'OVN overview', to: '/ovn' },
+        // { name: 'OVN overview', to: '/ovn' },
         { name: 'Insurance', to: '/insurance' },
       ],
     };
