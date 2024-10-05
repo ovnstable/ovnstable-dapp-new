@@ -99,7 +99,6 @@ export const formatPositionData = (
     const pool = poolsMap[poolId]
     ?? poolsMap[poolId.toUpperCase()] ?? poolsMap[poolId.toLowerCase()];
 
-    if (isStaked) {
       // Tokens
       const token0Info = getTokenInfo(token0, tokenMap);
       const token1Info = getTokenInfo(token1, tokenMap);
@@ -199,8 +198,6 @@ export const formatPositionData = (
       // console.log(positionFullInfo, '__positionFullInfo');
 
       return positionFullInfo;
-    }
-    return [];
   });
 
   // console.log(positionInfo, '__positionInfo');

@@ -89,7 +89,7 @@
           full
           disabled
         >
-          NOT ENOUGH REWARDS TO COMPOUND
+          {{ disabledMsg }}
         </ButtonComponent>
         <ButtonComponent
           v-else-if="isAnyInputsNeedApprove"
@@ -373,7 +373,12 @@ export default {
 
       return true;
     },
+    disabledMsg() {
+      if (!this.zapPool.isStaked) return "STAKE POSITION REQUIRED";
+      return "NOT ENOUGH REWARDS TO COMPOUND"
+    },
     isDisabled() {
+      if (!this.zapPool.isStaked) return true;
       if (new BN(this.zapPool.rewards.usdValue) < new BN(0.01)) return true;
       return false;
     },

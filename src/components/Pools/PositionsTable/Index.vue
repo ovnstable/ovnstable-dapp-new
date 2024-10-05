@@ -27,6 +27,11 @@
         >
           Earned
         </div>
+        <div
+          class="pools-header__item"
+        >
+          Staked
+        </div>
         <div class="pools-header__item center">
           Platforms
         </div>
@@ -101,6 +106,11 @@
                 @keypress="emitClaim(pool)"
               >
                 Claim
+              </div>
+            </div>
+            <div class="pools-table__staked">
+              <div>
+                {{ pool.isStaked ? "YES" : "NO" }}
               </div>
             </div>
             <div class="pools-table__platform-row center">

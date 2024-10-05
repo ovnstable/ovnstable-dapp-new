@@ -940,7 +940,7 @@ export default defineComponent({
         this.odosData = data.odosData;
         this.odosDataLoading = false;
       } catch (e) {
-        this.showErrorModalWithMsg({ errorMsg: parseErrorLog(e) });
+        this.showErrorModalWithMsg({ errorType: 'zap', errorMsg: parseErrorLog(e) });
         this.odosDataLoading = false;
       }
     },

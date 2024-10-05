@@ -102,9 +102,10 @@ class ZapinService {
       tx = await gaugeContract.getReward(zapPool.tokenId);
     }
 
-    if (zapPool?.platform[0] === PLATFORMS.AERO && !zapPool.isStaked) {
-      tx = await poolTokenContract.collect(zapPool.tokenId);
-    }
+    // if (zapPool?.platform[0] === PLATFORMS.AERO && !zapPool.isStaked) {
+    //   console.log(poolTokenContract, "COLLECT")
+    //   tx = await poolTokenContract.collect(zapPool.tokenId);
+    // }
 
     if (!tx) throw new Error("Can't be claimed");
 

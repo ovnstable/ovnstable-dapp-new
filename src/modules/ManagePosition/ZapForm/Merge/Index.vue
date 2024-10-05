@@ -416,6 +416,7 @@ export default defineComponent({
       if (!this.zapPool || this.positionsList?.length === 0) return [];
 
       return this.positionsList
+        .filter((_) => _?.isStaked)
         .filter((_) => _?.platform[0] === this.zapPool?.platform[0])
         .filter((_) => _?.tokenId?.toString() !== this.zapPool?.tokenId?.toString());
     },
