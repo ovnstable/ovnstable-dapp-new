@@ -114,11 +114,11 @@ export class OvernightApi extends ApiService implements IOvernightApi {
   }
 
   public async loadTotalPlusToken(chain: string, token: string): Promise<number> {
-    return this.get(`${API_URL_NEW}/stat/${chain}/${token}/total-supply`);
+    return this.get(`${API_URL_NEW}/stat/${chain}/${token.toUpperCase()}/total-supply`);
   }
 
   public async loadCollaterlPlusToken(chain: string, token: string): Promise<Collateral[]> {
-    return this.get(`${API_URL}/${chain}/${token}/dapp/collateral/total`);
+    return this.get(`${API_URL}/${chain}/${token.toUpperCase()}/dapp/collateral/total`);
   }
 
   // Insurance
