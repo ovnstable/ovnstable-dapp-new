@@ -379,7 +379,7 @@ export default {
     },
     isDisabled() {
       if (!this.zapPool.isStaked) return true;
-      if (new BN(this.zapPool.rewards.usdValue) < new BN(0.01)) return true;
+      if (new BN(this.zapPool.rewards.usdValue).lt(0.01)) return true;
       return false;
     },
     isAnyInputsNeedApprove() {
