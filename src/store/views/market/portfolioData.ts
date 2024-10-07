@@ -1,5 +1,6 @@
 import { TOKENS } from '@/store/views/market/mock.ts';
 import { OvernightApi } from '@/services/ApiService/OvernightApi.ts';
+import type { IStrategyResponseOld } from '@/types/api/overnightApi';
 
 const state = {
   portfolioData: {},
@@ -16,7 +17,8 @@ const actions = {
         totalPlusToken,
         tokenName,
         collateralToken,
-        strategies,
+        strategies: strategies
+          .filter((strategy: IStrategyResponseOld) => Number(strategy.weight) > 0),
       };
       commit('setPortfolioData', { marketId, combinedData });
     } catch (error) {
