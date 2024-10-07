@@ -109,8 +109,20 @@
               </div>
             </div>
             <div class="pools-table__staked">
-              <div>
+              <div
+                class="pools-table__staked-stat"
+                :class="{ red: !pool.isStaked, green: pool.isStaked  }"
+              >
                 {{ pool.isStaked ? "YES" : "NO" }}
+              </div>
+              <div
+                v-if="!pool.isStaked"
+                class="pools-table__btn"
+                :class="{ 'pools-table__btn--disabled': lessThanMin(pool.rewards.usdValue) }"
+                @click="emitStake(pool)"
+                @keypress="emitStake(pool)"
+              >
+                Stake
               </div>
             </div>
             <div class="pools-table__platform-row center">
@@ -200,7 +212,7 @@ export default {
       required: true,
     },
   },
-  emits: ['claim'],
+  emits: ['claim', 'stake'],
   computed: {
     lessThanMin() {
       return (val: string) => new BN(val).lt(0.02);
@@ -211,6 +223,9 @@ export default {
     handleOpen(pool: any) {
       this.openZapIn(pool);
       this.$router.replace(`/positions/${pool?.tokenId?.toString()}`);
+    },
+    emitStake(pool: any) {
+      this.$emit('stake', pool);
     },
     emitClaim(pool: any) {
       this.$emit('claim', pool);

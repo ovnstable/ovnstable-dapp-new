@@ -4,7 +4,7 @@
       v-if="type === 'POSITIONS'"
       class="heading-row"
     >
-      <h1>MY POSITIONS</h1>
+      <h1>MY {{ networkName?.toUpperCase() }} POSITIONS</h1>
       <p>View and manage your open V3 positions.</p>
     </div>
     <div
@@ -53,6 +53,7 @@ import PoolsNew from '@/modules/PoolsPositions/Pools/PoolsNew.vue';
 import PoolFilterNew from '@/components/Pools/PoolsFilter/PoolFilterNew.vue';
 import SwitchTabs from '@/components/SwitchTabs/Index.vue';
 import PoolsOld from '@/modules/PoolsPositions/Pools/Index.vue';
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'PoolsPositions',
@@ -78,6 +79,9 @@ export default {
       activeTab: 0,
       type: window.location.pathname.split('/').pop()?.toUpperCase(),
     };
+  },
+  computed: {
+    ...mapGetters('network', ['networkName']),
   },
   methods: {
     changeTab(val: number) {

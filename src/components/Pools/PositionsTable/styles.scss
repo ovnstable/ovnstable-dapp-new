@@ -520,7 +520,28 @@
 
 .pools-table__staked {
   display: flex;
+  flex-direction: column;
+  width: fit-content;
   align-items: center;
+  gap: 4px;
+
+  .red {
+    background-color: #FF3E36;
+  }
+
+  .green {
+    background-color: var(--color-12);
+  }
+}
+
+.pools-table__staked-stat {
+  padding: 5px 7px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  min-width: 50px;
+  text-align: center;
+  color: var(--color-4);
 }
 
 

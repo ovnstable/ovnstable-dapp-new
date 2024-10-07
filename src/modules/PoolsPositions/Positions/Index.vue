@@ -74,6 +74,7 @@
           :position-size-order-type="positionSizeOrder"
           :claim-loading="isClaiming"
           @claim="handleClaim"
+          @stake="stakeTrigger"
         >
           <template #filters>
             <PoolsFilter
@@ -100,14 +101,14 @@ import TableSkeleton from '@/components/TableSkeleton/Index.vue';
 import { awaitDelay, getImageUrl } from '@/utils/const.ts';
 import ButtonComponent from '@/components/Button/Index.vue';
 import { defineComponent } from 'vue';
-import { usePositionsQuery } from '@/hooks/fetch/usePositionsQuery.ts';
+import { usePositionsQuery, useRefreshPositions } from '@/hooks/fetch/usePositionsQuery.ts';
 import { useRefreshBalances } from '@/hooks/fetch/useRefreshBalances.ts';
 import { parseErrorLog } from '@/utils/errors.ts';
 import { initZapinContracts } from '@/services/Web3Service/utils/index.ts';
 import { useTokensQuery, useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import { usePoolsQueryNew } from '@/hooks/fetch/usePoolsQuery.ts';
-import type { TFilterPoolsParams, TPoolInfo } from '@/types/common/pools/index.ts';
+import type { PLATFORMS, TFilterPoolsParams, TPoolInfo } from '@/types/common/pools/index.ts';
 import ZapinService from '@/services/Web3Service/Zapin-service.ts';
 import type { IPositionsInfo } from '@/types/positions';
 
@@ -178,6 +179,7 @@ export default defineComponent({
       poolList,
 
       resetData: useRefreshBalances(),
+      reloadData: useRefreshPositions(),
 
       poolTabType: POOL_TYPES.ALL,
       isOpenHiddenPools: false,
@@ -290,6 +292,60 @@ export default defineComponent({
 
       if (foundPool) return foundPool.gauge;
       return '';
+    },
+    async approveNftGauge(poolTokenContract: any, gaugeContract: any, tokenId: any) {
+      this.showWaitingModal('Approving NFT in process');
+
+      try {
+        const params = { from: this.account };
+        const tx = await poolTokenContract
+          .approve(gaugeContract?.target, tokenId, params);
+
+        await tx.wait();
+      } catch (e: any) {
+        this.closeWaitingModal();
+        throw new Error(e);
+      }
+    },
+    async stakeTrigger(pool: IPositionsInfo) {
+      this.setIsZapModalShow(false);
+      this.handleClickSearch(pool);
+      await awaitDelay(500);
+      const gaugeAdd = this.searchGauge(pool);
+
+      if (!gaugeAdd) {
+        this.showErrorModalWithMsg({ errorMsg: 'Gauge not found' });
+        return;
+      }
+
+      const contractsData = await initZapinContracts(
+        pool,
+        this.mergedAllTokens,
+        this.evmSigner,
+        gaugeAdd
+      );
+
+      console.log(pool, '___pool')
+
+      try {
+        this.showWaitingModal('staking');
+        this.isClaiming = true;
+        await this.approveNftGauge(contractsData.poolTokenContract, contractsData.gaugeContract, pool.tokenId)
+        await ZapinService.stakeTrigger(
+          pool.platform[0] as PLATFORMS,
+          contractsData.gaugeContract,
+          pool.tokenId,
+          this.account,
+          contractsData.poolTokenContract,
+        );
+        
+        this.reloadData();
+        this.closeWaitingModal();
+      } catch (e) {
+        this.isClaiming = false;
+        this.closeWaitingModal();
+        this.showErrorModalWithMsg({ errorType: "zap", errorMsg: parseErrorLog(e) });
+      }
     },
     async handleClaim(pool: IPositionsInfo) {
       this.setIsZapModalShow(false);
