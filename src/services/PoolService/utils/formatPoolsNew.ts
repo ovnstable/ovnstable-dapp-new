@@ -41,5 +41,5 @@ export const formatPools = (
     tickSpacing: pool.tickSpacing,
   }));
 
-  return poolsList.filter((pool) => pool.platform.some((platform) => platform !== 'Uniswap'));
+  return poolsList;
 };

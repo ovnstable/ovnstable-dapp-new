@@ -669,6 +669,7 @@ export default {
         {
           ticks,
         },
+        this.selectedOutputTokens
       );
 
       const params = {

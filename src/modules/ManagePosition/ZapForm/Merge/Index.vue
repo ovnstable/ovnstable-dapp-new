@@ -717,6 +717,7 @@ export default defineComponent({
         {
           ticks: this.v3RangeTicks,
         },
+        this.selectedOutputTokens
       );
 
       this.showWaitingModal('Staking in process');

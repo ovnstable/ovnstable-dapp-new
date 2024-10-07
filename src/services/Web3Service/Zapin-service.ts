@@ -157,9 +157,14 @@ class ZapinService {
     zapContract: any,
     tokenIds = [] as string[],
   ) {
-    console.log(poolAddress, tickRange, inputSwapTokens, tokenIds, '___ARGS');
+    console.log({pair: poolAddress, tickRange, inputTokens: inputSwapTokens, tokenIds}, '___ARGS');
     return zapContract
-      .getProportionForZap(poolAddress, tickRange, inputSwapTokens, tokenIds)
+      .getProportionForZap({
+        pair: poolAddress,
+        tickRange,
+        inputTokens: inputSwapTokens,
+        tokenIds
+      })
       .then((data: any) => data)
       .catch((e: any) => {
         console.log(JSON.parse(JSON.stringify(e)), '___decoded1');
@@ -629,12 +634,13 @@ class ZapinService {
     tokensMerge?: string[],
   ) {
     const txData = { ...argTxData };
-    let gaugeData = { ...argGaugeData };
+    let gaugeData = { ...argGaugeData, tokenId: tokenId ?? 0, tokensOut: tokensMerge ?? [] };
 
+    console.log(gaugeData, '___gaugeData')
     if (gaugeData.isSimulation) {
       try {
         if (method === ZAPIN_FUNCTIONS.MERGE) {
-          await zapContract[method](txData, gaugeData, tokenId, tokensMerge);
+          await zapContract[method](txData, gaugeData);
         }
         if (method === ZAPIN_FUNCTIONS.ZAPIN) {
           await zapContract[method](txData, gaugeData);
@@ -646,7 +652,7 @@ class ZapinService {
             gaugeData,
             tokenId,
           }, '__zap');
-          await zapContract[method](txData, gaugeData, tokenId);
+          await zapContract[method](txData, gaugeData);
         }
       } catch (e: any) {
         console.log(JSON.parse(JSON.stringify(e)), '___decoded1');

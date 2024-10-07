@@ -40,7 +40,7 @@ export const ZAPIN_SCHEME = {
   },
   base: {
     aerodrome: {
-      zapinAdd: '0x0a20444bf4621d348E139D77CC3837464932226a',
+      zapinAdd: '0xb63F93A8020d0495fE9EDfE23Da3b7833F632c49',
       stake: DEPOSIT_TYPES.DEPOSIT,
     },
     pancake: {
@@ -49,7 +49,7 @@ export const ZAPIN_SCHEME = {
       stake: DEPOSIT_TYPES.TRANSFER,
     },
     uniswap: {
-      zapinAdd: '',
+      zapinAdd: '0x8A368427Fc41D314174FdB8d2F8d444de8db362b',
       stake: DEPOSIT_TYPES.NONE,
     },
   },

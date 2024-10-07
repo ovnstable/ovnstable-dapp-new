@@ -206,8 +206,8 @@
             btn-styles="primary"
             full
             :loading="isSwapLoading"
-            @click="toApproveAndDepositSteps(lastZapResponseData)"
-            @keypress="toApproveAndDepositSteps(lastZapResponseData)"
+            @click="toApproveAndDepositSteps"
+            @keypress="toApproveAndDepositSteps"
           >
             APPROVE GAUGE
           </ButtonComponent>
@@ -298,6 +298,7 @@ import {
   initReqData,
   initZapData,
   initZapinContracts,
+  isStakeSkip,
   parseLogs,
   removeToken,
 } from '@/services/Web3Service/utils/index.ts';
@@ -552,7 +553,7 @@ export default defineComponent({
     ...mapActions('waitingModal', ['showWaitingModal', 'closeWaitingModal']),
     ...mapActions('poolsData', ['setIsZapModalShow']),
     ...mapActions('walletAction', ['connectWallet']),
-    ...mapMutations('waitingModal', ['setStagesMap']),
+    ...mapMutations('waitingModal', ['setStagesMap', 'setSkipStake']),
     onLeaveList,
     beforeEnterList,
     onEnterList,
@@ -606,7 +607,8 @@ export default defineComponent({
       this.poolTokenContract = contractsData.poolTokenContract;
       this.poolTokens = contractsData.poolTokens;
 
-      console.log(this.zapContract);
+      // some protocols do not support staking
+      this.setSkipStake(isStakeSkip(this.gaugeContract, this.zapPool));
     },
 
     firstInit() {
@@ -726,7 +728,7 @@ export default defineComponent({
         val: value,
       });
     },
-    async toApproveAndDepositSteps(data: any) {
+    initLogs(data: any) {
       parseLogs(data.logs, this.commitEventToStore);
 
       console.log(data.logs, '___LOGS');
@@ -740,6 +742,8 @@ export default defineComponent({
         }
       }
 
+    },
+    async toApproveAndDepositSteps() {
       this.currentStage = zapInStep.APPROVE_GAUGE;
       this.isSwapLoading = true;
 
@@ -850,6 +854,7 @@ export default defineComponent({
         this.zapPool.address,
         proportions,
         this.v3Range,
+        this.selectedOutputTokens
       );
 
       this.showWaitingModal('Staking in process');
@@ -882,7 +887,9 @@ export default defineComponent({
           val: markRaw(receipt),
         });
 
-        if (this.gaugeContract.target === '0x0000000000000000000000000000000000000000') {
+        this.initLogs(markRaw(receipt));
+
+        if (isStakeSkip(this.gaugeContract, this.zapPool)) {
           this.triggerSuccessZapin(
             {
               isShow: true,
@@ -894,11 +901,17 @@ export default defineComponent({
             },
           );
 
+          this.clearAndInitForm();
+          this.$store.commit('odosData/changeState', {
+            field: 'additionalSwapStepType',
+            val: null,
+          });
+          this.currentStage = zapInStep.STAKE_LP;
           this.closeWaitingModal();
           return;
         }
 
-        this.toApproveAndDepositSteps(this.lastZapResponseData);
+        this.toApproveAndDepositSteps();
       } catch (e: any) {
         this.closeWaitingModal();
         this.showErrorModalWithMsg({
@@ -966,6 +979,7 @@ export default defineComponent({
       );
 
       selectedToken.approveData.allowanceValue = allowanceValue;
+
       if (!selectedToken.approveData.allowanceValue) {
         selectedToken.approveData.approved = false;
         return;
@@ -975,9 +989,14 @@ export default defineComponent({
         selectedToken.approveData.approved = true;
         return;
       }
+
+      console.log(allowanceValue, "CHECKALLOW")
       selectedToken.approveData.approved = new BN(selectedToken.approveData.allowanceValue)
         .isGreaterThanOrEqualTo(checkedAllowanceValue);
-      this.currentStage = zapInStep.DEPOSIT;
+
+      if (selectedToken.approveData.approved) {
+        this.currentStage = zapInStep.DEPOSIT;
+      }
     },
 
     async approveTrigger(token: any) {

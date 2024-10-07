@@ -166,7 +166,7 @@ export default {
       sortedChains: networkList,
       isShowTokensModal: false as boolean,
       activePlat: "ALL",
-      platformsList: ["ALL", "Aerodrome", "Pancake"],
+      platformsList: ["ALL", "Aerodrome", "Pancake", 'Uniswap'],
       selectingTokenIndex: 1 as Number,
     };
   },

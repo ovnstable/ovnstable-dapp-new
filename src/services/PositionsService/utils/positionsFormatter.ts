@@ -152,6 +152,7 @@ export const formatPositionData = (
         centerTick,
       };
 
+      console.log(getPlatformLinks(platformName, poolId, network?.networkName?.toLowerCase()), '___LINKS')
       // Final data
       const positionFullInfo = {
         ...pool,
