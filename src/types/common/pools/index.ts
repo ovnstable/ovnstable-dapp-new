@@ -1,6 +1,7 @@
 export enum PLATFORMS {
     AERO = 'Aerodrome',
-    PANCAKE = 'Pancake'
+    PANCAKE = 'Pancake',
+    UNI = 'Uniswap'
 }
 
 export type TPool = {

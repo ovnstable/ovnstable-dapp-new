@@ -26,24 +26,26 @@
     >
       Rebalance
     </p>
-    <BaseIcon name="InsuranceModalArrowRight" />
-    <p
-      :class="{
-        'active-stage': currentStage === rebalanceStep.APPROVEGAUGE,
-        'active-color': isActiveTab(rebalanceStep.APPROVEGAUGE),
-      }"
-    >
-      Approve NFT (gauge)
-    </p>
-    <BaseIcon name="InsuranceModalArrowRight" />
-    <p
-      :class="{
-        'active-stage': currentStage === rebalanceStep.STAKE,
-        'active-color': isActiveTab(rebalanceStep.STAKE),
-      }"
-    >
-      Stake
-    </p>
+    <template v-if="!skipStake">
+      <BaseIcon name="InsuranceModalArrowRight" />
+      <p
+        :class="{
+          'active-stage': currentStage === rebalanceStep.APPROVEGAUGE,
+          'active-color': isActiveTab(rebalanceStep.APPROVEGAUGE),
+        }"
+      >
+        Approve NFT (gauge)
+      </p>
+      <BaseIcon name="InsuranceModalArrowRight" />
+      <p
+        :class="{
+          'active-stage': currentStage === rebalanceStep.STAKE,
+          'active-color': isActiveTab(rebalanceStep.STAKE),
+        }"
+      >
+        Stake
+      </p>
+    </template>
   </div>
 </template>
 
@@ -59,6 +61,10 @@ export default defineComponent({
     BaseIcon,
   },
   props: {
+    skipStake: {
+      type: Boolean,
+      default: false,
+    },
     currentStage: {
       type: Number as PropType<rebalanceStep>,
       default: rebalanceStep.UNSTAKE,

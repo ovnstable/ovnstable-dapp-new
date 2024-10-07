@@ -124,11 +124,13 @@ export const formatPositionData = (
         platform?.toLowerCase() as keyof typeof REWARDS_LIST.arbitrum
       ];
 
+      if (platformName === 'UniswapV3') {
+        platformName = 'Uniswap';
+      }
+
       if (platformName === 'PCS') {
         platformName = 'Pancake';
       }
-
-      console.log(rewardAdd, '__rewardAdd');
 
       if (rewardAdd) {
         const aeroTokenInfo = getTokenInfo(rewardAdd, tokenMap);
@@ -152,7 +154,6 @@ export const formatPositionData = (
         centerTick,
       };
 
-      console.log(getPlatformLinks(platformName, poolId, network?.networkName?.toLowerCase()), '___LINKS')
       // Final data
       const positionFullInfo = {
         ...pool,
@@ -195,8 +196,6 @@ export const formatPositionData = (
         tokenNames,
         isStaked,
       };
-
-      // console.log(positionFullInfo, '__positionFullInfo');
 
       return positionFullInfo;
   });

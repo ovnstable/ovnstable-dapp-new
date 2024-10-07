@@ -195,6 +195,7 @@
       <ZapInStepsRow
         v-if="zapPool.chain === networkId"
         class="zapin__modal-steps"
+        :skip-stake="skipStake"
         :current-stage="currentStage"
       />
     </div>
@@ -231,7 +232,8 @@ import { parseErrorLog } from '@/utils/errors.ts';
 import FeesBlock, { MIN_IMPACT } from '@/components/FeesBlock/Index.vue';
 import SwapSlippageSettings from '@/components/SwapSlippage/Index.vue';
 import {
-  initReqData, initZapData, initZapinContracts, parseLogs,
+  checkIsStaked,
+  initReqData, initZapData, initZapinContracts, isStakeSkip, parseLogs,
 } from '@/services/Web3Service/utils/index.ts';
 import ZapinService, { ZAPIN_FUNCTIONS, ZAPIN_TYPE } from '@/services/Web3Service/Zapin-service.ts';
 import SwapRouting from '@/components/SwapRouting/Index.vue';
@@ -338,6 +340,10 @@ export default {
     ...mapGetters('network', ['networkId']),
     ...mapGetters('accountData', ['account']),
 
+    skipStake() {
+      if (this.zapPool.platform[0] === "Uniswap") return true;
+      return false
+    },
     zapAllTokens() {
       return mergedTokens(this.allTokensList as any[], this.balanceList as any[]);
     },
@@ -429,7 +435,7 @@ export default {
     ...mapActions('walletAction', ['connectWallet']),
     ...mapActions('waitingModal', ['showWaitingModal', 'closeWaitingModal']),
 
-    ...mapMutations('waitingModal', ['setStagesMap']),
+    ...mapMutations('waitingModal', ['setStagesMap', 'setSkipStake']),
 
     changeAgreeFees() {
       this.agreeWithFees = !this.agreeWithFees;
@@ -484,13 +490,14 @@ export default {
       this.zapContract = contractsData.zapContract;
       this.poolTokenContract = contractsData.poolTokenContract;
       this.poolTokens = contractsData.poolTokens;
-
-      console.log(this.zapPool, '__POOL');
+      this.setSkipStake(isStakeSkip(this.gaugeContract, this.zapPool));
+      console.log(checkIsStaked(this.zapPool), '__POOL');
 
       if (!this.isAvailableOnNetwork) this.mintAction();
-      if (!this.zapPool.isStaked) {
-        this.positionStaked = this.zapPool.isStaked;
+      if (!checkIsStaked(this.zapPool)) {
+        this.positionStaked = false;
         this.currentStage = rebalanceStep.APPROVE;
+        this.checkNftApprove();
       }
     },
     firstInit() {
@@ -711,9 +718,10 @@ export default {
       const isApproved = await this.poolTokenContract
         .getApproved(this.zapPool?.tokenId);
 
+      console.log(isApproved, '___isApproved')
       if (isApproved?.toLowerCase() === this.zapContract?.target?.toLowerCase()) {
         this.isNftApproved = true;
-        // this.currentStage = rebalanceStep.REBALANCE;
+        this.currentStage = rebalanceStep.REBALANCE;
       }
 
       this.isSwapLoading = false;
@@ -810,16 +818,29 @@ export default {
           field: 'lastParsedZapResponseData',
           val: markRaw(logsData),
         });
+        
+        this.initLogs(markRaw(logsData));
 
-        parseLogs(logsData, this.commitEventToStore);
+        if (isStakeSkip(this.gaugeContract, this.zapPool)) {
+          this.triggerSuccessZapin(
+            {
+              isShow: true,
+              inputTokens: this.inputTokens,
+              outputTokens: this.outputTokens,
+              hash: logsData.hash,
+              pool: this.zapPool,
+              modalType: MODAL_TYPE.ZAPIN,
+            },
+          );
 
-        for (const item of logsData.logs) {
-          const eventName = item?.eventName;
-          if (eventName === 'TokenId') {
-            // eslint-disable-next-line prefer-destructuring
-            this.newTokenId = item.args[0];
-            this.commitEventToStore('lastParsedTokenIdEvent', new BN(item.args[0]).toString(10));
-          }
+          this.clearAndInitForm();
+          this.$store.commit('odosData/changeState', {
+            field: 'additionalSwapStepType',
+            val: null,
+          });
+          this.currentStage = rebalanceStep.REBALANCE;
+          this.closeWaitingModal();
+          return;
         }
 
         this.isSwapLoading = false;
@@ -831,6 +852,19 @@ export default {
         this.closeWaitingModal();
         this.showErrorModalWithMsg({ errorType: 'zap', errorMsg: parseErrorLog(e) });
       }
+    },
+    initLogs(logsData: any) {
+      parseLogs(logsData, this.commitEventToStore);
+
+      for (const item of logsData.logs) {
+        const eventName = item?.eventName;
+        if (eventName === 'TokenId') {
+          // eslint-disable-next-line prefer-destructuring
+          this.newTokenId = item.args[0];
+          this.commitEventToStore('lastParsedTokenIdEvent', new BN(item.args[0]).toString(10));
+        }
+      }
+
     },
     clearQuotaInfo() {
       this.$store.commit('odosData/changeState', {

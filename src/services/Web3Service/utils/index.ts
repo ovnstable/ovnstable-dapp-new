@@ -526,3 +526,10 @@ export const isStakeSkip =(gaugeContract: any, zapPool: any) => {
 
   return false
 }
+
+export const checkIsStaked = (zapPool: any) => {
+  if (!zapPool.isStaked) return false
+  if (zapPool.isStaked && zapPool.platform[0] === 'Uniswap') return false
+
+  return true
+}

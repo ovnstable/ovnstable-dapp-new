@@ -6,6 +6,7 @@ import { JSONLoader } from '@/utils/httpUtils.ts';
 
 import { zapInStep } from '@/store/modals/waiting-modal.ts';
 import type { ContractAbi } from '@/types/abi';
+import { PLATFORMS } from '@/types/common/pools';
 
 export enum REWARD_TOKEN {
   AERO = 'AERO',
@@ -48,8 +49,8 @@ export const nftSrcMap: TSrcMap = {
 };
 
 export const rebalanceChainMap: {[key: string]: string[]} = {
-  base: ['Aerodrome', 'Pancake'],
-  arbitrum: ['Pancake'],
+  base: [PLATFORMS.AERO, PLATFORMS.PANCAKE, PLATFORMS.UNI],
+  arbitrum: [PLATFORMS.PANCAKE, PLATFORMS.UNI],
 };
 
 export const loadAbi = async (abiFileSrc: string): Promise<ContractAbi> => {

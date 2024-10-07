@@ -45,6 +45,7 @@ class PositionsService {
       }),
     );
 
+    // console.log(rawPositionsData, '___rawPositionsData')
     return rawPositionsData.flat();
   }
 

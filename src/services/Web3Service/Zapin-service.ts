@@ -650,7 +650,6 @@ class ZapinService {
           console.log({
             txData,
             gaugeData,
-            tokenId,
           }, '__zap');
           await zapContract[method](txData, gaugeData);
         }
