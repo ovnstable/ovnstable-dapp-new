@@ -856,6 +856,7 @@ export default {
         this.zapPool.address,
         proportions,
         this.v3Range,
+        this.selectedOutputTokens
       );
 
       const params = {
