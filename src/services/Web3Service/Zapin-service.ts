@@ -796,8 +796,6 @@ class ZapinService {
       );
     }
 
-    console.log(resp, '___resp');
-
     if (!resp) {
       showErrorModalWithMsg({
         errorType: 'zap',

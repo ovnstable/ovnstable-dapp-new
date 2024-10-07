@@ -103,7 +103,7 @@
         class="swap-button-container"
       >
         <ButtonComponent
-          v-if="positionStaked"
+          v-if="withdrawRequired"
           btn-size="large"
           btn-styles="primary"
           full
@@ -234,6 +234,10 @@ export default defineComponent({
     ...mapGetters('network', ['networkId']),
     ...mapGetters('accountData', ['account']),
 
+    withdrawRequired() {
+      if (this.zapPool.platform[0] === "Uniswap") return false
+      return this.positionStaked
+    },
     zapAllTokens() {
       return mergedTokens(this.allTokensList as any[], this.balanceList as any[]);
     },
@@ -288,7 +292,7 @@ export default defineComponent({
     this.setIsZapModalShow(true);
     this.positionStaked = this.zapPool.isStaked;
 
-    if (!this.zapPool.isStaked) {
+    if (!this.zapPool.isStaked || !this.withdrawRequired) {
       this.currentStage = withdrawStep.APPROVE;
     }
   },
