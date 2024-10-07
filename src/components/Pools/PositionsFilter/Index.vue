@@ -25,6 +25,10 @@
           />
         </template>
       </InputComponent>
+      <div class="pools-wrap__search-sw">
+        Switch chain to see another chain positions
+        <BaseIcon :name="networkName"/>
+      </div>
     </div>
 
     <!-- <div class="pools-wrap__filters-networks">
@@ -56,6 +60,7 @@ import SwitchTabs from '@/components/SwitchTabs/Index.vue';
 import { appNetworksData } from '@/utils/const.ts';
 import { sortedChainsByTVL } from '@/store/helpers/index.ts';
 import { POOL_TYPES } from '@/store/views/main/pools/index.ts';
+import { mapGetters } from 'vuex';
 
 interface Chain {
   chainName: string;
@@ -94,6 +99,9 @@ export default {
       this.networksData,
       this.isShowDeprecated,
     );
+  },
+  computed: {
+    ...mapGetters('network', ['networkName']),
   },
   methods: {
     changeTab(val: string) {
@@ -213,9 +221,27 @@ export default {
 }
 
 .pools-wrap__search {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   min-width: 150px;
-    .input-component {
-      background-color: transparent;
+  width: 100%;
+  margin-bottom: 20px;
+
+  .input-component {
+    background-color: transparent;
+  }
+}
+
+.pools-wrap__search-sw {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+
+  svg {
+    width: 24px;
+    height: 24px;
   }
 }
 </style>

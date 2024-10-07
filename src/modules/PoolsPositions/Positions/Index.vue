@@ -231,7 +231,7 @@ export default defineComponent({
     },
     displayedPools() {
       if (this.positionData.length > 0) return this.filteredPools;
-      return this.positionData;
+      return this.filteredPools
     },
     filteredBySearchQuery() {
       if (!this.searchQuery || this.searchQuery.trim().length === 0) return this.filteredByNetwork;
@@ -338,7 +338,7 @@ export default defineComponent({
           this.account,
           contractsData.poolTokenContract,
         );
-        
+
         this.reloadData();
         this.closeWaitingModal();
       } catch (e) {
