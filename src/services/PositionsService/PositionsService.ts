@@ -11,7 +11,6 @@ export const loadPositionContract = async (state: any, platformName: string) => 
   const abiV3Zap = srcStringBuilder('Contract')('v3', 'Zapin');
   const abiContractV3Zap = await loadAbi(abiV3Zap);
 
-  console.log(platformName, '___platformName');
   const abiZapAdd = ZAPIN_SCHEME[
     state.network.networkName?.toLowerCase() as keyof typeof ZAPIN_SCHEME
   ][
