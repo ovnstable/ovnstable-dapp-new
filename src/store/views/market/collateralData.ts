@@ -1,16 +1,18 @@
 import { TOKENS } from '@/store/views/market/mock.ts';
-import { OvernightApi } from '@/services/ApiService/OvernightApi.ts';
+import { collateralMockResponse } from './mocks.ts';
+// import { OvernightApi } from '@/services/ApiService/OvernightApi.ts';
 
 const state = {
   collateralData: {},
 };
 
 const actions = {
-  async fetchCollateralData({ commit }: any, { marketId, networkName }: any) {
+  async fetchCollateralData({ commit }: any, { marketId }: any) {
     try {
-      const overnightApiInstance = new OvernightApi();
+      // const overnightApiInstance = new OvernightApi();
       const { tokenName, collateralToken } = TOKENS[marketId];
-      const colleterals = await overnightApiInstance.loadCollaterlPlusToken(networkName, `${marketId}+`);
+      // Костыль вместо вызова устаревшего апи метода. TODO: remove
+      const colleterals = collateralMockResponse;
       const combinedData = {
         tokenName,
         collateralToken,

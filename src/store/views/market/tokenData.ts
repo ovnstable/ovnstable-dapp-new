@@ -41,7 +41,9 @@ const actions = {
       const overnightApiInstance = new OvernightApi();
       const staticData = TOKENS[marketId] || {};
       const strategies = await overnightApiInstance.loadStrategies();
-      const tvl = calculateTvl(strategies);
+      //  // Filtering inactive strategies (by their portfolio weight)
+      const tvl = calculateTvl(strategies
+        .filter((strategy: IStrategyResponseOld) => Number(strategy.weight) > 0));
       const payouts = await overnightApiInstance.loadPayouts(networkName);
       const { lastPayoutType, lastPayoutTime, dailyApy } = getLastPayout(payouts);
       const combinedData = {
