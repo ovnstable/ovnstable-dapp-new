@@ -395,7 +395,6 @@ export default defineComponent({
       this.isDefaultOrder = true;
       this.isOpenHiddenPools = false;
       this.searchQuery = searchQuery;
-      console.log('searchQuery', searchQuery);
       this.$store.commit('accountData/triggerPositionRefresh');
     },
     toggleOrderType() {
