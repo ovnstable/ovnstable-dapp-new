@@ -65,6 +65,9 @@ const mutations = {
   setPosthogInstance(state: any, posthogService: IPosthogService) {
     state.posthogInstance = posthogService;
   },
+  triggerPositionRefresh(state: any) {
+    state.posRefreshTrigger = !state.posRefreshTrigger;
+  },
 };
 
 export default {

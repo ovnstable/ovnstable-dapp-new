@@ -1,7 +1,7 @@
 <template>
   <div class="pools-wrap">
     <div
-      v-if="!isLoading && (!walletConnected
+      v-if="!isLoading && searchQuery === '' && (!walletConnected
         || !account
         || !isSupportedNetwork
         || !displayedPools
@@ -231,7 +231,7 @@ export default defineComponent({
     },
     displayedPools() {
       if (this.positionData.length > 0) return this.filteredPools;
-      return this.filteredPools
+      return this.filteredPools;
     },
     filteredBySearchQuery() {
       if (!this.searchQuery || this.searchQuery.trim().length === 0) return this.filteredByNetwork;
@@ -322,15 +322,19 @@ export default defineComponent({
         pool,
         this.mergedAllTokens,
         this.evmSigner,
-        gaugeAdd
+        gaugeAdd,
       );
 
-      console.log(pool, '___pool')
+      console.log(pool, '___pool');
 
       try {
         this.showWaitingModal('staking');
         this.isClaiming = true;
-        await this.approveNftGauge(contractsData.poolTokenContract, contractsData.gaugeContract, pool.tokenId)
+        await this.approveNftGauge(
+          contractsData.poolTokenContract,
+          contractsData.gaugeContract,
+          pool.tokenId,
+        );
         await ZapinService.stakeTrigger(
           pool.platform[0] as PLATFORMS,
           contractsData.gaugeContract,
@@ -344,7 +348,7 @@ export default defineComponent({
       } catch (e) {
         this.isClaiming = false;
         this.closeWaitingModal();
-        this.showErrorModalWithMsg({ errorType: "zap", errorMsg: parseErrorLog(e) });
+        this.showErrorModalWithMsg({ errorType: 'zap', errorMsg: parseErrorLog(e) });
       }
     },
     async handleClaim(pool: IPositionsInfo) {
@@ -391,6 +395,8 @@ export default defineComponent({
       this.isDefaultOrder = true;
       this.isOpenHiddenPools = false;
       this.searchQuery = searchQuery;
+      console.log('searchQuery', searchQuery);
+      this.$store.commit('accountData/triggerPositionRefresh');
     },
     toggleOrderType() {
       this.orderType = this.aprSortIterator.next();
