@@ -355,7 +355,7 @@ export default defineComponent({
     async handleClaim(pool: IPositionsInfo) {
       this.setIsZapModalShow(false);
       this.handleClickSearch(pool);
-      await awaitDelay(500);
+      await awaitDelay(1000);
       const gaugeAdd = this.searchGauge(pool);
 
       console.log(gaugeAdd, this.poolList, '___gaugeAdd')
