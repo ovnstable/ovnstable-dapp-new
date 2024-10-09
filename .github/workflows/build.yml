@@ -24,7 +24,7 @@ jobs:
       env:
         IMAGE_TAG: ${{ github.sha }}
       run: |
-        IMAGE_NAME=${DOCKER_REGISTRY}/frontend
+        IMAGE_NAME=${{ secrets.DOCKER_REGISTRY }}/frontend
         docker build -t $IMAGE_NAME:${IMAGE_TAG} .
         docker push $IMAGE_NAME:${IMAGE_TAG}
 
@@ -41,7 +41,7 @@ jobs:
       run: |
         cd gitops
         if [ -f deployment.yaml ]; then
-          sed -i "s|image: ${DOCKER_REGISTRY}/frontend:.*|image: ${DOCKER_REGISTRY}/frontend:${IMAGE_TAG}|" deployment.yaml
+          sed -i "s|image: ${{ secrets.DOCKER_REGISTRY }}/frontend:.*|image: ${{ secrets.DOCKER_REGISTRY }}/frontend:${IMAGE_TAG}|" deployment.yaml
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@overnight.finance"
           git add deployment.yaml
