@@ -311,7 +311,7 @@ export default defineComponent({
     async stakeTrigger(pool: IPositionsInfo) {
       this.setIsZapModalShow(false);
       this.handleClickSearch(pool);
-      await awaitDelay(500);
+      await awaitDelay(1000);
       const gaugeAdd = this.searchGauge(pool);
 
       if (!gaugeAdd) {
@@ -387,7 +387,7 @@ export default defineComponent({
       } catch (e) {
         this.isClaiming = false;
         this.closeWaitingModal();
-        this.showErrorModalWithMsg({ errorMsg: parseErrorLog(e) });
+        this.showErrorModalWithMsg({ errorType: "zap", errorMsg: parseErrorLog(e) });
       }
     },
     switchPoolsTab(type: POOL_TYPES) {
