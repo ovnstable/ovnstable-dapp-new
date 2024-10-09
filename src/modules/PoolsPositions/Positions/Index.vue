@@ -315,7 +315,7 @@ export default defineComponent({
       const gaugeAdd = this.searchGauge(pool);
 
       if (!gaugeAdd) {
-        this.showErrorModalWithMsg({ errorMsg: 'Gauge not found' });
+        this.showErrorModalWithMsg({ errorType: "zap", errorMsg: 'Gauge not found' });
         return;
       }
 
