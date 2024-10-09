@@ -850,7 +850,7 @@ export default {
       } catch (e: any) {
         this.isSwapLoading = false;
         this.closeWaitingModal();
-        this.showErrorModalWithMsg({ errorType: 'zap', errorMsg: parseErrorLog(e) });
+        this.showErrorModalWithMsg({ errorType: 'zap', errorMsg: e });
       }
     },
     initLogs(logsData: any) {

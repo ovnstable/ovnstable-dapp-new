@@ -210,6 +210,9 @@ export default {
   },
   computed: {
     isLoadingData() {
+      console.log(this.gaugeAddress, '___gaugeAddress');
+      console.log(this.zapPool, '__zapPool');
+
       return isEmpty(this.zapPool)
         || isEmpty(this.allTokensList)
         || isEmpty(this.balanceList)

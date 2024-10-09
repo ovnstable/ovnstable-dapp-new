@@ -727,7 +727,7 @@ class ZapinService {
         const decoded = zapContract.interface.parseError(e?.data);
 
         console.log(decoded, '___decoded2');
-        if (!decoded) throw new Error(e);
+        if (!decoded) throw new Error("Simulation error");
 
         gaugeData = {
           ...gaugeData,
@@ -739,23 +739,24 @@ class ZapinService {
     }
 
     try {
+      let tx = null;
+
       if (method === ZAPIN_FUNCTIONS.MERGE) {
-        const tx = await zapContract[method](txData, gaugeData, tokenId, tokensMerge, params);
-        return tx.wait();
+         tx = await zapContract[method](txData, gaugeData, params);
       }
       if (method === ZAPIN_FUNCTIONS.ZAPIN) {
-        const tx = await zapContract[method](txData, gaugeData, params);
-        return tx.wait();
+         tx = await zapContract[method](txData, gaugeData, params);
       }
 
       if ([ZAPIN_FUNCTIONS.REBALANCE, ZAPIN_FUNCTIONS.INCREASE].includes(method) && tokenId) {
-        const tx = await zapContract[method](txData, gaugeData, tokenId, params);
-        return tx.wait();
+         tx = await zapContract[method](txData, gaugeData, params);
       }
 
-      throw new Error('Such method do not exist');
+      if (tx) return tx.wait();
+      else throw new Error('Such method do not exist');
     } catch (e: any) {
-      throw new Error(e);
+      console.log(JSON.parse(JSON.stringify(e)), '___decoded3');
+      throw new Error(e?.reason ?? "Simulation start error");
     }
   }
 

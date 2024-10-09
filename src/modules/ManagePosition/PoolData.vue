@@ -267,7 +267,7 @@ export default {
       return loadTokenImage(getSymbolEmmToken(this.zapPool.platform[0])).href;
     },
     getRewardTotalUsd() {
-      const res: BN = this.inputTokens.reduce((acc: BN, curr: any) => {
+      const res: BN = this.rewardTokens.reduce((acc: BN, curr: any) => {
         const val = new BN(curr.value).times(curr.selectedToken?.price).toFixed(6);
 
         return acc.plus(val);

@@ -149,12 +149,12 @@ export default defineComponent({
     },
 
     getName() {
-      if (this.successData.modalType === MODAL_TYPE.HARVEST) return 'HARVEST';
-      if (this.successData.modalType === MODAL_TYPE.WITHDRAW) return 'WITHDRAW';
-      if (this.successData.modalType === MODAL_TYPE.COMPOUND) return 'COMPOUND';
-      if (this.successData.modalType === MODAL_TYPE.REBALANCE) return 'REBALANCE';
-      if (this.successData.modalType === MODAL_TYPE.INCREASE) return 'INCREASE';
-      if (this.successData.modalType === MODAL_TYPE.MERGE) return 'MERGE';
+      if (this.successData.modalType === MODAL_TYPE.HARVEST) return 'HARVESTED';
+      if (this.successData.modalType === MODAL_TYPE.WITHDRAW) return 'WITHDREW';
+      if (this.successData.modalType === MODAL_TYPE.COMPOUND) return 'COMPOUNDED';
+      if (this.successData.modalType === MODAL_TYPE.REBALANCE) return 'REBALANCED';
+      if (this.successData.modalType === MODAL_TYPE.INCREASE) return 'INCREASED';
+      if (this.successData.modalType === MODAL_TYPE.MERGE) return 'MERGED';
       return 'ZAPIN';
     },
   },

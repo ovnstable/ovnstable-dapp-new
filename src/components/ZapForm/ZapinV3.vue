@@ -499,7 +499,8 @@ export default {
     this.ticksAmount = tickSpace.toString();
     this.centerTick = centerTick.toString();
 
-    console.log(center.toString(), '___this.center');
+    console.log(centerTick.toString(), '___this.center');
+    console.log(this.tickSpace, '___this.tickSpace');
     console.log(this.tickLeft, '___this.tickLeft');
     console.log(this.tickRight, '___this.tickRight');
     const minPrice = new BN(await this.zapContract
@@ -507,6 +508,8 @@ export default {
     const maxPrice = new BN(await this.zapContract
       .tickToPrice(this.zapPool.address, this.tickRight));
 
+    console.log(+minPrice, '___this.tickLeft');
+    console.log(+maxPrice, '___this.tickRight');
     let buildData: any = [];
     this.isStablePool = checkIsEveryStable(this.zapPool);
 
@@ -975,6 +978,8 @@ export default {
           .div(10 ** this.getFirstDecimal).toFixed(this.lowPoolPrice ? 8 : 0);
         this.ticksAmount = val.toString();
 
+        console.log(this.tickLeft, '__this.tickLeft');
+        console.log(this.tickRight, '__this.tickRight');
         (this.$refs?.zapinChart as any)?.updateOptions(
           {
             chart: {
