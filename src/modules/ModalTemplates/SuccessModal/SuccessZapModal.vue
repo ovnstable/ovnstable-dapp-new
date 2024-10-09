@@ -11,7 +11,7 @@
         name="CommonSuccess"
       />
       <h1 v-if="successData">
-        YOU SUCCESSFULLY {{ getName }}
+        YOU SUCCESSFUL {{ getName }}
       </h1>
 
       <template v-if="successData">
