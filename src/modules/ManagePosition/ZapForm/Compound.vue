@@ -1020,6 +1020,8 @@ export default {
           this.poolTokenContract,
           () => {},
           this.account,
+          this.$store.state.web3.evmSigner,
+          this.networkId
         );
 
         this.isHasRewards = false;

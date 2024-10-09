@@ -264,6 +264,7 @@ export default {
   },
   mounted() {
     this.init();
+    console.log(this.zapPool, '__ZAP')
   },
   methods: {
     init() {

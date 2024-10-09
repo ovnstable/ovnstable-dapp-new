@@ -331,6 +331,8 @@ export default defineComponent({
           this.poolTokenContract,
           this.triggerSuccessZapin,
           this.account,
+          this.evmSigner,
+          this.networkId
         );
 
         this.closeWaitingModal();

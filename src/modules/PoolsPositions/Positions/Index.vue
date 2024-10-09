@@ -209,6 +209,7 @@ export default defineComponent({
     ...mapGetters('network', ['networkName']),
     ...mapGetters('walletAction', ['walletConnected']),
     ...mapGetters('web3', ['evmSigner']),
+    ...mapGetters('network', ['networkId']),
     mergedAllTokens() {
       return mergedTokens(this.allTokensList as any[], this.balanceList as any[]);
     },
@@ -353,8 +354,9 @@ export default defineComponent({
       await awaitDelay(500);
       const gaugeAdd = this.searchGauge(pool);
 
+      console.log(gaugeAdd, this.poolList, '___gaugeAdd')
       if (!gaugeAdd) {
-        this.showErrorModalWithMsg({ errorMsg: 'Gauge not found' });
+        this.showErrorModalWithMsg({ errorType: "zap", errorMsg: 'Gauge not found' });
         return;
       }
 
@@ -374,6 +376,8 @@ export default defineComponent({
           contractsData.poolTokenContract,
           this.triggerSuccessZapin,
           this.account,
+          this.evmSigner,
+          this.networkId
         );
         this.closeWaitingModal();
       } catch (e) {

@@ -12,6 +12,7 @@
     "lint": "eslint . --ext .vue,.js,.cjs,.mjs,.ts,.tsx,.cts,.mts --ignore-path .gitignore"
   },
   "dependencies": {
+    "@angleprotocol/sdk": "^3.0.129",
     "@auth0/auth0-vue": "^2.3.3",
     "@kyvg/vue3-notification": "^3.2.1",
     "@sentry/vue": "^8.33.0",

@@ -18,8 +18,13 @@ import {
   getSourceLiquidityBlackList,
   sumOfAllSelectedTokensInUsd,
 } from './utils/index.ts';
-import { ZAPIN_SCHEME } from './utils/scheme.ts';
 import { OvernightApi, type IOvernightApi } from '../ApiService/OvernightApi.ts';
+import {
+  Distributor__factory,
+  type MerklAPIData,
+  registry,
+} from "@angleprotocol/sdk";
+import axios from 'axios';
 
 export enum ZAPIN_TYPE {
   ZAPIN,
@@ -84,15 +89,59 @@ class ZapinService {
     this.overnightApi = new OvernightApi();
   }
 
+  async claimUniswap(chainId: number, signer: any) {
+    let data: any;
+    try {
+      console.log(signer, '__signer')
+      data = (
+        await axios.get(
+          `https://api.merkl.xyz/v3/userRewards?chainId=${chainId}&user=${signer.address?.toLowerCase()}&proof=true`,
+          {
+            timeout: 5000,
+          }
+        )
+      ).data;
+    } catch {
+      throw "Angle API not responding";
+    }
+
+    console.log(data, '___data')
+    const tokens = Object.keys(data).filter(
+      (k) => data[k].proof !== undefined || data[k].proof.length > 0
+    );
+    const claims = tokens.map((t) => data[t].accumulated);
+    const proofs = tokens.map((t) => data[t].proof);
+
+    if (tokens.length === 0) throw "No tokens to claim";
+
+    const contractAddress = registry(chainId)?.Merkl?.Distributor;
+    if (!contractAddress) throw "Chain not supported";
+    const contract = Distributor__factory.connect(contractAddress, signer);
+    await (
+      await contract.claim(
+        tokens.map((t) => signer._address),
+        tokens,
+        claims,
+        proofs as string[][]
+      )
+    ).wait();
+  }
+
   async claimPosition(
     zapPool: IPositionsInfo,
     gaugeContract: any,
     poolTokenContract: any,
     triggerSuccess: (successData: ITriggerSuccessZapin) => void,
     account: string,
+    evmSigner: any,
+    chainId: number,
     inputTokens?: any[],
   ) {
     let tx = null;
+
+    if (zapPool?.platform[0] === PLATFORMS.UNI) {
+      tx = await this.claimUniswap(chainId, evmSigner);
+    }
 
     if (zapPool?.platform[0] === PLATFORMS.PANCAKE && zapPool.isStaked) {
       tx = await gaugeContract.harvest(zapPool.tokenId, account);
