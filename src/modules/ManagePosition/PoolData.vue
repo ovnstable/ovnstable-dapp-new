@@ -137,37 +137,71 @@
         </h1>
 
         <div>
-          ${{ getRewardUsd }}
+          ${{ getRewardTotalUsd }}
         </div>
       </div>
       <span class="divider" />
       <div
+        v-for="token in rewardTokens"
+        :key="token.id"
         class="swap-block__item"
       >
         <div
+          v-if="token.selectedToken"
           class="swap-block__item-row"
         >
           <div class="swap-block__item-row--token-wrap">
             <img
-              :src="getImgToken"
+              :src="token.selectedToken.logoUrl"
               alt="select-token"
             >
             <span>
-              {{ getSymbolToken?.toUpperCase() }}
+              {{ token.selectedToken.symbol }}
             </span>
           </div>
         </div>
         <div
+          v-if="token.value"
           class="swap-block__item-bal"
         >
-          <div>
-            {{ getFixedVal(getRewardEmm) }}
+          <div v-if="token.value">
+            {{ token.displayedValue }}
           </div>
-          <div v-if="getRewardUsd">
-            ~ ${{ getFixedVal(getRewardUsd) }}
+          <div>
+            ~ ${{ token.usdValue }}
           </div>
         </div>
       </div>
+      <template v-if="getRewardUsd">
+        <span class="divider" />
+        <div
+          class="swap-block__item"
+        >
+          <div
+            class="swap-block__item-row"
+          >
+            <div class="swap-block__item-row--token-wrap">
+              <img
+                :src="getImgToken"
+                alt="select-token"
+              >
+              <span>
+                {{ getSymbolToken?.toUpperCase() }}
+              </span>
+            </div>
+          </div>
+          <div
+            class="swap-block__item-bal"
+          >
+            <div>
+              {{ getFixedVal(getRewardEmm) }}
+            </div>
+            <div v-if="getRewardUsd">
+              ~ ${{ getFixedVal(getRewardUsd) }}
+            </div>
+          </div>
+        </div>
+      </template>
     </div>
   </div>
 </template>
@@ -182,6 +216,7 @@ import { fixedByPrice } from '@/utils/numbers.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import ButtonComponent from '@/components/Button/Index.vue';
 import { getSymbolEmmToken } from '@/services/Web3Service/utils/index.ts';
+import { allTokensMap } from '@/hooks/fetch/useTokensQuery';
 
 export default {
   name: 'PositionForm',
@@ -208,6 +243,7 @@ export default {
   },
   data() {
     return {
+      rewardTokens: [] as any,
       inputTokens: [] as any,
       isLoaded: false,
       priceProportionTokens: [] as any,
@@ -229,6 +265,17 @@ export default {
     },
     getImgToken() {
       return loadTokenImage(getSymbolEmmToken(this.zapPool.platform[0])).href;
+    },
+    getRewardTotalUsd() {
+      const res: BN = this.inputTokens.reduce((acc: BN, curr: any) => {
+        const val = new BN(curr.value).times(curr.selectedToken?.price).toFixed(6);
+
+        return acc.plus(val);
+      }, new BN(0));
+
+      if (!this.getRewardUsd && res.eq(0)) return 0;
+
+      return this.getRewardUsd ? new BN(this.getRewardUsd).plus(res).toFixed(6) : res.toFixed(6);
     },
     getRewardUsd() {
       if (!this.getRewardTokenInfo) return 0;
@@ -257,13 +304,9 @@ export default {
       return res.toFixed(4);
     },
   },
-  watch: {
-    allTokensMap() {
-      this.init();
-    },
-  },
   mounted() {
     this.init();
+    this.initRewardTokens()
     console.log(this.zapPool, '__ZAP')
   },
   methods: {
@@ -303,6 +346,28 @@ export default {
 
       const inputTokenInfo = formatInputTokens(arrTokens);
       this.inputTokens = inputTokenInfo;
+    },
+    initRewardTokens() {
+      const rewardToken = this.zapPool.rewards.tokens.map((_: any) => {
+        const rewardData: any = Object.entries(_)[0];
+        const tokenInfo = allTokensMap(this.zapAllTokens).values().find((_: any) => {
+          const allTokSymbol = _?.symbol?.toLowerCase();
+          return allTokSymbol === rewardData[0]?.toLowerCase();
+        });
+
+        return {
+          displayedValue: new BN(rewardData[1] ?? 0).toFixed(8),
+          id: Date.now().toString(),
+          locked: true,
+          proportion: 0,
+          selectedToken: tokenInfo,
+          sum: new BN(rewardData[1] ?? 0).toFixed(6),
+          usdValue: new BN(rewardData[1] ?? 0).times(tokenInfo.price).toFixed(6),
+          value: new BN(rewardData[1] ?? 0).toFixed(6),
+        };
+      });
+
+      this.rewardTokens = rewardToken;
     },
     copyToClipBoard(textToCopy: string) {
       navigator.clipboard.writeText(textToCopy);
