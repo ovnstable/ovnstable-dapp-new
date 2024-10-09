@@ -143,18 +143,30 @@ class ZapinService {
       tx = await this.claimUniswap(chainId, evmSigner);
     }
 
+    console.log(gaugeContract, "COLLECT")
     if (zapPool?.platform[0] === PLATFORMS.PANCAKE && zapPool.isStaked) {
       tx = await gaugeContract.harvest(zapPool.tokenId, account);
+      tx = await gaugeContract.collect({
+        tokenId: zapPool.tokenId,
+        recipient: account,
+        amount0Max: new BN(10).pow(24).toFixed(),
+        amount1Max: new BN(10).pow(24).toFixed()
+      });
     }
 
     if (zapPool?.platform[0] === PLATFORMS.AERO && zapPool.isStaked) {
       tx = await gaugeContract.getReward(zapPool.tokenId);
     }
 
-    // if (zapPool?.platform[0] === PLATFORMS.AERO && !zapPool.isStaked) {
-    //   console.log(poolTokenContract, "COLLECT")
-    //   tx = await poolTokenContract.collect(zapPool.tokenId);
-    // }
+    if (zapPool?.platform[0] === PLATFORMS.AERO && !zapPool.isStaked) {
+      console.log(poolTokenContract, "COLLECT")
+      tx = await poolTokenContract.collect({
+        tokenId: zapPool.tokenId,
+        recipient: account,
+        amount0Max: new BN(10).pow(24).toFixed(),
+        amount1Max: new BN(10).pow(24).toFixed()
+      });
+    }
 
     if (!tx) throw new Error("Can't be claimed");
 

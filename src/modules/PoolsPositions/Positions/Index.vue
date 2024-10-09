@@ -374,6 +374,14 @@ export default defineComponent({
       try {
         this.showWaitingModal('unstaking');
         this.isClaiming = true;
+        // if (pool.isStaked && pool.platform[0] === "Pancake") {
+        //   await this.approveNftGauge(
+        //     contractsData.poolTokenContract,
+        //     contractsData.gaugeContract,
+        //     pool.tokenId,
+        //   );
+        // }
+
         await ZapinService.claimPosition(
           pool,
           contractsData.gaugeContract,
