@@ -153,10 +153,10 @@
           v-else
           class="pools-table__empty"
         >
-          <img
+          <!-- <img
             alt="sloth"
             :src="getImageUrl(`assets/icons/common/SlothUnavailable.png`)"
-          />
+          /> -->
           POSITIONS NOT FOUND
         </div>
       </div>

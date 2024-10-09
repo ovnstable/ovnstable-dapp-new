@@ -8,7 +8,7 @@ import PositionsService from '@/services/PositionsService/PositionsService.ts';
 import { useStore } from 'vuex';
 import { getQueryStates, isAllQueryDataAvailable, type TQuery } from '../utils/index.ts';
 
-export const usePositionsQuery = (refreshTrigger = false) => {
+export const usePositionsQuery = () => {
   const { state: stateData } = useStore();
 
   const networkId = computed(() => stateData.network.networkId);

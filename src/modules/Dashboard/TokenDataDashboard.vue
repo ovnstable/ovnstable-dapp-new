@@ -32,7 +32,7 @@
     <div class="dashboard__apy-data">
       <p class="dashboard__token-data-title">Balance</p>
       <div class="dashboard__apy-data-chain">
-        <p class="dashboard__token-data-num"> {{ getBalance() }}</p>
+        <p class="dashboard__token-data-num"> {{ getBalance }}</p>
         <p
           v-if="!device.isMobile"
           :class="['dashboard__token-data-growth-balance', { 'negative-growth': isGrowthNegative }]"
@@ -95,20 +95,19 @@ export default {
     getFormattedPeriod() {
       return getFormattedPeriodDashboard(this.getDashboardInterval, this.portfolioBalanceData);
     },
-  },
-  methods: {
     getBalance() {
       if (this.portfolioBalanceData.length === undefined) {
         return '$0,00';
       }
-      const payoutTransactions = this.portfolioBalanceData.filter((transaction: any) => transaction.type === 'PAYOUT');
+      const payoutTransactions = this.portfolioBalanceData.filter((transaction: any) => transaction.type === 'PAYOUT' || transaction.type === 'payout');
       if (payoutTransactions.length > 0) {
         const balance = payoutTransactions[0].closing_balance;
         return new Intl.NumberFormat('en-EN', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(balance);
       }
       return '$0,00';
     },
-
+  },
+  methods: {
     growthPercentage(): any {
       if (this.portfolioBalanceData.length === undefined) {
         return '0.0000%';
