@@ -25,6 +25,6 @@ export const useDispatchSwapEvents = () => {
     const eventType = successParams.type;
     if (eventType === 'MINT' || eventType === 'REDEEM') posthogService.mintredeemSuccessTrigger(posthogEventData);
     if (eventType === 'WRAP' || eventType === 'UNWRAP') posthogService.wrapUnwrapSuccessTrigger(posthogEventData);
-    if (eventType === 'SWAP') posthogService.swapSuccessTrigger(posthogEventData);
+    else posthogService.swapSuccessTrigger(posthogEventData);
   };
 };
