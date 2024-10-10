@@ -62,6 +62,7 @@ import RefundInfo from '@/modules/ModalTemplates/components/RefundInfo.vue';
 import ModalComponent from '@/components/Modal/Index.vue';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
+import { useDispatchSwapEvents } from '@/hooks/analytics/useDispatchSwapEvents.ts';
 
 export default {
   name: 'SuccessModal',
@@ -78,8 +79,14 @@ export default {
       default: true,
     },
   },
+  setup: () => ({
+    dispatchSwapEvent: useDispatchSwapEvents(),
+  }),
   computed: {
     ...mapGetters('successModal', ['swapData', 'zksyncFeeHistory']),
+  },
+  mounted() {
+    this.dispatchSwapEvent(this.swapData);
   },
 
   methods: {
