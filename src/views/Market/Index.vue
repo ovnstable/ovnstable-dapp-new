@@ -97,7 +97,7 @@ export default {
       const marketUrlNetwork = this.$route.query.chain;
       const marketNetwork = marketUrlNetwork || this.$store.state.network.marketNetwork;
 
-      if (marketId) this.fetchDataForMarketId(marketId, marketNetwork);
+      if (marketId && marketNetwork) this.fetchDataForMarketId(marketId, marketNetwork);
     },
     async fetchDataForMarketId(marketId: any, networkName: string) {
       this.loaded = false;

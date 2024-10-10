@@ -11,7 +11,8 @@ const actions = {
     try {
       const overnightApiInstance = new OvernightApi();
       const { tokenName, collateralToken } = TOKENS[marketId];
-      const strategies = await overnightApiInstance.loadStrategies();
+      const strategies = await overnightApiInstance.loadStrategies(networkName, `${marketId}+`);
+      console.log(networkName, '__networkName')
       const totalPlusToken = await overnightApiInstance.loadTotalPlusToken(networkName, `${marketId}+`);
       const combinedData = {
         totalPlusToken,
@@ -20,6 +21,8 @@ const actions = {
         strategies: strategies
           .filter((strategy: IStrategyResponseOld) => Number(strategy.weight) > 0),
       };
+
+      console.log(combinedData, '___combinedData')
       commit('setPortfolioData', { marketId, combinedData });
     } catch (error) {
       console.error('Failed to fetch token data:', error);
