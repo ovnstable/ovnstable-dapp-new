@@ -510,6 +510,7 @@ export default {
 
     console.log(+minPrice, '___this.tickLeft');
     console.log(+maxPrice, '___this.tickRight');
+    console.log(currPrice.toString(), '___currPrice')
     let buildData: any = [];
     this.isStablePool = checkIsEveryStable(this.zapPool);
 
@@ -520,9 +521,8 @@ export default {
 
     if (this.ticksInit?.length > 0) this.ticksAmount = '0';
 
-    console.log(center.toString(), '___center');
     // if center price lower than 2$, doing higher zoom
-    if (center.lt(2)) {
+    if (center.lt(10)) {
       if (center.lt(0.1)) {
         buildData = buildData.concat(Array
           .from({ length: 4 })
@@ -587,6 +587,8 @@ export default {
         },
       };
     } else {
+
+      console.log("_LOWFALSE")
       this.lowPoolPrice = false;
       // building data before and after center
       buildData = buildData.concat(Array
