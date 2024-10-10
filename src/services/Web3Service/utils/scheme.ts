@@ -22,7 +22,7 @@ export const ZAPIN_SCHEME = {
     },
     uniswap: {
       zapinDev: '0x767bf60d3D22B3bfad879ff4bF311Ef1594b4B0c',
-      zapinAdd: '0x767bf60d3D22B3bfad879ff4bF311Ef1594b4B0c',
+      zapinAdd: '0x68A213C21C9DBB6A38646B860ef10a9a95B85Da4',
       stake: DEPOSIT_TYPES.NONE,
     },
   },
@@ -39,7 +39,7 @@ export const ZAPIN_SCHEME = {
     },
     uniswap: {
       zapinDev: '0x8A368427Fc41D314174FdB8d2F8d444de8db362b',
-      zapinAdd: '0x8A368427Fc41D314174FdB8d2F8d444de8db362b',
+      zapinAdd: '0x767bf60d3D22B3bfad879ff4bF311Ef1594b4B0c',
       stake: DEPOSIT_TYPES.NONE,
     },
   },
