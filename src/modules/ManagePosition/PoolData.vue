@@ -261,7 +261,7 @@ export default {
       };
     },
     zapAllTokens() {
-      return mergedTokens(this.allTokensList as any[], this.balanceList as any[]);
+      return mergedTokens(this.balanceList as any[], this.allTokensList as any[]);
     },
     getImgToken() {
       return loadTokenImage(getSymbolEmmToken(this.zapPool.platform[0])).href;

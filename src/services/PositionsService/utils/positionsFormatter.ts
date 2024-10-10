@@ -49,6 +49,11 @@ export const isInRange = ({ tickLower, tickUpper, centerTick }: TTicks) => {
   );
 };
 
+export const isInRangeByTokens = (tokens: string[]) => {
+  if (tokens.some((_) => new BN(_).eq(0))) return false;
+  return true;
+};
+
 const getPercentage = (value: string, total: string) => new BN((value))
   .dividedBy(new BN(total)).multipliedBy(100).toFixed(0);
 
@@ -178,7 +183,7 @@ export const formatPositionData = (
           usdValue: positionUsdTotal,
           displayedUsdValue: getMinVal(positionUsdTotal),
           tokenProportions: getPositionProportion(token0UsdStr, token1UsdStr, positionUsdTotal),
-          isInRange: isInRange(ticks),
+          isInRange: isInRangeByTokens([amount0.toString(), amount1.toString()]),
         },
         rewards: {
           tokens: [
