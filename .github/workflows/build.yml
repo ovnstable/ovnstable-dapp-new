@@ -39,7 +39,7 @@ jobs:
       env:
         IMAGE_TAG: ${{ github.sha }}
       run: |
-        cd gitops
+        cd gitops/frontend
         if [ -f deployment.yaml ]; then
           sed -i "s|image: ${{ secrets.DOCKER_REGISTRY }}/frontend:.*|image: ${{ secrets.DOCKER_REGISTRY }}/frontend:${IMAGE_TAG}|" deployment.yaml
           git config user.name "github-actions[bot]"
