@@ -34,7 +34,7 @@ export const ZAPIN_SCHEME = {
     },
     pancake: {
       zapinDev: '0x7E7F8D5547B93F38bd3B893C09A80BD0233265Dc',
-      zapinAdd: '0x7E7F8D5547B93F38bd3B893C09A80BD0233265Dc',
+      zapinAdd: '0xB1b2F63ADD990d792d436143a07b8E0c06d8Fa09',
       stake: DEPOSIT_TYPES.TRANSFER,
     },
     uniswap: {
