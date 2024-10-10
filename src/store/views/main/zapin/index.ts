@@ -50,7 +50,7 @@ export const nftSrcMap: TSrcMap = {
 
 export const rebalanceChainMap: {[key: string]: string[]} = {
   base: [PLATFORMS.AERO, PLATFORMS.PANCAKE, PLATFORMS.UNI],
-  arbitrum: [PLATFORMS.PANCAKE],
+  arbitrum: [PLATFORMS.PANCAKE, PLATFORMS.UNI],
 };
 
 export const loadAbi = async (abiFileSrc: string): Promise<ContractAbi> => {
