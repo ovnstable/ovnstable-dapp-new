@@ -48,11 +48,6 @@ export const nftSrcMap: TSrcMap = {
   v3: srcStringBuilder('V3Nft'),
 };
 
-export const rebalanceChainMap: {[key: string]: string[]} = {
-  base: [PLATFORMS.AERO, PLATFORMS.PANCAKE, PLATFORMS.UNI],
-  arbitrum: [PLATFORMS.PANCAKE, PLATFORMS.UNI],
-};
-
 export const loadAbi = async (abiFileSrc: string): Promise<ContractAbi> => {
   try {
     const abiFile = await JSONLoader(abiFileSrc);

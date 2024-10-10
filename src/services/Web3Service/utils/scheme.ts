@@ -1,9 +1,16 @@
+import { PLATFORMS } from "@/types/common/pools";
+
 export enum DEPOSIT_TYPES {
   DEPOSIT = 'deposit',
   TRANSFER = 'transfer',
   ADD = 'add',
   NONE = ''
 }
+
+export const rebalanceChainMap: {[key: string]: string[]} = {
+  base: [PLATFORMS.AERO, PLATFORMS.PANCAKE, PLATFORMS.UNI],
+  arbitrum: [PLATFORMS.PANCAKE, PLATFORMS.UNI],
+};
 
 // for zapins dev/prod
 export const ZAPIN_SCHEME = {
@@ -31,8 +38,8 @@ export const ZAPIN_SCHEME = {
       stake: DEPOSIT_TYPES.TRANSFER,
     },
     uniswap: {
-      zapinDev: '0x68A213C21C9DBB6A38646B860ef10a9a95B85Da4',
-      zapinAdd: '0x68A213C21C9DBB6A38646B860ef10a9a95B85Da4',
+      zapinDev: '0x8A368427Fc41D314174FdB8d2F8d444de8db362b',
+      zapinAdd: '0x8A368427Fc41D314174FdB8d2F8d444de8db362b',
       stake: DEPOSIT_TYPES.NONE,
     },
   },

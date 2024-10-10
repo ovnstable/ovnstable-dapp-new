@@ -1,11 +1,11 @@
 import { formatPositionData } from '@/services/PositionsService/utils/positionsFormatter.ts';
 import { buildEvmContract } from '@/utils/contractsMap.ts';
 import {
-  loadAbi, rebalanceChainMap, srcStringBuilder,
+  loadAbi, srcStringBuilder,
 } from '@/store/views/main/zapin/index.ts';
 import type { TTokenInfo } from '@/types/common/tokens';
 import type { TPoolInfo } from '@/types/common/pools';
-import { ZAPIN_SCHEME } from '../Web3Service/utils/scheme.ts';
+import { rebalanceChainMap, ZAPIN_SCHEME } from '../Web3Service/utils/scheme.ts';
 
 export const loadPositionContract = async (state: any, platformName: string) => {
   const abiV3Zap = srcStringBuilder('Contract')('v3', 'Zapin');
@@ -34,8 +34,9 @@ class PositionsService {
       platformNames.map(async (platform: string) => {
         const positionsContract = await loadPositionContract(state, platform);
         try {
+          console.log(positionsContract, platform, '___positionsContract')
           const positionsData = await positionsContract.getPositions(state.accountData.account);
-          // console.log('__positionsData', positionsData, platform);
+          console.log('__positionsData', positionsData, platform);
           return positionsData;
         } catch (e) {
           console.log(e, positionsContract, '___e');
