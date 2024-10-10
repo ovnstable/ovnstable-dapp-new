@@ -11,7 +11,7 @@ const actions = {
   ) {
     try {
       const OvernightApiInstance = new OvernightApi();
-      const data = await OvernightApiInstance.loadStrategies();
+      const data = await OvernightApiInstance.loadStrategies('arbitrum', 'usd+');
       // Filtering inactive strategies (by their portfolio weight)
       const filteredStrategies = data
         .filter((strategy: IStrategyResponseOld) => Number(strategy.weight) > 0);
