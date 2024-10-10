@@ -25,6 +25,7 @@ const state = {
 
   // Actual value doesnt matter, just a reactivity trigger
   balanceRefreshTrigger: false as boolean,
+  posRefreshTrigger: false as boolean,
 };
 
 const getters = {
@@ -43,6 +44,9 @@ const actions = {
   handleRefreshBalances({ commit }: any) {
     commit('toggleBalanceRefresh');
   },
+  handleRefreshPositions({ commit }: any) {
+    commit('togglePosRefresh');
+  },
   initPosthog({ commit }: any, posthogService: IPosthogService) {
     commit('setPosthogInstance', posthogService);
   },
@@ -55,8 +59,14 @@ const mutations = {
   toggleBalanceRefresh(state: any) {
     state.balanceRefreshTrigger = !state.balanceRefreshTrigger;
   },
+  togglePosRefresh(state: any) {
+    state.posRefreshTrigger = !state.posRefreshTrigger;
+  },
   setPosthogInstance(state: any, posthogService: IPosthogService) {
     state.posthogInstance = posthogService;
+  },
+  triggerPositionRefresh(state: any) {
+    state.posRefreshTrigger = !state.posRefreshTrigger;
   },
 };
 

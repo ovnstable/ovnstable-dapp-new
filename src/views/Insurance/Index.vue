@@ -38,22 +38,22 @@ export default {
       immediate: true,
       handler: function handleNetworkNameChange(newVal, oldVal) {
         if (newVal !== oldVal) {
-          this.fetchDataForInsurance(this.$store.state.network.insuranceNetwork);
+          this.fetchDataForInsurance();
         }
       },
     },
   },
   async mounted() {
-    await this.fetchDataForInsurance(this.$store.state.network.insuranceNetwork.toLowerCase());
+    await this.fetchDataForInsurance();
   },
   methods: {
-    async fetchDataForInsurance(networkName: string) {
+    async fetchDataForInsurance() {
       this.loaded = false;
       try {
         await Promise.all([
-          this.$store.dispatch('insuranceTokenData/fetchInsuranceTokenData', { networkName }),
-          this.$store.dispatch('insurancePayouts/fetchInsurancePayouts', { networkName }),
-          this.$store.dispatch('insurancePremiums/fetchInsurancePremiums', { networkName }),
+          this.$store.dispatch('insuranceTokenData/fetchInsuranceTokenData'),
+          this.$store.dispatch('insurancePayouts/fetchInsurancePayouts'),
+          this.$store.dispatch('insurancePremiums/fetchInsurancePremiums'),
         ]);
         this.loaded = true;
         this.firstRender = false;

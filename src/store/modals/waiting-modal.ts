@@ -112,6 +112,7 @@ export enum MANAGE_FUNC {
 const stateData = {
   show: false,
   modalText: '',
+  skipStake: false,
   STAGES_MAP: ZAPIN_MAP as typeof ZAPIN_MAP
   | typeof REBALANCE_MAP
   | typeof WITHDRAW_MAP
@@ -133,7 +134,6 @@ const getters = {
 };
 
 const actions = {
-
   showWaitingModal({ commit }: any, text: string) {
     commit('setShow', true);
     commit('setModalText', text);
@@ -147,7 +147,9 @@ const actions = {
 };
 
 const mutations = {
-
+  setSkipStake(state: typeof stateData, val: boolean) {
+    state.skipStake = val;
+  },
   setShow(state: typeof stateData, show: any) {
     state.show = show;
   },

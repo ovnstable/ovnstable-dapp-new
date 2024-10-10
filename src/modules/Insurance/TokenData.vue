@@ -9,7 +9,9 @@
     />
     <div class="insurance__token-title">
       <div class="insurance__title-token-info">
-        <p class="insurance__token-data-title insurance__token-data-title--token">INSURANCE</p>
+        <p class="insurance__token-data-title insurance__token-data-title--token">
+          INSURANCE
+        </p>
         <div class="insurance__links-info">
           <a
             :href="`${networkScan}token/` + generateHref('token_insurance', networkName)"
@@ -37,11 +39,11 @@
           >
             <BaseIcon
               class="insurance__mint-button"
-              name='InsuranceMint'
+              name="InsuranceMint"
             />
             MINT / REDEEM
             <BaseIcon
-              name='InsuranceRedeem'
+              name="InsuranceRedeem"
               class="insurance__redeem-button"
             />
           </ButtonComponent>
@@ -51,7 +53,7 @@
           >
             <ButtonComponent class="insurance__title-button">
               <BaseIcon
-                name='InsuranceBridge'
+                name="InsuranceBridge"
               />
               BRIDGE
             </ButtonComponent>
@@ -63,7 +65,7 @@
             @keydown.enter="toggleModalOvnDasbhoard()"
           >
             <BaseIcon
-              name='InsuranceOVN'
+              name="InsuranceOVN"
             />
             OVN DASHBOARD
           </ButtonComponent>
@@ -75,13 +77,12 @@
           @keydown.enter="toggleInsuranceAbout()"
         >
           <BaseIcon
-            name='InsuranceAbout'
+            name="InsuranceAbout"
           />
           ABOUT INSURANCE
         </ButtonComponent>
       </div>
     </div>
-
   </div>
   <div
     v-else
@@ -100,7 +101,7 @@
         >
           <BaseIcon
             class="insurance__mint-button"
-            name='InsuranceMint'
+            name="InsuranceMint"
           />
         </ButtonComponent>
         <p>MINT</p>
@@ -112,7 +113,7 @@
         >
           <ButtonComponent class="insurance__title-button">
             <BaseIcon
-              name='InsuranceBridge'
+              name="InsuranceBridge"
             />
           </ButtonComponent>
         </router-link>
@@ -126,7 +127,7 @@
         >
           <BaseIcon
             class="insurance__mint-button"
-            name='InsuranceRedeem'
+            name="InsuranceRedeem"
           />
         </ButtonComponent>
         <p>REDEEM</p>
@@ -139,7 +140,7 @@
           @keydown.enter="toggleModalOvnDasbhoard()"
         >
           <BaseIcon
-            name='InsuranceOVN'
+            name="InsuranceOVN"
           />
         </ButtonComponent>
         <p>MY OVN</p>
@@ -153,12 +154,11 @@
           @keydown.enter="toggleInsuranceAbout()"
         >
           <BaseIcon
-            name='InsuranceAbout'
+            name="InsuranceAbout"
           />
         </ButtonComponent>
         <p>ABOUT INS</p>
       </div>
-
     </div>
     <div
       v-else-if="insuranceIsMobileAboutOvn && !insuranceIsMobileMintRedeem
@@ -170,7 +170,7 @@
         @keydown.enter="toggleInsuranceAbout()"
       >
         <BaseIcon
-          name='ArrowExitMobile'
+          name="ArrowExitMobile"
         />
       </ButtonComponent>
       <p>ABOUT INSURANCE</p>
@@ -186,7 +186,9 @@
         class="insurance__token-image"
       />
       <div class="insurance__title-token-info">
-        <p class="insurance__token-data-title insurance__token-data-title--token">INSURANCE</p>
+        <p class="insurance__token-data-title insurance__token-data-title--token">
+          INSURANCE
+        </p>
         <div class="insurance__links-info">
           <a
             :href="`${networkScan}token/` + generateHref('token_insurance', networkName)"
@@ -204,13 +206,11 @@
           >What is ovn</a>
         </div>
       </div>
-
     </div>
-
   </div>
   <div
-    class="insurance__about"
     v-if="showInsuranceInfo"
+    class="insurance__about"
   >
     <InsuranceAbout />
   </div>
@@ -221,43 +221,69 @@
   >
     <div class="insurance__divider insurance__divider--first-divider" />
     <div class="insurance__payout-data">
-      <p class="insurance__token-data-title">Risk factor</p>
+      <p class="insurance__token-data-title">
+        Risk factor
+      </p>
       <div class="insurance_risk-factor">
-        <p class="insurance_risk-factor-text">High</p>
+        <p class="insurance_risk-factor-text">
+          High
+        </p>
         <BaseIcon
-          name='InsuranceRiskFactor'
+          name="InsuranceRiskFactor"
         />
       </div>
     </div>
     <div class="insurance__divider" />
     <div class="insurance__payout-data">
-      <p class="insurance__token-data-title">Last payout</p>
-      <p class="insurance__token-data-num">{{ tokenData.lastPayoutTime }}</p>
-      <p class="insurance__token-data-h">{{ tokenData.lastPayoutType }}</p>
+      <p class="insurance__token-data-title">
+        Last payout
+      </p>
+      <p class="insurance__token-data-num">
+        {{ tokenData.lastPayoutTime }}
+      </p>
+      <p class="insurance__token-data-h">
+        {{ tokenData.lastPayoutType }}
+      </p>
     </div>
     <div class="insurance__divider" />
     <div class="insurance__payout-data">
-      <p class="insurance__token-data-title">Insurance vault</p>
-      <p class="insurance__token-data-num amount-of-ovn">{{ formatTVL(tokenData.data.supply.toFixed(2)) }} OVN</p>
+      <p class="insurance__token-data-title">
+        Insurance vault
+      </p>
+      <p class="insurance__token-data-num amount-of-ovn">
+        {{ formatTVL(new BigNumber(tokenData.data.supply).toFixed(2)) }} OVN
+      </p>
       <BaseIcon
-        name='InsuranceOVNVault'
+        name="InsuranceOVNVault"
       />
     </div>
     <div class="insurance__divider" />
     <div class="insurance__payout-data">
-      <p class="insurance__token-data-title">Value of vault</p>
-      <p class="insurance__token-data-num amount-of-ovn">${{ formatTVL(tokenData.data.supplyUSD.toFixed(2)) }}</p>
+      <p class="insurance__token-data-title">
+        Value of vault
+      </p>
+      <p class="insurance__token-data-num amount-of-ovn">
+        ${{ formatTVL(new BigNumber(tokenData.data.supplyUSD).toFixed(2)) }}
+      </p>
     </div>
     <div class="insurance__divider" />
     <div class="insurance__payout-data">
-      <p class="insurance__token-data-title">Insurance coverage</p>
-      <p class="insurance__token-data-num amount-of-ovn">{{ tokenData.data.coverage.toFixed(2) }}%</p>
+      <p class="insurance__token-data-title">
+        Insurance coverage
+      </p>
+      <p class="insurance__token-data-num amount-of-ovn">
+        {{ new BigNumber(tokenData.data.coverage).toFixed(2) }}%
+      </p>
     </div>
     <div class="insurance__divider" />
     <div class="performance__apy-data">
-      <p class="insurance__token-data-title">30-day APY</p>
+      <p class="insurance__token-data-title">
+        30-day APY
+      </p>
       <div class="insurance__apy-data-chain">
-        <p class="insurance__token-data-num insurance__token-data-num--apy-num">{{ tokenData.data.apyMonth.toFixed(2) }}%</p>
+        <p class="insurance__token-data-num insurance__token-data-num--apy-num">
+          {{ new BigNumber(tokenData.data.apyMonth).toFixed(2) }}%
+        </p>
         <div
           class="insurance__icon-chain"
         >
@@ -265,7 +291,6 @@
             :name="networkName.toLocaleLowerCase()"
           />
         </div>
-
       </div>
     </div>
 
@@ -274,8 +299,8 @@
       v-model="showModalMintRedeem"
     />
     <OvnDashboardModal
-      :price="tokenData.ovnPrice"
       v-model="showModalOvnDashboard"
+      :price="tokenData.ovnPrice"
     />
   </div>
 
@@ -286,8 +311,8 @@
   </div>
   <div v-if="insuranceIsMobileOvnDashboard">
     <OvnDashboardModal
-      :price="tokenData.ovnPrice"
       v-model="showModalOvnDashboard"
+      :price="tokenData.ovnPrice"
     />
   </div>
 </template>
@@ -300,6 +325,7 @@ import MintRedeemModal from '@/modules/Insurance/MintRedeemModal.vue';
 import OvnDashboardModal from '@/modules/Insurance/OvnDashboardModal.vue';
 import { chainContractsMap } from '@/utils/contractsMap.ts';
 import { deviceType } from '@/utils/deviceType.ts';
+import BigNumber from 'bignumber.js';
 
 export default {
   name: 'TokenDataInsurance',
@@ -310,18 +336,19 @@ export default {
     MintRedeemModal,
     OvnDashboardModal,
   },
-  data() {
-    return {
-      showInsuranceInfo: false,
-      showModalMintRedeem: false,
-      showModalOvnDashboard: false,
-    };
-  },
   props: {
     tokenData: {
       type: Object,
       default: () => ({}),
     },
+  },
+  data() {
+    return {
+      showInsuranceInfo: false,
+      showModalMintRedeem: false,
+      showModalOvnDashboard: false,
+      BigNumber,
+    };
   },
   computed: {
     device() {
@@ -344,12 +371,6 @@ export default {
     },
   },
   methods: {
-    closeOvnDashboardModal() {
-      this.showModalOvnDashboard = false;
-    },
-    openMintRedeemModal() {
-      this.showModalMintRedeem = true;
-    },
     toggleModalOvnDasbhoard() {
       if (this.device.isMobile) {
         this.showModalOvnDashboard = true;

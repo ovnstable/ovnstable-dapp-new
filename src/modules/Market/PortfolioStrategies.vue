@@ -379,11 +379,13 @@ export default {
       return `${Number(value).toFixed(6)} ${collateralToken}`;
     },
     totalNAV(assets: any[], collateralToken: string) {
+      if (!assets) return 0;
       const totalValue = assets.reduce((total, asset) => total + asset.netAssetValue, 0);
       return this.formatValue(totalValue, collateralToken);
     },
 
     totalLiquidationValue(assets: any[], collateralToken: string) {
+      if (!assets) return 0;
       const totalValue = assets.reduce((total, asset) => total + asset.liquidationValue, 0);
       return this.formatValue(totalValue, collateralToken);
     },

@@ -1,14 +1,17 @@
-/* eslint-disable no-param-reassign */
-import InsuranceApiService from "@/services/insurance-api-service.ts";
+import { OvernightApi } from '@/services/ApiService/OvernightApi.ts';
 
+/* eslint-disable no-param-reassign */
 const state = {
   insurancePayouts: {},
 };
 
 const actions = {
-  async fetchInsurancePayouts({ commit }: any, { networkName }: any) {
+  async fetchInsurancePayouts(
+    { commit }: any,
+  ) {
     try {
-      const insurancePayouts = await InsuranceApiService.loadPayouts(networkName);
+      const OvernightApiInstance = new OvernightApi();
+      const insurancePayouts = await OvernightApiInstance.loadInsurancePayouts();
       const startValue = 1;
       let accumulator = startValue;
       let accumulatorDay = startValue;
@@ -18,7 +21,7 @@ const actions = {
 
       insurancePayouts.reverse().forEach((payout: any) => {
         const { dailyProfit } = payout;
-        if (payout.hash === "0xc0ba6d1d74f5fa3952b0d6521f05073f8bc4060429b89e75ed1e3be9c96a75f2") {
+        if (payout.hash === '0xc0ba6d1d74f5fa3952b0d6521f05073f8bc4060429b89e75ed1e3be9c96a75f2') {
           payout.comp = (-100.00).toFixed(3);
           accumulator = 1;
           counter--;
@@ -50,9 +53,9 @@ const actions = {
         accumulatorWeek: accumulatorWeek.toFixed(2),
         accumulatorMonth: accumulatorMonth.toFixed(2),
       };
-      commit("setInsurancePayouts", payload);
+      commit('setInsurancePayouts', payload);
     } catch (error) {
-      console.error("Failed to fetch insurance payouts:", error);
+      console.error('Failed to fetch insurance payouts:', error);
     }
   },
 };

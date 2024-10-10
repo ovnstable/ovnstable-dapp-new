@@ -18,8 +18,13 @@ import {
   getSourceLiquidityBlackList,
   sumOfAllSelectedTokensInUsd,
 } from './utils/index.ts';
-import odosApiService from '../odos-api-service.ts';
-import { ZAPIN_SCHEME } from './utils/scheme.ts';
+import { OvernightApi, type IOvernightApi } from '../ApiService/OvernightApi.ts';
+import {
+  Distributor__factory,
+  type MerklAPIData,
+  registry,
+} from "@angleprotocol/sdk";
+import axios from 'axios';
 
 export enum ZAPIN_TYPE {
   ZAPIN,
@@ -78,18 +83,83 @@ export const ACTIVE_PROTOCOLS_V3 = {
 };
 
 class ZapinService {
+  private overnightApi: IOvernightApi;
+
+  constructor() {
+    this.overnightApi = new OvernightApi();
+  }
+
+  async claimUniswap(chainId: number, signer: any) {
+    let data: any;
+    try {
+      console.log(signer, '__signer')
+      data = (
+        await axios.get(
+          `https://api.merkl.xyz/v3/userRewards?chainId=${chainId}&user=${signer.address?.toLowerCase()}&proof=true`,
+          {
+            timeout: 5000,
+          }
+        )
+      ).data;
+    } catch {
+      throw "Angle API not responding";
+    }
+
+    console.log(data, '___data')
+    const tokens = Object.keys(data).filter(
+      (k) => data[k].proof !== undefined || data[k].proof.length > 0
+    );
+    const claims = tokens.map((t) => data[t].accumulated);
+    const proofs = tokens.map((t) => data[t].proof);
+
+    if (tokens.length === 0) throw "No tokens to claim";
+
+    const contractAddress = registry(chainId)?.Merkl?.Distributor;
+    if (!contractAddress) throw "Chain not supported";
+    const contract = Distributor__factory.connect(contractAddress, signer);
+    await (
+      await contract.claim(
+        tokens.map((t) => signer._address),
+        tokens,
+        claims,
+        proofs as string[][]
+      )
+    ).wait();
+  }
+
   async claimPosition(
     zapPool: IPositionsInfo,
     gaugeContract: any,
     poolTokenContract: any,
     triggerSuccess: (successData: ITriggerSuccessZapin) => void,
     account: string,
+    evmSigner: any,
+    chainId: number,
     inputTokens?: any[],
   ) {
     let tx = null;
 
+    if (zapPool?.platform[0] === PLATFORMS.UNI) {
+      tx = await this.claimUniswap(chainId, evmSigner);
+    }
+
     if (zapPool?.platform[0] === PLATFORMS.PANCAKE && zapPool.isStaked) {
       tx = await gaugeContract.harvest(zapPool.tokenId, account);
+      tx = await gaugeContract.collect({
+        tokenId: zapPool.tokenId,
+        recipient: account,
+        amount0Max: new BN(10).pow(24).toFixed(),
+        amount1Max: new BN(10).pow(24).toFixed()
+      });
+    }
+
+    if (zapPool?.platform[0] === PLATFORMS.PANCAKE && !zapPool.isStaked) {
+      tx = await gaugeContract.collect({
+        tokenId: zapPool.tokenId,
+        recipient: account,
+        amount0Max: new BN(10).pow(24).toFixed(),
+        amount1Max: new BN(10).pow(24).toFixed()
+      });
     }
 
     if (zapPool?.platform[0] === PLATFORMS.AERO && zapPool.isStaked) {
@@ -97,7 +167,13 @@ class ZapinService {
     }
 
     if (zapPool?.platform[0] === PLATFORMS.AERO && !zapPool.isStaked) {
-      tx = await poolTokenContract.collect(zapPool.tokenId);
+      console.log(poolTokenContract, "COLLECT")
+      tx = await poolTokenContract.collect({
+        tokenId: zapPool.tokenId,
+        recipient: account,
+        amount0Max: new BN(10).pow(24).toFixed(),
+        amount1Max: new BN(10).pow(24).toFixed()
+      });
     }
 
     if (!tx) throw new Error("Can't be claimed");
@@ -150,9 +226,14 @@ class ZapinService {
     zapContract: any,
     tokenIds = [] as string[],
   ) {
-    console.log(poolAddress, tickRange, inputSwapTokens, tokenIds, '___ARGS');
+    console.log({pair: poolAddress, tickRange, inputTokens: inputSwapTokens, tokenIds}, '___ARGS');
     return zapContract
-      .getProportionForZap(poolAddress, tickRange, inputSwapTokens, tokenIds)
+      .getProportionForZap({
+        pair: poolAddress,
+        tickRange,
+        inputTokens: inputSwapTokens,
+        tokenIds
+      })
       .then((data: any) => data)
       .catch((e: any) => {
         console.log(JSON.parse(JSON.stringify(e)), '___decoded1');
@@ -622,57 +703,60 @@ class ZapinService {
     tokensMerge?: string[],
   ) {
     const txData = { ...argTxData };
-    let gaugeData = { ...argGaugeData };
+    let gaugeData = { ...argGaugeData, tokenId: tokenId ?? 0, tokensOut: tokensMerge ?? [] };
 
-    try {
-      if (method === ZAPIN_FUNCTIONS.MERGE) {
-        await zapContract[method](txData, gaugeData, tokenId, tokensMerge);
-      }
-      if (method === ZAPIN_FUNCTIONS.ZAPIN) {
-        await zapContract[method](txData, gaugeData);
-      }
-      if ([ZAPIN_FUNCTIONS.REBALANCE, ZAPIN_FUNCTIONS.INCREASE].includes(method) && tokenId) {
-        console.log(zapContract, '__zap');
-        console.log({
-          txData,
-          gaugeData,
-          tokenId,
-        }, '__zap');
-        await zapContract[method](txData, gaugeData, tokenId);
-      }
-    } catch (e: any) {
-      console.log(JSON.parse(JSON.stringify(e)), '___decoded1');
-      const decoded = zapContract.interface.parseError(e?.data);
+    console.log(gaugeData, '___gaugeData')
+    if (gaugeData.isSimulation) {
+      try {
+        if (method === ZAPIN_FUNCTIONS.MERGE) {
+          await zapContract[method](txData, gaugeData);
+        }
+        if (method === ZAPIN_FUNCTIONS.ZAPIN) {
+          await zapContract[method](txData, gaugeData);
+        }
+        if ([ZAPIN_FUNCTIONS.REBALANCE, ZAPIN_FUNCTIONS.INCREASE].includes(method) && tokenId) {
+          console.log(zapContract, '__zap');
+          console.log({
+            txData,
+            gaugeData,
+          }, '__zap');
+          await zapContract[method](txData, gaugeData);
+        }
+      } catch (e: any) {
+        console.log(JSON.parse(JSON.stringify(e)), '___decoded1');
+        const decoded = zapContract.interface.parseError(e?.data);
 
-      console.log(decoded, '___decoded2');
-      if (!decoded) throw new Error(e);
+        console.log(decoded, '___decoded2');
+        if (!decoded) throw new Error("Simulation error");
 
-      gaugeData = {
-        ...gaugeData,
-        isSimulation: false,
-        adjustSwapAmount: decoded.args[4],
-        adjustSwapSide: decoded.args[5],
-      };
+        gaugeData = {
+          ...gaugeData,
+          isSimulation: false,
+          adjustSwapAmount: decoded.args[4],
+          adjustSwapSide: decoded.args[5],
+        };
+      }
     }
 
     try {
+      let tx = null;
+
       if (method === ZAPIN_FUNCTIONS.MERGE) {
-        const tx = await zapContract[method](txData, gaugeData, tokenId, tokensMerge, params);
-        return tx.wait();
+         tx = await zapContract[method](txData, gaugeData, params);
       }
       if (method === ZAPIN_FUNCTIONS.ZAPIN) {
-        const tx = await zapContract[method](txData, gaugeData, params);
-        return tx.wait();
+         tx = await zapContract[method](txData, gaugeData, params);
       }
 
       if ([ZAPIN_FUNCTIONS.REBALANCE, ZAPIN_FUNCTIONS.INCREASE].includes(method) && tokenId) {
-        const tx = await zapContract[method](txData, gaugeData, tokenId, params);
-        return tx.wait();
+         tx = await zapContract[method](txData, gaugeData, params);
       }
 
-      throw new Error('Such method do not exist');
+      if (tx) return tx.wait();
+      else throw new Error('Such method do not exist');
     } catch (e: any) {
-      throw new Error(e);
+      console.log(JSON.parse(JSON.stringify(e)), '___decoded3');
+      throw new Error(e?.reason ?? "Simulation start error");
     }
   }
 
@@ -782,8 +866,6 @@ class ZapinService {
       );
     }
 
-    console.log(resp, '___resp');
-
     if (!resp) {
       showErrorModalWithMsg({
         errorType: 'zap',
@@ -860,7 +942,7 @@ class ZapinService {
     }
 
     if (!simulateSwap) {
-      const actualGas = await odosApiService.getActualGasPrice(networkId) as any;
+      const actualGas = await this.overnightApi.getActualGasPrice(networkId) as any;
 
       requestData = {
         chainId: networkId,

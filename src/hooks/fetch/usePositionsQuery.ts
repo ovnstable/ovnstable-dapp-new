@@ -13,6 +13,7 @@ export const usePositionsQuery = () => {
 
   const networkId = computed(() => stateData.network.networkId);
   const address = computed(() => stateData.accountData.account);
+  const posRefreshTrigger = computed(() => stateData.accountData.posRefreshTrigger);
 
   const poolsQuery = usePoolsQuery();
   const tokensQuery = useTokensQueryNew() as TQuery;
@@ -20,7 +21,7 @@ export const usePositionsQuery = () => {
   const positionsQuery = useQuery(
     {
       // eslint-disable-next-line @tanstack/query/exhaustive-deps
-      queryKey: ['positions', networkId, address],
+      queryKey: ['positions', networkId, address, posRefreshTrigger],
       queryFn: async () => PositionsService.fetchPositions(stateData),
       enabled: !!networkId && !!address,
       staleTime: 0,
@@ -52,4 +53,9 @@ export const usePositionsQuery = () => {
     error: allErrors,
     isFetching: isAnyFetching,
   };
+};
+
+export const useRefreshPositions = () => {
+  const store = useStore();
+  return () => store.dispatch('accountData/handleRefreshPositions');
 };

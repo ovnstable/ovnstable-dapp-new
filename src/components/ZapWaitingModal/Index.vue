@@ -8,7 +8,7 @@
     />
     <div class="stages-container">
       <div
-        v-for="(stageName, index) in stageNames"
+        v-for="(stageName, index) in schemeList"
         :key="index"
         class="stage-row"
       >
@@ -83,13 +83,22 @@ export default defineComponent({
     ...mapState('zapinData', [
       'currentStage',
     ]),
+    ...mapState('waitingModal', [
+      'skipStake',
+    ]),
     ...mapState('poolsData', [
       'currentZapPool',
     ]),
+    schemeList() {
+        if (this.skipStake && Object.values(this.stageNames).length === 5) {
+          return Object.values(this.stageNames).slice(0, 3)
+        }
+
+        return Object.values(this.stageNames)
+    },
   },
   watch: {
     stageMap(val) {
-      console.log(val, '_VALL');
       this.stageNames = val;
     },
   },

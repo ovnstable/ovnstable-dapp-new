@@ -1,12 +1,8 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable no-param-reassign */
-/* eslint-disable no-continue */
-/* eslint-disable no-await-in-loop */
 import BigNumber from 'bignumber.js';
 import { loadTokenImage, loadOvernightTokenImage } from '@/utils/tokenLogo.ts';
-import odosApiService from '@/services/odos-api-service.ts';
-import SliderApiService from '@/services/slider-api-service.ts';
 import { DEPRECATED_NETWORKS } from '@/utils/const.ts';
+import { OvernightApi } from '@/services/ApiService/OvernightApi.ts';
 
 const SECONDTOKEN_SECOND_DEFAULT_SYMBOL = 'DAI+';
 const SECONDTOKEN_DEFAULT_SYMBOL = 'USD+';
@@ -358,7 +354,7 @@ export const getReferralCode = () => {
   return '';
 };
 
-export const loadPrices = async (chainId: number | string) => odosApiService
+export const loadPrices = async (chainId: number | string) => new OvernightApi()
   .loadPrices(chainId)
   .then((data: any) => data.tokenPrices)
   .catch((e: any) => {
@@ -369,7 +365,8 @@ export const sortedChainsByTVL = async (
   chains: any,
   showDeprecated: boolean,
 ) => {
-  const tvl = await SliderApiService.loadTVL();
+  const overnightApiInstance = new OvernightApi();
+  const tvl = await overnightApiInstance.loadTVL();
   const filterDeprecated = chains.filter((_: any) => {
     if (showDeprecated) return chains;
 

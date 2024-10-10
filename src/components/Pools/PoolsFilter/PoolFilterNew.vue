@@ -4,68 +4,83 @@
       Select options to search perfect pool for you!
     </div>
     <div class="filter-container">
-      <div class="token-input-wrap">
-        <ButtonComponent
-          class="token-select-input"
-          btn-styles="faded"
-          @click="() => toggleShowTokensModal(1)"
-          @keypress="() => toggleShowTokensModal(1)"
-        >
-          {{ selectedTokens[0]?.symbol ?? "Token 1" }}
-          <BaseIcon name="ArrowRight" />
-        </ButtonComponent>
-        <ButtonComponent
-          class="token-select-input"
-          btn-styles="faded"
-          @click="() => toggleShowTokensModal(2)"
-          @keypress="() => toggleShowTokensModal(2)"
-        >
-          {{ selectedTokens[1]?.symbol ?? "Token 2" }}
-          <BaseIcon name="ArrowRight" />
-        </ButtonComponent>
-      </div>
-      <div class="network-filter-wrap">
-        <div class="pools-wrap__filters-networks">
-          <div
-            :class="activeChain === 'all' ? 'pools-wrap__filters-item--selected' : ''"
-            @click="handleClickChain('all')"
-            @keypress="handleClickChain('all')"
+      <div class="filter-container__top">
+        <div class="token-input-wrap">
+          <InputComponent
+            :value="tokenSearch"
+            is-text
+            input-type="primary"
+            placeholder="Search pools by token"
+            full-width
+            @input="searchTokens"
           >
-            All
+            <template #prefix>
+              <BaseIcon
+                class="search-icon"
+                name="SearchBasic"
+              />
+            </template>
+          </InputComponent>
+        </div>
+        <div class="network-filter-wrap">
+          <div class="pools-wrap__filters-networks">
+            <div
+              :class="activeChain === 'ALL' ? 'pools-wrap__filters-item--selected' : ''"
+              @click="handleClickChain('ALL')"
+              @keypress="handleClickChain('ALL')"
+            >
+              All
+            </div>
+            <div
+              v-for="networkConfig in sortedChains"
+              :key="networkConfig.chainId"
+              :class="activeChain === networkConfig.chainId ? 'pools-wrap__filters-item--selected' : ''"
+              class="pools-wrap__filters-item"
+              @click="handleClickChain(networkConfig.chainId)"
+              @keypress="handleClickChain(networkConfig.chainId)"
+            >
+              <BaseIcon :name="networkConfig.name.toLowerCase()" />
+            </div>
           </div>
-          <div
-            v-for="networkConfig in sortedChains"
-            :key="networkConfig.chainId"
-            :class="activeChain === networkConfig.chainId ? 'pools-wrap__filters-item--selected' : ''"
-            class="pools-wrap__filters-item"
-            @click="handleClickChain(networkConfig.chainId)"
-            @keypress="handleClickChain(networkConfig.chainId)"
+        </div>
+        <div class="button-container">
+          <ButtonComponent
+            id="search-btn"
+            class="search-button"
+            btn-styles="faded"
+            @click="handleClickSearch"
+            @keypress="handleClickSearch"
           >
-            <BaseIcon :name="networkConfig.name.toLowerCase()" />
+            SEARCH POOLS
+          </ButtonComponent>
+          <ButtonComponent
+            class="search-button"
+            btn-styles="faded"
+            @click="handleClickResetFilter"
+            @keypress="handleClickResetFilter"
+          >
+            CLEAR FILTER
+          </ButtonComponent>
+        </div>
+      </div>
+      <div class="filter-container__bottom">
+        <h2>Platforms</h2>
+        <div class="filter-container__plat">
+          <div
+            v-for="item in platformsList"
+            class="filter-container__plat-item"
+            :class="{ active: activePlat === item }"
+            :key="item"
+            @click="filterByPlat(item)"
+          >
+            <BaseIcon v-if="item !== 'ALL'" :name="item" />
+            <span v-if="item === 'ALL'">{{ item }}</span>
           </div>
         </div>
       </div>
-      <div class="button-container">
-        <ButtonComponent
-          class="search-button"
-          btn-styles="faded"
-          @click="handleClickSearch"
-          @keypress="handleClickSearch"
-        >
-          SEARCH POOLS
-        </ButtonComponent>
-        <ButtonComponent
-          class="search-button"
-          btn-styles="faded"
-          @click="handleClickResetFilter"
-          @keypress="handleClickResetFilter"
-        >
-          CLEAR FILTER
-        </ButtonComponent>
-      </div>
     </div>
   </div>
-  <SelectTokensModal
+  <!-- <SelectTokensModal
     :is-show="isShowTokensModal"
     :select-token-input="true"
     :tokens="mergedTokenList"
@@ -80,14 +95,16 @@
     @set-show="toggleShowTokensModal"
     @add-token-to-list="toggleSelectToken"
     @remove-token-from-list="toggleSelectToken"
-  />
+  /> -->
 </template>
 
 <script lang="ts">
 import ButtonComponent from '@/components/Button/Index.vue';
 import { mapActions, mapGetters, mapState } from 'vuex';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
-import SelectTokensModal from '@/components/TokensModal/Index.vue';
+import InputComponent from '@/components/Input/Index.vue';
+
+// import SelectTokensModal from '@/components/TokensModal/Index.vue';
 import { computed } from 'vue';
 import { useTokensQuery, useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
@@ -121,7 +138,7 @@ export default {
   components: {
     ButtonComponent,
     BaseIcon,
-    SelectTokensModal,
+    InputComponent,
   },
   setup: () => {
     const {
@@ -145,8 +162,11 @@ export default {
   data() {
     return {
       selectedTokens: [initSelectedToken] as Partial<TTokenInfo>[],
+      tokenSearch: "USD+",
       sortedChains: networkList,
       isShowTokensModal: false as boolean,
+      activePlat: "ALL",
+      platformsList: ["ALL", "Aerodrome", "Pancake", 'Uniswap'],
       selectingTokenIndex: 1 as Number,
     };
   },
@@ -157,19 +177,30 @@ export default {
       return mergedTokens(this.balancesList as any[], this.allTokensList);
     },
   },
+  mounted() {
+    if (!window) return;
+    window.addEventListener("keydown",  (e) => { if (13 == e.keyCode) { this.handleClickSearch() } });
+  },
   methods: {
-    ...mapActions('poolsData', ['setFilterParams', 'setFilterChain']),
+    ...mapActions('poolsData', ['setFilterParams', 'setFilterChain', 'setFilterPlat']),
+    filterByPlat(val: string) {
+      this.activePlat = val
+      this.setFilterPlat(val);
+    },
     toggleShowTokensModal(tokenToSelect: number) {
       this.isShowTokensModal = !this.isShowTokensModal;
       this.selectingTokenIndex = tokenToSelect;
+    },
+    searchTokens(val: string) {
+      this.tokenSearch = val;
     },
     toggleSelectToken(newToken: TSelectTokenWithSearch) {
       const selectedToken = newToken.tokenData;
       this.selectedTokens[Number(this.selectingTokenIndex) - 1] = selectedToken;
       this.isShowTokensModal = false;
       const filterParams: Partial<TFilterPoolsParams> = {
-        token0: this.selectedTokens[0]?.symbol ?? '',
-        token1: this.selectedTokens[1]?.symbol ?? '',
+        token0: this.tokenSearch,
+        // token1: this.selectedTokens[1]?.symbol ?? '',
       };
       this.setFilterParams(filterParams);
     },
@@ -178,8 +209,8 @@ export default {
     },
     handleClickSearch() {
       const filterParams: Partial<TFilterPoolsParams> = {
-        token0: this.selectedTokens[0]?.symbol ?? '',
-        token1: this.selectedTokens[1]?.symbol ?? '',
+        token0: this.tokenSearch ?? '',
+        // token1: this.selectedTokens[1]?.symbol ?? '',
       };
       this.setFilterParams(filterParams);
     },
@@ -190,6 +221,7 @@ export default {
       };
       this.setFilterParams(filterParams);
       this.selectedTokens = [];
+      this.tokenSearch = "";
     },
   },
 };

@@ -23,6 +23,10 @@ const ALL_STABLE_TOKENS = [
 export const buildLink = (pool: any, poolPlatform: string) => {
   let url;
 
+  if (poolPlatform === 'Uniswap') {
+    return `https://app.uniswap.org/pool?chain=${pool.chainName}`
+  }
+
   if (poolPlatform === 'Trader Joe') {
     if (pool.address === '0xa8A502ACF4084B8D38362E9F620C689CB4D2EB89') {
       return 'https://traderjoexyz.com/arbitrum/pool/v22/0xe80772eaf6e2e18b651f160bc9158b2a5cafca65/ETH/10';

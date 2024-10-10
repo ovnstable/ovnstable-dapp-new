@@ -26,7 +26,7 @@
 .pools-table__new,
 .pools-table__blast {
   display: grid;
-  grid-template-columns: minmax(100px, 0.5fr) minmax(200px, 2.5fr) minmax(100px, 1fr) minmax(140px, 1fr) minmax(140px, 1.5fr) minmax(140px, 1fr);
+  grid-template-columns: minmax(100px, 0.5fr) minmax(200px, 2.5fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(140px, 1fr) minmax(140px, 1.5fr) minmax(140px, 1fr);
   justify-content: space-between;
   width: 100%;
   padding: 15px 0;
@@ -54,12 +54,12 @@
   }
 }
 .pools-table__blast {
-  grid-template-columns: minmax(100px, 0.5fr) minmax(200px, 2.5fr) minmax(100px, 1fr) minmax(140px, 1fr) minmax(140px, 1.5fr) minmax(140px, 1fr);
+  grid-template-columns: minmax(100px, 0.5fr) minmax(200px, 2.5fr) minmax(100px, 1fr)  minmax(100px, 1fr) minmax(140px, 1fr) minmax(140px, 1.5fr) minmax(140px, 1fr);
 }
 
 .pools-header {
   display: grid;
-  grid-template-columns: minmax(100px, 0.5fr) minmax(200px, 2.5fr) minmax(100px, 1fr) minmax(140px, 1fr) minmax(140px, 1.5fr) minmax(140px, 1fr);
+  grid-template-columns: minmax(100px, 0.5fr) minmax(200px, 2.5fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(140px, 1fr) minmax(140px, 1.5fr) minmax(140px, 1fr);
   width: 100%;
   color: var(--color-2);
   margin-top: 10px;
@@ -483,7 +483,7 @@
     font-size: 12px;
   }
   .pools-table__row {
-    grid-template-columns: 0.5fr 3fr 2fr 1fr 1.35fr 0.9fr;
+    grid-template-columns: 0.5fr 3fr 2fr 1fr 1fr 1.35fr 0.9fr;
     button {
       font-size: 14px;
     }
@@ -518,13 +518,39 @@
   }
 }
 
+.pools-table__staked {
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+  align-items: center;
+  gap: 4px;
+
+  .red {
+    background-color: #FF3E36;
+  }
+
+  .green {
+    background-color: var(--color-12);
+  }
+}
+
+.pools-table__staked-stat {
+  padding: 5px 7px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  min-width: 50px;
+  text-align: center;
+  color: var(--color-4);
+}
+
 
 // Position specific
 .positions-header {
-  grid-template-columns: minmax(100px, 0.5fr) minmax(150px, 1.5fr) minmax(100px, 3fr) minmax(140px, 1fr) minmax(140px, .75fr) minmax(140px, .75fr);
+  grid-template-columns: minmax(100px, 0.5fr) minmax(150px, 1.5fr) minmax(100px, 3fr) minmax(140px, 1fr) minmax(140px, 1fr) minmax(140px, .75fr) minmax(140px, .75fr);
 }
 .position-table_row {
-  grid-template-columns: minmax(100px, 0.5fr) minmax(150px, 1.5fr) minmax(100px, 3fr) minmax(140px, 1fr) minmax(140px, .75fr) minmax(140px, .75fr);
+  grid-template-columns: minmax(100px, 0.5fr) minmax(150px, 1.5fr) minmax(100px, 3fr) minmax(140px, 1fr) minmax(140px, 1fr) minmax(140px, .75fr) minmax(140px, .75fr);
 }
 .center {
   display: flex;

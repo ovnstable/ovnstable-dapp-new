@@ -15,7 +15,8 @@ export enum POOL_TYPES {
 const stateData = {
   allPools: [],
   isPoolsLoading: true,
-  activeChain: 'all',
+  activeChain: 'ALL',
+  activePlat: "ALL",
 
   topPool: null,
 
@@ -86,6 +87,12 @@ const actions = {
   setFilterChain({ commit }: any, params: number) {
     commit('changeState', {
       field: 'activeChain',
+      val: params,
+    });
+  },
+  setFilterPlat({ commit }: any, params: number) {
+    commit('changeState', {
+      field: 'activePlat',
       val: params,
     });
   },

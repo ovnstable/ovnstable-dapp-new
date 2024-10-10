@@ -7,6 +7,7 @@ import { loadAbi, REWARD_TOKEN, srcStringBuilder } from '@/store/views/main/zapi
 import { buildEvmContract } from '@/utils/contractsMap.ts';
 import { markRaw } from 'vue';
 import { ZAPIN_SCHEME } from './scheme.ts';
+import { isEmpty } from 'lodash';
 
 const EVENT_SIG = ['address[]', 'uint256[]'];
 const ZAP_RESULT_SIG = [
@@ -383,6 +384,7 @@ export const initZapData = (
   zapPoolAdd: string,
   proportions: any,
   v3Range: any,
+  selOutTokens: any[]
 ) => {
   const txData = {
     inputs: requestData.inputT,
@@ -399,6 +401,9 @@ export const initZapData = (
     pool: zapPoolAdd,
     tickRange: v3Range.ticks,
     amountsOut: [proportions.amountToken0Out, proportions.amountToken1Out],
+    isV3: true,
+    poolTokenPrices: selOutTokens
+      .map((_: any) => new BN(_?.selectedToken?.price).times(10 ** 18).toFixed()),
     isSimulation: true,
     adjustSwapSide: false,
     adjustSwapAmount: 0,
@@ -451,21 +456,21 @@ export const initZapinContracts = async (
   const platform = zapPool.platform[0]?.toLowerCase();
 
   const abiGauge = srcStringBuilder('V3GaugeRebalance')(zapPool.chainName, zapPool.platform[0]);
-  const abiGaugeContractFileV3 = await loadAbi(abiGauge);
+  const abiGaugeContractFileV3 = abiGauge ? await loadAbi(abiGauge) : null;
 
   const abiV3Zap = srcStringBuilder('Contract')('v3', 'Zapin');
-  const abiContractV3Zap = await loadAbi(abiV3Zap);
+  const abiContractV3Zap = await loadAbi(abiV3Zap).catch(() => null);
   const abiZapAdd = ZAPIN_SCHEME[zapPool.chainName as keyof typeof ZAPIN_SCHEME][
     platform as keyof typeof ZAPIN_SCHEME.arbitrum
   ]?.zapinAdd;
 
-  if (!abiZapAdd) throw new Error('abiZapAdd not found');
+  if (!abiZapAdd || !abiContractV3Zap) throw new Error('abiZapAdd not found');
 
   // possible todo, make separate folder for it, if its same every time
   const abiV3Nft = srcStringBuilder('V3Nft')(zapPool.chainName, zapPool.platform[0]);
-  const abiContractV3Nft = await loadAbi(abiV3Nft);
+  const abiContractV3Nft = await loadAbi(abiV3Nft).catch(() => null);
 
-  const gaugeContract = gaugeAddress ? buildEvmContract(
+  const gaugeContract = gaugeAddress && !isEmpty(abiGaugeContractFileV3) ? buildEvmContract(
     abiGaugeContractFileV3.abi,
     evmSigner,
     gaugeAddress,
@@ -478,13 +483,11 @@ export const initZapinContracts = async (
     abiZapAdd,
   ));
 
-  console.log(zapContract, '__zapContract');
-
-  const poolTokenContract = buildEvmContract(
+  const poolTokenContract = abiContractV3Nft ? buildEvmContract(
     abiContractV3Nft.abi,
     evmSigner,
     abiContractV3Nft.address,
-  );
+  ) : null;
 
   const poolTokens = [tokenA, tokenB];
 
@@ -508,3 +511,20 @@ export const getSymbolEmmToken = (platform: string) => {
   if (platform === 'Aerodrome') return REWARD_TOKEN.AERO;
   return '';
 };
+
+export const isStakeSkip =(gaugeContract: any, zapPool: any) => {
+  if (gaugeContract?.target === '0x0000000000000000000000000000000000000000') {
+    return true
+  }
+
+  if (zapPool.platform[0] === 'Uniswap') return true
+
+  return false
+}
+
+export const checkIsStaked = (zapPool: any) => {
+  if (!zapPool.isStaked) return false
+  if (zapPool.isStaked && zapPool.platform[0] === 'Uniswap') return false
+
+  return true
+}

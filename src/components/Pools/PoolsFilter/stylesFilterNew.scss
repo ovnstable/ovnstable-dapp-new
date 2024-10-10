@@ -5,30 +5,25 @@
     flex-direction: column;
 }
 .filter-container {
-width: 100%;
-background-color: var(--color-8);
-color: var(--color-1);
-font-weight: 500;
-font-size: 14px;
-border-radius: 30px;
-backdrop-filter: blur(20px);
-height: 100px;
-border: 1px var(--color-1) solid;
-box-shadow: 0px 1px 0px 0px #0F172A;
-padding: 20px 30px 20px 30px;
-display: flex;
-flex-direction: row;
-justify-content: center;
-align-items: center;
+  width: 100%;
+  background-color: var(--color-8);
+  color: var(--color-1);
+  font-weight: 500;
+  font-size: 14px;
+  border-radius: 30px;
+  backdrop-filter: blur(20px);
+  border: 1px var(--color-1) solid;
+  box-shadow: 0px 1px 0px 0px #0F172A;
+  padding: 20px 30px 20px 30px;
 
-[data-theme="dark"] & {
-  background: var(--color-19);
-}
+  [data-theme="dark"] & {
+    background: var(--color-19);
+  }
 
-.search-button {
-    border-radius: 20px;
-    max-height: 40px;
-}
+  .search-button {
+      border-radius: 20px;
+      max-height: 40px;
+  }
 }
 .network-filter-wrap {
     width: 100%;
@@ -91,6 +86,12 @@ align-items: center;
     justify-content: center;
     align-items: center;
     gap: 20px;
+    min-width: 250px;
+
+    svg {
+      min-width: 20px;
+      margin-left: 10px;
+    }
 }
 
 .token-select-input {
@@ -116,4 +117,59 @@ color: var(--color-2);
   display: flex;
   flex-direction: row;
   gap: 15px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+}
+
+.filter-container__top {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.filter-container__bottom {
+  padding-top: 20px;
+  border-top: 1px solid #EEEFF2;
+
+  h2 {
+    margin-bottom: 10px;
+  }
+
+  svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.filter-container__plat {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.filter-container__plat-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: .5;
+  padding: 4px;
+  min-width: 36px;
+  min-height: 36px;
+  cursor: pointer;
+  border-radius: 50%;
+  border: 1px solid var(--color-3);
+  transition: opacity .15s ease;
+
+  &:hover {
+    opacity: 1;
+  }
+
+  &.active {
+    opacity: 1;
+  }
 }

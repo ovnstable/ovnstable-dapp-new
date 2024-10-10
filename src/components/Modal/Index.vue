@@ -110,9 +110,6 @@ export default {
       };
     },
   },
-  mounted() {
-    window.addEventListener('keyup', this.onKeyUp);
-  },
   beforeUnmount() {
     window.removeEventListener('keyup', this.onKeyUp);
   },

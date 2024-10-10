@@ -67,8 +67,8 @@
       </div>
     </div>
     <div class="swap-block__part">
-      <SwapRouting
-      v-if="zapPool"
+          <SwapRouting
+            v-if="zapPool"
             :swap-data="[]"
             :merged-list="[]"
             :input-tokens="[]"
@@ -89,6 +89,16 @@
           @keypress="connectWallet"
         >
           CONNECT WALLET
+        </ButtonComponent>
+        <ButtonComponent
+          v-else-if="disabledPos"
+          class="swap-button-container"
+          btn-size="large"
+          btn-styles="primary"
+          full
+          :disabled="disabledPos"
+        >
+          STAKE POSITION REQUIRED
         </ButtonComponent>
         <div
           v-else
@@ -202,7 +212,10 @@ export default defineComponent({
     ]),
     ...mapGetters('network', ['networkId']),
     ...mapGetters('accountData', ['account']),
-
+    
+    disabledPos() {
+      return this.zapPool.isStaked !== true
+    },
     getSymbolToken() {
       if (this.zapPool.platform[0] === 'Pancake') return REWARD_TOKEN.CAKE;
       if (this.zapPool.platform[0] === 'Aerodrome') return REWARD_TOKEN.AERO;
@@ -318,6 +331,8 @@ export default defineComponent({
           this.poolTokenContract,
           this.triggerSuccessZapin,
           this.account,
+          this.evmSigner,
+          this.networkId
         );
 
         this.closeWaitingModal();

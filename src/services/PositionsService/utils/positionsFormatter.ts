@@ -104,7 +104,6 @@ export const formatPositionData = (
     const pool = poolsMap[poolId]
     ?? poolsMap[poolId.toUpperCase()] ?? poolsMap[poolId.toLowerCase()];
 
-    if (isStaked) {
       // Tokens
       const token0Info = getTokenInfo(token0, tokenMap);
       const token1Info = getTokenInfo(token1, tokenMap);
@@ -130,11 +129,13 @@ export const formatPositionData = (
         platform?.toLowerCase() as keyof typeof REWARDS_LIST.arbitrum
       ];
 
+      if (platformName === 'UniswapV3') {
+        platformName = 'Uniswap';
+      }
+
       if (platformName === 'PCS') {
         platformName = 'Pancake';
       }
-
-      console.log(rewardAdd, '__rewardAdd');
 
       if (rewardAdd) {
         const aeroTokenInfo = getTokenInfo(rewardAdd, tokenMap);
@@ -201,11 +202,7 @@ export const formatPositionData = (
         isStaked,
       };
 
-      // console.log(positionFullInfo, '__positionFullInfo');
-
       return positionFullInfo;
-    }
-    return [];
   });
 
   // console.log(positionInfo, '__positionInfo');

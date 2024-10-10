@@ -236,7 +236,7 @@
 import {
   mapActions, mapGetters, mapState,
 } from 'vuex';
-import { computed, defineComponent } from 'vue';
+import { computed, defineComponent, inject } from 'vue';
 import { useEventBus } from '@vueuse/core';
 import { ethers } from 'ethers';
 import TokenForm from '@/components/TokenForm/Index.vue';
@@ -250,7 +250,6 @@ import SwapSlippageSettings from '@/components/SwapSlippage/Index.vue';
 import { deviceType } from '@/utils/deviceType.ts';
 import { getRandomString } from '@/utils/strings.ts';
 import { clearApproveToken, getAllowanceValue, approveToken } from '@/utils/contractApprove.ts';
-import odosApiService from '@/services/odos-api-service.ts';
 import { onLeaveList, onEnterList, beforeEnterList } from '@/utils/animations.ts';
 import {
   getNewInputToken,
@@ -267,6 +266,7 @@ import { useRefreshBalances } from '@/hooks/fetch/useRefreshBalances.ts';
 import { parseErrorLog } from '@/utils/errors.ts';
 import { getOdosOutputTokens, getUpdatedTokenVal } from '@/services/Web3Service/utils/index.ts';
 import { debounce } from 'lodash';
+import type { IOvernightApi } from '@/services/ApiService/OvernightApi';
 
 export default defineComponent({
   name: 'SwapForm',
@@ -297,12 +297,15 @@ export default defineComponent({
       data: allTokensList,
     } = useTokensQueryNew();
 
+    const overnightApiInstance = inject('overnightApi') as IOvernightApi;
+
     return {
       allTokensList,
       balanceList,
       isAllDataLoaded: computed(() => !isLoading.value),
       isBalancesLoading,
       refetchAll: useRefreshBalances(),
+      overnightApiInstance,
     };
   },
   data() {
@@ -787,24 +790,24 @@ export default defineComponent({
       }
     },
     odosAssembleRequest(requestData: any) {
-      return odosApiService
+      return this.overnightApiInstance
         .assembleRequest(requestData)
-        .then((data) => data)
-        .catch((e) => {
+        .then((data: any) => data)
+        .catch((e: any) => {
           console.log('Assemble request error: ', e);
         });
     },
     async odosSwapRequest(requestData: any) {
-      return odosApiService
+      return this.overnightApiInstance
         .quoteRequest(requestData)
-        .then((data) => {
+        .then((data: any) => {
           this.$store.commit('odosData/changeState', {
             field: 'swapResponseInfo',
             val: data,
           });
           return data;
         })
-        .catch((e) => {
+        .catch((e: any) => {
           this.closeWaitingModal();
           if (e && e.message && e.message.includes('path')) {
             this.showErrorModalWithMsg({ errorType: 'odos-path', errorMsg: e });
@@ -815,16 +818,16 @@ export default defineComponent({
         });
     },
     quoteRequest(requestData: any) {
-      return odosApiService
+      return this.overnightApiInstance
         .quoteRequest(requestData)
-        .then((data) => {
+        .then((data: any) => {
           this.$store.commit('odosData/changeState', {
             field: 'quotaResponseInfo',
             val: data,
           });
           return data;
         })
-        .catch((e) => {
+        .catch((e: any) => {
           console.log('Quota request error: ', e);
         });
     },
@@ -910,7 +913,7 @@ export default defineComponent({
 
               this.isSwapLoading = false;
             })
-            .catch((e) => {
+            .catch((e: any) => {
               console.log({
                 message: 'Odos assemble request failed swap form',
                 swapSession: this.swapSessionId,
@@ -994,7 +997,7 @@ export default defineComponent({
           });
           this.$emit('update-is-loading-data', false);
         })
-        .catch((e) => {
+        .catch((e: any) => {
           console.error('Odos simulate swap request failed', e);
           this.isSumulateSwapLoading = false;
           this.isSumulateIntervalStarted = false;

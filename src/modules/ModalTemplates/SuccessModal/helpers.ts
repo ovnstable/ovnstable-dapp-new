@@ -39,6 +39,7 @@ export type TFormatTokenInfo = {
 };
 
 const platformLinkMap: TPlatformLinkMap = {
+  Uniswap: (address: string) => 'https://app.uniswap.org/pool',
   Lynex: (address: string) => `https://app.lynex.fi/liquidity/manage/${address}`,
   Chronos: (address: string) => `https://app.chronos.exchange/liquidity/${address}`,
   Thena: (address: string) => `https://www.thena.fi/liquidity/manage/${address}`,

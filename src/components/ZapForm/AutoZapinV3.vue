@@ -206,8 +206,8 @@
             btn-styles="primary"
             full
             :loading="isSwapLoading"
-            @click="toApproveAndDepositSteps(lastZapResponseData)"
-            @keypress="toApproveAndDepositSteps(lastZapResponseData)"
+            @click="toApproveAndDepositSteps"
+            @keypress="toApproveAndDepositSteps"
           >
             APPROVE GAUGE
           </ButtonComponent>
@@ -256,7 +256,7 @@
 <!-- eslint-disable no-continue -->
 <script lang="ts">
 import {
-  computed, defineComponent, markRaw,
+  computed, defineComponent, inject, markRaw,
 } from 'vue';
 import { ethers } from 'ethers';
 import {
@@ -268,7 +268,7 @@ import {
   getNewOutputToken,
   getNewInputToken,
 } from '@/store/helpers/index.ts';
-import odosApiService from '@/services/odos-api-service.ts';
+import { type IOvernightApi } from '@/services/ApiService/OvernightApi.ts';
 
 import SwapRouting from '@/components/SwapRouting/Index.vue';
 import Spinner from '@/components/Spinner/Index.vue';
@@ -298,6 +298,7 @@ import {
   initReqData,
   initZapData,
   initZapinContracts,
+  isStakeSkip,
   parseLogs,
   removeToken,
 } from '@/services/Web3Service/utils/index.ts';
@@ -346,9 +347,12 @@ export default defineComponent({
       isLoading: isAnyLoading,
     } = useTokensQuery();
 
+    const overnightApiInstance = inject('overnightApi') as IOvernightApi;
+
     return {
       isAnyLoading: computed(() => isAnyLoading.value),
       refreshBalances: useRefreshBalances(),
+      overnightApiInstance,
     };
   },
   data: () => ({
@@ -549,7 +553,7 @@ export default defineComponent({
     ...mapActions('waitingModal', ['showWaitingModal', 'closeWaitingModal']),
     ...mapActions('poolsData', ['setIsZapModalShow']),
     ...mapActions('walletAction', ['connectWallet']),
-    ...mapMutations('waitingModal', ['setStagesMap']),
+    ...mapMutations('waitingModal', ['setStagesMap', 'setSkipStake']),
     onLeaveList,
     beforeEnterList,
     onEnterList,
@@ -603,7 +607,8 @@ export default defineComponent({
       this.poolTokenContract = contractsData.poolTokenContract;
       this.poolTokens = contractsData.poolTokens;
 
-      console.log(this.zapContract);
+      // some protocols do not support staking
+      this.setSkipStake(isStakeSkip(this.gaugeContract, this.zapPool));
     },
 
     firstInit() {
@@ -627,10 +632,10 @@ export default defineComponent({
       removeToken(this.inputTokens, id);
     },
     async odosSwapRequest(requestData: any) {
-      return odosApiService
+      return this.overnightApiInstance
         .quoteRequest(requestData)
-        .then((data) => data)
-        .catch((e) => {
+        .then((data: any) => data)
+        .catch((e: any) => {
           this.closeWaitingModal();
           if (e && e.message && e.message.includes('path')) {
             this.showErrorModalWithMsg({ errorType: 'odos-path', errorMsg: e });
@@ -699,9 +704,9 @@ export default defineComponent({
           simulate: true,
         };
 
-        odosApiService
+        this.overnightApiInstance
           .assembleRequest(assembleData)
-          .then(async (responseAssembleData) => {
+          .then(async (responseAssembleData: any) => {
             await this.initZapInTransaction(
               responseAssembleData,
               data.inputTokens,
@@ -723,7 +728,7 @@ export default defineComponent({
         val: value,
       });
     },
-    async toApproveAndDepositSteps(data: any) {
+    initLogs(data: any) {
       parseLogs(data.logs, this.commitEventToStore);
 
       console.log(data.logs, '___LOGS');
@@ -737,6 +742,8 @@ export default defineComponent({
         }
       }
 
+    },
+    async toApproveAndDepositSteps() {
       this.currentStage = zapInStep.APPROVE_GAUGE;
       this.isSwapLoading = true;
 
@@ -847,6 +854,7 @@ export default defineComponent({
         this.zapPool.address,
         proportions,
         this.v3Range,
+        this.selectedOutputTokens
       );
 
       this.showWaitingModal('Staking in process');
@@ -879,7 +887,9 @@ export default defineComponent({
           val: markRaw(receipt),
         });
 
-        if (this.gaugeContract.target === '0x0000000000000000000000000000000000000000') {
+        this.initLogs(markRaw(receipt));
+
+        if (isStakeSkip(this.gaugeContract, this.zapPool)) {
           this.triggerSuccessZapin(
             {
               isShow: true,
@@ -891,11 +901,17 @@ export default defineComponent({
             },
           );
 
+          this.clearAndInitForm();
+          this.$store.commit('odosData/changeState', {
+            field: 'additionalSwapStepType',
+            val: null,
+          });
+          this.currentStage = zapInStep.STAKE_LP;
           this.closeWaitingModal();
           return;
         }
 
-        this.toApproveAndDepositSteps(this.lastZapResponseData);
+        this.toApproveAndDepositSteps();
       } catch (e: any) {
         this.closeWaitingModal();
         this.showErrorModalWithMsg({
@@ -937,7 +953,7 @@ export default defineComponent({
         this.odosData = data.odosData;
         this.odosDataLoading = false;
       } catch (e) {
-        this.showErrorModalWithMsg({ errorMsg: parseErrorLog(e) });
+        this.showErrorModalWithMsg({ errorType: 'zap', errorMsg: parseErrorLog(e) });
         this.odosDataLoading = false;
       }
     },
@@ -963,6 +979,7 @@ export default defineComponent({
       );
 
       selectedToken.approveData.allowanceValue = allowanceValue;
+
       if (!selectedToken.approveData.allowanceValue) {
         selectedToken.approveData.approved = false;
         return;
@@ -972,9 +989,14 @@ export default defineComponent({
         selectedToken.approveData.approved = true;
         return;
       }
+
+      console.log(allowanceValue, "CHECKALLOW")
       selectedToken.approveData.approved = new BN(selectedToken.approveData.allowanceValue)
         .isGreaterThanOrEqualTo(checkedAllowanceValue);
-      this.currentStage = zapInStep.DEPOSIT;
+
+      if (selectedToken.approveData.approved) {
+        this.currentStage = zapInStep.DEPOSIT;
+      }
     },
 
     async approveTrigger(token: any) {
