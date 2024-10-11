@@ -7,12 +7,12 @@ import {
 } from './mocks.ts';
 
 // const OVN_STABLE_TOKENS = ['USD+', 'DAI+', 'WUSD+', 'USDC+', 'USDT+'];
-const ALL_STABLE_TOKENS = [
+export const ALL_STABLE_TOKENS = [
   'usd+', 'dai+', 'wusd+', 'usdc+', 'usdt+',
   'dola', 'frax', 'sfrax', 'usdc', 'usdt',
   'usdb', 'eusd', 'usdbc', 'crvusd', 'usdz',
   'usdc.e', 'axlusdc', 'axlusdt', 'eurc',
-  'mai', 'rgusdc', 'rgusd',
+  'mai', 'rgusdc', 'rgusd', 'usde'
 ];
 
 // const REVERT_AGG = [
