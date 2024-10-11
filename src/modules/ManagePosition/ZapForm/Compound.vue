@@ -585,7 +585,7 @@ export default {
         const tx = await ZapinService.stakeTrigger(
           this.zapPool.platform[0] as PLATFORMS,
           this.gaugeContract,
-          this.newTokenId,
+          this.zapPool.tokenId?.toString(),
           this.account,
           this.poolTokenContract,
         );
