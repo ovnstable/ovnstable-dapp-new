@@ -1,7 +1,7 @@
 /* eslint-disable vue/no-ref-as-operand */
 /* eslint-disable import/prefer-default-export */
 import { useQuery } from '@tanstack/vue-query';
-import { usePoolsQuery } from '@/hooks/fetch/usePoolsQuery.ts';
+import { usePoolsQueryNew } from '@/hooks/fetch/usePoolsQuery.ts';
 import { useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.ts';
 import { computed } from 'vue';
 import PositionsService from '@/services/PositionsService/PositionsService.ts';
@@ -15,7 +15,7 @@ export const usePositionsQuery = () => {
   const address = computed(() => stateData.accountData.account);
   const posRefreshTrigger = computed(() => stateData.accountData.posRefreshTrigger);
 
-  const poolsQuery = usePoolsQuery();
+  const poolsQuery = usePoolsQueryNew(0);
   const tokensQuery = useTokensQueryNew() as TQuery;
 
   const positionsQuery = useQuery(
@@ -28,13 +28,13 @@ export const usePositionsQuery = () => {
     },
   );
 
-  const queries = [tokensQuery, positionsQuery, poolsQuery];
+  const queries = [tokensQuery, positionsQuery];
   const {
     isAnyLoading, isAnyError, allErrors, isAnyFetching,
   } = getQueryStates(queries);
 
   const positionData = computed(() => {
-    if (isAllQueryDataAvailable(queries)) {
+    if (isAllQueryDataAvailable(queries) && poolsQuery?.data?.value) {
       return PositionsService
         .formatPositions(
           positionsQuery!.data!.value ?? [],

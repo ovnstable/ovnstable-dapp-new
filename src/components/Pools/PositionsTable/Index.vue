@@ -74,6 +74,12 @@
                   <div>
                     {{ pool.name }}
                   </div>
+                  <div
+                    v-if="pool.fee"
+                    class="pool-fee"
+                  >
+                    {{ formatPoolFee(pool.fee) }}
+                  </div>
                 </div>
                 <div class="pools-table__details-row">
                   <div class="pools-table__tokens-details">
@@ -178,7 +184,7 @@ import ButtonComponent from '@/components/Button/Index.vue';
 import type { PropType } from 'vue';
 import { mapActions } from 'vuex';
 import { getImageUrl } from '@/utils/const.ts';
-import BN from 'bignumber.js';
+import BN, { BigNumber } from 'bignumber.js';
 import type { IPositionsInfo } from '@/types/positions/index.d.ts';
 
 enum POSITION_SIZE_ORDER_TYPE {
@@ -220,6 +226,10 @@ export default {
   },
   methods: {
     ...mapActions('poolsData', ['openZapIn']),
+    formatPoolFee(fee: string) {
+      const formattedFee = new BigNumber(fee).multipliedBy(0.0001);
+      return `${formattedFee} %`;
+    },
     handleOpen(pool: any) {
       this.openZapIn(pool);
       this.$router.replace(`/positions/${pool?.tokenId?.toString()}`);

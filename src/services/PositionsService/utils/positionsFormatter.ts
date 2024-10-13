@@ -7,6 +7,7 @@ import { getNetworkParams } from '@/store/web3/network.ts';
 import type { TPoolInfo } from '@/types/common/pools';
 import type { TTokenInfo } from '@/types/common/tokens';
 import type { IPositionsInfo, TPositionData, TTicks } from '@/types/positions';
+import { getTokenBySymbol } from '@/store/helpers';
 
 const REWARDS_LIST = {
   arbitrum: {
@@ -104,6 +105,7 @@ export const formatPositionData = (
     const pool = poolsMap[poolId]
     ?? poolsMap[poolId.toUpperCase()] ?? poolsMap[poolId.toLowerCase()];
 
+    console.log(poolsMap, '__poolsMap')
       // Tokens
       const token0Info = getTokenInfo(token0, tokenMap);
       const token1Info = getTokenInfo(token1, tokenMap);
@@ -139,7 +141,9 @@ export const formatPositionData = (
 
       if (rewardAdd) {
         const aeroTokenInfo = getTokenInfo(rewardAdd, tokenMap);
-        rewardUsdTotal = getUsdStr(emissions, aeroTokenInfo?.decimals, aeroTokenInfo?.price);
+        rewardUsdTotal = new BN(rewardUsdTotal)
+          .plus(getUsdStr(emissions, aeroTokenInfo?.decimals, aeroTokenInfo?.price)).toFixed(4);
+
         rewardTokensInfo = [
           {
             id: aeroTokenInfo.id,
@@ -205,6 +209,6 @@ export const formatPositionData = (
       return positionFullInfo;
   });
 
-  // console.log(positionInfo, '__positionInfo');
+  console.log(positionInfo, '__positionInfo');
   return positionInfo;
 };
