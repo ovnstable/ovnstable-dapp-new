@@ -40,7 +40,7 @@ const actions = {
     try {
       const overnightApiInstance = new OvernightApi();
       const staticData = TOKENS[marketId] || {};
-      const strategies = await overnightApiInstance.loadStrategies();
+      const strategies = await overnightApiInstance.loadStrategies(networkName, `${marketId}+`);
       //  // Filtering inactive strategies (by their portfolio weight)
       const tvl = calculateTvl(strategies
         .filter((strategy: IStrategyResponseOld) => Number(strategy.weight) > 0));

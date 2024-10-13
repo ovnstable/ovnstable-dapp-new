@@ -18,6 +18,7 @@ const actions = {
         collateralToken,
         colleterals,
       };
+
       commit('setCollateralData', { marketId, combinedData });
     } catch (error) {
       console.error('Failed to fetch token data:', error);

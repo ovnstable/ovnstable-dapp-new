@@ -1,5 +1,5 @@
-import { ALL_STABLE_TOKENS } from '@/constants/tokens/index.ts';
 import { POOL_WHITE_LIST, SECOND_MIN_AMOUNT } from '@/constants/pools/index.ts';
+import { ALL_STABLE_TOKENS } from '@/store/views/main/pools/helpers';
 
 export const getFilterDisplayedPools = (
   pools: any[],

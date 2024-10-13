@@ -585,7 +585,7 @@ export default {
         const tx = await ZapinService.stakeTrigger(
           this.zapPool.platform[0] as PLATFORMS,
           this.gaugeContract,
-          this.newTokenId,
+          this.zapPool.tokenId?.toString(),
           this.account,
           this.poolTokenContract,
         );
@@ -714,6 +714,7 @@ export default {
         }
 
         this.isSwapLoading = false;
+        this.positionStaked = true;
         this.approveNftPosition(true);
         this.currentStage = CompoundStep.APPROVEGAUGE;
       } catch (e: any) {

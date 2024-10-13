@@ -38,7 +38,7 @@ export interface IOvernightApi {
   swapRequest(requestData: any): any,
 
   // Market
-  loadStrategies(): Promise<IStrategyResponseOld[]>,
+  loadStrategies(chain: string, token: string): Promise<IStrategyResponseOld[]>,
   loadPayouts(chain: string, token: string): any,
   loadTotalPlusToken(chain: string, token: string): Promise<number>,
   loadCollaterlPlusToken(chain: string, token: string): Promise<Collateral[]>,
@@ -105,8 +105,8 @@ export class OvernightApi extends ApiService implements IOvernightApi {
 
   // Market
 
-  public async loadStrategies(): Promise<IStrategyResponseOld[]> {
-    return tranformStrategyResponse(this.get(`${API_URL_NEW}/strategy/arbitrum/USD+/list`));
+  public async loadStrategies(chain: string, token: string): Promise<IStrategyResponseOld[]> {
+    return tranformStrategyResponse(this.get(`${API_URL_NEW}/strategy/${chain}/${token}/list`));
   }
 
   public async loadPayouts(chain: string): Promise<IPayoutResponseOld[]> {
