@@ -82,7 +82,7 @@
           v-else
           class="swap-button-container"
         >
-        <ButtonComponent
+        <!-- <ButtonComponent
           v-if="isDisabled"
           btn-size="large"
           btn-styles="primary"
@@ -90,9 +90,9 @@
           disabled
         >
           {{ disabledMsg }}
-        </ButtonComponent>
+        </ButtonComponent> -->
         <ButtonComponent
-          v-else-if="isAnyInputsNeedApprove"
+          v-if="isAnyInputsNeedApprove"
           btn-size="large"
           btn-styles="primary"
           full
@@ -714,6 +714,7 @@ export default {
         }
 
         this.isSwapLoading = false;
+        this.positionStaked = true;
         this.approveNftPosition(true);
         this.currentStage = CompoundStep.APPROVEGAUGE;
       } catch (e: any) {
