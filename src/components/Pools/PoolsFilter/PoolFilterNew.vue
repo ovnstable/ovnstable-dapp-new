@@ -44,7 +44,7 @@
           </div>
         </div>
         <div class="button-container">
-          <ButtonComponent
+          <!-- <ButtonComponent
             id="search-btn"
             class="search-button"
             btn-styles="faded"
@@ -52,7 +52,7 @@
             @keypress="handleClickSearch"
           >
             SEARCH POOLS
-          </ButtonComponent>
+          </ButtonComponent> -->
           <ButtonComponent
             class="search-button"
             btn-styles="faded"
@@ -68,53 +68,35 @@
         <div class="filter-container__plat">
           <div
             v-for="item in platformsList"
+            :key="item"
             class="filter-container__plat-item"
             :class="{ active: activePlat === item }"
-            :key="item"
             @click="filterByPlat(item)"
+            @keypress="filterByPlat(item)"
           >
-            <BaseIcon v-if="item !== 'ALL'" :name="item" />
+            <BaseIcon
+              v-if="item !== 'ALL'"
+              :name="item"
+            />
             <span v-if="item === 'ALL'">{{ item }}</span>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <!-- <SelectTokensModal
-    :is-show="isShowTokensModal"
-    :select-token-input="true"
-    :tokens="mergedTokenList"
-    :is-all-data-loaded="isAllDataLoaded"
-    :selected-tokens="selectedTokens"
-    :balances-loading="isLoading"
-    :user-account="account"
-    :is-overnight-first="false"
-    remove-native
-    :token0-name="`Token ${selectingTokenIndex}`"
-    :max-token-count="1"
-    @set-show="toggleShowTokensModal"
-    @add-token-to-list="toggleSelectToken"
-    @remove-token-from-list="toggleSelectToken"
-  /> -->
 </template>
 
 <script lang="ts">
 import ButtonComponent from '@/components/Button/Index.vue';
-import { mapActions, mapGetters, mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import InputComponent from '@/components/Input/Index.vue';
 
 // import SelectTokensModal from '@/components/TokensModal/Index.vue';
 import { computed } from 'vue';
 import { useTokensQuery, useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.ts';
-import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import type { TTokenInfo } from '@/types/common/tokens';
 import type { TFilterPoolsParams } from '@/types/common/pools';
-
-type TSelectTokenWithSearch = {
-    isInput: boolean,
-    tokenData: Partial<TTokenInfo>
-}
 
 const initSelectedToken = {
   symbol: 'USD+',
@@ -162,47 +144,24 @@ export default {
   data() {
     return {
       selectedTokens: [initSelectedToken] as Partial<TTokenInfo>[],
-      tokenSearch: "USD+",
+      tokenSearch: 'USD+',
       sortedChains: networkList,
-      isShowTokensModal: false as boolean,
-      activePlat: "ALL",
-      platformsList: ["ALL", "Aerodrome", "Pancake", 'Uniswap'],
-      selectingTokenIndex: 1 as Number,
+      activePlat: 'ALL',
+      platformsList: ['ALL', 'Aerodrome', 'Pancake', 'Uniswap'],
     };
   },
   computed: {
-    ...mapGetters('accountData', ['account']),
     ...mapState('poolsData', ['activeChain']),
-    mergedTokenList() {
-      return mergedTokens(this.balancesList as any[], this.allTokensList);
-    },
-  },
-  mounted() {
-    if (!window) return;
-    window.addEventListener("keydown",  (e) => { if (13 == e.keyCode) { this.handleClickSearch() } });
   },
   methods: {
     ...mapActions('poolsData', ['setFilterParams', 'setFilterChain', 'setFilterPlat']),
     filterByPlat(val: string) {
-      this.activePlat = val
+      this.activePlat = val;
       this.setFilterPlat(val);
-    },
-    toggleShowTokensModal(tokenToSelect: number) {
-      this.isShowTokensModal = !this.isShowTokensModal;
-      this.selectingTokenIndex = tokenToSelect;
     },
     searchTokens(val: string) {
       this.tokenSearch = val;
-    },
-    toggleSelectToken(newToken: TSelectTokenWithSearch) {
-      const selectedToken = newToken.tokenData;
-      this.selectedTokens[Number(this.selectingTokenIndex) - 1] = selectedToken;
-      this.isShowTokensModal = false;
-      const filterParams: Partial<TFilterPoolsParams> = {
-        token0: this.tokenSearch,
-        // token1: this.selectedTokens[1]?.symbol ?? '',
-      };
-      this.setFilterParams(filterParams);
+      this.handleClickSearch();
     },
     handleClickChain(chain: number | string) {
       this.setFilterChain(chain);
@@ -221,7 +180,7 @@ export default {
       };
       this.setFilterParams(filterParams);
       this.selectedTokens = [];
-      this.tokenSearch = "";
+      this.tokenSearch = '';
     },
   },
 };
