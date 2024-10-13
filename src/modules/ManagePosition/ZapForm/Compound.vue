@@ -82,7 +82,7 @@
           v-else
           class="swap-button-container"
         >
-        <!-- <ButtonComponent
+        <ButtonComponent
           v-if="isDisabled"
           btn-size="large"
           btn-styles="primary"
@@ -90,9 +90,9 @@
           disabled
         >
           {{ disabledMsg }}
-        </ButtonComponent> -->
+        </ButtonComponent>
         <ButtonComponent
-          v-if="isAnyInputsNeedApprove"
+          v-else-if="isAnyInputsNeedApprove"
           btn-size="large"
           btn-styles="primary"
           full
