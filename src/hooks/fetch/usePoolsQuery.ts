@@ -19,7 +19,7 @@ export const usePoolsQuery = () => {
   );
 };
 
-export const usePoolsQueryNew = () => {
+export const usePoolsQueryNew = (param?: number) => {
   const { state } = useStore();
   const filterParams = computed(() => state.poolsData.filterParams);
 
@@ -28,8 +28,8 @@ export const usePoolsQueryNew = () => {
   const tokensQuery = useTokensQueryNew();
   const poolsQuery = useQuery(
     {
-      queryKey: ['allPools', filterParams],
-      queryFn: async () => poolService.getFilterPools(filterParams.value),
+      queryKey: ['allPools', param ?? filterParams],
+      queryFn: async () => poolService.getFilterPools(param ?? filterParams.value),
       staleTime: 0,
       refetchInterval: false,
       refetchOnMount: false,

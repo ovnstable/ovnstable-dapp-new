@@ -4,7 +4,7 @@ import {
   loadAbi, srcStringBuilder,
 } from '@/store/views/main/zapin/index.ts';
 import type { TTokenInfo } from '@/types/common/tokens';
-import type { TPoolInfo } from '@/types/common/pools';
+import type { TPool, TPoolInfo } from '@/types/common/pools';
 import { rebalanceChainMap, ZAPIN_SCHEME } from '../Web3Service/utils/scheme.ts';
 
 export const loadPositionContract = async (state: any, platformName: string) => {
@@ -51,7 +51,7 @@ class PositionsService {
 
   public static formatPositions(
     rawPositionData: any,
-    pools: TPoolInfo[],
+    pools: TPool[],
     tokens: TTokenInfo[],
     networkId: number,
   ) {

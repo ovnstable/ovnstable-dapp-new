@@ -139,10 +139,6 @@ class ZapinService {
   ) {
     let tx = null;
 
-    if (zapPool?.platform[0] === PLATFORMS.UNI) {
-      tx = await this.claimUniswap(chainId, evmSigner);
-    }
-
     if (zapPool?.platform[0] === PLATFORMS.PANCAKE && zapPool.isStaked) {
       tx = await gaugeContract.harvest(zapPool.tokenId, account);
       tx = await gaugeContract.collect({
@@ -167,6 +163,20 @@ class ZapinService {
     }
 
     if (zapPool?.platform[0] === PLATFORMS.AERO && !zapPool.isStaked) {
+      console.log(poolTokenContract, "COLLECT")
+      tx = await poolTokenContract.collect({
+        tokenId: zapPool.tokenId,
+        recipient: account,
+        amount0Max: new BN(10).pow(24).toFixed(),
+        amount1Max: new BN(10).pow(24).toFixed()
+      });
+    }
+
+    if (zapPool?.platform[0] === PLATFORMS.UNI && !zapPool.isStaked) {
+      tx = await this.claimUniswap(chainId, evmSigner);
+    }
+
+    if (zapPool?.platform[0] === PLATFORMS.UNI && zapPool.isStaked) {
       console.log(poolTokenContract, "COLLECT")
       tx = await poolTokenContract.collect({
         tokenId: zapPool.tokenId,

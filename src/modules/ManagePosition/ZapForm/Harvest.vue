@@ -25,37 +25,71 @@
           You have
         </h2>
         <div class="swap-block__item-col--send">
-          <h1>
-            REWARDS
-          </h1>
-          <span class="divider" />
+        <h1>
+          REWARDS
+        </h1>
+        <span class="divider" />
         <div
+          v-for="token in rewardTokens"
+          :key="token.id"
           class="swap-block__item"
         >
           <div
+            v-if="token.selectedToken"
             class="swap-block__item-row"
           >
             <div class="swap-block__item-row--token-wrap">
               <img
-                :src="getImgToken"
+                :src="token.selectedToken.logoUrl"
                 alt="select-token"
               >
               <span>
-                {{ getSymbolToken?.toUpperCase() }}
+                {{ token.selectedToken.symbol }}
               </span>
             </div>
           </div>
           <div
+            v-if="token.value"
             class="swap-block__item-bal"
           >
-            <div>
-              {{ getRewardEmm }}
+            <div v-if="token.value">
+              {{ token.displayedValue }}
             </div>
-            <div v-if="getRewardUsd">
-              ~ ${{ getRewardUsd }}
+            <div>
+              ~ ${{ token.usdValue }}
             </div>
           </div>
         </div>
+        <template v-if="getRewardUsd">
+          <span class="divider" />
+          <div
+            class="swap-block__item"
+          >
+            <div
+              class="swap-block__item-row"
+            >
+              <div class="swap-block__item-row--token-wrap">
+                <img
+                  :src="getImgToken"
+                  alt="select-token"
+                >
+                <span>
+                  {{ getSymbolToken?.toUpperCase() }}
+                </span>
+              </div>
+            </div>
+            <div
+              class="swap-block__item-bal"
+            >
+              <div>
+                {{ getRewardEmm }}
+              </div>
+              <div v-if="getRewardUsd">
+                ~ ${{ getRewardUsd }}
+              </div>
+            </div>
+          </div>
+        </template>
       </div>
       <div class="swap-block__part-total">
         <h2>
@@ -66,18 +100,18 @@
         </div>
       </div>
     </div>
-    <div class="swap-block__part">
-          <SwapRouting
-            v-if="zapPool"
-            :swap-data="[]"
-            :merged-list="[]"
-            :input-tokens="[]"
-            :output-tokens="[]"
-            :routing-type="MODAL_TYPE.HARVEST"
-            :zap-pool="zapPool"
-          />
-        </div>
-      </div>
+    <div class="swap-block__part" v-if="getRewardUsd">
+      <SwapRouting
+        v-if="zapPool"
+        :swap-data="[]"
+        :merged-list="[]"
+        :input-tokens="[]"
+        :output-tokens="[]"
+        :routing-type="MODAL_TYPE.HARVEST"
+        :zap-pool="zapPool"
+      />
+    </div>
+    </div>
       <div class="swap-container__footer">
         <ButtonComponent
           v-if="!account"
@@ -193,6 +227,7 @@ export default defineComponent({
   },
   data() {
     return {
+      rewardTokens: [] as any,
       positionFinish: false,
       outputTokens: [] as any[],
       poolTokens: [] as any[],
@@ -287,6 +322,7 @@ export default defineComponent({
   },
   async mounted() {
     await this.initContracts();
+    this.initRewardTokens();
     this.setIsZapModalShow(false);
   },
   created() {
@@ -339,8 +375,30 @@ export default defineComponent({
       } catch (e) {
         this.isSwapLoading = false;
         this.closeWaitingModal();
-        this.showErrorModalWithMsg({ errorMsg: parseErrorLog(e) });
+        this.showErrorModalWithMsg({ errorType: "zap", errorMsg: parseErrorLog(e) });
       }
+    },
+    initRewardTokens() {
+      const rewardToken = this.zapPool.rewards.tokens.map((_: any) => {
+        const rewardData: any = Object.entries(_)[0];
+        const tokenInfo = allTokensMap(this.mergedAllTokens).values().find((_: any) => {
+          const allTokSymbol = _?.symbol?.toLowerCase();
+          return allTokSymbol === rewardData[0]?.toLowerCase();
+        });
+
+        return {
+          displayedValue: new BN(rewardData[1] ?? 0).toFixed(8),
+          id: Date.now().toString(),
+          locked: true,
+          proportion: 0,
+          selectedToken: tokenInfo,
+          sum: new BN(rewardData[1] ?? 0).toFixed(6),
+          usdValue: new BN(rewardData[1] ?? 0).times(tokenInfo.price).toFixed(6),
+          value: new BN(rewardData[1] ?? 0).toFixed(6),
+        };
+      });
+
+      this.rewardTokens = rewardToken;
     },
     async checkNftApprove() {
       if (!this.poolTokenContract) return;
