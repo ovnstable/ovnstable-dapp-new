@@ -292,7 +292,7 @@ import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import { useRefreshBalances } from '@/hooks/fetch/useRefreshBalances.ts';
 import FeesBlock, { MIN_IMPACT } from '@/components/FeesBlock/Index.vue';
 import { parseErrorLog } from '@/utils/errors.ts';
-import ZapinService, { ZAPIN_FUNCTIONS, ZAPIN_TYPE } from '@/services/Web3Service/Zapin-service.ts';
+import ZapinService, { DEFAULT_ODOS_D, ZAPIN_FUNCTIONS, ZAPIN_TYPE } from '@/services/Web3Service/Zapin-service.ts';
 import {
   getUpdatedTokenVal,
   initReqData,
@@ -675,13 +675,15 @@ export default defineComponent({
       try {
         const data = await ZapinService.recalculateProportionOdosV3(recalculateProportionParams);
 
-        if (!data || (data && !data.odosData)) {
+        if (!data) {
           this.odosDataLoading = false;
           this.isSwapLoading = false;
           return;
         }
 
-        if (data.inputTokens?.length === 0 && data.outputTokens?.length === 0) {
+        console.log(data, '___data')
+
+        if (data.inputTokens?.length === 0) {
           this.initZapInTransaction(
             null,
             data.inputTokens,
@@ -689,10 +691,15 @@ export default defineComponent({
             data.amountOut,
             data.amountMins,
           );
+          this.odosDataLoading = false;
+          return
         }
 
-        this.outputTokens = data?.outputTokens;
-        this.odosData = data?.odosData;
+        if (data?.outputTokens?.length > 0) {
+          this.outputTokens = data?.outputTokens;
+        }
+
+        this.odosData = data?.odosData ? data?.odosData : DEFAULT_ODOS_D();
         this.odosDataLoading = false;
         this.isSwapLoading = true;
 
@@ -840,6 +847,7 @@ export default defineComponent({
       proportions: any,
       amountMins: string[],
     ) {
+      console.log(proportions, '__requestInputTokens')
       const requestData = initReqData(
         requestInputTokens,
         requestOutputTokens,
@@ -944,13 +952,17 @@ export default defineComponent({
 
         const data = await ZapinService.recalculateProportionOdosV3(recalculateProportionParams);
 
-        if (!data || (data && !data.odosData)) {
+        console.log(data, '___data')
+        if (!data) {
           this.odosDataLoading = false;
           return;
         }
 
-        this.outputTokens = data?.outputTokens;
-        this.odosData = data.odosData;
+        if (data?.outputTokens?.length > 0) {
+          this.outputTokens = data?.outputTokens;
+        }
+
+        this.odosData = data?.odosData ? data?.odosData : DEFAULT_ODOS_D();
         this.odosDataLoading = false;
       } catch (e) {
         this.showErrorModalWithMsg({ errorType: 'zap', errorMsg: parseErrorLog(e) });

@@ -386,15 +386,16 @@ export const initZapData = (
   v3Range: any,
   selOutTokens: any[]
 ) => {
+  console.log(requestData, '___requestData')
   const txData = {
-    inputs: requestData.inputT,
-    outputs: requestData.outputT.map((_: any, key: number) => ({
+    inputs: requestData.inputT?.length > 0 ? requestData.inputT : [],
+    outputs: requestData.outputT?.length > 0 ? requestData.outputT.map((_: any, key: number) => ({
       tokenAddress: _.tokenAddress,
       amountMin: new BN(amountMins[key])
         .times(1 - getSlippagePercent / 100)
         .toFixed(0),
-    })),
-    data: responseData ? responseData.transaction.data : '0x',
+    })) : [],
+    data: responseData ? responseData?.transaction?.data : '0x0000000000000000000000000000000000000000000000000000000000000000',
   };
 
   const gaugeData = {

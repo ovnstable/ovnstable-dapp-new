@@ -26,6 +26,14 @@ import {
 } from "@angleprotocol/sdk";
 import axios from 'axios';
 
+const ZERO_ADD = "0x0000000000000000000000000000000000000000";
+
+export const DEFAULT_ODOS_D = () => ({
+  percentDiff: 0,
+  netOutValue: 0,
+  priceImpact: 0,
+})
+
 export enum ZAPIN_TYPE {
   ZAPIN,
   REBALANCE,
@@ -876,6 +884,8 @@ class ZapinService {
       );
     }
 
+    console.log(resp, '__resp')
+
     if (!resp) {
       showErrorModalWithMsg({
         errorType: 'zap',
@@ -887,25 +897,31 @@ class ZapinService {
     let inputTokens = [];
 
     if (typeFunc === ZAPIN_TYPE.ZAPIN) {
-      inputTokens = selectedInputTokens
+      if (resp[1]?.length === 0) inputTokens = []
+      else {
+        inputTokens = selectedInputTokens
         .map((_: any, key: number) => ({
           tokenAddress: _?.selectedToken?.address,
           amount: resp[1][key]?.toString(),
         }))
         .filter(
-          (item: any) => new BN(item.amount).gt(0),
+          (item: any) => item.tokenAddress !== ZERO_ADD && new BN(item.amount).gt(0),
         );
+      }
     }
 
     if ([ZAPIN_TYPE.REBALANCE, ZAPIN_TYPE.MERGE].includes(typeFunc)) {
-      inputTokens = resp[0].map((_: any, key: number) => ({
-        tokenAddress: _,
-        amount: resp[1][key]?.toString(),
-      }))
-        .filter((_: any) => new BN(_.amount).gt(0));
+      if (resp[1]?.length === 0) inputTokens = []
+      else {
+        inputTokens = resp[0].map((_: any, key: number) => ({
+          tokenAddress: _,
+          amount: resp[1][key]?.toString(),
+        }))
+          .filter((item: any) => item.tokenAddress !== ZERO_ADD && new BN(item.amount).gt(0));
+      }
     }
 
-    if (inputTokens?.length === 0) return null;
+    // if (inputTokens?.length === 0) return null;
 
     const outputTokens = resp[2]
       .map((_: any, key: number) => ({
@@ -916,16 +932,25 @@ class ZapinService {
         (item: any) => new BN(item.proportion).gt(0),
       );
 
+      console.log(outputTokens, '___outputTokens')
     // init zapin without swap
     if (inputTokens?.length === 0 && outputTokens?.length === 0) {
-      const amountMins = resp[2].map((_: any, key: number) => resp[6][key]?.toString());
+      const amountMins = resp[2].map((_: any, key: number) => resp[4][key]?.toString());
+
+      const outputTokensNew = selectedOutputTokens
+        .map((_: any, key: number) => ({
+          ..._,
+          sum: new BN(resp[5][key]?.toString()).div(10 ** 18).toFixed(6),
+        }))
 
       return {
         inputTokens,
-        outputTokens,
+        outputTokens: outputTokensNew,
         outputTokensForZap: outputTokens,
-        amountToken0Out: '0',
-        amountToken1Out: '0',
+        amountOut: {
+          amountToken0Out: amountMins[0],
+          amountToken1Out: amountMins[1],
+        },
         responseProportionV3: resp,
         odosData: null,
         amountMins,
@@ -934,6 +959,7 @@ class ZapinService {
 
     const whiteList = WHITE_LIST_ODOS[networkId as keyof typeof WHITE_LIST_ODOS];
 
+    console.log(inputTokens, '__inputTokens')
     let requestData = null;
     const userAddr = ethers.getAddress(zapContract?.target?.toLowerCase());
 
@@ -969,6 +995,8 @@ class ZapinService {
         referralCode: ODOS_REF_CODE,
       };
     }
+
+    console.log(requestData, '___requestData')
 
     const data: any = await odosSwapRequest(requestData);
 
