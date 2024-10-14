@@ -164,7 +164,7 @@ export default {
     const { data: getUserPositions } = usePositionsQuery();
     const { data: balanceList, isLoading: tokensLoading } = useTokensQuery();
     const { data: allTokensList } = useTokensQueryNew();
-    const { data: poolList } = usePoolsQueryNew();
+    const { data: poolList } = usePoolsQueryNew(0);
 
     return {
       allTokensList,

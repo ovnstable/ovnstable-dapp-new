@@ -169,7 +169,7 @@ export default defineComponent({
     const { data: positionData, isLoading } = usePositionsQuery();
     const { data: allTokensList } = useTokensQuery();
     const { data: balanceList } = useTokensQueryNew();
-    const { data: poolList } = usePoolsQueryNew();
+    const { data: poolList } = usePoolsQueryNew(0);
 
     return {
       isLoading,
