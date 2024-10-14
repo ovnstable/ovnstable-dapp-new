@@ -36,7 +36,7 @@ class PositionsService {
         const positionsContract = await loadPositionContract(state, platform);
         try {
           console.log(positionsContract, platform, '___positionsContract')
-          const positionsData = await positionsContract.getPositions(paramAcc ?? state.accountData.account);
+          const positionsData = await positionsContract.getPositions(paramAcc ? paramAcc : state.accountData.account);
           console.log('__positionsData', positionsData, platform);
           return positionsData;
         } catch (e) {
