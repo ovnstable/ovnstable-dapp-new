@@ -124,6 +124,7 @@ export const formatPositionData = (
       let rewardUsdTotal = sumBnStr(reward0UsdStr, reward1UsdStr);
       let platformName = platform;
       let rewardTokensInfo;
+      let emissionsUsd = "0";
 
       const chainName = network?.networkName?.toLowerCase();
       const rewardAdd = REWARDS_LIST[chainName as keyof typeof REWARDS_LIST][
@@ -140,8 +141,8 @@ export const formatPositionData = (
 
       if (rewardAdd) {
         const aeroTokenInfo = getTokenInfo(rewardAdd, tokenMap);
-        rewardUsdTotal = new BN(rewardUsdTotal)
-          .plus(getUsdStr(emissions, aeroTokenInfo?.decimals, aeroTokenInfo?.price)).toFixed(4);
+        emissionsUsd = new BN(getUsdStr(emissions, aeroTokenInfo?.decimals, aeroTokenInfo?.price))
+          .toFixed(4)
 
         rewardTokensInfo = [
           {
@@ -198,6 +199,7 @@ export const formatPositionData = (
           displayedUsdValue: getMinVal(rewardUsdTotal),
         },
         emissions,
+        emissionsUsd,
         platformLinks: getPlatformLinks(platformName, poolId, network?.networkName?.toLowerCase()),
         tokenId,
         ticks,
@@ -208,6 +210,6 @@ export const formatPositionData = (
       return positionFullInfo;
   });
 
-  // console.log(positionInfo, '__positionInfo');
+  console.log(positionInfo, '__positionInfo');
   return positionInfo;
 };

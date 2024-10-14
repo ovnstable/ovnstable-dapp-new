@@ -40,6 +40,7 @@ export type TPoolInfo = {
     platform: string[],
     tvl: number,
     apr: number,
+    fee: string,
     poolTag: null | string,
     skimEnabled: boolean,
     explorerUrl: string,

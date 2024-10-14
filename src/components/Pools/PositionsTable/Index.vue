@@ -41,7 +41,7 @@
       <div class="pools-table__content">
         <template v-if="pools.length > 0">
           <div
-            v-for="(pool, key) in (pools as any)"
+            v-for="(pool, key) in (pools)"
             :key="key"
             class="pools-table__row position-table_row"
           >
@@ -103,7 +103,7 @@
             </div>
             <div class="pools-table__emission">
               <div>
-                {{ pool.rewards.displayedUsdValue }}$
+                {{ getRewards(pool) }}$
               </div>
               <div
                 class="pools-table__btn"
@@ -186,6 +186,7 @@ import { mapActions } from 'vuex';
 import { getImageUrl } from '@/utils/const.ts';
 import BN, { BigNumber } from 'bignumber.js';
 import type { IPositionsInfo } from '@/types/positions/index.d.ts';
+import { PLATFORMS, type TPool, type TPoolInfo } from '@/types/common/pools';
 
 enum POSITION_SIZE_ORDER_TYPE {
   'VALUE', 'VALUE_UP', 'VALUE_DOWN',
@@ -223,6 +224,21 @@ export default {
     lessThanMin() {
       return (val: string) => new BN(val).lt(0.02);
     },
+    getRewards() {
+      return (pool: IPositionsInfo) => {
+        if ([PLATFORMS.PANCAKE, PLATFORMS.AERO].includes(pool.platform[0] as PLATFORMS) && pool.isStaked) {
+          return new BN(pool.emissionsUsd).gt(0.1) ? pool.emissionsUsd : "< 0.1"
+        }
+
+        if ([PLATFORMS.PANCAKE, PLATFORMS.AERO].includes(pool.platform[0] as PLATFORMS) && !pool.isStaked) {
+          return pool.rewards.displayedUsdValue
+        }
+
+        if (pool.platform[0] === PLATFORMS.UNI) {
+          return pool.rewards.displayedUsdValue
+        }
+      }
+    }
   },
   methods: {
     ...mapActions('poolsData', ['openZapIn']),
