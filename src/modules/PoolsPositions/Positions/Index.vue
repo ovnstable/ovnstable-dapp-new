@@ -111,6 +111,7 @@ import { usePoolsQueryNew } from '@/hooks/fetch/usePoolsQuery.ts';
 import type { PLATFORMS, TFilterPoolsParams, TPoolInfo } from '@/types/common/pools/index.ts';
 import ZapinService from '@/services/Web3Service/Zapin-service.ts';
 import type { IPositionsInfo } from '@/types/positions';
+import { useRoute } from 'vue-router';
 
 interface IEnumIterator {
   next: () => number,
@@ -166,7 +167,10 @@ export default defineComponent({
     ButtonComponent,
   },
   setup() {
-    const { data: positionData, isLoading } = usePositionsQuery();
+    const router = useRoute()
+
+    const paramAdd = router.query?.address
+    const { data: positionData, isLoading } = usePositionsQuery(paramAdd as string ?? "");
     const { data: allTokensList } = useTokensQuery();
     const { data: balanceList } = useTokensQueryNew();
     const { data: poolList } = usePoolsQueryNew(0);

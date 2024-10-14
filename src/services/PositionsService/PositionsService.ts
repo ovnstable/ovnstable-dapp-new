@@ -27,15 +27,16 @@ export const loadPositionContract = async (state: any, platformName: string) => 
 };
 
 class PositionsService {
-  public static async fetchPositions(state: any) {
+  public static async fetchPositions(state: any, paramAcc?: string) {
     const platformNames = rebalanceChainMap[state.network.networkName];
 
+    console.log(paramAcc, '___paramAcc')
     const rawPositionsData = await Promise.all(
       platformNames.map(async (platform: string) => {
         const positionsContract = await loadPositionContract(state, platform);
         try {
           console.log(positionsContract, platform, '___positionsContract')
-          const positionsData = await positionsContract.getPositions(state.accountData.account);
+          const positionsData = await positionsContract.getPositions(paramAcc ?? state.accountData.account);
           console.log('__positionsData', positionsData, platform);
           return positionsData;
         } catch (e) {
