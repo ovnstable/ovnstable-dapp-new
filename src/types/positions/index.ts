@@ -42,6 +42,7 @@ export interface IPositionsInfo extends TPoolInfo {
     },
     isInRange: boolean,
   },
+  emissionsUsd: string,
   emissions: number,
   token0Add: string,
   token1Add: string,
