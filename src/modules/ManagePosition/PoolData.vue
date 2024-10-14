@@ -257,6 +257,7 @@ export default {
     getFixedVal() {
       return (price: string) => {
         if (new BN(price).eq(0)) return 0;
+        console.log(price, '___PRICE')
         return new BN(price).toFixed(fixedByPrice(+price));
       };
     },
