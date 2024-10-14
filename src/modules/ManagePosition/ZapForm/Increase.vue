@@ -317,7 +317,7 @@ import {
   getUpdatedTokenVal, initReqData, initZapData, initZapinContracts, parseLogs,
 } from '@/services/Web3Service/utils/index.ts';
 import { approveToken, getAllowanceValue } from '@/utils/contractApprove.ts';
-import ZapinService, { ZAPIN_FUNCTIONS, ZAPIN_TYPE } from '@/services/Web3Service/Zapin-service.ts';
+import ZapinService, { DEFAULT_ODOS_D, ZAPIN_FUNCTIONS, ZAPIN_TYPE } from '@/services/Web3Service/Zapin-service.ts';
 import SwapRouting from '@/components/SwapRouting/Index.vue';
 import { awaitDelay } from '@/utils/const.ts';
 import type { IPositionsInfo } from '@/types/positions';
@@ -959,11 +959,14 @@ export default {
           .reduce((acc: any, curr: any) => acc
             .plus(new BN(curr.sum).times(curr.selectedToken?.price)), new BN(0)).toFixed();
 
-        this.outputTokens = data?.outputTokens;
-        this.odosData = {
+        if (data?.outputTokens?.length > 0) {
+          this.outputTokens = data?.outputTokens;
+        }
+
+        this.odosData = data?.odosData ? {
           ...data.odosData,
           netOutValue: totalFinalOutputUsd,
-        };
+        } : DEFAULT_ODOS_D();
         this.odosDataLoading = false;
       } catch (e) {
         this.showErrorModalWithMsg({ errorType: 'zap', errorMsg: parseErrorLog(e) });
@@ -1169,6 +1172,7 @@ export default {
       if (!this.v3Range || this.inputTokens?.length === 0) return;
 
       this.odosDataLoading = true;
+      this.isSwapLoading = true;
 
       try {
         const recalculateProportionParams = {
@@ -1187,13 +1191,15 @@ export default {
 
         const data = await ZapinService.recalculateProportionOdosV3(recalculateProportionParams);
 
-        if (!data || (data && !data.odosData)) {
+        if (!data) {
           this.odosDataLoading = false;
           this.isSwapLoading = false;
           return;
         }
 
-        if (data.inputTokens?.length === 0 && data.outputTokens?.length === 0) {
+
+        if (data.inputTokens?.length === 0) {
+          this.odosDataLoading = false;
           this.initZapInTransaction(
             null,
             data.inputTokens,
@@ -1201,10 +1207,11 @@ export default {
             data.amountOut,
             data.amountMins,
           );
+          return;
         }
 
         this.outputTokens = data?.outputTokens;
-        this.odosData = data?.odosData;
+        this.odosData = data?.odosData ? data?.odosData : DEFAULT_ODOS_D();
         this.odosDataLoading = false;
         this.isSwapLoading = true;
 
@@ -1229,7 +1236,7 @@ export default {
       } catch (e) {
         this.showErrorModalWithMsg({ errorType: 'zap', errorMsg: parseErrorLog(e) });
         this.odosDataLoading = false;
-        this.isSwapLoading = true;
+        this.isSwapLoading = false;
       }
     },
     async approveTrigger(token: any) {

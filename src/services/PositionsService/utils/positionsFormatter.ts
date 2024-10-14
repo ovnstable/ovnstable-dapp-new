@@ -105,7 +105,6 @@ export const formatPositionData = (
     const pool = poolsMap[poolId]
     ?? poolsMap[poolId.toUpperCase()] ?? poolsMap[poolId.toLowerCase()];
 
-    console.log(poolsMap, '__poolsMap')
       // Tokens
       const token0Info = getTokenInfo(token0, tokenMap);
       const token1Info = getTokenInfo(token1, tokenMap);
@@ -209,6 +208,6 @@ export const formatPositionData = (
       return positionFullInfo;
   });
 
-  console.log(positionInfo, '__positionInfo');
+  // console.log(positionInfo, '__positionInfo');
   return positionInfo;
 };
