@@ -3,7 +3,8 @@ name: CI/CD Pipeline with ArgoCD
 on:
   push:
     branches:
-      - cicd
+      - dev
+      - main
 
 jobs:
   build-and-deploy:
@@ -40,6 +41,12 @@ jobs:
         IMAGE_TAG: ${{ github.sha }}
       run: |
         cd gitops/frontend
+        if [ "${{ github.ref }}" == "refs/heads/dev" ]; then
+          cd beta
+        elif [ "${{ github.ref }}" == "refs/heads/main" ]; then
+          cd prod
+        fi
+
         if [ -f deployment.yaml ]; then
           sed -i "s|image: ${{ secrets.DOCKER_REGISTRY }}/frontend:.*|image: ${{ secrets.DOCKER_REGISTRY }}/frontend:${IMAGE_TAG}|" deployment.yaml
           git config user.name "github-actions[bot]"
