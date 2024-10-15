@@ -7,7 +7,6 @@ import { getNetworkParams } from '@/store/web3/network.ts';
 import type { TPoolInfo } from '@/types/common/pools';
 import type { TTokenInfo } from '@/types/common/tokens';
 import type { IPositionsInfo, TPositionData, TTicks } from '@/types/positions';
-import { getTokenBySymbol } from '@/store/helpers';
 
 const REWARDS_LIST = {
   arbitrum: {

@@ -216,7 +216,6 @@ import { fixedByPrice } from '@/utils/numbers.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import ButtonComponent from '@/components/Button/Index.vue';
 import { getSymbolEmmToken } from '@/services/Web3Service/utils/index.ts';
-import { allTokensMap } from '@/hooks/fetch/useTokensQuery';
 
 export default {
   name: 'PositionForm',
