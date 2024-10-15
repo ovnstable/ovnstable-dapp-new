@@ -19,13 +19,15 @@
           Position size, USD
           <BaseIcon :name="toggleSortIcon()" />
         </div>
-        <!-- <div class="pools-header__item">
-          Daily rewards
-        </div> -->
         <div
           class="pools-header__item "
         >
           Earned
+        </div>
+        <div
+          class="pools-header__item "
+        >
+          Merkle
         </div>
         <div
           class="pools-header__item"
@@ -112,6 +114,19 @@
                 @keypress="emitClaim(pool)"
               >
                 Claim
+              </div>
+            </div>
+            <div class="pools-table__emission">
+              <div>
+                {{ pool.merkleData.toClaim }}{{ " " }}{{ pool.merkleData.rewardToken?.symbol }}
+              </div>
+              <div
+                v-if="pool.merkleData?.rewardToken?.symbol"
+                class="pools-table__btn"
+                @click="emitClaimMerkle(pool)"
+                @keypress="emitClaimMerkle(pool)"
+              >
+                Claim all
               </div>
             </div>
             <div class="pools-table__staked">
@@ -219,7 +234,7 @@ export default {
       required: true,
     },
   },
-  emits: ['claim', 'stake'],
+  emits: ['claim', 'claim-merkle', 'stake'],
   computed: {
     lessThanMin() {
       return (val: string) => new BN(val).lt(0.02);
@@ -255,6 +270,9 @@ export default {
     },
     emitClaim(pool: any) {
       this.$emit('claim', pool);
+    },
+    emitClaimMerkle(pool: any) {
+      this.$emit('claim-merkle', pool);
     },
     toggleSortIcon() {
       return iconNameSort(POSITION_SIZE_ORDER_TYPE[this.positionSizeOrderType]);

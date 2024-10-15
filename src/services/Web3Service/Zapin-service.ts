@@ -113,7 +113,6 @@ class ZapinService {
       throw "Angle API not responding";
     }
 
-    console.log(data, '___data')
     const tokens = Object.keys(data).filter(
       (k) => data[k].proof !== undefined || data[k].proof.length > 0
     );

@@ -28,7 +28,17 @@ export const usePositionsQuery = (paramAcc?: string) => {
     },
   );
 
-  const queries = [tokensQuery, positionsQuery];
+  const positionsMerkle = useQuery(
+    {
+      // eslint-disable-next-line @tanstack/query/exhaustive-deps
+      queryKey: ['positionsMerkle', networkId, address, posRefreshTrigger],
+      queryFn: async () => PositionsService.fetchMerklePos(networkId.value, stateData.accountData.account, paramAcc),
+      enabled: !!networkId && !!address,
+      staleTime: 0,
+    },
+  );
+
+  const queries = [tokensQuery, positionsQuery, positionsMerkle];
   const {
     isAnyLoading, isAnyError, allErrors, isAnyFetching,
   } = getQueryStates(queries);
@@ -40,6 +50,7 @@ export const usePositionsQuery = (paramAcc?: string) => {
           positionsQuery!.data!.value ?? [],
           poolsQuery!.data!.value ?? [],
           tokensQuery!.data!.value ?? [],
+          positionsMerkle?.data?.value ?? [],
           networkId.value,
         );
     }

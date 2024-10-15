@@ -73,6 +73,7 @@
           :apy-order-type="orderType"
           :position-size-order-type="positionSizeOrder"
           :claim-loading="isClaiming"
+          @claim-merkle="handleClaimMerkle"
           @claim="handleClaim"
           @stake="stakeTrigger"
         >
@@ -355,6 +356,17 @@ export default defineComponent({
         this.closeWaitingModal();
         this.showErrorModalWithMsg({ errorType: 'zap', errorMsg: parseErrorLog(e) });
       }
+    },
+    async handleClaimMerkle(pool: IPositionsInfo) {
+      try {
+        this.showWaitingModal();
+        this.isClaiming = true;
+        await ZapinService.claimUniswap(this.networkId, this.evmSigner);
+        this.closeWaitingModal();
+      } catch(e) {
+        console.log(e)
+      }
+
     },
     async handleClaim(pool: IPositionsInfo) {
       this.setIsZapModalShow(false);

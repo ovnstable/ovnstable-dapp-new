@@ -4,6 +4,12 @@ export enum PLATFORMS {
     UNI = 'Uniswap'
 }
 
+export type MPos = {
+    tokenId: string;
+    toClaim: string;
+    rewardToken: string;
+}
+
 export type TPool = {
     id: string,
     name: string,

@@ -42,6 +42,10 @@ export interface IPositionsInfo extends TPoolInfo {
     },
     isInRange: boolean,
   },
+  merkleData: {
+    toClaim: string,
+    rewardToken: any
+  },
   emissionsUsd: string,
   emissions: number,
   token0Add: string,

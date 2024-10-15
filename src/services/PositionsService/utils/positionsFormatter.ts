@@ -4,7 +4,7 @@ import { buildLink } from '@/store/views/main/pools/helpers.ts';
 import { getUsdStr, sumBnStr } from '@/utils/tokens.ts';
 import { loadEmptyImg } from '@/utils/tokenLogo.ts';
 import { getNetworkParams } from '@/store/web3/network.ts';
-import type { TPoolInfo } from '@/types/common/pools';
+import type { MPos, TPoolInfo } from '@/types/common/pools';
 import type { TTokenInfo } from '@/types/common/tokens';
 import type { IPositionsInfo, TPositionData, TTicks } from '@/types/positions';
 import { getTokenBySymbol } from '@/store/helpers';
@@ -95,6 +95,7 @@ export const formatPositionData = (
   poolsMap: { [key: string]: TPoolInfo },
   tokenMap: Map<string, TTokenInfo>,
   networkId: number,
+  positionsMerkle: MPos[]
 ): IPositionsInfo[] => {
   const positionInfo = posDataArr.flatMap((
     [platform, tokenId, poolId, token0, token1, amount0, amount1, rewardAmount0, rewardAmount1,
@@ -121,6 +122,8 @@ export const formatPositionData = (
       const reward0UsdStr = getUsdStr(rewardAmount0, token0Info?.decimals, token0Info?.price);
       const reward1UsdStr = getUsdStr(rewardAmount1, token1Info?.decimals, token1Info?.price);
       const positionUsdTotal = sumBnStr(token0UsdStr, token1UsdStr);
+      const merklePos = positionsMerkle.find((_) => _.tokenId === tokenId?.toString());
+      const tokenMerkle = merklePos ? getTokenInfo(merklePos.rewardToken, tokenMap) : "";
       let rewardUsdTotal = sumBnStr(reward0UsdStr, reward1UsdStr);
       let platformName = platform;
       let rewardTokensInfo;
@@ -197,6 +200,10 @@ export const formatPositionData = (
           tokensInfo: rewardTokensInfo || [],
           usdValue: rewardUsdTotal,
           displayedUsdValue: getMinVal(rewardUsdTotal),
+        },
+        merkleData: {
+          toClaim: merklePos && tokenMerkle ? new BN(merklePos?.toClaim).div(10 ** tokenMerkle.decimals).toFixed(4) : "-",
+          rewardToken: tokenMerkle
         },
         emissions,
         emissionsUsd,
