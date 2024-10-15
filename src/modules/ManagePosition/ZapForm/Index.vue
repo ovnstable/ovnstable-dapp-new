@@ -491,7 +491,6 @@ export default {
       this.poolTokenContract = contractsData.poolTokenContract;
       this.poolTokens = contractsData.poolTokens;
       this.setSkipStake(isStakeSkip(this.gaugeContract, this.zapPool));
-      console.log(checkIsStaked(this.zapPool), '__POOL');
 
       if (!this.isAvailableOnNetwork) this.mintAction();
       if (!checkIsStaked(this.zapPool)) {

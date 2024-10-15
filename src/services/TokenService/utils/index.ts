@@ -2,7 +2,7 @@
 import {
   BLAST_TOKENS, LINEA_TOKENS, OP_TOKENS, SFRAX_TOKEN, ZKSYNC_TOKENS,
 } from '@/constants/tokens/manualTokensMap.ts';
-import { loadOvernightTokenImage, loadTokenImage } from '@/utils/tokenLogo.ts';
+import { loadEmptyImg, loadOvernightTokenImage, loadTokenImage } from '@/utils/tokenLogo.ts';
 import BigNumber from 'bignumber.js';
 import { fixedByPrice } from '@/utils/numbers.ts';
 import { buildEvmContract } from '@/utils/contractsMap.ts';
@@ -167,7 +167,7 @@ export const formatTokenInfoNew = (
       assetType: 'unknown',
       name: token.name,
       symbol: token.symbol.toUpperCase(),
-      logoUrl: token.image_url,
+      logoUrl: token?.image_url ? token.image_url : loadEmptyImg(),
       selected: false,
       approveData: {
         allowanceValue: 0,
@@ -184,5 +184,6 @@ export const formatTokenInfoNew = (
       isPoolToken: token?.isPoolToken ?? false,
     }
   ));
+  
   return tokenInfoList;
 };

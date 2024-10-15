@@ -7,8 +7,7 @@ export const getTokenInfo = (
   tokenMap: Map<string, TTokenInfo>,
 ):TTokenInfo => tokenMap.get(address)!;
 
-const getPercentage = (value: string, total: string) => new BN((value))
-  .dividedBy(new BN(total)).multipliedBy(100).toFixed(0);
+const getPercentage = (value: string, total: string) => new BN(value).div(total).times(100).toFixed(0);
 
 export const getPositionProportion = (
   token0UsdValue: string,
@@ -19,9 +18,9 @@ export const getPositionProportion = (
     token0: '0',
     token1: '0',
   };
-  if (Number(token0UsdValue) === 0) {
+  if (new BN(token0UsdValue).eq(0)) {
     tokenProportions.token1 = '100';
-  } else if (Number(token1UsdValue) === 0) {
+  } else if (new BN(token1UsdValue).eq(0)) {
     tokenProportions.token0 = '100';
   } else {
     tokenProportions.token0 = getPercentage(token0UsdValue, totalUsdValue);

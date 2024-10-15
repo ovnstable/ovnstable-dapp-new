@@ -41,8 +41,8 @@ export const formatInputTokens = (tokens: TInputToken[]): IInputTokenInfo[] => {
 
       return {
         ...token,
-        usdValue: usdValue ? formatMoney(Number(usdValue), 6) : 0,
-        displayedValue: formatMoney(Number(token.value), 6),
+        usdValue: usdValue,
+        displayedValue: formatMoney(token.value, 6),
         proportion: '',
       };
     });

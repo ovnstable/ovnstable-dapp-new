@@ -8,7 +8,7 @@ import PositionsService from '@/services/PositionsService/PositionsService.ts';
 import { useStore } from 'vuex';
 import { getQueryStates, isAllQueryDataAvailable, type TQuery } from '../utils/index.ts';
 
-export const usePositionsQuery = () => {
+export const usePositionsQuery = (paramAcc?: string) => {
   const { state: stateData } = useStore();
 
   const networkId = computed(() => stateData.network.networkId);
@@ -22,7 +22,7 @@ export const usePositionsQuery = () => {
     {
       // eslint-disable-next-line @tanstack/query/exhaustive-deps
       queryKey: ['positions', networkId, address, posRefreshTrigger],
-      queryFn: async () => PositionsService.fetchPositions(stateData),
+      queryFn: async () => PositionsService.fetchPositions(stateData, paramAcc),
       enabled: !!networkId && !!address,
       staleTime: 0,
     },
