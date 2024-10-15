@@ -11,7 +11,7 @@ import App from '@/App.vue';
 import VueApexCharts from 'vue3-apexcharts';
 import { VueQueryPlugin } from '@tanstack/vue-query';
 import { createContext } from '@/context.ts';
-import * as Sentry from '@sentry/vue';
+// import * as Sentry from '@sentry/vue';
 
 const app = createApp(App);
 
