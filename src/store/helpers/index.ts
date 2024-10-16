@@ -174,7 +174,14 @@ export const getSecondDefaultSecondtoken = (
 export const getTokenBySymbol = (
   symbol: string,
   tokensList: any[],
-) => tokensList.find((_) => _.symbol?.toLowerCase() === symbol?.toLowerCase());
+) => {
+  // workaround until token API fixed, there are plenty of usd+ token in coingecko
+  if (symbol?.toUpperCase() === 'USD+') {
+    return tokensList.find((_) => _.symbol?.toLowerCase() === symbol?.toLowerCase() && _.assetType === 'usd')
+  }
+  
+  return tokensList.find((_) => _.symbol?.toLowerCase() === symbol?.toLowerCase())
+};
 
 export const getTokenByAddress = (
   address: string,
