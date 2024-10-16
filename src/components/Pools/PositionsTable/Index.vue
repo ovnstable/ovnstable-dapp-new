@@ -104,13 +104,13 @@
                 {{ pool.tokenNames.token0 }} {{ pool.position.tokenProportions.token0 }} % |
                 {{ pool.tokenNames.token1 }} {{ pool.position.tokenProportions.token1 }} %
               </div>
-              <div
+              <!-- <div
                 class="pools-table__btn pools-table__btn--disabled"
                 @click="emitClaim(pool)"
                 @keypress="emitClaim(pool)"
               >
                 Increase
-              </div>
+              </div> -->
             </div>
             <div class="pools-table__emission">
               <div>
@@ -153,14 +153,14 @@
               >
                 Stake
               </div>
-              <div
+              <!-- <div
                 v-else-if="pool.isStaked"
                 class="pools-table__btn pools-table__btn--disabled"
                 @click="emitStake(pool)"
                 @keypress="emitStake(pool)"
               >
                 Unstake
-              </div>
+              </div> -->
             </div>
             <div class="pools-table__platform-row center">
               <a
