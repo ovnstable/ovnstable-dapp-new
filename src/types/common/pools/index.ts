@@ -94,8 +94,7 @@ export enum POOL_CATEGORIES {
 // }
 
 export type TFilterPoolsParams = {
-    token0: string,
-    token1: string,
+    search: string,
     chain: string[],
     minTvl: string,
     protocol: string[],

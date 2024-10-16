@@ -120,7 +120,7 @@ export default defineComponent({
     ...mapMutations('poolsData', ['changeState']),
     handleClickSearch() {
       const filterParams: Partial<TFilterPoolsParams> = {
-        token0: 'USD+',
+        search: 'USD+',
       };
       this.setFilterParams(filterParams);
     },

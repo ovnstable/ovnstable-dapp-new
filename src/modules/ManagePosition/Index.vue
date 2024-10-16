@@ -243,8 +243,7 @@ export default {
       const tokens = (this.zapPool?.name as string)?.split('/');
 
       const filterParams: Partial<TFilterPoolsParams> = {
-        token0: tokens[0],
-        // token1: tokens[1],
+        search: tokens[0],
       };
       this.setFilterParams(filterParams);
     },

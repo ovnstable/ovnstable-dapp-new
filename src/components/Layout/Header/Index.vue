@@ -374,7 +374,13 @@ export default {
   margin-left: 36px;
   font-size: 17px;
   font-weight: 600;
+  transition: opacity .15s ease;
 }
+
+.app-header__dashboard:hover {
+  opacity: .7;
+}
+
 .active-link {
   color: var(--color-3);
   text-decoration: underline;
