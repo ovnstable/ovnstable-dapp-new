@@ -29,10 +29,25 @@
   grid-template-columns: minmax(100px, 0.5fr) minmax(200px, 2.5fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(140px, 1fr) minmax(140px, 1.5fr) minmax(140px, 1fr);
   justify-content: space-between;
   width: 100%;
-  padding: 15px 0;
+  padding: 20px 0;
   border-bottom: 1px solid var(--color-17);
   button {
     border-radius: 30px;
+    max-height: 35px;
+    align-self: center;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    svg {
+      transform: rotate(-90deg) scale(.8);
+      fill: var(--color-2);
+    }
+
+    &:hover {
+      svg {
+        fill: var(--color-1);
+    }
+    }
   }
 
   @media (max-width: 1024px) {
@@ -91,7 +106,7 @@
   height: 30px;
   width: 30px;
   border-radius: 50%;
-  padding: 4px;
+  padding: 2px;
   background-color: var(--color-4);
   border: 1px solid var(--color-17);
   [data-theme="dark"] & {
@@ -504,7 +519,6 @@
 .pools-table__details-row {
   display: flex;
   align-items: center;
-  margin-bottom: 4px;
   gap: 8px;
 
   & .in-range {
@@ -526,12 +540,13 @@
   gap: 4px;
 
   .red {
-    background-color: #FF3E36;
+    color: #FF3E36;
   }
 
   .green {
-    background-color: var(--color-12);
+    color: var(--color-12);
   }
+  justify-content: space-between;
 }
 
 .pools-table__staked-stat {
@@ -563,16 +578,23 @@
   align-items: center;
 }
 
-.pools-table__details-row {
+.pools-table__details {
+
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  justify-content: space-between;
 
   & .is-in-range {
     color: green;
     white-space: nowrap;
+    padding: 0;
   }
 
   & .out-range {
     color: red;
     white-space: nowrap;
+    padding: 0;
   }
 
 
@@ -582,6 +604,7 @@
   display: flex;
   gap: 6px;
   flex-direction: column;
+  justify-content: space-between;
 }
 
 .pools-table__btn {
@@ -613,4 +636,10 @@
   background-color: var(--color-5);
   border-radius: 30px;
   min-width: 65px;
+}
+
+.pools-table__chain--container {
+  display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
