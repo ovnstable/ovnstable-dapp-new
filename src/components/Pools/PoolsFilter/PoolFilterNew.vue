@@ -95,6 +95,7 @@ import InputComponent from '@/components/Input/Index.vue';
 // import SelectTokensModal from '@/components/TokensModal/Index.vue';
 import { computed } from 'vue';
 import { useTokensQuery, useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.ts';
+import { debounce } from 'lodash';
 import type { TTokenInfo } from '@/types/common/tokens';
 import type { TFilterPoolsParams } from '@/types/common/pools';
 
@@ -161,8 +162,12 @@ export default {
     },
     searchTokens(val: string) {
       this.tokenSearch = val;
-      this.handleClickSearch();
+      this.handleDebounceSearch();
     },
+    handleDebounceSearch: debounce(
+      function debounceSearch(this: any) { this.handleClickSearch(); },
+      1000,
+    ),
     handleClickChain(chain: number | string) {
       this.setFilterChain(chain);
     },
