@@ -132,7 +132,7 @@
             <div class="pools-table__staked">
               <div
                 class="pools-table__staked-stat"
-                :class="{ red: !pool.isStaked, green: pool.isStaked  }"
+                :class="{ red: !pool.isStaked, green: pool.isStaked }"
               >
                 {{ pool.isStaked ? "YES" : "NO" }}
               </div>
@@ -198,10 +198,9 @@ import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import type { PropType } from 'vue';
 import { mapActions } from 'vuex';
-import { getImageUrl } from '@/utils/const.ts';
 import BN, { BigNumber } from 'bignumber.js';
+import { PLATFORMS } from '@/types/common/pools/index.ts';
 import type { IPositionsInfo } from '@/types/positions/index.d.ts';
-import { PLATFORMS, type TPool, type TPoolInfo } from '@/types/common/pools';
 
 enum POSITION_SIZE_ORDER_TYPE {
   'VALUE', 'VALUE_UP', 'VALUE_DOWN',
@@ -242,18 +241,18 @@ export default {
     getRewards() {
       return (pool: IPositionsInfo) => {
         if ([PLATFORMS.PANCAKE, PLATFORMS.AERO].includes(pool.platform[0] as PLATFORMS) && pool.isStaked) {
-          return new BN(pool.emissionsUsd).gt(0.1) ? pool.emissionsUsd : "< 0.1"
+          return new BN(pool.emissionsUsd).gt(0.1) ? pool.emissionsUsd : '< 0.1';
         }
 
         if ([PLATFORMS.PANCAKE, PLATFORMS.AERO].includes(pool.platform[0] as PLATFORMS) && !pool.isStaked) {
-          return pool.rewards.displayedUsdValue
+          return pool.rewards.displayedUsdValue;
         }
 
         if (pool.platform[0] === PLATFORMS.UNI) {
-          return pool.rewards.displayedUsdValue
+          return pool.rewards.displayedUsdValue;
         }
-      }
-    }
+      };
+    },
   },
   methods: {
     ...mapActions('poolsData', ['openZapIn']),
@@ -277,7 +276,6 @@ export default {
     toggleSortIcon() {
       return iconNameSort(POSITION_SIZE_ORDER_TYPE[this.positionSizeOrderType]);
     },
-    getImageUrl,
   },
 };
 </script>

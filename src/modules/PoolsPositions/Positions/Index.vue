@@ -111,8 +111,8 @@ import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import { usePoolsQueryNew } from '@/hooks/fetch/usePoolsQuery.ts';
 import type { PLATFORMS, TFilterPoolsParams, TPoolInfo } from '@/types/common/pools/index.ts';
 import ZapinService from '@/services/Web3Service/Zapin-service.ts';
-import type { IPositionsInfo } from '@/types/positions';
 import { useRoute } from 'vue-router';
+import type { IPositionsInfo } from '@/types/positions';
 
 interface IEnumIterator {
   next: () => number,
@@ -168,10 +168,10 @@ export default defineComponent({
     ButtonComponent,
   },
   setup() {
-    const router = useRoute()
+    const router = useRoute();
 
-    const paramAdd = router.query?.address
-    const { data: positionData, isLoading } = usePositionsQuery(paramAdd as string ?? "");
+    const paramAdd = router.query?.address;
+    const { data: positionData, isLoading } = usePositionsQuery(paramAdd as string ?? '');
     const { data: allTokensList } = useTokensQuery();
     const { data: balanceList } = useTokensQueryNew();
     const { data: poolList } = usePoolsQueryNew(0);
@@ -320,7 +320,7 @@ export default defineComponent({
       const gaugeAdd = this.searchGauge(pool);
 
       if (!gaugeAdd) {
-        this.showErrorModalWithMsg({ errorType: "zap", errorMsg: 'Gauge not found' });
+        this.showErrorModalWithMsg({ errorType: 'zap', errorMsg: 'Gauge not found' });
         return;
       }
 
@@ -357,16 +357,15 @@ export default defineComponent({
         this.showErrorModalWithMsg({ errorType: 'zap', errorMsg: parseErrorLog(e) });
       }
     },
-    async handleClaimMerkle(pool: IPositionsInfo) {
+    async handleClaimMerkle() {
       try {
         this.showWaitingModal();
         this.isClaiming = true;
         await ZapinService.claimUniswap(this.networkId, this.evmSigner);
         this.closeWaitingModal();
-      } catch(e) {
-        console.log(e)
+      } catch (e) {
+        console.log(e);
       }
-
     },
     async handleClaim(pool: IPositionsInfo) {
       this.setIsZapModalShow(false);
@@ -374,9 +373,9 @@ export default defineComponent({
       await awaitDelay(1000);
       const gaugeAdd = this.searchGauge(pool);
 
-      console.log(gaugeAdd, this.poolList, '___gaugeAdd')
+      console.log(gaugeAdd, this.poolList, '___gaugeAdd');
       if (!gaugeAdd) {
-        this.showErrorModalWithMsg({ errorType: "zap", errorMsg: 'Gauge not found' });
+        this.showErrorModalWithMsg({ errorType: 'zap', errorMsg: 'Gauge not found' });
         return;
       }
 
@@ -390,13 +389,6 @@ export default defineComponent({
       try {
         this.showWaitingModal('unstaking');
         this.isClaiming = true;
-        // if (pool.isStaked && pool.platform[0] === "Pancake") {
-        //   await this.approveNftGauge(
-        //     contractsData.poolTokenContract,
-        //     contractsData.gaugeContract,
-        //     pool.tokenId,
-        //   );
-        // }
 
         await ZapinService.claimPosition(
           pool,
@@ -405,13 +397,13 @@ export default defineComponent({
           this.triggerSuccessZapin,
           this.account,
           this.evmSigner,
-          this.networkId
+          this.networkId,
         );
         this.closeWaitingModal();
       } catch (e) {
         this.isClaiming = false;
         this.closeWaitingModal();
-        this.showErrorModalWithMsg({ errorType: "zap", errorMsg: parseErrorLog(e) });
+        this.showErrorModalWithMsg({ errorType: 'zap', errorMsg: parseErrorLog(e) });
       }
     },
     switchPoolsTab(type: POOL_TYPES) {
@@ -430,6 +422,7 @@ export default defineComponent({
     },
     togglePositionSizeSort() {
       this.positionSizeOrder = this.positionSizeSortIterator.next();
+      this.reloadData();
     },
     setSelectedNetwork(selectedChain: number | 'ALL') {
       this.isOpenHiddenPools = false;
