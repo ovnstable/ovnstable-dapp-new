@@ -228,9 +228,9 @@ export default {
   width: 100%;
   margin-bottom: 20px;
 
-  .input-component {
-    background-color: transparent;
-  }
+  // .input-component {
+  //   background-color: var(--color-8);
+  // }
 }
 
 .pools-wrap__search-sw {

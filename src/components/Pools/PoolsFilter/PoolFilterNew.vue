@@ -173,15 +173,14 @@ export default {
     },
     handleClickSearch() {
       const filterParams: Partial<TFilterPoolsParams> = {
-        token0: this.tokenSearch ?? '',
+        search: this.tokenSearch ?? '',
         // token1: this.selectedTokens[1]?.symbol ?? '',
       };
       this.setFilterParams(filterParams);
     },
     handleClickResetFilter() {
       const filterParams: Partial<TFilterPoolsParams> = {
-        token0: '',
-        token1: '',
+        search: '',
       };
       this.setFilterParams(filterParams);
       this.selectedTokens = [];

@@ -32,7 +32,7 @@
         <div
           class="pools-header__item"
         >
-          Staked
+          Stake status
         </div>
         <div class="pools-header__item center">
           Platforms
@@ -47,8 +47,10 @@
             :key="key"
             class="pools-table__row position-table_row"
           >
-            <div class="pools-table__chain">
-              <BaseIcon :name="pool.chainName" />
+            <div class="pools-table__chain--container">
+              <div class="pools-table__chain">
+                <BaseIcon :name="pool.chainName" />
+              </div>
             </div>
             <div class="pools-table__tokens-wrap">
               <div class="pools-table__tokens">
@@ -83,15 +85,15 @@
                     {{ formatPoolFee(pool.fee) }}
                   </div>
                 </div>
+                <div
+                  class="pools-table__tag is-in-range"
+                  :class="{ 'out-range': !pool.position?.isInRange }"
+                >
+                  {{ pool.position?.isInRange ? 'IN RANGE' : 'OUT OF RANGE' }}
+                </div>
                 <div class="pools-table__details-row">
                   <div class="pools-table__tokens-details">
                     ID#{{ pool.tokenId }}
-                  </div>
-                  <div
-                    class="pools-table__tag is-in-range"
-                    :class="{ 'out-range': !pool.position?.isInRange }"
-                  >
-                    {{ pool.position?.isInRange ? 'IN RANGE' : 'OUT OF RANGE' }}
                   </div>
                 </div>
               </div>
@@ -101,6 +103,13 @@
               <div>
                 {{ pool.tokenNames.token0 }} {{ pool.position.tokenProportions.token0 }} % |
                 {{ pool.tokenNames.token1 }} {{ pool.position.tokenProportions.token1 }} %
+              </div>
+              <div
+                class="pools-table__btn pools-table__btn--disabled"
+                @click="emitClaim(pool)"
+                @keypress="emitClaim(pool)"
+              >
+                Increase
               </div>
             </div>
             <div class="pools-table__emission">
@@ -130,12 +139,11 @@
               </div>
             </div>
             <div class="pools-table__staked">
-              <div
-                class="pools-table__staked-stat"
+              <p
                 :class="{ red: !pool.isStaked, green: pool.isStaked }"
               >
-                {{ pool.isStaked ? "YES" : "NO" }}
-              </div>
+                {{ pool.isStaked ? "STAKED" : "UNSTAKED" }}
+              </p>
               <div
                 v-if="!pool.isStaked"
                 class="pools-table__btn"
@@ -144,6 +152,14 @@
                 @keypress="emitStake(pool)"
               >
                 Stake
+              </div>
+              <div
+                v-else-if="pool.isStaked"
+                class="pools-table__btn pools-table__btn--disabled"
+                @click="emitStake(pool)"
+                @keypress="emitStake(pool)"
+              >
+                Unstake
               </div>
             </div>
             <div class="pools-table__platform-row center">
@@ -167,6 +183,9 @@
               @click="handleOpen(pool)"
             >
               MANAGE
+              <BaseIcon
+                name="ArrowDown"
+              />
             </ButtonComponent>
           </div>
         </template>

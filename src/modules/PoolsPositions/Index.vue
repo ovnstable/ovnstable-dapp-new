@@ -96,7 +96,7 @@ export default {
   margin-bottom: 35px;
   color: var(--color-1);
   font-size: 16px;
-  font-weight: 400;
+  font-weight: 600;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
