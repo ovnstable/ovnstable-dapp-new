@@ -116,6 +116,7 @@
                 Merkle: {{ pool.merkleData.toClaim }}{{ " " }}{{ pool.merkleData.rewardToken?.symbol }}
               </div>
               <div
+                v-else-if="pool.chain !== 56"
                 class="pools-table__btn"
                 :class="{ 'pools-table__btn--disabled': lessThanMin(pool.rewards.usdValue) }"
                 @click="emitClaim(pool)"
