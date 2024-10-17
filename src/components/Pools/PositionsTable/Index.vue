@@ -160,7 +160,7 @@
                 No gauge
               </div>
               <div
-                v-else-if="pool.isStaked"
+                v-else-if="pool.isStaked && pool.chain !== 56"
                 class="pools-table__btn pools-table__btn--disabled"
                 @click="handleOpenTab(pool, MANAGE_TAB.WITHDRAW)"
                 @keypress="handleOpenTab(pool, MANAGE_TAB.WITHDRAW)"
