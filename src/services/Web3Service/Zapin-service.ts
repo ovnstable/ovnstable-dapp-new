@@ -682,7 +682,7 @@ class ZapinService {
 
       return tx;
     } catch (e: any) {
-      throw new Error(e);
+      throw e;
     }
   }
 
@@ -706,7 +706,7 @@ class ZapinService {
 
       return await tx.wait();
     } catch (e: any) {
-      throw new Error(e);
+      throw e;
     }
   }
 

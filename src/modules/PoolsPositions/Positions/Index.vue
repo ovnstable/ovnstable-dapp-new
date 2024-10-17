@@ -105,7 +105,7 @@ import { defineComponent } from 'vue';
 import { usePositionsQuery, useRefreshPositions } from '@/hooks/fetch/usePositionsQuery.ts';
 import { useRefreshBalances } from '@/hooks/fetch/useRefreshBalances.ts';
 import { parseErrorLog } from '@/utils/errors.ts';
-import { initZapinContracts } from '@/services/Web3Service/utils/index.ts';
+import { checkForBscError, initZapinContracts } from '@/services/Web3Service/utils/index.ts';
 import { useTokensQuery, useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import { usePoolsQueryNew } from '@/hooks/fetch/usePoolsQuery.ts';
@@ -347,12 +347,6 @@ export default defineComponent({
           );
         }
 
-        await this.approveNftGauge(
-          contractsData.poolTokenContract,
-          contractsData.gaugeContract,
-          pool.tokenId,
-        );
-
         await ZapinService.stakeTrigger(
           pool.platform[0] as PLATFORMS,
           contractsData.gaugeContract,
@@ -365,8 +359,16 @@ export default defineComponent({
         this.closeWaitingModal();
       } catch (e) {
         console.log(e, '___e1');
-        console.log(JSON.parse(JSON.stringify(e)), '___e');
         this.isClaiming = false;
+        const skipErr = checkForBscError(e);
+
+        console.log(skipErr, '__skipErr')
+        if (skipErr) {
+          this.closeWaitingModal();
+          this.reloadData();
+          return
+        };
+
         this.closeWaitingModal();
         this.showErrorModalWithMsg({ errorType: 'zap', errorMsg: parseErrorLog(e) });
       }

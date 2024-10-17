@@ -48,6 +48,17 @@ export const sumOfAllSelectedTokensInUsd = (selectedInputTokens: any[]) => {
   return sum;
 };
 
+export const checkForBscError = (e: any) => {
+  const err = JSON.parse(JSON.stringify(e))
+  // only for bsc chain, unique logic, all successfull tx throwing it
+  // its mean TX is indexing
+  if (err?.error?.code === -32000) {
+    return true
+  }
+
+  return false
+}
+
 const decodeEventData = (eventSignature: string[], eventData: string) => new ethers.AbiCoder()
   .decode(eventSignature, eventData);
 
