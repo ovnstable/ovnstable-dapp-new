@@ -202,6 +202,33 @@
           </div>
         </div>
       </template>
+      <template v-if="zapPool.merkleData.toClaim">
+        <span class="divider" />
+        <div
+          class="swap-block__item"
+        >
+          <div
+            class="swap-block__item-row"
+          >
+            <div class="swap-block__item-row--token-wrap">
+              <img
+                :src="getImgBySymbol(zapPool.merkleData.rewardToken?.symbol) as any"
+                alt="select-token"
+              >
+              <span>
+                {{ zapPool.merkleData.rewardToken?.symbol?.toUpperCase() }}
+              </span>
+            </div>
+          </div>
+          <div
+            class="swap-block__item-bal"
+          >
+            <div>
+              {{ zapPool.merkleData.toClaim }}
+            </div>
+          </div>
+        </div>
+      </template>
     </div>
   </div>
 </template>
@@ -250,6 +277,9 @@ export default {
     };
   },
   computed: {
+    getImgBySymbol() {
+      return (symbol: string) => loadTokenImage(symbol);
+    },
     getSymbolToken() {
       return getSymbolEmmToken(this.zapPool.platform[0]);
     },

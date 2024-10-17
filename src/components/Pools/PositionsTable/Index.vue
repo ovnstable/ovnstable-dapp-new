@@ -25,11 +25,6 @@
           Earned
         </div>
         <div
-          class="pools-header__item "
-        >
-          Merkle
-        </div>
-        <div
           class="pools-header__item"
         >
           Stake status
@@ -114,7 +109,10 @@
             </div>
             <div class="pools-table__emission">
               <div>
-                {{ getRewards(pool) }}$
+                Rewards: {{ getRewards(pool) }}$
+              </div>
+              <div v-if="pool.merkleData.toClaim">
+                Merkle: {{ pool.merkleData.toClaim }}{{ " " }}{{ pool.merkleData.rewardToken?.symbol }}
               </div>
               <div
                 class="pools-table__btn"
@@ -125,7 +123,7 @@
                 Claim
               </div>
             </div>
-            <div class="pools-table__emission">
+            <!-- <div class="pools-table__emission">
               <div>
                 {{ pool.merkleData.toClaim }}{{ " " }}{{ pool.merkleData.rewardToken?.symbol }}
               </div>
@@ -137,7 +135,7 @@
               >
                 Claim all
               </div>
-            </div>
+            </div> -->
             <div class="pools-table__staked">
               <p
                 :class="{ red: !pool.isStaked, green: pool.isStaked }"

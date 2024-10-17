@@ -134,6 +134,7 @@ import { useTokensQuery, useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.
 import { isEmpty } from 'lodash';
 import { usePoolsQueryNew } from '@/hooks/fetch/usePoolsQuery.ts';
 import type { TFilterPoolsParams } from '@/types/common/pools';
+import { useRoute } from 'vue-router';
 
 export enum MANAGE_TAB {
   REBALANCE,
@@ -161,7 +162,10 @@ export default {
     CompoundForm,
   },
   setup() {
-    const { data: getUserPositions } = usePositionsQuery();
+    const router = useRoute();
+
+    const paramAdd = router.query?.address;
+    const { data: getUserPositions } = usePositionsQuery(paramAdd as string ?? '');
     const { data: balanceList, isLoading: tokensLoading } = useTokensQuery();
     const { data: allTokensList } = useTokensQueryNew();
     const { data: poolList } = usePoolsQueryNew(0);
@@ -210,9 +214,6 @@ export default {
   },
   computed: {
     isLoadingData() {
-      console.log(this.gaugeAddress, '___gaugeAddress');
-      console.log(this.zapPool, '__zapPool');
-
       return isEmpty(this.zapPool)
         || isEmpty(this.allTokensList)
         || isEmpty(this.balanceList)

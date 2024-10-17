@@ -201,7 +201,7 @@ export const formatPositionData = (
           displayedUsdValue: getMinVal(rewardUsdTotal),
         },
         merkleData: {
-          toClaim: merklePos && tokenMerkle ? new BN(merklePos?.toClaim).div(10 ** tokenMerkle.decimals).toFixed(4) : "-",
+          toClaim: merklePos && tokenMerkle ? new BN(merklePos?.toClaim).div(10 ** tokenMerkle.decimals).toFixed(4) : "",
           rewardToken: tokenMerkle
         },
         emissions,
