@@ -100,6 +100,7 @@
                 {{ pool.tokenNames.token1 }} {{ pool.position.tokenProportions.token1 }} %
               </div>
               <div
+                v-if="pool.chain !== 56"
                 class="pools-table__btn pools-table__btn--disabled"
                 @click="handleOpenTab(pool, MANAGE_TAB.INCREASE)"
                 @keypress="handleOpenTab(pool, MANAGE_TAB.INCREASE)"
@@ -186,6 +187,7 @@
             <ButtonComponent
               btn-styles="faded"
               @click="handleOpenTab(pool)"
+              :disabled="pool.chain === 56"
             >
               MANAGE
               <BaseIcon

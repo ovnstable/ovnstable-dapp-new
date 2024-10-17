@@ -771,7 +771,8 @@ export default {
         const skipErr = checkForBscError(e);
 
         if (skipErr) {
-          this.closeWaitingModal('Approve');
+          this.closeWaitingModal();
+          this.isSwapLoading = false;
           return
         };
         console.log(e);
@@ -874,7 +875,10 @@ export default {
         const skipErr = checkForBscError(e);
 
         if (skipErr) {
-          this.closeWaitingModal('Approve');
+          this.closeWaitingModal();
+          this.isSwapLoading = false;
+          this.positionStaked = true;
+          this.currentStage = rebalanceStep.APPROVEGAUGE;
           return
         };
         this.isSwapLoading = false;

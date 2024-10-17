@@ -773,7 +773,7 @@ class ZapinService {
       else throw new Error('Such method do not exist');
     } catch (e: any) {
       console.log(JSON.parse(JSON.stringify(e)), '___decoded3');
-      throw new Error(e?.reason ?? "Simulation start error");
+      throw e;
     }
   }
 
