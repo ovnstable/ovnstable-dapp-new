@@ -99,13 +99,13 @@
                 {{ pool.tokenNames.token0 }} {{ pool.position.tokenProportions.token0 }} % |
                 {{ pool.tokenNames.token1 }} {{ pool.position.tokenProportions.token1 }} %
               </div>
-              <!-- <div
+              <div
                 class="pools-table__btn pools-table__btn--disabled"
                 @click="handleOpenTab(pool, MANAGE_TAB.INCREASE)"
                 @keypress="handleOpenTab(pool, MANAGE_TAB.INCREASE)"
               >
                 Increase
-              </div> -->
+              </div>
             </div>
             <div class="pools-table__emission">
               <div>
@@ -158,14 +158,14 @@
               >
                 NO GAUGE
               </div>
-              <!-- <div
+              <div
                 v-else-if="pool.isStaked"
                 class="pools-table__btn pools-table__btn--disabled"
                 @click="handleOpenTab(pool, MANAGE_TAB.WITHDRAW)"
                 @keypress="handleOpenTab(pool, MANAGE_TAB.WITHDRAW)"
               >
                 Unstake
-              </div> -->
+              </div>
             </div>
             <div class="pools-table__platform-row center">
               <a
@@ -234,8 +234,8 @@ import { mapActions } from 'vuex';
 import BN, { BigNumber } from 'bignumber.js';
 import { PLATFORMS } from '@/types/common/pools/index.ts';
 import { MANAGE_TAB } from '@/modules/ManagePosition/Index.vue';
+import { ZERO_ADDRESS } from '@/utils/const.ts';
 import type { IPositionsInfo } from '@/types/positions/index.d.ts';
-import { ZERO_ADDRESS } from '@/utils/const';
 
 enum POSITION_SIZE_ORDER_TYPE {
   'VALUE', 'VALUE_UP', 'VALUE_DOWN',
@@ -255,9 +255,6 @@ export default {
     BaseIcon,
     ButtonComponent,
   },
-  data: () => ({
-    ZERO_ADDRESS,
-  }),
   props: {
     pools: {
       type: Array as PropType<IPositionsInfo[]>,
@@ -274,11 +271,10 @@ export default {
     },
   },
   emits: ['claim', 'claim-merkle', 'stake'],
-  data() {
-    return {
-      MANAGE_TAB,
-    };
-  },
+  data: () => ({
+    ZERO_ADDRESS,
+    MANAGE_TAB,
+  }),
   computed: {
     lessThanMin() {
       return (val: string) => new BN(val).lt(0.02);
@@ -319,9 +315,9 @@ export default {
     emitClaim(pool: any) {
       this.$emit('claim', pool);
     },
-    emitClaimMerkle(pool: any) {
-      this.$emit('claim-merkle', pool);
-    },
+    // emitClaimMerkle(pool: any) {
+    //   this.$emit('claim-merkle', pool);
+    // },
     toggleSortIcon() {
       return iconNameSort(POSITION_SIZE_ORDER_TYPE[this.positionSizeOrderType]);
     },
