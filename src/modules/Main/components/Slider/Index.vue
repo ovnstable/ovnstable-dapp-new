@@ -561,42 +561,11 @@ export default {
   width: 100%;
   height: 100%;
 }
-.slider-info-blast-points {
-  background-image: url('/blastQuest/blastPointsSlider.png');
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-  padding: 20px 18px;
-  border-radius: 10px;
-  margin-bottom: 10px;
-  max-height: 55px;
-  p,span {
-    font-size: 15px;
-    color: var(--color-4);
-  }
-  p {
-    display: flex;
-    justify-content: space-between;
-  }
-}
 .spinner-container {
   display: flex;
   transform: scale(0.5);
   margin-top: -24px;
   margin-right: -20px;
-}
-
-.slider-info-blast-lootbox {
-  background-image: url('/blastQuest/blastLootboxSlider.png');
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-  border-radius: 10px;
-  padding: 12px 4px;
-  padding-bottom: 0;
-  p {
-    color: var(--color-4);
-  }
 }
 
 .slider-info-blast-lootbox p:first-child {
