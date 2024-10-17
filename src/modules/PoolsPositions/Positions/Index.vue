@@ -36,7 +36,7 @@
           class="unavailable-row"
         >
           <p>
-            PLEASE SELECT ONE OF THE CURRENTLY SUPPORTED NETWORKS: BASE, ARBITRUM
+            PLEASE SELECT ONE OF THE CURRENTLY SUPPORTED NETWORKS: BASE, ARBITRUM, BSC
           </p>
         </div>
       </div>
@@ -73,6 +73,7 @@
           :apy-order-type="orderType"
           :position-size-order-type="positionSizeOrder"
           :claim-loading="isClaiming"
+          @claim-merkle="handleClaimMerkle"
           @claim="handleClaim"
           @stake="stakeTrigger"
         >
@@ -104,14 +105,14 @@ import { defineComponent } from 'vue';
 import { usePositionsQuery, useRefreshPositions } from '@/hooks/fetch/usePositionsQuery.ts';
 import { useRefreshBalances } from '@/hooks/fetch/useRefreshBalances.ts';
 import { parseErrorLog } from '@/utils/errors.ts';
-import { initZapinContracts } from '@/services/Web3Service/utils/index.ts';
+import { checkForBscError, initZapinContracts } from '@/services/Web3Service/utils/index.ts';
 import { useTokensQuery, useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import { usePoolsQueryNew } from '@/hooks/fetch/usePoolsQuery.ts';
-import type { PLATFORMS, TFilterPoolsParams, TPoolInfo } from '@/types/common/pools/index.ts';
+import { PLATFORMS, type TFilterPoolsParams, type TPoolInfo } from '@/types/common/pools/index.ts';
 import ZapinService from '@/services/Web3Service/Zapin-service.ts';
-import type { IPositionsInfo } from '@/types/positions';
 import { useRoute } from 'vue-router';
+import type { IPositionsInfo } from '@/types/positions';
 
 interface IEnumIterator {
   next: () => number,
@@ -155,7 +156,7 @@ enum POSITION_SIZE_ORDER_TYPE {
   'VALUE', 'VALUE_UP', 'VALUE_DOWN',
 }
 enum SUPPORTED_REBALANCE_NETWORKS {
-  arbitrum, base,
+  arbitrum, base, bsc
 }
 
 export default defineComponent({
@@ -167,10 +168,10 @@ export default defineComponent({
     ButtonComponent,
   },
   setup() {
-    const router = useRoute()
+    const router = useRoute();
 
-    const paramAdd = router.query?.address
-    const { data: positionData, isLoading } = usePositionsQuery(paramAdd as string ?? "");
+    const paramAdd = router.query?.address;
+    const { data: positionData, isLoading } = usePositionsQuery(paramAdd as string ?? '');
     const { data: allTokensList } = useTokensQuery();
     const { data: balanceList } = useTokensQueryNew();
     const { data: poolList } = usePoolsQueryNew(0);
@@ -246,6 +247,7 @@ export default defineComponent({
           .some((col: any) => col?.toLowerCase()?.includes(this.searchQuery.toLowerCase())));
     },
     filteredByNetwork() {
+      if (!this.positionData) return [];
       if (this.selectedNetworks.length === 0) return this.positionData;
 
       return this.positionData
@@ -286,7 +288,7 @@ export default defineComponent({
       const tokens = (zapPool?.name as string)?.split('/');
 
       const filterParams: Partial<TFilterPoolsParams> = {
-        token0: tokens[0],
+        search: tokens[0],
       };
       this.setFilterParams(filterParams);
     },
@@ -306,6 +308,7 @@ export default defineComponent({
         const tx = await poolTokenContract
           .approve(gaugeContract?.target, tokenId, params);
 
+        console.log(tx, '___tx');
         await tx.wait();
       } catch (e: any) {
         this.closeWaitingModal();
@@ -319,7 +322,7 @@ export default defineComponent({
       const gaugeAdd = this.searchGauge(pool);
 
       if (!gaugeAdd) {
-        this.showErrorModalWithMsg({ errorType: "zap", errorMsg: 'Gauge not found' });
+        this.showErrorModalWithMsg({ errorType: 'zap', errorMsg: 'Gauge not found' });
         return;
       }
 
@@ -335,11 +338,15 @@ export default defineComponent({
       try {
         this.showWaitingModal('staking');
         this.isClaiming = true;
-        await this.approveNftGauge(
-          contractsData.poolTokenContract,
-          contractsData.gaugeContract,
-          pool.tokenId,
-        );
+
+        if (pool.platform[0] === PLATFORMS.AERO) {
+          await this.approveNftGauge(
+            contractsData.poolTokenContract,
+            contractsData.gaugeContract,
+            pool.tokenId,
+          );
+        }
+
         await ZapinService.stakeTrigger(
           pool.platform[0] as PLATFORMS,
           contractsData.gaugeContract,
@@ -351,9 +358,29 @@ export default defineComponent({
         this.reloadData();
         this.closeWaitingModal();
       } catch (e) {
+        console.log(e, '___e1');
         this.isClaiming = false;
+        const skipErr = checkForBscError(e);
+
+        console.log(skipErr, '__skipErr')
+        if (skipErr) {
+          this.closeWaitingModal();
+          this.reloadData();
+          return
+        };
+
         this.closeWaitingModal();
         this.showErrorModalWithMsg({ errorType: 'zap', errorMsg: parseErrorLog(e) });
+      }
+    },
+    async handleClaimMerkle() {
+      try {
+        this.showWaitingModal();
+        this.isClaiming = true;
+        await ZapinService.claimUniswap(this.networkId, this.evmSigner);
+        this.closeWaitingModal();
+      } catch (e) {
+        console.log(e);
       }
     },
     async handleClaim(pool: IPositionsInfo) {
@@ -362,9 +389,9 @@ export default defineComponent({
       await awaitDelay(1000);
       const gaugeAdd = this.searchGauge(pool);
 
-      console.log(gaugeAdd, this.poolList, '___gaugeAdd')
+      console.log(gaugeAdd, this.poolList, '___gaugeAdd');
       if (!gaugeAdd) {
-        this.showErrorModalWithMsg({ errorType: "zap", errorMsg: 'Gauge not found' });
+        this.showErrorModalWithMsg({ errorType: 'zap', errorMsg: 'Gauge not found' });
         return;
       }
 
@@ -378,13 +405,6 @@ export default defineComponent({
       try {
         this.showWaitingModal('unstaking');
         this.isClaiming = true;
-        // if (pool.isStaked && pool.platform[0] === "Pancake") {
-        //   await this.approveNftGauge(
-        //     contractsData.poolTokenContract,
-        //     contractsData.gaugeContract,
-        //     pool.tokenId,
-        //   );
-        // }
 
         await ZapinService.claimPosition(
           pool,
@@ -393,13 +413,13 @@ export default defineComponent({
           this.triggerSuccessZapin,
           this.account,
           this.evmSigner,
-          this.networkId
+          this.networkId,
         );
         this.closeWaitingModal();
       } catch (e) {
         this.isClaiming = false;
         this.closeWaitingModal();
-        this.showErrorModalWithMsg({ errorType: "zap", errorMsg: parseErrorLog(e) });
+        this.showErrorModalWithMsg({ errorType: 'zap', errorMsg: parseErrorLog(e) });
       }
     },
     switchPoolsTab(type: POOL_TYPES) {
@@ -418,6 +438,7 @@ export default defineComponent({
     },
     togglePositionSizeSort() {
       this.positionSizeOrder = this.positionSizeSortIterator.next();
+      this.reloadData();
     },
     setSelectedNetwork(selectedChain: number | 'ALL') {
       this.isOpenHiddenPools = false;

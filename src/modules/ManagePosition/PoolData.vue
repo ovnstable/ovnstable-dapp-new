@@ -117,10 +117,10 @@
           </div>
         </div>
         <div
-          v-if="token.value"
+          v-if="token?.value"
           class="swap-block__item-bal"
         >
-          <div v-if="token.value">
+          <div v-if="token?.value">
             {{ token.displayedValue }}
           </div>
           <div>
@@ -161,10 +161,10 @@
           </div>
         </div>
         <div
-          v-if="token.value"
+          v-if="token?.value"
           class="swap-block__item-bal"
         >
-          <div v-if="token.value">
+          <div v-if="token?.value">
             {{ token.displayedValue }}
           </div>
           <div>
@@ -198,6 +198,36 @@
             </div>
             <div v-if="getRewardUsd">
               ~ ${{ getFixedVal(getRewardUsd) }}
+            </div>
+          </div>
+        </div>
+      </template>
+      <template v-if="zapPool.merkleData.toClaim">
+        <span class="divider" />
+        <div
+          class="swap-block__item"
+        >
+          <div
+            class="swap-block__item-row"
+          >
+            <div class="swap-block__item-row--token-wrap">
+              <img
+                :src="getImgBySymbol(zapPool.merkleData.rewardToken?.symbol) as any"
+                alt="select-token"
+              >
+              <span>
+                {{ zapPool.merkleData.rewardToken?.symbol?.toUpperCase() }}
+              </span>
+            </div>
+          </div>
+          <div
+            class="swap-block__item-bal"
+          >
+            <div>
+              {{ zapPool.merkleData.toClaim }}
+            </div>
+            <div v-if="zapPool.merkleData.toClaimUsd">
+              ~ ${{ zapPool.merkleData.toClaimUsd }}
             </div>
           </div>
         </div>
@@ -250,6 +280,9 @@ export default {
     };
   },
   computed: {
+    getImgBySymbol() {
+      return (symbol: string) => loadTokenImage(symbol);
+    },
     getSymbolToken() {
       return getSymbolEmmToken(this.zapPool.platform[0]);
     },
@@ -267,7 +300,8 @@ export default {
     },
     getRewardTotalUsd() {
       const res: BN = this.rewardTokens.reduce((acc: BN, curr: any) => {
-        const val = new BN(curr.value).times(curr.selectedToken?.price).toFixed(6);
+        if (!curr) return acc;
+        const val = new BN(curr?.value).times(curr.selectedToken?.price).toFixed(6);
 
         return acc.plus(val);
       }, new BN(0));
@@ -293,7 +327,8 @@ export default {
       if (this.zapAllTokens.length === 0) return 0;
 
       const res: BN = this.inputTokens.reduce((acc: BN, curr: any) => {
-        const val = new BN(curr.value).times(curr.selectedToken?.price).toFixed(6);
+        if (!curr) return acc;
+        const val = new BN(curr?.value).times(curr.selectedToken?.price).toFixed(6);
 
         return acc.plus(val);
       }, new BN(0));
@@ -306,7 +341,6 @@ export default {
   mounted() {
     this.init();
     this.initRewardTokens()
-    console.log(this.zapPool, '__ZAP')
   },
   methods: {
     init() {
@@ -318,7 +352,6 @@ export default {
       const token0 = getTokenByAddress(this.zapPool?.token0Add, this.zapAllTokens);
       const token1 = getTokenByAddress(this.zapPool?.token1Add, this.zapAllTokens);
 
-      console.log(token1, '___tokenInfo2323')
       const tokenFull0 = {
         ...getNewInputToken(),
         locked: false,
@@ -345,7 +378,7 @@ export default {
       });
 
       const inputTokenInfo = formatInputTokens(arrTokens);
-      this.inputTokens = inputTokenInfo;
+      this.inputTokens = inputTokenInfo.filter((_) => !!_);
     },
     initRewardTokens() {
       const rewardToken = this.zapPool.rewards.tokens.map((_: any) => {
@@ -367,9 +400,7 @@ export default {
         };
       });
 
-      console.log(rewardToken, '___rewardToken')
-
-      this.rewardTokens = rewardToken;
+      this.rewardTokens = rewardToken.filter((_: any) => !!_);
     },
     copyToClipBoard(textToCopy: string) {
       navigator.clipboard.writeText(textToCopy);

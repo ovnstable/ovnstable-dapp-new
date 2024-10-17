@@ -232,6 +232,7 @@ import { parseErrorLog } from '@/utils/errors.ts';
 import FeesBlock, { MIN_IMPACT } from '@/components/FeesBlock/Index.vue';
 import SwapSlippageSettings from '@/components/SwapSlippage/Index.vue';
 import {
+  checkForBscError,
   checkIsStaked,
   initReqData, initZapData, initZapinContracts, isStakeSkip, parseLogs,
 } from '@/services/Web3Service/utils/index.ts';
@@ -594,6 +595,12 @@ export default {
         this.currentStage = rebalanceStep.APPROVE;
         this.approveNftPosition(false);
       } catch (e) {
+        const skipErr = checkForBscError(e);
+
+        if (skipErr) {
+          this.closeWaitingModal('Approve');
+          return
+        };
         console.log(e);
         this.closeWaitingModal();
         this.isSwapLoading = false;
@@ -709,6 +716,12 @@ export default {
             );
           });
       } catch (e) {
+        const skipErr = checkForBscError(e);
+
+        if (skipErr) {
+          this.closeWaitingModal('Approve');
+          return
+        };
         this.showErrorModalWithMsg({ errorType: 'zap', errorMsg: parseErrorLog(e) });
         this.odosDataLoading = false;
         this.isSwapLoading = true;
@@ -755,6 +768,13 @@ export default {
         this.isSwapLoading = false;
         this.closeWaitingModal();
       } catch (e) {
+        const skipErr = checkForBscError(e);
+
+        if (skipErr) {
+          this.closeWaitingModal();
+          this.isSwapLoading = false;
+          return
+        };
         console.log(e);
         this.closeWaitingModal('Approve');
         this.showErrorModalWithMsg({ errorType: 'approve', errorMsg: parseErrorLog(e) });
@@ -852,6 +872,15 @@ export default {
         this.positionStaked = true;
         this.approveNftPosition(true);
       } catch (e: any) {
+        const skipErr = checkForBscError(e);
+
+        if (skipErr) {
+          this.closeWaitingModal();
+          this.isSwapLoading = false;
+          this.positionStaked = true;
+          this.currentStage = rebalanceStep.APPROVEGAUGE;
+          return
+        };
         this.isSwapLoading = false;
         this.closeWaitingModal();
         this.showErrorModalWithMsg({ errorType: 'zap', errorMsg: e });

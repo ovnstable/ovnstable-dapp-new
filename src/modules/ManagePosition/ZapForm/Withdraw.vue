@@ -174,7 +174,7 @@ import { MODAL_TYPE } from '@/store/views/main/odos/index.ts';
 import { defineComponent, type PropType } from 'vue';
 import { fixedByPrice } from '@/utils/numbers.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
-import { initZapinContracts } from '@/services/Web3Service/utils/index.ts';
+import { checkForBscError, initZapinContracts } from '@/services/Web3Service/utils/index.ts';
 import SwapRouting from '@/components/SwapRouting/Index.vue';
 import { parseErrorLog } from '@/utils/errors.ts';
 import ZapinService from '@/services/Web3Service/Zapin-service.ts';
@@ -347,6 +347,16 @@ export default defineComponent({
         this.zapOutTrigger();
       } catch (e) {
         console.log(e);
+        const skipErr = checkForBscError(e);
+
+        if (skipErr) {
+          this.closeWaitingModal('Approve');
+          this.isNftApproved = true;
+          this.isSwapLoading = false;
+          this.currentStage = withdrawStep.ZAPOUT;
+          return
+        };
+
         this.closeWaitingModal('Approve');
         this.isSwapLoading = false;
         this.showErrorModalWithMsg({ errorType: 'approve', errorMsg: parseErrorLog(e) });
@@ -396,6 +406,8 @@ export default defineComponent({
     },
     async zapOutTrigger() {
       this.isSwapLoading = true;
+        const inputTokens = [...this.inputTokens];
+        const outputTokens = [...this.outputTokens];
 
       try {
         this.showWaitingModal('unstaking');
@@ -404,9 +416,6 @@ export default defineComponent({
 
         await tx.wait();
         this.isSwapLoading = false;
-        this.closeWaitingModal();
-        const inputTokens = [...this.inputTokens];
-        const outputTokens = [...this.outputTokens];
         this.triggerSuccessZapin(
           {
             isShow: true,
@@ -420,7 +429,24 @@ export default defineComponent({
         this.closeWaitingModal();
         this.positionFinish = true;
       } catch (e) {
+        const skipErr = checkForBscError(e);
+
         console.log(e);
+        if (skipErr) {
+          this.triggerSuccessZapin(
+            {
+              isShow: true,
+              inputTokens,
+              outputTokens,
+              hash: "",
+              pool: this.zapPool,
+              modalType: MODAL_TYPE.WITHDRAW,
+            },
+          );
+          this.closeWaitingModal();
+          return
+        };
+
         this.showErrorModalWithMsg({ errorMsg: parseErrorLog(e) });
         this.closeWaitingModal();
         this.isSwapLoading = false;
@@ -447,6 +473,17 @@ export default defineComponent({
         this.approveNftPosition(false);
       } catch (e) {
         console.log(e);
+        const skipErr = checkForBscError(e);
+
+        console.log(skipErr, '___skipErr');
+        if (skipErr) {
+          this.closeWaitingModal('Approve');
+          this.positionStaked = false;
+          this.isSwapLoading = false;
+          this.currentStage = withdrawStep.APPROVE;
+          return
+        };
+
         this.showErrorModalWithMsg({ errorMsg: parseErrorLog(e) });
         this.closeWaitingModal();
         this.isSwapLoading = false;

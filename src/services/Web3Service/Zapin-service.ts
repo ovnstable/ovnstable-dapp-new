@@ -113,7 +113,6 @@ class ZapinService {
       throw "Angle API not responding";
     }
 
-    console.log(data, '___data')
     const tokens = Object.keys(data).filter(
       (k) => data[k].proof !== undefined || data[k].proof.length > 0
     );
@@ -683,7 +682,7 @@ class ZapinService {
 
       return tx;
     } catch (e: any) {
-      throw new Error(e);
+      throw e;
     }
   }
 
@@ -707,7 +706,7 @@ class ZapinService {
 
       return await tx.wait();
     } catch (e: any) {
-      throw new Error(e);
+      throw e;
     }
   }
 
@@ -774,7 +773,7 @@ class ZapinService {
       else throw new Error('Such method do not exist');
     } catch (e: any) {
       console.log(JSON.parse(JSON.stringify(e)), '___decoded3');
-      throw new Error(e?.reason ?? "Simulation start error");
+      throw e;
     }
   }
 

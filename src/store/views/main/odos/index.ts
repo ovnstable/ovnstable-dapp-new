@@ -191,42 +191,58 @@ const actions = {
   ) {
     if (!state.routerContract || !state.executorContract) return;
 
-    const transactionData = {
-      ...data.txData.transaction,
-      from: rootState.accountData.account,
-    };
-
-    dispatch('waitingModal/showWaitingModal', 'Swapping in process', { root: true });
-
-    const dataTx = await rootState.web3.evmSigner
-      .sendTransaction(transactionData)
-      .catch((e: any) => {
-        console.log(e);
-        dispatch('errorModal/showErrorModalWithMsg', { errorType: 'estimateGas', errorMsg: e }, { root: true });
-      });
-
-    await dataTx.wait();
-    dispatch('waitingModal/closeWaitingModal', null, { root: true });
-
     const inputTokens = [...data.selectedInputTokens];
     const outputTokens = [...data.selectedOutputTokens];
-
-    dispatch('successModal/showSuccessModal', {
-      successTxHash: dataTx.hash,
-      type: 'SWAP',
-      from: inputTokens.map((_) => ({
-        ..._.selectedToken,
-        value: new BigNumber(_.value).toFixed(5),
-      })),
-      to: outputTokens.map((_) => ({
-        ..._.selectedToken,
-        value: new BigNumber(_.sum).toFixed(5),
-      })),
-    }, { root: true });
-
-    // event
     const bus = useEventBus('odos-transaction-finished');
-    bus.emit(true);
+
+    try {
+      const transactionData = {
+        ...data.txData.transaction,
+        from: rootState.accountData.account,
+      };
+  
+      dispatch('waitingModal/showWaitingModal', 'Swapping in process', { root: true });
+  
+      const dataTx = await rootState.web3.evmSigner.sendTransaction(transactionData)
+      await dataTx.wait();
+      dispatch('waitingModal/closeWaitingModal', null, { root: true });
+  
+      dispatch('successModal/showSuccessModal', {
+        successTxHash: dataTx.hash,
+        type: 'SWAP',
+        from: inputTokens.map((_) => ({
+          ..._.selectedToken,
+          value: new BigNumber(_.value).toFixed(5),
+        })),
+        to: outputTokens.map((_) => ({
+          ..._.selectedToken,
+          value: new BigNumber(_.sum).toFixed(5),
+        })),
+      }, { root: true });
+  
+      // event
+      bus.emit(true);
+    } catch(e: any) {
+      const err = JSON.parse(JSON.stringify(e))
+      // only for bsc chain, unique logic, all successfull tx throwing it
+      if (err?.error?.code === -32000) {
+        bus.emit(true);
+        dispatch('successModal/showSuccessModal', {
+          successTxHash: "",
+          type: 'SWAP',
+          from: inputTokens.map((_) => ({
+            ..._.selectedToken,
+            value: new BigNumber(_.value).toFixed(5),
+          })),
+          to: outputTokens.map((_) => ({
+            ..._.selectedToken,
+            value: new BigNumber(_.sum).toFixed(5),
+          })),
+        }, { root: true });
+      } else {
+        throw new Error(e)
+      }
+    }
   },
   async getActualGasPrice({
     commit, state, dispatch, rootState,

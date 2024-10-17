@@ -11,23 +11,23 @@ import App from '@/App.vue';
 import VueApexCharts from 'vue3-apexcharts';
 import { VueQueryPlugin } from '@tanstack/vue-query';
 import { createContext } from '@/context.ts';
-// import * as Sentry from '@sentry/vue';
+import * as Sentry from '@sentry/vue';
 
 const app = createApp(App);
 
 console.log('Production app, init sentry.');
-// Sentry.init({
-//   app,
-//   dsn: 'http://595da1bf0467177cc9df83161e22081f@sentry.overnight.fi/5',
-//   logErrors: true,
-//   integrations: [
-//     Sentry.browserTracingIntegration({ router }),
-//     Sentry.replayIntegration(),
-//   ],
-//   tracePropagationTargets: ['*'],
-//   replaysSessionSampleRate: 0.1,
-//   replaysOnErrorSampleRate: 1.0,
-// });
+Sentry.init({
+  app,
+  dsn: 'http://595da1bf0467177cc9df83161e22081f@sentry.overnight.fi/5',
+  logErrors: true,
+  integrations: [
+    Sentry.browserTracingIntegration({ router }),
+    Sentry.replayIntegration(),
+  ],
+  tracePropagationTargets: ['*'],
+  replaysSessionSampleRate: 0.1,
+  replaysOnErrorSampleRate: 1.0,
+});
 
 app.config.globalProperties.$store = store;
 app.use(VueQueryPlugin);

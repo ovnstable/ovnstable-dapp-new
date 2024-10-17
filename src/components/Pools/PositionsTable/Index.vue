@@ -19,18 +19,15 @@
           Position size, USD
           <BaseIcon :name="toggleSortIcon()" />
         </div>
-        <!-- <div class="pools-header__item">
-          Daily rewards
-        </div> -->
         <div
-          class="pools-header__item "
+          class="pools-header__item center"
         >
           Earned
         </div>
         <div
-          class="pools-header__item"
+          class="pools-header__item center"
         >
-          Staked
+          Stake status
         </div>
         <div class="pools-header__item center">
           Platforms
@@ -45,8 +42,10 @@
             :key="key"
             class="pools-table__row position-table_row"
           >
-            <div class="pools-table__chain">
-              <BaseIcon :name="pool.chainName" />
+            <div class="pools-table__chain--container">
+              <div class="pools-table__chain">
+                <BaseIcon :name="pool.chainName" />
+              </div>
             </div>
             <div class="pools-table__tokens-wrap">
               <div class="pools-table__tokens">
@@ -81,15 +80,15 @@
                     {{ formatPoolFee(pool.fee) }}
                   </div>
                 </div>
+                <div
+                  class="pools-table__tag is-in-range"
+                  :class="{ 'out-range': !pool.position?.isInRange }"
+                >
+                  {{ pool.position?.isInRange ? 'IN RANGE' : 'OUT OF RANGE' }}
+                </div>
                 <div class="pools-table__details-row">
                   <div class="pools-table__tokens-details">
                     ID#{{ pool.tokenId }}
-                  </div>
-                  <div
-                    class="pools-table__tag is-in-range"
-                    :class="{ 'out-range': !pool.position?.isInRange }"
-                  >
-                    {{ pool.position?.isInRange ? 'IN RANGE' : 'OUT OF RANGE' }}
                   </div>
                 </div>
               </div>
@@ -100,10 +99,21 @@
                 {{ pool.tokenNames.token0 }} {{ pool.position.tokenProportions.token0 }} % |
                 {{ pool.tokenNames.token1 }} {{ pool.position.tokenProportions.token1 }} %
               </div>
+              <div
+                v-if="pool.chain !== 56"
+                class="pools-table__btn pools-table__btn--disabled"
+                @click="handleOpenTab(pool, MANAGE_TAB.INCREASE)"
+                @keypress="handleOpenTab(pool, MANAGE_TAB.INCREASE)"
+              >
+                INCREASE
+              </div>
             </div>
             <div class="pools-table__emission">
               <div>
-                {{ getRewards(pool) }}$
+                Rewards: {{ getRewards(pool) }}$
+              </div>
+              <div v-if="pool.merkleData.toClaim">
+                Merkle: {{ pool.merkleData.toClaim }}{{ " " }}{{ pool.merkleData.rewardToken?.symbol }}
               </div>
               <div
                 class="pools-table__btn"
@@ -111,24 +121,51 @@
                 @click="emitClaim(pool)"
                 @keypress="emitClaim(pool)"
               >
-                Claim
+                CLAIM
               </div>
             </div>
-            <div class="pools-table__staked">
-              <div
-                class="pools-table__staked-stat"
-                :class="{ red: !pool.isStaked, green: pool.isStaked  }"
-              >
-                {{ pool.isStaked ? "YES" : "NO" }}
+            <!-- <div class="pools-table__emission">
+              <div>
+                {{ pool.merkleData.toClaim }}{{ " " }}{{ pool.merkleData.rewardToken?.symbol }}
               </div>
               <div
-                v-if="!pool.isStaked"
+                v-if="pool.merkleData?.rewardToken?.symbol"
+                class="pools-table__btn"
+                @click="emitClaimMerkle(pool)"
+                @keypress="emitClaimMerkle(pool)"
+              >
+                Claim all
+              </div>
+            </div> -->
+            <div class="pools-table__staked">
+              <p
+                v-if="pool.gauge !== ZERO_ADDRESS"
+                :class="{ red: !pool.isStaked, green: pool.isStaked }"
+              >
+                {{ pool.isStaked ? "Staked" : "Unstaked" }}
+              </p>
+              <div
+                v-if="!pool.isStaked && pool.gauge !== ZERO_ADDRESS"
                 class="pools-table__btn"
                 :class="{ 'pools-table__btn--disabled': lessThanMin(pool.rewards.usdValue) }"
                 @click="emitStake(pool)"
                 @keypress="emitStake(pool)"
               >
-                Stake
+                STAKE
+              </div>
+              <div
+                v-else-if="pool.gauge === ZERO_ADDRESS"
+                :class="{ yellow: true }"
+              >
+                No gauge
+              </div>
+              <div
+                v-else-if="pool.isStaked"
+                class="pools-table__btn pools-table__btn--disabled"
+                @click="handleOpenTab(pool, MANAGE_TAB.WITHDRAW)"
+                @keypress="handleOpenTab(pool, MANAGE_TAB.WITHDRAW)"
+              >
+                UNSTAKE
               </div>
             </div>
             <div class="pools-table__platform-row center">
@@ -149,9 +186,13 @@
 
             <ButtonComponent
               btn-styles="faded"
-              @click="handleOpen(pool)"
+              @click="handleOpenTab(pool)"
+              :disabled="pool.chain === 56"
             >
               MANAGE
+              <BaseIcon
+                name="ArrowDown"
+              />
             </ButtonComponent>
           </div>
         </template>
@@ -172,6 +213,15 @@
         class="pools-table__footer"
       >
         <slot name="footer" />
+        <ButtonComponent
+          class="btn_add-position"
+          btn-styles="faded"
+          @click="handleOpenPools"
+        >
+          <p>+</p>
+          <p>ADD NEW POSITION</p>
+          <p>+</p>
+        </ButtonComponent>
       </div>
     </div>
   </div>
@@ -183,10 +233,11 @@ import BaseIcon from '@/components/Icon/BaseIcon.vue';
 import ButtonComponent from '@/components/Button/Index.vue';
 import type { PropType } from 'vue';
 import { mapActions } from 'vuex';
-import { getImageUrl } from '@/utils/const.ts';
 import BN, { BigNumber } from 'bignumber.js';
+import { PLATFORMS } from '@/types/common/pools/index.ts';
+import { MANAGE_TAB } from '@/modules/ManagePosition/Index.vue';
+import { ZERO_ADDRESS } from '@/utils/const.ts';
 import type { IPositionsInfo } from '@/types/positions/index.d.ts';
-import { PLATFORMS, type TPool, type TPoolInfo } from '@/types/common/pools';
 
 enum POSITION_SIZE_ORDER_TYPE {
   'VALUE', 'VALUE_UP', 'VALUE_DOWN',
@@ -197,6 +248,8 @@ const iconNameSort = (orderTypeStr: string) => {
   if (orderTypeStr.includes('DOWN')) return 'ArrowDownSort';
   return 'ArrowsFilter';
 };
+
+export const getPositionTabLink = (pool: any, action: MANAGE_TAB) => `/positions/${pool?.tokenId?.toString()}/${MANAGE_TAB[action].toLowerCase()}`;
 
 export default {
   name: 'PositionsTable',
@@ -219,26 +272,34 @@ export default {
       required: true,
     },
   },
-  emits: ['claim', 'stake'],
+  emits: ['claim', 'claim-merkle', 'stake'],
+  data: () => ({
+    ZERO_ADDRESS,
+    MANAGE_TAB,
+  }),
   computed: {
     lessThanMin() {
       return (val: string) => new BN(val).lt(0.02);
     },
     getRewards() {
       return (pool: IPositionsInfo) => {
-        if ([PLATFORMS.PANCAKE, PLATFORMS.AERO].includes(pool.platform[0] as PLATFORMS) && pool.isStaked) {
-          return new BN(pool.emissionsUsd).gt(0.1) ? pool.emissionsUsd : "< 0.1"
+        if ([PLATFORMS.PANCAKE, PLATFORMS.AERO]
+          .includes(pool.platform[0] as PLATFORMS) && pool.isStaked) {
+          return new BN(pool.emissionsUsd).gt(0.1) ? pool.emissionsUsd : '< 0.1';
         }
 
-        if ([PLATFORMS.PANCAKE, PLATFORMS.AERO].includes(pool.platform[0] as PLATFORMS) && !pool.isStaked) {
-          return pool.rewards.displayedUsdValue
+        if ([PLATFORMS.PANCAKE, PLATFORMS.AERO]
+          .includes(pool.platform[0] as PLATFORMS) && !pool.isStaked) {
+          return pool.rewards.displayedUsdValue;
         }
 
         if (pool.platform[0] === PLATFORMS.UNI) {
-          return pool.rewards.displayedUsdValue
+          return pool.rewards.displayedUsdValue;
         }
-      }
-    }
+
+        return null;
+      };
+    },
   },
   methods: {
     ...mapActions('poolsData', ['openZapIn']),
@@ -246,9 +307,10 @@ export default {
       const formattedFee = new BigNumber(fee).multipliedBy(0.0001);
       return `${formattedFee} %`;
     },
-    handleOpen(pool: any) {
+    handleOpenTab(pool: any, tab: MANAGE_TAB = MANAGE_TAB.REBALANCE) {
       this.openZapIn(pool);
-      this.$router.replace(`/positions/${pool?.tokenId?.toString()}`);
+      console.log(getPositionTabLink(pool, tab), '___TAB')
+      this.$router.replace(getPositionTabLink(pool, tab));
     },
     emitStake(pool: any) {
       this.$emit('stake', pool);
@@ -256,10 +318,15 @@ export default {
     emitClaim(pool: any) {
       this.$emit('claim', pool);
     },
+    // emitClaimMerkle(pool: any) {
+    //   this.$emit('claim-merkle', pool);
+    // },
     toggleSortIcon() {
       return iconNameSort(POSITION_SIZE_ORDER_TYPE[this.positionSizeOrderType]);
     },
-    getImageUrl,
+    handleOpenPools() {
+      this.$router.replace('/pools');
+    },
   },
 };
 </script>

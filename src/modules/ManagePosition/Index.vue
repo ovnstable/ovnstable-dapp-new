@@ -133,7 +133,9 @@ import { usePositionsQuery } from '@/hooks/fetch/usePositionsQuery.ts';
 import { useTokensQuery, useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.ts';
 import { isEmpty } from 'lodash';
 import { usePoolsQueryNew } from '@/hooks/fetch/usePoolsQuery.ts';
+import { getPositionTabLink } from '@/components/Pools/PositionsTable/Index.vue';
 import type { TFilterPoolsParams } from '@/types/common/pools';
+import { useRoute } from 'vue-router';
 
 export enum MANAGE_TAB {
   REBALANCE,
@@ -143,6 +145,11 @@ export enum MANAGE_TAB {
   MERGE,
   COMPOUND,
 }
+
+const getActionFromUrl = (route: any): MANAGE_TAB => {
+  const action = route.params?.tab?.toUpperCase() as keyof typeof MANAGE_TAB;
+  return action in MANAGE_TAB ? MANAGE_TAB[action] : MANAGE_TAB.REBALANCE;
+};
 
 export default {
   name: 'PositionForm',
@@ -161,11 +168,15 @@ export default {
     CompoundForm,
   },
   setup() {
-    const { data: getUserPositions } = usePositionsQuery();
+    const router = useRoute();
+
+    const paramAdd = router.query?.address;
+    const { data: getUserPositions } = usePositionsQuery(paramAdd as string ?? '');
     const { data: balanceList, isLoading: tokensLoading } = useTokensQuery();
     const { data: allTokensList } = useTokensQueryNew();
     const { data: poolList } = usePoolsQueryNew(0);
 
+    console.log(getUserPositions, '__getUserPositions')
     return {
       allTokensList,
       balanceList,
@@ -178,7 +189,7 @@ export default {
     return {
       zapPool: null as any,
       manageTab: MANAGE_TAB,
-      activeTab: MANAGE_TAB.REBALANCE,
+      activeTab: getActionFromUrl(this.$route),
       gaugeAddress: '',
       filterTabs: [
         {
@@ -210,9 +221,6 @@ export default {
   },
   computed: {
     isLoadingData() {
-      console.log(this.gaugeAddress, '___gaugeAddress');
-      console.log(this.zapPool, '__zapPool');
-
       return isEmpty(this.zapPool)
         || isEmpty(this.allTokensList)
         || isEmpty(this.balanceList)
@@ -243,8 +251,7 @@ export default {
       const tokens = (this.zapPool?.name as string)?.split('/');
 
       const filterParams: Partial<TFilterPoolsParams> = {
-        token0: tokens[0],
-        // token1: tokens[1],
+        search: tokens[0],
       };
       this.setFilterParams(filterParams);
     },
@@ -255,8 +262,9 @@ export default {
 
       if (foundPool) this.gaugeAddress = foundPool.gauge;
     },
-    changeTab(id: number) {
-      this.activeTab = id;
+    changeTab(tabId: number) {
+      this.activeTab = tabId;
+      this.$router.replace(getPositionTabLink(this.zapPool, tabId));
     },
     searchPool() {
       const foundPool = this.getUserPositions

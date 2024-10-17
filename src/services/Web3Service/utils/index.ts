@@ -48,6 +48,17 @@ export const sumOfAllSelectedTokensInUsd = (selectedInputTokens: any[]) => {
   return sum;
 };
 
+export const checkForBscError = (e: any) => {
+  const err = JSON.parse(JSON.stringify(e))
+  // only for bsc chain, unique logic, all successfull tx throwing it
+  // its mean TX is indexing
+  if (err?.error?.code === -32000) {
+    return true
+  }
+
+  return false
+}
+
 const decodeEventData = (eventSignature: string[], eventData: string) => new ethers.AbiCoder()
   .decode(eventSignature, eventData);
 
@@ -465,12 +476,14 @@ export const initZapinContracts = async (
     platform as keyof typeof ZAPIN_SCHEME.arbitrum
   ]?.zapinAdd;
 
+  console.log(abiZapAdd, '__abiZapAdd')
   if (!abiZapAdd || !abiContractV3Zap) throw new Error('abiZapAdd not found');
 
   // possible todo, make separate folder for it, if its same every time
   const abiV3Nft = srcStringBuilder('V3Nft')(zapPool.chainName, zapPool.platform[0]);
   const abiContractV3Nft = await loadAbi(abiV3Nft).catch(() => null);
 
+  console.log(abiV3Nft, '__abiV3Nft')
   const gaugeContract = gaugeAddress && !isEmpty(abiGaugeContractFileV3) ? buildEvmContract(
     abiGaugeContractFileV3.abi,
     evmSigner,

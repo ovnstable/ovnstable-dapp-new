@@ -31,6 +31,7 @@ export type TPositionRewardTokenInfo = {
 export interface IPositionsInfo extends TPoolInfo {
   platformLinks: { platform: string, link: string }[],
   isStaked: boolean;
+  gauge: string;
   position: {
     tokens:{ [key: string]: string }[],
     tokensOrig:{ [key: string]: string }[],
@@ -41,6 +42,10 @@ export interface IPositionsInfo extends TPoolInfo {
       token1: string,
     },
     isInRange: boolean,
+  },
+  merkleData: {
+    toClaim: string,
+    rewardToken: any
   },
   emissionsUsd: string,
   emissions: number,

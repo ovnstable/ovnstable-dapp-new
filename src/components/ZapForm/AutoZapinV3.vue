@@ -294,6 +294,7 @@ import FeesBlock, { MIN_IMPACT } from '@/components/FeesBlock/Index.vue';
 import { parseErrorLog } from '@/utils/errors.ts';
 import ZapinService, { DEFAULT_ODOS_D, ZAPIN_FUNCTIONS, ZAPIN_TYPE } from '@/services/Web3Service/Zapin-service.ts';
 import {
+  checkForBscError,
   getUpdatedTokenVal,
   initReqData,
   initZapData,
@@ -781,6 +782,15 @@ export default defineComponent({
         this.closeWaitingModal();
         this.depositGauge();
       } catch (e) {
+        const skipErr = checkForBscError(e);
+
+        if (skipErr) {
+          this.currentStage = zapInStep.DEPOSIT;
+          this.closeWaitingModal();
+          this.isSwapLoading = false;
+          return
+        };
+
         console.error('Approve nft gauge failed', e);
         this.$store.commit('odosData/changeState', {
           field: 'lastNftTokenId',
@@ -832,6 +842,24 @@ export default defineComponent({
           val: null,
         });
       } catch (e) {
+        const skipErr = checkForBscError(e);
+
+        if (skipErr) {
+          this.triggerSuccessZapin(
+            {
+              isShow: true,
+              inputTokens: [...this.inputTokens],
+              outputTokens: [...this.outputTokens],
+              hash: "",
+              pool: this.zapPool,
+              modalType: MODAL_TYPE.ZAPIN,
+            },
+          );
+          this.closeWaitingModal();
+          this.isSwapLoading = false;
+          return
+        };
+
         this.isSwapLoading = false;
         this.closeWaitingModal();
         this.showErrorModalWithMsg({
@@ -921,6 +949,31 @@ export default defineComponent({
 
         this.toApproveAndDepositSteps();
       } catch (e: any) {
+        const skipErr = checkForBscError(e);
+
+        console.log(skipErr, '___skipErr');
+        if (skipErr) {
+          this.triggerSuccessZapin(
+            {
+              isShow: true,
+              inputTokens: this.inputTokens,
+              outputTokens: this.outputTokens,
+              hash: "",
+              pool: this.zapPool,
+              modalType: MODAL_TYPE.ZAPIN,
+            },
+          );
+
+          this.clearAndInitForm();
+          this.$store.commit('odosData/changeState', {
+            field: 'additionalSwapStepType',
+            val: null,
+          });
+          this.currentStage = zapInStep.STAKE_LP;
+          this.closeWaitingModal();
+          return;
+        };
+
         this.closeWaitingModal();
         this.showErrorModalWithMsg({
           errorType: 'zap',

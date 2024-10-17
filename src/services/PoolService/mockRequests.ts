@@ -10,5 +10,5 @@ export const poolFilterParams: Partial<TFilterPoolsParams> = {
   page: '',
   limit: '',
   chain: [''],
-  token0: '',
+  search: '',
 };

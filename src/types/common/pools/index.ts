@@ -4,6 +4,12 @@ export enum PLATFORMS {
     UNI = 'Uniswap'
 }
 
+export type MPos = {
+    tokenId: string;
+    toClaim: string;
+    rewardToken: string;
+}
+
 export type TPool = {
     id: string,
     name: string,
@@ -40,6 +46,7 @@ export type TPoolInfo = {
     platform: string[],
     tvl: number,
     apr: number,
+    gauge: string,
     fee: string,
     poolTag: null | string,
     skimEnabled: boolean,
@@ -88,8 +95,7 @@ export enum POOL_CATEGORIES {
 // }
 
 export type TFilterPoolsParams = {
-    token0: string,
-    token1: string,
+    search: string,
     chain: string[],
     minTvl: string,
     protocol: string[],

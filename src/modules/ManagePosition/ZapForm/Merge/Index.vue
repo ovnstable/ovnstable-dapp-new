@@ -516,7 +516,7 @@ export default defineComponent({
       const tokens = (zapPool?.name as string)?.split('/');
 
       const filterParams: Partial<TFilterPoolsParams> = {
-        token0: tokens[0],
+        search: tokens[0],
       };
       this.setFilterParams(filterParams);
     },
