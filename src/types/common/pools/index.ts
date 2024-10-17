@@ -46,6 +46,7 @@ export type TPoolInfo = {
     platform: string[],
     tvl: number,
     apr: number,
+    gauge: string,
     fee: string,
     poolTag: null | string,
     skimEnabled: boolean,

@@ -138,18 +138,25 @@
             </div> -->
             <div class="pools-table__staked">
               <p
+                v-if="pool.gauge !== ZERO_ADDRESS"
                 :class="{ red: !pool.isStaked, green: pool.isStaked }"
               >
                 {{ pool.isStaked ? "STAKED" : "UNSTAKED" }}
               </p>
               <div
-                v-if="!pool.isStaked"
+                v-if="!pool.isStaked && pool.gauge !== ZERO_ADDRESS"
                 class="pools-table__btn"
                 :class="{ 'pools-table__btn--disabled': lessThanMin(pool.rewards.usdValue) }"
                 @click="emitStake(pool)"
                 @keypress="emitStake(pool)"
               >
                 Stake
+              </div>
+              <div
+                v-else-if="pool.gauge === ZERO_ADDRESS"
+                :class="{ yellow: true }"
+              >
+                NO GAUGE
               </div>
               <!-- <div
                 v-else-if="pool.isStaked"
@@ -218,6 +225,7 @@ import { mapActions } from 'vuex';
 import BN, { BigNumber } from 'bignumber.js';
 import { PLATFORMS } from '@/types/common/pools/index.ts';
 import type { IPositionsInfo } from '@/types/positions/index.d.ts';
+import { ZERO_ADDRESS } from '@/utils/const';
 
 enum POSITION_SIZE_ORDER_TYPE {
   'VALUE', 'VALUE_UP', 'VALUE_DOWN',
@@ -235,6 +243,9 @@ export default {
     BaseIcon,
     ButtonComponent,
   },
+  data: () => ({
+    ZERO_ADDRESS,
+  }),
   props: {
     pools: {
       type: Array as PropType<IPositionsInfo[]>,

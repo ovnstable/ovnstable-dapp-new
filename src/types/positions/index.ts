@@ -31,6 +31,7 @@ export type TPositionRewardTokenInfo = {
 export interface IPositionsInfo extends TPoolInfo {
   platformLinks: { platform: string, link: string }[],
   isStaked: boolean;
+  gauge: string;
   position: {
     tokens:{ [key: string]: string }[],
     tokensOrig:{ [key: string]: string }[],
