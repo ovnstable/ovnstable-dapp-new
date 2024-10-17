@@ -12,14 +12,11 @@ ENV NODE_OPTIONS=--max-old-space-size=4096
 
 RUN yarn build
 
-
-
-
 FROM nginx:stable-alpine
 
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-RUN rm /usr/share/nginx/html/index.html && ln -s /usr/share/nginx/html/index.prod.html /usr/share/nginx/html/index.html
+COPY /nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 
