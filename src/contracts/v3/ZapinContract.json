@@ -1437,6 +1437,20 @@
     },
     {
       "type": "function",
+      "name": "isDev",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 20000000,
+      "inputs": [],
+      "outputs": [
+        {
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "type": "function",
       "name": "merge",
       "constant": false,
       "payable": false,
@@ -1653,6 +1667,30 @@
     },
     {
       "type": "function",
+      "name": "setVersion",
+      "constant": false,
+      "payable": false,
+      "gas": 20000000,
+      "inputs": [
+        {
+          "type": "tuple",
+          "name": "args",
+          "components": [
+            {
+              "type": "uint256",
+              "name": "version"
+            },
+            {
+              "type": "bool",
+              "name": "isDev"
+            }
+          ]
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
       "name": "setZapParams",
       "constant": false,
       "payable": false,
@@ -1686,6 +1724,20 @@
     {
       "type": "function",
       "name": "slippageBps",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 20000000,
+      "inputs": [],
+      "outputs": [
+        {
+          "type": "uint256"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "version",
       "constant": true,
       "stateMutability": "view",
       "payable": false,
