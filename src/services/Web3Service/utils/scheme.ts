@@ -7,6 +7,12 @@ export enum DEPOSIT_TYPES {
   NONE = ''
 }
 
+export const SCORE_SCHEME = {
+  56: 70,
+  42161: 40,
+  8453: 40
+}
+
 export const rebalanceChainMap: {[key: string]: string[]} = {
   base: [PLATFORMS.AERO, PLATFORMS.PANCAKE, PLATFORMS.UNI],
   arbitrum: [PLATFORMS.PANCAKE, PLATFORMS.UNI],

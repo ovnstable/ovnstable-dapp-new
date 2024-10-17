@@ -1065,37 +1065,6 @@ export default defineComponent({
     },
 
     async approveTrigger(token: any) {
-      this.showWaitingModal('Approving in process');
-
-      this.approvingPending = true;
-      const { selectedToken } = token;
-
-      const approveValue = new BN(10)
-        .pow(selectedToken.decimals)
-        .times(10 ** 18)
-        .toFixed(0);
-
-      await this.checkApproveForToken(token, (Number(approveValue) * 0.5).toFixed(0));
-      if (selectedToken.approveData.approved) {
-        this.closeWaitingModal();
-        return;
-      }
-
-      const tokenContract = TokenService
-        .loadTokenContract(selectedToken.address, this.$store.state.web3.evmSigner);
-
-      const tx = await approveToken(
-        tokenContract,
-        this.zapContract.target,
-        approveValue,
-        this.account,
-      )
-        .catch((e) => {
-          console.error('Error when approve token.', e);
-          this.closeWaitingModal();
-          this.showErrorModalWithMsg({ errorType: 'approve', errorMsg: parseErrorLog(e) });
-        });
-
       console.log('TRIGGER__2');
       const finishTx = () => {
         this.checkApproveForToken(token, token.contractValue);
@@ -1103,14 +1072,56 @@ export default defineComponent({
         this.approvingPending = false;
       };
 
-      if (!tx) {
-        finishTx();
-        return;
-      }
+      try {
+        this.showWaitingModal('Approving in process');
 
-      await tx.wait();
-      finishTx();
-      this.currentStage = zapInStep.DEPOSIT;
+        this.approvingPending = true;
+        const { selectedToken } = token;
+
+        const approveValue = new BN(10)
+          .pow(selectedToken.decimals)
+          .times(10 ** 18)
+          .toFixed(0);
+
+        await this.checkApproveForToken(token, (Number(approveValue) * 0.5).toFixed(0));
+        if (selectedToken.approveData.approved) {
+          this.closeWaitingModal();
+          return;
+        }
+
+        const tokenContract = TokenService
+          .loadTokenContract(selectedToken.address, this.$store.state.web3.evmSigner);
+
+        const tx = await approveToken(
+          tokenContract,
+          this.zapContract.target,
+          approveValue,
+          this.account,
+        )
+          .catch((e) => {
+            console.error('Error when approve token.', e);
+            this.closeWaitingModal();
+            this.showErrorModalWithMsg({ errorType: 'approve', errorMsg: parseErrorLog(e) });
+          });
+
+        if (!tx) {
+          finishTx();
+          return;
+        }
+
+        await tx.wait();
+        finishTx();
+        this.currentStage = zapInStep.DEPOSIT;
+      } catch(e) {
+        const skipErr = checkForBscError(e);
+
+        if (skipErr) {
+          finishTx();
+          this.currentStage = zapInStep.DEPOSIT;
+          return
+        };
+
+      }
     },
     addSelectedTokenToList(data: any) {
       if (data.isInput) {

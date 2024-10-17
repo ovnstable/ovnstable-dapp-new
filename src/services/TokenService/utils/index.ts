@@ -9,6 +9,7 @@ import { buildEvmContract } from '@/utils/contractsMap.ts';
 import { ERC20_ABI } from '@/assets/abi/index.ts';
 import type { TTokenBalanceData, TTokenInfo } from '@/types/common/tokens';
 import type { TTokenData } from '@/types/api/overnightApi';
+import { SCORE_SCHEME } from '@/services/Web3Service/utils/scheme';
 
 export const mergeTokenLists = (fetchedTokens: any) => {
   const tokensMap = {
@@ -94,6 +95,7 @@ const getFormatTokenBalance = (token: TTokenInfo, balanceData: TTokenBalanceData
   const balanceFormatted = formatTokenDecimals(balance, token.decimals);
   return {
     name: token.symbol,
+    score: token.score,
     balance: formatBlanceFixed(balanceFormatted),
     balanceInUsd: formatBalanceInUsd(balanceFormatted, token.price),
     originalBalance: balance,
@@ -123,6 +125,7 @@ export const getFormatTokenInfo = (
       allowanceValue: 0,
       approved: false,
     },
+    score: token?.score,
     price: tokenPricesMap ? formatTokenPrice(tokenPricesMap[address]) : '0',
     isPoolToken: token?.isPoolToken ?? false,
   };
@@ -158,14 +161,21 @@ export const loadContractForToken = (tokenAddress: string, evmSigner: any) => bu
 
 export const formatTokenInfoNew = (
   tokenMap: {[key: string]: TTokenData},
+  chain: number
 ): TTokenInfo[] => {
-  const tokenInfoList = Object.values(tokenMap).map((token: TTokenData) => (
+  console.log(chain, '___chain')
+  const tokenInfoList = Object.values(tokenMap)
+    .filter((_) => {
+      return _.score > SCORE_SCHEME[chain as keyof typeof SCORE_SCHEME] ? true : false
+    })
+    .map((token: TTokenData) => (
     {
       id: token.id,
       address: token.address,
       decimals: token.decimals,
       assetType: 'unknown',
       name: token.name,
+      score: token.score,
       symbol: token.symbol.toUpperCase(),
       logoUrl: token?.image_url ? token.image_url : loadEmptyImg(),
       selected: false,

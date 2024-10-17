@@ -64,11 +64,11 @@ class TokenService implements ITokenService {
   // New API
   public static formatTokenInfo = (
     tokens: TChainTokenMap,
-    chainId: string,
+    chainId: number,
   ) => {
     const tokenNetworkMap = mergeTokenLists(tokens);
     const tokensByNetwork = tokenNetworkMap.chainTokenMap[chainId]?.tokenMap ?? [];
-    const tokenInfo = formatTokenInfoNew(tokensByNetwork);
+    const tokenInfo = formatTokenInfoNew(tokensByNetwork, chainId);
     return tokenInfo;
   };
 

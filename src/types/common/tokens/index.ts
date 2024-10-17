@@ -20,6 +20,7 @@ export type TTokenInfo = {
     assetType: string,
     name: string,
     symbol: string,
+    score: number,
     logoUrl: string,
     selected: boolean,
     price: string,

@@ -30,6 +30,7 @@ export type TTokenData = {
     name: string,
     symbol: string,
     id: string,
+    score: number,
     decimals: number,
     price: string,
     image_url: string,
