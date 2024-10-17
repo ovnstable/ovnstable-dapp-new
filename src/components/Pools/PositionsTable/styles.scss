@@ -1,7 +1,7 @@
 .pools-table {
   position: relative;
   width: 100%;
-  background-color: var(--color-8);
+  background-color: var(--color-4);
   color: var(--color-1);
   font-weight: 500;
   font-size: 14px;
@@ -539,8 +539,8 @@
 .pools-table__staked {
   display: flex;
   flex-direction: column;
-  width: fit-content;
-  align-items: flex-start;
+  width: 100%;
+  align-items: center;
   gap: 4px;
 
   .yellow {
@@ -613,10 +613,11 @@
   gap: 6px;
   flex-direction: column;
   justify-content: space-between;
+  align-items: center;
 }
 
 .pools-table__btn {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--color-3);
   width: fit-content;
