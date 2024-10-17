@@ -69,7 +69,7 @@ export interface IStrategyPayoutResponse {
 }
 export interface IStrategyResponse {
     id: string,
-    strategy: string,
+    address: string,
     growPnl: BigNumber,
     rewardPnl: BigNumber,
     totalPnl: BigNumber,

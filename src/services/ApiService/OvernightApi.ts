@@ -106,7 +106,7 @@ export class OvernightApi extends ApiService implements IOvernightApi {
   // Market
 
   public async loadStrategies(chain: string, token: string): Promise<IStrategyResponseOld[]> {
-    return tranformStrategyResponse(this.get(`${API_URL_NEW}/strategy/${chain}/${token}/list`));
+    return tranformStrategyResponse(this.get(`${API_URL_NEW}/strategy/${chain}/${token}/portfolio`));
   }
 
   public async loadPayouts(chain: string): Promise<IPayoutResponseOld[]> {
