@@ -45,8 +45,8 @@ const router = createRouter({
       component: () => import('@/views/Positions/Index.vue'),
     },
     {
-      path: '/positions/:id',
-      name: '/positions/:id',
+      path: '/positions/:id/:tab',
+      name: '/positions/:id/:tab',
       component: () => import('@/views/Manage/Index.vue'),
     },
     {

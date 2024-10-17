@@ -106,8 +106,8 @@
               </div>
               <div
                 class="pools-table__btn pools-table__btn--disabled"
-                @click="emitClaim(pool)"
-                @keypress="emitClaim(pool)"
+                @click="handleOpenTab(pool, MANAGE_TAB.INCREASE)"
+                @keypress="handleOpenTab(pool, MANAGE_TAB.INCREASE)"
               >
                 Increase
               </div>
@@ -156,8 +156,8 @@
               <div
                 v-else-if="pool.isStaked"
                 class="pools-table__btn pools-table__btn--disabled"
-                @click="emitStake(pool)"
-                @keypress="emitStake(pool)"
+                @click="handleOpenTab(pool, MANAGE_TAB.WITHDRAW)"
+                @keypress="handleOpenTab(pool, MANAGE_TAB.WITHDRAW)"
               >
                 Unstake
               </div>
@@ -180,7 +180,7 @@
 
             <ButtonComponent
               btn-styles="faded"
-              @click="handleOpen(pool)"
+              @click="handleOpenTab(pool)"
             >
               MANAGE
               <BaseIcon
@@ -206,6 +206,15 @@
         class="pools-table__footer"
       >
         <slot name="footer" />
+        <ButtonComponent
+          class="btn_add-position"
+          btn-styles="faded"
+          @click="handleOpenPools"
+        >
+          <p>+</p>
+          <p>ADD NEW POSITION</p>
+          <p>+</p>
+        </ButtonComponent>
       </div>
     </div>
   </div>
@@ -219,6 +228,7 @@ import type { PropType } from 'vue';
 import { mapActions } from 'vuex';
 import BN, { BigNumber } from 'bignumber.js';
 import { PLATFORMS } from '@/types/common/pools/index.ts';
+import { MANAGE_TAB } from '@/modules/ManagePosition/Index.vue';
 import type { IPositionsInfo } from '@/types/positions/index.d.ts';
 
 enum POSITION_SIZE_ORDER_TYPE {
@@ -230,6 +240,8 @@ const iconNameSort = (orderTypeStr: string) => {
   if (orderTypeStr.includes('DOWN')) return 'ArrowDownSort';
   return 'ArrowsFilter';
 };
+
+export const getPositionTabLink = (pool: any, action: MANAGE_TAB) => `/positions/${pool?.tokenId?.toString()}/${MANAGE_TAB[action].toLowerCase()}`;
 
 export default {
   name: 'PositionsTable',
@@ -253,23 +265,32 @@ export default {
     },
   },
   emits: ['claim', 'claim-merkle', 'stake'],
+  data() {
+    return {
+      MANAGE_TAB,
+    };
+  },
   computed: {
     lessThanMin() {
       return (val: string) => new BN(val).lt(0.02);
     },
     getRewards() {
       return (pool: IPositionsInfo) => {
-        if ([PLATFORMS.PANCAKE, PLATFORMS.AERO].includes(pool.platform[0] as PLATFORMS) && pool.isStaked) {
+        if ([PLATFORMS.PANCAKE, PLATFORMS.AERO]
+          .includes(pool.platform[0] as PLATFORMS) && pool.isStaked) {
           return new BN(pool.emissionsUsd).gt(0.1) ? pool.emissionsUsd : '< 0.1';
         }
 
-        if ([PLATFORMS.PANCAKE, PLATFORMS.AERO].includes(pool.platform[0] as PLATFORMS) && !pool.isStaked) {
+        if ([PLATFORMS.PANCAKE, PLATFORMS.AERO]
+          .includes(pool.platform[0] as PLATFORMS) && !pool.isStaked) {
           return pool.rewards.displayedUsdValue;
         }
 
         if (pool.platform[0] === PLATFORMS.UNI) {
           return pool.rewards.displayedUsdValue;
         }
+
+        return null;
       };
     },
   },
@@ -279,9 +300,9 @@ export default {
       const formattedFee = new BigNumber(fee).multipliedBy(0.0001);
       return `${formattedFee} %`;
     },
-    handleOpen(pool: any) {
+    handleOpenTab(pool: any, tab: MANAGE_TAB = MANAGE_TAB.REBALANCE) {
       this.openZapIn(pool);
-      this.$router.replace(`/positions/${pool?.tokenId?.toString()}`);
+      this.$router.replace(getPositionTabLink(pool, tab));
     },
     emitStake(pool: any) {
       this.$emit('stake', pool);
@@ -294,6 +315,9 @@ export default {
     },
     toggleSortIcon() {
       return iconNameSort(POSITION_SIZE_ORDER_TYPE[this.positionSizeOrderType]);
+    },
+    handleOpenPools() {
+      this.$router.replace('/pools');
     },
   },
 };

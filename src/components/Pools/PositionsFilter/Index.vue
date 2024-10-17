@@ -214,8 +214,13 @@ export default {
   }
 }
 
+.pools-wrap__tabs {
+    display: none;
+  }
+
 @media (max-width: 640px) {
   .pools-wrap__tabs {
+    display: block;
     width: 100%;
   }
 }

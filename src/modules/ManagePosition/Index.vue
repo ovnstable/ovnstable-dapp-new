@@ -133,6 +133,7 @@ import { usePositionsQuery } from '@/hooks/fetch/usePositionsQuery.ts';
 import { useTokensQuery, useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.ts';
 import { isEmpty } from 'lodash';
 import { usePoolsQueryNew } from '@/hooks/fetch/usePoolsQuery.ts';
+import { getPositionTabLink } from '@/components/Pools/PositionsTable/Index.vue';
 import type { TFilterPoolsParams } from '@/types/common/pools';
 
 export enum MANAGE_TAB {
@@ -143,6 +144,11 @@ export enum MANAGE_TAB {
   MERGE,
   COMPOUND,
 }
+
+const getActionFromUrl = (route: any): MANAGE_TAB => {
+  const action = route.params?.tab?.toUpperCase() as keyof typeof MANAGE_TAB;
+  return action in MANAGE_TAB ? MANAGE_TAB[action] : MANAGE_TAB.REBALANCE;
+};
 
 export default {
   name: 'PositionForm',
@@ -178,7 +184,7 @@ export default {
     return {
       zapPool: null as any,
       manageTab: MANAGE_TAB,
-      activeTab: MANAGE_TAB.REBALANCE,
+      activeTab: getActionFromUrl(this.$route),
       gaugeAddress: '',
       filterTabs: [
         {
@@ -255,8 +261,9 @@ export default {
 
       if (foundPool) this.gaugeAddress = foundPool.gauge;
     },
-    changeTab(id: number) {
-      this.activeTab = id;
+    changeTab(tabId: number) {
+      this.activeTab = tabId;
+      this.$router.replace(getPositionTabLink(this.zapPool, tabId));
     },
     searchPool() {
       const foundPool = this.getUserPositions
