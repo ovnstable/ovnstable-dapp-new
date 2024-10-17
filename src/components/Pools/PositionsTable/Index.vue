@@ -20,12 +20,12 @@
           <BaseIcon :name="toggleSortIcon()" />
         </div>
         <div
-          class="pools-header__item "
+          class="pools-header__item center"
         >
           Earned
         </div>
         <div
-          class="pools-header__item"
+          class="pools-header__item center"
         >
           Stake status
         </div>
@@ -104,7 +104,7 @@
                 @click="handleOpenTab(pool, MANAGE_TAB.INCREASE)"
                 @keypress="handleOpenTab(pool, MANAGE_TAB.INCREASE)"
               >
-                Increase
+                INCREASE
               </div>
             </div>
             <div class="pools-table__emission">
@@ -120,7 +120,7 @@
                 @click="emitClaim(pool)"
                 @keypress="emitClaim(pool)"
               >
-                Claim
+                CLAIM
               </div>
             </div>
             <!-- <div class="pools-table__emission">
@@ -141,7 +141,7 @@
                 v-if="pool.gauge !== ZERO_ADDRESS"
                 :class="{ red: !pool.isStaked, green: pool.isStaked }"
               >
-                {{ pool.isStaked ? "STAKED" : "UNSTAKED" }}
+                {{ pool.isStaked ? "Staked" : "Unstaked" }}
               </p>
               <div
                 v-if="!pool.isStaked && pool.gauge !== ZERO_ADDRESS"
@@ -150,13 +150,13 @@
                 @click="emitStake(pool)"
                 @keypress="emitStake(pool)"
               >
-                Stake
+                STAKE
               </div>
               <div
                 v-else-if="pool.gauge === ZERO_ADDRESS"
                 :class="{ yellow: true }"
               >
-                NO GAUGE
+                No gauge
               </div>
               <div
                 v-else-if="pool.isStaked"
@@ -164,7 +164,7 @@
                 @click="handleOpenTab(pool, MANAGE_TAB.WITHDRAW)"
                 @keypress="handleOpenTab(pool, MANAGE_TAB.WITHDRAW)"
               >
-                Unstake
+                UNSTAKE
               </div>
             </div>
             <div class="pools-table__platform-row center">

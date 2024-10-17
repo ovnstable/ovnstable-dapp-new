@@ -14,18 +14,6 @@
       <h1>POOLS</h1>
       <p>Use your Tokens+ and OVN in DeFi to maximize your yield.</p>
     </div>
-    <div
-      v-if="type === 'POOLS'"
-      class="pos-wrap__tabs"
-    >
-      <SwitchTabs
-        :tabs="tabsList"
-        :active-tab="activeTab"
-        tab-style="bigWhite"
-        type="large"
-        @tab-change="changeTab"
-      />
-    </div>
     <div v-if="type === 'POOLS' && activeTab === 0">
       <div class="pools-data-container">
         <PoolFilterNew />
@@ -51,7 +39,6 @@
 import Positions from '@/modules/PoolsPositions/Positions/Index.vue';
 import PoolsNew from '@/modules/PoolsPositions/Pools/PoolsNew.vue';
 import PoolFilterNew from '@/components/Pools/PoolsFilter/PoolFilterNew.vue';
-import SwitchTabs from '@/components/SwitchTabs/Index.vue';
 import PoolsOld from '@/modules/PoolsPositions/Pools/Index.vue';
 import { mapGetters } from 'vuex';
 
@@ -62,31 +49,15 @@ export default {
     PoolsNew,
     PoolsOld,
     PoolFilterNew,
-    SwitchTabs,
   },
   data() {
     return {
-      tabsList: [
-        {
-          id: 0,
-          name: 'ALL POOLS',
-        },
-        // {
-        //   id: 1,
-        //   name: 'OVERNIGHT POOLS',
-        // },
-      ],
       activeTab: 0,
       type: window.location.pathname.split('/').pop()?.toUpperCase(),
     };
   },
   computed: {
     ...mapGetters('network', ['networkName']),
-  },
-  methods: {
-    changeTab(val: number) {
-      this.activeTab = val;
-    },
   },
 };
 </script>
