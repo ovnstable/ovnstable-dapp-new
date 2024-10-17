@@ -135,6 +135,7 @@ import { isEmpty } from 'lodash';
 import { usePoolsQueryNew } from '@/hooks/fetch/usePoolsQuery.ts';
 import { getPositionTabLink } from '@/components/Pools/PositionsTable/Index.vue';
 import type { TFilterPoolsParams } from '@/types/common/pools';
+import { useRoute } from 'vue-router';
 
 export enum MANAGE_TAB {
   REBALANCE,
@@ -167,7 +168,10 @@ export default {
     CompoundForm,
   },
   setup() {
-    const { data: getUserPositions } = usePositionsQuery();
+    const router = useRoute();
+
+    const paramAdd = router.query?.address;
+    const { data: getUserPositions } = usePositionsQuery(paramAdd as string ?? '');
     const { data: balanceList, isLoading: tokensLoading } = useTokensQuery();
     const { data: allTokensList } = useTokensQueryNew();
     const { data: poolList } = usePoolsQueryNew(0);
@@ -216,9 +220,6 @@ export default {
   },
   computed: {
     isLoadingData() {
-      console.log(this.gaugeAddress, '___gaugeAddress');
-      console.log(this.zapPool, '__zapPool');
-
       return isEmpty(this.zapPool)
         || isEmpty(this.allTokensList)
         || isEmpty(this.balanceList)
@@ -249,8 +250,7 @@ export default {
       const tokens = (this.zapPool?.name as string)?.split('/');
 
       const filterParams: Partial<TFilterPoolsParams> = {
-        token0: tokens[0],
-        // token1: tokens[1],
+        search: tokens[0],
       };
       this.setFilterParams(filterParams);
     },

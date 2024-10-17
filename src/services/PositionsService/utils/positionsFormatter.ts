@@ -7,7 +7,6 @@ import { getNetworkParams } from '@/store/web3/network.ts';
 import type { MPos, TPoolInfo } from '@/types/common/pools';
 import type { TTokenInfo } from '@/types/common/tokens';
 import type { IPositionsInfo, TPositionData, TTicks } from '@/types/positions';
-import { getTokenBySymbol } from '@/store/helpers';
 
 const REWARDS_LIST = {
   arbitrum: {
@@ -109,7 +108,7 @@ export const formatPositionData = (
       // Tokens
       const token0Info = getTokenInfo(token0, tokenMap);
       const token1Info = getTokenInfo(token1, tokenMap);
-      const tokenNames = pool ? getTokenNames(pool.name) : {
+      const tokenNames = {
         token0: token0Info?.symbol,
         token1: token1Info?.symbol,
       };
@@ -177,7 +176,7 @@ export const formatPositionData = (
         token0Icon: token0Info?.logoUrl ?? loadEmptyImg(),
         token1Icon: token1Info?.logoUrl ?? loadEmptyImg(),
         platform: [platformName],
-        name: pool ? pool.name : `${token0Info?.symbol}/${token1Info?.symbol}`,
+        name: `${token0Info?.symbol}/${token1Info?.symbol}`,
         position: {
           tokens: [
             { [tokenNames.token0]: getUsdStr(amount0, token0Info?.decimals) },
@@ -202,7 +201,7 @@ export const formatPositionData = (
           displayedUsdValue: getMinVal(rewardUsdTotal),
         },
         merkleData: {
-          toClaim: merklePos && tokenMerkle ? new BN(merklePos?.toClaim).div(10 ** tokenMerkle.decimals).toFixed(4) : "-",
+          toClaim: merklePos && tokenMerkle ? new BN(merklePos?.toClaim).div(10 ** tokenMerkle.decimals).toFixed(4) : "",
           rewardToken: tokenMerkle
         },
         emissions,

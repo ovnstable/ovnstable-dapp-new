@@ -30,8 +30,7 @@ const stateData = {
 
   // New filter
   filterParams: {
-    token1: 'USD+' as string,
-    token2: '' as string,
+    search: 'USD+' as string,
     chain: [] as string[],
     minTvl: '0' as string,
     protocol: [] as string[],

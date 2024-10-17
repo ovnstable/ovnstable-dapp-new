@@ -202,6 +202,33 @@
           </div>
         </div>
       </template>
+      <template v-if="zapPool.merkleData.toClaim">
+        <span class="divider" />
+        <div
+          class="swap-block__item"
+        >
+          <div
+            class="swap-block__item-row"
+          >
+            <div class="swap-block__item-row--token-wrap">
+              <img
+                :src="getImgBySymbol(zapPool.merkleData.rewardToken?.symbol) as any"
+                alt="select-token"
+              >
+              <span>
+                {{ zapPool.merkleData.rewardToken?.symbol?.toUpperCase() }}
+              </span>
+            </div>
+          </div>
+          <div
+            class="swap-block__item-bal"
+          >
+            <div>
+              {{ zapPool.merkleData.toClaim }}
+            </div>
+          </div>
+        </div>
+      </template>
     </div>
   </div>
 </template>
@@ -216,7 +243,6 @@ import { fixedByPrice } from '@/utils/numbers.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import ButtonComponent from '@/components/Button/Index.vue';
 import { getSymbolEmmToken } from '@/services/Web3Service/utils/index.ts';
-import { allTokensMap } from '@/hooks/fetch/useTokensQuery';
 
 export default {
   name: 'PositionForm',
@@ -251,18 +277,20 @@ export default {
     };
   },
   computed: {
+    getImgBySymbol() {
+      return (symbol: string) => loadTokenImage(symbol);
+    },
     getSymbolToken() {
       return getSymbolEmmToken(this.zapPool.platform[0]);
     },
     getFixedVal() {
       return (price: string) => {
         if (new BN(price).eq(0)) return 0;
-        console.log(price, '___PRICE')
         return new BN(price).toFixed(fixedByPrice(+price));
       };
     },
     zapAllTokens() {
-      return mergedTokens(this.balanceList as any[], this.allTokensList as any[]);
+      return mergedTokens(this.allTokensList as any[], this.balanceList as any[]);
     },
     getImgToken() {
       return loadTokenImage(getSymbolEmmToken(this.zapPool.platform[0])).href;
@@ -320,6 +348,7 @@ export default {
       const token0 = getTokenByAddress(this.zapPool?.token0Add, this.zapAllTokens);
       const token1 = getTokenByAddress(this.zapPool?.token1Add, this.zapAllTokens);
 
+      console.log(token1, '___tokenInfo2323')
       const tokenFull0 = {
         ...getNewInputToken(),
         locked: false,
@@ -351,10 +380,10 @@ export default {
     initRewardTokens() {
       const rewardToken = this.zapPool.rewards.tokens.map((_: any) => {
         const rewardData: any = Object.entries(_)[0];
-        const tokenInfo = allTokensMap(this.zapAllTokens).values().find((_: any) => {
-          const allTokSymbol = _?.symbol?.toLowerCase();
-          return allTokSymbol === rewardData[0]?.toLowerCase();
-        });
+
+        const tokenInfo = getTokenBySymbol(rewardData[0]?.toLowerCase(), this.zapAllTokens);
+
+        if (!tokenInfo) return null
 
         return {
           displayedValue: new BN(rewardData[1] ?? 0).toFixed(8),
@@ -367,6 +396,8 @@ export default {
           value: new BN(rewardData[1] ?? 0).toFixed(6),
         };
       });
+
+      console.log(rewardToken, '___rewardToken')
 
       this.rewardTokens = rewardToken;
     },

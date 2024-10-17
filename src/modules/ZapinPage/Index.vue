@@ -119,8 +119,7 @@ export default {
 
       if (!token0 || this.zapInit) return;
       const filterParams: Partial<TFilterPoolsParams> = {
-        token0: token0.symbol,
-        // token1: tokens[1],
+        search: token0.symbol,
       };
       this.setFilterParams(filterParams);
       this.zapInit = true;

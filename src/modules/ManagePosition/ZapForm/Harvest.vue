@@ -174,6 +174,7 @@ import {
 } from 'vuex';
 import {
   getNewOutputToken,
+  getTokenBySymbol,
 } from '@/store/helpers/index.ts';
 
 import Spinner from '@/components/Spinner/Index.vue';
@@ -381,10 +382,8 @@ export default defineComponent({
     initRewardTokens() {
       const rewardToken = this.zapPool.rewards.tokens.map((_: any) => {
         const rewardData: any = Object.entries(_)[0];
-        const tokenInfo = allTokensMap(this.mergedAllTokens).values().find((_: any) => {
-          const allTokSymbol = _?.symbol?.toLowerCase();
-          return allTokSymbol === rewardData[0]?.toLowerCase();
-        });
+        const tokenInfo = getTokenBySymbol(rewardData[0]?.toLowerCase(), this.mergedAllTokens);
+        if (!tokenInfo) return null
 
         return {
           displayedValue: new BN(rewardData[1] ?? 0).toFixed(8),

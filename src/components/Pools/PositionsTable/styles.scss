@@ -540,8 +540,12 @@
   display: flex;
   flex-direction: column;
   width: fit-content;
-  align-items: center;
+  align-items: flex-start;
   gap: 4px;
+
+  .yellow {
+    color: #FFBA00;
+  }
 
   .red {
     color: #FF3E36;
@@ -566,10 +570,10 @@
 
 // Position specific
 .positions-header {
-  grid-template-columns: minmax(100px, 0.5fr) minmax(150px, 2fr) minmax(100px, 3fr) minmax(140px, 1fr) minmax(140px, 1fr) minmax(100px, .5fr) minmax(100px, .5fr) minmax(140px, .75fr);
+  grid-template-columns: minmax(100px, 0.5fr) minmax(150px, 2fr) minmax(100px, 2fr) minmax(140px, 1.5fr) minmax(140px, 1fr) minmax(100px, 1fr) minmax(140px, .75fr);
 }
 .position-table_row {
-  grid-template-columns: minmax(100px, 0.5fr) minmax(150px, 2fr) minmax(100px, 3fr) minmax(140px, 1fr) minmax(140px, 1fr) minmax(100px, .5fr) minmax(100px, .5fr) minmax(140px, .75fr);
+  grid-template-columns: minmax(100px, 0.5fr) minmax(150px, 2fr) minmax(100px, 2fr) minmax(140px, 1.5fr) minmax(140px, 1fr) minmax(100px, 1fr) minmax(140px, .75fr);
 }
 .center {
   display: flex;

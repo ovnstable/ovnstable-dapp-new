@@ -25,11 +25,6 @@
           Earned
         </div>
         <div
-          class="pools-header__item "
-        >
-          Merkle
-        </div>
-        <div
           class="pools-header__item"
         >
           Stake status
@@ -104,17 +99,20 @@
                 {{ pool.tokenNames.token0 }} {{ pool.position.tokenProportions.token0 }} % |
                 {{ pool.tokenNames.token1 }} {{ pool.position.tokenProportions.token1 }} %
               </div>
-              <div
+              <!-- <div
                 class="pools-table__btn pools-table__btn--disabled"
                 @click="handleOpenTab(pool, MANAGE_TAB.INCREASE)"
                 @keypress="handleOpenTab(pool, MANAGE_TAB.INCREASE)"
               >
                 Increase
-              </div>
+              </div> -->
             </div>
             <div class="pools-table__emission">
               <div>
-                {{ getRewards(pool) }}$
+                Rewards: {{ getRewards(pool) }}$
+              </div>
+              <div v-if="pool.merkleData.toClaim">
+                Merkle: {{ pool.merkleData.toClaim }}{{ " " }}{{ pool.merkleData.rewardToken?.symbol }}
               </div>
               <div
                 class="pools-table__btn"
@@ -125,7 +123,7 @@
                 Claim
               </div>
             </div>
-            <div class="pools-table__emission">
+            <!-- <div class="pools-table__emission">
               <div>
                 {{ pool.merkleData.toClaim }}{{ " " }}{{ pool.merkleData.rewardToken?.symbol }}
               </div>
@@ -137,15 +135,16 @@
               >
                 Claim all
               </div>
-            </div>
+            </div> -->
             <div class="pools-table__staked">
               <p
+                v-if="pool.gauge !== ZERO_ADDRESS"
                 :class="{ red: !pool.isStaked, green: pool.isStaked }"
               >
                 {{ pool.isStaked ? "STAKED" : "UNSTAKED" }}
               </p>
               <div
-                v-if="!pool.isStaked"
+                v-if="!pool.isStaked && pool.gauge !== ZERO_ADDRESS"
                 class="pools-table__btn"
                 :class="{ 'pools-table__btn--disabled': lessThanMin(pool.rewards.usdValue) }"
                 @click="emitStake(pool)"
@@ -154,13 +153,19 @@
                 Stake
               </div>
               <div
+                v-else-if="pool.gauge === ZERO_ADDRESS"
+                :class="{ yellow: true }"
+              >
+                NO GAUGE
+              </div>
+              <!-- <div
                 v-else-if="pool.isStaked"
                 class="pools-table__btn pools-table__btn--disabled"
                 @click="handleOpenTab(pool, MANAGE_TAB.WITHDRAW)"
                 @keypress="handleOpenTab(pool, MANAGE_TAB.WITHDRAW)"
               >
                 Unstake
-              </div>
+              </div> -->
             </div>
             <div class="pools-table__platform-row center">
               <a
@@ -230,6 +235,7 @@ import BN, { BigNumber } from 'bignumber.js';
 import { PLATFORMS } from '@/types/common/pools/index.ts';
 import { MANAGE_TAB } from '@/modules/ManagePosition/Index.vue';
 import type { IPositionsInfo } from '@/types/positions/index.d.ts';
+import { ZERO_ADDRESS } from '@/utils/const';
 
 enum POSITION_SIZE_ORDER_TYPE {
   'VALUE', 'VALUE_UP', 'VALUE_DOWN',
@@ -249,6 +255,9 @@ export default {
     BaseIcon,
     ButtonComponent,
   },
+  data: () => ({
+    ZERO_ADDRESS,
+  }),
   props: {
     pools: {
       type: Array as PropType<IPositionsInfo[]>,
