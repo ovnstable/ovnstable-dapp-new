@@ -170,6 +170,7 @@ export default {
     const { data: allTokensList } = useTokensQueryNew();
     const { data: poolList } = usePoolsQueryNew(0);
 
+    console.log(getUserPositions, '__getUserPositions')
     return {
       allTokensList,
       balanceList,

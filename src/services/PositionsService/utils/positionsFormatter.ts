@@ -123,6 +123,8 @@ export const formatPositionData = (
       const positionUsdTotal = sumBnStr(token0UsdStr, token1UsdStr);
       const merklePos = positionsMerkle.find((_) => _.tokenId === tokenId?.toString());
       const tokenMerkle = merklePos ? getTokenInfo(merklePos.rewardToken, tokenMap) : "";
+      const merkeToClaim = tokenMerkle && merklePos ? new BN(merklePos?.toClaim).div(10 ** tokenMerkle.decimals).toFixed(4) : ""
+      const merkeToClaimUsd = tokenMerkle && merkeToClaim ? new BN(merkeToClaim).times(tokenMerkle.price).toFixed(4) : ""
       let rewardUsdTotal = sumBnStr(reward0UsdStr, reward1UsdStr);
       let platformName = platform;
       let rewardTokensInfo;
@@ -202,6 +204,7 @@ export const formatPositionData = (
         },
         merkleData: {
           toClaim: merklePos && tokenMerkle ? new BN(merklePos?.toClaim).div(10 ** tokenMerkle.decimals).toFixed(4) : "",
+          toClaimUsd: merkeToClaimUsd,
           rewardToken: tokenMerkle
         },
         emissions,

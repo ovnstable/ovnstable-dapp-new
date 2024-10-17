@@ -226,6 +226,9 @@
             <div>
               {{ zapPool.merkleData.toClaim }}
             </div>
+            <div v-if="zapPool.merkleData.toClaimUsd">
+              ~ ${{ zapPool.merkleData.toClaimUsd }}
+            </div>
           </div>
         </div>
       </template>
