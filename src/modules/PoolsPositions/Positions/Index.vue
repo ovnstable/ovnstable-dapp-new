@@ -36,7 +36,7 @@
           class="unavailable-row"
         >
           <p>
-            PLEASE SELECT ONE OF THE CURRENTLY SUPPORTED NETWORKS: BASE, ARBITRUM
+            PLEASE SELECT ONE OF THE CURRENTLY SUPPORTED NETWORKS: BASE, ARBITRUM, BSC
           </p>
         </div>
       </div>
@@ -109,7 +109,7 @@ import { initZapinContracts } from '@/services/Web3Service/utils/index.ts';
 import { useTokensQuery, useTokensQueryNew } from '@/hooks/fetch/useTokensQuery.ts';
 import { mergedTokens } from '@/services/TokenService/utils/index.ts';
 import { usePoolsQueryNew } from '@/hooks/fetch/usePoolsQuery.ts';
-import type { PLATFORMS, TFilterPoolsParams, TPoolInfo } from '@/types/common/pools/index.ts';
+import { PLATFORMS, type TFilterPoolsParams, type TPoolInfo } from '@/types/common/pools/index.ts';
 import ZapinService from '@/services/Web3Service/Zapin-service.ts';
 import { useRoute } from 'vue-router';
 import type { IPositionsInfo } from '@/types/positions';
@@ -156,7 +156,7 @@ enum POSITION_SIZE_ORDER_TYPE {
   'VALUE', 'VALUE_UP', 'VALUE_DOWN',
 }
 enum SUPPORTED_REBALANCE_NETWORKS {
-  arbitrum, base,
+  arbitrum, base, bsc
 }
 
 export default defineComponent({
@@ -247,6 +247,7 @@ export default defineComponent({
           .some((col: any) => col?.toLowerCase()?.includes(this.searchQuery.toLowerCase())));
     },
     filteredByNetwork() {
+      if (!this.positionData) return [];
       if (this.selectedNetworks.length === 0) return this.positionData;
 
       return this.positionData
@@ -307,6 +308,7 @@ export default defineComponent({
         const tx = await poolTokenContract
           .approve(gaugeContract?.target, tokenId, params);
 
+        console.log(tx, '___tx');
         await tx.wait();
       } catch (e: any) {
         this.closeWaitingModal();
@@ -336,11 +338,21 @@ export default defineComponent({
       try {
         this.showWaitingModal('staking');
         this.isClaiming = true;
+
+        if (pool.platform[0] === PLATFORMS.AERO) {
+          await this.approveNftGauge(
+            contractsData.poolTokenContract,
+            contractsData.gaugeContract,
+            pool.tokenId,
+          );
+        }
+
         await this.approveNftGauge(
           contractsData.poolTokenContract,
           contractsData.gaugeContract,
           pool.tokenId,
         );
+
         await ZapinService.stakeTrigger(
           pool.platform[0] as PLATFORMS,
           contractsData.gaugeContract,
@@ -352,6 +364,8 @@ export default defineComponent({
         this.reloadData();
         this.closeWaitingModal();
       } catch (e) {
+        console.log(e, '___e1');
+        console.log(JSON.parse(JSON.stringify(e)), '___e');
         this.isClaiming = false;
         this.closeWaitingModal();
         this.showErrorModalWithMsg({ errorType: 'zap', errorMsg: parseErrorLog(e) });

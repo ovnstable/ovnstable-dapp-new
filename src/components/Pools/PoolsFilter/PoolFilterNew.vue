@@ -114,6 +114,11 @@ export const networkList = [
     name: 'Arbitrum',
     enabled: false,
   },
+  {
+    chainId: 56,
+    name: 'Bsc',
+    enabled: false,
+  },
 ];
 
 export default {

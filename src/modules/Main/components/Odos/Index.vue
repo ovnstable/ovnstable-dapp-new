@@ -763,6 +763,8 @@ export default defineComponent({
       });
 
       await this.refetchAll();
+      this.closeWaitingModal();
+      this.isSwapLoading = false;
       this.clearForm();
     },
 
@@ -867,7 +869,7 @@ export default defineComponent({
 
       this.odosSwapRequest(requestData)
         .then(async (data: any) => {
-          if (!data.pathViz) {
+          if (!data?.pathViz) {
             this.isSumulateSwapLoading = false;
             this.isSumulateIntervalStarted = false;
             throw new Error('Simulation error');
@@ -979,19 +981,20 @@ export default defineComponent({
 
       this.quoteRequest(requestData)
         .then((data: any) => {
-          this.outputTokens = getOdosOutputTokens(data, this.selectedOutputTokens);
-
           this.isSumulateSwapLoading = false;
           this.isSumulateIntervalStarted = false;
+          console.log(data,"__data")
 
-          if (!data.pathViz) {
+          if (!data?.pathViz) {
             this.isSumulateSwapLoading = false;
             this.isSumulateIntervalStarted = false;
             throw new Error('Simulation error');
           }
 
+          this.outputTokens = getOdosOutputTokens(data, this.selectedOutputTokens);
+
           this.$emit('update-path-view', {
-            path: data.pathViz,
+            path: data?.pathViz,
             input: this.selectedInputTokens,
             output: this.selectedOutputTokens,
           });
@@ -1076,46 +1079,50 @@ export default defineComponent({
 
       this.firstSwipeClickOnApprove = true;
 
-      await this.checkApproveForToken(token, token.contractValue);
-      const { selectedToken } = token;
-      if (selectedToken.approveData.approved) {
-        this.closeWaitingModal();
-        return;
-      }
-
-      const tokenContract = TokenService
-        .loadTokenContract(selectedToken.address, this.$store.state.web3.evmSigner);
-      const approveValue = new BigNumber(10)
-        .pow(selectedToken.decimals)
-        .times(10 ** 18)
-        .toFixed(0);
-
-      const tx = await approveToken(
-        tokenContract,
-        this.routerContract.target,
-        approveValue,
-        this.account,
-      )
-        .catch((e) => {
-          console.error('Error when approve token.', e);
-          this.firstSwipeClickOnApprove = false;
-          this.closeWaitingModal();
-          this.showErrorModalWithMsg({ errorType: 'approve', errorMsg: parseErrorLog(e) });
-        });
-
       const finishTx = () => {
         this.checkApproveForToken(token, token.contractValue);
         this.closeWaitingModal();
         this.firstSwipeClickOnApprove = false;
       };
 
-      if (!tx) {
-        finishTx();
-        return;
-      }
+      try {
+        await this.checkApproveForToken(token, token.contractValue);
+        const { selectedToken } = token;
+        if (selectedToken.approveData.approved) {
+          this.closeWaitingModal();
+          return;
+        }
 
-      await tx.wait();
-      finishTx();
+        const tokenContract = TokenService
+          .loadTokenContract(selectedToken.address, this.$store.state.web3.evmSigner);
+        const approveValue = new BigNumber(10)
+          .pow(selectedToken.decimals)
+          .times(10 ** 18)
+          .toFixed(0);
+
+        const tx = await approveToken(
+            tokenContract,
+            this.routerContract.target,
+            approveValue,
+            this.account,
+          )
+          .catch((e) => {
+            console.error('Error when approve token.', e);
+            this.firstSwipeClickOnApprove = false;
+            this.closeWaitingModal();
+            this.showErrorModalWithMsg({ errorType: 'approve', errorMsg: parseErrorLog(e) });
+          });
+
+        if (!tx) {
+          finishTx();
+          return;
+        }
+
+        await tx.wait();
+        finishTx();
+      } catch {
+        finishTx();
+      }
     },
 
     getRequestTokens(isInput: boolean) {

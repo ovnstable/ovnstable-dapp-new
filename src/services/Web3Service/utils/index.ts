@@ -465,12 +465,14 @@ export const initZapinContracts = async (
     platform as keyof typeof ZAPIN_SCHEME.arbitrum
   ]?.zapinAdd;
 
+  console.log(abiZapAdd, '__abiZapAdd')
   if (!abiZapAdd || !abiContractV3Zap) throw new Error('abiZapAdd not found');
 
   // possible todo, make separate folder for it, if its same every time
   const abiV3Nft = srcStringBuilder('V3Nft')(zapPool.chainName, zapPool.platform[0]);
   const abiContractV3Nft = await loadAbi(abiV3Nft).catch(() => null);
 
+  console.log(abiV3Nft, '__abiV3Nft')
   const gaugeContract = gaugeAddress && !isEmpty(abiGaugeContractFileV3) ? buildEvmContract(
     abiGaugeContractFileV3.abi,
     evmSigner,

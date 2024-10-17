@@ -86,6 +86,9 @@ export default {
   },
   computed: {
     isLoadingData() {
+      console.log(this.zapPool, '___this.zapPool');
+      console.log(this.allTokensList, '___this.allTokensList');
+      console.log(this.balanceTokensList, '___this.balanceTokensList');
       return isEmpty(this.zapPool)
         || isEmpty(this.allTokensList)
         || isEmpty(this.balanceTokensList);
@@ -103,7 +106,9 @@ export default {
 
       this.handleClickSearch();
     },
-    poolList() {
+    poolList(val) {
+      console.log(val, '______this.poolList1')
+      if (val?.length === 0) return;
       this.init();
     },
   },
@@ -118,14 +123,23 @@ export default {
       const token0 = getTokenByAddress(tokens[0], this.mergedTokenList);
 
       if (!token0 || this.zapInit) return;
+
+      let tokenSymbol = token0?.symbol;
+
+      // workaround for bsc chain, need to fix api
+      if (tokenSymbol && tokenSymbol.includes("BSC")) {
+        const newTok = getTokenByAddress(tokens[1], this.mergedTokenList);
+        tokenSymbol = newTok?.symbol
+      }
+
       const filterParams: Partial<TFilterPoolsParams> = {
-        search: token0.symbol,
+        search: tokenSymbol,
       };
       this.setFilterParams(filterParams);
       this.zapInit = true;
     },
     init() {
-      if (!this.poolList || this.poolList?.length === 0) return;
+      if (!this.poolList || this.poolList?.length === 0 || !isEmpty(this.zapPool)) return;
       const foundPool = this.poolList
         .find((_: any) => _.address?.toLowerCase() === this.$route.query.pair);
       if (foundPool) this.zapPool = foundPool;

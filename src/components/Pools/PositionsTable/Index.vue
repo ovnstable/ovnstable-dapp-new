@@ -307,6 +307,7 @@ export default {
     },
     handleOpenTab(pool: any, tab: MANAGE_TAB = MANAGE_TAB.REBALANCE) {
       this.openZapIn(pool);
+      console.log(getPositionTabLink(pool, tab), '___TAB')
       this.$router.replace(getPositionTabLink(pool, tab));
     },
     emitStake(pool: any) {

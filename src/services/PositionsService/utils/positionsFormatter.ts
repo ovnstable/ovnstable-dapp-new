@@ -9,6 +9,9 @@ import type { TTokenInfo } from '@/types/common/tokens';
 import type { IPositionsInfo, TPositionData, TTicks } from '@/types/positions';
 
 const REWARDS_LIST = {
+  bsc: {
+    pcs: '0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82',
+  },
   arbitrum: {
     pcs: '0x1b896893dfc86bb67cf57767298b9073d2c1ba2c',
   },
@@ -16,16 +19,6 @@ const REWARDS_LIST = {
     pcs: '0x3055913c90fcc1a6ce9a358911721eeb942013a1',
     aerodrome: '0x940181a94A35A4569E4529A3CDfB74e38FD98631',
   },
-};
-
-// const BN_USD_STRING_BASE = 2;
-
-const getTokenNames = (poolName: string) => {
-  const tokens = poolName.split('/');
-  return {
-    token0: tokens[0],
-    token1: tokens[1],
-  };
 };
 
 export const getTokenInfo = (

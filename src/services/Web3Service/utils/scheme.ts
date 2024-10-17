@@ -10,9 +10,12 @@ export enum DEPOSIT_TYPES {
 export const rebalanceChainMap: {[key: string]: string[]} = {
   base: [PLATFORMS.AERO, PLATFORMS.PANCAKE, PLATFORMS.UNI],
   arbitrum: [PLATFORMS.PANCAKE, PLATFORMS.UNI],
+  bsc: [PLATFORMS.PANCAKE],
 };
 
-// for zapins dev/prod
+// for autozapins dev/prod
+// prod is fixed contract, without updates, and usually the most stable
+// dev is for experiments or some hotfixes
 export const ZAPIN_SCHEME = {
   arbitrum: {
     pancake: {
@@ -28,11 +31,22 @@ export const ZAPIN_SCHEME = {
       stake: DEPOSIT_TYPES.NONE,
     },
   },
+  bsc: {
+    uniswap: {
+      zapinAdd: '',
+    },
+    pancake: {
+      zapinProd: '0x65BEBAf04b3Bc943B49a2Ec5727cf991f45C2290',
+      zapinDev: '0x2A86C30c2688E9970E7a57dc4215F32697219491',
+      zapinAdd: '0x2A86C30c2688E9970E7a57dc4215F32697219491',
+      stake: DEPOSIT_TYPES.TRANSFER,
+    },
+  },
   base: {
     aerodrome: {
       zapinProd: '0x0a20444bf4621d348E139D77CC3837464932226a',
       zapinDev: '0xb63F93A8020d0495fE9EDfE23Da3b7833F632c49',
-      zapinAdd: '0x0a20444bf4621d348E139D77CC3837464932226a',
+      zapinAdd: '0xb63F93A8020d0495fE9EDfE23Da3b7833F632c49',
       stake: DEPOSIT_TYPES.DEPOSIT,
     },
     pancake: {

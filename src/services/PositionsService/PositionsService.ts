@@ -34,6 +34,7 @@ class PositionsService {
     let data: any;
 
     try {
+      if (!address) throw new Error("no add");
       console.log(address, '__signer')
       data = (
         await axios.get(
@@ -44,7 +45,7 @@ class PositionsService {
         )
       ).data;
     } catch {
-      throw "Angle API not responding";
+      return [];
     }
   
     // console.log(data, '___data')
@@ -73,7 +74,8 @@ class PositionsService {
       platformNames.map(async (platform: string) => {
         const positionsContract = await loadPositionContract(state, platform);
         try {
-          console.log(positionsContract, platform, '___positionsContract')
+          // console.log(positionsContract, platform, '___positionsContract')
+          if (!positionsContract) return []
           const positionsData = await positionsContract.getPositions(paramAcc ? paramAcc : state.accountData.account);
           console.log('__positionsData', positionsData, platform);
           return positionsData;
@@ -95,6 +97,7 @@ class PositionsService {
     positionsMerkle: MPos[],
     networkId: number,
   ) {
+    console.log("__formatPositions")
     const tokenMap = new Map(tokens.map((token) => [token.address, token]));
     const poolsMap = pools.reduce((acc: any, pool: any) => ({ ...acc, [pool.address]: pool }), {});
 
